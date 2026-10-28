@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -91,6 +91,22 @@ namespace SwingPreview
                     WeaponRotationOffset = (float)Math.PI / 4f,
                     SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 62f),
                     SpearBaseNorm = new System.Drawing.PointF(0.5f, 61.5f / 62f),
+                };
+            }
+
+            if (puppet.Equals("BlackKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "BlackKnight",
+                    // Black Knight set; the game dyes it Reflective Metal, which the preview can't apply.
+                    BodySheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightHelmet_Head.png"),
+                    // BlackBlade: 62x62, pommel (0,61), tip (61,0); hand mid-handle at (5,56).
+                    WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "BlackBlade.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
                 };
             }
 

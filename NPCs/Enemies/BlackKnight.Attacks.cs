@@ -10,8 +10,6 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
 
-// tsorcGlobalProjectile.SetDefenseTraits
-
 namespace tsorcRevamp.NPCs.Enemies
 {
     /// <summary>Which attack the knight is currently running. Stored in NPC.ai[2].</summary>
@@ -24,16 +22,37 @@ namespace tsorcRevamp.NPCs.Enemies
         BlackRain,
         DeathSeal,
         PlagueAmbush,
-        LeapStrike,     // ballistic leap in, spear strike, backward leap, throw at the apex
-        CounterCheck,   // proximity-triggered unblockable punish for closing on him
+        LeapStrike,     // ballistic sword leap, then a backward leap that throws a spear at the apex
+        CounterCheck,   // proximity-triggered unblockable sword stab for closing on him
         CurseWard,      // frontal projectile ward — makes his slowness stop mattering
         PlagueSeals,    // placed columns of black death; answers a player who stands still
+        CrystalStorm,   // below 1/3 HP: a five-crystal homing fan from the palms
     }
 
     /// <summary>
-    /// How the knight moves while committing a throw. Ported from RedKnight's RedThrowMovement: the point is
-    /// that a thrown weapon does NOT require standing still, so the knight can back off, close, or pop
-    /// straight up while releasing it.
+    /// One token in the opener bag: a single attack, or a fixed two-attack chain whose second attack starts the
+    /// tick the first ends (proposal section 0, Q3). Melee chains are multi-step MeleeCombos instead.
+    /// </summary>
+    internal enum BlackKnightCard : byte
+    {
+        SpearThrow,
+        HomingVolley,
+        BombThrow,
+        BlackRain,
+        LeapStrike,
+        PlagueSeals,
+        CurseWard,
+        DeathSeal,
+        PlagueAmbush,
+        CrystalStorm,
+        SpearIntoBomb,
+        HomingIntoRain,
+        BombIntoLeap,
+    }
+
+    /// <summary>
+    /// How the knight moves while committing a throw. Ported from RedKnight's RedThrowMovement: a thrown weapon does
+    /// NOT require standing still, so the knight can back off, close, or pop straight up while releasing it.
     /// </summary>
     internal enum BlackThrowMovement : byte
     {
@@ -44,84 +63,99 @@ namespace tsorcRevamp.NPCs.Enemies
         VerticalHop,
     }
 
-    partial class BlackKnight
+    public partial class BlackKnight
     {
         // ── Attack state ────────────────────────────────────────────────────────────────────────────────
-        // Deliberately stored in NPC.ai[] so it rides the vanilla NPC sync for free rather than needing more
-        // SendExtraAI payload:
-        //   ai[1] = the general cadence clock. Semantics UNCHANGED from before the bag: the HumanoidMelee
-        //           opener still gates on 60..90 (see ConfigureHumanoidMelee's openerCondition) and combo
-        //           followups still reset it to 60. It simply no longer doubles as an attack conveyor.
+        // Stored in NPC.ai[] so it rides the NPC sync (and every puppet phase snapshot) for free:
         //   ai[2] = current BlackKnightAttack.
-        //   ai[3] = tick counter WITHIN the current attack.
+        //   ai[3] = tick counter WITHIN the current attack. Every machine advances it while the attack runs, so poses
+        //           and tell dust are smooth on clients; the server's snapshots correct any drift.
+        // Puppets never use NPC.ai[] themselves.
         private BlackKnightAttack CurrentAttack => (BlackKnightAttack)(int)NPC.ai[2];
         private int AttackTimer => (int)NPC.ai[3];
         private bool AttackActive => CurrentAttack != BlackKnightAttack.None;
 
         // Server-only selection state; never drawn, so it needs no sync.
-        private readonly List<BlackKnightAttack> openerBag = new();
-        private bool openerBagBelowHalf;
-        private BlackThrowMovement throwMovement;
+        private readonly List<BlackKnightCard> openerBag = new();
+        private int openerBagHealthStage = -1;
         private int attackCooldown;
+        // The second half of a chain card, started when the first attack completes. Server only.
+        private BlackKnightAttack chainedAttack;
+        private bool chainCardPlaying;
+        // Synced (SendExtraAI): the throw hop picked at the start of a throw, read by the debug label.
+        private BlackThrowMovement throwMovement;
 
         // ── Timings ─────────────────────────────────────────────────────────────────────────────────────
-        // Preserved from the conveyor windows they replace, so the feel of each attack is unchanged; only the
-        // SELECTION in front of them is new. (Old window -> new duration: spear 120-180 -> 60, homing
-        // 265-375 -> 110, bomb 865-925 -> 60, death seal ai[2] 100-246 -> 146.)
         private const int SpearWindupTicks = 60;
         private const int SpearWindupTicksUnblockable = 90; // the shield-bypass variant telegraphs longer
         private const int SpearFlashLead = 25;              // flash this many ticks before release
-        private const int SpearRecoveryTicks = 10;
+        private const int SpearThrowRecoveryTicks = 10;
 
         private const int HomingFirstBurstTick = 60;
         private const int HomingSecondBurstTick = 110;
-        private const int HomingRecoveryTicks = 10;
+        private const int HomingRecoveryTicks = 26;         // covers the palm's 14t hold + 12t lower
 
         private const int BombWindupTicks = 60;
         private const int BombFlashLead = 25;
         private const int BombRecoveryTicks = 10;
 
-        private const int BlackRainTicks = 30;
+        // Both arms rise over 20t; wave 1 drops at the raise peak (it used to fire on tick 0 with no gesture).
+        private const int BlackRainWaveTick = 20;
+        private const int BlackRainTicks = 44;
 
         private const int DeathSealTelegraphTicks = 100;
         private const int DeathSealFlashTick = 65;
         private const int DeathSealFireTicks = 35;
-        private const int DeathSealRecoveryTicks = 11;
+        private const int DeathSealRecoveryTicks = 12;
 
         private const int PlagueAmbushVanishTick = 12;
         private const int PlagueAmbushTicks = 150;
 
+        // ── Shadow Crystal Storm (below 1/3 HP) ─────────────────────────────────────────────────────────
+        // Was a global-clock side effect (GameUpdateCount % 420) that fired mid-attack and mid-stagger from his
+        // centre. Now a bag attack: both palms gather a hex crystal for 40t (commit at 20), the back palm pushes
+        // five homing crystals out in a 60-degree fan at 40, then 26t of hold and lowering.
+        private const int CrystalStormReleaseTick = 40;
+        private const int CrystalStormCommitTick = 20;
+        private const int CrystalStormTicks = 66;
+        private const int CrystalStormCount = 5;
+        private const float CrystalStormSpread = MathHelper.Pi / 3f;
+        private const float CrystalStormMinRange = 200f;
+        private const float CrystalStormMaxRange = 900f;
+
         // ── LeapStrike ──────────────────────────────────────────────────────────────────────────────────
-        // Deliberately TIMER-driven end to end rather than event-driven (e.g. "when he lands"). Clients
-        // derive the held-spear draw and the hit window from ai[3] alone, so every phase boundary has to be
-        // a tick number both sides can compute. Landing is still detected server-side, but only to damp
-        // horizontal drift — never to advance the phase.
-        private const int LeapWindupTicks = 18;      // crouch + telegraph before committing
+        // A sword leap. Timer-driven end to end: every phase boundary is a tick number all machines can compute.
+        // The strike tick is solved at launch from the leap's flight time and synced (leapStrikeStartTick), so the
+        // downswing pose and the hitbox's live window agree everywhere.
+        //   0-24 tell: sword raised overhead while braking, flash at 8 | 24 launch (ballistic 12.5 px/t at the target)
+        //   strike: live for 20t starting 16t before the predicted landing (ends ~4t after it), never before launch
+        //   plant until 74 | 74 backleap, sword away and spear drawn | 90 apex throw | 104 end.
+        private const int LeapWindupTicks = 24;
         private const int LeapFlashTick = 8;
-        private const int LeapStrikeEndTick = 48;    // outbound arc: hitbox live from LeapWindupTicks
-        private const int LeapRecoverTick = 62;      // planted, spear still out
-        private const int LeapBackTick = 62;         // backward leap launches
-        private const int LeapThrowTick = 78;        // apex of the backward leap -> release
-        private const int LeapStrikeTicks = 92;
+        private const int LeapLiveTicks = 20;
+        private const int LeapLiveBeforeLandingTicks = 16;
+        private const int LeapBackTick = 74;
+        private const int LeapThrowTick = 90;
+        private const int LeapStrikeTicks = 104;
         private const float LeapOutSpeed = 12.5f;    // ballistic solve speed toward the player
         private const float LeapBackSpeedX = 6.2f;
         private const float LeapBackSpeedY = -8.4f;
-        private const float LeapSpearReach = 78f;    // hitbox width during the outbound arc
-        private const float LeapSpearHeight = 44f;
+        private const float LeapSwordReach = 78f;    // hitbox size during the strike
+        private const float LeapSwordHeight = 44f;
+        // Synced: tick the leap's downswing and live window start; -1 until the launch solves it.
+        private int leapStrikeStartTick = -1;
 
         // ── CounterCheck ────────────────────────────────────────────────────────────────────────────────
-        // Not a bag attack: proximity-triggered, so closing on him is what causes it.
-        // Deliberately short — this is a punish, not a telegraph. The windup is the accelerate-in ramp.
-        private const int CounterStrikeTick = 12;
+        // Not a bag attack: proximity-triggered, so closing on him is what causes it. A 20t tell (the reaction
+        // floor; it was 12t), then a sword stab dash with a small hop, unblockable, live 12t (rollable).
+        private const int CounterStrikeTick = 20;
         private const int CounterHitTicks = 12;
-        private const int CounterTicks = 44;
+        private const int CounterTicks = 52;
         private const float CounterTriggerRange = 112f;
         private const float CounterReach = 86f;
         private const float CounterHeight = 42f;
-        // The counter DASHES. Its hitbox is source-anchored (it rides the knight), so a jab thrown from a
-        // standing stop only connects if the player is already touching him — which is why it read as "he
-        // holds the spear out and nothing happens". Leonhard-style commit: wind up by accelerating in, then
-        // burst forward with a small ballistic hop so it has to be dodged rather than walked out of.
+        // The stab DASHES: its hitbox rides the knight, so a stab from a standing stop only connects if the player
+        // is already touching him. Wind up by accelerating in, then burst forward with a small ballistic hop.
         private const float CounterWindupSpeed = 3.4f;
         private const float CounterDashSpeed = 10f;
         private const float CounterDashHop = -3f;
@@ -129,30 +163,23 @@ namespace tsorcRevamp.NPCs.Enemies
         private int counterCooldown;
 
         // ── CurseWard ───────────────────────────────────────────────────────────────────────────────────
-        // The answer to "a slow enemy just gets kited". It does not make him faster; it makes range stop
-        // working, so the player has to solve him positionally instead of out-DPSing him.
-        //
-        // The 120-tick facing LOCK is the counterplay and the whole reason this is fair: while warding he
-        // physically cannot turn, so flanking beats it. Without the lock a frontal ward is just a damage
-        // immunity that follows you around.
+        // The answer to "a slow enemy just gets kited". It makes range stop working, so the player has to solve him
+        // positionally. The 120-tick facing LOCK is the counterplay: while warding he cannot turn, so flanking beats it.
         private const int WardFacingLockTicks = 120;
         private const int WardTicks = 152;                 // lock + a visible lower/recover tail
         private const float WardAdvanceSpeed = 1.15f;      // he walks INTO you behind it, slowly
         private const float WardMinRange = 200f;
         private const float WardMaxRange = 900f;
-        private int wardFacing;                            // direction he committed to at cast time
+        private int wardFacing;                            // direction he committed to at cast time (synced)
 
-        // Sparse rain DURING the lock, so the ward is never 2.5s of dead air. Vertical on purpose: it must
-        // not cover his flanks, or the facing lock stops being counterplay. The pressure herds the player
-        // sideways, which is exactly where they should be going.
+        // Sparse vertical rain DURING the lock, so the ward is never 2.5s of dead air; it herds the player sideways.
         private const int WardRainTickA = 30;
         private const int WardRainTickB = 80;
-        private const int WardRainCount = 2;               // vs 4-6 for the standalone barrage
+        private const int WardRainCount = 2;
         private const float WardRainSpread = 34f;
         private const float WardRainRadius = 240f;
 
-        // The ward FEEDS on what it absorbs, and pays it back when it drops. This is what makes shooting
-        // into it actively wrong rather than merely wasteful — the wrong play visibly loads his counter.
+        // The ward FEEDS on what it absorbs and pays it back when it drops, so shooting into it is actively wrong.
         private const int WardReleaseBaseCount = 3;
         private const int WardReleaseMaxBonus = 6;
         private const float WardReleaseFullChargeFraction = 0.10f; // absorbed / lifeMax that maxes the bonus
@@ -171,10 +198,7 @@ namespace tsorcRevamp.NPCs.Enemies
         private const int WardRiseTicks = 16;
         private const int WardFadeTicks = 20;
 
-        /// <summary>
-        /// 0..1 bloom of the ward plane: rises quickly on cast, holds through the lock, then collapses as
-        /// it drops. Derived from ai[3] so clients animate it without any extra sync.
-        /// </summary>
+        /// <summary>0..1 bloom of the ward plane: rises on cast, holds through the lock, collapses as it drops.</summary>
         internal float CurseWardRise
         {
             get
@@ -183,62 +207,51 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     return 0f;
                 }
-                int t = AttackTimer;
-                if (t < WardRiseTicks)
+                int timer = AttackTimer;
+                if (timer < WardRiseTicks)
                 {
-                    return MathHelper.Clamp(t / (float)WardRiseTicks, 0f, 1f);
+                    return MathHelper.Clamp(timer / (float)WardRiseTicks, 0f, 1f);
                 }
-                if (t < WardFacingLockTicks)
+                if (timer < WardFacingLockTicks)
                 {
                     return 1f;
                 }
-                return MathHelper.Clamp(1f - (t - WardFacingLockTicks) / (float)WardFadeTicks, 0f, 1f);
+                return MathHelper.Clamp(1f - (timer - WardFacingLockTicks) / (float)WardFadeTicks, 0f, 1f);
             }
         }
 
         // ── PlagueSeals ─────────────────────────────────────────────────────────────────────────────────
-        // 90, up from 60: this is his slowest, most committed cast and the payoff removes a chunk of the
-        // arena, so the read on it should be long and unmistakable. Everything below derives from it —
-        // the staff-hold window, the committed-attack window and the charge ramp on the casting dust.
+        // His slowest, most committed cast; the payoff removes a chunk of the arena, so the read is long.
         private const int SealCastTicks = 90;              // caster telegraph before the seals are placed
         private const int SealCastTotalTicks = 114;
         private const int SealFirstTelegraphTicks = 26;    // floor warning on the column under the player
-        private const int SealDelayedTelegraphTicks = 180; // 3s, per design — the follow-up pair
-        // The delayed pair FLANKS the player, one column each side at this distance. It was previously both
-        // columns on the far side 44px apart, which at a 32px column width put them practically touching and
-        // read as a single doubled pillar rather than a pincer.
+        private const int SealDelayedTelegraphTicks = 180; // 3s — the follow-up pair
+        // The delayed pair FLANKS the player, one column each side, so both horizontal escapes get sealed.
         private const float SealFlankOffset = 500f;
         private const float SealMinRange = 180f;
         private const float SealMaxRange = 950f;
+        // Grip to staff head along the held staff at draw scale 1 (Amethyst Staff icon diagonal, grip ~30% up).
+        private const float StaffLength = 34f;
 
-        /// <summary>Staff is raised: drives the held-staff draw and its casting dust.</summary>
-        internal bool CastingStaff => CurrentAttack == BlackKnightAttack.PlagueSeals
-            && AttackTimer < SealCastTicks + 12;
-
-        // Held 45 degrees up from the grip, per design. Length is the distance from grip to staff head,
-        // used both to place the casting dust and to draw the sprite.
-        internal const float StaffAngleFromHorizontal = MathHelper.PiOver4;
-        internal const float StaffLength = 34f;
-
-        /// <summary>World position of the staff's head (the gem end), 45 degrees up from the hand.</summary>
-        internal Vector2 StaffHeadWorld()
+        /// <summary>World position of the staff's head (the gem end), along the posed staff from the hand.</summary>
+        private Vector2 StaffHeadWorld()
         {
-            Vector2 grip = CurrentHandWorld();
-            return grip + new Vector2(NPC.spriteDirection, 0f).RotatedBy(-StaffAngleFromHorizontal * NPC.spriteDirection) * StaffLength;
+            return PuppetHandPosition + PuppetWeaponDirection * StaffLength;
         }
 
         // ── Plague trail ────────────────────────────────────────────────────────────────────────────────
-        // The fix for "kiting reads as skittish": ground he gives up becomes ground you cannot take.
-        // Reuses PlagueTeleportCloud, which is stationary, deals NO damage, and applies stacking
-        // CurseBuildup — denial pressure rather than a punishing damage puddle.
+        // Ground he gives up becomes ground you cannot take. PlagueTeleportCloud is stationary, deals NO damage, and
+        // applies stacking CurseBuildup — denial pressure rather than a damage puddle.
         private const int PlagueTrailCooldownTicks = 45;
         private const float PlagueTrailRadius = 52f;
         private const int PlagueTrailLifetime = 150;
         private const float PlagueTrailMinRetreatSpeed = 0.9f;
         private int plagueTrailCooldown;
 
-        /// <summary>Spear is out: the LeapStrike arc through to the throw, plus the counter jab.</summary>
-        public bool SpearMeleeActive => (CurrentAttack == BlackKnightAttack.LeapStrike && AttackTimer < LeapThrowTick)
+        /// <summary>The sword hitbox exists: the Leap Strike from launch to the backleap, plus the counter stab.
+        /// Read by GreatBlackKnightSpearHitbox (ISpearMeleeWielder).</summary>
+        public bool SpearMeleeActive => (CurrentAttack == BlackKnightAttack.LeapStrike
+                && AttackTimer >= LeapWindupTicks && AttackTimer < LeapBackTick)
             || CurrentAttack == BlackKnightAttack.CounterCheck;
 
         /// <summary>Strike is live and should deal damage.</summary>
@@ -246,42 +259,46 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             get
             {
-                int t = AttackTimer;
-                return CurrentAttack switch
+                int timer = AttackTimer;
+                if (CurrentAttack == BlackKnightAttack.LeapStrike)
                 {
-                    BlackKnightAttack.LeapStrike => t >= LeapWindupTicks && t < LeapStrikeEndTick,
-                    BlackKnightAttack.CounterCheck => t >= CounterStrikeTick && t < CounterStrikeTick + CounterHitTicks,
-                    _ => false,
-                };
+                    bool solved = leapStrikeStartTick >= 0;
+                    return solved && timer >= leapStrikeStartTick && timer < leapStrikeStartTick + LeapLiveTicks;
+                }
+                if (CurrentAttack == BlackKnightAttack.CounterCheck)
+                {
+                    return timer >= CounterStrikeTick && timer < CounterStrikeTick + CounterHitTicks;
+                }
+                return false;
             }
         }
 
-        /// <summary>Cooldown between OPENERS. Combo followups bypass this entirely — they are paced by
-        /// CombatTempo's own continue-chance, which is the system that makes strings feel adaptive.</summary>
+        /// <summary>Cooldown between bag cards. A chain card's second attack bypasses it; the card then pays
+        /// ChainExtraCooldownTicks on top when it finishes.</summary>
         private const int OpenerCooldownTicks = 45;
         private const int OpenerFailCooldownTicks = 20;
+        private const int ChainExtraCooldownTicks = 15;
 
-        // ── Spacing duelist tuning ──────────────────────────────────────────────────────────────────────
-        // BlackKnight kites (KiteRangeMin 2 / Max 15 tiles). These bands partition the bag around that band
-        // so the kiting reads as a deliberate preferred engagement range rather than as him being skittish:
-        // he wants to sit mid-range, punishes anything that closes, and answers a runaway with rain/seal.
-        // Kept in step with the CombatComboMove bands in SetDefaults, so an attack cannot be a legal opener
-        // at a range where it would be an illegal followup (which read as the knight opening with something
-        // it then immediately refused to chain).
+        // ── Range bands ─────────────────────────────────────────────────────────────────────────────────
+        // Partitioned around the kite band (KiteRangeMin/Max = 2..15 tiles = ~32..240px): melee (the sword combos and
+        // the counter) owns inside 120px, the spear is his only ranged option close in, the bomb is the tool for the
+        // band edge, homing / rain / seals punish disengaging.
         private const float SpearMinRange = 120f;
         private const float HomingMinRange = 300f;
         private const float HomingMaxRange = 900f;
         private const float BombMinRange = 190f;
         private const float BombMaxRange = 620f;
-        private const float BlackRainMinRange = 250f;   // matches the old ai[2] gate
+        private const float BlackRainMinRange = 250f;
         private const float DeathSealMaxRange = 900f;
         private const float PlagueAmbushMinRange = 260f; // only worth vanishing if there is ground to cover
         private const float PlagueAmbushMaxRange = 1100f;
-        // LeapStrike deliberately overlaps the band the spear throw owns. That overlap is the point: at
-        // mid range the player should not know whether the answer is a thrown spear or him closing it
-        // himself, which is what stops the spacing reading as a safe, predictable wall.
+        // LeapStrike deliberately overlaps the spear throw's band: at mid range the player should not know whether
+        // the answer is a thrown spear or him closing the gap himself.
         private const float LeapMinRange = 150f;
         private const float LeapMaxRange = 430f;
+        private const float LeapMaxHeightDifference = 96f;
+        // Spear and bomb aim this far past the target so arcs never land short (it was 10px).
+        private const float AimOvershootPixels = 45f;
 
         /// <summary>Human-readable current attack, for the above-head debug readout.</summary>
         internal string CurrentAttackDebugName
@@ -299,7 +316,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     BlackThrowMovement.VerticalHop => " — Vertical Hop",
                     _ => string.Empty,
                 };
-                return CurrentAttack switch
+                string name = CurrentAttack switch
                 {
                     BlackKnightAttack.SpearThrow => $"Spear Throw{movement}",
                     BlackKnightAttack.HomingVolley => "Homing Volley",
@@ -311,15 +328,21 @@ namespace tsorcRevamp.NPCs.Enemies
                     BlackKnightAttack.CounterCheck => "Counter Check",
                     BlackKnightAttack.CurseWard => "Curse Ward",
                     BlackKnightAttack.PlagueSeals => "Plague Seals",
+                    BlackKnightAttack.CrystalStorm => "Shadow Crystal Storm",
                     _ => null,
                 };
+                if (InCommittedAttack(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>()))
+                {
+                    return name;
+                }
+                return $"{name} (Windup)";
             }
         }
 
         /// <summary>Total ticks this attack runs for, including its recovery tail.</summary>
-        private int AttackDuration(BlackKnightAttack attack, tsorcRevampGlobalNPC globalNPC) => attack switch
+        private int AttackDuration(BlackKnightAttack attack) => attack switch
         {
-            BlackKnightAttack.SpearThrow => SpearWindup(globalNPC) + SpearRecoveryTicks,
+            BlackKnightAttack.SpearThrow => SpearReleaseTick + SpearThrowRecoveryTicks,
             BlackKnightAttack.HomingVolley => HomingSecondBurstTick + HomingRecoveryTicks,
             BlackKnightAttack.BombThrow => BombWindupTicks + BombRecoveryTicks,
             BlackKnightAttack.BlackRain => BlackRainTicks,
@@ -329,33 +352,43 @@ namespace tsorcRevamp.NPCs.Enemies
             BlackKnightAttack.CounterCheck => CounterTicks,
             BlackKnightAttack.CurseWard => WardTicks,
             BlackKnightAttack.PlagueSeals => SealCastTotalTicks,
+            BlackKnightAttack.CrystalStorm => CrystalStormTicks,
             _ => 1,
         };
 
-        private int SpearWindup(tsorcRevampGlobalNPC globalNPC)
-            => globalNPC.ActiveAttackBypassesShield ? SpearWindupTicksUnblockable : SpearWindupTicks;
+        /// <summary>The spear throw's release tick: the unblockable variant telegraphs 30t longer. Read from the
+        /// synced defence traits, so it agrees on every machine.</summary>
+        private int SpearReleaseTick
+        {
+            get
+            {
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackBypassesShield)
+                {
+                    return SpearWindupTicksUnblockable;
+                }
+                return SpearWindupTicks;
+            }
+        }
 
-        /// <summary>True while the attack is committed enough to be hyper-armoured and to survive a teleport
-        /// or dodge trying to seize the body. Replaces the old hardcoded inProtectedAttack tick ranges.</summary>
+        /// <summary>True while the attack is committed enough to be hyper-armoured. Before this, a poise break
+        /// cancels the windup.</summary>
         internal bool InCommittedAttack(tsorcRevampGlobalNPC globalNPC)
         {
-            int t = AttackTimer;
+            int timer = AttackTimer;
             return CurrentAttack switch
             {
-                BlackKnightAttack.SpearThrow => t >= SpearWindup(globalNPC) - SpearFlashLead,
-                BlackKnightAttack.HomingVolley => t >= HomingFirstBurstTick,
-                BlackKnightAttack.BombThrow => t >= BombWindupTicks - BombFlashLead,
-                BlackKnightAttack.DeathSeal => t >= DeathSealFlashTick,
+                BlackKnightAttack.SpearThrow => timer >= SpearReleaseTick - SpearFlashLead,
+                BlackKnightAttack.HomingVolley => timer >= HomingFirstBurstTick,
+                BlackKnightAttack.BombThrow => timer >= BombWindupTicks - BombFlashLead,
+                BlackKnightAttack.DeathSeal => timer >= DeathSealFlashTick,
                 BlackKnightAttack.PlagueAmbush => true, // a teleport in flight must never be cancelled
-                // Hyper-armoured from launch: an airborne leap cannot be staggered mid-arc without
-                // dumping him on the floor in a broken pose, and the whole point of the move is that
-                // committing to it is safe for him and dangerous for you.
-                BlackKnightAttack.LeapStrike => t >= LeapWindupTicks,
-                BlackKnightAttack.CounterCheck => t >= CounterStrikeTick,
-                // The ward IS the commitment: he is locked facing one way and cannot be shoved out of it,
-                // which is exactly what makes flanking the answer.
-                BlackKnightAttack.CurseWard => t < WardFacingLockTicks,
-                BlackKnightAttack.PlagueSeals => t >= SealCastTicks - 20,
+                // Hyper-armoured from launch: an airborne leap staggered mid-arc would dump him in a broken pose.
+                BlackKnightAttack.LeapStrike => timer >= LeapWindupTicks,
+                BlackKnightAttack.CounterCheck => timer >= CounterStrikeTick,
+                // The ward IS the commitment: he is locked facing one way and cannot be shoved out of it.
+                BlackKnightAttack.CurseWard => timer < WardFacingLockTicks,
+                BlackKnightAttack.PlagueSeals => timer >= SealCastTicks - 20,
+                BlackKnightAttack.CrystalStorm => timer >= CrystalStormCommitTick,
                 _ => false,
             };
         }
@@ -367,185 +400,216 @@ namespace tsorcRevamp.NPCs.Enemies
         // ── Selection ───────────────────────────────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Picks and starts an OPENER from the bag. Followups are NOT chosen here — those still go through
-        /// CombatTempo's weighted, damage-urgency-scaled chooser (TryQueueComboFollowup), which is the system
-        /// that gives BlackKnight its adaptive combo strings. The bag exists only to fix the opener, which
-        /// used to be a fixed spear -> homing -> bomb rotation baked into the conveyor's tick numbers.
+        /// Server, from neutral: the proximity counter, then a bag card. True when an attack started (the caller hosts
+        /// it in a Custom phase). The guard-pressure finisher needs nothing here: entering the Custom phase with the
+        /// pressure ready makes the attack unblockable (PuppetNPC's shared finisher), and the spear throw reads that
+        /// trait to take its 30t-longer tell.
         /// </summary>
-        private void TryStartOpener(tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
+        private bool TryStartAttack(tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
         {
-            if (attackCooldown > 0)
-            {
-                attackCooldown--;
-                return;
-            }
             if (!CanStartAttack(globalNPC))
             {
-                return;
+                return false;
             }
-
-            float distance = NPC.Distance(player.Center);
-            bool belowHalf = NPC.life <= NPC.lifeMax / 2;
-
-            Span<BlackKnightAttack> candidates = stackalloc BlackKnightAttack[8];
-            int count = 0;
-            if (hasPlayerLOS && distance >= SpearMinRange)
+            // The counter ignores the card cooldown: it is not one of his choices, it is what happens to you for
+            // stepping inside his guard.
+            if (TryStartCounter(globalNPC))
             {
-                candidates[count++] = BlackKnightAttack.SpearThrow;
+                return true;
             }
-            if (hasPlayerLOS && distance >= HomingMinRange && distance <= HomingMaxRange)
+            if (attackCooldown > 0)
             {
-                candidates[count++] = BlackKnightAttack.HomingVolley;
+                return false;
             }
-            if (hasPlayerLOS && distance >= BombMinRange && distance <= BombMaxRange)
-            {
-                candidates[count++] = BlackKnightAttack.BombThrow;
-            }
-            if (hasPlayerLOS && distance >= BlackRainMinRange)
-            {
-                candidates[count++] = BlackKnightAttack.BlackRain;
-            }
-            if (belowHalf && hasPlayerLOS && distance <= DeathSealMaxRange)
-            {
-                candidates[count++] = BlackKnightAttack.DeathSeal;
-            }
-            // The ambush deliberately does NOT require line of sight — closing a broken sight line is the
-            // entire point of it, and it is the knight's answer to a player who has run behind cover.
-            if (belowHalf && globalNPC.TeleportCooldownTimer <= 0
-                && distance >= PlagueAmbushMinRange && distance <= PlagueAmbushMaxRange)
-            {
-                candidates[count++] = BlackKnightAttack.PlagueAmbush;
-            }
-
-            // The gap-closer: needs room to actually arc, and a clear line so he doesn't leap into a wall.
-            if (hasPlayerLOS && distance >= LeapMinRange && distance <= LeapMaxRange
-                && MathF.Abs(player.Center.Y - NPC.Center.Y) <= 96f)
-            {
-                candidates[count++] = BlackKnightAttack.LeapStrike;
-            }
-
-            // Ward wants range to actually cover ground behind it, and a target to walk at.
-            if (hasPlayerLOS && distance >= WardMinRange && distance <= WardMaxRange)
-            {
-                candidates[count++] = BlackKnightAttack.CurseWard;
-            }
-            // Seals are placed, not aimed, so they do NOT need line of sight — sealing the floor around
-            // someone hiding behind cover is exactly what they are for.
-            if (distance >= SealMinRange && distance <= SealMaxRange)
-            {
-                candidates[count++] = BlackKnightAttack.PlagueSeals;
-            }
-
-            if (count == 0)
-            {
-                attackCooldown = OpenerFailCooldownTicks;
-                return;
-            }
-
-            BeginAttack(ChooseFromBag(candidates[..count], belowHalf), globalNPC);
+            return TryStartCard(hasPlayerLOS);
         }
+
+        /// <summary>True when <paramref name="attack"/> may start at this distance and health. Shared by the bag (a
+        /// card's opener) and the chain (its second attack, re-checked when the first one ends).</summary>
+        private bool IsAttackInRange(BlackKnightAttack attack, float distance, bool hasPlayerLOS)
+        {
+            bool belowHalf = NPC.life <= NPC.lifeMax / 2;
+            bool belowThird = NPC.life <= NPC.lifeMax / 3;
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            switch (attack)
+            {
+                case BlackKnightAttack.SpearThrow:
+                    return hasPlayerLOS && distance >= SpearMinRange;
+                case BlackKnightAttack.HomingVolley:
+                    return hasPlayerLOS && distance >= HomingMinRange && distance <= HomingMaxRange;
+                case BlackKnightAttack.BombThrow:
+                    return hasPlayerLOS && distance >= BombMinRange && distance <= BombMaxRange;
+                case BlackKnightAttack.BlackRain:
+                    return hasPlayerLOS && distance >= BlackRainMinRange;
+                case BlackKnightAttack.DeathSeal:
+                    return belowHalf && hasPlayerLOS && distance <= DeathSealMaxRange;
+                case BlackKnightAttack.PlagueAmbush:
+                    // No line of sight needed: closing a broken sight line is the point of it.
+                    return belowHalf && globalNPC.TeleportCooldownTimer <= 0
+                        && distance >= PlagueAmbushMinRange && distance <= PlagueAmbushMaxRange;
+                case BlackKnightAttack.LeapStrike:
+                {
+                    // Needs room to arc, and a clear line so he doesn't leap into a wall.
+                    float heightDifference = MathF.Abs(player.Center.Y - NPC.Center.Y);
+                    return hasPlayerLOS && distance >= LeapMinRange && distance <= LeapMaxRange
+                        && heightDifference <= LeapMaxHeightDifference;
+                }
+                case BlackKnightAttack.CurseWard:
+                    return hasPlayerLOS && distance >= WardMinRange && distance <= WardMaxRange;
+                case BlackKnightAttack.PlagueSeals:
+                    // Placed, not aimed: sealing the floor around someone behind cover is what they are for.
+                    return distance >= SealMinRange && distance <= SealMaxRange;
+                case BlackKnightAttack.CrystalStorm:
+                    return belowThird && hasPlayerLOS && distance >= CrystalStormMinRange && distance <= CrystalStormMaxRange;
+            }
+            return false;
+        }
+
+        private static BlackKnightAttack CardOpener(BlackKnightCard card) => card switch
+        {
+            BlackKnightCard.SpearThrow => BlackKnightAttack.SpearThrow,
+            BlackKnightCard.HomingVolley => BlackKnightAttack.HomingVolley,
+            BlackKnightCard.BombThrow => BlackKnightAttack.BombThrow,
+            BlackKnightCard.BlackRain => BlackKnightAttack.BlackRain,
+            BlackKnightCard.LeapStrike => BlackKnightAttack.LeapStrike,
+            BlackKnightCard.PlagueSeals => BlackKnightAttack.PlagueSeals,
+            BlackKnightCard.CurseWard => BlackKnightAttack.CurseWard,
+            BlackKnightCard.DeathSeal => BlackKnightAttack.DeathSeal,
+            BlackKnightCard.PlagueAmbush => BlackKnightAttack.PlagueAmbush,
+            BlackKnightCard.CrystalStorm => BlackKnightAttack.CrystalStorm,
+            BlackKnightCard.SpearIntoBomb => BlackKnightAttack.SpearThrow,
+            BlackKnightCard.HomingIntoRain => BlackKnightAttack.HomingVolley,
+            BlackKnightCard.BombIntoLeap => BlackKnightAttack.BombThrow,
+            _ => BlackKnightAttack.None,
+        };
+
+        private static BlackKnightAttack CardFollowUp(BlackKnightCard card) => card switch
+        {
+            BlackKnightCard.SpearIntoBomb => BlackKnightAttack.BombThrow,
+            BlackKnightCard.HomingIntoRain => BlackKnightAttack.BlackRain,
+            BlackKnightCard.BombIntoLeap => BlackKnightAttack.LeapStrike,
+            _ => BlackKnightAttack.None,
+        };
 
         /// <summary>
-        /// Draws one token from the opener bag, restricted to what is currently in range. Bag semantics (draw
-        /// without replacement, refill when empty) are the actual upgrade over the old fixed rotation: every
-        /// attack is guaranteed an outing before any repeats, instead of the cycle always running in the same
-        /// order or a pure weighted roll letting one attack dominate a stretch of the fight.
+        /// Draws one card from the bag, restricted to cards whose opener is in range now. Bag semantics (draw without
+        /// replacement, refill when empty or when the health stage changes) guarantee every card an outing before any
+        /// repeats. When everything in range has been drawn this cycle the bag refills rather than stalls, which keeps
+        /// a cornered knight with one or two options still attacking.
         /// </summary>
-        private BlackKnightAttack ChooseFromBag(ReadOnlySpan<BlackKnightAttack> candidates, bool belowHalf)
+        private bool TryStartCard(bool hasPlayerLOS)
         {
-            if (openerBag.Count == 0 || openerBagBelowHalf != belowHalf)
+            float distance = NPC.Distance(player.Center);
+            int healthStage = 0;
+            if (NPC.life <= NPC.lifeMax / 3)
             {
-                FillOpenerBag(belowHalf);
+                healthStage = 2;
+            }
+            else if (NPC.life <= NPC.lifeMax / 2)
+            {
+                healthStage = 1;
+            }
+            if (openerBag.Count == 0 || openerBagHealthStage != healthStage)
+            {
+                FillOpenerBag(healthStage);
             }
 
-            Span<BlackKnightAttack> eligible = stackalloc BlackKnightAttack[candidates.Length];
-            int eligibleCount = CollectBagEligible(candidates, eligible);
-            if (eligibleCount == 0)
+            List<BlackKnightCard> eligible = CollectEligibleCards(distance, hasPlayerLOS);
+            if (eligible.Count == 0)
             {
-                // Everything in range has already been drawn this cycle — refill rather than stall, which is
-                // what keeps a cornered knight (only one or two attacks ever in range) still attacking.
-                FillOpenerBag(belowHalf);
-                eligibleCount = CollectBagEligible(candidates, eligible);
+                FillOpenerBag(healthStage);
+                eligible = CollectEligibleCards(distance, hasPlayerLOS);
             }
-            if (eligibleCount == 0)
+            if (eligible.Count == 0)
             {
-                return candidates[Main.rand.Next(candidates.Length)];
+                attackCooldown = OpenerFailCooldownTicks;
+                return false;
             }
 
-            BlackKnightAttack selected = eligible[Main.rand.Next(eligibleCount)];
-            openerBag.Remove(selected);
-            return selected;
+            BlackKnightCard card = eligible[Main.rand.Next(eligible.Count)];
+            openerBag.Remove(card);
+            chainedAttack = CardFollowUp(card);
+            chainCardPlaying = chainedAttack != BlackKnightAttack.None;
+            BeginAttack(CardOpener(card));
+            return true;
         }
 
-        private int CollectBagEligible(ReadOnlySpan<BlackKnightAttack> candidates, Span<BlackKnightAttack> destination)
+        private List<BlackKnightCard> CollectEligibleCards(float distance, bool hasPlayerLOS)
         {
-            int result = 0;
-            for (int i = 0; i < candidates.Length; i++)
+            List<BlackKnightCard> eligible = new List<BlackKnightCard>();
+            foreach (BlackKnightCard card in openerBag)
             {
-                if (openerBag.Contains(candidates[i]))
+                if (IsAttackInRange(CardOpener(card), distance, hasPlayerLOS))
                 {
-                    destination[result++] = candidates[i];
+                    eligible.Add(card);
                 }
             }
-            return result;
+            return eligible;
         }
 
-        private void FillOpenerBag(bool belowHalf)
+        private void FillOpenerBag(int healthStage)
         {
             openerBag.Clear();
-            openerBagBelowHalf = belowHalf;
-            openerBag.Add(BlackKnightAttack.SpearThrow);
-            openerBag.Add(BlackKnightAttack.HomingVolley);
-            openerBag.Add(BlackKnightAttack.BombThrow);
-            openerBag.Add(BlackKnightAttack.BlackRain);
-            openerBag.Add(BlackKnightAttack.LeapStrike);
-            openerBag.Add(BlackKnightAttack.PlagueSeals);
-            openerBag.Add(BlackKnightAttack.CurseWard);
-            if (belowHalf)
+            openerBagHealthStage = healthStage;
+            openerBag.Add(BlackKnightCard.SpearThrow);
+            openerBag.Add(BlackKnightCard.HomingVolley);
+            openerBag.Add(BlackKnightCard.BombThrow);
+            openerBag.Add(BlackKnightCard.BlackRain);
+            openerBag.Add(BlackKnightCard.LeapStrike);
+            openerBag.Add(BlackKnightCard.PlagueSeals);
+            openerBag.Add(BlackKnightCard.CurseWard);
+            openerBag.Add(BlackKnightCard.SpearIntoBomb);
+            openerBag.Add(BlackKnightCard.HomingIntoRain);
+            openerBag.Add(BlackKnightCard.BombIntoLeap);
+            if (healthStage >= 1)
             {
-                openerBag.Add(BlackKnightAttack.DeathSeal);
-                openerBag.Add(BlackKnightAttack.PlagueAmbush);
-                // A second spear token below half: the throw is his bread-and-butter spacing tool and the
-                // bag would otherwise dilute it exactly when the fight gets busiest.
-                openerBag.Add(BlackKnightAttack.SpearThrow);
+                openerBag.Add(BlackKnightCard.DeathSeal);
+                openerBag.Add(BlackKnightCard.PlagueAmbush);
+                // A second spear token below half: the throw is his bread-and-butter spacing tool and the bag would
+                // otherwise dilute it exactly when the fight gets busiest.
+                openerBag.Add(BlackKnightCard.SpearThrow);
+            }
+            if (healthStage >= 2)
+            {
+                openerBag.Add(BlackKnightCard.CrystalStorm);
             }
         }
 
-        /// <summary>Shared gate for starting anything — mirrors RedKnightAttackController.CanStart.</summary>
+        /// <summary>Shared gate for starting anything.</summary>
         private bool CanStartAttack(tsorcRevampGlobalNPC globalNPC)
         {
             return Main.netMode != NetmodeID.MultiplayerClient
                 && !AttackActive
                 && player.active && !player.dead
                 && NPC.velocity.Y == 0f
-                && !globalNPC.CombatMeleeActive
-                && !globalNPC.HasPendingCombatComboMove
-                && !globalNPC.InCombatComboRecovery
                 && globalNPC.StaggerTimer <= 0
                 && globalNPC.TeleportCountdown <= 0
                 && globalNPC.TeleportAppearanceTimer <= 0
                 && globalNPC.DodgeTimer <= 0
                 && globalNPC.DodgeRecoveryTimer <= 0
-                && globalNPC.PounceTimer <= 0
                 && !globalNPC.Fleeing;
         }
 
-        /// <summary>
-        /// Starts an attack. Also reachable from the combo system: a queued CombatComboMove maps to an attack
-        /// and lands here, which is what replaced the old "set ai[1] = 124/269/869 to address an attack".
-        /// </summary>
-        private void BeginAttack(BlackKnightAttack attack, tsorcRevampGlobalNPC globalNPC)
+        /// <summary>Server: starts an attack on tick 0, facing the target. The caller hosts it in a Custom phase (or
+        /// it already runs in one, for a chained attack).</summary>
+        private void BeginAttack(BlackKnightAttack attack)
         {
             NPC.ai[2] = (float)attack;
             NPC.ai[3] = 0f;
             NPC.TargetClosest(true);
-            int facing = player.Center.X >= NPC.Center.X ? 1 : -1;
+            int facing = 1;
+            if (player.Center.X < NPC.Center.X)
+            {
+                facing = -1;
+            }
             NPC.direction = facing;
             NPC.spriteDirection = facing;
 
-            throwMovement = attack is BlackKnightAttack.SpearThrow or BlackKnightAttack.BombThrow
-                ? ChooseThrowMovement(facing)
-                : BlackThrowMovement.None;
+            throwMovement = BlackThrowMovement.None;
+            if (attack == BlackKnightAttack.SpearThrow || attack == BlackKnightAttack.BombThrow)
+            {
+                throwMovement = ChooseThrowMovement(facing);
+            }
 
             // The ward locks to whichever way he was facing when it went up; it must NOT track the player.
             wardFacing = facing;
@@ -553,6 +617,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 wardAbsorbedDamage = 0f; // each cast is charged only by what IT absorbs
             }
+            leapStrikeStartTick = -1;
 
             if (attack != BlackKnightAttack.DeathSeal)
             {
@@ -563,45 +628,61 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         /// <summary>
-        /// Poise stagger: cancel whatever attack was winding up and drop back to neutral.
+        /// Server: the attack ran its full length. A chain card starts its second attack on this same tick (re-checked
+        /// against range; a chain whose second half is out of range just ends), otherwise back to neutral.
         /// </summary>
-        /// <remarks>
-        /// Replaces the generic PoiseStaggerResetsAI path, which sets ai[1]=60 / ai[2]=-100. That was correct
-        /// while ai[2] was a free-running timer, but it now holds the attack ENUM — -100 is not a valid
-        /// BlackKnightAttack, so the knight would spend a tick in a garbage attack state that draws no held
-        /// weapon and matches no case in the pump.
-        ///
-        /// Only ever reached from a windup: a committed attack is hyper-armoured and cannot be staggered at
-        /// all (GlobalNPC gates poise accumulation and stagger on AttackCommitted), so cancelling
-        /// unconditionally here is safe.
-        /// </remarks>
-        public void OnStagger(NPC npc)
+        private void CompleteAttack()
         {
-            npc.ai[1] = 60f; // back to the neutral cadence window the melee opener reads
-            EndAttack(cooldown: OpenerFailCooldownTicks);
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ResetCombatTempoSequence(clearRecovery: true);
-        }
-
-        /// <summary>
-        /// Cancels the current attack from OUTSIDE the pump — a teleport, dodge, pounce, flee or patrol
-        /// seizing the body. Only ever called after InCommittedAttack has been checked, so this cannot
-        /// interrupt a committed attack.
-        /// </summary>
-        internal void EndAttackExternally()
-        {
-            if (AttackActive)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                EndAttack(cooldown: OpenerFailCooldownTicks);
+                return;
             }
+
+            BlackKnightAttack next = chainedAttack;
+            chainedAttack = BlackKnightAttack.None;
+            if (next != BlackKnightAttack.None && player.active && !player.dead)
+            {
+                bool hasPlayerLOS = Collision.CanHitLine(NPC.Center, 1, 1, player.Center, 1, 1);
+                if (IsAttackInRange(next, NPC.Distance(player.Center), hasPlayerLOS))
+                {
+                    BeginAttack(next);
+                    return;
+                }
+            }
+
+            int cooldown = OpenerCooldownTicks;
+            if (chainCardPlaying)
+            {
+                cooldown += ChainExtraCooldownTicks;
+            }
+            EndAttack(cooldown);
         }
 
+        /// <summary>Server: back to neutral (also a cancel: a lost sight line, a stagger, the phase ending under it).
+        /// Clients follow the snapshot this marks.</summary>
         private void EndAttack(int cooldown = OpenerCooldownTicks)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             NPC.ai[2] = (float)BlackKnightAttack.None;
             NPC.ai[3] = 0f;
             throwMovement = BlackThrowMovement.None;
+            leapStrikeStartTick = -1;
+            chainCardPlaying = false;
             attackCooldown = cooldown;
+            // The counter's unblockable trait is not a pressure sequence, so the puppet's neutral entry never clears it;
+            // left set, every later attack would be unblockable (and the spear throw 30t longer).
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.None);
             NPC.netUpdate = true;
+        }
+
+        /// <summary>Server: abandon the attack and any chain behind it.</summary>
+        private void CancelAttack()
+        {
+            chainedAttack = BlackKnightAttack.None;
+            EndAttack();
         }
 
         // ── Throw hop movement (ported from RedKnight via KnightHopPlanner) ─────────────────────────────
@@ -612,9 +693,7 @@ namespace tsorcRevamp.NPCs.Enemies
         private const float ThrowApproachSpeed = 1.4f;
         private const float ThrowRecoverySpeed = 2f;
         private const float ThrowAcceleration = 0.1f;
-        // Red Knight biases retreat at 0.72. BlackKnight ALSO kites (KiteRangeMin/Max), so at 0.72 the two
-        // compound and he never closes — pulled down so the hop is a flourish on top of the kite, not a
-        // second independent reason to back off.
+        // He ALSO kites, so a Red Knight-level retreat bias (0.72) compounds with it and he never closes.
         private const float RetreatHopChance = 0.45f;
         private const float AdvanceHopChance = 0.72f;
 
@@ -647,25 +726,33 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         /// <summary>
-        /// Drives the body through a throw. Air control is intentionally absent after takeoff: the hop is a
-        /// commitment, so a knight that lands early keeps coasting rather than snapping around mid-throw.
+        /// Drives the body through a throw. Air control is intentionally absent after takeoff: the hop is a commitment.
+        /// Runs on every machine (client-side movement prediction); only the server downgrades the hop.
         /// </summary>
         private void RunThrowMovement(int hopTick, int releaseTick)
         {
-            if (throwMovement is BlackThrowMovement.None or BlackThrowMovement.GroundHold)
+            if (throwMovement == BlackThrowMovement.None || throwMovement == BlackThrowMovement.GroundHold)
             {
-                KnightHopPlanner.ApproachHorizontalSpeed(NPC, NPC.direction,
-                    AttackTimer < releaseTick ? ThrowApproachSpeed : ThrowRecoverySpeed, ThrowAcceleration);
+                float speed = ThrowRecoverySpeed;
+                if (AttackTimer < releaseTick)
+                {
+                    speed = ThrowApproachSpeed;
+                }
+                KnightHopPlanner.ApproachHorizontalSpeed(NPC, NPC.direction, speed, ThrowAcceleration);
                 return;
             }
 
-            int travelDirection = throwMovement == BlackThrowMovement.RetreatHop ? -NPC.direction : NPC.direction;
-            float travelSpeed = throwMovement switch
+            int travelDirection = NPC.direction;
+            float travelSpeed = 0.8f;
+            if (throwMovement == BlackThrowMovement.RetreatHop)
             {
-                BlackThrowMovement.RetreatHop => ThrowRetreatSpeed,
-                BlackThrowMovement.AdvanceHop => ThrowAdvanceSpeed,
-                _ => 0.8f,
-            };
+                travelDirection = -NPC.direction;
+                travelSpeed = ThrowRetreatSpeed;
+            }
+            else if (throwMovement == BlackThrowMovement.AdvanceHop)
+            {
+                travelSpeed = ThrowAdvanceSpeed;
+            }
 
             if (AttackTimer < hopTick)
             {
@@ -674,11 +761,16 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             if (AttackTimer == hopTick)
             {
-                // Re-validate at takeoff: the knight has moved since the hop was chosen, so the ground it was
-                // planned against may no longer be the ground under its feet.
-                if (NPC.velocity.Y != 0f || !KnightHopPlanner.HasSafeHop(NPC, player.Center, NPC.direction,
-                        travelDirection, travelSpeed, throwMovement == BlackThrowMovement.AdvanceHop,
-                        ThrowHopSpeedY, ThrowHopGravity))
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return; // the server decides the takeoff; its snapshot carries the velocity
+                }
+
+                // Re-validate at takeoff: the ground it was planned against may no longer be under its feet.
+                bool advancing = throwMovement == BlackThrowMovement.AdvanceHop;
+                bool safe = NPC.velocity.Y == 0f && KnightHopPlanner.HasSafeHop(NPC, player.Center, NPC.direction,
+                    travelDirection, travelSpeed, advancing, ThrowHopSpeedY, ThrowHopGravity);
+                if (!safe)
                 {
                     throwMovement = BlackThrowMovement.GroundHold;
                     KnightHopPlanner.ApproachHorizontalSpeed(NPC, NPC.direction, ThrowApproachSpeed, ThrowAcceleration);
@@ -705,79 +797,94 @@ namespace tsorcRevamp.NPCs.Enemies
         // ── Execution ───────────────────────────────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Server-side attack pump. Replaces the old conveyor: instead of every attack watching a free-running
-        /// ai[1]/ai[2] for its magic tick number, exactly one attack is active at a time and owns its own
-        /// zero-based clock in ai[3].
+        /// One tick of the running attack, from DoCustomTick on EVERY machine: poses, tell dust and sounds play
+        /// everywhere (they used to be server-only, so clients saw no tells), while decisions and spawns stay behind
+        /// Main.netMode checks inside each attack. ai[3] advances everywhere; only the server ends an attack.
         /// </summary>
         internal void TickAttacks(tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            if (counterCooldown > 0)
-            {
-                counterCooldown--;
-            }
-            RunPlagueTrail(globalNPC);
-            RunGravefallWaves();
-
             if (!AttackActive)
             {
-                // The counter is checked BEFORE the bag and ignores the opener cooldown: it is not one of
-                // his choices, it is what happens to you for stepping inside his guard.
-                if (TryStartCounter(globalNPC))
-                {
-                    return;
-                }
-                TryStartOpener(globalNPC, hasPlayerLOS);
                 return;
             }
 
-            // A stagger cancels a windup but never a committed attack — same carve-out the old
-            // inProtectedAttack ranges expressed, now asked of the state machine instead of hardcoded ticks.
-            if (!player.active || player.dead
-                || (globalNPC.StaggerTimer > 0 && !InCommittedAttack(globalNPC)))
+            // A stagger cancels a windup but never a committed attack.
+            bool staggeredInWindup = globalNPC.StaggerTimer > 0 && !InCommittedAttack(globalNPC);
+            if (!player.active || player.dead || staggeredInWindup)
             {
-                globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                EndAttack();
+                CancelAttack();
                 return;
             }
 
-            int t = AttackTimer;
+            int timer = AttackTimer;
+            int duration = AttackDuration(CurrentAttack);
+            if (timer >= duration)
+            {
+                // A client that ran ahead of the server holds the last tick until the snapshot ends or chains it.
+                CompleteAttack();
+                return;
+            }
+
             switch (CurrentAttack)
             {
-                case BlackKnightAttack.SpearThrow: TickSpearThrow(t, globalNPC, hasPlayerLOS); break;
-                case BlackKnightAttack.HomingVolley: TickHomingVolley(t, globalNPC, hasPlayerLOS); break;
-                case BlackKnightAttack.BombThrow: TickBombThrow(t, globalNPC, hasPlayerLOS); break;
-                case BlackKnightAttack.BlackRain: TickBlackRain(t); break;
-                case BlackKnightAttack.DeathSeal: TickDeathSeal(t, globalNPC); break;
-                case BlackKnightAttack.PlagueAmbush: TickPlagueAmbush(t, globalNPC); break;
-                case BlackKnightAttack.LeapStrike: TickLeapStrike(t, globalNPC); break;
-                case BlackKnightAttack.CounterCheck: TickCounterCheck(t, globalNPC); break;
-                case BlackKnightAttack.CurseWard: TickCurseWard(t, globalNPC); break;
-                case BlackKnightAttack.PlagueSeals: TickPlagueSeals(t, globalNPC); break;
+                case BlackKnightAttack.SpearThrow: TickSpearThrow(timer, globalNPC, hasPlayerLOS); break;
+                case BlackKnightAttack.HomingVolley: TickHomingVolley(timer, hasPlayerLOS); break;
+                case BlackKnightAttack.BombThrow: TickBombThrow(timer, hasPlayerLOS); break;
+                case BlackKnightAttack.BlackRain: TickBlackRain(timer); break;
+                case BlackKnightAttack.DeathSeal: TickDeathSeal(timer); break;
+                case BlackKnightAttack.PlagueAmbush: TickPlagueAmbush(timer, globalNPC); break;
+                case BlackKnightAttack.LeapStrike: TickLeapStrike(timer, globalNPC); break;
+                case BlackKnightAttack.CounterCheck: TickCounterCheck(timer, globalNPC); break;
+                case BlackKnightAttack.CurseWard: TickCurseWard(timer, globalNPC); break;
+                case BlackKnightAttack.PlagueSeals: TickPlagueSeals(timer); break;
+                case BlackKnightAttack.CrystalStorm: TickCrystalStorm(timer, hasPlayerLOS); break;
             }
 
             if (!AttackActive)
             {
-                return; // the body already finished it (fired, or abandoned on lost line of sight)
+                return; // the attack abandoned itself (lost line of sight)
             }
 
-            NPC.ai[3] = t + 1;
-            if (AttackTimer >= AttackDuration(CurrentAttack, globalNPC))
+            // An attack that ended a chain-free cancel above already returned; a chained BeginAttack resets ai[3] to 0.
+            if ((int)NPC.ai[3] == timer)
             {
-                EndAttack();
+                NPC.ai[3] = timer + 1;
             }
         }
 
-        /// <summary>Aim point: the ~25-tick-old predicted position, nudged 10px past the player so the arc
-        /// lands on them rather than short. Unchanged from the conveyor version.</summary>
+        /// <summary>Aim point: the ~25-tick-old predicted position, AimOvershootPixels past the player so arcs land on
+        /// and beyond them rather than short.</summary>
         private Vector2 PredictedAimPoint()
         {
-            int direction = storedPlayerPosition.X > NPC.Center.X ? 1 : -1;
-            return new Vector2(storedPlayerPosition.X + 10f * direction, storedPlayerPosition.Y);
+            int direction = 1;
+            if (storedPlayerPosition.X < NPC.Center.X)
+            {
+                direction = -1;
+            }
+            return new Vector2(storedPlayerPosition.X + AimOvershootPixels * direction, storedPlayerPosition.Y);
+        }
+
+        /// <summary>The bomb's launch velocity from <paramref name="source"/>: a 5 px/t lob with extra loft up close,
+        /// 8 px/t plus lead far out. The loft is fixed (no random) so the pose's aim and the throw agree.</summary>
+        private Vector2 BombLaunchVelocity(Vector2 source)
+        {
+            bool far = NPC.Distance(storedPlayerPosition) > 400f;
+            float speed = 5f;
+            if (far)
+            {
+                speed = 8f;
+            }
+
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(source, PredictedAimPoint(), speed, fallback: true);
+            if (far && NPC.HasValidTarget)
+            {
+                velocity += player.velocity;
+            }
+            else
+            {
+                velocity.Y -= 1.5f; // a little extra loft on the short lob
+            }
+            return velocity;
         }
 
         private void SpawnAttackFlash(Color color)
@@ -796,102 +903,124 @@ namespace tsorcRevamp.NPCs.Enemies
                 UsefulFunctions.ColorToFloat(color));
         }
 
-        /// <summary>Refreshes the predicted aim point mid-windup, on the same 25-tick cadence as before.</summary>
+        /// <summary>Server: refreshes the predicted aim point mid-windup, on a 25-tick cadence. Clients draw against
+        /// this, so it marks a sync.</summary>
         private void RefreshStoredPosition()
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             if (framesSinceStoredPosition < 25 || !player.active || player.dead)
             {
                 return;
             }
             framesSinceStoredPosition = 0;
             storedPlayerPosition = player.Center;
-            NPC.netUpdate = true; // SendExtraAI only rides along with a netUpdate; clients draw against this
+            NPC.netUpdate = true;
         }
 
-        private void TickSpearThrow(int t, tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
+        private void SpawnSpearProjectile(Vector2 source, Vector2 velocity, tsorcRevampGlobalNPC globalNPC)
         {
-            int windup = SpearWindup(globalNPC);
-            RunThrowMovement(windup - SpearFlashLead, windup);
+            int projectileIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), source, velocity,
+                ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+            tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, globalNPC.ActiveAttackDefenseTraits);
+        }
 
-            if (t >= windup - SpearFlashLead)
+        private void TickSpearThrow(int timer, tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
+        {
+            int release = SpearReleaseTick;
+            RunThrowMovement(release - SpearFlashLead, release);
+
+            if (timer >= release - SpearFlashLead)
             {
                 NPC.knockBackResist = 0f;
             }
-            if (t == windup - SpearFlashLead)
+            if (timer == release - SpearFlashLead)
             {
-                SpawnAttackFlash(globalNPC.ActiveAttackBypassesShield ? Color.Red : Color.OrangeRed);
+                Color flashColor = Color.OrangeRed;
+                if (globalNPC.ActiveAttackBypassesShield)
+                {
+                    flashColor = Color.Red;
+                }
+                SpawnAttackFlash(flashColor);
                 RefreshStoredPosition();
             }
-            if (t != windup)
+            if (timer != release)
             {
                 return;
             }
 
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             if (!hasPlayerLOS)
             {
-                globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                EndAttack();
+                CancelAttack();
                 return;
             }
 
-            NPC.TargetClosest(true);
             // Close throws are slower so they arc more visibly; far throws are flatter and faster.
-            float speed = NPC.Distance(player.Center) > 400f
-                ? Main.rand.NextFloat(16f, 18f)
-                : Main.rand.NextFloat(12f, 14f);
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, PredictedAimPoint(), speed, fallback: true)
+            NPC.TargetClosest(true);
+            float speed = Main.rand.NextFloat(12f, 14f);
+            if (NPC.Distance(player.Center) > 400f)
+            {
+                speed = Main.rand.NextFloat(16f, 18f);
+            }
+            Vector2 velocity = UsefulFunctions.BallisticTrajectory(AttackHandWorld, PredictedAimPoint(), speed, fallback: true)
                 + player.velocity;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                SpawnSpearProjectile(velocity, globalNPC);
-            }
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.1f }, NPC.Center);
-            CompleteSpearAttack(globalNPC);
-            if (globalNPC.HasPendingCombatComboMove)
-            {
-                EndAttack(cooldown: 0); // a followup owns the pacing from here
-            }
+            SpawnSpearProjectile(AttackHandWorld, velocity, globalNPC);
         }
 
-        private void TickHomingVolley(int t, tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
+        private void TickHomingVolley(int timer, bool hasPlayerLOS)
         {
-            if (t <= HomingFirstBurstTick && Main.rand.NextBool(2))
+            // Shadow motes gather IN the back palm through the raise.
+            if (!Main.dedServ && timer <= HomingFirstBurstTick && Main.rand.NextBool(2))
             {
-                int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.ShadowbeamStaff,
-                    NPC.velocity.X - 6f, NPC.velocity.Y, 6, Color.DarkSlateGray, 0.5f);
-                Main.dust[dust].noGravity = true;
+                Vector2 offset = Main.rand.NextVector2Circular(14f, 14f);
+                Dust mote = Dust.NewDustPerfect(CastHandWorld + offset, DustID.ShadowbeamStaff, -offset * 0.08f, 6,
+                    Color.DarkSlateGray, 0.7f);
+                mote.noGravity = true;
             }
-            if (t == HomingFirstBurstTick - 25 || t == HomingSecondBurstTick - 25)
+            if (timer == HomingFirstBurstTick - 25 || timer == HomingSecondBurstTick - 25)
             {
                 SpawnAttackFlash(Color.Orange);
             }
 
-            bool firstBurst = t == HomingFirstBurstTick;
-            bool secondBurst = t == HomingSecondBurstTick;
+            bool firstBurst = timer == HomingFirstBurstTick;
+            bool secondBurst = timer == HomingSecondBurstTick;
             if (!firstBurst && !secondBurst)
+            {
+                return;
+            }
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
             if (!hasPlayerLOS)
             {
-                globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                EndAttack();
+                CancelAttack();
                 return;
             }
 
-            // Burst 1 is a single lofted crystal; burst 2 is a faster, flatter pair.
-            int projectiles = firstBurst ? 1 : 2;
-            float projectileSpeed = firstBurst ? 15f : 18f;
-            float arc = firstBurst ? 2.1f : 1.1f;
+            // Burst 1 is a single lofted crystal; burst 2 is a faster, flatter pair. Both leave the back palm.
+            int projectiles = 1;
+            float projectileSpeed = 15f;
+            float arc = 2.1f;
+            if (secondBurst)
+            {
+                projectiles = 2;
+                projectileSpeed = 18f;
+                arc = 1.1f;
+            }
             const float spread = MathHelper.Pi / 6f;
+            Vector2 source = CastHandWorld;
             for (int i = 0; i < projectiles; i++)
             {
                 float angle = i * spread - spread * (projectiles - 1) / 2f;
-                if (angle > MathHelper.PiOver2)
-                {
-                    angle = MathHelper.Pi - angle;
-                }
-                Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center,
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(source, player.Center,
                     projectileSpeed, arc, highAngle: true, fallback: true);
                 if (firstBurst)
                 {
@@ -903,85 +1032,163 @@ namespace tsorcRevamp.NPCs.Enemies
                 {
                     continue;
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                        ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(),
-                        redMagicDamage, 0f, Main.myPlayer);
-                }
-            }
-
-            if (secondBurst)
-            {
-                TryQueueComboFollowup(globalNPC, HomingComboMoveKey);
-                if (globalNPC.HasPendingCombatComboMove)
-                {
-                    EndAttack(cooldown: 0);
-                }
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), source, velocity,
+                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
             }
         }
 
-        private void TickBombThrow(int t, tsorcRevampGlobalNPC globalNPC, bool hasPlayerLOS)
+        private void TickBombThrow(int timer, bool hasPlayerLOS)
         {
             RunThrowMovement(BombWindupTicks - BombFlashLead, BombWindupTicks);
 
-            if (t >= BombWindupTicks - BombFlashLead)
+            // The fuse is lit on camera the moment the bomb comes out (pose appear tick), not at the flash.
+            int appearTick = BombWindupTicks - ThrowWhipTicks - ThrowWindupTicks - PropShowAheadTicks;
+            if (timer == appearTick)
+            {
+                SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center);
+            }
+            if (timer >= BombWindupTicks - BombFlashLead)
             {
                 NPC.knockBackResist = 0f;
             }
-            if (t == BombWindupTicks - BombFlashLead)
+            if (timer == BombWindupTicks - BombFlashLead)
             {
-                SoundEngine.PlaySound(UsefulFunctions.BombFuse with { Volume = 0.6f }, NPC.Center);
                 SpawnAttackFlash(Color.OrangeRed);
                 Lighting.AddLight(NPC.Center, Color.OrangeRed.ToVector3() * 3f);
                 RefreshStoredPosition();
             }
-            if (t != BombWindupTicks)
+            if (timer != BombWindupTicks)
             {
                 return;
             }
 
+            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
             if (!hasPlayerLOS)
             {
-                globalNPC.EndCombatTempoSequenceWithoutFollowup(NPC);
-                EndAttack();
+                CancelAttack();
                 return;
             }
 
-            bool far = NPC.Distance(player.Center) > 400f;
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, PredictedAimPoint(),
-                far ? 8f : 5f, fallback: true);
-            if (far)
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), AttackHandWorld, BombLaunchVelocity(AttackHandWorld),
+                ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+        }
+
+        /// <summary>
+        /// Black rain barrage: each drop carries its OWN telegraph (EnemyBlackCursedBreath freezes and spins in place
+        /// for 45 ticks before falling), so one call fires wave 1 and schedules 1-2 more, GravefallWaveCooldown apart,
+        /// ticked from AI(). Up to 2 nearby players each get their own batch. Server only.
+        /// </summary>
+        private void StartGravefallBarrage(bool wideWave)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                velocity += player.velocity;
+                return;
             }
-            else
+
+            gravefallWide = wideWave;
+            gravefallWaveIndex = 0;
+            gravefallWaveTimer = 0;
+            gravefallWavesRemaining = Main.rand.Next(1, 3); // 1 or 2 MORE waves after this one = 2-3 total
+            FireGravefallWave();
+        }
+
+        /// <summary>Up to 2 nearby players, closest first.</summary>
+        private List<Player> GetGravefallTargets()
+        {
+            List<Player> targets = new List<Player>();
+            for (int i = 0; i < Main.maxPlayers; i++)
             {
-                velocity.Y += Main.rand.NextFloat(-1f, -2f); // a little extra loft on the short lob
+                Player candidate = Main.player[i];
+                if (candidate.active && !candidate.dead && NPC.Distance(candidate.Center) < 2000f)
+                {
+                    targets.Add(candidate);
+                }
             }
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            targets.Sort((first, second) => NPC.Distance(first.Center).CompareTo(NPC.Distance(second.Center)));
+            if (targets.Count > 2)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, velocity,
-                    ModContent.ProjectileType<EnemyMoonfuryBomb>(),
-                    redKnightsSpearDamage, 0f, Main.myPlayer);
+                targets.RemoveRange(2, targets.Count - 2);
             }
-            SoundEngine.PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-            TryQueueComboFollowup(globalNPC, BombComboMoveKey);
-            if (globalNPC.HasPendingCombatComboMove)
+            return targets;
+        }
+
+        /// <summary>One wave of the barrage, escalating a little each wave (more drops, wider spread).</summary>
+        private void FireGravefallWave()
+        {
+            int count = 4 + gravefallWaveIndex;
+            float knockback = 3f;
+            if (gravefallWide)
             {
-                EndAttack(cooldown: 0);
+                count = 6 + gravefallWaveIndex;
+                knockback = 4f;
+            }
+            FireGravefallWave(count, 45f + gravefallWaveIndex * 12f, 260f + gravefallWaveIndex * 25f, knockback);
+        }
+
+        /// <summary>
+        /// Explicitly-sized rain wave, so the Curse Ward can fire deliberately sparse waves without touching the
+        /// barrage's escalation state. Server only: the spawn burst dust plays from the telegraph projectile.
+        /// </summary>
+        private void FireGravefallWave(int count, float spreadDeg, float radius, float knockback)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            List<Player> targets = GetGravefallTargets();
+            if (targets.Count == 0 || count <= 0)
+            {
+                return;
+            }
+
+            foreach (Player target in targets)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    // Fan above AND to the sides rather than a uniform scatter directly overhead. -0.5..0.5 across the fan.
+                    float fanPosition = 0f;
+                    if (count > 1)
+                    {
+                        fanPosition = (i / (float)(count - 1)) - 0.5f;
+                    }
+                    float angleRad = MathHelper.ToRadians(fanPosition * spreadDeg + Main.rand.NextFloat(-6f, 6f));
+                    Vector2 offset = new Vector2((float)Math.Sin(angleRad), -(float)Math.Cos(angleRad))
+                        * (radius + Main.rand.NextFloat(-20f, 20f));
+                    Vector2 spawnPosition = target.Center + offset;
+
+                    // Fan outward as well as down: left drops drift left, the centre falls straight, right drifts right.
+                    Vector2 fallDirection = new Vector2(fanPosition * 0.75f, 1f).SafeNormalize(Vector2.UnitY);
+                    Vector2 fallVelocity = fallDirection * Main.rand.NextFloat(4.5f, 6.5f);
+
+                    if (!Main.dedServ)
+                    {
+                        for (int dustIndex = 0; dustIndex < 30; dustIndex++)
+                        {
+                            Vector2 dustVelocity = Main.rand.NextVector2Circular(3.5f, 3.5f);
+                            Dust dust = Dust.NewDustPerfect(spawnPosition, DustID.Wraith, dustVelocity, 100, default, Main.rand.NextFloat(1.0f, 1.5f));
+                            dust.noGravity = true;
+                        }
+                    }
+
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, fallVelocity,
+                        ModContent.ProjectileType<EnemyBlackCursedBreath>(), redMagicDamage, knockback, Main.myPlayer, 1f);
+
+                    // Brief "portal opening" flash at the same spawn point, on top of the drop's own frozen-spin windup.
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero,
+                        ModContent.ProjectileType<BlackKnightGravefallTelegraph>(), 0, 0f, Main.myPlayer);
+                }
             }
         }
 
         /// <summary>
-        /// Advances the 2-3 wave barrage StartGravefallBarrage schedules.
+        /// Advances the 2-3 wave barrage StartGravefallBarrage schedules. Runs OUTSIDE the attack state machine on
+        /// purpose: waves are 90t apart but the BlackRain attack itself is only 44t. Server only.
         /// </summary>
-        /// <remarks>
-        /// Runs OUTSIDE the attack state machine on purpose: waves are GravefallWaveCooldown (90t) apart but
-        /// the BlackRain attack itself is only 30t, so tying this to the attack would silently drop waves 2
-        /// and 3. It previously lived in the ai[2] conveyor block and was lost when that was spliced out —
-        /// caught by the resulting "gravefallWaveTimer assigned but never used" warning.
-        /// </remarks>
         private void RunGravefallWaves()
         {
             if (gravefallWavesRemaining <= 0)
@@ -1000,41 +1207,52 @@ namespace tsorcRevamp.NPCs.Enemies
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
         }
 
-        private void TickBlackRain(int t)
+        private void TickBlackRain(int timer)
         {
-            if (t != 0)
+            NPC.velocity.X *= 0.85f;
+            // Wraith motes streaming off both palms as the arms rise.
+            if (!Main.dedServ && timer < BlackRainWaveTick && Main.rand.NextBool(2))
+            {
+                Vector2 palm = PuppetHandPosition;
+                if (Main.rand.NextBool())
+                {
+                    palm = PuppetBackHandPosition;
+                }
+                Dust mote = Dust.NewDustPerfect(palm, DustID.Wraith, new Vector2(0f, -Main.rand.NextFloat(0.5f, 1.5f)),
+                    100, default, Main.rand.NextFloat(0.9f, 1.3f));
+                mote.noGravity = true;
+            }
+            if (timer != BlackRainWaveTick)
             {
                 return;
             }
-            // Wide waves are the bigger, more spread-out variant the old ai[2] == 97/547/597 ticks fired.
-            StartGravefallBarrage(Main.rand.NextBool());
+
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.01f }, NPC.Center);
-            NPC.netUpdate = true;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            // Wide waves are the bigger, more spread-out variant.
+            StartGravefallBarrage(Main.rand.NextBool());
         }
 
-        private void TickDeathSeal(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickDeathSeal(int timer)
         {
-            if (t == 0)
-            {
-                globalNPC.ResetCombatTempoSequence(clearRecovery: true);
-            }
-
-            if (t < DeathSealTelegraphTicks)
+            if (timer < DeathSealTelegraphTicks)
             {
                 NPC.knockBackResist = 0f;
                 NPC.velocity.X *= 0.85f;
-                if (Main.rand.NextBool(4))
+                if (!Main.dedServ && Main.rand.NextBool(4))
                 {
                     // Ring of motes collapsing inward, so the telegraph reads as power gathering.
-                    float collapse = MathHelper.Clamp(1f - t / (float)DeathSealTelegraphTicks, 0f, 1f);
+                    float collapse = MathHelper.Clamp(1f - timer / (float)DeathSealTelegraphTicks, 0f, 1f);
                     Vector2 offset = Main.rand.NextVector2CircularEdge(240f, 240f) * collapse;
-                    Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.BoneTorch,
-                        -offset * 0.025f, 120, default, 0.9f);
+                    Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.BoneTorch, -offset * 0.025f, 120, default, 0.9f);
                     mote.noGravity = true;
                 }
                 Lighting.AddLight(NPC.Center, Color.WhiteSmoke.ToVector3() * 1.2f);
 
-                if (t == DeathSealFlashTick)
+                if (timer == DeathSealFlashTick)
                 {
                     SpawnAttackFlash(Color.OrangeRed);
                     RefreshStoredPosition();
@@ -1042,92 +1260,86 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            if (t >= DeathSealTelegraphTicks + DeathSealFireTicks)
+            if (timer >= DeathSealTelegraphTicks + DeathSealFireTicks)
             {
                 return; // recovery tail
             }
 
+            // The stream leaves the front palm, which the pose has swung onto the locked aim.
             NPC.velocity.X *= 0.25f;
-            Vector2 aim = PredictedAimPoint();
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                Vector2 skullVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aim, 2f, fallback: true)
-                    + Main.rand.NextVector2Circular(1, 5);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, skullVelocity,
-                    ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(),
-                    redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
-
-                Vector2 breathVelocity = UsefulFunctions.BallisticTrajectory(NPC.Center, aim, 2f, fallback: true)
-                    + Main.rand.NextVector2Circular(-5, 5);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVelocity,
-                    ModContent.ProjectileType<EnemyBlackCursedBreath>(),
-                    redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
-            }
             SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, PitchVariance = 1f }, NPC.Center);
             SoundEngine.PlaySound(SoundID.Item69 with { Volume = 0.9f, PitchVariance = 2f }, NPC.Center);
-            NPC.netUpdate = true;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Vector2 source = AttackHandWorld;
+            Vector2 aim = PredictedAimPoint();
+            Vector2 skullVelocity = UsefulFunctions.BallisticTrajectory(source, aim, 2f, fallback: true)
+                + Main.rand.NextVector2Circular(1, 5);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), source, skullVelocity,
+                ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
+
+            Vector2 breathVelocity = UsefulFunctions.BallisticTrajectory(source, aim, 2f, fallback: true)
+                + Main.rand.NextVector2Circular(-5, 5);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), source, breathVelocity,
+                ModContent.ProjectileType<EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
         }
 
         /// <summary>
-        /// The signature move, and what most separates this knight from the Red family: rather than teleport
-        /// only as a reactive escape (TryTeleportReacquire), he chooses to vanish OFFENSIVELY, reappear on top
-        /// of the player, and immediately buy a melee punish out of the arrival.
+        /// The signature move: rather than teleport only as a reactive escape, he vanishes OFFENSIVELY and reappears on
+        /// top of the player; the sword combos then pick up at that range on their own.
         /// </summary>
-        private void TickPlagueAmbush(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickPlagueAmbush(int timer, tsorcRevampGlobalNPC globalNPC)
         {
-            if (t < PlagueAmbushVanishTick)
+            if (timer < PlagueAmbushVanishTick)
             {
-                // Brief tell before the vanish so it is reactable rather than instant.
+                // Brief tell before the vanish so it is reactable rather than instant; the motes gather at the palm.
                 NPC.velocity.X *= 0.8f;
-                if (Main.rand.NextBool(2))
+                if (!Main.dedServ && Main.rand.NextBool(2))
                 {
                     Vector2 offset = Main.rand.NextVector2Circular(28f, 28f);
-                    Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.PurpleTorch,
+                    Dust mote = Dust.NewDustPerfect(CastHandWorld + offset, DustID.PurpleTorch,
                         -offset * 0.08f, 150, new Color(120, 45, 170), 1.1f);
                     mote.noGravity = true;
                 }
                 return;
             }
 
-            if (t == PlagueAmbushVanishTick)
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                // Reuses the shared plague teleport wholesale, including the retimed clouds — he emerges with
-                // ~2s of cloud still billowing, which is exactly the cover an ambush wants.
+                return;
+            }
+
+            if (timer == PlagueAmbushVanishTick)
+            {
+                // The shared plague teleport, including the retimed clouds: he emerges with ~2s of cloud still billowing.
                 tsorcRevampAIs.QueueTeleport(NPC, 50, requireLineofSight: false,
                     globalNPC.TeleportTelegraphTime, globalNPC.PrefersHighGround, minRange: 5);
                 return;
             }
 
-            // Wait out the vanish. If the teleport never took (no valid destination), just abandon rather
-            // than stand invisible doing nothing.
+            // The puppet freezes the Custom phase while a teleport is in flight; once he is back (or the teleport never
+            // took, after a frame's grace) the reposition was the payoff.
             if (globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0)
             {
                 return;
             }
-            if (t < PlagueAmbushVanishTick + 4)
+            if (timer < PlagueAmbushVanishTick + 4)
             {
-                return; // give QueueTeleport a frame to take effect before concluding it failed
+                return;
             }
 
-            // Arrived. Cash the ambush in for an immediate melee punish if one is available at this range;
-            // otherwise the reposition alone was the payoff.
             NPC.TargetClosest(true);
-            TryQueueComboFollowup(globalNPC, ModContent.ProjectileType<BlackThrowingSpear>());
-            EndAttack(cooldown: globalNPC.HasPendingCombatComboMove ? 0 : OpenerCooldownTicks);
+            CompleteAttack();
         }
 
         /// <summary>
-        /// Ground he gives up becomes ground you cannot take. Drops a stationary curse patch whenever he is
-        /// genuinely retreating on foot — the kite band's back-off, a LeapStrike backleap, an evasive hop.
+        /// Ground he gives up becomes ground you cannot take. Drops a stationary curse patch whenever he is genuinely
+        /// retreating on foot. Detected from VELOCITY rather than hooked into SF4's kite code: BlackKnight-only, and it
+        /// catches every source of retreat. Server only.
         /// </summary>
-        /// <remarks>
-        /// Detected from VELOCITY rather than hooked into SmartFighter4AI's kite code on purpose: this is a
-        /// BlackKnight-only behaviour and the mover is shared with every other kiting enemy in the mod.
-        /// Reading his own retreat here catches every source of it and cannot regress anything else.
-        ///
-        /// PlagueTeleportCloud deals no damage — it only builds CurseBuildup. Retreat should cost the player
-        /// TEMPO and space, not chip damage they cannot answer.
-        /// </remarks>
         private void RunPlagueTrail(tsorcRevampGlobalNPC globalNPC)
         {
             if (plagueTrailCooldown > 0)
@@ -1142,193 +1354,212 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // Retreating = moving away from the player at a real pace, not just drifting or being shoved.
-            int awayDirection = player.Center.X >= NPC.Center.X ? -1 : 1;
+            int awayDirection = 1;
+            if (player.Center.X >= NPC.Center.X)
+            {
+                awayDirection = -1;
+            }
             if (NPC.velocity.X * awayDirection < PlagueTrailMinRetreatSpeed)
             {
                 return;
             }
 
             plagueTrailCooldown = PlagueTrailCooldownTicks;
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-            var cloud = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Bottom, Vector2.Zero,
-                ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0f, Main.myPlayer,
-                1f, PlagueTrailRadius);
+            Projectile cloud = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Bottom, Vector2.Zero,
+                ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0f, Main.myPlayer, 1f, PlagueTrailRadius);
             cloud.timeLeft = PlagueTrailLifetime;
             NPC.netUpdate = true;
         }
 
         /// <summary>
-        /// Punish for closing on him. Fires on PROXIMITY rather than from the bag, so stepping inside his
-        /// guard is what causes it — the band becomes a threat instead of a preference.
+        /// Punish for closing on him. Fires on PROXIMITY rather than from the bag, so stepping inside his guard is what
+        /// causes it — the band becomes a threat instead of a preference. Server only.
         /// </summary>
         private bool TryStartCounter(tsorcRevampGlobalNPC globalNPC)
         {
-            if (counterCooldown > 0 || !CanStartAttack(globalNPC)
-                || NPC.Distance(player.Center) > CounterTriggerRange
-                || MathF.Abs(player.Center.Y - NPC.Center.Y) > 64f)
+            float heightDifference = MathF.Abs(player.Center.Y - NPC.Center.Y);
+            if (counterCooldown > 0 || NPC.Distance(player.Center) > CounterTriggerRange || heightDifference > 64f)
             {
                 return false;
             }
 
             counterCooldown = CounterCooldownTicks;
-            // Unblockable: the counter is the answer to someone who has already committed to being close,
-            // so hiding behind a shield should not be the free out.
+            // Unblockable: the counter answers someone already committed to being close; a shield is not the free out.
             globalNPC.SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.BypassesActiveShield);
-            BeginAttack(BlackKnightAttack.CounterCheck, globalNPC);
+            chainedAttack = BlackKnightAttack.None;
+            BeginAttack(BlackKnightAttack.CounterCheck);
             SpawnAttackFlash(Color.Red);
-            SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.7f, Pitch = 0.35f }, NPC.Center);
             return true;
         }
 
-        private void TickCounterCheck(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickCounterCheck(int timer, tsorcRevampGlobalNPC globalNPC)
         {
             NPC.knockBackResist = 0f;
-
-            if (t < CounterStrikeTick)
+            if (timer == 0)
             {
-                // Wind up by CLOSING, not by planting: the ramp is the tell, and it means the dash launches
-                // from a body already moving toward the player rather than from a standstill.
-                int facing = player.Center.X >= NPC.Center.X ? 1 : -1;
+                SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.7f, Pitch = 0.35f }, NPC.Center);
+            }
+
+            if (timer < CounterStrikeTick)
+            {
+                // Wind up by CLOSING, not by planting: the ramp is part of the tell, and the dash launches from a body
+                // already moving toward the player.
+                int facing = 1;
+                if (player.Center.X < NPC.Center.X)
+                {
+                    facing = -1;
+                }
                 NPC.direction = facing;
                 NPC.spriteDirection = facing;
-                float ramp = t / (float)MathF.Max(1f, CounterStrikeTick);
-                KnightHopPlanner.ApproachHorizontalSpeed(NPC, facing,
-                    MathHelper.Lerp(1.2f, CounterWindupSpeed, ramp), 0.34f);
+                float ramp = timer / (float)CounterStrikeTick;
+                KnightHopPlanner.ApproachHorizontalSpeed(NPC, facing, MathHelper.Lerp(1.2f, CounterWindupSpeed, ramp), 0.34f);
                 return;
             }
 
-            if (t == CounterStrikeTick)
+            if (timer == CounterStrikeTick)
             {
-                int direction = player.Center.X >= NPC.Center.X ? 1 : -1;
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.15f }, NPC.Center);
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+
+                int direction = 1;
+                if (player.Center.X < NPC.Center.X)
+                {
+                    direction = -1;
+                }
                 NPC.direction = direction;
                 NPC.spriteDirection = direction;
-                // Committed burst with a small hop, mirroring RedKnightAttackController.LeonhardDashVelocity.
-                // The hop is what makes it read as a lunge rather than a slide, and it carries the anchored
-                // hitbox onto the player instead of waiting for them to walk into it.
+                // Committed burst with a small hop: it reads as a lunge rather than a slide, and carries the anchored
+                // hitbox onto the player.
                 NPC.velocity = new Vector2(direction * CounterDashSpeed, CounterDashHop);
-                SpawnSpearHitbox(direction, CounterReach, CounterHeight, globalNPC);
-                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = 0.15f }, NPC.Center);
+                SpawnSwordHitbox(direction, CounterReach, CounterHeight, globalNPC);
                 NPC.netUpdate = true;
                 return;
             }
 
             // Committed: no air control through the strike, then shed the dash on landing.
-            if (t > CounterStrikeTick + CounterHitTicks && NPC.velocity.Y == 0f)
+            if (timer > CounterStrikeTick + CounterHitTicks && NPC.velocity.Y == 0f)
             {
                 NPC.velocity.X *= 0.80f;
             }
         }
 
         /// <summary>
-        /// Ballistic leap in with the spear, then a backward leap that throws it at the apex.
+        /// Ballistic sword leap in, then a backward leap that throws a spear at the apex. The retreat is the attack:
+        /// he only backleaps after committing a strike, and the spear leaves his hand on the way out.
         /// </summary>
-        /// <remarks>
-        /// The retreat is the attack. He only backleaps AFTER committing a strike, and the spear leaves his
-        /// hand on the way out — so following him is punished and the disengage is a threat rather than an
-        /// escape. This is the move that is supposed to make the spacing read as intent rather than fear.
-        ///
-        /// Every phase boundary is a fixed tick so clients can derive the held-spear draw and hit window
-        /// from ai[3]; see the LeapStrike constants.
-        /// </remarks>
-        private void TickLeapStrike(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickLeapStrike(int timer, tsorcRevampGlobalNPC globalNPC)
         {
-            if (t < LeapWindupTicks)
+            if (timer < LeapWindupTicks)
             {
-                NPC.velocity.X *= 0.82f;             // coil
-                if (t == LeapFlashTick)
+                NPC.velocity.X *= 0.82f;             // coil, sword rising overhead
+                if (timer == LeapFlashTick)
                 {
                     SpawnAttackFlash(Color.OrangeRed);
-                    storedPlayerPosition = player.Center;
-                    framesSinceStoredPosition = 0;
-                    NPC.netUpdate = true;
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        storedPlayerPosition = player.Center;
+                        framesSinceStoredPosition = 0;
+                        NPC.netUpdate = true;
+                    }
                 }
                 return;
             }
 
-            if (t == LeapWindupTicks)
+            if (timer == LeapWindupTicks)
             {
-                // Ballistic solve so the arc actually lands on the player rather than a flat lunge.
-                int direction = player.Center.X >= NPC.Center.X ? 1 : -1;
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.1f }, NPC.Center);
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+
+                // Ballistic solve so the arc lands on the player rather than a flat lunge.
+                int direction = 1;
+                if (player.Center.X < NPC.Center.X)
+                {
+                    direction = -1;
+                }
                 NPC.direction = direction;
                 NPC.spriteDirection = direction;
-                NPC.velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center,
-                    LeapOutSpeed, fallback: true);
-                SpawnSpearHitbox(direction, LeapSpearReach, LeapSpearHeight, globalNPC);
-                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.1f }, NPC.Center);
+                NPC.velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center, LeapOutSpeed, fallback: true);
+
+                // Flight time ~ horizontal gap / horizontal speed. The 20t live window starts 16t before that landing
+                // (never before launch) so it covers the descent and ~4t of the touchdown; the downswing pose keys off it.
+                float horizontalSpeed = Math.Max(1f, Math.Abs(NPC.velocity.X));
+                int flightTicks = (int)(Math.Abs(player.Center.X - NPC.Center.X) / horizontalSpeed);
+                int strikeStart = LeapWindupTicks + flightTicks - LeapLiveBeforeLandingTicks;
+                int latestStart = LeapBackTick - LeapLiveTicks;
+                leapStrikeStartTick = Math.Clamp(strikeStart, LeapWindupTicks, latestStart);
+
+                SpawnSwordHitbox(direction, LeapSwordReach, LeapSwordHeight, globalNPC);
                 NPC.netUpdate = true;
                 return;
             }
 
-            if (t < LeapStrikeEndTick)
+            if (timer < LeapBackTick)
             {
-                return; // committed arc — no air control, the leap is a commitment
-            }
-
-            if (t < LeapRecoverTick)
-            {
+                // Committed arc: no air control. Landed: shed the slide and hold the planted blade.
                 if (NPC.velocity.Y == 0f)
                 {
-                    NPC.velocity.X *= 0.80f;         // landed: shed the slide
+                    NPC.velocity.X *= 0.80f;
                 }
                 return;
             }
 
-            if (t >= LeapBackTick)
+            // Keep him FACING the player for the whole retreat: turning his back would read as fleeing, and the apex
+            // throw would appear to come out of the back of his head.
+            int facePlayer = 1;
+            if (player.Center.X < NPC.Center.X)
             {
-                // Keep him FACING the player for the whole retreat. He is leaping backwards with the spear
-                // cocked and about to throw it — turning his back would read as fleeing, and the apex throw
-                // would appear to come out of the back of his head. Both direction and spriteDirection are
-                // set: vanilla's AnimationType re-derives spriteDirection from direction on any grounded
-                // frame, so setting only the sprite would snap back the moment he lands.
-                int facePlayer = player.Center.X >= NPC.Center.X ? 1 : -1;
-                NPC.direction = facePlayer;
-                NPC.spriteDirection = facePlayer;
+                facePlayer = -1;
             }
+            NPC.direction = facePlayer;
+            NPC.spriteDirection = facePlayer;
 
-            if (t == LeapBackTick)
+            if (timer == LeapBackTick)
             {
-                // Backleap, spear still in hand. Away from the player, not away from his facing, so a
-                // player who has run past him does not get chased by the disengage.
-                int away = player.Center.X >= NPC.Center.X ? -1 : 1;
-                NPC.velocity = new Vector2(away * LeapBackSpeedX, LeapBackSpeedY);
                 SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = 0.4f }, NPC.Center);
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+
+                // Away from the player, not away from his facing, so a player who ran past him is not chased by it.
+                NPC.velocity = new Vector2(-facePlayer * LeapBackSpeedX, LeapBackSpeedY);
                 NPC.netUpdate = true;
                 return;
             }
 
-            if (t == LeapThrowTick)
+            if (timer == LeapThrowTick)
             {
-                // Apex throw. Aimed live rather than at the stored prediction: he can see the player from
-                // up here, and a lead-predicted throw from mid-air reads as a miss the player did not cause.
-                NPC.TargetClosest(true); // facing is already held on the player by the backleap block above
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    Vector2 velocity = UsefulFunctions.BallisticTrajectory(NPC.Center, player.Center,
-                        14f, fallback: true) + player.velocity * 0.5f;
-                    SpawnSpearProjectile(velocity, globalNPC);
-                }
                 SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.85f, PitchVariance = 0.1f }, NPC.Center);
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+
+                // Apex throw, from the hand, aimed live: he can see the player from up here, and a lead-predicted throw
+                // from mid-air reads as a miss the player did not cause.
+                NPC.TargetClosest(true);
+                Vector2 velocity = UsefulFunctions.BallisticTrajectory(AttackHandWorld, player.Center, 14f, fallback: true)
+                    + player.velocity * 0.5f;
+                SpawnSpearProjectile(AttackHandWorld, velocity, globalNPC);
                 NPC.netUpdate = true;
             }
         }
 
         /// <summary>
-        /// Raises a frontal ward that eats projectiles, and walks slowly forward behind it.
+        /// Raises a frontal ward that eats projectiles, and walks slowly forward behind it. He commits to ONE facing
+        /// for WardFacingLockTicks and cannot turn: getting behind him beats it outright.
         /// </summary>
-        /// <remarks>
-        /// He commits to ONE facing for WardFacingLockTicks and cannot turn, which is the counterplay:
-        /// getting behind him beats it outright. He also keeps advancing, so ignoring it is not free —
-        /// the ward is how a slow enemy closes on someone who would otherwise just walk backwards shooting.
-        /// </remarks>
-        private void TickCurseWard(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickCurseWard(int timer, tsorcRevampGlobalNPC globalNPC)
         {
-            if (t < WardFacingLockTicks)
+            if (timer < WardFacingLockTicks)
             {
-                // Hard facing lock. Re-asserted every tick because FindFrame/FaceAttackAim and the mover
-                // would otherwise turn him toward the player, which would defeat the entire move.
+                // Hard facing lock, re-asserted every tick so the puppet's facing never turns him toward the player.
                 NPC.direction = wardFacing;
                 NPC.spriteDirection = wardFacing;
                 globalNPC.ShieldGuarding = true;      // front hits also build reduced poise
@@ -1344,13 +1575,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         new Color(104, 38, 160), Main.rand.NextFloat(1.1f, 1.8f));
                     mote.noGravity = true;
                 }
-                if (t == 0)
+                if (timer == 0)
                 {
                     SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
                 }
-                // Sparse rain while he holds. Deliberately small waves — this is pressure to make standing
-                // still and backing off both wrong, not a curtain that overrides the ward's own read.
-                if (t == WardRainTickA || t == WardRainTickB)
+                // Sparse rain while he holds: pressure that makes standing still and backing off both wrong.
+                if (timer == WardRainTickA || timer == WardRainTickB)
                 {
                     FireGravefallWave(WardRainCount, WardRainSpread, WardRainRadius, 2f);
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.4f, Pitch = 0.15f }, NPC.Center);
@@ -1361,7 +1591,7 @@ namespace tsorcRevamp.NPCs.Enemies
             // Lock released: he may face the player again and the ward drops.
             globalNPC.ShieldGuarding = false;
             NPC.velocity.X *= 0.85f;
-            if (t == WardFacingLockTicks)
+            if (timer == WardFacingLockTicks)
             {
                 ReleaseWard();
                 NPC.netUpdate = true;
@@ -1369,20 +1599,18 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         /// <summary>
-        /// The ward collapses and gives back what it drank: a rain volley scaled by how much damage was
-        /// poured into the front of it.
+        /// The ward collapses and gives back what it drank: a rain volley scaled by the damage poured into its front,
+        /// against lifeMax so it behaves the same across the stat tiers. Runs on every machine: the vent dust and sound
+        /// play everywhere, the wave spawns server-side (the absorbed total is only exact on the server and the
+        /// shooters' machines, so clients may vent a slightly different burst size).
         /// </summary>
-        /// <remarks>
-        /// Scaled against lifeMax rather than a flat damage number so it behaves the same across the
-        /// normal / hardmode / SuperHardMode stat tiers instead of trivially maxing out in the late game.
-        /// A player who correctly stopped shooting and went around still eats the base volley, so the ward
-        /// always ends on a beat — it just ends on a much bigger one if they fought it head-on.
-        /// </remarks>
         private void ReleaseWard()
         {
-            float charge = NPC.lifeMax > 0
-                ? MathHelper.Clamp(wardAbsorbedDamage / (NPC.lifeMax * WardReleaseFullChargeFraction), 0f, 1f)
-                : 0f;
+            float charge = 0f;
+            if (NPC.lifeMax > 0)
+            {
+                charge = MathHelper.Clamp(wardAbsorbedDamage / (NPC.lifeMax * WardReleaseFullChargeFraction), 0f, 1f);
+            }
             int bonus = (int)MathF.Round(charge * WardReleaseMaxBonus);
             wardAbsorbedDamage = 0f;
 
@@ -1394,15 +1622,18 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (!Main.dedServ)
             {
-                // The collapse reads as the absorbed energy venting outward, so the size of the burst is
-                // itself the feedback for how much was shot into it.
+                // The size of the burst is itself the feedback for how much was shot into it.
                 int burst = 18 + bonus * 9;
                 for (int i = 0; i < burst; i++)
                 {
                     Vector2 velocity = Main.rand.NextVector2CircularEdge(3.2f, 3.2f)
                         * Main.rand.NextFloat(0.4f, 1f) + new Vector2(wardFacing * 1.4f, 0f);
-                    Dust mote = Dust.NewDustPerfect(NPC.Center + new Vector2(wardFacing * 18f, 0f),
-                        Main.rand.NextBool(3) ? DustID.Smoke : DustID.ShadowbeamStaff, velocity, 175,
+                    int dustType = DustID.ShadowbeamStaff;
+                    if (Main.rand.NextBool(3))
+                    {
+                        dustType = DustID.Smoke;
+                    }
+                    Dust mote = Dust.NewDustPerfect(NPC.Center + new Vector2(wardFacing * 18f, 0f), dustType, velocity, 175,
                         new Color(112, 40, 168), Main.rand.NextFloat(1.2f, 2.2f));
                     mote.noGravity = true;
                 }
@@ -1412,32 +1643,27 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         /// <summary>
-        /// Seals three columns of black death into the floor: one under the player now, and a pair beyond
-        /// them that erupts three seconds later.
+        /// Seals three columns of black death into the floor: one under the player now, and a flanking pair that
+        /// erupts three seconds later. He does not chase you; he removes the places you wanted to go.
         /// </summary>
-        /// <remarks>
-        /// The pair is placed PAST the player, away from the knight, so the natural retreat direction is the
-        /// one that becomes unavailable. That is the whole idea — he does not chase you, he removes the
-        /// places you wanted to go. The follow-up gets no caster animation (he has already moved on) but
-        /// still telegraphs on the floor for its full delay.
-        /// </remarks>
-        private void TickPlagueSeals(int t, tsorcRevampGlobalNPC globalNPC)
+        private void TickPlagueSeals(int timer)
         {
-            if (t < SealCastTicks)
+            if (timer < SealCastTicks)
             {
                 NPC.velocity.X *= 0.88f;              // plants to cast
-                if (t == 0)
+                if (timer == 0)
                 {
                     SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = -0.2f }, NPC.Center);
                 }
                 if (!Main.dedServ)
                 {
-                    SpawnStaffCastDust(t);
+                    SpawnStaffCastDust(timer);
                 }
                 return;
             }
-            if (t != SealCastTicks)
+            if (timer != SealCastTicks)
             {
+                NPC.velocity.X *= 0.88f;
                 return;
             }
 
@@ -1453,19 +1679,13 @@ namespace tsorcRevamp.NPCs.Enemies
             // 1) Under the player, on a short floor warning so it is still dodgeable.
             SpawnPlagueColumn(columnType, player.Bottom.X, SealFirstTelegraphTicks);
 
-            // 2+3) The pincer: one column each side, offset in time. Flanking rather than stacking on the
-            // far side means BOTH horizontal escapes get sealed, so the answer is to commit to a side early
-            // (while only the centre column is live) rather than drift — which is the whole point of a
-            // placed attack on a slow caster.
+            // 2+3) The pincer: one column each side, offset in time, so the answer is to commit to a side early.
             SpawnPlagueColumn(columnType, player.Center.X - SealFlankOffset, SealDelayedTelegraphTicks);
             SpawnPlagueColumn(columnType, player.Center.X + SealFlankOffset, SealDelayedTelegraphTicks);
             NPC.netUpdate = true;
         }
 
-        /// <summary>
-        /// Drops a column onto the standable ground nearest the given X, so a seal always sits ON a floor
-        /// rather than floating where the player happened to be mid-jump.
-        /// </summary>
+        /// <summary>Drops a column onto the standable ground nearest the given X, so a seal always sits ON a floor.</summary>
         private void SpawnPlagueColumn(int columnType, float worldX, int telegraphTicks)
         {
             Vector2 probe = new Vector2(worldX, player.Bottom.Y);
@@ -1474,40 +1694,93 @@ namespace tsorcRevamp.NPCs.Enemies
                 surface = probe;    // open air: seal it where it was aimed rather than dropping the cast
             }
 
-            var column = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
+            Projectile column = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
                 new Vector2(surface.X, surface.Y - BlackKnightPlagueColumn.ColumnHeight * 0.5f),
-                Vector2.Zero, columnType, 0, 0f, Main.myPlayer,
-                telegraphTicks, redMagicDamage);
+                Vector2.Zero, columnType, 0, 0f, Main.myPlayer, telegraphTicks, redMagicDamage);
             column.timeLeft = BlackKnightPlagueColumn.ActiveTicks;
         }
 
         /// <summary>Casting motes streaming off the staff head while the seals are being drawn.</summary>
-        private void SpawnStaffCastDust(int t)
+        private void SpawnStaffCastDust(int timer)
         {
             if (!Main.rand.NextBool(2))
             {
                 return;
             }
-            float charge = MathHelper.Clamp(t / (float)SealCastTicks, 0f, 1f);
+            float charge = MathHelper.Clamp(timer / (float)SealCastTicks, 0f, 1f);
             Vector2 tip = StaffHeadWorld();
             Vector2 offset = Main.rand.NextVector2Circular(7f, 7f);
-            Dust mote = Dust.NewDustPerfect(tip + offset,
-                Main.rand.NextBool(3) ? DustID.Smoke : DustID.ShadowbeamStaff,
+            int dustType = DustID.ShadowbeamStaff;
+            if (Main.rand.NextBool(3))
+            {
+                dustType = DustID.Smoke;
+            }
+            Dust mote = Dust.NewDustPerfect(tip + offset, dustType,
                 new Vector2(0f, -Main.rand.NextFloat(0.3f, 1.2f)) - offset * 0.08f, 175,
                 new Color(112, 40, 168), Main.rand.NextFloat(0.9f, 1.7f) * (0.5f + charge));
             mote.noGravity = true;
         }
 
-        /// <summary>Source-anchored spear hitbox (GreatBlackKnightSpearHitbox, gated on ISpearMeleeWielder).</summary>
-        private void SpawnSpearHitbox(int direction, float reach, float height, tsorcRevampGlobalNPC globalNPC)
+        /// <summary>
+        /// Shadow Crystal Storm: a hex crystal gathers between the raised palms (drawn in PostDraw), shadow motes spiral
+        /// in, then five homing crystals leave the back palm in a 60-degree fan aimed at the target.
+        /// </summary>
+        private void TickCrystalStorm(int timer, bool hasPlayerLOS)
+        {
+            NPC.velocity.X *= 0.85f;
+            if (timer < CrystalStormReleaseTick)
+            {
+                if (!Main.dedServ && Main.rand.NextBool(2))
+                {
+                    Vector2 palms = (PuppetHandPosition + PuppetBackHandPosition) * 0.5f;
+                    Vector2 offset = Main.rand.NextVector2Circular(64f, 64f);
+                    Dust mote = Dust.NewDustPerfect(palms + offset, DustID.ShadowbeamStaff, -offset * 0.1f, 150, default, 1.2f);
+                    mote.noGravity = true;
+                }
+                if (timer == CrystalStormCommitTick)
+                {
+                    SpawnAttackFlash(new Color(96, 34, 148));
+                }
+                return;
+            }
+            if (timer != CrystalStormReleaseTick)
+            {
+                return;
+            }
+
+            SoundEngine.PlaySound(SoundID.Item69 with { Volume = 1f, Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            if (!hasPlayerLOS)
+            {
+                CancelAttack();
+                return;
+            }
+
+            Vector2 source = CastHandWorld;
+            Vector2 baseVelocity = UsefulFunctions.BallisticTrajectory(source, player.Center, 10f, fallback: true)
+                + player.velocity / 2f;
+            for (int i = 0; i < CrystalStormCount; i++)
+            {
+                float angle = (i - (CrystalStormCount - 1) / 2f) * (CrystalStormSpread / (CrystalStormCount - 1));
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), source, baseVelocity.RotatedBy(angle),
+                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+            }
+            NPC.netUpdate = true;
+        }
+
+        /// <summary>Source-anchored sword hitbox (GreatBlackKnightSpearHitbox, gated on ISpearMeleeWielder: it lives
+        /// while SpearMeleeActive and deals damage while SpearMeleeHitWindow). Server only.</summary>
+        private void SpawnSwordHitbox(int direction, float reach, float height, tsorcRevampGlobalNPC globalNPC)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
             int index = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
-                ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(),
-                redKnightsGreatDamage, 4f, Main.myPlayer, reach, height);
+                ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(), redKnightsGreatDamage, 4f, Main.myPlayer, reach, height);
             tsorcGlobalProjectile.SetDefenseTraits(index, globalNPC.ActiveAttackDefenseTraits);
         }
     }

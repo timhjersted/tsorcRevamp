@@ -9145,6 +9145,21 @@ Mods: {
 				// DisplayName: Red Knight Greaves
 			}
 
+			BlackKnightHelmet: {
+				// Tooltip: ""
+				// DisplayName: Black Knight Helmet
+			}
+
+			BlackKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Black Knight Breastplate
+			}
+
+			BlackKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Black Knight Greaves
+			}
+
 			RedKnightBreastplate: {
 				// Tooltip: ""
 				// DisplayName: Red Knight Breastplate
@@ -9316,6 +9331,11 @@ Mods: {
 			OolacileCultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Oolacile Cultist Staff
+			}
+
+			BlackBlade: {
+				// Tooltip: ""
+				// DisplayName: Black Blade
 			}
 
 			EnemyBeastClaw: {

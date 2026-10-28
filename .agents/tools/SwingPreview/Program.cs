@@ -34,6 +34,10 @@ namespace SwingPreview
         private static int Main(string[] args)
         {
             if (args.Contains("--rune-demo")) return RuneBladePreview.Run(args);
+            if (args.Contains("--black-knight-poses"))
+            {
+                return KnightPosePreview.RunBlackKnight(args);
+            }
             if (args.Contains("--knight-poses"))
             {
                 return KnightPosePreview.Run(args);

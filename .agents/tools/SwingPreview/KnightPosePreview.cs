@@ -347,6 +347,224 @@ namespace SwingPreview
             }
         }
 
+        // ── Black Knight ─────────────────────────────────────────────────────────────────────────────
+        // --black-knight-poses [all | <BlackKnightAttack>] [--profile] [--body] [--zoom N] [--left] [--target X,Y]
+        //
+        // Renders BlackKnight.ResolveAttackPose, the game's own pose function, for every brain attack. The renderer
+        // draws one weapon sprite per sheet, so an attack is rendered once per prop it shows (sword / spear / bomb /
+        // staff), with the other props' frames drawn empty-handed: Leap Strike gives a sword sheet and a spear sheet.
+        //
+        // NOT the game: he stands still at the origin (no hops, leaps, dashes, teleport), aims are solved from the
+        // centre to a fixed target, Leap Strike's downswing tick is fixed (the game solves it from the flight time),
+        // the bomb is drawn at full size (the game holds it at 0.6), the staff is an ArchdeaconStaff proxy (vanilla
+        // Amethyst Staff can't load offline), and dust / ward / sigils are not drawn.
+        private static readonly (string Attack, int Ticks)[] BlackKnightAttacks =
+        {
+            ("SpearThrow", 72),
+            ("BombThrow", 72),
+            ("HomingVolley", 140),
+            ("BlackRain", 44),
+            ("DeathSeal", 150),
+            ("PlagueAmbush", 16),
+            ("LeapStrike", 104),
+            ("CounterCheck", 52),
+            ("CurseWard", 152),
+            ("PlagueSeals", 114),
+            ("CrystalStorm", 66),
+        };
+        private const int PreviewLeapStrikeStart = 40;
+
+        internal static int RunBlackKnight(string[] args)
+        {
+            string repo = FindRepoRoot();
+            int at = Array.IndexOf(args, "--black-knight-poses");
+            string which = "all";
+            if (at + 1 < args.Length && !args[at + 1].StartsWith("--"))
+            {
+                which = args[at + 1];
+            }
+
+            int direction = 1;
+            if (args.Contains("--left"))
+            {
+                direction = -1;
+            }
+
+            Vector2 targetOffset = new Vector2(240f, 0f);
+            int targetAt = Array.IndexOf(args, "--target");
+            if (targetAt >= 0)
+            {
+                string[] parts = args[targetAt + 1].Split(',');
+                targetOffset = new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+            }
+
+            int zoom = 2;
+            int zoomAt = Array.IndexOf(args, "--zoom");
+            if (zoomAt >= 0)
+            {
+                zoom = int.Parse(args[zoomAt + 1]);
+            }
+
+            var selected = BlackKnightAttacks.Where(entry => which == "all"
+                || entry.Attack.Equals(which, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (selected.Count == 0)
+            {
+                Console.WriteLine($"Unknown attack '{which}'. Known: {string.Join(", ", BlackKnightAttacks.Select(entry => entry.Attack))}");
+                return 1;
+            }
+
+            Type attackType = typeof(BlackKnight).Assembly.GetType("tsorcRevamp.NPCs.Enemies.BlackKnightAttack", throwOnError: true);
+            int spearRelease = (int)typeof(BlackKnight).GetField("SpearWindupTicks", BindingFlags.NonPublic | BindingFlags.Static).GetRawConstantValue();
+            Vector2 target = new Vector2(targetOffset.X * direction, targetOffset.Y);
+            Console.WriteLine($"Black Knight attack poses, facing {(direction == 1 ? "right" : "left")}, target {targetOffset.X},{targetOffset.Y} px from centre.");
+
+            foreach (var entry in selected)
+            {
+                int attack = Convert.ToInt32(Enum.Parse(attackType, entry.Attack));
+                var frames = new List<(PoseFrame Frame, BlackKnightProp Prop)>();
+                for (int timer = 0; timer < entry.Ticks; timer++)
+                {
+                    var input = new BlackKnight.BlackKnightPoseInput
+                    {
+                        Attack = attack,
+                        Timer = timer,
+                        SpearRelease = spearRelease,
+                        LeapStrikeStart = PreviewLeapStrikeStart,
+                        ThrowAim = RedKnightPuppet.FacingAngleOf(target, direction),
+                        BombAim = RedKnightPuppet.FacingAngleOf(
+                            UsefulFunctions.BallisticTrajectory(Vector2.Zero, target, 5f, fallback: true), direction),
+                        CastAim = RedKnightPuppet.FacingAngleOf(target, direction),
+                    };
+                    BlackKnight.BlackKnightPose pose = BlackKnight.ResolveAttackPose(input);
+                    frames.Add((BlackKnightFrame(entry.Attack, timer, direction, pose), pose.FrontProp));
+                }
+
+                if (args.Contains("--profile"))
+                {
+                    PrintProfile(entry.Attack, frames.Select(pair => pair.Frame).ToList());
+                }
+                if (!args.Contains("--body"))
+                {
+                    continue;
+                }
+
+                var props = frames.Select(pair => pair.Prop).Where(prop => prop != BlackKnightProp.None).Distinct().ToList();
+                if (props.Count == 0)
+                {
+                    props.Add(BlackKnightProp.None);
+                }
+                foreach (BlackKnightProp prop in props)
+                {
+                    PuppetArt art = BlackKnightPropArt(repo, prop);
+                    var sheet = frames.Select(pair => WithOnlyProp(pair.Frame, pair.Prop, prop)).ToList();
+                    string label = $"{entry.Attack}-{prop}-{(direction == 1 ? "Right" : "Left")}";
+                    if (props.Count == 1)
+                    {
+                        label = $"{entry.Attack}-{(direction == 1 ? "Right" : "Left")}";
+                    }
+                    BodyRenderer.Render(art, sheet, Path.Combine(repo, "tsorcDocs", "SwingReports", "BlackKnightPoses"), label, zoom);
+                }
+            }
+            return 0;
+        }
+
+        // Every prop's art. Grip norms are the game's: BlackBlade (5,56)/62, the BlackThrowingSpear head/base rows, the
+        // staff's StaffPropWeapon norm.
+        private static PuppetArt BlackKnightPropArt(string repo, BlackKnightProp prop)
+        {
+            PuppetArt art = PuppetArtLibrary.Resolve("BlackKnight", repo);
+            PuppetProfile profile = PuppetProfile.For("BlackKnight");
+            art.HandleNormX = profile.HandleNormX;
+            art.HandleNormY = profile.HandleNormY;
+            art.WeaponScale = profile.WeaponDrawScale;
+            art.BombSprite = Path.Combine(repo, "Content", "Projectiles", "Enemy", "EnemyMoonfuryBomb.png");
+            art.BombGripOrigin = new System.Drawing.PointF(17f, 17f);
+            if (prop == BlackKnightProp.Spear)
+            {
+                art.WeaponSprite = Path.Combine(repo, "Content", "Projectiles", "Enemy", "BlackThrowingSpear.png");
+                art.WeaponRotationOffset = MathF.PI / 4f;
+                art.SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 84f);
+                art.SpearBaseNorm = new System.Drawing.PointF(0.5f, 83.5f / 84f);
+                art.WeaponScale = 1f;
+            }
+            else if (prop == BlackKnightProp.Staff)
+            {
+                art.WeaponSprite = Path.Combine(repo, "Content", "Items", "Weapons", "Enemy", "ArchdeaconStaff.png");
+                art.HandleNormX = 0.28f;
+                art.HandleNormY = 0.72f;
+                art.WeaponScale = 1f;
+            }
+            return art;
+        }
+
+        // A frame that shows only `prop` in the front hand; any other prop's frame is drawn with the hand empty.
+        private static PoseFrame WithOnlyProp(PoseFrame frame, BlackKnightProp frameProp, BlackKnightProp prop)
+        {
+            if (frameProp == prop || frameProp == BlackKnightProp.None)
+            {
+                return frame;
+            }
+            PoseFrame empty = (PoseFrame)typeof(PoseFrame).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(frame, null);
+            empty.WeaponHidden = true;
+            empty.HeldProp = null;
+            empty.SpearGrip = null;
+            empty.FrontArmFree = null;
+            return empty;
+        }
+
+        private static PoseFrame BlackKnightFrame(string attack, int timer, int direction, BlackKnight.BlackKnightPose pose)
+        {
+            var frame = new PoseFrame
+            {
+                Tick = timer,
+                Phase = "Custom",
+                Direction = direction,
+                Motion = attack,
+                WeaponHidden = true,
+            };
+
+            string stage = "empty";
+            float swingPose = RedKnightPuppet.SwingPoseFor(pose.Facing);
+            if (pose.FrontProp == BlackKnightProp.Sword || pose.FrontProp == BlackKnightProp.Staff
+                || pose.FrontProp == BlackKnightProp.Spear)
+            {
+                // CustomWeaponRotation drives the weapon and the composite arm; the arm offset turns the arm alone.
+                frame.WeaponHidden = false;
+                frame.WeaponRotation = swingPose;
+                frame.CompositeArmRotation = (swingPose - MathHelper.PiOver2 + pose.ArmOffset) * direction;
+                if (pose.FrontProp == BlackKnightProp.Spear)
+                {
+                    frame.SpearGrip = pose.Grip;
+                }
+                stage = $"{pose.FrontProp.ToString().ToLowerInvariant()} {Degrees(pose.Facing):+0;-0}d";
+            }
+            else if (pose.FrontProp == BlackKnightProp.Bomb)
+            {
+                frame.FrontArmFree = swingPose - MathHelper.PiOver2;
+                frame.HeldProp = "bomb";
+                frame.HeldPropFacing = pose.Facing;
+                frame.FuseLit = pose.FuseLit;
+                stage = $"bomb {Degrees(pose.Facing):+0;-0}d";
+            }
+            else if (pose.FrontFreeFacing.HasValue)
+            {
+                frame.FrontArmFree = pose.FrontFreeFacing.Value - MathHelper.PiOver2;
+                stage = $"palms {Degrees(pose.FrontFreeFacing.Value):+0;-0}d";
+            }
+
+            if (pose.BackPalmFacing.HasValue)
+            {
+                frame.BackArmFree = pose.BackPalmFacing.Value - MathHelper.PiOver2;
+                if (pose.FrontProp == BlackKnightProp.None && !pose.FrontFreeFacing.HasValue)
+                {
+                    stage = $"palm {Degrees(pose.BackPalmFacing.Value):+0;-0}d";
+                }
+            }
+            frame.Stage = stage;
+            return frame;
+        }
+
         private static float Degrees(float radians) => radians * 180f / MathF.PI;
 
         private static void Set(object target, string property, object value)

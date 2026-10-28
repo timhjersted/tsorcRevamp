@@ -29,6 +29,7 @@ default, not written in the file · `.` off by default, never considered
 | Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
 | Archdeacon | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AttraidiesIllusion | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| BlackKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | RedKnightPuppet | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | CrystalKnight | Halberd | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
