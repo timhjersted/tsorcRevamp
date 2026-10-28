@@ -1,9 +1,9 @@
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Items.Armor
+namespace tsorcRevamp.Content.Items.Armor.RedKnightSet
 {
     [AutoloadEquip(EquipType.Head)]
-    public class RedKnightTestHelmet : ModItem
+    public class RedKnightHelmet : ModItem
     {
         public override void SetDefaults()
         {
@@ -14,7 +14,7 @@ namespace tsorcRevamp.Content.Items.Armor
     }
 
     [AutoloadEquip(EquipType.Body)]
-    public class RedKnightTestBreastplate : ModItem
+    public class RedKnightBreastplate : ModItem
     {
         public override void SetDefaults()
         {
@@ -25,7 +25,7 @@ namespace tsorcRevamp.Content.Items.Armor
     }
 
     [AutoloadEquip(EquipType.Legs)]
-    public class RedKnightTestGreaves : ModItem
+    public class RedKnightGreaves : ModItem
     {
         public override void SetDefaults()
         {

@@ -2378,39 +2378,6 @@ namespace tsorcRevamp
                         break;
                     }
 
-                case tsorcPacketID.SyncEnemyActivePose:
-                    {
-                        // Server → client: fire a one-shot "active pose" (throw release / magic
-                        // release / etc.) on an enemy that renders via EnemySpriteRenderer.
-                        int npcId = reader.ReadInt32();
-                        byte poseByte = reader.ReadByte();
-                        int heldItemType = reader.ReadInt32();
-                        short duration = reader.ReadInt16();
-                        bool weaponVisible = reader.ReadBoolean();
-                        byte styleByte = reader.ReadByte();
-                        string heldTexturePath = reader.ReadString();
-                        bool hasSpearRot = reader.ReadBoolean();
-                        float spearRot = hasSpearRot ? reader.ReadSingle() : 0f;
-
-                        if (Main.netMode == NetmodeID.MultiplayerClient
-                            && npcId >= 0 && npcId < Main.maxNPCs
-                            && Main.npc[npcId] != null
-                            && Main.npc[npcId].active
-                            && Main.npc[npcId].ModNPC is NPCs.EnemySpriteRendering.IEnemySpriteRendererHost host
-                            && host.SpriteRenderer != null)
-                        {
-                            host.SpriteRenderer.StartActivePose(
-                                (NPCs.EnemySpriteRendering.EnemySpritePose)poseByte,
-                                heldItemType,
-                                duration,
-                                weaponVisible,
-                                (NPCs.EnemySpriteRendering.EnemyHeldItemStyle)styleByte,
-                                string.IsNullOrEmpty(heldTexturePath) ? null : heldTexturePath,
-                                hasSpearRot ? spearRot : null);
-                        }
-                        break;
-                    }
-
                 case tsorcPacketID.DropSouls:
                     {
                         Vector2 position = reader.ReadVector2();
@@ -5298,13 +5265,7 @@ namespace tsorcRevamp
         public const byte SpawnNPCLunarTowerStardust = 19;
         public const byte SpawnNPCLunarTowerSolar = 20;
 
-        /// <summary>
-        /// Server → clients: fires a timed "active pose" on an enemy rendered via
-        /// <see cref="NPCs.EnemySpriteRendering.EnemySpriteRenderer"/>. The host
-        /// <see cref="ModNPC"/> must implement <see cref="NPCs.EnemySpriteRendering.IEnemySpriteRendererHost"/>
-        /// so the packet handler can find the renderer.
-        /// </summary>
-        public const byte SyncEnemyActivePose = 21;
+        // 21 was SyncEnemyActivePose (EnemySpriteRenderer, deleted with RedKnightTest).
 
         /// <summary>
         /// Active Shields Revamp: syncs a player's raised-shield state (isBlocking + shield item type)

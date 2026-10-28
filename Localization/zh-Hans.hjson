@@ -9172,19 +9172,19 @@ Mods: {
 				// Tooltip: "'The essence of a shadow warrior claimed by the Abyss'"
 			}
 
-			RedKnightTestHelmet: {
+			RedKnightHelmet: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Helmet
+				// DisplayName: Red Knight Helmet
 			}
 
-			RedKnightTestGreaves: {
+			RedKnightGreaves: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Greaves
+				// DisplayName: Red Knight Greaves
 			}
 
-			RedKnightTestBreastplate: {
+			RedKnightBreastplate: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Breastplate
+				// DisplayName: Red Knight Breastplate
 			}
 
 			EnemyDebugTome: {
@@ -12447,7 +12447,6 @@ Mods: {
 				// DespawnHandler: The Great Red Knight stands victorious...
 			}
 
-			// GreatRedKnightTest.DisplayName: Great Red Knight Test
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
 			IceSkeleton.DisplayName: 希斯门徒
@@ -13550,7 +13549,6 @@ Mods: {
 			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
-			// RedKnightTest.DisplayName: Red Knight Test
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse

@@ -581,7 +581,6 @@ namespace tsorcRevamp.Systems
             //   LothricBlackKnightOriginal: authored 1000 / 1500 / 5000 (legacy/disabled spawn)
             //   LothricKnightOriginal: authored 750 / 1400 / 2500 (legacy/disabled spawn)
             //   LothricSpearKnightOriginal: authored 750 / 1200 / 3000 (legacy/disabled spawn)
-            //   RedKnightTest: authored 2500 / 2500 / 4000 (legacy/disabled spawn)
             //   RingedKnightOriginal: authored 400 / 800 / 2500 (legacy/disabled spawn)
             // Projectile-like helpers, critters and one-hit spawns (HP of 20 or less). Not registered.
             //   CosmicCrystalLizard: authored 18

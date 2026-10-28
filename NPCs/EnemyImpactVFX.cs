@@ -126,7 +126,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<RedCloudHunter>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ResentfulSeedling>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RedKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<RedKnightTest>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RingedKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RingedKnightOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Sahagin>()] = EnemyImpactMaterial.Blood,

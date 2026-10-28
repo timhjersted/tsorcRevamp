@@ -34,6 +34,10 @@ namespace SwingPreview
         private static int Main(string[] args)
         {
             if (args.Contains("--rune-demo")) return RuneBladePreview.Run(args);
+            if (args.Contains("--knight-poses"))
+            {
+                return KnightPosePreview.Run(args);
+            }
             var options = Options.Parse(args);
             if (options == null)
             {
@@ -521,6 +525,12 @@ namespace SwingPreview
                     frameArmed &= collisionElapsed >= (spec.Combo.Name == "Crystal Vault" ? 21
                         : current.Motion == ComboMotion.JoustDash ? 6 : 0);
                 }
+                if (profile.Name == "RedKnight" && phase == PhaseAttack && current.Motion == ComboMotion.JoustDash)
+                {
+                    // RedKnight.CanDamageWithMeleeStep: a thrust only hurts once the 6-tick punch is out.
+                    int collisionElapsed = activeStepTotalTicks - phaseTimer - 1;
+                    frameArmed &= collisionElapsed >= 6;
+                }
                 bool isLeap = current.Motion == ComboMotion.LeapSlam || current.Motion == ComboMotion.LeapThrust;
                 if (phase == PhaseAttack && IsLandingTimedLeap(profile, current))
                 {
@@ -571,6 +581,21 @@ namespace SwingPreview
 
                 EmitFrame(spec, run, writer, poses, tick, phase, current.Motion, stepIndex, steps.Length, rotation, frameArmed,
                     direction, airborne, weaponHidden);
+                if (profile.Name == "RedKnight")
+                {
+                    // Mirrors RedKnight.OverrideSpearGrip: cocked 0.32 outside the attack, the shared thrust curve for
+                    // JoustDash, held extended (0.97) through the rising sweep.
+                    float redKnightGrip = 0.32f;
+                    if (phase == PhaseAttack && current.Motion == ComboMotion.JoustDash)
+                    {
+                        redKnightGrip = tsorcRevamp.NPCs.Enemies.RedKnight.ThrustGrip(t, spec.Combo.Name == "Charging Spear Thrust");
+                    }
+                    else if (phase == PhaseAttack)
+                    {
+                        redKnightGrip = 0.97f;
+                    }
+                    poses[^1].SpearGrip = redKnightGrip;
+                }
                 if (profile.Name == "CrystalKnight")
                 {
                     poses[^1].SpearGrip = phase == PhaseAttack && current.Motion == ComboMotion.JoustDash

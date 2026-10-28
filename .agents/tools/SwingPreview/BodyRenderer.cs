@@ -47,6 +47,22 @@ namespace SwingPreview
         public float OwnerOffsetY;
         public bool RuneVisible, RuneUnderhand;
         public float RuneAge, RuneFade = 1f;
+
+        /// <summary>Pose mode (KnightPosePreview). Free arm angles are FACING-RIGHT composite radians, the value
+        /// PuppetNPC.FacingAngleToCompositeArm produces before its direction mirror; null = the arm follows the weapon.
+        /// The front one only applies while WeaponHidden (an empty hand).</summary>
+        public float? FrontArmFree;
+        public float? BackArmFree;
+        /// <summary>The back arm reaches for the weapon with PuppetNPC.ResolveTwoHandedBackArmPose's solve.</summary>
+        public bool TwoHanded;
+        /// <summary>Front-hand prop drawn on the fist in place of the weapon sprite ("bomb"), as RedKnight.PostDraw does.</summary>
+        public string HeldProp;
+        public float HeldPropFacing;
+        public bool FuseLit;
+        /// <summary>Replaces the phase word in the frame label.</summary>
+        public string Stage;
+        /// <summary>Written back by the renderer: the two-handed solve's grip error in px.</summary>
+        public float TwoHandedGripError;
     }
 
     /// <summary>Which sprite sheets to composite, and the handful of numbers the pose maths needs.</summary>
@@ -77,6 +93,11 @@ namespace SwingPreview
         public float HandleNormX = 0.10f;
         public float HandleNormY = 0.85f;
 
+        /// <summary>A spear's SpearHeadNorm / SpearBaseNorm. A frame's SpearGrip slides the hand between them, exactly as
+        /// PuppetNPC's spear draw lerps its origin. Defaults are Crystal Knight's 116x116 diagonal North Pole holdout.</summary>
+        public PointF SpearHeadNorm = new PointF(1f / 116f, 1f / 116f);
+        public PointF SpearBaseNorm = new PointF(115f / 116f, 115f / 116f);
+
         /// <summary>Dual wield: sprite in the back hand (null = single weapon). Uses the same grip and scale
         /// as the front weapon, and the puppet's OffHandCarryRotation for the non-swinging hand.</summary>
         public string OffHandWeaponSprite;
@@ -85,6 +106,15 @@ namespace SwingPreview
         public string FlailBallSprite;
         public string FlailChainSprite;
         public string RuneSprite, RuneSlashSprite;
+
+        /// <summary>Front-hand prop sprite for a frame's HeldProp, and the texel pinned to the hand.</summary>
+        public string BombSprite;
+        public PointF BombGripOrigin = new PointF(11f, 18f);
+
+        /// <summary>Two-handed grip: PuppetNPC.TwoHandedBackGripOffset (px from the front hand along the weapon,
+        /// toward the tip; negative = toward the butt) and TwoHandedBackArmMaxSeparation.</summary>
+        public float TwoHandedGripOffset = 4f;
+        public float TwoHandedMaxSeparation = (float)(70.0 * Math.PI / 180.0);
     }
 
     /// <summary>
@@ -143,12 +173,16 @@ namespace SwingPreview
             using Bitmap flailChain = art.FlailChainSprite == null ? null : Load(art.FlailChainSprite);
             using Bitmap rune = art.RuneSprite == null ? null : Load(art.RuneSprite);
             using Bitmap runeSlash = art.RuneSlashSprite == null ? null : Load(art.RuneSlashSprite);
+            using Bitmap bomb = art.BombSprite == null ? null : Load(art.BombSprite);
+
+            // The two-handed solve's switch penalty compares against the previous frame's elbow, as the game does tick to tick.
+            _twoHandedBackStretch = ArmStretch;
 
             var rendered = new List<Bitmap>();
             foreach (PoseFrame frame in frames)
             {
                 rendered.Add(DrawFrame(art, frame, body, legs, head, weapon, offHandWeapon,
-                    flailBall, flailChain, frames, zoom, rune, runeSlash));
+                    flailBall, flailChain, frames, zoom, rune, runeSlash, bomb));
             }
 
             string safe = Sanitize(label);
@@ -221,7 +255,8 @@ namespace SwingPreview
 
         private static Bitmap DrawFrame(PuppetArt art, PoseFrame frame,
             Bitmap body, Bitmap legs, Bitmap head, Bitmap weapon, Bitmap offHandWeapon,
-            Bitmap flailBall, Bitmap flailChain, List<PoseFrame> allFrames, int zoom, Bitmap rune, Bitmap runeSlash)
+            Bitmap flailBall, Bitmap flailChain, List<PoseFrame> allFrames, int zoom, Bitmap rune, Bitmap runeSlash,
+            Bitmap bomb)
         {
             // Canvas padding sized to the weapon: its reach from the grip to the farthest texture
             // corner, so a full-scale greatsword (Gwyn's is ~117px) never runs off the frame.
@@ -288,6 +323,12 @@ namespace SwingPreview
                 // Sheathed: no composite arm pose in game, so the arms hang in the natural draw.
                 // Rotation 0 in composite space is the arm straight down - the idle stand-in.
                 armRotation = 0f;
+
+                // An empty hand gesturing (PuppetNPC.FreeFrontArmFacingAngle) still poses the composite arm.
+                if (frame.FrontArmFree.HasValue)
+                {
+                    armRotation = frame.FrontArmFree.Value;
+                }
             }
             if (frame.Direction < 0)
             {
@@ -329,6 +370,28 @@ namespace SwingPreview
                 backArmRotation = backWeaponRotation - (float)Math.PI / 2f;
             }
 
+            // Pose mode's back arm: a free palm gesture (always Full stretch, as PuppetNPC sets it), or the two-handed
+            // reach for the weapon. Free wins, matching GetUnscaledBackHandPosition's order.
+            int backStretchRow = stretchRow;
+            PointF? twoHandedTarget = null;
+            if (frame.BackArmFree.HasValue)
+            {
+                backArmRotation = frame.BackArmFree.Value;
+                backStretchRow = 0;
+            }
+            else if (frame.TwoHanded && !weaponSpriteHidden)
+            {
+                PointF frontHandForGrip = FrontHandInCell(armRotation, flip: false);
+                PointF weaponDirection = WeaponTipDirectionInCell(art, weapon, frontWeaponRotation + frame.WeaponDrawOffset, frame.SpearGrip);
+                PointF gripTarget = new PointF(
+                    frontHandForGrip.X + weaponDirection.X * art.TwoHandedGripOffset,
+                    frontHandForGrip.Y + weaponDirection.Y * art.TwoHandedGripOffset);
+                ResolveTwoHandedBackArm(art, armRotation, gripTarget, out backArmRotation, out backStretchRow, out float gripError);
+                frame.TwoHandedGripError = gripError;
+                twoHandedTarget = gripTarget;
+            }
+            Rectangle posedBackArmCell = Cell(ColBackArm, backStretchRow);
+
             PointF flailHand = FrontHandInCell(armRotation, flip: false);
             PointF flailCenter = new PointF(
                 flailHand.X + frame.FlailOffsetX,
@@ -343,7 +406,7 @@ namespace SwingPreview
                 DrawTargetMarker(g, flailTarget, frame.FlailTargetLabel);
             }
             DrawStatic(g, legs, legFrame, flip);
-            DrawRotated(g, body, backArmCell, BackArmPivot, backArmRotation, flip);
+            DrawRotated(g, body, posedBackArmCell, BackArmPivot, backArmRotation, flip);
             if (dualWield)
             {
                 // PuppetBackWeaponDrawLayer sits right after Skin: over the back arm, under the torso.
@@ -356,9 +419,14 @@ namespace SwingPreview
             if (!weaponSpriteHidden)
             {
                 PointF frontHand = FrontHandInCell(armRotation, flip);
-                PointF? spearOrigin = frame.SpearGrip.HasValue
-                    ? new PointF((1f + frame.SpearGrip.Value * 114f) / 116f,
-                        (1f + frame.SpearGrip.Value * 114f) / 116f) : null;
+                PointF? spearOrigin = null;
+                if (frame.SpearGrip.HasValue)
+                {
+                    float grip = frame.SpearGrip.Value;
+                    spearOrigin = new PointF(
+                        Lerp(art.SpearHeadNorm.X, art.SpearBaseNorm.X, grip),
+                        Lerp(art.SpearHeadNorm.Y, art.SpearBaseNorm.Y, grip));
+                }
                 DrawWeapon(g, weapon, art, frontWeaponRotation + frame.WeaponDrawOffset, frontHand, flip, art.WeaponScale, spearOrigin);
             }
 
@@ -385,6 +453,32 @@ namespace SwingPreview
             }
 
             if (frame.RuneVisible && rune != null) DrawRune(g, frame, rune, runeSlash);
+
+            // RedKnight.PostDraw: the bomb on the fist, fuse along the arm (fuse-up sprite, +90 degrees), over every layer.
+            if (frame.HeldProp == "bomb" && bomb != null)
+            {
+                PointF bombHand = FrontHandInCell(armRotation, flip: false);
+                float bombRotation = frame.HeldPropFacing + (float)Math.PI / 2f;
+                GraphicsState bombState = g.Save();
+                g.TranslateTransform(bombHand.X, bombHand.Y);
+                g.RotateTransform((float)(bombRotation * 180.0 / Math.PI));
+                g.DrawImage(bomb, new RectangleF(-art.BombGripOrigin.X, -art.BombGripOrigin.Y, bomb.Width, bomb.Height),
+                    new RectangleF(0f, 0f, bomb.Width, bomb.Height), GraphicsUnit.Pixel);
+                if (frame.FuseLit)
+                {
+                    // Stand-in for RedKnightVFX.DrawBombFuse at hand + (0, -15) along the bomb.
+                    using var fuseBrush = new SolidBrush(Color.FromArgb(230, 255, 170, 60));
+                    g.FillEllipse(fuseBrush, -2f, -17f, 4f, 4f);
+                }
+                g.Restore(bombState);
+            }
+
+            // Two-handed grip target: where the rear hand was asked to be. The arm's own hand should sit on it.
+            if (twoHandedTarget.HasValue)
+            {
+                using var targetBrush = new SolidBrush(Color.FromArgb(220, 255, 60, 220));
+                g.FillRectangle(targetBrush, twoHandedTarget.Value.X - 0.5f, twoHandedTarget.Value.Y - 0.5f, 1f, 1f);
+            }
             g.ResetTransform();
             DrawLabel(canvas, frame);
             return canvas;
@@ -548,19 +642,120 @@ namespace SwingPreview
 
         /// <summary>Vanilla Player.GetBackHandPosition in facing-right cell space: the arm ellipse for the
         /// stretch plus the (+6, -2) back-shoulder offset, with no wrist nudge. Mirroring is the canvas flip.</summary>
-        private static PointF BackHandInCell(float rotation)
+        private static PointF BackHandInCell(float rotation) => BackHandInCell(rotation, ArmStretch);
+
+        private static PointF BackHandInCell(float rotation, int stretchRow)
         {
             float angle = rotation + (float)Math.PI / 2f;
-            (float radiusX, float radiusY) = Math.Clamp(ArmStretch, 0, 3) switch
-            {
-                0 => (10f, 12f),
-                1 => (8f, 10f),
-                2 => (6f, 8f),
-                _ => (4f, 6f),
-            };
+            (float radiusX, float radiusY) = BackArmEllipse(stretchRow);
             float x = (float)Math.Cos(angle) * radiusX + 6f;
             float y = (float)Math.Sin(angle) * radiusY - 2f;
             return ScaleCellPoint(20f + x, 28f + y);
+        }
+
+        // PuppetNPC.GetBackArmEllipse: vanilla's back-hand ellipse radii per stretch row (Full 0 .. None 3).
+        private static (float radiusX, float radiusY) BackArmEllipse(int stretchRow)
+        {
+            switch (Math.Clamp(stretchRow, 0, 3))
+            {
+                case 0:
+                    return (10f, 12f);
+                case 1:
+                    return (8f, 10f);
+                case 2:
+                    return (6f, 8f);
+                default:
+                    return (4f, 6f);
+            }
+        }
+
+        // Elbow row chosen on the previous frame; the solve's switch penalty compares against it.
+        private static int _twoHandedBackStretch;
+
+        /// <summary>
+        /// Hand-port of PuppetNPC.ResolveTwoHandedBackArmPose + EvaluateTwoHandedBackCandidate, in facing-right cell space.
+        /// Each of the four elbow rows aims its ellipse endpoint at the grip, clamped to MaxSeparation from the front arm;
+        /// the closest hand wins, with a 2px-equivalent penalty for changing rows. Re-sync if the game's solve changes.
+        /// </summary>
+        private static void ResolveTwoHandedBackArm(PuppetArt art, float frontArmRotation, PointF gripTarget,
+            out float backRotation, out int backStretchRow, out float gripError)
+        {
+            const float SwitchPenalty = 2f;
+            PointF shoulder = ScaleCellPoint(20f + 6f, 28f - 2f);
+            float bestScore = float.MaxValue;
+            backRotation = frontArmRotation;
+            backStretchRow = _twoHandedBackStretch;
+            gripError = 0f;
+
+            // Current row first so exact ties keep it, then every row, in the game's order.
+            int[] candidateRows = { _twoHandedBackStretch, 1, 2, 0, 3 };
+            foreach (int row in candidateRows)
+            {
+                (float radiusX, float radiusY) = BackArmEllipse(row);
+                float targetX = gripTarget.X - shoulder.X;
+                float targetY = gripTarget.Y - shoulder.Y;
+                float endpointAngle = (float)Math.Atan2(targetY / radiusY, targetX / radiusX);
+                float candidateRotation = endpointAngle - (float)Math.PI / 2f;
+                float separation = WrapAngle(candidateRotation - frontArmRotation);
+                float clampedSeparation = Math.Clamp(separation, -art.TwoHandedMaxSeparation, art.TwoHandedMaxSeparation);
+                candidateRotation = frontArmRotation + clampedSeparation;
+
+                PointF candidateHand = BackHandInCell(candidateRotation, row);
+                float errorX = candidateHand.X - gripTarget.X;
+                float errorY = candidateHand.Y - gripTarget.Y;
+                float errorSq = errorX * errorX + errorY * errorY;
+                float score = errorSq;
+                if (row != _twoHandedBackStretch)
+                {
+                    score += SwitchPenalty * SwitchPenalty;
+                }
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    backRotation = candidateRotation;
+                    backStretchRow = row;
+                    gripError = (float)Math.Sqrt(errorSq);
+                }
+            }
+
+            _twoHandedBackStretch = backStretchRow;
+        }
+
+        private static float WrapAngle(float angle)
+        {
+            double wrapped = Math.IEEERemainder(angle, Math.PI * 2.0);
+            return (float)wrapped;
+        }
+
+        /// <summary>Unit direction from the hand toward the weapon's tip as drawn: a spear from its grip toward
+        /// SpearHeadNorm, anything else from MeleeHandleNorm toward the top-right corner (the sword tip).</summary>
+        private static PointF WeaponTipDirectionInCell(PuppetArt art, Bitmap weapon, float weaponRotation, float? spearGrip)
+        {
+            float gripX = art.HandleNormX;
+            float gripY = art.HandleNormY;
+            float tipX = 1f;
+            float tipY = 0f;
+            if (spearGrip.HasValue)
+            {
+                gripX = Lerp(art.SpearHeadNorm.X, art.SpearBaseNorm.X, spearGrip.Value);
+                gripY = Lerp(art.SpearHeadNorm.Y, art.SpearBaseNorm.Y, spearGrip.Value);
+                tipX = art.SpearHeadNorm.X;
+                tipY = art.SpearHeadNorm.Y;
+            }
+
+            float localX = (tipX - gripX) * weapon.Width;
+            float localY = (tipY - gripY) * weapon.Height;
+            float angle = weaponRotation + art.WeaponRotationOffset;
+            float worldX = localX * (float)Math.Cos(angle) - localY * (float)Math.Sin(angle);
+            float worldY = localX * (float)Math.Sin(angle) + localY * (float)Math.Cos(angle);
+            float length = (float)Math.Sqrt(worldX * worldX + worldY * worldY);
+            if (length < 0.001f)
+            {
+                return new PointF(1f, 0f);
+            }
+
+            return new PointF(worldX / length, worldY / length);
         }
 
         /// <summary>Vanilla Player.GetFrontHandPosition, expressed in cell space rather than world
@@ -595,7 +790,12 @@ namespace SwingPreview
             Color tint = frame.Armed ? Color.FromArgb(255, 235, 90, 90) : Color.FromArgb(255, 150, 155, 165);
             using var brush = new SolidBrush(tint);
             string air = frame.Airborne ? " air" : "";
-            g.DrawString($"t{frame.Tick} {ShortPhase(frame.Phase)}{air}", font, brush, 4, 4);
+            string phaseWord = ShortPhase(frame.Phase);
+            if (!string.IsNullOrEmpty(frame.Stage))
+            {
+                phaseWord = frame.Stage;
+            }
+            g.DrawString($"t{frame.Tick} {phaseWord}{air}", font, brush, 4, 4);
 
             if (!string.IsNullOrWhiteSpace(frame.FlailStage))
             {

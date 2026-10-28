@@ -383,6 +383,9 @@ namespace tsorcRevamp.NPCs
         // Block attribution/state lives here; the independent cadence snapshot and recovery live in
         // GlobalNPC.GuardPressure.cs. CombatTempo never requires this state to run.
         public const int GuardPressureMaxBlocks = 4;
+        // Banked blocks that turn the next attack into the unblockable finisher. The old-AI knights keep the 4-block
+        // climax; PuppetNPC pushes its own (3) every tick. Stacks still cap at GuardPressureMaxBlocks.
+        public int GuardPressureFinisherBlocks = GuardPressureMaxBlocks;
         public const int GuardPressureFirstDecayTicks = 480;
         public const int GuardPressureStackDecayTicks = 240;
         public int BlockedRecently;

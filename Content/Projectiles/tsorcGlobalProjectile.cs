@@ -243,6 +243,16 @@ namespace tsorcRevamp.Content.Projectiles
             {
                 SourceNPCIndex = sourceNPC.whoAmI;
                 SourceNPCType = sourceNPC.type;
+
+                // A puppet's guard-pressure finisher (PuppetNPC.EnterPhase) makes everything it fires unblockable:
+                // melee hitboxes, throws and spells alike, with no per-enemy code. Children inherit it below.
+                // Limited to puppets: the old-AI knights tag only their finisher spear themselves.
+                bool puppetFinisher = sourceNPC.ModNPC is NPCs.Puppets.PuppetNPC
+                    && sourceNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ActiveAttackBypassesShield;
+                if (puppetFinisher && !projectile.friendly)
+                {
+                    DefenseTraits |= AttackDefenseTraits.BypassesActiveShield;
+                }
             }
 
             // Attribute projectile and child-projectile damage to the item activation that produced it.

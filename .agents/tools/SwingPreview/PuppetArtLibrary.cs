@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -75,6 +75,22 @@ namespace SwingPreview
                     // Exact installed holdout exported with ExportVanillaTexture.ps1, not proxy art.
                     WeaponSprite = P("tsorcDocs", "SwingReports", "CrystalKnight", "NorthPole.png"),
                     WeaponRotationOffset = (float)Math.PI / 2f,
+                };
+            }
+
+            if (puppet.Equals("RedKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "RedKnight",
+                    BodySheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightHelmet_Head.png"),
+                    // BlackKnightSpear: 14x62, tip straight up (rows 0 and 61 at x 6-7). SpearDrawRotationOffset = 45 degrees.
+                    WeaponSprite = P("Content", "Projectiles", "Enemy", "BlackKnightSpear.png"),
+                    WeaponRotationOffset = (float)Math.PI / 4f,
+                    SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 62f),
+                    SpearBaseNorm = new System.Drawing.PointF(0.5f, 61.5f / 62f),
                 };
             }
 

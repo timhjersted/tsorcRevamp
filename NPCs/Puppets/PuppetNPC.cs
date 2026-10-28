@@ -2457,6 +2457,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// stand still). For authored holds: an owner idling while its summon arrives, a summon fading in/out.</summary>
         protected virtual bool HoldAttackSelection => false;
 
+        /// <summary>The 75-tick stand-still after an unblockable finisher (GuardPressureRecoveryTimer, synced): no new
+        /// attack and no pursuit, so the player who ate or dodged it gets a real punish. Subclasses with their own
+        /// neutral selection should also skip it while this is true.</summary>
+        protected bool InFinisherPunishWindow => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InGuardPressureRecovery;
+
         /// <summary>Optional bespoke combo pool that REPLACES the shared archetype table (for boss
         /// movesets).  null = use the archetype table.  Length defines the cooldown array.</summary>
         protected virtual MeleeCombo[] MeleeComboPoolOverride => null;
@@ -3288,6 +3293,8 @@ namespace tsorcRevamp.NPCs.Puppets
             gnpc.TeleportDustColor     = TeleportDustTint;
             gnpc.TeleportDustScale     = TeleportDustScale;
             gnpc.TeleportDustCount     = TeleportDustCount;
+            // 0 or less opts out; int.MaxValue can never be banked (stacks cap at GuardPressureMaxBlocks).
+            gnpc.GuardPressureFinisherBlocks = UnblockableFinisherBlocks > 0 ? UnblockableFinisherBlocks : int.MaxValue;
 
             // Quick-step tuning (used by both on-hit and preemptive quick-steps via the shared executor).
             gnpc.QuickStepRecoveryTicks = QuickStepRecoveryTicks;
@@ -3417,7 +3424,12 @@ namespace tsorcRevamp.NPCs.Puppets
             // velocity.X every tick to keep the impaled target held in place) - letting the navigator
             // keep planning alongside them found the held target "in the way" and fired spurious jumps.
             bool pierceHeldPhase = Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick;
-            if (!pierceHeldPhase)
+            if (InFinisherPunishWindow)
+            {
+                // Plant for the punish window: no navigation, just brake.
+                SlowDown();
+            }
+            else if (!pierceHeldPhase)
             {
                 RunMovementAI(speedMult);
             }
@@ -4441,8 +4453,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     }
 
                     // The movement controller has already advanced the puppet this tick. A subclass's own
-                    // authored hold (see HoldAttackSelection) skips neutral selection entirely.
-                    if (HoldAttackSelection)
+                    // authored hold (see HoldAttackSelection) and the finisher's punish window skip neutral selection.
+                    if (HoldAttackSelection || InFinisherPunishWindow)
                     {
                         break;
                     }
@@ -6273,7 +6285,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
 
-                    if (HoldAttackSelection)
+                    if (HoldAttackSelection || InFinisherPunishWindow)
                     {
                         EnterPhase(AttackPhase.Idle, 0);
                         break;
@@ -7381,7 +7393,19 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         private int GetComboTelegraphTicks(MeleeComboStep step)
-            => Math.Max(MinComboTelegraphTicks, (int)(step.TelegraphTicks * ComboTelegraphMultiplier));
+        {
+            int telegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(step.TelegraphTicks * ComboTelegraphMultiplier));
+
+            // A guard-pressure finisher holds its tell longer (EnterPhase added the same ticks to PhaseTimer), so every
+            // reader of the total - windup pose progress, flash timing - stays in step with the timer.
+            bool finisher = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackBypassesShield;
+            if (finisher && _activeMeleeCombo.RuntimeV2Clip == null)
+            {
+                telegraphTicks += UnblockableFinisherTellExtraTicks;
+            }
+
+            return telegraphTicks;
+        }
 
         /// <summary>
         /// Spawn the damage hitbox for the current combo step.  Default applies the step's
@@ -8378,6 +8402,42 @@ namespace tsorcRevamp.NPCs.Puppets
                 || phase == AttackPhase.ClosingDistance)
             {
                 _attackFacingDir = 0;
+            }
+
+            // ── Unblockable finisher (guard pressure) ──
+            // Server: the first attack started from neutral once UnblockableFinisherBlocks blocks are banked against the
+            // target becomes the finisher, whatever the bag picked. The trait tags every hostile shot and hitbox this
+            // puppet spawns until the sequence ends (tsorcGlobalProjectile.OnSpawn). A melee combo's tell is held 30t
+            // longer; other phases keep their own tells, since their timers feed fixed-length progress maths.
+            // Back in neutral the sequence completes: stacks consumed, 75t standing punish window.
+            if (!IsMultiplayerClient)
+            {
+                tsorcRevampGlobalNPC guardNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                bool startsAttack = wasNeutral && (isTelegraph || phase == AttackPhase.Custom);
+                bool entersNeutral = phase == AttackPhase.Idle || phase == AttackPhase.CasualStroll
+                    || phase == AttackPhase.ClosingDistance;
+
+                if (startsAttack && guardNPC.IsMaximumGuardPressureReady(NPC))
+                {
+                    guardNPC.TryBeginGuardPressureSequence(NPC);
+                    int stacks = guardNPC.GetActiveGuardPressureSequenceStacks(NPC);
+                    if (stacks >= guardNPC.GuardPressureFinisherBlocks)
+                    {
+                        guardNPC.SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.BypassesActiveShield);
+
+                        bool legacyComboTell = phase == AttackPhase.MeleeComboTelegraph
+                            && _activeMeleeCombo.RuntimeV2Clip == null;
+                        if (legacyComboTell)
+                        {
+                            duration += UnblockableFinisherTellExtraTicks;
+                        }
+                    }
+                }
+                else if (entersNeutral && !wasNeutral && guardNPC.GuardPressureSequenceStacks > 0)
+                {
+                    guardNPC.CompleteGuardPressureSequence(NPC);
+                    guardNPC.SetActiveAttackDefenseTraits(NPC, AttackDefenseTraits.None);
+                }
             }
 
             Phase      = phase;
@@ -10044,7 +10104,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 return PuppetVisualCenter;
             }
 
-            Vector2 composite = _puppet.GetBackHandPosition(CompositeArmStretch, BackCompositeArmRotation);
+            // A free back-arm gesture is the pose vanilla drew this tick, so report its palm, not the weapon arm's.
+            Player.CompositeArmStretchAmount stretch = CompositeArmStretch;
+            float rotation = BackCompositeArmRotation;
+            bool backArmHoldsWeapon = TwoHandedCompositeArmActive || BackHandWeaponVisible;
+            if (!backArmHoldsWeapon && FreeBackArmFacingAngle is float freeBackFacing)
+            {
+                stretch = Player.CompositeArmStretchAmount.Full;
+                rotation = FacingAngleToCompositeArm(freeBackFacing);
+            }
+
+            Vector2 composite = _puppet.GetBackHandPosition(stretch, rotation);
             if (composite != Vector2.Zero)
             {
                 return composite;
@@ -10560,9 +10630,18 @@ namespace tsorcRevamp.NPCs.Puppets
             // of the selected body frame. The front hand remains authoritative for weapon draw and
             // collision. An opt-in rear arm is visual-only and solves toward a second hilt grip.
             if (CompositeArmActive)
+            {
                 _puppet.SetCompositeArmFront(true, CompositeArmStretch, CompositeArmRotation);
+            }
+            else if (FreeFrontArmFacingAngle is float freeFrontFacing)
+            {
+                _puppet.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full,
+                    FacingAngleToCompositeArm(freeFrontFacing));
+            }
             else
+            {
                 _puppet.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
+            }
 
             if (TwoHandedCompositeArmActive)
             {
@@ -10573,6 +10652,11 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Dual wield: the back arm holds its own weapon, posed from its own blended rotation.
                 _puppet.SetCompositeArmBack(true, CompositeArmStretch, BackCompositeArmRotation);
+            }
+            else if (FreeBackArmFacingAngle is float freeBackFacing)
+            {
+                _puppet.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full,
+                    FacingAngleToCompositeArm(freeBackFacing));
             }
             else
             {
@@ -11392,6 +11476,13 @@ namespace tsorcRevamp.NPCs.Puppets
         // silhouette pattern to the completed draw cache, then restores the ordinary body on top.
         // Default-off so subclasses can opt in for a specific telegraph phase.
         protected virtual bool HasUnblockableBodyAura => false;
+
+        /// <summary>Blocks banked against the target (perfect parries excluded) that turn this puppet's next attack into
+        /// an unblockable finisher — any weapon, see EnterPhase. The old-AI knights use 4; puppets default to 3 so a
+        /// shield turtle meets it sooner. 0 or less never triggers it.</summary>
+        protected virtual int UnblockableFinisherBlocks => 3;
+        /// <summary>Extra tell ticks for a finisher melee combo (legacy steps only; V2 clips keep their windup).</summary>
+        protected virtual int UnblockableFinisherTellExtraTicks => 30;
         protected virtual float UnblockableBodyAuraScale => 1.1f;
         protected virtual float UnblockableBodyAuraOpacity => 0.5f;
         private readonly List<DrawData> _unblockableBodyDrawCache = new List<DrawData>();
@@ -11502,7 +11593,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
             TransformLargeArmorTemplate(ref drawInfo);
 
-            if (HasUnblockableBodyAura)
+            // A guard-pressure finisher (EnterPhase marks it) wears the aura for its whole sequence, on top of any
+            // phase a subclass opts in through HasUnblockableBodyAura. The draw cache holds the held weapon too.
+            bool finisherActive = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ActiveAttackBypassesShield;
+            if (HasUnblockableBodyAura || finisherActive)
             {
                 TransformUnblockableBodyAura(ref drawInfo);
                 return;
@@ -12826,7 +12920,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// this puppet's melee swings drive the puppet's vanilla composite FRONT arm so the arm
         /// rotates continuously with the blade — a genuine player-style swing — instead of the
         /// 4-frame Use1–Use4 approximation.  Opt-in per subclass so it can be tested on one enemy
-        /// before any wider rollout.  See the notes in <c>EnemySpriteRenderer</c> for why the
+        /// before any wider rollout.  The deleted pre-puppet <c>EnemySpriteRenderer</c> explains why the
         /// project previously avoided composite arms (rotation-convention mismatch + unreliable
         /// <c>GetFrontHandPosition</c> on a puppet) — both are what this experiment validates.</summary>
         protected virtual bool UseCompositeArmSwing => false;
@@ -12838,6 +12932,21 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Allows a bespoke additional phase to replace the normal weapon-space rotation
         /// before it drives the composite arm. Default is a no-op.</summary>
         protected virtual void ModifyAdditionalPhaseWeaponRotation(ref float weaponRotation) { }
+
+        /// <summary>Points an EMPTY front arm (no weapon pose active) at a facing-space angle: 0 = ahead,
+        /// negative = up, mirrored by facing. For gestures such as a raised summoning arm. Null = body frame.</summary>
+        protected virtual float? FreeFrontArmFacingAngle => null;
+
+        /// <summary>Same for the back arm, e.g. an open-palm cast. Ignored while the back arm holds a weapon
+        /// (dual wield, two-handed grip, bow); <see cref="PuppetBackHandPosition"/> follows the posed palm.</summary>
+        protected virtual float? FreeBackArmFacingAngle => null;
+
+        // Facing-space angle -> vanilla composite-arm rotation. Vanilla's arm hangs at 0 and points ahead at
+        // -PiOver2 * direction (Player.cs useStyle callers), so offset by a quarter turn and mirror by facing.
+        private float FacingAngleToCompositeArm(float facingAngle)
+        {
+            return (facingAngle - MathHelper.PiOver2) * NPC.direction;
+        }
 
         /// <summary>Opt-in great-weapon pose. The front arm continues to own the weapon anchor and
         /// collision; the back arm follows the same authored swing and reaches for a second hilt

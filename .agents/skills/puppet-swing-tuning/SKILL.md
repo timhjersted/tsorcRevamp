@@ -49,6 +49,15 @@ the jump pose. Then chart it:
 powershell -File .agents/tools/swing-analyze.ps1 -LogFile "$env:TEMP\swing-preview.jsonl" -Top 4
 ```
 
+### Controller poses (Red Knight family)
+
+`--knight-poses [all | <KnightSpecialAttack> | DominionFinale] [--great] --profile --body` renders the Red Knight /
+Great Red Knight held-prop and palm poses (throws, bomb, thrusts, casts, two-handed heave and plant) through the
+game's own `RedKnightPuppet.ResolveControllerPose`, with the cue ticks read from a real controller by reflection.
+It ports `PuppetNPC.ResolveTwoHandedBackArmPose` (re-sync if that solve changes) and prints the rear-hand grip error.
+It does not model movement, VFX, dyes, or the vanilla back arm when the back arm is not posed: there it trails the
+front arm at 0.55x, as combo renders do.
+
 ## 2. The puppet's real flags are read from the mod, not passed by hand
 
 `--puppet <ClassName>` builds a `PuppetProfile` (`PuppetProfile.cs`) by reflecting getters off an
@@ -205,8 +214,8 @@ up — generates correctly sized sheets, grid guide images and the `ModItem` cla
 set. `-UseReferenceSheets -ReferencePrefix <existing set>` copies a working animated set so the output
 has valid walk and arm-use frames on day one; repaint over it using the guides. It will not solve
 side-facing frames from a front-facing concept — it produces validated targets for the art pass. It
-also emits an `EnemySpriteRenderer` snippet; ignore it, that is the pre-`PuppetNPC` path and only
-`RedKnightTest` still uses it.
+may also emit an `EnemySpriteRenderer` snippet; ignore it, that pre-`PuppetNPC` renderer has been
+deleted.
 
 ### Torso and shoulder-cap cells
 
