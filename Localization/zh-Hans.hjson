@@ -1245,9 +1245,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
-			OolacileDemonBanner: {
-				DisplayName: "{$NPCs.OolacileDemon.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
+			DarkrootImpBanner: {
+				DisplayName: "{$NPCs.DarkrootImp.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
 			OolacileKnightBanner: {
@@ -11903,9 +11903,9 @@ Mods: {
 			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			// EaterToxicOoze.DisplayName: Eater Toxic Ooze
 			// MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
-			// OolacileDemonAcid.DisplayName: Oolacile Demon Acid
-			// OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
-			// OolacileDemonBreath.DisplayName: Oolacile Demon Breath
+			// DarkrootImpAcid.DisplayName: Darkroot Imp Acid
+			// DarkrootImpAcidPool.DisplayName: Darkroot Imp Acid Pool
+			// DarkrootImpBreath.DisplayName: Darkroot Imp Breath
 			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 			// AshenLordDragon.DisplayName: Ashen Lord Dragon
 			// ASOL13Dragon.DisplayName: A S O L13 Dragon
@@ -12479,7 +12479,7 @@ Mods: {
 			}
 
 			ManOfWar.DisplayName: 战争缔造者
-			OolacileDemon.DisplayName: 乌拉席露大恶魔
+			DarkrootImp.DisplayName: 黑森林小恶魔
 
 			OolacileKnight: {
 				DisplayName: 乌拉席露骑士

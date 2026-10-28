@@ -739,7 +739,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
             Add<Enemies.SuperHardMode.CorruptedHornet>(0.5f, 15f); // small SHM flyer: a few hits break the volley tell or the dive rear
             Add<Enemies.SuperHardMode.Mantassin>(0.3f, 20f); // finger sorcerer: 3-4 hits break any cast; every tell is interruptible
-            Add<Enemies.SuperHardMode.OolacileDemon>(0.25f, 40f); // flying curse-caster: breaking a windup (ember / orb charge / swoop rear) cancels it
+            Add<Enemies.SuperHardMode.DarkrootImp>(0.25f, 40f); // flying curse-caster: breaking a windup (ember / orb charge / swoop rear) cancels it
             // Human / skilled
             Add<Enemies.FallenNecromancer>(0.4f, 26f);
             Add<Enemies.Necromancer>(0.4f, 26f);

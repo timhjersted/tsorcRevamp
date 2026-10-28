@@ -9,12 +9,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Materials.Titanite;
-using tsorcRevamp.Content.Projectiles.Enemy.OolacileDemonSpells;
+using tsorcRevamp.Content.Projectiles.Enemy.DarkrootImpSpells;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    // Ephemeral Oolacile Demon — SHM flying curse-caster. Hovers 220-380px from its target (FloaterAI: flying A*, keeps line
+    // Darkroot Imp — SHM flying curse-caster. Hovers 220-380px from its target (FloaterAI: flying A*, keeps line
     // of sight so shots never spawn in walls) and deals one of four attacks from an AttackBag:
     //   Cursed Breath  75t mouth ember (Massacre-style smoulder → swell) / 54t breath sweeping 40° across you / 45t recovery
     //   Acid Fan       30t charge converging on the orb / 5-shot 40° fan from the orb (empowered: a 2nd fan 45t later) / 45t
@@ -25,7 +25,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     // The sprite only flaps, so every tell is dust + sound + doubled flap tempo. Art faces LEFT (spriteDirection -1 = unflipped).
     // MP: the server picks attacks and locks every aim (sweep angle/side, dive velocity/length); those + state/timers are synced
     // in SendExtraAI and both sides then run the same timeline. Projectiles spawn on the server only; dust/sound on clients only.
-    class OolacileDemon : ModNPC, IStaggerable, IDebugAttackLabel
+    // Was "Ephemeral Oolacile Demon" (OolacileDemon) until 2026-10; LegacyName keeps old saves' kill counts mapped to it.
+    [LegacyName("OolacileDemon")]
+    class DarkrootImp : ModNPC, IStaggerable, IDebugAttackLabel
     {
         enum DemonAttack : byte
         {
@@ -186,7 +188,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.noGravity = true;
             NPC.value = 12000; // life / 2.5 : was 1875 with 4500 health
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.OolacileDemonBanner>();
+            BannerItem = ModContent.ItemType<Banners.DarkrootImpBanner>();
         }
 
         // Legacy spawn rules, used only while the "New Enemy Spawns" config is off (Systems/EnemySpawns.cs replaces them).
@@ -194,7 +196,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             bool inHell = spawnInfo.SpawnTileY >= Main.maxTilesY - 200;
 
-            if (NPC.AnyNPCs(ModContent.NPCType<OolacileDemon>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<DarkrootImp>()))
             {
                 return 0;
             }
@@ -483,7 +485,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (shotTick && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 velocity = aim * BreathSpeed + Main.rand.NextVector2Circular(0.6f, 0.6f);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity, ModContent.ProjectileType<OolacileDemonBreath>(), CursedBreathDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity, ModContent.ProjectileType<DarkrootImpBreath>(), CursedBreathDamage, 0f, Main.myPlayer);
                 }
 
                 return;
@@ -564,7 +566,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 float shotAngle = centerAngle - spread * 0.5f + step * (i + stepOffset);
                 Vector2 velocity = shotAngle.ToRotationVector2() * FanSpeed;
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), orb, velocity, ModContent.ProjectileType<OolacileDemonAcid>(), AcidSpitDamage, 0f, Main.myPlayer, OolacileDemonAcid.ModeSpit);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), orb, velocity, ModContent.ProjectileType<DarkrootImpAcid>(), AcidSpitDamage, 0f, Main.myPlayer, DarkrootImpAcid.ModeSpit);
             }
         }
 
@@ -643,14 +645,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Vector2 orb = Orb;
             Vector2 landing = new Vector2(landingX, floorY - 8f);
             float flightTicks = MortarFlightTicks;
-            float gravity = OolacileDemonAcid.GlobGravity;
+            float gravity = DarkrootImpAcid.GlobGravity;
             float gravityDrop = gravity * flightTicks * (flightTicks + 1f) * 0.5f;
 
             Vector2 velocity;
             velocity.X = (landing.X - orb.X) / flightTicks;
             velocity.Y = (landing.Y - orb.Y - gravityDrop) / flightTicks;
 
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), orb, velocity, ModContent.ProjectileType<OolacileDemonAcid>(), BileGlobDamage, 0f, Main.myPlayer, OolacileDemonAcid.ModeGlob, AcidPoolDamage);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), orb, velocity, ModContent.ProjectileType<DarkrootImpAcid>(), BileGlobDamage, 0f, Main.myPlayer, DarkrootImpAcid.ModeGlob, AcidPoolDamage);
         }
 
         void TickSwoop(Player target)

@@ -4,13 +4,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileDemonSpells
+namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootImpSpells
 {
-    // One puff of the Oolacile Demon's Cursed Breath sweep. Dust-only (no sprite): the stream reads as green curse fire.
+    // One puff of the Darkroot Imp's Cursed Breath sweep. Dust-only (no sprite): the stream reads as green curse fire.
     // Grows from 0.6x to 1.4x over its life at constant speed (reach = speed x LifetimeTicks; the demon gates the breath on it),
     // and thins out over the last FadeTicks instead of popping.
     // Stops on tiles (the breath does not go through walls). Lifetime is fixed here, not patched after spawn (timeLeft isn't synced).
-    public class OolacileDemonBreath : ModProjectile
+    public class DarkrootImpBreath : ModProjectile
     {
         public const int LifetimeTicks = 44;
         private const int FadeTicks = 14;

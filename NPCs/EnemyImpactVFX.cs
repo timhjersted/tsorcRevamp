@@ -111,7 +111,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<MutantToad>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Necromancer>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ObsidianJellyfish>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<OolacileDemon>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<DarkrootImp>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<OolacileKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<OolacileAcolyte>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Parasprite>()] = EnemyImpactMaterial.Blood,

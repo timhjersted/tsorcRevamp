@@ -155,7 +155,7 @@ intended reach, then prove it at three distances: close, typical, and the stated
   refill when it's empty; never allow an immediate repeat. New enemies use the shared
   `AttackBag<T>` (`Utilities/AttackBag.cs`): duplicates = weight, the refill callback picks the
   phase's cards, the gate predicate skips without dropping, `Clear()` on a phase change. First
-  user: `OolacileDemon`. Older bosses still hand-roll theirs; don't migrate them unasked.
+  user: `DarkrootImp`. Older bosses still hand-roll theirs; don't migrate them unasked.
   Weighted rolls with per-attack cooldowns still starve low-weight moves.
 - **Gates narrow the bag; they don't replace it.** Range, health-phase and cooldown gates filter
   which attacks are eligible, then the bag picks. An attack whose gate is almost never true is

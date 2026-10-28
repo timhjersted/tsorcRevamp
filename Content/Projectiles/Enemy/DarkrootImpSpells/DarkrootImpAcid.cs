@@ -5,14 +5,14 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileDemonSpells
+namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootImpSpells
 {
-    // The Oolacile Demon's acid, thrown from the green orb in its hand. Two modes in ai[0]:
+    // The Darkroot Imp's acid, thrown from the green orb in its hand. Two modes in ai[0]:
     //   ModeSpit (0) — Acid Fan shot: straight line, no gravity, dies on tiles / player / timeout.
-    //   ModeGlob (1) — Bile Mortar glob: falls at GlobGravity px/tick², and on a floor it leaves an OolacileDemonAcidPool.
+    //   ModeGlob (1) — Bile Mortar glob: falls at GlobGravity px/tick², and on a floor it leaves an DarkrootImpAcidPool.
     // ai[1] = the pool's damage (globs only). Every death plays the same green splash (OnKill); a timeout fades out first.
     // Sprite: the bio-spit ball this demon always fired (deliberate reuse, not a placeholder). Round, so it just spins.
-    public class OolacileDemonAcid : ModProjectile
+    public class DarkrootImpAcid : ModProjectile
     {
         public const float ModeSpit = 0f;
         public const float ModeGlob = 1f;
@@ -99,9 +99,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileDemonSpells
                 if (solidFloor)
                 {
                     float floorTop = tileY * 16f;
-                    Vector2 poolCenter = new Vector2(Projectile.Center.X, floorTop - OolacileDemonAcidPool.PoolHeight * 0.5f);
+                    Vector2 poolCenter = new Vector2(Projectile.Center.X, floorTop - DarkrootImpAcidPool.PoolHeight * 0.5f);
                     int poolDamage = (int)Projectile.ai[1];
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), poolCenter, Vector2.Zero, ModContent.ProjectileType<OolacileDemonAcidPool>(), poolDamage, 0f, Main.myPlayer);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), poolCenter, Vector2.Zero, ModContent.ProjectileType<DarkrootImpAcidPool>(), poolDamage, 0f, Main.myPlayer);
                     return;
                 }
             }

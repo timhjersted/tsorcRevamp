@@ -3,12 +3,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileDemonSpells
+namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootImpSpells
 {
     // Lingering acid left by a Bile Mortar glob: an 88x14 px strip sitting on the floor for LifetimeTicks (3s).
     // Harmless for its first ArmTicks while it spreads, then burns anyone standing in it (40t player i-frames ≈ 1 hit per 0.67s).
     // Dust-only. Thins out over the last FadeTicks. Spawned by the server, centred on the floor surface by the glob.
-    public class OolacileDemonAcidPool : ModProjectile
+    public class DarkrootImpAcidPool : ModProjectile
     {
         public const int PoolWidth = 88;
         public const int PoolHeight = 14;

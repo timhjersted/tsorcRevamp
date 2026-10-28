@@ -226,7 +226,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 if (Main.rand.NextBool(1000))
                 {
-                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileDemon>(), 0);
+                    int Spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootImp>(), 0);
 
                     if (Main.netMode == NetmodeID.Server)
                     {

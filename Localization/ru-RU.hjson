@@ -1209,9 +1209,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
-			OolacileDemonBanner: {
-				DisplayName: Знамя демона Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
+			DarkrootImpBanner: {
+				DisplayName: Знамя беса Тёмных корней
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
 			OolacileKnightBanner: {
@@ -11866,9 +11866,9 @@ Mods: {
 			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			// EaterToxicOoze.DisplayName: Eater Toxic Ooze
 			// MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
-			// OolacileDemonAcid.DisplayName: Oolacile Demon Acid
-			// OolacileDemonAcidPool.DisplayName: Oolacile Demon Acid Pool
-			// OolacileDemonBreath.DisplayName: Oolacile Demon Breath
+			// DarkrootImpAcid.DisplayName: Darkroot Imp Acid
+			// DarkrootImpAcidPool.DisplayName: Darkroot Imp Acid Pool
+			// DarkrootImpBreath.DisplayName: Darkroot Imp Breath
 			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 			// AshenLordDragon.DisplayName: Ashen Lord Dragon
 			// ASOL13Dragon.DisplayName: A S O L13 Dragon
@@ -12442,7 +12442,7 @@ Mods: {
 			}
 
 			ManOfWar.DisplayName: Человек войны
-			OolacileDemon.DisplayName: Эфемерный демон Олачиля
+			DarkrootImp.DisplayName: Бес Тёмных корней
 
 			OolacileKnight: {
 				DisplayName: Рыцарь Олачиля

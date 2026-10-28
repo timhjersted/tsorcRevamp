@@ -20,7 +20,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     //                 40t slow drift (punish window)
     // The sprite only flaps, so every tell is dust + sound + doubled flap tempo + a body shudder. Art faces LEFT.
     // MP: the server picks attacks and locks the dive velocity; state/timers/dive are synced in SendExtraAI and both sides run
-    // the same timeline. Projectiles spawn on the server only; dust/sound on clients only. Reference: OolacileDemon.
+    // the same timeline. Projectiles spawn on the server only; dust/sound on clients only. Reference: DarkrootImp.
     class CorruptedHornet : ModNPC, IStaggerable, IDebugAttackLabel
     {
         enum HornetAttack : byte
