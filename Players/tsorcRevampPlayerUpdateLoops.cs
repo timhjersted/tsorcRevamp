@@ -374,9 +374,15 @@ namespace tsorcRevamp
                 weaponStaminaMult = 0.5f;
             }
 
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                weaponStaminaMult = WhipWeaponMult;
+            }
+
             return classStaminaMult * TiredStaminaMult * weaponStaminaMult;
         }
 
+        public const float WhipWeaponMult = 1.25f;
         // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing
         // WeaponStaminaMult read picks it up automatically; the dodge roll's flat stamina cost (which doesn't
         // go through WeaponStaminaMult) multiplies by this directly instead - see DodgeRoll().

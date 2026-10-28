@@ -559,7 +559,6 @@ namespace tsorcRevamp
         }
 
         //const float BoomerangDrainPerFrame = 0.6f;
-        const float HeldProjectileDrainPerFrame = 1f;
         /// <summary>
         /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Both classes
         /// currently share 60 (1 second); BotC has its own constant so the two can be tuned apart.
@@ -767,9 +766,10 @@ namespace tsorcRevamp
             }
         }
 
-        const float SpecialHeldProjectileDrainPerFrame = 0.6f;
+        const float HeldProjectileDrainPerFrame = 0.5f;
+        const float SpecialHeldProjectileDrainPerFrame = 0.4f;
         const float FlailDrainPerFrame = 0.2f;
-        const float YoyoDrainPerFrame = 0.3f;
+        const float YoyoDrainPerFrame = 0.25f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
