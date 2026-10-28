@@ -27,6 +27,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     [AutoloadBossHead]
     class GreatRedKnight : RedKnightPuppet, IHumanoidMeleeHitEffects
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(GreatRedKnight)) + "_Head_Boss";
+
         NPCDespawnHandler despawnHandler;
 
         // --- Crimson Dominion death finale ----------------------------------------------------

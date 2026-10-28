@@ -356,9 +356,13 @@ namespace tsorcRevamp.NPCs.Bosses
                         int type = ModContent.ProjectileType<FireTrails>();
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, PitchVariance = 1f }, NPC.Center); //flame thrower
                         float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        // Server spawns; every client still runs the sound, dust and ai[1] reset below so they stay in step.
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                            //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                            Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
+                        }
                         NPC.ai[1] = -90;
                         // Added some dust so the projectiles aren't just appearing out of thin air
                         for (int i = 0; i < 20; i++)
@@ -488,9 +492,13 @@ namespace tsorcRevamp.NPCs.Bosses
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), NPC.Center.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    // Server spawns; every client still runs the sound, dust and ai[1] reset so they stay in step.
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150, (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type, (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                    }
                     NPC.ai[1] = -90;
                     // Added some dust so the projectiles aren't just appearing out of thin air
                     for (int i = 0; i < 20; i++)
@@ -565,14 +573,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if (NPC.frame.Y >= num * 7)
             {
                 NPC.frame.Y = 0;
-            }
-            if (NPC.ai[3] == 0)
-            {
-                NPC.alpha = 0;
-            }
-            else
-            {
-                NPC.alpha = 200;
             }
         }
         public override bool CheckActive()

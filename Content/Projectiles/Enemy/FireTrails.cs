@@ -62,6 +62,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             effect.Parameters["slashCenter"].SetValue(Color.White.ToVector4());
             effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+
+            // Slash.fx pixelates its UVs with PixelGrid (block count across the strip, then its reciprocal).
+            // Unset it reads as zero, collapsing every UV to 0 and drawing the trail fully invisible while it still hits.
+            // Same 2px-block maths as Slash.cs; width is doubled because the strip spans +/- WidthFunction.
+            const float pixelBlockSize = 2f;
+            Vector2 pixelGridSize = new Vector2(
+                Math.Max(trailCurrentLength / pixelBlockSize, 1f),
+                Math.Max((WidthFunction(0f) * 2f) / pixelBlockSize, 1f));
+            effect.Parameters["PixelGrid"].SetValue(new Vector4(
+                pixelGridSize.X,
+                pixelGridSize.Y,
+                1f / pixelGridSize.X,
+                1f / pixelGridSize.Y));
+
             collisionEndPadding = trailPositions.Count / 3;
             collisionPadding = trailPositions.Count / 8;
         }
