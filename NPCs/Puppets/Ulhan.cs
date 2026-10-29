@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
@@ -16,8 +17,13 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Puppets
 {
+    [AutoloadBossHead]
     public class Ulhan : PuppetNPC
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(Ulhan)) + "_Head_Boss";
+
         private enum BowMovement : byte { Stand, Walk, Run, Jump, ArcLeap }
         private readonly List<BowMovement> _movementBag = new List<BowMovement>();
         private BowMovement _movement;
@@ -39,6 +45,27 @@ namespace tsorcRevamp.NPCs.Puppets
         private const float JumpGravity = 0.3f;
         private const float SecondJumpSpeed = 6.2f;
         private const int ArcEarlyShotTick = 14;
+        // Explosive crossbow bolt: selected and pursued only inside this radius (17.5 tiles).
+        // The approach is dropped the moment the target leaves it, so it never becomes a long chase.
+        private const float ExplosiveArrowRange = 280f;
+        private const int ExplosiveApproachTicks = 180;
+        // The crossbow is held level, so the bolt may only tilt this far before it visibly leaves the stock.
+        private const float ExplosiveMaxAimAngle = 0.26f;
+        // Rapier jab step-in, px across the strike. Curve: 2 ease-in / 10 ease-out authored ticks, decay k=2;
+        // a 64px (4-tile) jab over 10 ticks peaks ~15 px/t. Ends JabCloseTo px from the target's centre.
+        private const int JabEaseInTicks = 2;
+        private const int JabEaseOutTicks = 10;
+        private const float JabEaseOutDecay = 2f;
+        private const float JabStepInMin = 16f;
+        private const float JabStepInMax = 64f;
+        private const float JabCloseTo = 40f;
+        // Rapier Lunge gap-closer: 7-15 tiles, same level. 40t vibrating guard tell, then 14 px/t (5t ramp)
+        // solved to run 40px past the target (~15-24t). Contact only during the dash; roll through it.
+        private const float LungeMaxRange = 240f;
+        private const float LungeMinRange = 112f;
+        private const float LungeMaxHeightGap = 48f;
+        private const int LungeContactDamage = 65;
+        private const int LungeAfterimageTailTicks = 8;
         private int JumpApexTicks => Math.Max(1, (int)Math.Round(_jumpUpSpeed / JumpGravity));
 
         protected override string InvaderTitle => "Ulhan";
@@ -49,8 +76,23 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int MeleeDamage => EnemyDamage.Projectile(55);
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Rapier;
         protected override float MeleeRange => 76f;
-        protected override float MeleeEngageRange => 70f;
-        protected override float ComboMaxStartRange => 100f;
+        // Jab step-in (up to JabStepInMax) lets combos open from farther out than the 53px hitbox alone.
+        protected override float MeleeEngageRange => 100f;
+        protected override float ComboMaxStartRange => 110f;
+        protected override bool CanPierce => !_closingForExplosive && !_minesPending && NPC.HasValidTarget
+            && Math.Abs(Main.player[NPC.target].Center.Y - NPC.Center.Y) <= LungeMaxHeightGap;
+        protected override int PierceStabChance => 0;
+        protected override float PierceRange => LungeMaxRange;
+        protected override float MinPierceRange => LungeMinRange;
+        protected override int PierceChance => 5;
+        protected override int PierceTelegraphTicks => 40;
+        protected override float PierceDashSpeed => 14f;
+        protected override int PierceDashAccelTicks => 5;
+        protected override float PierceOvershootPastTarget => 40f;
+        protected override int PierceDashMaxTicks => 26;
+        protected override int PierceRecoveryTicks => 50;
+        // 10 s, counted from the end of the lunge's recovery.
+        protected override int PierceCooldownAfterUse => 600;
         protected override float RangedStartComboMaxRange => 100f;
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 0;
@@ -63,7 +105,8 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool AuthoredClockCoversJoustDash => true;
         protected override int MeleeRecoveryTicks => 28;
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyTaintedBow>();
-        protected override int SecondaryRangedWeaponItemType => RangedWeaponItemType;
+        // Same Heavy Crossbow prop the Studded Leather Warrior fires its bolts from.
+        protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<HeavyCrossbow>();
         protected override int RangedDamage => EnemyDamage.Projectile(50);
         protected override int SecondaryRangedDamage => EnemyDamage.Projectile(75);
         // The former EnemyCaltrop throw is disabled for Ulhan; its shared projectile stays intact.
@@ -89,16 +132,13 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool PuppetCanDoubleJump => true;
         protected override float PuppetDoubleJumpPower => SecondJumpSpeed;
         protected override int CasualStrollChance => 0;
-        protected override bool ShowWeaponDuringNeutral => true;
-        protected override bool DrawHeldWeaponBehindBody =>
-            Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
         protected override bool ShowRangedWeaponDuringRecovery => true;
         protected override float TopSpeed => 2.8f;
         protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
-        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Bow;
+        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
         protected override float RangedRange => 900f;
         protected override float MinRangedRange => _closingForExplosive ? float.MaxValue : 0f;
-        protected override float SecondaryRangedRange => 200f;
+        protected override float SecondaryRangedRange => ExplosiveArrowRange;
         protected override float SecondaryRangedMinRange => 0f;
         protected override bool SecondaryRangedAvailable => _closingForExplosive;
         protected override int SecondaryRangedChance => 100;
@@ -129,13 +169,12 @@ namespace tsorcRevamp.NPCs.Puppets
         // TaintedBow: right-facing 18x46; riser texel (14,23), left-edge string rows 2..43.
         protected override Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.78f, 0.5f);
         protected override float GetHeldRangedDrawScale(int itemType) => 0.9f;
-        // The idle bow is slung over the back, mirrored by the base draw code's NPC.direction.
-        protected override Vector2 GetHeldRangedDrawOffset(int itemType) => DrawHeldWeaponBehindBody
-            && itemType == RangedWeaponItemType ? new Vector2(-6f, -2f) : Vector2.Zero;
         protected override Rectangle GetBowStringTexels(int itemType) => new Rectangle(0, 2, 2, 42);
-        protected override string NockedBowArrowTexture => IsSecondaryRangedActive
-            ? "tsorcRevamp/Content/Projectiles/Enemy/Weapons/UlhanExplosiveArrow"
-            : "Terraria/Images/Projectile_" + ProjectileID.UnholyArrow;
+        // Only the bow nocks an arrow; the explosive bolt is a crossbow shot with no string pose.
+        protected override string NockedBowArrowTexture => "Terraria/Images/Projectile_" + ProjectileID.UnholyArrow;
+        // Explosive bolt leaves the level crossbow stock, not the bow grip. Position-only (no draw puppet)
+        // so the server's spawn point and every client's telegraph agree. Same offset as Studded Leather Warrior.
+        private Vector2 CrossbowMuzzle => NPC.Center + new Vector2(NPC.direction * 14f, -NPC.height * 0.2f);
         protected override float BowAimAngle => (float)Math.Atan2(_shotAim.Y, _shotAim.X * NPC.direction);
 
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
@@ -148,8 +187,108 @@ namespace tsorcRevamp.NPCs.Puppets
                 step.PostStepPause = Math.Max(step.PostStepPause, 30);
                 combo.Steps[i] = step;
             }
+
+            // Each rapier jab lunges on the engine's shaped step-in (Weighted ease + StepInDistance): speed peaks
+            // on tick 2 with the blade's front-loaded drive, then decays. The distance itself is re-solved from
+            // the live gap as each jab starts (SolveJabStepIn); JabStepInMin is only the fallback.
+            for (int i = 0; i < combo.Steps.Length; i++)
+            {
+                MeleeComboStep step = combo.Steps[i];
+
+                if (step.Motion == ComboMotion.Thrust)
+                {
+                    step.ForwardPushMult = 0f;
+                    step.Ease = SwingEaseStyle.Weighted;
+                    step.EaseInTicks = JabEaseInTicks;
+                    step.EaseOutTicks = JabEaseOutTicks;
+                    step.EaseOutDecay = JabEaseOutDecay;
+                    step.StepInDistance = JabStepInMin;
+                    combo.Steps[i] = step;
+                }
+            }
             combo.RecoveryTicks = combo.Name == "Lunging Finisher" ? 44
                 : combo.Name == "Triple Flurry" ? 36 : 28;
+        }
+
+        protected override void ModifyOpeningMeleeComboStep(string comboName, Player target, ref MeleeComboStep openingStep)
+        {
+            SolveJabStepIn(target, ref openingStep);
+        }
+
+        protected override void ModifyNextMeleeComboStep(string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
+        {
+            SolveJabStepIn(target, ref nextStep);
+        }
+
+        // Size the jab's lunge to the horizontal gap so the strike ends with the target JabCloseTo px away
+        // (inside the 53px hitbox): a close target gets a short step, a backing-off one up to 4 tiles.
+        private void SolveJabStepIn(Player target, ref MeleeComboStep step)
+        {
+            if (step.Motion != ComboMotion.Thrust)
+            {
+                return;
+            }
+
+            float gap = Math.Abs(target.Center.X - NPC.Center.X);
+            step.StepInDistance = MathHelper.Clamp(gap - JabCloseTo, JabStepInMin, JabStepInMax);
+        }
+
+        // Rapier Lunge (engine Piercing Dash): telegraph holds the raised rapier guard, then a distance-solved dash.
+        protected override float PierceTelegraphRotation => RapierGuardRotation;
+
+        protected override void DoPierceWindup(int elapsed)
+        {
+            if (elapsed == 0)
+            {
+                SpawnTelegraphFlash(Color.White);
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
+            }
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Silver glints gathering along the leveled blade line ahead of him.
+            if (elapsed % 3 == 0)
+            {
+                Vector2 glintPosition = NPC.Center + new Vector2(NPC.direction * Main.rand.NextFloat(20f, 50f), Main.rand.NextFloat(-6f, 2f));
+                Dust glint = Dust.NewDustPerfect(glintPosition, DustID.SilverCoin, new Vector2(-NPC.direction * 0.8f, 0f), 80, default, 0.8f);
+                glint.noGravity = true;
+            }
+        }
+
+        protected override void DoPierceDashTick()
+        {
+            // Keep the cached-position body echoes alive for the whole dash plus a short fade past its end.
+            AfterimageTicks = Math.Max(AfterimageTicks, LungeAfterimageTailTicks);
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Vector2 streakVelocity = -NPC.velocity * 0.15f;
+            Dust streak = Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(8f, 16f), DustID.Smoke, streakVelocity, 120, Color.LightGray, 1.1f);
+            streak.noGravity = true;
+        }
+
+        // Lunging Finisher's closing JoustDash starts from the rapier guard the preceding jab pause retracted to,
+        // instead of the generic 45°-low couch, which opened the dash with a ~60° snap.
+        protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float startRotation, ref float endRotation)
+        {
+            if (motion == ComboMotion.JoustDash)
+            {
+                startRotation = RapierGuardRotation;
+            }
+        }
+
+        public override void SetStaticDefaults()
+        {
+            base.SetStaticDefaults();
+            // Caches NPC.oldPos for the Rapier Lunge's body afterimages.
+            NPCID.Sets.TrailCacheLength[NPC.type] = 10;
+            NPCID.Sets.TrailingMode[NPC.type] = 0;
         }
 
         public override void SetDefaults()
@@ -213,11 +352,21 @@ namespace tsorcRevamp.NPCs.Puppets
                 : _closingForExplosive ? "Explosive Arrow Approach" : null;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (_closingForExplosive && --_approachTicks <= 0)
+                if (_closingForExplosive)
                 {
-                    // Unreachable terrain must not starve the normal bow kit forever.
-                    _closingForExplosive = false;
-                    NPC.netUpdate = true;
+                    // Drop the explosive approach when it times out (unreachable terrain) or the target
+                    // steps outside ExplosiveArrowRange; the normal bow kit resumes instead of a long chase.
+                    _approachTicks--;
+                    bool targetOutOfRange = !NPC.HasValidTarget
+                        || NPC.Distance(Main.player[NPC.target].Center) > ExplosiveArrowRange;
+                    bool explosiveShotStarted = IsSecondaryRangedActive
+                        && (Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack);
+
+                    if (!explosiveShotStarted && (_approachTicks <= 0 || targetOutOfRange))
+                    {
+                        _closingForExplosive = false;
+                        NPC.netUpdate = true;
+                    }
                 }
                 if ((Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.CrossbowBurstPause)
                     && (PhaseTimer > 8 || _movement == BowMovement.ArcLeap) && NPC.HasValidTarget)
@@ -230,6 +379,16 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             AttackPhase previousPhase = Phase;
             base.AI();
+
+            // Contact hurts only during the Rapier Lunge dash. Every peer derives it from the synced phase,
+            // so the hit player's own machine resolves the contact (and its roll i-frames) itself.
+            int contactDamage = 0;
+
+            if (Phase == AttackPhase.PierceDash)
+            {
+                contactDamage = EnemyDamage.ScaleContact(LungeContactDamage);
+            }
+            NPC.damage = contactDamage;
             if (HasRangedJumpOverride && previousPhase == AttackPhase.CrossbowBurstPause)
                 TickRangedJumpOverride();
             else if (HasRangedJumpOverride && previousPhase == AttackPhase.RangedRecovery
@@ -239,9 +398,12 @@ namespace tsorcRevamp.NPCs.Puppets
             if (usedDoubleJump && !_lastUsedDoubleJump)
                 PlayDoubleJumpEffect();
             _lastUsedDoubleJump = usedDoubleJump;
-            if (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
-                || Phase == AttackPhase.RangedRecovery)
-                SetDisplayWeapon(RangedWeaponItemType, swing: false);
+            // The bow is only out while shooting; idle and strolling show no slung weapon.
+            if (Phase == AttackPhase.RangedRecovery)
+            {
+                int recoveryWeapon = IsSecondaryRangedActive ? SecondaryRangedWeaponItemType : RangedWeaponItemType;
+                SetDisplayWeapon(recoveryWeapon, swing: false);
+            }
             if (Main.netMode == NetmodeID.MultiplayerClient && previousPhase == AttackPhase.MagicTelegraph
                 && Phase == AttackPhase.MagicAttack)
                 PlayThrowSound();
@@ -303,8 +465,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             ThrowMines(_mineTarget + new Vector2(NPC.direction * 90f, 0f));
             _minesPending = false;
-            _closingForExplosive = true;
-            _approachTicks = 600;
+
+            // Arm the explosive follow-up only if the target is already close; a distant target
+            // goes straight back to the bow rotation instead of being chased down.
+            bool targetInExplosiveRange = NPC.HasValidTarget
+                && NPC.Distance(Main.player[NPC.target].Center) <= ExplosiveArrowRange;
+            _closingForExplosive = targetInExplosiveRange;
+            _approachTicks = ExplosiveApproachTicks;
             NPC.netUpdate = true;
         }
 
@@ -543,6 +710,12 @@ namespace tsorcRevamp.NPCs.Puppets
                 return new Vector2(NPC.direction, 0f);
             Player target = Main.player[NPC.target];
             Vector2 origin = PuppetBowGripPosition;
+            float maxAimAngle = MathHelper.PiOver4;
+            if (IsSecondaryRangedActive)
+            {
+                origin = CrossbowMuzzle;
+                maxAimAngle = ExplosiveMaxAimAngle;
+            }
             Vector2 aimAt = target.Center;
             for (int i = 0; i < 4; i++)
             {
@@ -552,10 +725,10 @@ namespace tsorcRevamp.NPCs.Puppets
                     - new Vector2(0f, 0.1f * fallingTicks * (fallingTicks + 1f) * 0.5f);
             }
             Vector2 direction = (aimAt - origin).SafeNormalize(new Vector2(NPC.direction, 0f));
-            // Same ±45-degree articulation limit as Owl Father's bow hold.
+            // Same ±45-degree articulation limit as Owl Father's bow hold (±15° for the level crossbow).
             int facing = direction.X < 0f ? -1 : 1;
             float angle = MathHelper.Clamp((float)Math.Atan2(direction.Y, Math.Abs(direction.X)),
-                -MathHelper.PiOver4, MathHelper.PiOver4);
+                -maxAimAngle, maxAimAngle);
             return new Vector2((float)Math.Cos(angle) * facing, (float)Math.Sin(angle));
         }
 
@@ -579,9 +752,11 @@ namespace tsorcRevamp.NPCs.Puppets
                 FireUnholyArrow(_shotAim);
             else
             {
-                Vector2 origin = PuppetBowGripPosition;
+                Vector2 origin = CrossbowMuzzle;
                 if (!Main.dedServ)
-                    SoundEngine.PlaySound(SoundID.Item5 with { Volume = 0.7f, PitchVariance = 0.15f }, origin);
+                {
+                    SoundEngine.PlaySound(SoundID.Item98 with { Volume = 0.75f, PitchVariance = 0.1f }, origin);
+                }
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, _shotAim * 10f,
                         ModContent.ProjectileType<UlhanExplosiveArrow>(), SecondaryRangedDamage, 2f, Main.myPlayer);
@@ -611,6 +786,10 @@ namespace tsorcRevamp.NPCs.Puppets
             if (Main.dedServ)
                 return;
             Vector2 origin = PuppetBowGripPosition;
+            if (secondary)
+            {
+                origin = CrossbowMuzzle;
+            }
             if (Main.GameUpdateCount % 3 == 0)
             {
                 Dust dust = Dust.NewDustPerfect(origin + Main.rand.NextVector2Circular(3f, 3f),

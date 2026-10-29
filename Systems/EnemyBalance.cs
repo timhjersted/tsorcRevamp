@@ -350,7 +350,7 @@ namespace tsorcRevamp.Systems
             RegisterMod("Gaibon", 4000, 6000);
             RegisterMod("Slogra", 4000, 6000);
             Register(NPCID.SkeletronHead, 8000, 9000);
-            RegisterMod("GravelordNito", 4000, 12000);
+            RegisterMod("GravelordNito", 4000, 9000);
             RegisterMod("OolacileDemon", 4800, 10000);
             RegisterMod("BlackNinja", 6000, 6000); // base raised in BlackNinja.cs (was 1800 -> 6000); registry now keeps it there (was 8000)
             RegisterMod("AncestralSpirit", 11900, 12000);

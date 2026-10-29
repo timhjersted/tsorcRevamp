@@ -94,6 +94,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static readonly Color ToxicDark = new(8, 25, 8);
         static readonly Color ToxicMid = new(66, 176, 54);
         static readonly Color ToxicCore = new(213, 255, 133);
+        // Shadow Ninja smoke bombs: charcoal with a faint violet cast, no bright core (it is smoke, not gas).
+        static readonly Color ShadowSmokeDark = new(6, 6, 9);
+        static readonly Color ShadowSmokeMid = new(46, 44, 54);
+        static readonly Color ShadowSmokeCore = new(96, 92, 108);
         static readonly Color WaterDark = new(5, 25, 52);
         static readonly Color WaterMid = new(32, 150, 221);
         static readonly Color WaterCore = new(213, 249, 255);
@@ -730,6 +734,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 center, size * visualScale, rotation, ToxicDark, ToxicMid, ToxicCore,
                 resolvedOpacity, progress, active ? 1f : 0f, 1f / visualScale,
                 BlendState.AlphaBlend);
+        }
+
+        /// <summary>Shadow Ninja smoke cloud: the ToxicField fog (round, noise-edged, no border) in the charcoal palette.
+        /// Same progress hold curve: full from 0.11 to 0.72, faded out at 1.0.</summary>
+        internal static void DrawShadowSmokeField(Vector2 center, Vector2 size, float progress, float rotation, float opacity)
+        {
+            LoadAssets();
+            Draw(elandToxicVFX, "ElandToxicField", voronoiNoise, cloudNoise,
+                center, size * FogVisualScale, rotation, ShadowSmokeDark, ShadowSmokeMid, ShadowSmokeCore,
+                opacity, progress, 0f, 1f / FogVisualScale, BlendState.AlphaBlend);
         }
 
         /// <summary>

@@ -16,8 +16,13 @@ namespace tsorcRevamp.NPCs.Puppets
     /// An early-game red mage invader. Kahlrun alternates short, readable sword strings with
     /// several formations of the same Farron Dart spell.
     /// </summary>
+    [AutoloadBossHead]
     public class Kahlrun : PuppetNPC
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(Kahlrun)) + "_Head_Boss";
+
         protected override string InvaderTitle => "Kahlrun of Falstrók";
 
         protected override void RunMovementAI(float speedMult)

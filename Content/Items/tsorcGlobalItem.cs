@@ -57,10 +57,10 @@ namespace tsorcRevamp.Content.Items
                 return false;
             }
 
-            // Suppressed blocks mounts outright. mountType is -1 on every non-mount item; QuickMount goes through
-            // this hook too. Anything already ridden is thrown off in tsorcRevampPlayer.PostUpdateEquips.
+            // Suppressed / Treacherous Terrain block mounts outright. mountType is -1 on every non-mount item; QuickMount
+            // goes through this hook too. Anything already ridden is thrown off in tsorcRevampPlayer.PostUpdateEquips.
             bool isMountItem = item.mountType != -1;
-            if (isMountItem && player.GetModPlayer<tsorcRevampPlayer>().Suppressed)
+            if (isMountItem && player.GetModPlayer<tsorcRevampPlayer>().MountsDisabled)
             {
                 return false;
             }

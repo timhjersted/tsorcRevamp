@@ -100,6 +100,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int MiasmaHemPuffCount = 20;        // was 25
         const int MiasmaHemGridColumns = 5;
         const int MiasmaHemGridRows = 4;          // GridColumns * GridRows must equal MiasmaHemPuffCount
+        const int MiasmaHemBuildupPerTick = 1;            // 100 ticks in the fog (~1.7s) fills the Miasma meter
+        const int MiasmaHemBuildupReportIntervalTicks = 10;
 
         const float DeathNovaRadius = 600f;         // was 300: twice the ring. Duration follows: radius / 8px-per-tick expand
         const float BoneVolleyMaxRange = 800f;      // 50 tiles: the furthest the shard ballistics are asked to reach
@@ -185,6 +187,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         float MiasmaHemLeftX;
         float MiasmaHemRightX;
         int MiasmaHemAge;
+
+        // Miasma buildup earned in the fog (1 per tick inside), per player index, held until the next
+        // report. Batched so the meter's hit-burst dust and SyncState packet fire 6x/s instead of 60x/s.
+        // Server/singleplayer only — that's the only copy that runs the overlap check.
+        readonly int[] MiasmaHemPendingBuildup = new int[Main.maxPlayers];
 
         // ── Loose-sword swing animation ─────────────────────────────────────────
         // The body sheet is ALWAYS the no-sword art (GravelordNitoAttacking.png — despite the name,
@@ -1834,10 +1841,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         ///Main.netMode != MultiplayerClient (the "one authority" rule), so only the server/singleplayer
         ///copy of the cloud position ever feeds a real decision.
         ///
-        ///Poisoned's own damage is still fine here: confirmed in decompiled Player.cs (~17694) that the
-        ///Poisoned debuff drains life through the lifeRegen system every frame, not through Player.Hurt —
-        ///no Hurt call means no immune-window grant and no knockback either way. So Poisoned gives real
-        ///damage with none of the contact-hit's side effects, which is exactly what was asked for.</summary>
+        ///Damage comes from Miasma buildup (1 per tick inside the fog): a full meter procs the Miasma drain,
+        ///which, like any debuff drain, goes through lifeRegen rather than Player.Hurt — so still no
+        ///immune-window grant and no knockback. Called on the server here, MiasmaBuildup.Apply goes straight
+        ///to the authoritative meter (MiasmaPlayer.ApplyBuildupAuthoritative) and syncs it to clients.</summary>
         void UpdateMiasmaHem()
         {
             MiasmaHemAge = Math.Min(MiasmaHemAge + 1, MiasmaHemFadeInTicks);
@@ -1859,21 +1866,31 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             Vector2 rightCenter = new Vector2(MiasmaHemRightX, NPC.Center.Y);
             int crippledType = ModContent.BuffType<Buffs.Debuffs.Crippled>();
 
+            bool reportTick = Main.GameUpdateCount % MiasmaHemBuildupReportIntervalTicks == 0;
+
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player target = Main.player[i];
                 if (!target.active || target.dead)
                 {
+                    MiasmaHemPendingBuildup[i] = 0;
                     continue;
                 }
+
                 if (MiasmaHemOverlaps(target.Center, leftCenter) || MiasmaHemOverlaps(target.Center, rightCenter))
                 {
-                    // Poisoned deals real damage (via lifeRegen, not a Hurt call — see the summary above),
-                    // Darkness is vision-only, Crippled is movement-only. All three simply refresh every
-                    // tick spent inside the fog; none of them can knock the player back.
-                    target.AddBuff(BuffID.Poisoned, 4 * 60);
+                    // Buildup accrues every tick inside (reported in batches below). Darkness is vision-only,
+                    // Crippled is movement-only; both refresh every tick in the fog and neither knocks back.
+                    MiasmaHemPendingBuildup[i] += MiasmaHemBuildupPerTick;
                     target.AddBuff(BuffID.Darkness, 3 * 60);
                     target.AddBuff(crippledType, 3 * 60);
+                }
+
+                // Flush on the shared interval even after the player has stepped out, so brief grazes still count.
+                if (reportTick && MiasmaHemPendingBuildup[i] > 0)
+                {
+                    Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaHemPendingBuildup[i]);
+                    MiasmaHemPendingBuildup[i] = 0;
                 }
             }
         }

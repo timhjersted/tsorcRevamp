@@ -485,6 +485,8 @@ namespace tsorcRevamp
         public bool WasInAbyss;
         public bool SlowfallWingActive;
         public bool Suppressed;
+        // No mounts or minecarts this tick. Set by Suppressed and Treacherous Terrain; reset each tick.
+        public bool MountsDisabled;
         public bool Tired;
         public int timeSinceLastAttacked = 0;
 
@@ -506,6 +508,7 @@ namespace tsorcRevamp
             SwallowHidden = false;
             SlowfallWingActive = false;
             Suppressed = false;
+            MountsDisabled = false;
             Tired = false;
             DestinedDeathActive = false;
             if (Player.dead)
@@ -1554,15 +1557,15 @@ namespace tsorcRevamp
                 Player.GetJumpState(ExtraJump.FartInAJar).Disable();
                 Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable();
                 Player.GetJumpState(ExtraJump.UnicornMount).Disable();
+            }
 
-                // No mounts at all, minecarts included. Mount items are refused in tsorcGlobalItem.CanUseItem; this
-                // throws off anything already ridden (or a cart boarded from a track). Owner-only: Dismount clears
-                // the mount buff and syncs the player itself, so remote copies follow.
-                bool ownsThisPlayer = Player.whoAmI == Main.myPlayer;
-                if (Player.mount.Active && ownsThisPlayer)
-                {
-                    Player.mount.Dismount(Player);
-                }
+            // Suppressed / Treacherous Terrain: no mounts at all, minecarts included. Mount items are refused in
+            // tsorcGlobalItem.CanUseItem; this throws off anything already ridden (or a cart boarded from a track).
+            // Owner-only: Dismount clears the mount buff and syncs the player itself, so remote copies follow.
+            bool ownsThisPlayer = Player.whoAmI == Main.myPlayer;
+            if (MountsDisabled && Player.mount.Active && ownsThisPlayer)
+            {
+                Player.mount.Dismount(Player);
             }
 
             if (ShadowWeight)
@@ -2878,6 +2881,15 @@ namespace tsorcRevamp
                 {
                     Player.AddBuff(ModContent.BuffType<WeightOfShadow>(), 1 * 60, false);
                 }
+            }
+
+            // Snow and desert (surface or underground): the footing is too treacherous to ride. Refreshed every tick
+            // at 1s, so it drops off a second after leaving the biome.
+            bool inMountlessBiome = Player.ZoneSnow || Player.ZoneDesert || Player.ZoneUndergroundDesert;
+
+            if (inMountlessBiome)
+            {
+                Player.AddBuff(ModContent.BuffType<TreacherousTerrain>(), 1 * 60, false);
             }
 
             // Original Adventure map only (Remix has its own Seath ice-biome block below): the SHM ice biome tears

@@ -780,6 +780,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// repeat. Capped by <see cref="PierceDashMaxTicks"/>.</summary>
         protected virtual float PierceOvershootPastTarget  => 0f;
         protected virtual int   PierceDashMaxTicks         => 90;
+        /// <summary>Weapon rotation the telegraph eases toward. Default PiOver2 = the 45°-low couch; a rapier can
+        /// hold its raised guard instead.</summary>
+        protected virtual float PierceTelegraphRotation    => MathHelper.PiOver2;
         /// <summary>When true a whiffed dash always uses its repeats (<see cref="PierceWhiffRepeatCount"/>), however far the
         /// target has got. Default false: a repeat needs the target within <see cref="PierceRange"/>.</summary>
         protected virtual bool  PierceRepeatIgnoresRange   => false;
@@ -1881,6 +1884,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private const float HoldRotation  = -0.30f;
 
+        /// <summary>UseSmoothRapierThrustPose en-garde guard: blade 0.3 rad (~17°) above level (PiOver4 draws flat).
+        /// Telegraphs rise into it and pauses retract to it, so the blade never crosses the strike line before a thrust.</summary>
+        protected const float RapierGuardRotation = MathHelper.PiOver4 - 0.30f;
+
         // ── Debug instrumentation (DebugMode config only) ───────────────────────────
         // Snapshot of the last DrawWeaponToLayer call's rotation/position math, so the
         // DebugMode overlay (lower-left HUD text) and the weapon-debug log file can report
@@ -2555,6 +2562,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Multiplayer: server only — the edited step reaches clients in every snapshot.</summary>
         protected virtual void ModifyNextMeleeComboStep(
             string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep) { }
+        /// <summary>The opening-step counterpart of <see cref="ModifyNextMeleeComboStep"/>: called as the combo
+        /// telegraph ends, immediately before step 0 begins, so spacing edits use the post-tell gap.
+        /// Multiplayer: server only — the edited step reaches clients in every snapshot.</summary>
+        protected virtual void ModifyOpeningMeleeComboStep(
+            string comboName, Player target, ref MeleeComboStep openingStep) { }
 
         /// <summary>Allows a subclass to give a particular ranged payload a distinct readable
         /// telegraph while retaining the shared ranged phase executor.</summary>
@@ -6383,6 +6395,13 @@ namespace tsorcRevamp.NPCs.Puppets
                     if (--PhaseTimer <= 0)
                     {
                         var step0 = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                        // The opening step is edited against the gap at the END of the tell, not at selection,
+                        // since the player moves during it. Server only; the edit reaches clients in the snapshot.
+                        if (!IsMultiplayerClient)
+                        {
+                            ModifyOpeningMeleeComboStep(_activeMeleeCombo.Name, target, ref step0);
+                            _activeMeleeCombo.Steps[_meleeComboStepIndex] = step0;
+                        }
                         BeginComboStepAttack(step0);
                     }
                     break;
@@ -9004,8 +9023,8 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             else if (Phase == AttackPhase.PierceTelegraph)
             {
-                // Same "cocked, arm extended toward the player" pose as JoustDash's telegraph.
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.22f);
+                // Same "cocked, arm extended toward the player" pose as JoustDash's telegraph, unless overridden.
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, PierceTelegraphRotation, 0.22f);
             }
             else if (Phase == AttackPhase.PierceDash)
             {
@@ -9476,11 +9495,29 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                     case ComboMotion.Thrust:
-                        if (inTel)
+                        if (UseSmoothRapierThrustPose)
                         {
-                            _weaponRotation = UseSmoothRapierThrustPose
-                                ? MathHelper.SmoothStep(HoldRotation, MathHelper.PiOver2, comboTelegraphT)
-                                : MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
+                            // Rapier: rise from the carry into the guard, drive to level, retract to the guard between jabs.
+                            // Strike is cubic ease-out (most of the travel lands in the first third), so it reads as a stab.
+                            if (inTel)
+                            {
+                                _weaponRotation = MathHelper.SmoothStep(HoldRotation, RapierGuardRotation, comboTelegraphT);
+                            }
+                            else if (inPause)
+                            {
+                                _weaponRotation = MathHelper.Lerp(_weaponRotation, RapierGuardRotation, 0.18f);
+                            }
+                            else
+                            {
+                                float strikeT = MathHelper.Clamp(t, 0f, 1f);
+                                float remaining = 1f - strikeT;
+                                float strikeProgress = 1f - remaining * remaining * remaining;
+                                _weaponRotation = MathHelper.Lerp(RapierGuardRotation, MathHelper.PiOver4, strikeProgress);
+                            }
+                        }
+                        else if (inTel)
+                        {
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver2, 0.20f);
                         }
                         else if (inPause)
                         {
@@ -9488,10 +9525,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else
                         {
-                            _weaponRotation = UseSmoothRapierThrustPose
-                                ? MathHelper.SmoothStep(MathHelper.PiOver2, MathHelper.PiOver4,
-                                    MathHelper.Clamp(t, 0f, 1f))
-                                : MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
+                            _weaponRotation = MathHelper.Lerp(_weaponRotation, MathHelper.PiOver4, 0.42f);
                         }
                         break;
                     case ComboMotion.JoustDash:
@@ -11584,6 +11618,35 @@ namespace tsorcRevamp.NPCs.Puppets
             _spectralOldPositions[0] = NPC.position;
         }
 
+        /// <summary>Whole-body flip angle (radians, + = clockwise on screen) for somersault set-pieces. Rotates every
+        /// composed draw piece - body, arms, held weapon - rigidly about the visual centre (PuppetBodySpinPivot).
+        /// Visual only: a subclass that keeps the blade live mid-flip must rotate its hit capsule to match
+        /// (ModifyFrontBladeCapsule). 0 = upright (default).</summary>
+        protected virtual float PuppetBodySpinRotation => 0f;
+
+        /// <summary>World point the body spin pivots around; the same point a subclass rotates its blade capsule about.</summary>
+        protected Vector2 PuppetBodySpinPivot => PuppetVisualCenter;
+
+        // Rigid rotation of the composed draw cache: each piece's anchor orbits the pivot and its own rotation turns with it.
+        private void ApplyBodySpin(ref PlayerDrawSet drawInfo)
+        {
+            float spin = PuppetBodySpinRotation;
+            if (spin == 0f)
+            {
+                return;
+            }
+
+            Vector2 pivot = PuppetBodySpinPivot - Main.screenPosition;
+            for (int i = 0; i < drawInfo.DrawDataCache.Count; i++)
+            {
+                DrawData data = drawInfo.DrawDataCache[i];
+                Vector2 fromPivot = data.position - pivot;
+                data.position = pivot + fromPivot.RotatedBy(spin);
+                data.rotation += spin;
+                drawInfo.DrawDataCache[i] = data;
+            }
+        }
+
         /// <summary>Hydra's shield treatment: 12 radial blue silhouettes, 18-position motion
         /// history, then a blue-tinted core. Called after armor/weapon layers have composed.</summary>
         internal void TransformSpectralDrawData(ref PlayerDrawSet drawInfo)
@@ -11591,6 +11654,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (drawInfo.drawPlayer != _puppet)
                 return;
 
+            ApplyBodySpin(ref drawInfo);
             TransformLargeArmorTemplate(ref drawInfo);
 
             // A guard-pressure finisher (EnterPhase marks it) wears the aura for its whole sequence, on top of any
@@ -12835,7 +12899,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 // (PiOver2) opened with a ~107 degree snap. Matches WeaponArchetypeTables.SwingArcEndpoints.
                 ComboMotion.JoustDash       => (MathHelper.PiOver2, MathHelper.PiOver4),
                 ComboMotion.Thrust when UseSmoothRapierThrustPose
-                                            => (MathHelper.PiOver2, MathHelper.PiOver4),
+                                            => (RapierGuardRotation, MathHelper.PiOver4),
                 ComboMotion.LowAxeRun       => (1.9f, 1.9f),
                 ComboMotion.RisingUppercutLeap => (1.9f, -1.0f),
                 ComboMotion.BackstepRaise   => (1.0f, -1.3f),

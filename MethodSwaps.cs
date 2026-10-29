@@ -2195,6 +2195,46 @@ namespace tsorcRevamp
                 behindTilesCache.Clear();
                 behindTilesCache.AddRange(_otherBehindTilesProjs);
 
+                // Same problem for the mirror puppets rising out of / sinking into the ground (Soul Mimic summon and
+                // dissolve, the invader's dissolve): draw them here, before the solid tiles, so the ground still hides the
+                // buried part; DrawnBeforeSolidTiles makes vanilla's later behind-tiles pass skip them this frame.
+                bool puppetBatchStarted = false;
+
+                try
+                {
+                    for (int npcIndex = 0; npcIndex < Main.maxNPCs; npcIndex++)
+                    {
+                        NPC npc = Main.npc[npcIndex];
+                        bool buriedPuppet = npc.active && npc.behindTiles
+                            && npc.ModNPC is NPCs.FriendlyPuppets.MirrorPuppetNPC puppet && puppet.StaysBehindSolidTiles;
+
+                        if (!buriedPuppet)
+                        {
+                            continue;
+                        }
+
+                        if (!puppetBatchStarted)
+                        {
+                            // Vanilla's own behind-tiles NPC pass state (Main.DoDraw_DrawNPCsBehindTiles).
+                            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                                DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                            puppetBatchStarted = true;
+                        }
+
+                        NPCs.FriendlyPuppets.MirrorPuppetNPC buriedMirrorPuppet = (NPCs.FriendlyPuppets.MirrorPuppetNPC)npc.ModNPC;
+                        buriedMirrorPuppet.DrawnBeforeSolidTiles = false;
+                        self.DrawNPC(npcIndex, true);
+                        buriedMirrorPuppet.DrawnBeforeSolidTiles = true;
+                    }
+                }
+                finally
+                {
+                    if (puppetBatchStarted)
+                    {
+                        Main.spriteBatch.End();
+                    }
+                }
+
                 if (_modBehindSolidTilesProjs.Count > 0)
                 {
                     // The spritebatch is ended between the non-solid and solid tile passes; same state as DrawCachedProjs.

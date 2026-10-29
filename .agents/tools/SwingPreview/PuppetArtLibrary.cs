@@ -25,10 +25,10 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "ShadowNinja",
-                    BodySheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaTop_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaBottoms_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaMask_Head.png"),
-                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "ShadowSickle.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaSet", "ShadowNinjaTop_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaSet", "ShadowNinjaBottoms_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Melee", "ShadowNinjaSet", "ShadowNinjaMask_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "ShadowSickle", "ShadowSickleItem.png"),
                     HandleNormX = 0.16f,
                     HandleNormY = 0.84f,
                 };

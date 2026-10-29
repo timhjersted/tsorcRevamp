@@ -6115,5 +6115,32 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "bf6bb130-15f1-47d9-a81e-03a3aefac326",
+    "CenterX": 6722.0,
+    "CenterY": 955.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/ShadowNinja",
+        "SpawnX": 6624.0,
+        "SpawnY": 972.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

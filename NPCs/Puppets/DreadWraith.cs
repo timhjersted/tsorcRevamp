@@ -18,8 +18,13 @@ namespace tsorcRevamp.NPCs.Puppets
     /// A post-Skeletron dungeon invader: a robed wraith that batters with a burning mace up close
     /// and hurls cursed skulls from its tome at range. Kit is entirely vanilla dungeon-tier gear.
     /// </summary>
+    [AutoloadBossHead]
     public class DreadWraith : PuppetNPC, IFlailAnchor
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(DreadWraith)) + "_Head_Boss";
+
         protected override string InvaderTitle => "Dread Wraith";
 
         protected override Color PuppetSkinColor => new Color(190, 195, 200); // pale, corpse-grey skin

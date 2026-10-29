@@ -28,6 +28,7 @@ namespace tsorcRevamp.Buffs.Debuffs
             }
 
             player.GetModPlayer<tsorcRevampPlayer>().Suppressed = true;
+            player.GetModPlayer<tsorcRevampPlayer>().MountsDisabled = true;
         }
     }
 }

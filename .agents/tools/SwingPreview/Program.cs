@@ -724,20 +724,30 @@ namespace SwingPreview
                     }
                     return ApplySwingEase(profile, a0, a1, t, step);
                 case ComboMotion.Thrust:
+                    // Hand-port of PuppetNPC's Thrust branch, including the RapierGuardRotation guard.
+                    if (profile.SmoothRapierThrustPose)
+                    {
+                        float guard = MathHelper.PiOver4 - 0.30f;
+                        if (inTel)
+                        {
+                            return MathHelper.SmoothStep(profile.HoldRotation, guard, telegraphT);
+                        }
+                        if (inPause)
+                        {
+                            return MathHelper.Lerp(rotation, guard, 0.18f);
+                        }
+                        float remaining = 1f - MathHelper.Clamp(t, 0f, 1f);
+                        return MathHelper.Lerp(guard, MathHelper.PiOver4, 1f - remaining * remaining * remaining);
+                    }
                     if (inTel)
                     {
-                        return profile.SmoothRapierThrustPose
-                            ? MathHelper.SmoothStep(profile.HoldRotation, MathHelper.PiOver2, telegraphT)
-                            : MathHelper.Lerp(rotation, MathHelper.PiOver2, 0.20f);
+                        return MathHelper.Lerp(rotation, MathHelper.PiOver2, 0.20f);
                     }
                     if (inPause)
                     {
                         return MathHelper.Lerp(rotation, MathHelper.PiOver2 * 0.8f, 0.18f);
                     }
-                    return profile.SmoothRapierThrustPose
-                        ? MathHelper.SmoothStep(MathHelper.PiOver2, MathHelper.PiOver4,
-                            MathHelper.Clamp(t, 0f, 1f))
-                        : MathHelper.Lerp(rotation, MathHelper.PiOver4, 0.42f);
+                    return MathHelper.Lerp(rotation, MathHelper.PiOver4, 0.42f);
                 case ComboMotion.JoustDash:
                     if (inTel)
                     {
@@ -978,7 +988,7 @@ namespace SwingPreview
                 // Skewer String is the first combo to chain two JoustDash steps.
                 case ComboMotion.JoustDash: a0 = MathHelper.PiOver2; a1 = MathHelper.PiOver4; break;
                 case ComboMotion.Thrust when profile.SmoothRapierThrustPose:
-                    a0 = MathHelper.PiOver2; a1 = MathHelper.PiOver4; break;
+                    a0 = MathHelper.PiOver4 - 0.30f; a1 = MathHelper.PiOver4; break;
                 case ComboMotion.LowAxeRun: a0 = 1.9f; a1 = 1.9f; break;
                 case ComboMotion.RisingUppercutLeap: a0 = 1.9f; a1 = -1.0f; break;
                 case ComboMotion.BackstepRaise: a0 = 1.0f; a1 = -1.3f; break;

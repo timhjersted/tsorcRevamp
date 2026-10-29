@@ -73,6 +73,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const float FollowNearDistance = 6f * 16f;
         private const float FollowFarDistance = 12f * 16f;
         private const float FollowSettleDistance = 9f * 16f;
+        /// <summary>Idle routine (no target, owner standing still): walk to a new spot in the follow band at a walking pace,
+        /// then stand for 1.5–4 s facing the owner, and repeat. Spots closer than 2 tiles to where it is are skipped (it
+        /// just waits again). ESTIMATE.</summary>
+        private const float IdleWalkMinDistance = 2f * 16f;
+        private const float IdleWalkSpeedFraction = 0.4f;
+        private const int IdlePauseMinTicks = 90;
+        private const int IdlePauseMaxTicks = 240;
         /// <summary>Summoned this far behind the owner (3 tiles), so the rise is in view.</summary>
         private const float SummonOffset = 48f;
         /// <summary>Summon: pool spreads for SummonPoolTicks, then the body rises out of it until SummonTicks (1.5 s).</summary>
@@ -165,6 +172,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private int _strafeTicksLeft;
         private int _strafeDirection;
         private int _jumpAttackCooldown;
+        private bool _idleWalking;
+        private float _idleTargetX;
+        private int _idlePauseTicks = IdlePauseMinTicks;
 
         // All machines: local timer for the current state (reset when ai[3] changes), used for drink pose/progress.
         private MimicState _lastSeenState = MimicState.Fight;
@@ -1008,6 +1018,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             if (target != null)
             {
+                _idleWalking = false;
+
                 // Stand at the weapon's preferred distance (or the back-off distance), on our own side of the target.
                 int activeType = 0;
                 bool activeSlotValid = ActiveSlot >= 0 && ActiveSlot < LoadoutSize;
@@ -1101,14 +1113,66 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     && Math.Abs(NPC.Center.Y - owner.Center.Y) < FollowFarDistance
                     && sideOfOwner == Math.Sign(offsetFromOwner);
 
-                if (inFollowBand)
+                // In the band while the owner walks: hold, as before (it re-follows once it falls out of the band).
+                if (inFollowBand && ownerWalking)
                 {
+                    _idleWalking = false;
                     NPC.velocity.X *= 0.8f;
                     return;
                 }
 
-                waypoint = owner.Center + new Vector2(sideOfOwner * FollowSettleDistance, 0f);
-                stopDistance = EngagementSlack;
+                // Out of the band: follow back in, and start the idle routine over once there.
+                if (!inFollowBand)
+                {
+                    _idleWalking = false;
+                    waypoint = owner.Center + new Vector2(sideOfOwner * FollowSettleDistance, 0f);
+                    stopDistance = EngagementSlack;
+                }
+                else
+                {
+                    // Idle routine (server-side rolls): pause facing the owner, then walk to a new spot in the band on
+                    // its own side, at a walking pace; arriving starts the next pause.
+                    if (_idleWalking && Math.Abs(_idleTargetX - NPC.Center.X) <= EngagementSlack)
+                    {
+                        _idleWalking = false;
+                        _idlePauseTicks = Main.rand.Next(IdlePauseMinTicks, IdlePauseMaxTicks + 1);
+                    }
+
+                    if (!_idleWalking && _idlePauseTicks > 0)
+                    {
+                        _idlePauseTicks--;
+                        NPC.velocity.X *= 0.8f;
+                        int faceOwner = Math.Sign(owner.Center.X - NPC.Center.X);
+
+                        if (faceOwner != 0)
+                        {
+                            NPC.direction = faceOwner;
+                        }
+
+                        return;
+                    }
+
+                    if (!_idleWalking)
+                    {
+                        float spotDistance = Main.rand.NextFloat(FollowNearDistance, FollowFarDistance);
+                        float spotX = owner.Center.X + sideOfOwner * spotDistance;
+
+                        if (Math.Abs(spotX - NPC.Center.X) < IdleWalkMinDistance)
+                        {
+                            _idlePauseTicks = Main.rand.Next(IdlePauseMinTicks, IdlePauseMaxTicks + 1);
+                            NPC.velocity.X *= 0.8f;
+                            return;
+                        }
+
+                        _idleWalking = true;
+                        _idleTargetX = spotX;
+                        NPC.netUpdate = true;
+                    }
+
+                    waypoint = new Vector2(_idleTargetX, NPC.Center.Y);
+                    stopDistance = EngagementSlack;
+                    topSpeed *= IdleWalkSpeedFraction;
+                }
             }
 
             float horizontalGap = Math.Abs(waypoint.X - NPC.Center.X);
@@ -1523,6 +1587,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 modifiers.SourceDamage *= 2f;
             }
         }
+
+        // Rising out of its pool or melting back into it: the ground must hide the buried part even under Hunter vision.
+        internal override bool StaysBehindSolidTiles => State == MimicState.Summoning || State == MimicState.Dissolving;
 
         public override void HitEffect(NPC.HitInfo hit)
         {

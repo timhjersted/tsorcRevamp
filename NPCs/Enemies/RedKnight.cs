@@ -14,8 +14,13 @@ namespace tsorcRevamp.NPCs.Enemies
     /// <summary>
     /// Red Knight: the RedKnightPuppet body with the Red attack pool (TryStartRed), its stats, spawns and loot.
     /// </summary>
+    [AutoloadBossHead]
     public class RedKnight : RedKnightPuppet, IHumanoidMeleeHitEffects
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(RedKnight)) + "_Head_Boss";
+
         #region Defaults
         NPCDespawnHandler despawnHandler;
 

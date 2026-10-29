@@ -1114,9 +1114,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             return true;
         }
 
+        public const int MiasmaBuildupPerHit = 35;
+
+        // Runs on the hit player's machine; MiasmaBuildup.Apply reports the gain to the server, which owns the meter.
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.Poisoned, 4 * 60);
+            Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaBuildupPerHit);
             target.AddBuff(BuffID.Darkness, 3 * 60);
         }
     }

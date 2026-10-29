@@ -17,9 +17,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const float SpreadDegrees = 42f;
         private const int DormantTicks = 6 * 60;
         private const int PopTicks = 40;
+        // Bouncing-mine hop: a tripped mine springs up to HopHeight (5 tiles) under its own slow gravity,
+        // ~28 ticks to the apex so it reads clearly, then detonates on its HopFallTicks-th tick of falling.
+        private const float HopGravity = 0.2f;
+        private const float HopHeight = 5f * 16f;
+        private const int HopFallTicks = 5;
+        // Jump-over trigger: a player inside this half-width column above the mine, up to HopHeight high.
+        private const float JumpOverHalfWidth = 16f;
         private const float Flying = 0f;
         private const float Grounded = 1f;
-        private const float Popping = 2f;
+        private const float Hopping = 2f;
         private const float Detonating = 3f;
         private const float RocketPopping = 4f;
         private const float LaunchingRocket = 5f;
@@ -37,6 +44,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.ignoreWater = true;
             Projectile.timeLeft = DormantTicks + 60;
             Projectile.aiStyle = -1;
+            // Required for DrawBehind to run; DrawBehind then places every state in a draw list.
+            Projectile.hide = true;
         }
 
         public override bool? CanDamage() => false;
@@ -66,7 +75,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
-            if ((Projectile.ai[0] == Popping || Projectile.ai[0] == RocketPopping)
+            if ((Projectile.ai[0] == Hopping || Projectile.ai[0] == RocketPopping)
                 && Projectile.localAI[1] != Projectile.ai[0] && !Main.dedServ)
                 SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.55f, Pitch = 0.3f }, Projectile.Center);
             Projectile.localAI[1] = Projectile.ai[0];
@@ -89,6 +98,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
+            if (Projectile.ai[0] == Hopping)
+            {
+                // Every peer integrates the same gravity from the synced launch velocity; only the
+                // server counts falling ticks (ai[1]) and detonates.
+                Projectile.velocity.Y += HopGravity;
+                Projectile.rotation += 0.15f;
+                EmitTrail();
+
+                bool falling = Projectile.velocity.Y > 0f;
+                if (Main.netMode != NetmodeID.MultiplayerClient && falling)
+                {
+                    Projectile.ai[1]++;
+
+                    if (Projectile.ai[1] >= HopFallTicks)
+                    {
+                        Detonate(false);
+                    }
+                }
+                return;
+            }
+
             Projectile.velocity = Vector2.Zero;
             Projectile.tileCollide = false;
             if (Projectile.ai[0] == Grounded)
@@ -96,10 +126,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.ai[1]++;
-                    if (PlayerWithinBlast())
-                        BeginPop(false);
+                    if (PlayerWithinBlast() || PlayerJumpingOver())
+                        BeginHop();
                     else if (Projectile.ai[1] >= DormantTicks)
-                        BeginPop(true);
+                        BeginRocketPop();
                 }
                 if (!Main.dedServ && Main.GameUpdateCount % 12 == 0)
                     Dust.NewDustPerfect(Projectile.Center - new Vector2(0f, 7f), DustID.OrangeTorch,
@@ -107,7 +137,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            if (Projectile.ai[0] == Popping || Projectile.ai[0] == RocketPopping)
+            if (Projectile.ai[0] == RocketPopping)
             {
                 Projectile.ai[1]++;
                 if (!Main.dedServ && Main.GameUpdateCount % 2 == 0)
@@ -119,8 +149,32 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     dust.noGravity = true;
                 }
                 if (Main.netMode != NetmodeID.MultiplayerClient && Projectile.ai[1] >= PopTicks)
-                    Detonate(Projectile.ai[0] == RocketPopping);
+                    Detonate(true);
             }
+        }
+
+        // True when a player is passing over the mine: their hitbox overlaps a narrow column
+        // centred on it, with their feet somewhere between the mine and HopHeight above it.
+        private bool PlayerJumpingOver()
+        {
+            foreach (Player player in Main.ActivePlayers)
+            {
+                if (player.dead || player.ghost)
+                {
+                    continue;
+                }
+
+                bool overColumn = player.Hitbox.Right >= Projectile.Center.X - JumpOverHalfWidth
+                    && player.Hitbox.Left <= Projectile.Center.X + JumpOverHalfWidth;
+                float heightAbove = Projectile.Center.Y - player.Bottom.Y;
+                bool withinHopHeight = heightAbove >= 0f && heightAbove <= HopHeight;
+
+                if (overColumn && withinHopHeight)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private bool PlayerWithinBlast()
@@ -132,11 +186,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             return false;
         }
 
-        private void BeginPop(bool launchRocket)
+        private void BeginRocketPop()
         {
-            Projectile.ai[0] = launchRocket ? RocketPopping : Popping;
+            Projectile.ai[0] = RocketPopping;
             Projectile.ai[1] = 0f;
             Projectile.timeLeft = PopTicks + 30;
+            Projectile.netUpdate = true;
+        }
+
+        private void BeginHop()
+        {
+            // v = sqrt(2gh) peaks exactly HopHeight above the buried rest position.
+            float launchSpeed = (float)Math.Sqrt(2f * HopGravity * HopHeight);
+            Projectile.ai[0] = Hopping;
+            Projectile.ai[1] = 0f;
+            Projectile.velocity = new Vector2(0f, -launchSpeed);
+            Projectile.timeLeft = 120;
             Projectile.netUpdate = true;
         }
 
@@ -197,6 +262,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                         Projectile.knockBack, Main.myPlayer);
                 else
                 {
+                    // An untriggered mine still blasts where it lay as its homing rocket lifts off.
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<ProximityMineExplosion>(), Projectile.damage,
+                        Projectile.knockBack, Main.myPlayer);
                     Player target = FindNearestPlayer();
                     Vector2 heading = target == null ? -Vector2.UnitY
                         : (target.Center - Projectile.Center).SafeNormalize(-Vector2.UnitY);
@@ -220,8 +289,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers,
             List<int> overWiresUI)
         {
-            if (Projectile.ai[0] != Flying)
+            // Buried states sit half in the ground; a hopping mine is in open air and draws normally.
+            // A hidden projectile left out of every list is not drawn at all.
+            if (Projectile.ai[0] == Grounded || Projectile.ai[0] == RocketPopping)
+            {
                 behindNPCsAndTiles.Add(index);
+            }
+            else
+            {
+                behindProjectiles.Add(index);
+            }
         }
 
         private Player FindNearestPlayer()

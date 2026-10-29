@@ -31,8 +31,13 @@ namespace tsorcRevamp.NPCs.Enemies
     /// </summary>
     // Partial with BlackKnight.Attacks.cs: the attacks need direct access to this class's gravefall wave state, the
     // pose hand positions and the spawn helpers, and no other enemy runs this state machine.
+    [AutoloadBossHead]
     public partial class BlackKnight : PuppetNPC, IHumanoidMeleeHitEffects, ISpearMeleeWielder
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(BlackKnight)) + "_Head_Boss";
+
         #region Defaults
         public int redKnightsSpearDamage = 15;
         public int redMagicDamage = 14;

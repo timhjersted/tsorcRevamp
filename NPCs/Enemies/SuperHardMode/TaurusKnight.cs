@@ -33,8 +33,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     ///    also deals Leap Smash. The class name and type are load-bearing: scripted events, the banner and the
     ///    spawn/balance registries reference TaurusKnight.
     /// </summary>
+    [AutoloadBossHead]
     public class TaurusKnight : PuppetNPC
     {
+        // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
+        // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(TaurusKnight)) + "_Head_Boss";
+
         #region Tuning
 
         private const string HammerFallName = "Hammer Fall";
@@ -63,10 +68,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const float PhaseTwoRecoveryMult = 0.85f;
         private const float PhaseTwoHealthFraction = 0.5f;
 
-        // Reach: hitbox = ComboReachBase * 0.7 * ReachMult. 90 * 0.7 * 1.1 = 69px vs the measured visual reach (grip texel
-        // (6,40) to the far head corner (46,16) of the 46x46 Doomhammer = 46.6 texels * 1.6 draw scale = 75px): -8%.
-        private const float HammerReachBase = 90f;
-        private const float HammerDrawScale = 1.6f;
+        // Reach: hitbox = ComboReachBase * 0.7 * ReachMult. 56 * 0.7 * 1.1 = 43px vs the measured visual reach (grip texel
+        // (6,40) to the far head corner (46,16) of the 46x46 Doomhammer = 46.6 texels * 1.0 draw scale = 47px): -7%.
+        // (2026-10-28: drawn 1.6 -> 1.0, too big in game; the reach base was scaled with it from 90.)
+        private const float HammerReachBase = 56f;
+        private const float HammerDrawScale = 1.0f;
         // Centre-to-centre slack for the target's own half-width when testing whether a swing can connect.
         private const float TargetHalfWidth = 10f;
 
@@ -168,7 +174,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // Leap Smash — gap closer, 200-420px, landing-timed LeapSlam.
         // Tell:    34t, hammer cocked overhead (arm-only pose). Leap solved by BeginLeapAttack; resolves on real landing.
-        // Reach:   ReliableJumpStartRange = 63.3t airtime * 6.3 px/t (TopSpeed * 2.1) + 66px blade - 24 margin = 441px at
+        // Reach:   ReliableJumpStartRange = 63.3t airtime * 6.45 px/t (TopSpeed * 2.15) + 41px blade - 24 margin = 425px at
         //          phase-1 speed, so the 420px cap is reachable; selection is also gated by that function.
         // Impact:  dust ring + shake, NO shockwave (keeps Quake Slam special). Recovery 34t. Damage 1.3x.
         // Counter: roll the landing / run under the apex.
@@ -272,10 +278,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         protected override float TopSpeed => _phaseTwo ? PhaseTwoTopSpeed : PhaseOneTopSpeed;
         protected override float Acceleration => 0.09f;
-        protected override float MeleeRange => 80f;
+        protected override float MeleeRange => 60f;
         protected override float ComboReachBase => HammerReachBase;
-        // Fall's reach + live-window push is ~113px centre-to-centre, so any swing started from here connects.
-        protected override float MeleeEngageRange => 100f;
+        // Fall's reach + live-window push is ~87px centre-to-centre, so any swing started from here connects.
+        protected override float MeleeEngageRange => 85f;
         protected override float ComboMaxStartRange => 560f;
         protected override float ClosingDistanceSpeedMult => ClosingSpeedMult;
         protected override int ClosingDistanceMaxTicks => 150;
@@ -301,7 +307,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return TelegraphAdvanceSpeedMult;
             }
         }
-        protected override float ComboTelegraphAdvanceStopDistance => 56f;
+        protected override float ComboTelegraphAdvanceStopDistance => 40f;
         protected override int TelegraphFacingCommitTicks => TelegraphCommitTicks;
         protected override int MeleeRecoveryTicks => 28;
         protected override bool CanStab => false;
@@ -328,7 +334,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         // no rotation offset. Two-handed grip near the butt at texel (6,40).
         protected override Vector2 MeleeHandleNorm => new Vector2(6f / 46f, 40f / 46f);
         protected override float MeleeWeaponDrawScale => HammerDrawScale;
-        protected override float LeapAttackForwardSpeed => TopSpeed * 2.1f;
+        protected override float LeapAttackForwardSpeed => TopSpeed * 2.15f;
         protected override float LeapAttackTargetLeadTicks => 10f;
         protected override float LeapSlamCarryRotation => -1.62f;
         protected override float LeapSlamImpactRotation => 2.05f;
@@ -459,8 +465,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private float _rushStopX;
         private int _rushCount;
         private bool _rushWhiffed;
-        // Server only: a contact reached the authority through ReportAttackHit (see OnAttackHitReported).
+        // Ticks into the in-range hammer swing, or -1 before it starts. Synced: the server starts it and flushes a
+        // snapshot; clients predict the same trigger from their own positions until that arrives.
+        private int _rushSwingTicks = -1;
+        // Server only: a contact or the swing reached the target (ReportAttackHit / OnBladeHit).
         private bool _rushConnected;
+        // Local: the pose the rush ended on, so the turnaround eases from where the hammer actually is.
+        private float _rushEndPose;
 
         // Trident Javelin volley progress (synced).
         private int _javelinThrowsDone;
@@ -505,6 +516,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             writer.Write((byte)_javelinThrowsDone);
             writer.Write((byte)_javelinThrowsTotal);
             writer.Write(_breathAngle);
+            writer.Write((short)_rushSwingTicks);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -520,6 +532,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _javelinThrowsDone = reader.ReadByte();
             _javelinThrowsTotal = reader.ReadByte();
             _breathAngle = reader.ReadSingle();
+            _rushSwingTicks = reader.ReadInt16();
         }
 
         #endregion
@@ -1352,16 +1365,20 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region Set-piece state machine (AttackPhase.Custom, one phase per stage)
 
         // Bull Rush — identity move (160-560px). Bespoke: ChargeChop re-faces every tick and deals no damage.
-        // Tell:    36t, hammer carried low and trailing, hoof-stamp puffs at ticks 12 and 26 + snort, eyes flare. The
-        //          direction and the stop point (180px PAST the target's x) lock on the tell's last tick.
+        // Tell:    36t, hammer hauled up and cocked overhead (Hammer Fall's -1.62 start), hoof-stamp puffs at ticks 12 and
+        //          26 + snort, eyes flare. The direction and the stop point (180px PAST the target's x) lock on the last tick.
         // Charge:  0 -> 9.5 px/t over 12t (quadratic ease-in), cruise until past the stop point, a wall, a ledge, a
-        //          connect, or 70t. Contact damage only while speed >= 50% of top. Hyper-armor on.
-        // On hit:  knockback 9 along the line (OnHitPlayer), the charge ends early into a 16t skid.
+        //          connect, or 70t. Body contact damage only while speed >= 50% of top (1.3x). Hyper-armor on.
+        // Swing:   once the target is in front and within blade reach + the ease-in's travel (~115px at top speed), the
+        //          hammer comes down while he keeps running: Weighted 6 / 22, k 7 over 28t, -1.62 -> 2.05 (210°), peak
+        //          ~41°/t, live 9.8t (rollable). A started swing overrides the stop point and plays out; it can carry on
+        //          into the skid. Damage 1.0x blade.
+        // On hit:  body contact knocks back 9 along the line (OnHitPlayer); any connect ends the run into a 16t skid.
         // Whiff:   24t skid with a dust trail, then a 40t turnaround (punish; armor off).
-        // Counter: jump it (~46px tall body), roll through it (closing ~17 px/t -> ~3t of overlap, well inside 22t of
-        //          i-frames), or leave its row. Rolling away does not work: the overshoot is the point, and the tell is 36t.
+        // Counter: jump it (~46px tall body), roll through the swing (~10t live, well inside 22t of i-frames), or leave its
+        //          row. Rolling away does not work: the overshoot is the point, and the tell is 36t.
         // Phase 2: a whiffed first rush turns around (the 40t turnaround doubles as the second tell, > the 30t gap rule)
-        //          and charges again. Max 2. Damage 1.3x, contact.
+        //          and charges again. Max 2.
         private const int RushTellTicks = 36;
         private const float RushTopSpeed = 9.5f;
         private const int RushAccelerationTicks = 12;
@@ -1376,15 +1393,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const int RushStampTickA = 12;
         private const int RushStampTickB = 26;
         private const int MaxRushesPhaseTwo = 2;
+        private static readonly WeightedSwing RushStrikeCurve = new WeightedSwing(6, 22, 7f);
+        private const float RushStrikeReachMult = 1.1f;
+        // Vertical window for the in-range swing: the target must be roughly in the charge's row.
+        private const float RushStrikeMaxVerticalGap = 56f;
 
         // Trident Javelin — ranged answer (300-750px).
-        // Prop:    the hammer is swapped for the Earth Trident at the tell's first tick; held over the shoulder, then the arm
-        //          swings forward onto the solved release angle. Grip texel (8,67) of 16x108 at 0.9 scale, 60px to the tip.
-        // Tell:    28t: raise + a dotted aim arc along the solved trajectory (last 18t), earthy dust at the tip, Item60.
+        // Prop:    the hammer is swapped for the Earth Trident at the tell's first tick. Grip texel (8,67) of 16x108 at 0.9
+        //          scale, 60px to the tip.
+        // Tell:    58t: raised above the head over 10t, held there, then thrown forward onto the solved release angle over
+        //          the last 10t. A dotted aim arc along the solved trajectory shows for the last 18t; earthy dust at the
+        //          tip; Item60. (2026-10-28: 28 -> 58t so the raised trident reads before the throw.)
         // Release: from the tip. Lob solved for gravity 0.1/t² to land 60px PAST the player's feet (fixes the land-short):
         //          14 px/t, ~28t across 400px. An on-time throw passes through a standing player at knee height.
         // Phase 2: 3 javelins, 14t apart, re-aimed each throw. Recovery 20t (17 in phase 2), the hammer swapped back.
-        private const int JavelinFirstAimTicks = 28;
+        private const int JavelinFirstAimTicks = 58;
         private const int JavelinReaimTicks = 14;
         private const int JavelinRecoveryTicks = 20;
         private const int JavelinVolleyCount = 3;
@@ -1393,8 +1416,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const float JavelinWalkSpeedMult = 0.5f;
         private const float JavelinGripToTipPixels = 67f * JavelinDrawScale;
         private const float JavelinDrawScale = 0.9f;
-        // How far the trident is pulled back over the shoulder at the start of an aim, rad.
-        private const float JavelinCockRadians = 1.1f;
+        // Raised-above-the-head hold, in facing space: -100° = straight up, tipped slightly back.
+        private const float JavelinRaisedFacingAngle = -100f * MathHelper.Pi / 180f;
+        private const int JavelinRaiseTicks = 10;
+        private const int JavelinThrowSwingTicks = 10;
         private const int JavelinAimArcTicks = 18;
 
         // Bull Breath — phase 2, <= 420px.
@@ -1404,7 +1429,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //          doesn't. Planted. Recovery 30t (25 in phase 2, which is the only phase it exists in).
         private const int BreathTellTicks = 40;
         private const int BreathTicks = 36;
-        private const int BreathRecoveryTicks = 30;
+        private const int BullBreathRecoveryTicks = 30;
         private const int BreathInterval = 2;
         private const float BreathSpeed = 12f;
         private const float BreathTurnRadiansPerTick = 1.2f * MathHelper.Pi / 180f;
@@ -1428,7 +1453,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private const int RainDropIntervalTicks = 6;
 
         // Swing-space poses for the Custom stages (0 = the sprite's 45° up-forward diagonal; world = rotation - 45°).
-        private const float HammerLowTrailPose = 1.9f;     // LowAxeRun-style carry, head trailing low
+        private const float HammerChargeCarryPose = -1.62f; // cocked behind the head (Hammer Fall's start)
+        private const float HammerHoldPose = -0.30f;       // the engine's ordinary carry (HoldRotation)
         private const float HammerPlantedPose = 2.0f;      // head on the floor in front
         private const float HammerSkywardPose = -0.785f;   // straight up
         private const float HammerFloorStrikePose = 2.05f;
@@ -1590,7 +1616,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             NPC.velocity.X *= 0.8f;
             FaceTarget(target);
-            _setPieceWeaponRotation = HammerLowTrailPose;
+            // Hauls the hammer up from the carry to the cocked pose over the first half of the tell, then holds it.
+            float raise = MathHelper.Clamp((elapsed + 1f) / (RushTellTicks * 0.5f), 0f, 1f);
+            _setPieceWeaponRotation = MathHelper.SmoothStep(HammerHoldPose, HammerChargeCarryPose, raise);
 
             bool stampTick = elapsed == RushStampTickA || elapsed == RushStampTickB;
             if (stampTick)
@@ -1624,9 +1652,52 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _rushDirection = direction;
             _rushStopX = target.Center.X + direction * RushOvershootPixels;
             _rushConnected = false;
+            _rushSwingTicks = -1;
             _rushCount++;
             FaceDirection(direction);
         }
+
+        /// <summary>Whether the target is in front, in the charge's row, and close enough that the swing's blade reaches
+        /// them by the strike's peak: blade reach plus the ground covered during the ease-in at the current speed.</summary>
+        private bool IsTargetInRushStrikeRange(Player target, float speed)
+        {
+            float horizontalGap = (target.Center.X - NPC.Center.X) * _rushDirection;
+            float verticalGap = Math.Abs(target.Center.Y - NPC.Center.Y);
+            float bladeReach = ComboReachBase * 0.7f * RushStrikeReachMult;
+            float strikeRange = bladeReach + speed * RushStrikeCurve.EaseInTicks + TargetHalfWidth;
+            return horizontalGap > 0f && horizontalGap <= strikeRange && verticalGap <= RushStrikeMaxVerticalGap;
+        }
+
+        /// <summary>Advances the in-range hammer swing (charge and skid both call this; the swing can span the stage
+        /// change). Server arms the tracked blade on the first tick and disarms it once the live window passes.</summary>
+        private void TickRushSwing()
+        {
+            if (_rushSwingTicks == 0)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    TryMeleeHit(ComboReachBase * 0.7f * RushStrikeReachMult);
+                }
+
+                PlayMeleeSwingSound();
+            }
+
+            bool live = _rushSwingTicks <= RushStrikeCurve.LiveTicks;
+            if (live)
+            {
+                TickBladeHit();
+            }
+            else
+            {
+                StopMeleeHit();
+            }
+
+            _setPieceWeaponRotation = RushStrikeCurve.Apply(HammerChargeCarryPose, HammerFloorStrikePose, _rushSwingTicks);
+            _rushSwingTicks++;
+        }
+
+        private bool RushSwingActive => _rushSwingTicks >= 0;
+        private bool RushSwingFinished => _rushSwingTicks >= RushStrikeCurve.TotalTicks;
 
         private float RushSpeedAt(int elapsed)
         {
@@ -1637,9 +1708,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private void TickRushCharge(Player target, int elapsed, bool lastTick)
         {
             FaceDirection(_rushDirection);
-            _setPieceWeaponRotation = HammerLowTrailPose;
             float speed = RushSpeedAt(elapsed);
             NPC.velocity.X = _rushDirection * speed;
+
+            // The hammer stays cocked until the target is in reach, then comes down without breaking stride. Every peer
+            // runs the trigger on its own positions; the server's start is flushed in a snapshot and wins.
+            bool startSwing = !RushSwingActive && IsTargetInRushStrikeRange(target, speed);
+            if (startSwing)
+            {
+                _rushSwingTicks = 0;
+                RequestNetworkSnapshot();
+            }
+
+            UpdateRushHammer();
             // Vanilla fighter step-up, so a one-block bump in the floor doesn't read as a wall.
             Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
             AfterimageTicks = 3;
@@ -1663,12 +1744,46 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
+            // A swing in progress overrides the stop point: he keeps running until the hammer has come down.
             bool pastStopPoint = _rushDirection * (NPC.Center.X - _rushStopX) >= 0f;
+            bool stopPointEnds = pastStopPoint && !RushSwingActive;
+            bool swingDone = RushSwingActive && RushSwingFinished;
             bool blocked = IsRushBlocked(speed);
             bool atLedge = IsRushAtLedge(speed);
-            if (_rushConnected || pastStopPoint || blocked || atLedge || lastTick)
+            if (_rushConnected || stopPointEnds || swingDone || blocked || atLedge || lastTick)
             {
                 EnterRushSkid();
+            }
+        }
+
+        /// <summary>Hammer pose for the charge and the skid: cocked until the swing starts, the swing while it plays, then
+        /// held on the floor pose it ended on.</summary>
+        private void UpdateRushHammer()
+        {
+            if (!RushSwingActive)
+            {
+                _setPieceWeaponRotation = HammerChargeCarryPose;
+            }
+            else if (!RushSwingFinished)
+            {
+                TickRushSwing();
+            }
+            else
+            {
+                StopMeleeHit();
+                _setPieceWeaponRotation = HammerFloorStrikePose;
+            }
+
+            _rushEndPose = _setPieceWeaponRotation;
+        }
+
+        protected override void OnBladeHit(Player player)
+        {
+            // Server: the rush's hammer swing connected, so the run ends into the short skid.
+            bool rushStage = _stage == TaurusStage.RushCharge || _stage == TaurusStage.RushSkid;
+            if (rushStage)
+            {
+                _rushConnected = true;
             }
         }
 
@@ -1703,7 +1818,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private void TickRushSkid(bool lastTick)
         {
             FaceDirection(_rushDirection);
-            _setPieceWeaponRotation = HammerLowTrailPose;
+            UpdateRushHammer();
             // 0.885/t takes top speed to ~0.5 px/t over the 24t whiff skid.
             NPC.velocity.X *= 0.885f;
 
@@ -1734,7 +1849,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private void TickRushTurnaround(Player target, int elapsed, bool lastTick)
         {
             NPC.velocity.X *= 0.8f;
-            _setPieceWeaponRotation = HammerLowTrailPose;
+            StopMeleeHit();
+
+            // The hammer comes back up from wherever the rush left it: to the cocked pose if a second rush follows,
+            // otherwise to the ordinary carry.
+            bool repeating = _phaseTwo && _rushWhiffed && _rushCount < MaxRushesPhaseTwo;
+            float restPose = HammerHoldPose;
+            if (repeating)
+            {
+                restPose = HammerChargeCarryPose;
+            }
+
+            float settle = (elapsed + 1f) / _stageTicks;
+            _setPieceWeaponRotation = MathHelper.SmoothStep(_rushEndPose, restPose, settle);
 
             // Turns back to the target halfway through: the back half of the turnaround is the readable re-face.
             if (elapsed >= _stageTicks / 2)
@@ -1746,8 +1873,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 FaceDirection(_rushDirection);
             }
 
-            bool doubleRush = _phaseTwo && _rushWhiffed && _rushCount < MaxRushesPhaseTwo;
-            if (doubleRush)
+            if (repeating)
             {
                 bool stampTick = elapsed == RushStampTickA || elapsed == RushStampTickB;
                 if (stampTick)
@@ -1761,7 +1887,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            if (doubleRush)
+            if (repeating)
             {
                 LockRushLine(target);
                 EnterStage(TaurusStage.RushCharge, RushMaxChargeTicks);
@@ -1861,17 +1987,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             FaceTarget(target);
             Vector2 launchVelocity = SolveJavelinFromTip(target);
 
-            // Facing-space angle of the throw (0 = straight ahead, negative = up). The arm starts pulled back over the
-            // shoulder and swings forward onto it; +45° converts facing space to swing space.
+            // Facing-space angle of the throw (0 = straight ahead, negative = up); +45° converts facing space to swing
+            // space. Three beats: raise the trident above the head, hold it there, throw forward onto the release angle.
+            // A short re-aim (phase-2 volley) compresses the raise and throw into its 14t.
             float facingAngle = (float)Math.Atan2(launchVelocity.Y, launchVelocity.X * NPC.direction);
-            float progress = (elapsed + 1f) / _stageTicks;
-            float aimPose = MathHelper.SmoothStep(facingAngle - JavelinCockRadians, facingAngle, progress);
+            int raiseTicks = Math.Min(JavelinRaiseTicks, _stageTicks / 3);
+            int throwTicks = Math.Min(JavelinThrowSwingTicks, _stageTicks / 2);
+            int throwStart = _stageTicks - throwTicks;
+            float aimPose = JavelinRaisedFacingAngle;
+            if (elapsed < raiseTicks)
+            {
+                float raise = (elapsed + 1f) / raiseTicks;
+                aimPose = MathHelper.SmoothStep(facingAngle, JavelinRaisedFacingAngle, raise);
+            }
+            else if (elapsed >= throwStart)
+            {
+                float throwProgress = (elapsed - throwStart + 1f) / throwTicks;
+                aimPose = MathHelper.SmoothStep(JavelinRaisedFacingAngle, facingAngle, throwProgress);
+            }
+
             _setPieceWeaponRotation = aimPose + MathHelper.PiOver4;
 
+            // The release tip (along the throw) seeds the aim arc and the spawn; the held tip (along the raised trident)
+            // carries the earthy dust, so the dust stays on the prop during the hold.
             Vector2 tip = JavelinTipPosition(launchVelocity);
+            Vector2 heldDirection = new Vector2((float)Math.Cos(aimPose) * NPC.direction, (float)Math.Sin(aimPose));
+            Vector2 heldTip = PuppetHandPosition + heldDirection * JavelinGripToTipPixels;
             if (!Main.dedServ)
             {
-                EmitJavelinTell(tip, launchVelocity, elapsed);
+                EmitJavelinTell(heldTip, tip, launchVelocity, elapsed);
             }
 
             if (!lastTick)
@@ -1890,11 +2034,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             EnterStage(TaurusStage.JavelinRecovery, (int)(JavelinRecoveryTicks * RecoveryScale));
         }
 
-        private void EmitJavelinTell(Vector2 tip, Vector2 launchVelocity, int elapsed)
+        private void EmitJavelinTell(Vector2 heldTip, Vector2 tip, Vector2 launchVelocity, int elapsed)
         {
             if (elapsed % 2 == 0)
             {
-                Dust earth = Dust.NewDustPerfect(tip + Main.rand.NextVector2Circular(3f, 3f), DustID.Dirt,
+                Dust earth = Dust.NewDustPerfect(heldTip + Main.rand.NextVector2Circular(3f, 3f), DustID.Dirt,
                     Main.rand.NextVector2Circular(0.6f, 0.6f), 70, new Color(150, 110, 70), Main.rand.NextFloat(0.9f, 1.2f));
                 earth.noGravity = true;
             }
@@ -2014,7 +2158,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (lastTick)
             {
-                EnterStage(TaurusStage.BreathRecovery, (int)(BreathRecoveryTicks * RecoveryScale));
+                EnterStage(TaurusStage.BreathRecovery, (int)(BullBreathRecoveryTicks * RecoveryScale));
             }
         }
 

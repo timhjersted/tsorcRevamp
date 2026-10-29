@@ -1002,8 +1002,24 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
         }
 
+        /// <summary>True while the body is rising out of or sinking into the ground (drawn behind tiles, so the ground hides
+        /// the buried part). Hunter vision (detectCreature: Hunter Potion, the shields' Watchful passive) makes vanilla
+        /// draw behind-tiles NPCs AFTER the solid tiles; MethodSwaps.Main_DoDraw_Tiles_Solid draws these puppets before
+        /// the tiles instead, and sets <see cref="DrawnBeforeSolidTiles"/> so vanilla's later pass skips them.</summary>
+        internal virtual bool StaysBehindSolidTiles => false;
+
+        /// <summary>Set by the Hunter workaround after it drew this puppet; the next PreDraw (vanilla's own behind-tiles
+        /// pass, the same frame) clears it and draws nothing.</summary>
+        internal bool DrawnBeforeSolidTiles;
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (DrawnBeforeSolidTiles)
+            {
+                DrawnBeforeSolidTiles = false;
+                return false;
+            }
+
             bool ownerIndexValid = OwnerIndex >= 0 && OwnerIndex < Main.maxPlayers;
 
             if (!ownerIndexValid)

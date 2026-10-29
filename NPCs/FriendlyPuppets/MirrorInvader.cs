@@ -217,6 +217,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         protected override int LookSourceIndex => TriggerIndex;
 
+        // Sinking away: the ground must hide the buried part even under Hunter vision.
+        internal override bool StaysBehindSolidTiles => State == InvaderState.Dissolving;
+
+        // Server: whether the loadout has been copied from a player (SpawnFor, or the first AI tick of a manual spawn).
+        private bool _loadoutSnapshotted;
+
         protected override Item ActiveWeapon
         {
             get
@@ -285,6 +291,30 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             NPC npc = Main.npc[npcIndex];
             MirrorInvader invader = (MirrorInvader)npc.ModNPC;
+            invader.SnapshotFrom(trigger);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
+            }
+
+            return npcIndex;
+        }
+
+        /// <summary>
+        /// Server: copy <paramref name="trigger"/>'s fight — every usable hotbar weapon as type + prefix (§12.8 filter), the
+        /// minion staffs apart (they call adds, §12.9), the fallbacks if fewer than 2 weapons (§12.11 #5), their defense —
+        /// and make them the trigger (look), host and target. Callers: SpawnFor, and the first AI tick of an invader
+        /// spawned some other way (a cheat/spawner mod's plain NewNPC), so a manual spawn is armed too.
+        /// </summary>
+        private void SnapshotFrom(Player trigger)
+        {
+            _loadoutSnapshotted = true;
+            _loadoutCount = 0;
+            _summonStaffCount = 0;
+            NPC.ai[0] = trigger.whoAmI;
+            NPC.ai[1] = trigger.whoAmI;
+            NPC.ai[2] = trigger.whoAmI;
 
             // Every usable hotbar weapon (§12.8 filter), as type + prefix. Ammo weapons fire the basic ammo of their type
             // (UsesBasicAmmo), so they only need one to exist. Minion staffs are kept apart: they call adds (§12.9).
@@ -295,8 +325,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 if (category == WeaponCategory.SummonStaff)
                 {
-                    invader._summonStaffTypes[invader._summonStaffCount] = item.type;
-                    invader._summonStaffCount++;
+                    _summonStaffTypes[_summonStaffCount] = item.type;
+                    _summonStaffCount++;
                     continue;
                 }
 
@@ -310,46 +340,41 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     continue;
                 }
 
-                invader._loadoutTypes[invader._loadoutCount] = item.type;
-                invader._loadoutPrefixes[invader._loadoutCount] = item.prefix;
-                invader._loadoutCount++;
+                _loadoutTypes[_loadoutCount] = item.type;
+                _loadoutPrefixes[_loadoutCount] = item.prefix;
+                _loadoutCount++;
             }
 
             // Fewer than 2 usable weapons (a pure summoner, an empty hotbar): add the fallbacks it doesn't already have.
-            if (invader._loadoutCount < MinUsableWeapons)
+            if (_loadoutCount < MinUsableWeapons)
             {
                 for (int i = 0; i < FallbackWeaponTypes.Length; i++)
                 {
                     int fallbackType = FallbackWeaponTypes[i];
-                    bool alreadyHas = Array.IndexOf(invader._loadoutTypes, fallbackType, 0, invader._loadoutCount) >= 0;
+                    bool alreadyHas = Array.IndexOf(_loadoutTypes, fallbackType, 0, _loadoutCount) >= 0;
 
-                    if (alreadyHas || invader._loadoutCount >= HotbarSlots)
+                    if (alreadyHas || _loadoutCount >= HotbarSlots)
                     {
                         continue;
                     }
 
-                    invader._loadoutTypes[invader._loadoutCount] = fallbackType;
-                    invader._loadoutPrefixes[invader._loadoutCount] = 0;
-                    invader._loadoutCount++;
+                    _loadoutTypes[_loadoutCount] = fallbackType;
+                    _loadoutPrefixes[_loadoutCount] = 0;
+                    _loadoutCount++;
                 }
             }
 
-            invader._loadoutItemsDirty = true;
-            invader._activeSlot = 0;
-            invader._estusCharges = MaxEstusCharges;
+            _loadoutItemsDirty = true;
+            _activeSlot = 0;
+            _estusCharges = MaxEstusCharges;
 
             // The copied player's defense; health comes from the EnemyBalance registry (SetDefaults).
-            npc.defense = trigger.statDefense;
-            npc.defDefense = trigger.statDefense;
-            npc.direction = trigger.Center.X < npc.Center.X ? -1 : 1;
-            invader._lastLife = npc.life;
+            NPC.defense = trigger.statDefense;
+            NPC.defDefense = trigger.statDefense;
+            NPC.direction = trigger.Center.X < NPC.Center.X ? -1 : 1;
+            _lastLife = NPC.life;
 
-            if (Main.netMode == NetmodeID.Server)
-            {
-                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npcIndex);
-            }
-
-            return npcIndex;
+            NPC.netUpdate = true;
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -569,6 +594,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
+            }
+
+            // Spawned without SpawnFor (a spawner mod, /npc): copy the nearest living player now. ai[] is all 0 then, so
+            // without this it would be an unarmed copy of player 0.
+            if (!_loadoutSnapshotted)
+            {
+                Player nearestPlayer = null;
+                float nearestPlayerDistance = float.MaxValue;
+
+                for (int i = 0; i < Main.maxPlayers; i++)
+                {
+                    Player candidate = Main.player[i];
+
+                    if (!candidate.active || candidate.dead)
+                    {
+                        continue;
+                    }
+
+                    float candidateDistance = Vector2.Distance(candidate.Center, NPC.Center);
+
+                    if (candidateDistance < nearestPlayerDistance)
+                    {
+                        nearestPlayerDistance = candidateDistance;
+                        nearestPlayer = candidate;
+                    }
+                }
+
+                if (nearestPlayer == null)
+                {
+                    return;
+                }
+
+                SnapshotFrom(nearestPlayer);
             }
 
             if (dissolving)

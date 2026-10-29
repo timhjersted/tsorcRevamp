@@ -143,8 +143,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
     /// <summary>
     /// Taurus Knight's thrown Earth Trident. Flies on a lob solved by the thrower (gravity <see cref="Gravity"/>) to
-    /// land past the player. Hitting a player bursts it with no cloud. Hitting the ground EMBEDS it: it shudders for
-    /// <see cref="EmbedShudderTicks"/> (the tell), then crumbles and the server spawns a <see cref="TaurusSandCloud"/>.
+    /// land past the player. Hitting the ground EMBEDS it: it shudders for <see cref="EmbedShudderTicks"/> (the tell),
+    /// then crumbles. EVERY ending leaves a <see cref="TaurusSandCloud"/> (server spawn): the crumble, a player hit
+    /// (the cloud bursts on them) and a timeout alike — the cloud is guaranteed, never a chance (2026-10-28).
     /// ai[0] = 0 flying / 1 embedded. ai[1] = 1 once it has been killed by touching a player.
     /// </summary>
     public class TaurusJavelin : ModProjectile
@@ -205,8 +206,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            // Authority-side contact: a player in the head's path ends it here with no cloud (see SetDefaults).
-            // A rolling (immune) player is passed through, so a roll-through still leaves the cloud behind them.
+            // Authority-side contact: a player in the head's path bursts it here, into a cloud on them (see SetDefaults).
+            // A rolling (immune) player is passed through, so a roll-through leaves the cloud where it lands instead.
             for (int i = 0; i < Main.maxPlayers; i++)
             {
                 Player player = Main.player[i];
@@ -230,12 +231,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            // The tell: sand trickles off the shaft faster as the burst nears.
+            // The tell: sand trickles off the shaft every tick, 1 mote rising to 3 as the burst nears.
             float progress = 1f - Projectile.timeLeft / (float)EmbedShudderTicks;
-            int trickleChance = (int)MathHelper.Lerp(4f, 1f, progress);
-            if (Main.rand.NextBool(Math.Max(1, trickleChance)))
+            int trickleCount = 1 + (int)(progress * 2.99f);
+            Vector2 shaftDirection = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2();
+            for (int i = 0; i < trickleCount; i++)
             {
-                Vector2 shaftDirection = (Projectile.rotation - MathHelper.PiOver2).ToRotationVector2();
                 Vector2 alongShaft = -shaftDirection * Main.rand.NextFloat(0f, 70f);
                 Dust sand = Dust.NewDustPerfect(Projectile.Center + alongShaft, DustID.Sand,
                     new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(0.2f, 1f)), 80,
@@ -272,9 +273,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             bool crumbled = Embedded && !HitPlayer;
 
-            if (crumbled && Main.netMode != NetmodeID.MultiplayerClient)
+            // Always a cloud. An embedded trident raises it a little off the ground; otherwise it bursts where it died.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Vector2 cloudCenter = Projectile.Center - new Vector2(0f, CloudHeightAboveGround);
+                Vector2 cloudCenter = Projectile.Center;
+                if (Embedded)
+                {
+                    cloudCenter -= new Vector2(0f, CloudHeightAboveGround);
+                }
+
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), cloudCenter, Vector2.Zero,
                     ModContent.ProjectileType<TaurusSandCloud>(), 0, 0f, Main.myPlayer);
             }
@@ -300,7 +307,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            // Player hit or a timed-out throw: an earthy burst, no cloud.
+            // Player hit or a timed-out throw: an earthy burst along with the cloud.
             SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             for (int i = 0; i < 40; i++)
             {

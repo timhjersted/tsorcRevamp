@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -8,7 +9,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     public class UlhanExplosiveArrow : ModProjectile
     {
-        public const float MaximumTravel = 15f * 16f;
+        public const float MaximumTravel = 20f * 16f;
         private const float EmbeddedState = 2f;
         // PLACEHOLDER sprite: copy of Content/Items/Ammo/CruelArrow.png; 14x44, bottom tip leads.
         public override void SetDefaults()
@@ -22,6 +23,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.tileCollide = true;
             Projectile.timeLeft = 120;
             Projectile.aiStyle = -1;
+            // Required for DrawBehind to run; DrawBehind then places every state in a draw list.
+            Projectile.hide = true;
         }
 
         // The blast owns the entire 75-damage hit. Player proximity is detected on authority,
@@ -95,6 +98,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 lightColor, Projectile.rotation, texture.Size() * 0.5f, Projectile.scale,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally);
             return false;
+        }
+
+        // A lodged arrow draws behind the terrain it is stuck in, so only the shaft and fletching show.
+        public override void DrawBehind(int index, List<int> behindNPCsAndTiles,
+            List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers,
+            List<int> overWiresUI)
+        {
+            if (Projectile.ai[1] == EmbeddedState)
+            {
+                behindNPCsAndTiles.Add(index);
+            }
+            else
+            {
+                behindProjectiles.Add(index);
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

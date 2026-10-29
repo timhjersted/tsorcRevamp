@@ -47,10 +47,10 @@ default, not written in the file · `.` off by default, never considered
 | Marik | Broadsword | Y | . | Y | Y | Y | Y | . | Y | Y | . | . | Y | Y | . | . | Y | . |
 | OolacileCultist | Dagger | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | Y | . | Y | . |
 | OwlFather | Axe | Y | . | Y | Y* | Y | Y | Y* | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
-| ShadowNinja | Broadsword | Y | . | . | Y | Y | . | . | . | . | Y | . | Y | Y | . | . | . | . |
+| ShadowNinja | Broadsword | Y | . | . | Y | Y | . | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | SpiritOfKhaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | StuddedLeatherWarrior | Axe | Y | . | . | Y* | Y | Y | Y* | . | . | . | . | Y | Y | Y | . | Y | Y |
-| Ulhan | Rapier | Y | . | . | Y | . | . | . | . | . | . | . | Y | . | . | . | . | . |
+| Ulhan | Rapier | Y | . | . | Y | . | . | . | . | . | Y | . | Y | . | . | . | . | . |
 
 <!-- GENERATED:END -->
 

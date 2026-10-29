@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         {
             if (Main.dedServ)
                 return;
-            // The mine vents smoke as this rocket lifts off; there is no launch blast.
+            // The mine vents smoke as this rocket lifts off out of the mine's own launch blast.
             for (int i = 0; i < 16; i++)
             {
                 Dust smoke = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 4f),
