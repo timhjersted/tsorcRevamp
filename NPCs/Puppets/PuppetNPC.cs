@@ -1460,9 +1460,25 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Slow advance speed (px/frame) toward the player while guarding OUT of melee
         /// range.  In melee range the puppet plants instead.</summary>
         protected virtual float ShieldAdvanceSpeed => 0.9f;
+        /// <summary>Opt-in pursuit stance: hold the shield raised while walking toward the player in
+        /// neutral, at full movement-AI speed (no plant, no slow walk). Unlike the reactive guard it
+        /// never blocks attack selection — the guard drops the moment an attack phase starts.</summary>
+        protected virtual bool HoldShieldWhileAdvancing => false;
+        /// <summary>Farthest the advancing guard is held (px). Beyond it there is nothing worth blocking.</summary>
+        protected virtual float AdvancingGuardMaxRange => 480f;
+        /// <summary>Subclass veto on top of the base advancing-guard checks (neutral phase, grounded, in band, line
+        /// of sight). Return false to keep the shield lowered this tick. Must be computed from state every peer
+        /// shares (positions, synced fields), since every peer evaluates it.</summary>
+        protected virtual bool ShouldRaiseAdvancingGuard(Player target, float distance) => true;
+        /// <summary>True this tick while the advancing guard is raised.</summary>
+        protected bool AdvancingGuardUp => _advancingGuard;
         /// <summary>True this frame while the guard is up (drives the raised-shield pose + the
         /// front damage / poise reduction).  Driven by the reactive block timer.</summary>
         private bool _shielding;
+        /// <summary>True this frame while the <see cref="HoldShieldWhileAdvancing"/> stance is up. Kept
+        /// apart from _shielding because _shielding suspends PuppetAttackAI. Recomputed every tick on
+        /// every peer from synced position/phase, so it needs no packet of its own.</summary>
+        private bool _advancingGuard;
         /// <summary>Facing captured when the guard goes up and held through a melee commit, so the
         /// puppet doesn't track a player dodgerolling through to its back.</summary>
         private int  _shieldLockedDir;
@@ -7908,18 +7924,40 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         private void UpdateShield()
         {
+            _advancingGuard = false;
+
             if (!HasShield)
             {
                 return;
             }
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
+            // Advancing guard: shield up while pursuing in neutral, from just outside melee engage range
+            // out to AdvancingGuardMaxRange, with a clear line to the target. Movement is left alone, so
+            // the puppet keeps its full pursuit speed. Airborne drops it (same rule as the reactive guard).
+            if (HoldShieldWhileAdvancing && NPC.HasValidTarget)
+            {
+                Player stanceTarget = Main.player[NPC.target];
+                bool pursuingPhase = Phase == AttackPhase.Idle
+                    || Phase == AttackPhase.CasualStroll
+                    || Phase == AttackPhase.ClosingDistance;
+                bool stanceGrounded = NPC.velocity.Y == 0f;
+                float stanceDistance = NPC.Distance(stanceTarget.Center);
+                bool stanceInBand = stanceDistance > MeleeEngageRange && stanceDistance <= AdvancingGuardMaxRange;
+
+                if (pursuingPhase && stanceGrounded && stanceInBand)
+                {
+                    bool clearLine = Collision.CanHitLine(NPC.Center, 1, 1, stanceTarget.Center, 1, 1);
+                    _advancingGuard = clearLine && ShouldRaiseAdvancingGuard(stanceTarget, stanceDistance);
+                }
+            }
+
             // A carried shield remains visible, but reactive guards are opt-in. Their neutral hold
             // can otherwise be refreshed into an effective stun lock without ever breaking poise.
             if (!AllowReactiveDefense)
             {
                 _shielding = false;
-                globalNPC.ShieldGuarding = false;
+                globalNPC.ShieldGuarding = _advancingGuard;
                 return;
             }
 
@@ -7932,7 +7970,7 @@ namespace tsorcRevamp.NPCs.Puppets
             if (!guardPhase)
             {
                 _shielding = false;
-                globalNPC.ShieldGuarding = false;
+                globalNPC.ShieldGuarding = _advancingGuard;
                 _shieldWasGuarding = false;
                 _shieldMeleeExtended = false;
 
@@ -8577,12 +8615,17 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // ── Damage tracking for emergency heal + reactive shield ──────────────────
+        /// <summary>Fired from <see cref="RegisterHit"/>, i.e. where the hit is authoritative (singleplayer hit hook,
+        /// or the server on a client's hit report). Default no-op.</summary>
+        protected virtual void OnHitRegistered(Vector2 sourceCenter, int damageDone, bool meleeHit) { }
+
         /// <summary>Burst-damage memory for the emergency heal, plus the reactive shield raise. Only a FRONT hit can snap
         /// the guard up — a backstab must not re-raise it. Called by GlobalNPC.ApplyHitReport, which runs where hits are
         /// authoritative: from the hit hook in singleplayer, from a client's ReportNPCHit on a multiplayer server.</summary>
         internal void RegisterHit(Vector2 sourceCenter, int damageDone, bool meleeHit)
         {
             _recentDamage += (float)damageDone / NPC.lifeMax;
+            OnHitRegistered(sourceCenter, damageDone, meleeHit);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             bool frontHit = Math.Sign(sourceCenter.X - NPC.Center.X) == NPC.direction;
@@ -8599,13 +8642,13 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Reactive shield: reduce FRONT damage while guarding (backstabs bypass) ──
         public override void ModifyHitByItem(Player player, Item item, ref NPC.HitModifiers modifiers)
         {
-            if (_shielding && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
+            if ((_shielding || _advancingGuard) && Math.Sign(player.Center.X - NPC.Center.X) == NPC.direction)
                 modifiers.FinalDamage *= ShieldDamageReduction;
         }
 
         public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            if (_shielding && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
+            if ((_shielding || _advancingGuard) && Math.Sign(projectile.Center.X - NPC.Center.X) == NPC.direction)
                 modifiers.FinalDamage *= ShieldDamageReduction;
         }
 
@@ -11183,7 +11226,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.position.Y + NPC.height - frameH + 4f) - Main.screenPosition + origin;
             // The equip strip supplies the carried position. During the authored guard, lift it
             // toward the chest and push it toward the attacker so the defensive state reads clearly.
-            if (_shielding)
+            if (_shielding || _advancingGuard)
                 drawPos += new Vector2(NPC.direction * 5f, -5f);
             SpriteEffects spriteFx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 

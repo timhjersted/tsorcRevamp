@@ -523,11 +523,11 @@ namespace tsorcRevamp.Systems
 
         private static readonly SpawnCondition NoDungeonMiniBossOrMage = NoDungeonMiniBoss & Alive.None<DungeonMage>();
 
-        // Jungle or meteor ground with no dungeon or evil biome mixed in: where the Dworc family lives.
-        private static readonly SpawnCondition DworcLand = (Zone.Jungle | Zone.Meteor) & !Zone.Dungeon & !Evil;
+        // Jungle or meteor ground with no dungeon or evil biome or snow mixed in: where the Dworc family lives.
+        private static readonly SpawnCondition DworcLand = (Zone.Jungle | Zone.Meteor) & !Zone.Dungeon & !Evil & !Zone.Snow;
 
-        // Dry jungle outside the dungeon: the two Dworc hunters.
-        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle;
+        // Dry jungle outside the dungeon and snow: the two Dworc hunters.
+        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle & !Zone.Snow;
 
         // The same jungle in the lower half of the map (row 1000 and below on the 2000-tall map). Their underground lines only
         // fire there, a limit added to keep them out of the sky.
@@ -987,7 +987,7 @@ namespace tsorcRevamp.Systems
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Surface, phm: 0.004f, hm: 0.004f, shm: 0.004f, max: 1);
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Underground, phm: 0.008f, hm: 0.008f, shm: 0.008f, max: 1);
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Cavern, phm: 0.065f, hm: 0.065f, shm: 0.065f, max: 1);
-            Spawn("DworcAlchemist", Water.Dry & Zone.Jungle & !Zone.Meteor & !Zone.Beach & !Evil, hm: 0.005f, shm: 0.005f, max: 1);
+            Spawn("DworcAlchemist", Water.Dry & Zone.Jungle & !Zone.Snow & !Zone.Meteor & !Zone.Beach & !Evil, hm: 0.005f, shm: 0.005f, max: 1);
 
             // Both hunters also have a surface-jungle line (0.265 and 0.2). It had stopped firing because of the same row-1000 test
             // that was meant to keep them out of the sky; it is written for the real surface with no row test.
@@ -1000,7 +1000,7 @@ namespace tsorcRevamp.Systems
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Surface & Time.Night, hm: 0.035f, shm: 0.035f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Underground, hm: 0.025f, shm: 0.025f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Cavern, hm: 0.03f, shm: 0.03f, max: 1);
-            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle, hm: 0.045f, shm: 0.045f, max: 1);
+            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle & !Zone.Snow, hm: 0.045f, shm: 0.045f, max: 1);
 
             // Underground jungle only, never inside the Golem's temple: Zone.Lihzahrd is the player standing on Lihzahrd wall,
             // and the Wall.Is catches a spawn tile inside the temple while the player is just outside it.
@@ -1365,7 +1365,8 @@ namespace tsorcRevamp.Systems
             Spawn("ShadowMage", Zone.Dungeon | Depth.Underworld, hm: 0.025f, shm: 0.025f);
 
             // Was any spot with more than five snow tiles, read from the local client's scene. Snow zone is the server-safe equivalent.
-            Spawn("SnowOwl", Zone.Snow & Water.Dry, phm: 0.2f, hm: 0.2f);
+            // Surface and sky only: never underground.
+            Spawn("SnowOwl", Zone.Snow & Water.Dry & !Depth.BelowSurface, phm: 0.2f, hm: 0.2f);
 
             // The old rule multiplied vanilla's cavern spawn chance (1 below the rock layer, above the underworld) by 0.15 before
             // Hardmode and 0.07 in Hardmode. Its Super Hardmode line (0.01) sat behind the Hardmode one and never fired; it is now live.

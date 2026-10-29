@@ -71,6 +71,17 @@ namespace tsorcRevamp.Liquids
         // Light: vanilla lava glows (1, 0.6, 0.2) x pulse; Void glows violet.
         private static readonly Vector3 VoidLightTint = new Vector3(0.55f, 0.12f, 1f);
 
+        // Depth falloff: the top lava tile of a pool glows at full strength, each tile below it dimmer, bottoming out
+        // at DeepGlowFraction once it has GlowFadeDepth tiles of lava above it. Bubbles, drips and lavafalls are not dimmed.
+        private const int GlowFadeDepth = 8;
+        private const float DeepGlowFraction = 0.15f;
+
+        // Tile the light scan is working on, captured in GetTileLight because ApplyLiquidLight is only handed the Tile.
+        // The scan runs on worker threads (FastParallel), so each thread keeps its own copy.
+        [ThreadStatic] private static int scanTileX;
+        [ThreadStatic] private static int scanTileY;
+        [ThreadStatic] private static bool scanTileKnown;
+
         // Dust atlas layout: dust type T sits at x = 10*T, three 8x8 frames 10px apart.
         private static readonly Rectangle LavaDustAtlasRegion = new Rectangle(10 * DustID.Lava, 0, 10, 30);
 
@@ -96,6 +107,7 @@ namespace tsorcRevamp.Liquids
                 return;
             }
 
+            On_TileLightScanner.GetTileLight += CaptureScanTile;
             On_TileLightScanner.ApplyLiquidLight += ApplyVoidLavaLight;
             On_WaterfallManager.AddLight += ApplyVoidLavafallLight;
             On_MapHelper.CreateMapTile += ChartVoidLavaOnMap;
@@ -253,8 +265,21 @@ namespace tsorcRevamp.Liquids
             return built;
         }
 
+        // Vanilla's GetTileLight calls ApplyLiquidLight for tile (x, y); remember which tile so the depth falloff can look above it.
+        private static void CaptureScanTile(On_TileLightScanner.orig_GetTileLight orig, TileLightScanner self, int x, int y, out Vector3 outputColor)
+        {
+            scanTileX = x;
+            scanTileY = y;
+            scanTileKnown = true;
+
+            orig(self, x, y, out outputColor);
+
+            scanTileKnown = false;
+        }
+
         // Lava tiles emit violet instead of orange while Void is visible. Same pulse
         // as vanilla (0.55 base + mouseTextColor shimmer); only raises channels, never lowers.
+        // Dimmed by depth below the pool's surface, so deep Void reads dark while its top edge still glows.
         private static void ApplyVoidLavaLight(On_TileLightScanner.orig_ApplyLiquidLight orig, TileLightScanner self, Tile tile, ref Vector3 lightColor)
         {
             bool isVoidLava = VoidLavaVisible && tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Lava;
@@ -265,8 +290,37 @@ namespace tsorcRevamp.Liquids
                 return;
             }
 
+            // Count lava tiles stacked directly above, up to GlowFadeDepth. Unknown position (some other caller) = surface.
+            int lavaAbove = 0;
+
+            if (scanTileKnown)
+            {
+                while (lavaAbove < GlowFadeDepth)
+                {
+                    int checkY = scanTileY - 1 - lavaAbove;
+
+                    if (!WorldGen.InWorld(scanTileX, checkY))
+                    {
+                        break;
+                    }
+
+                    Tile above = Main.tile[scanTileX, checkY];
+                    bool aboveIsLava = above.LiquidAmount > 0 && above.LiquidType == LiquidID.Lava;
+
+                    if (!aboveIsLava)
+                    {
+                        break;
+                    }
+
+                    lavaAbove++;
+                }
+            }
+
+            float depthProgress = lavaAbove / (float)GlowFadeDepth;
+            float depthFactor = MathHelper.Lerp(1f, DeepGlowFraction, depthProgress);
+
             float glow = 0.55f + (270 - Main.mouseTextColor) / 900f;
-            Vector3 voidGlow = VoidLightTint * glow;
+            Vector3 voidGlow = VoidLightTint * glow * depthFactor;
 
             lightColor = Vector3.Max(lightColor, voidGlow);
         }

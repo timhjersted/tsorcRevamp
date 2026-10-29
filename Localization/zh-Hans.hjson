@@ -9753,6 +9753,11 @@ Mods: {
 				Description: 你不能飞行！
 			}
 
+			TreacherousTerrain: {
+				// DisplayName: Treacherous Terrain
+				// Description: The footing here is too treacherous to ride a mount
+			}
+
 			DestinedDeath: {
 				// DisplayName: Destined Death
 				// Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
@@ -11898,6 +11903,9 @@ Mods: {
 			// EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			// StardustDelivery.DisplayName: Stardust Delivery
 			// ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
+			// ShadowNinjaPoisonCloud.DisplayName: Shadow Ninja Poison Cloud
+			// ShadowSmokeCaltrop.DisplayName: Smoke Caltrop
+			// ShadowSmokeCloud.DisplayName: Smoke Cloud
 			// ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 			// ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
 			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
@@ -13570,6 +13578,7 @@ Mods: {
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
+			// ShadowNinjaShade.DisplayName: Shadow Self
 			// BlackNinja.DisplayName: Black Ninja
 			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart

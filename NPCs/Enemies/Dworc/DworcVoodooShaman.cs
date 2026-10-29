@@ -115,6 +115,12 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
 
             if (spawnInfo.Water) return 0f;
 
+            // Jungle enemies stay out of the snow biome, even where it borders the jungle.
+            if (spawnInfo.Player.ZoneSnow)
+            {
+                return 0f;
+            }
+
             if (Main.hardMode && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
             {
                 if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.01f;

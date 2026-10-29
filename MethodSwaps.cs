@@ -238,6 +238,8 @@ namespace tsorcRevamp
 
             On_Player.ItemCheck_EmitUseVisuals += On_Player_ItemCheck_EmitUseVisuals;
 
+            On_Player.CheckCrackedBrickBreak += On_Player_CheckCrackedBrickBreak;
+
             On_Player.GetPointOnSwungItemPath += On_Player_GetPointOnSwungItemPath;
 
             On_Player.ApplyVanillaHurtEffectModifiers += On_Player_ApplyVanillaHurtEffectModifiers;
@@ -1740,6 +1742,23 @@ namespace tsorcRevamp
                     Main.soundVolume = oldVolume;
                 }
             }
+        }
+
+        // Thin ice still breaks under Supersonic Wings / Dragoon helmets, which give Ice Skates grip only (IceGripOnly), unless a
+        // real Ice Skates source is also worn. Vanilla's Player.Update runs "if (!iceSkate) CheckIceBreak();" then
+        // CheckCrackedBrickBreak() on the owning client, before tile collision. This hook is that second call, so running
+        // CheckIceBreak here sees the same position and fall speed (> 7) vanilla would have.
+        private static void On_Player_CheckCrackedBrickBreak(On_Player.orig_CheckCrackedBrickBreak orig, Player self)
+        {
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+            bool skatesSkippedIceCheck = self.iceSkate && modPlayer.IceGripOnly && !modPlayer.HasRealIceSkates;
+
+            if (skatesSkippedIceCheck)
+            {
+                self.CheckIceBreak();
+            }
+
+            orig(self);
         }
 
         private static Rectangle On_Player_ItemCheck_EmitUseVisuals(On_Player.orig_ItemCheck_EmitUseVisuals orig, Player self, Item sItem, Rectangle itemRectangle)

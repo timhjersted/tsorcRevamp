@@ -60,7 +60,7 @@ namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
             player.noKnockback = true;
 
             player.ignoreWater = true;
-            player.iceSkate = true;
+            player.GetModPlayer<tsorcRevampPlayer>().IceGripOnly = true;
         }
         public override void ArmorSetShadows(Player player)
         {

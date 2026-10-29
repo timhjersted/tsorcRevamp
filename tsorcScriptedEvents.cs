@@ -1925,6 +1925,12 @@ namespace tsorcRevamp
                 if (dEvent.SaveOnCompletion && tsorcRevampWorld.CompletedDynamicEvents.Contains(dEvent.EventID))
                     continue;
 
+                // Native events sit in terrain that only exists on the expanded world; their coords mean nothing elsewhere.
+                if (dEvent.ExpandedNativeCoords && !ExpandedWorldTransform.Active)
+                {
+                    continue;
+                }
+
                 // Resolve conditions and actions via reflection.
                 // The World condition (Adventure/Remix/Always) and the Spawn condition are evaluated
                 // independently and ANDed together, so an event can be e.g. "Adventure Map Only" + "Hardmode Only".
@@ -2024,28 +2030,71 @@ namespace tsorcRevamp
         // In-memory dynamic events are kept in the CURRENT world's runtime space; the JSON file is always LEGACY
         // 2000-space. These convert between the two. Identity on non-expanded worlds (MapTile/InverseMapTile no-op).
 
-        private static void DynamicEventToRuntimeSpace(DynamicSpawnEvent e)
+        private static void DynamicEventToRuntimeSpace(DynamicSpawnEvent dynamicEvent)
         {
-            Vector2 c = ExpandedWorldTransform.MapTile(new Vector2(e.CenterX, e.CenterY));
-            e.CenterX = c.X; e.CenterY = c.Y;
-            if (e.Npcs != null)
-                foreach (DynamicSpawnEntry n in e.Npcs)
+            // Native events are stored in 2400-space already; mapping them again would shift them down 200/400.
+            if (dynamicEvent.ExpandedNativeCoords)
+            {
+                return;
+            }
+
+            Vector2 center = ExpandedWorldTransform.MapTile(new Vector2(dynamicEvent.CenterX, dynamicEvent.CenterY));
+            dynamicEvent.CenterX = center.X;
+            dynamicEvent.CenterY = center.Y;
+
+            if (dynamicEvent.Npcs != null)
+            {
+                foreach (DynamicSpawnEntry npc in dynamicEvent.Npcs)
                 {
-                    Vector2 s = ExpandedWorldTransform.MapTile(new Vector2(n.SpawnX, n.SpawnY));
-                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                    Vector2 spawn = ExpandedWorldTransform.MapTile(new Vector2(npc.SpawnX, npc.SpawnY));
+                    npc.SpawnX = spawn.X;
+                    npc.SpawnY = spawn.Y;
                 }
+            }
         }
 
-        private static void DynamicEventToLegacySpace(DynamicSpawnEvent e)
+        private static void DynamicEventToLegacySpace(DynamicSpawnEvent dynamicEvent)
         {
-            Vector2 c = ExpandedWorldTransform.InverseMapTile(new Vector2(e.CenterX, e.CenterY));
-            e.CenterX = c.X; e.CenterY = c.Y;
-            if (e.Npcs != null)
-                foreach (DynamicSpawnEntry n in e.Npcs)
+            // An event with any point in the fold gap (new 2400-only terrain, final-Y ~1991-2190) has no legacy
+            // equivalent: InverseMapTile falls back to -200, and reload then maps it +400, landing it 200 tiles too
+            // deep. Mark it native instead and leave its coords in runtime space. The flag is sticky once set.
+            bool centerInGap = ExpandedWorldTransform.IsInFoldGap((int)dynamicEvent.CenterY);
+            bool anyNpcInGap = false;
+
+            if (dynamicEvent.Npcs != null)
+            {
+                foreach (DynamicSpawnEntry npc in dynamicEvent.Npcs)
                 {
-                    Vector2 s = ExpandedWorldTransform.InverseMapTile(new Vector2(n.SpawnX, n.SpawnY));
-                    n.SpawnX = s.X; n.SpawnY = s.Y;
+                    if (ExpandedWorldTransform.IsInFoldGap((int)npc.SpawnY))
+                    {
+                        anyNpcInGap = true;
+                    }
                 }
+            }
+
+            if (centerInGap || anyNpcInGap)
+            {
+                dynamicEvent.ExpandedNativeCoords = true;
+            }
+
+            if (dynamicEvent.ExpandedNativeCoords)
+            {
+                return;
+            }
+
+            Vector2 center = ExpandedWorldTransform.InverseMapTile(new Vector2(dynamicEvent.CenterX, dynamicEvent.CenterY));
+            dynamicEvent.CenterX = center.X;
+            dynamicEvent.CenterY = center.Y;
+
+            if (dynamicEvent.Npcs != null)
+            {
+                foreach (DynamicSpawnEntry npc in dynamicEvent.Npcs)
+                {
+                    Vector2 spawn = ExpandedWorldTransform.InverseMapTile(new Vector2(npc.SpawnX, npc.SpawnY));
+                    npc.SpawnX = spawn.X;
+                    npc.SpawnY = spawn.Y;
+                }
+            }
         }
 
         // Serialize the (runtime-space) in-memory DynamicEvents to LEGACY-space JSON for on-disk storage.
@@ -3354,6 +3403,10 @@ namespace tsorcRevamp
         // True for "Quick Add" events: a single NPC acts as the event marker/center (no book icon drawn),
         // and the event is locked to exactly one NPC.
         public bool SingleNpcMarker { get; set; }
+        // True when CenterX/Y and NPC spawns are stored in expanded 2400-space as-is instead of legacy 2000-space.
+        // Set automatically on save for events placed in the fold gap, which has no legacy equivalent.
+        public bool ExpandedNativeCoords { get; set; }
+        public bool ShouldSerializeExpandedNativeCoords() => ExpandedNativeCoords;
         public List<DynamicSpawnEntry> Npcs { get; set; } = new List<DynamicSpawnEntry>();
 
         // Optional custom drops, mostly used for simple single-item drops.

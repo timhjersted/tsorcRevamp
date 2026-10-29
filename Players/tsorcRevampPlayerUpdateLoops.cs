@@ -232,6 +232,11 @@ namespace tsorcRevamp
 
         public int supersonicLevel = 0;
         public bool hasSupersonicHarness = false;
+        // Ice Skates grip without the thin-ice protection. Supersonic Wings I/II and the Dragoon helmets set IceGripOnly instead
+        // of iceSkate; PostUpdateEquips notes whether anything else gave real Ice Skates, then turns iceSkate on for grip.
+        // MethodSwaps.On_Player_CheckCrackedBrickBreak breaks thin ice when the grip came only from these. Both reset each tick.
+        public bool IceGripOnly = false;
+        public bool HasRealIceSkates = false;
         public bool hasSlottedWing = false;
         public bool supersonicHarnessHideVisual = false;
         public int slottedWingSlot = 0;
@@ -611,6 +616,8 @@ namespace tsorcRevamp
             ConditionOverload = false;
             supersonicLevel = 0;
             hasSupersonicHarness = false;
+            IceGripOnly = false;
+            HasRealIceSkates = false;
             hasSlottedWing = false;
             supersonicHarnessHideVisual = false;
             slottedWingSlot = 0;
@@ -1413,7 +1420,15 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
-            
+            // Grip-only Ice Skates. Equips, armor sets and buffs have all run, so iceSkate being on here means a real
+            // source (Ice Skates, Frostspark, Hero's Hat...) gave it. Record that, then grant the grip.
+            HasRealIceSkates = Player.iceSkate;
+
+            if (IceGripOnly)
+            {
+                Player.iceSkate = true;
+            }
+
             // The wing harness slot used to eject its items when the harness was unequipped or Souls Mode mobility turned
             // off. It now just goes inactive, like the other mod slots: SupersonicWingSlot.IsEnabled() returns false, tML
             // skips ApplyEquipEffects for it (so no wing effects), keeps it drawn while it still holds items

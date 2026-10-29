@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Items.Armor.DragoonSet
             //player.wingsLogic = 34;
             //player.wingTimeMax = 180;
             player.ignoreWater = true;
-            player.iceSkate = true;
+            player.GetModPlayer<tsorcRevampPlayer>().IceGripOnly = true;
         }
         public override void AddRecipes()
         {

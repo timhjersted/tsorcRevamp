@@ -11862,6 +11862,11 @@ Mods: {
 			TaurusJavelin.DisplayName: Earth Trident
 			TaurusSandCloud.DisplayName: Sand Cloud
 			TaurusBrimstoneFlame.DisplayName: Brimstone Flame
+			BlaiddSuppressionFlask.DisplayName: Azure Suppression Flask
+			BlaiddSuppressionBurst.DisplayName: Azure Suppression
+			BlaiddDiscardedShield.DisplayName: Discarded Shield
+			BlaiddMoonWave.DisplayName: Moonlight Wave
+			BlaiddMoonlightCrescent.DisplayName: Moonlight Crescent
 			ProximityMine.DisplayName: Proximity Mine
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			ProximityMineRocket.DisplayName: Proximity Mine Rocket

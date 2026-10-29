@@ -73,6 +73,12 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         {
             Player player = spawnInfo.Player;
 
+            // Jungle enemies stay out of the snow biome, even where it borders the jungle.
+            if (player.ZoneSnow)
+            {
+                return 0f;
+            }
+
             // these are all the regular stuff you get , now lets see......
             float chance = 0;
 

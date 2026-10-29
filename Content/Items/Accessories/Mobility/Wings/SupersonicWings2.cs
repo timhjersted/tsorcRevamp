@@ -78,7 +78,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Mobility.Wings
             }
 
             player.fireWalk = true;
-            player.iceSkate = true;
+            modPlayer.IceGripOnly = true;
 
             if (!SoulsModeMobility.Enabled(player))
             {

@@ -53,6 +53,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 chance = 0;
             }
 
+            // Surface and sky only: never underground.
+            bool belowSurface = spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight;
+            if (belowSurface)
+            {
+                chance = 0;
+            }
+
             return chance;
         }
 
