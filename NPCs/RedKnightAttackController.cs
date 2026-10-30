@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Enemy.WyvernMage;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs
 {
@@ -72,6 +73,10 @@ namespace tsorcRevamp.NPCs
         VerticalHop
     }
 
+    /// <summary>
+    /// Declared Expert Mode damage before player defense: every spawn wraps these in EnemyDamage.Projectile,
+    /// and the helpers below take the same real-Expert value as their damage parameter.
+    /// </summary>
     internal readonly struct KnightAttackStats
     {
         public readonly int SpearDamage;
@@ -984,7 +989,7 @@ namespace tsorcRevamp.NPCs
                 Vector2 bombSource = BombLaunchSource(npc);
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(bombSource, LockedTarget, 15f, 0.2f, highAngle: false, fallback: true);
                 emberBombProjectileIndex = Projectile.NewProjectile(npc.GetSource_FromThis(), bombSource, velocity,
-                    ModContent.ProjectileType<EnemyFirebomb>(), stats.BombDamage, 0f, Main.myPlayer, ai2: 1f);
+                    ModContent.ProjectileType<EnemyFirebomb>(), EnemyDamage.Projectile(stats.BombDamage), 0f, Main.myPlayer, ai2: 1f);
                 PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.35f }, npc.Center);
             }
 
@@ -1070,7 +1075,7 @@ namespace tsorcRevamp.NPCs
                     LockedVelocity = new Vector2(displacement.X / flightTicks,
                         (displacement.Y - 0.5f * gravity * flightTicks * flightTicks) / flightTicks);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, LockedVelocity,
-                        ModContent.ProjectileType<RedKnightAdderSpear>(), stats.MagicDamage, 0f, Main.myPlayer,
+                        ModContent.ProjectileType<RedKnightAdderSpear>(), EnemyDamage.Projectile(stats.MagicDamage), 0f, Main.myPlayer,
                         npc.whoAmI, AuxiliaryTargetA.X, AuxiliaryTargetA.Y);
                 }
                 PlaySound(SoundID.Item1 with { Volume = 0.88f, Pitch = -0.15f }, npc.Center);
@@ -1120,7 +1125,7 @@ namespace tsorcRevamp.NPCs
                     ? ModContent.ProjectileType<EnemyAncientBloodLanceProj>()
                     : ModContent.ProjectileType<BlackKnightSpear>();
                 Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, LockedVelocity,
-                    projectileType, stats.SpearDamage, 0f, Main.myPlayer, ai2: 1f);
+                    projectileType, EnemyDamage.Projectile(stats.SpearDamage), 0f, Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
                 PlaySound(SoundID.Item1 with { Volume = 0.82f, PitchVariance = 0.08f }, npc.Center);
             }
@@ -1149,7 +1154,7 @@ namespace tsorcRevamp.NPCs
                     if (Math.Sign(velocity.X) == Direction)
                     {
                         Projectile.NewProjectile(npc.GetSource_FromThis(), castSource, velocity,
-                            ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), stats.MagicDamage,
+                            ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), EnemyDamage.Projectile(stats.MagicDamage),
                             0f, Main.myPlayer, ai2: 1f);
                     }
                 }
@@ -1179,7 +1184,7 @@ namespace tsorcRevamp.NPCs
             if (Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(npc.GetSource_FromThis(), BombLaunchSource(npc), LockedVelocity,
-                    ModContent.ProjectileType<EnemyFirebomb>(), stats.BombDamage, 0f,
+                    ModContent.ProjectileType<EnemyFirebomb>(), EnemyDamage.Projectile(stats.BombDamage), 0f,
                     Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
                 PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.4f }, npc.Center);
@@ -1209,7 +1214,7 @@ namespace tsorcRevamp.NPCs
                     : ProjectileID.InsanityShadowHostile;
                 float handIndex = greatKnight ? (Timer - 60) / 2f : 0f;
                 Projectile.NewProjectile(npc.GetSource_FromThis(), castSource, velocity,
-                    projectileType, stats.GreatDamage, 0f, Main.myPlayer, ai0: handIndex);
+                    projectileType, EnemyDamage.Projectile(stats.GreatDamage), 0f, Main.myPlayer, ai0: handIndex);
                 if (Timer == 60)
                 {
                     tsorcRevampAIs.RegisterFighterAttack(npc);
@@ -1239,7 +1244,7 @@ namespace tsorcRevamp.NPCs
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
-                        ModContent.ProjectileType<RedKnightPoisonRainController>(), stats.MagicDamage,
+                        ModContent.ProjectileType<RedKnightPoisonRainController>(), EnemyDamage.Projectile(stats.MagicDamage),
                         0f, Main.myPlayer);
                     tsorcRevampAIs.RegisterFighterAttack(npc);
                 }
@@ -1319,7 +1324,7 @@ namespace tsorcRevamp.NPCs
                 float waveDrift = (wave - (CinderRainWaveCount - 1) * 0.5f) * 0.12f;
                 Vector2 velocity = new(Main.rand.NextFloat(-0.65f, 0.65f) + waveDrift, 7.1f);
                 Projectile.NewProjectile(npc.GetSource_FromThis(), origin, velocity,
-                    ModContent.ProjectileType<CinderRainDrop>(), damage, 2f, Main.myPlayer,
+                    ModContent.ProjectileType<CinderRainDrop>(), EnemyDamage.Projectile(damage), 2f, Main.myPlayer,
                     ai0: LockedTarget.Y - CinderRainExpireHeight);
             }
         }
@@ -1335,7 +1340,8 @@ namespace tsorcRevamp.NPCs
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, LockedVelocity,
-                        ModContent.ProjectileType<JellyfishLightning>(), 30, 1f, Main.myPlayer,
+                        ModContent.ProjectileType<JellyfishLightning>(), EnemyDamage.Projectile(120), 1f, // flat real-Expert value, every knight and mode
+                        Main.myPlayer,
                         ai1: npc.whoAmI);
                     tsorcRevampAIs.RegisterFighterAttack(npc);
                 }
@@ -1372,7 +1378,7 @@ namespace tsorcRevamp.NPCs
                 {
                     int sweepDirection = Main.rand.NextBool() ? 1 : -1;
                     Projectile.NewProjectile(npc.GetSource_FromThis(), LockedTarget, Vector2.Zero,
-                        ModContent.ProjectileType<RedKnightPoisonCurtainController>(), stats.MagicDamage,
+                        ModContent.ProjectileType<RedKnightPoisonCurtainController>(), EnemyDamage.Projectile(stats.MagicDamage),
                         0f, Main.myPlayer, ai0: sweepDirection);
                     tsorcRevampAIs.RegisterFighterAttack(npc);
                 }
@@ -1424,7 +1430,7 @@ namespace tsorcRevamp.NPCs
                     {
                         Projectile.NewProjectile(npc.GetSource_FromThis(), markerPosition, Vector2.Zero,
                             ModContent.ProjectileType<RedKnightTeleportFeintBlast>(),
-                            Math.Max(1, (int)(stats.MagicDamage * 0.75f)), 2f, Main.myPlayer);
+                            Math.Max(1, (int)(EnemyDamage.Projectile(stats.MagicDamage) * 0.75f)), 2f, Main.myPlayer);
                     }
                     PlaySound(SoundID.Item74 with
                     {
@@ -1479,7 +1485,7 @@ namespace tsorcRevamp.NPCs
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(npc.GetSource_FromThis(), SpearLaunchSource(npc, Direction), LockedVelocity,
-                    ModContent.ProjectileType<BlackKnightSpear>(), stats.SpearDamage, 0f,
+                    ModContent.ProjectileType<BlackKnightSpear>(), EnemyDamage.Projectile(stats.SpearDamage), 0f,
                     Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
                 PlaySound(SoundID.Item1 with { Volume = 0.88f, Pitch = -0.08f }, npc.Center);
@@ -1614,7 +1620,7 @@ namespace tsorcRevamp.NPCs
             {
                 // The bomb lerps from its spawn to its ground point, so it leaves from the throwing hand.
                 Projectile.NewProjectile(npc.GetSource_FromThis(), BombLaunchSource(npc), Vector2.Zero,
-                    ModContent.ProjectileType<RedKnightDelayedBomb>(), stats.GreatDamage, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<RedKnightDelayedBomb>(), EnemyDamage.Projectile(stats.GreatDamage), 0f, Main.myPlayer,
                     AuxiliaryTargetA.X, AuxiliaryTargetA.Y, 1f);
                 PlaySound(UsefulFunctions.BombFuse with { Volume = 0.75f }, npc.Center);
             }
@@ -1785,7 +1791,7 @@ namespace tsorcRevamp.NPCs
                     continue;
                 }
                 Projectile.NewProjectile(npc.GetSource_FromThis(), groundPoint, new Vector2(0f, -1f),
-                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<RedKnightLightningLane>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                     ai0: 46f, ai1: 12f, ai2: 620f);
             }
         }
@@ -1830,7 +1836,7 @@ namespace tsorcRevamp.NPCs
                     // InDominionDeathSequence to know when to fade. It runs until then.
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, Vector2.Zero,
                         ModContent.ProjectileType<CrimsonDominionController>(),
-                        stats.GreatDamage, 0f, Main.myPlayer,
+                        EnemyDamage.Projectile(stats.GreatDamage), 0f, Main.myPlayer,
                         ArenaRotationDirection, ArenaBaseRotation, npc.whoAmI);
                 }
             }
@@ -1991,7 +1997,7 @@ namespace tsorcRevamp.NPCs
             Vector2 aim = UsefulFunctions.Aim(npc.Center, point, 1);
             Projectile.NewProjectileDirect(npc.GetSource_FromThis(), npc.Center, aim,
                 ModContent.ProjectileType<SmallRedLightning>(),
-                damage, 1f, Main.myPlayer, 0, npc.whoAmI);
+                EnemyDamage.Projectile(damage), 1f, Main.myPlayer, 0, npc.whoAmI);
         }
 
         /// <summary>
@@ -2016,7 +2022,7 @@ namespace tsorcRevamp.NPCs
                 // point and is drawn as a vertical column, so a "sky strike" is a ground anchor plus
                 // an upward direction and a length.
                 Projectile.NewProjectile(npc.GetSource_FromThis(), groundPoint, new Vector2(0f, -1f),
-                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<RedKnightLightningLane>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                     ai0: DomStageDTelegraph, ai1: 12f, ai2: 640f);
             }
             PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.2f }, npc.Center);
@@ -2101,7 +2107,7 @@ namespace tsorcRevamp.NPCs
                     // while retaining a clear vertical dodge lane.
                     Vector2 lanceVelocity = new Vector2(sweepDirection * 0.45f, 10.5f);
                     Projectile.NewProjectile(npc.GetSource_FromThis(), origin, lanceVelocity,
-                        ModContent.ProjectileType<RedCourtLancePortal>(), stats.GreatDamage, 0f,
+                        ModContent.ProjectileType<RedCourtLancePortal>(), EnemyDamage.Projectile(stats.GreatDamage), 0f,
                         Main.myPlayer, ai0: npc.whoAmI, ai1: index);
                 }
             }
@@ -2820,7 +2826,7 @@ namespace tsorcRevamp.NPCs
                     Vector2 velocity = angle.ToRotationVector2() * speed;
                     int spinDirection = (i + wave) % 2 == 0 ? 1 : -1;
                     Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, velocity,
-                        ModContent.ProjectileType<DestinedDeathBlaze>(), damage, 1.5f, Main.myPlayer,
+                        ModContent.ProjectileType<DestinedDeathBlaze>(), EnemyDamage.Projectile(damage), 1.5f, Main.myPlayer,
                         ai0: spinDirection, ai1: 2f, ai2: travelDistance);
                 }
             }
@@ -2864,12 +2870,12 @@ namespace tsorcRevamp.NPCs
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(npc.GetSource_FromThis(), leftGround, new Vector2(0f, -1f),
-                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<RedKnightLightningLane>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                     ai0: StormHeraldLaneTelegraphTicks, ai1: StormHeraldLaneActiveTicks, ai2: 620f);
                 // Negative active duration means "silent twin" to RedKnightLightningLane. Collision
                 // still uses its absolute value, but the simultaneous pair produces one impact cue.
                 Projectile.NewProjectile(npc.GetSource_FromThis(), rightGround, new Vector2(0f, -1f),
-                    ModContent.ProjectileType<RedKnightLightningLane>(), damage, 0f, Main.myPlayer,
+                    ModContent.ProjectileType<RedKnightLightningLane>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                     ai0: StormHeraldLaneTelegraphTicks, ai1: -StormHeraldLaneActiveTicks, ai2: 620f);
             }
         }
@@ -3015,7 +3021,7 @@ namespace tsorcRevamp.NPCs
                 return;
             }
             Projectile.NewProjectile(npc.GetSource_FromThis(), npc.Center, new Vector2(npc.direction, 0f),
-                ModContent.ProjectileType<RedKnightLungeHitbox>(), damage, knockback, Main.myPlayer,
+                ModContent.ProjectileType<RedKnightLungeHitbox>(), EnemyDamage.Projectile(damage), knockback, Main.myPlayer,
                 reach, height, duration);
         }
 
@@ -3054,7 +3060,7 @@ namespace tsorcRevamp.NPCs
         {
             Vector2 launchSource = SpearLaunchSource(npc, npc.direction);
             Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, Vector2.Zero,
-                ModContent.ProjectileType<RedKnightStandard>(), damage, 0f, Main.myPlayer,
+                ModContent.ProjectileType<RedKnightStandard>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                 target.X, target.Y, (float)mode);
         }
 

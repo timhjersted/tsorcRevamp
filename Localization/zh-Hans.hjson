@@ -9197,6 +9197,21 @@ Mods: {
 				// DisplayName: Black Knight Greaves
 			}
 
+			GreatBlackKnightHelm: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Helm
+			}
+
+			GreatBlackKnightArmor: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Armor
+			}
+
+			GreatBlackKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Greaves
+			}
+
 			RedKnightBreastplate: {
 				// Tooltip: ""
 				// DisplayName: Red Knight Breastplate

@@ -30,6 +30,10 @@ namespace SwingPreview
         /// useAnimation. Deliberately excludes LeapThrust - see the base virtual's doc comment.</summary>
         public bool AuthoredClockCoversJoustDash;
         public bool UseSwingEasing;
+        /// <summary>PuppetNPC.UseTwoHandedCompositeSwing and TwoHandedBackGripOffset: the back hand also grips the
+        /// weapon, this many px from the front hand along it (negative = toward the butt).</summary>
+        public bool TwoHanded;
+        public float TwoHandedBackGripOffset = 4f;
         public bool SmoothRapierThrustPose;
         public bool AimSwingActive;
         public bool LogicalTelegraphs;
@@ -98,6 +102,8 @@ namespace SwingPreview
             profile._instance = RuntimeHelpers.GetUninitializedObject(puppetType);
 
             profile.UseSwingEasing = profile.Read("UseSwingEasing", false);
+            profile.TwoHanded = profile.Read("UseTwoHandedCompositeSwing", false);
+            profile.TwoHandedBackGripOffset = profile.Read("TwoHandedBackGripOffset", 4f);
             profile.SmoothRapierThrustPose = profile.Read("UseSmoothRapierThrustPose", false);
             profile.AimSwingActive = profile.Read("AimSwingActive", false);
             profile.AuthoredClock = profile.Read("UseAuthoredComboSwingClock", profile.AimSwingActive);

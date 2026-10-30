@@ -39,9 +39,11 @@ namespace tsorcRevamp.NPCs.Enemies
         public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(BlackKnight)) + "_Head_Boss";
 
         #region Defaults
-        public int redKnightsSpearDamage = 15;
-        public int redMagicDamage = 14;
-        public int redKnightsGreatDamage = 18;
+        // Declared Expert Mode damage before player defense and damage variation: spawns go through EnemyDamage.Projectile.
+        // Scripted events overwrite these (tsorcScriptedEvents BlackKnightCustomAction), in the same units.
+        public int redKnightsSpearDamage = 60;  // Combo swings, spear throw & Moonfury bomb (real expert damage)
+        public int redMagicDamage = 56;         // Homing crystals, Gravefall rain & plague columns (real expert damage)
+        public int redKnightsGreatDamage = 72;  // Spear thrust hitbox, death skull & cursed breath (real expert damage)
         Vector2 storedPlayerPosition = Vector2.Zero;
         public int framesSinceStoredPosition = 0;
 
@@ -78,7 +80,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<BlackBlade>();
         protected override int RangedWeaponItemType => -1;
-        protected override int MeleeDamage => redKnightsSpearDamage;
+        protected override int MeleeDamage => EnemyDamage.Projectile(redKnightsSpearDamage); // PuppetNPC spawns its blade hitboxes with this raw value
         protected override int RangedDamage => 0;
         protected override void DoMeleeAttack() { } // All melee is the combo pool below.
         protected override void DoRangedAttack() { }
@@ -114,18 +116,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 2000;
                 NPC.defense = 50;
                 NPC.value = 16000; // life / 1.25
-                redKnightsGreatDamage = 21;
-                redKnightsSpearDamage = 23;
-                redMagicDamage = 19;
+                redKnightsGreatDamage = 84;
+                redKnightsSpearDamage = 92;
+                redMagicDamage = 76;
             }
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 4000;
                 NPC.defense = 75;
                 NPC.value = 16000; // life / 2.5
-                redKnightsGreatDamage = 38;
-                redKnightsSpearDamage = 32;
-                redMagicDamage = 26;
+                redKnightsGreatDamage = 152;
+                redKnightsSpearDamage = 128;
+                redMagicDamage = 104;
             }
 
             NPC.HitSound = SoundID.NPCHit1;

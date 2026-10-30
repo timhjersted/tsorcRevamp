@@ -125,12 +125,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.GreatRedKnightBanner>();
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GreatRedKnight.DespawnHandler"), Color.Red, DustID.RedTorch);
 
-            redKnightsSpearDamage = 45;
-            redMagicDamage = 40;
-            redKnightsGreatDamage = 50;
-            // Benchmarked against this boss's own numbers: the great attack (50) is the heaviest thing it has, and a
+            // Real expert damage (declared Expert hit before defense; spawns go through EnemyDamage.Projectile).
+            redKnightsSpearDamage = 180;
+            redMagicDamage = 160;
+            redKnightsGreatDamage = 200;
+            // Benchmarked against this boss's own numbers: the great attack (200) is the heaviest thing it has, and a
             // lobbed AoE with an arc, a visible fuse and a 120px blast the player has ~2s to leave sits just above it.
-            redKnightsBombDamage = 62;
+            redKnightsBombDamage = 248;
 
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             redKnightGlobalNPC.Agility = 0.45f;
@@ -363,7 +364,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Vector2.Zero,
                     ModContent.ProjectileType<CrimsonDominionController>(),
-                    redKnightsGreatDamage, 0f, Main.myPlayer,
+                    EnemyDamage.Projectile(redKnightsGreatDamage), 0f, Main.myPlayer,
                     2f, Main.rand.NextFloat(MathHelper.Pi / 12f), NPC.whoAmI);
                 Terraria.Audio.SoundEngine.PlaySound(
                     SoundID.Item74 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);

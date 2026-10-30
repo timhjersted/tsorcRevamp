@@ -38,9 +38,9 @@ default, not written in the file · `.` off by default, never considered
 | TaurusKnight | Hammer | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | AbyssalNinja | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackNinja | Flail | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | Y | . |
-| Blaidd | Greatsword | . | . | Y | . | . | Y | . | Y | . | . | . | . | . | . | . | Y | . |
+| Blaidd | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | . | Y | . | Y | Y | Y | . | Y | . |
 | ClericOfSorrow | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
-| CursedDragon | Halberd | Y | . | Y | Y | Y | Y | . | Y | . | Y | . | Y | Y | Y | . | Y | . |
+| CursedDragon | Halberd | Y | Y | Y | Y | Y | Y | . | Y | . | Y | . | Y | Y | Y | . | Y | . |
 | DreadWraith | — | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | . |
 | Kahlrun | Broadsword | Y | . | Y | . | Y | Y | . | Y | . | . | . | . | . | . | . | Y | Y |
 | Khaios | — | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |

@@ -76,6 +76,7 @@ namespace SwingPreview
                 // Grip point and scale come from the puppet, exactly as DrawWeaponToLayer reads them.
                 art.HandleNormX = profile.HandleNormX;
                 art.HandleNormY = profile.HandleNormY;
+                art.TwoHandedGripOffset = profile.TwoHandedBackGripOffset;
                 art.WeaponScale = profile.WeaponDrawScale;
                 if (options.WeaponScale > 0f)
                 {
@@ -393,6 +394,7 @@ namespace SwingPreview
             PuppetProfile profile = spec.Profile;
             MeleeComboStep[] steps = spec.Steps;
             var poses = new List<PoseFrame>();
+            float baseSpearGrip = 0.5f; // PuppetNPC._spearGrip, for puppets on the base UpdateSpearGrip (Cursed Dragon)
 
             string phase = PhaseTelegraph;
             int stepIndex = 0;
@@ -599,6 +601,45 @@ namespace SwingPreview
                         redKnightGrip = 0.97f;
                     }
                     poses[^1].SpearGrip = redKnightGrip;
+                }
+                if (profile.Name == "CursedDragon")
+                {
+                    // Mirrors PuppetNPC.UpdateSpearGrip's base targets (0 = grip at the head, 1 = at the butt), eased by
+                    // the same per-tick lerp. UseAuthoredSpearGrip: thrusts pulse 0.45 -> 0.97 -> 0.45 on the swing clock t.
+                    float gripTarget = 0.5f;
+                    float gripEase = 0.25f;
+
+                    if (phase == PhaseTelegraph)
+                    {
+                        gripTarget = 0.45f;
+                        gripEase = 0.22f;
+                    }
+                    else if (phase == PhaseAttack)
+                    {
+                        bool poke = current.Motion == ComboMotion.Thrust
+                            || current.Motion == ComboMotion.JoustDash
+                            || current.Motion == ComboMotion.LeapThrust;
+
+                        if (poke)
+                        {
+                            float clock = MathHelper.Clamp(t, 0f, 1f);
+                            gripTarget = MathHelper.Lerp(0.45f, 0.97f, (float)Math.Sin(clock * Math.PI));
+                            gripEase = 0.55f;
+                        }
+                        else if (current.Motion == ComboMotion.Spin)
+                        {
+                            gripTarget = 0.9f;
+                            gripEase = 0.3f;
+                        }
+                        else
+                        {
+                            gripTarget = 0.85f;
+                            gripEase = 0.3f;
+                        }
+                    }
+
+                    baseSpearGrip = MathHelper.Lerp(baseSpearGrip, gripTarget, gripEase);
+                    poses[^1].SpearGrip = baseSpearGrip;
                 }
                 if (profile.Name == "CrystalKnight")
                 {
@@ -1188,6 +1229,7 @@ namespace SwingPreview
                 StepCount = stepCount,
                 Motion = motion.ToString(),
                 WeaponHidden = weaponHidden,
+                TwoHanded = spec.Profile.TwoHanded,
                 FrontSwingBlend = frontBlend,
                 BackSwingBlend = backBlend,
                 FlailVisible = flail.Visible,

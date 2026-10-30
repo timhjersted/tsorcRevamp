@@ -9,6 +9,7 @@ using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -923,7 +924,7 @@ namespace tsorcRevamp.NPCs.Enemies
         private void SpawnSpearProjectile(Vector2 source, Vector2 velocity, tsorcRevampGlobalNPC globalNPC)
         {
             int projectileIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), source, velocity,
-                ModContent.ProjectileType<BlackThrowingSpear>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<BlackThrowingSpear>(), EnemyDamage.Projectile(redKnightsSpearDamage), 0f, Main.myPlayer);
             tsorcGlobalProjectile.SetDefenseTraits(projectileIndex, globalNPC.ActiveAttackDefenseTraits);
         }
 
@@ -1033,7 +1034,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     continue;
                 }
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), source, velocity,
-                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), EnemyDamage.Projectile(redMagicDamage), 0f, Main.myPlayer);
             }
         }
 
@@ -1074,7 +1075,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             Projectile.NewProjectile(NPC.GetSource_FromThis(), AttackHandWorld, BombLaunchVelocity(AttackHandWorld),
-                ModContent.ProjectileType<EnemyMoonfuryBomb>(), redKnightsSpearDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<EnemyMoonfuryBomb>(), EnemyDamage.Projectile(redKnightsSpearDamage), 0f, Main.myPlayer);
         }
 
         /// <summary>
@@ -1176,7 +1177,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
 
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, fallVelocity,
-                        ModContent.ProjectileType<EnemyBlackCursedBreath>(), redMagicDamage, knockback, Main.myPlayer, 1f);
+                        ModContent.ProjectileType<EnemyBlackCursedBreath>(), EnemyDamage.Projectile(redMagicDamage), knockback, Main.myPlayer, 1f);
 
                     // Brief "portal opening" flash at the same spawn point, on top of the drop's own frozen-spin windup.
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, Vector2.Zero,
@@ -1279,12 +1280,12 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 skullVelocity = UsefulFunctions.BallisticTrajectory(source, aim, 2f, fallback: true)
                 + Main.rand.NextVector2Circular(1, 5);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), source, skullVelocity,
-                ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), redKnightsGreatDamage, 0f, Main.myPlayer, 1f);
+                ModContent.ProjectileType<EnemySpellSuddenDeathStrike>(), EnemyDamage.Projectile(redKnightsGreatDamage), 0f, Main.myPlayer, 1f);
 
             Vector2 breathVelocity = UsefulFunctions.BallisticTrajectory(source, aim, 2f, fallback: true)
                 + Main.rand.NextVector2Circular(-5, 5);
             Projectile.NewProjectile(NPC.GetSource_FromThis(), source, breathVelocity,
-                ModContent.ProjectileType<EnemyBlackCursedBreath>(), redKnightsGreatDamage, 0f, Main.myPlayer, 2f);
+                ModContent.ProjectileType<EnemyBlackCursedBreath>(), EnemyDamage.Projectile(redKnightsGreatDamage), 0f, Main.myPlayer, 2f);
         }
 
         /// <summary>
@@ -1696,7 +1697,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Projectile column = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
                 new Vector2(surface.X, surface.Y - BlackKnightPlagueColumn.ColumnHeight * 0.5f),
-                Vector2.Zero, columnType, 0, 0f, Main.myPlayer, telegraphTicks, redMagicDamage);
+                Vector2.Zero, columnType, 0, 0f, Main.myPlayer, telegraphTicks, EnemyDamage.Projectile(redMagicDamage));
             column.timeLeft = BlackKnightPlagueColumn.ActiveTicks;
         }
 
@@ -1766,7 +1767,7 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 float angle = (i - (CrystalStormCount - 1) / 2f) * (CrystalStormSpread / (CrystalStormCount - 1));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), source, baseVelocity.RotatedBy(angle),
-                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), redMagicDamage, 0f, Main.myPlayer);
+                    ModContent.ProjectileType<EnemyBlackKnightHomingCrystal>(), EnemyDamage.Projectile(redMagicDamage), 0f, Main.myPlayer);
             }
             NPC.netUpdate = true;
         }
@@ -1780,7 +1781,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             int index = Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, new Vector2(direction, 0f),
-                ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(), redKnightsGreatDamage, 4f, Main.myPlayer, reach, height);
+                ModContent.ProjectileType<GreatBlackKnightSpearHitbox>(), EnemyDamage.Projectile(redKnightsGreatDamage), 4f, Main.myPlayer, reach, height);
             tsorcGlobalProjectile.SetDefenseTraits(index, globalNPC.ActiveAttackDefenseTraits);
         }
     }

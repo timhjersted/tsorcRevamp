@@ -1481,7 +1481,7 @@ namespace tsorcRevamp
                 //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
                 //It's an easy fix though: Go to the file for the NPC you want to change and find the damage variables for the projectiles you want to modify (in this case spearDamage) and put 'public' in front of them.
                 //Then you'll be able to access them from here and set them to anything!
-                //ourKnight.redKnightsSpearDamage = 20;
+                //ourKnight.redKnightsSpearDamage = 80; // real expert damage: the hit before defense in Expert
             }
             return EventActionStatus.EndAction;
         }
@@ -1515,9 +1515,10 @@ namespace tsorcRevamp
             if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
             {
                 NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
-                ourRedKnight.redKnightsSpearDamage = 15;
-                ourRedKnight.redMagicDamage = 11;
-                ourRedKnight.redKnightsGreatDamage = 13;
+                // Real expert damage (the Red Knight wraps its spawns in EnemyDamage.Projectile).
+                ourRedKnight.redKnightsSpearDamage = 60;
+                ourRedKnight.redMagicDamage = 44;
+                ourRedKnight.redKnightsGreatDamage = 52;
             }
             return EventActionStatus.EndAction;
         }

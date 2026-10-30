@@ -118,6 +118,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// despawns in front of the player.</summary>
         protected virtual int AbandonedDespawnTicks => 0;
         private int _abandonedTicks;
+
+        /// <summary>The per-tick test <see cref="AbandonedDespawnTicks"/> counts. Default: nav has given up the chase
+        /// (Patrol). Server-only. Override for a different leash, e.g. "target off screen with no line of sight".</summary>
+        protected virtual bool IsEncounterAbandoned()
+        {
+            PursuitState pursuitState = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PursuitState;
+            return pursuitState == PursuitState.Patrol;
+        }
+
         // Server decides; synced in SendExtraAI so clients run the same fade instead of popping out.
         private bool _abandonedDespawnStarted;
 
@@ -208,8 +217,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // state (Pursue/Search) resets the clock.
             if (AbandonedDespawnTicks > 0 && !wasDespawning && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                PursuitState pursuitState = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().PursuitState;
-                if (pursuitState == PursuitState.Patrol)
+                if (IsEncounterAbandoned())
                 {
                     _abandonedTicks++;
                 }
@@ -2694,6 +2702,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// airborne — for puppets whose grounded silhouette should stay clean (e.g. Gwyn's cape).</summary>
         protected virtual bool ShowWingsWhenGrounded => true;
 
+        /// <summary>When true this tick, the wings are drawn held fully open (glide frame), grounded or not - a
+        /// wing-flare tell. Read on every peer, so it must come from synced state (phase, timers).</summary>
+        protected virtual bool ForceWingsSpread => false;
+
         /// <summary>Flight tuning.  Override to customize hover altitude / dive speed / cooldowns.</summary>
         protected virtual EnemyFlightConfig FlightConfig => EnemyFlightConfig.Default;
 
@@ -2898,6 +2910,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual int AerialDiveCooldownTicks => 120;
         protected virtual float AerialDiveLeadTicks => 10f;
         protected virtual float AerialMeleeRange => 620f;
+        /// <summary>Share (0-100) of aerial melee picks that go to the puppet's AirborneStartOnly combos when it has any;
+        /// the rest fall through to the flight controller's generic pierce-through dive. 100 (default) = combos only,
+        /// the OwlFather behaviour. Rolled server-side with the rest of selection.</summary>
+        protected virtual int AirborneComboChancePercent => 100;
         protected virtual float AerialRangedVerticalBand => 96f;
         /// <summary>When true, the airborne ranged trigger rolls a full burst pattern (fan/twin-ring/
         /// accelerating chain/etc., whatever PrimaryRangedBurstPatterns or SecondaryRangedBurstPatterns
@@ -4576,7 +4592,10 @@ namespace tsorcRevamp.NPCs.Puppets
                                     }
                                 }
 
-                                if (hasAirborneCombos)
+                                bool useAirborneCombo = hasAirborneCombos
+                                    && Main.rand.Next(100) < AirborneComboChancePercent;
+
+                                if (useAirborneCombo)
                                 {
                                     if (TryStartMeleeCombo(aerialDistance, airborneStart: true))
                                     {
@@ -8179,6 +8198,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 && Phase == AttackPhase.MeleeComboPause)
                 committed = true;
 
+            if (Phase == AttackPhase.Custom && CustomAttackCommitted)
+                committed = true;
+
             // Full-window hyper-armor: fold the telegraph into the committed (un-staggerable) window so
             // the whole attack — wind-up included — has hyper-armor, instead of only the post-flash swing.
             if (HyperArmorDuringTelegraph && telegraph)
@@ -8351,6 +8373,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Return <c>null</c> to keep the ordinary carried-weapon easing. This gives scripted guards and
         /// channels a real authored pose without pretending they are a damaging melee swing.</summary>
         protected virtual float? CustomWeaponRotation => null;
+
+        /// <summary>Hyper-armor for the current <see cref="AttackPhase.Custom"/> set-piece (no poise build, no stagger).
+        /// Read every tick by UpdateAttackCommitFlags, so a subclass can armor one set-piece and not another.</summary>
+        protected virtual bool CustomAttackCommitted => false;
 
         /// <summary>
         /// Park the puppet in a bespoke, timed set-piece phase for <paramref name="duration"/> ticks: it
@@ -10636,7 +10662,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 bool airborne = _flight.IsAirborne;
-                _puppet.wings = (airborne || ShowWingsWhenGrounded) ? (_wingsItemCache?.wingSlot ?? 0) : 0;
+                bool forceSpread = ForceWingsSpread;
+                _puppet.wings = (airborne || ShowWingsWhenGrounded || forceSpread) ? (_wingsItemCache?.wingSlot ?? 0) : 0;
                 _puppet.wingTime = airborne ? _puppet.wingTimeMax : 0;
                 _puppet.controlJump = _flight.WingsActiveThisTick;
                 // During idle hover drift the wings spread open (glide pose = frame 1) rather
@@ -10646,7 +10673,11 @@ namespace tsorcRevamp.NPCs.Puppets
                     && (_flight.Mode == FlightMode.Hover || _flight.Mode == FlightMode.Strafe);
                 // Reset to frame zero after landing. Otherwise the last open flight frame remains
                 // cached while walking, making grounded puppets look as though they are still gliding.
-                if (!airborne)
+                if (forceSpread)
+                {
+                    _puppet.wingFrame = 1; // the glide frame: wings held fully open
+                }
+                else if (!airborne)
                 {
                     _puppet.wingFrame = 0;
                 }

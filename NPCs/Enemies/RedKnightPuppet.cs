@@ -27,10 +27,12 @@ namespace tsorcRevamp.NPCs.Enemies
     public abstract class RedKnightPuppet : PuppetNPC
     {
         #region Defaults
-        public int redKnightsSpearDamage = 20;
-        public int redMagicDamage = 15;
-        public int redKnightsGreatDamage = 18;
-        public int redKnightsBombDamage = 26;
+        // Declared Expert Mode damage before player defense: KnightAttackStats carries these to the controller, which
+        // wraps every spawn in EnemyDamage.Projectile. These defaults are Red Knight's HM values; subclasses override.
+        public int redKnightsSpearDamage = 80;  // Spear combos, lunges & spear throws (real expert damage)
+        public int redMagicDamage = 60;         // Poison/cinder rain, stormbolts & standards (real expert damage)
+        public int redKnightsGreatDamage = 72;  // Great lunges, royal spears & shadow hands (real expert damage)
+        public int redKnightsBombDamage = 104;  // Firebombs (real expert damage)
         private protected readonly RedKnightAttackController specialAttacks = new RedKnightAttackController();
 
         // A controller attack ends itself (Finish/Cancel); this cap only stops a stuck Custom phase from living forever.
@@ -172,7 +174,7 @@ namespace tsorcRevamp.NPCs.Enemies
         // ItemID.Spear is only the held-item identity; the drawn shaft is BlackKnightSpear (SpearDrawTexturePath).
         protected override int MeleeWeaponItemType => ItemID.Spear;
         protected override int RangedWeaponItemType => -1;
-        protected override int MeleeDamage => redKnightsSpearDamage;
+        protected override int MeleeDamage => EnemyDamage.Projectile(redKnightsSpearDamage); // PuppetNPC spawns its blade hitboxes with this raw value
         protected override int RangedDamage => 0;
         protected override void DoMeleeAttack() { } // All melee is the combo pool above.
         protected override void DoRangedAttack() { }

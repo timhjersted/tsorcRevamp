@@ -60,10 +60,10 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.defense = 14;
                 NPC.value = 12500;
-                redKnightsGreatDamage = 9;
-                redKnightsSpearDamage = 12;
-                redMagicDamage = 7;
-                redKnightsBombDamage = 15;
+                redKnightsGreatDamage = 36; // real expert damage, like every field below
+                redKnightsSpearDamage = 48;
+                redMagicDamage = 28;
+                redKnightsBombDamage = 60;
                 NPC.boss = true;
             }
             if (tsorcRevampWorld.SuperHardMode)
@@ -71,10 +71,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 4000;
                 NPC.defense = 75;
                 NPC.value = 16000; // life / 2.5
-                redKnightsGreatDamage = 38;
-                redKnightsSpearDamage = 32;
-                redMagicDamage = 26;
-                redKnightsBombDamage = 40;
+                redKnightsGreatDamage = 152; // real expert damage
+                redKnightsSpearDamage = 128;
+                redMagicDamage = 104;
+                redKnightsBombDamage = 160;
             }
             tsorcRevampGlobalNPC redKnightGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 

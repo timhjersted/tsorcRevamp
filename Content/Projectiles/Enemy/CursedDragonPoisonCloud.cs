@@ -26,7 +26,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const int FadeTicks = 50;
         private const int TotalLifetime = 280;
         private const int PoisonRefreshTicks = 30 * 60; // 30 seconds, refreshed every tick while inside
-        private const int CurseReapplyInterval = 30;     // reapply the curse-buildup stack every 0.5s inside
+        // Reapply the curse-buildup stack every 0.75s inside. Each reapply adds 160 (PowerfulCurseBuildup.ReApply) and
+        // 500 fires the curse, so the 4th reapply - 180t, 3s of standing in it - is the one that triggers.
+        private const int CurseReapplyInterval = 45;
 
         public override void SetDefaults()
         {
@@ -80,30 +82,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
             Lighting.AddLight(Projectile.Center, 0.12f, 0.22f, 0.08f);
 
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (Main.dedServ)
             {
                 return;
             }
 
-            // Debuffs apply per-player independently - every peer is authoritative for its own
-            // player, same "force zone" convention as the mod's other lingering hazards.
-            for (int i = 0; i < Main.maxPlayers; i++)
+            // Each peer debuffs only its own player: Player.AddBuff run on the server never reaches the
+            // client that owns that player, so the old server-side loop did nothing in multiplayer.
+            Player player = Main.LocalPlayer;
+            if (!player.active || player.dead)
             {
-                Player player = Main.player[i];
-                if (!player.active || player.dead)
-                {
-                    continue;
-                }
-                if (Vector2.Distance(player.Center, Projectile.Center) > radius)
-                {
-                    continue;
-                }
+                return;
+            }
+            if (Vector2.Distance(player.Center, Projectile.Center) > radius)
+            {
+                return;
+            }
 
-                player.AddBuff(BuffID.Poisoned, PoisonRefreshTicks);
-                if ((int)Projectile.localAI[0] % CurseReapplyInterval == 0)
-                {
-                    player.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
-                }
+            player.AddBuff(BuffID.Poisoned, PoisonRefreshTicks);
+            if ((int)Projectile.localAI[0] % CurseReapplyInterval == 0)
+            {
+                player.AddBuff(ModContent.BuffType<PowerfulCurseBuildup>(), 36000);
             }
         }
 

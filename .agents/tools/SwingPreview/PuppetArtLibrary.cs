@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, GreatBlackKnight, CursedDragon, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -107,6 +107,41 @@ namespace SwingPreview
                     WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "BlackBlade.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1f,
+                };
+            }
+
+            // Not a puppet yet: the set exists ahead of the GBK's PuppetNPC conversion, so --puppet GreatBlackKnight
+            // swings on the PuppetNPC base defaults. The GBK fights with a spear, so it borrows the Red Knight's.
+            if (puppet.Equals("GreatBlackKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "GreatBlackKnight",
+                    BodySheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightHelm_Head.png"),
+                    WeaponSprite = P("Content", "Projectiles", "Enemy", "BlackKnightSpear.png"),
+                    WeaponRotationOffset = (float)Math.PI / 4f,
+                    SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 62f),
+                    SpearBaseNorm = new System.Drawing.PointF(0.5f, 61.5f / 62f),
+                };
+            }
+
+            if (puppet.Equals("CursedDragon", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "CursedDragon",
+                    BodySheet = P("Content", "Items", "Armor", "CursedDragonArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "CursedDragonGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "CursedDragonHelmet_Head.png"),
+                    // PilgrimSpontoonProj: 110x110, head pixel (0,0), butt (109,109). The norms are CursedDragon's own
+                    // SpearHeadNorm/SpearBaseNorm (0.03 / 0.95), and +90 degrees is its SpearDrawRotationOffset.
+                    // Wings (Tattered Fairy) are a vanilla XNB and aren't drawn.
+                    WeaponSprite = P("Content", "Projectiles", "Melee", "Spears", "PilgrimSpontoonProj.png"),
+                    WeaponRotationOffset = (float)Math.PI / 2f,
+                    SpearHeadNorm = new System.Drawing.PointF(0.03f, 0.03f),
+                    SpearBaseNorm = new System.Drawing.PointF(0.95f, 0.95f),
                 };
             }
 
