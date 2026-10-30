@@ -468,6 +468,134 @@ namespace SwingPreview
             return 0;
         }
 
+        // ── Great Black Knight ───────────────────────────────────────────────────────────────────────
+        // --gbk-poses [all | <GreatBlackKnightAttack>] [--profile] [--body] [--zoom N] [--left] [--target X,Y]
+        //
+        // Renders GreatBlackKnight.ResolveAttackPose in the GreatBlackKnightSet armour: one sheet per prop shown (spear,
+        // bomb), empty-handed palm casts otherwise. The pose struct has the Black Knight's shape, so frames reuse
+        // BlackKnightFrame. NOT the game: he stands still (no Skyfall leap; its landing is fixed at tick 80), aims are
+        // solved from the centre to a fixed target, the bomb is drawn at full size (the game holds it at 0.6), and the
+        // Flail Hurl is not listed (the flail projectile drives that arm: use --puppet GreatBlackKnight --flail-demo).
+        private static readonly (string Attack, int Ticks)[] GreatBlackKnightAttacks =
+        {
+            ("SpearThrow", 84),
+            ("BombThrow", 84),
+            ("HomingVolley", 136),
+            ("DeathSeal", 165),
+            ("CrystalStorm", 66),
+            ("Skyfall", 125),
+            ("PhaseTwoTransition", 40),
+        };
+        private const int PreviewSkyfallLandTick = 80;
+
+        internal static int RunGreatBlackKnight(string[] args)
+        {
+            string repo = FindRepoRoot();
+            int at = Array.IndexOf(args, "--gbk-poses");
+            string which = "all";
+            if (at + 1 < args.Length && !args[at + 1].StartsWith("--"))
+            {
+                which = args[at + 1];
+            }
+
+            int direction = 1;
+            if (args.Contains("--left"))
+            {
+                direction = -1;
+            }
+
+            Vector2 targetOffset = new Vector2(240f, 0f);
+            int targetAt = Array.IndexOf(args, "--target");
+            if (targetAt >= 0)
+            {
+                string[] parts = args[targetAt + 1].Split(',');
+                targetOffset = new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+            }
+
+            int zoom = 2;
+            int zoomAt = Array.IndexOf(args, "--zoom");
+            if (zoomAt >= 0)
+            {
+                zoom = int.Parse(args[zoomAt + 1]);
+            }
+
+            var selected = GreatBlackKnightAttacks.Where(entry => which == "all"
+                || entry.Attack.Equals(which, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (selected.Count == 0)
+            {
+                Console.WriteLine($"Unknown attack '{which}'. Known: {string.Join(", ", GreatBlackKnightAttacks.Select(entry => entry.Attack))}");
+                return 1;
+            }
+
+            Vector2 target = new Vector2(targetOffset.X * direction, targetOffset.Y);
+            Console.WriteLine($"Great Black Knight attack poses, facing {(direction == 1 ? "right" : "left")}, target {targetOffset.X},{targetOffset.Y} px from centre.");
+            foreach (var entry in selected)
+            {
+                int attack = (int)Enum.Parse<GreatBlackKnightAttack>(entry.Attack);
+                var frames = new List<(PoseFrame Frame, BlackKnightProp Prop)>();
+                for (int timer = 0; timer < entry.Ticks; timer++)
+                {
+                    var input = new GreatBlackKnight.GreatBlackKnightPoseInput
+                    {
+                        Attack = attack,
+                        Timer = timer,
+                        SkyfallLandTick = PreviewSkyfallLandTick,
+                        ThrowAim = RedKnightPuppet.FacingAngleOf(target, direction),
+                        BombAim = RedKnightPuppet.FacingAngleOf(
+                            UsefulFunctions.BallisticTrajectory(Vector2.Zero, target, 12f, fallback: true), direction),
+                        CastAim = RedKnightPuppet.FacingAngleOf(target, direction),
+                    };
+                    GreatBlackKnight.GreatBlackKnightPose gbkPose = GreatBlackKnight.ResolveAttackPose(input);
+                    var pose = new BlackKnight.BlackKnightPose
+                    {
+                        FrontProp = gbkPose.FrontProp,
+                        Facing = gbkPose.Facing,
+                        ArmOffset = gbkPose.ArmOffset,
+                        Grip = gbkPose.Grip,
+                        FuseLit = gbkPose.FuseLit,
+                        ThrowDrawBack = gbkPose.ThrowDrawBack,
+                        BackPalmFacing = gbkPose.BackPalmFacing,
+                        FrontFreeFacing = gbkPose.FrontFreeFacing,
+                    };
+                    frames.Add((BlackKnightFrame(entry.Attack, timer, direction, pose), pose.FrontProp));
+                }
+
+                if (args.Contains("--profile"))
+                {
+                    PrintProfile(entry.Attack, frames.Select(pair => pair.Frame).ToList());
+                }
+                if (!args.Contains("--body"))
+                {
+                    continue;
+                }
+
+                var props = frames.Select(pair => pair.Prop).Where(prop => prop != BlackKnightProp.None).Distinct().ToList();
+                if (props.Count == 0)
+                {
+                    props.Add(BlackKnightProp.None);
+                }
+                foreach (BlackKnightProp prop in props)
+                {
+                    PuppetArt art = PuppetArtLibrary.Resolve("GreatBlackKnight", repo);
+                    art.BombSprite = Path.Combine(repo, "Content", "Projectiles", "Enemy", "EnemyMoonfuryBomb.png");
+                    art.BombGripOrigin = new System.Drawing.PointF(17f, 17f);
+                    if (prop == BlackKnightProp.Spear)
+                    {
+                        art.ForceHideWeapon = false;
+                        art.WeaponSprite = Path.Combine(repo, "Content", "Projectiles", "Enemy", "BlackThrowingSpear.png");
+                        art.WeaponRotationOffset = MathF.PI / 4f;
+                        art.SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 84f);
+                        art.SpearBaseNorm = new System.Drawing.PointF(0.5f, 83.5f / 84f);
+                        art.WeaponScale = 1f;
+                    }
+                    var sheet = frames.Select(pair => WithOnlyProp(pair.Frame, pair.Prop, prop)).ToList();
+                    string label = $"{entry.Attack}-{(direction == 1 ? "Right" : "Left")}";
+                    BodyRenderer.Render(art, sheet, Path.Combine(repo, "tsorcDocs", "SwingReports", "GreatBlackKnightPoses"), label, zoom);
+                }
+            }
+            return 0;
+        }
+
         // Every prop's art. Grip norms are the game's: BlackBlade (5,56)/62, the BlackThrowingSpear head/base rows, the
         // staff's StaffPropWeapon norm.
         private static PuppetArt BlackKnightPropArt(string repo, BlackKnightProp prop)

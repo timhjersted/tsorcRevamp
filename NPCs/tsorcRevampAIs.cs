@@ -1095,7 +1095,7 @@ namespace tsorcRevamp.NPCs
             }
             // Deliberately does NOT include AttackTelegraphing/AttackCommitted: an enemy winding up an attack
             // keeps its movement. Enemies whose attacks need to own the body drive it themselves from their
-            // own state machine (see GreatBlackKnight.RunSpearMeleeApproach), which composes with the mover
+            // own state machine (see BlackKnight's throw approach, KnightHopPlanner), which composes with the mover
             // instead of freezing it.
             intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }

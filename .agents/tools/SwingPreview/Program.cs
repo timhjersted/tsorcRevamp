@@ -38,6 +38,10 @@ namespace SwingPreview
             {
                 return KnightPosePreview.RunBlackKnight(args);
             }
+            if (args.Contains("--gbk-poses"))
+            {
+                return KnightPosePreview.RunGreatBlackKnight(args);
+            }
             if (args.Contains("--knight-poses"))
             {
                 return KnightPosePreview.Run(args);

@@ -718,6 +718,7 @@ namespace tsorcRevamp.NPCs
             // Elite / heavy knight
             Add<Enemies.SuperHardMode.TaurusKnight>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
+            Add<Enemies.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
             // Standard fighters
             Add<AttraidiesIllusion>(0.3f, 30f);
             Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows

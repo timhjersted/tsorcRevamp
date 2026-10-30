@@ -110,8 +110,9 @@ namespace SwingPreview
                 };
             }
 
-            // Not a puppet yet: the set exists ahead of the GBK's PuppetNPC conversion, so --puppet GreatBlackKnight
-            // swings on the PuppetNPC base defaults. The GBK fights with a spear, so it borrows the Red Knight's.
+            // GreatBlackKnight set, no dye. The flail is the main weapon: the held icon is hidden and GreatBlackKnightFlail
+            // (Berserker's Nightmare ball + chain; the game adds a Blight shader the preview can't draw) owns the prop.
+            // The thrown spear only appears in --gbk-poses, which swaps in BlackThrowingSpear itself.
             if (puppet.Equals("GreatBlackKnight", StringComparison.OrdinalIgnoreCase))
             {
                 return new PuppetArt
@@ -120,10 +121,12 @@ namespace SwingPreview
                     BodySheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightArmor_Body.png"),
                     LegsSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightGreaves_Legs.png"),
                     HeadSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightHelm_Head.png"),
-                    WeaponSprite = P("Content", "Projectiles", "Enemy", "BlackKnightSpear.png"),
-                    WeaponRotationOffset = (float)Math.PI / 4f,
-                    SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 62f),
-                    SpearBaseNorm = new System.Drawing.PointF(0.5f, 61.5f / 62f),
+                    WeaponSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall.png"),
+                    FlailBallSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall.png"),
+                    FlailChainSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall_Chain.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                    ForceHideWeapon = true,
                 };
             }
 

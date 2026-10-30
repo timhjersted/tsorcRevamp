@@ -12,8 +12,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
     /// <summary>
     /// Great Black Knight's flail head — same ball+chain rig as the Invader's EnemyDiamondCrusherBall (see
-    /// EnemyFlailProjectileBase), anchored to the knight's own rigged hand position via GreatBlackKnight
-    /// implementing IFlailAnchor.
+    /// EnemyFlailProjectileBase), anchored to the puppet's front hand via GreatBlackKnight implementing IFlailAnchor.
+    /// Modes 10/11 are the Flail Hurl; every shared authored pattern (Chainfall, Chainrise, ...) falls through to the base.
     /// <para/>
     /// Each throw rolls once (on spawn) whether it's "empowered" — a plain throw is just the chain+head hit, an
     /// empowered one also periodically pulses a wide curse AOE (a scaled-down version of the player Berserker's
@@ -32,8 +32,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private const int ReleasedLifetime = 110;
 
         // Declared Expert Mode damage before player defense and damage variation.
-        public const int PulseDamage = 52; // Preserves raw spawn ~13 (52 Expert)
-        public const int EmberDamage = 80; // Preserves raw spawn 20 (80 Expert)
+        // Raised with the puppet conversion's damage pass (were 52 / 80).
+        public const int PulseDamage = 70;
+        public const int EmberDamage = 110;
 
         // The knight's orbit throw starts 60px from the hand, travels 26 ticks at 16px/tick,
         // and reaches 476px before reeling back. The inherited legacy throw keeps its 30-tick leg.
@@ -144,6 +145,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     }
                     OnFlailTick(owner, hand);
                 }
+
+                // The puppet's composite arm follows the chain through the orbit and the throw, as it does for the
+                // shared authored patterns (EnemyFlailProjectileBase).
+                knight.UpdateFlailProjectileArmPose(hand, Projectile.Center);
 
                 Projectile.rotation += Projectile.velocity.X * 0.08f + owner.direction * 0.25f;
             }

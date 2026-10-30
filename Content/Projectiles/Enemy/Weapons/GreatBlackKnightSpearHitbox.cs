@@ -9,8 +9,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// <summary>
     /// State contract for an enemy driving a bespoke spear-melee window, so
     /// <see cref="GreatBlackKnightSpearHitbox"/> can serve the whole Black Knight family rather than
-    /// one class. Implemented by GreatBlackKnight (its SpearMelee AttackKind) and BlackKnight (the
-    /// LeapStrike attack's outbound arc).
+    /// one class. Implemented by BlackKnight (the LeapStrike arc and the Counter Check); the Great Black
+    /// Knight's spear jab was removed in its puppet conversion.
     /// </summary>
     public interface ISpearMeleeWielder
     {
