@@ -551,7 +551,7 @@ namespace tsorcRevamp.Systems
             Enemy("GreatBlackKnight", shm: 80000); // mini-boss; authored 50000; caster, contact damage 0
 
             // ---- Events: no natural spawn (placed by the map, summoned by a boss or event, or spawned by another enemy), alphabetical ----
-            Enemy("BarrowWightPhantom", shm: 18000); // standard; authored 1250
+            Enemy("BarrowWightPhantom", shm: 50000); // Witchking summon (phase 2); rebuilt as a puppet, authored 50000
             Enemy("DemonLordApocalypse", phm: 150000); // mini-boss; authored 40000
             Enemy("DestroyerLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("FrozenGigasStatue", phm: 5000); // standard; authored 250; caster, contact damage 0

@@ -2313,7 +2313,8 @@
   "tileX": 6697,
   "tileY": 1663,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "You feel yourself growing lighter. The gravitational pull is shifting... --NEWLINE  --NEWLINE Try pressing the up key (as if you had a gravity potion active) to become fully in tune with the unique gravitational forces within this area.",
@@ -2339,7 +2340,8 @@
   "textWidth": 320,
   "style": 1,
   "category": "lore,location",
-  "locationName": "BOWELS OF THE ABYSS"
+  "locationName": "BOWELS OF THE ABYSS",
+  "skipOnExpanded": true
 }
 {
   "text": "\u0022Have you seen it?\u0022 whispers a feminine voice. --NEWLINE  --NEWLINE \u0022The sky temple that floats above the village?\u0022 --NEWLINE  --NEWLINE \u0022It is where Golem imprisoned the Empress!\u0022",

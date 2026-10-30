@@ -279,6 +279,40 @@ namespace SwingPreview
                 };
             }
 
+            if (puppet.Equals("Witchking", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "Witchking",
+                    // The real Witchking set (the game also tints it with the shield dye, which this tool doesn't draw).
+                    BodySheet = P("Content", "Items", "Armor", "Summon", "WitchkingSet", "WitchkingRobe_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Summon", "WitchkingSet", "WitchkingPants_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Summon", "WitchkingSet", "WitchkingHelmet_Head.png"),
+                    // The same Witchking's Sword in both hands: fire in front, void behind.
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "WitchkingsSword.png"),
+                    OffHandWeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "WitchkingsSword.png"),
+                    OffHandWeaponScale = 0.8f,      // Witchking.SwordDrawScale
+                    OffHandCarryRotation = -0.30f,  // HoldRotation (no OffHandCarryRotation override)
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                };
+            }
+
+            if (puppet.Equals("BarrowWightPhantom", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "BarrowWightPhantom",
+                    // The real set; the game also draws it through the spectral overlay (tint, halo, trail), not shown here.
+                    BodySheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
+                    WeaponRotationOffset = 0f,
+                    DrawScale = 1f,
+                };
+            }
+
             if (puppet.Equals("AbysmalOolacileSorcerer", StringComparison.OrdinalIgnoreCase))
             {
                 return new PuppetArt

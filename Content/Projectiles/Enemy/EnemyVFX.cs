@@ -53,6 +53,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static Asset<Effect> voidExplosion;
         static Asset<Effect> archdeaconGlintstone;
         static Asset<Effect> mantassinGlintstone;
+        static Asset<Effect> witchkingVoidCrescent;
 
         static Asset<Texture2D> circle;
         static Asset<Texture2D> gradient;
@@ -140,6 +141,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal static readonly Color MantassinGold = new(255, 196, 92);
         static readonly Color MantassinBlinkDark = new(10, 10, 26);
 
+        // Witchking's void fire: dark purple frayed edges, bright purple body, white accents (premultiplied, so the dark
+        // purple reads over a bright sky too).
+        static readonly Color VoidFireDark = new(46, 8, 78);
+        static readonly Color VoidFireMid = new(176, 82, 255);
+        static readonly Color VoidFireCore = new(255, 246, 255);
+
         static void LoadAssets()
         {
             if (Main.dedServ)
@@ -171,6 +178,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             voidExplosion ??= ModContent.Request<Effect>(EffectRoot + "VoidExplosion", AssetRequestMode.ImmediateLoad);
             archdeaconGlintstone ??= ModContent.Request<Effect>(EffectRoot + "ArchdeaconGlintstone", AssetRequestMode.ImmediateLoad);
             mantassinGlintstone ??= ModContent.Request<Effect>(EffectRoot + "MantassinGlintstone", AssetRequestMode.ImmediateLoad);
+            witchkingVoidCrescent ??= ModContent.Request<Effect>(EffectRoot + "WitchkingVoidCrescent", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
             gradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
@@ -280,6 +288,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Vector2.Lerp(start, end, 0.5f), new Vector2(length, 18f), delta.ToRotation(),
                 blight ? BlightDark : PlagueDark, blight ? BlightMid : PlagueMid,
                 blight ? BlightCore : PlagueCore, 0.62f, progress, 1f, 1f);
+        }
+
+        /// <summary>The Witchking's Void Flame: a ")" crescent of purple fire, bulge leading, on a quad rotated to the
+        /// velocity. <paramref name="size"/> = (quad width along travel, crescent height). The band's middle half-thickness
+        /// (px) goes to the shader as a fraction of the quad width (Active), pre-divided here to save ps_2_0 slots.
+        /// <paramref name="phase"/> offsets the noise so a fan of crescents doesn't burn identically.</summary>
+        internal static void DrawWitchkingVoidCrescent(Vector2 center, Vector2 size, float rotation, float midHalfThickness, float opacity, float phase)
+        {
+            LoadAssets();
+            float activeHalfThickness = midHalfThickness / MathHelper.Max(size.X, 1f);
+            Draw(witchkingVoidCrescent, "WitchkingVoidCrescent", cloudNoise, perlinTiled,
+                center, size, rotation, VoidFireDark, VoidFireMid, VoidFireCore,
+                opacity, 0f, activeHalfThickness, phase, BlendState.AlphaBlend);
         }
 
         internal static void DrawBlackKnightDeathTrail(Vector2 center, Vector2 velocity, Vector2 size, float opacity, bool blight = false)

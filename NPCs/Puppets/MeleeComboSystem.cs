@@ -80,12 +80,27 @@ namespace tsorcRevamp.NPCs.Puppets
         Both,
     }
 
+    /// <summary>How the back blade moves on a <see cref="ComboHand.Both"/> step. Both hands still read the
+    /// one swing clock; this only picks the back hand's curve on it. Arc motions only (Overhead, Underhand,
+    /// HorizontalSweep, VerticalChop) - any other motion always mirrors.</summary>
+    public enum ComboBackArc : byte
+    {
+        Mirror,  // the back blade sweeps the identical arc (the original Both behaviour)
+        Reverse, // the back blade sweeps the arc end -> start while the front sweeps start -> end (a scissor)
+        Delayed, // the back blade sweeps the identical arc, BackDelayTicks behind the front
+    }
+
     public struct MeleeComboStep
     {
         public ComboMotion Motion;
         /// <summary>Dual-wield only: the hand(s) this step swings with. Ignored without a back-hand weapon.
         /// Legacy MeleeCombo steps only — a RuntimeV2Clip combo always swings the front hand.</summary>
         public ComboHand Hand;
+        /// <summary>Dual-wield Both steps only: the back blade's curve. Mirror (the default) is unchanged behaviour.</summary>
+        public ComboBackArc BackArc;
+        /// <summary>BackArc.Delayed only: ticks (of AttackTicks) the back blade trails the front. Its hit window
+        /// shifts by the same amount, so the trailing blade is live for its own strike.</summary>
+        public int BackDelayTicks;
         public int   TelegraphTicks;   // only step 0's telegraph is "real"; later steps use PostStepPause as their telegraph
         public int   AttackTicks;
         public int   PostStepPause;    // pause AFTER this step before the next step's attack

@@ -9212,6 +9212,51 @@ Mods: {
 				// DisplayName: Great Black Knight Greaves
 			}
 
+			BarrowWightPhantomHelm: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Helm
+			}
+
+			BarrowWightPhantomArmor: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Armor
+			}
+
+			BarrowWightPhantomShroud: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Shroud
+			}
+
+			ForgottenWarriorHelm: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Helm
+			}
+
+			ForgottenWarriorArmor: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Armor
+			}
+
+			ForgottenWarriorGreaves: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Greaves
+			}
+
+			ForgottenKnightHelmet: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Helmet
+			}
+
+			ForgottenKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Breastplate
+			}
+
+			ForgottenKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Greaves
+			}
+
 			RedKnightBreastplate: {
 				// Tooltip: ""
 				// DisplayName: Red Knight Breastplate
@@ -9393,6 +9438,11 @@ Mods: {
 			EnemyBeastClaw: {
 				// Tooltip: ""
 				// DisplayName: Beast Claw
+			}
+
+			EnemyBarrowWightSword: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Sword
 			}
 
 			EnemyOccultistStaff: {
@@ -10866,6 +10916,13 @@ Mods: {
 		Projectiles: {
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
+			// WitchkingVoidFlame.DisplayName: Void Flame
+			// WitchkingFireWall.DisplayName: Hellfire Wall
+			// WitchkingDeathSkull.DisplayName: Unmaking Skull
+			// WitchkingMaceWhip.DisplayName: Witchking's Mace
+			// WitchkingGrondMace.DisplayName: Grond's Toll
+			// WitchkingVoidShockwave.DisplayName: Void Shockwave
+			// WitchkingBlightMire.DisplayName: Blight Mire
 			// BloodKnightRainArrow.DisplayName: Blood Rain Arrow
 			// PurpleSkull.DisplayName: Purple Skull
 			// VesselGravityWell.DisplayName: Gravity Well

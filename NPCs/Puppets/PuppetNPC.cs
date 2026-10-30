@@ -2294,7 +2294,29 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
-        private float BackHandPoseRotation => MathHelper.Lerp(OffHandCarryRotation, _weaponRotation, _backHandSwingBlend);
+        // The back hand's own swing angle, used instead of _weaponRotation while _backArcActive is set: a Both step
+        // whose BackArc isn't Mirror, or a Custom phase holding CustomBackWeaponRotation. Cleared every tick in
+        // TickWeaponAnim, so a puppet that never sets either keeps the mirrored back hand exactly as before.
+        private float _backWeaponRotation;
+        private bool _backArcActive;
+
+        /// <summary>Custom phase only: holds the back weapon at this swing angle (the back-hand twin of
+        /// <see cref="CustomWeaponRotation"/>), e.g. arms spread to both sides. Null = the back hand carries.</summary>
+        protected virtual float? CustomBackWeaponRotation => null;
+
+        private float BackHandPoseRotation
+        {
+            get
+            {
+                float swingRotation = _weaponRotation;
+                if (_backArcActive)
+                {
+                    swingRotation = _backWeaponRotation;
+                }
+
+                return MathHelper.Lerp(OffHandCarryRotation, swingRotation, _backHandSwingBlend);
+            }
+        }
 
         /// <summary>The back weapon is drawn exactly when the front melee weapon is.</summary>
         private bool BackHandWeaponVisible =>
@@ -2328,6 +2350,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 frontTarget = 0f;
             }
             if (swingHand != ComboHand.Front)
+            {
+                backTarget = 1f;
+            }
+
+            // A Custom phase posing the back weapon directly (CustomBackWeaponRotation) keeps that arm on its pose.
+            bool customBackPose = Phase == AttackPhase.Custom && CustomBackWeaponRotation.HasValue;
+            if (customBackPose)
             {
                 backTarget = 1f;
             }
@@ -3943,6 +3972,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     state.Write(step.LeapDescentGravityMult);
                     state.Write(step.LeapApexRetargetStrength);
                     state.Write(step.StepInDistance);
+                    state.Write((byte)step.Hand);
+                    state.Write((byte)step.BackArc);
+                    state.Write((short)step.BackDelayTicks);
                 }
             }
 
@@ -4275,6 +4307,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     step.LeapDescentGravityMult = state.ReadSingle();
                     step.LeapApexRetargetStrength = state.ReadSingle();
                     step.StepInDistance = state.ReadSingle();
+                    step.Hand = (ComboHand)state.ReadByte();
+                    step.BackArc = (ComboBackArc)state.ReadByte();
+                    step.BackDelayTicks = state.ReadInt16();
                     receivedSteps[i] = step;
                 }
             }
@@ -6689,7 +6724,14 @@ namespace tsorcRevamp.NPCs.Puppets
                         // Weighted ease-out), so disarm it rather than let a settling sword deal damage.
                         // Elapsed is measured before this tick's PhaseTimer decrement below.
                         float stepProgress = (_activeComboStepTotalTicks - PhaseTimer) / (float)Math.Max(1, _activeComboStepTotalTicks);
-                        bool followingThrough = step.HitWindowEnd > 0f && stepProgress > step.HitWindowEnd;
+                        // A Delayed back blade (BackArc) has its own window, shifted by its delay: it isn't live
+                        // before its strike starts, and stays live past the front's window end. Without a delay
+                        // both flags are identical, which is the original single-window behaviour.
+                        float backDelayFraction = GetBackArcDelayFraction(step);
+                        bool frontFollowingThrough = step.HitWindowEnd > 0f && stepProgress > step.HitWindowEnd;
+                        bool backFollowingThrough = step.HitWindowEnd > 0f && stepProgress - backDelayFraction > step.HitWindowEnd;
+                        bool backStarted = stepProgress >= backDelayFraction;
+                        bool followingThrough = frontFollowingThrough && backFollowingThrough;
                         if (followingThrough)
                         {
                             _bladeArmed = false;
@@ -6698,7 +6740,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
                         else if (CanDamageWithMeleeStep(step, stepProgress))
                         {
-                            TickBladeHit();
+                            TickBladeHit(!frontFollowingThrough, backStarted && !backFollowingThrough);
                         }
                         else
                         {
@@ -7420,7 +7462,8 @@ namespace tsorcRevamp.NPCs.Puppets
                         hitPoint,
                         bladeWidth,
                         (int)(MeleeDamage * step.DamageMult),
-                        3f);
+                        3f,
+                        PuppetHandSlot.Front); // V2 clips are front-hand only
                     _lastAttackHitConnected = true;
                     _currentComboStepHitConnected = true;
                     OnBladeHit(player);
@@ -8729,26 +8772,32 @@ namespace tsorcRevamp.NPCs.Puppets
         /// of where the blade is pointing (the old static-box behavior).
         /// Dual wield: tests the capsule of every hand the current step swings with. Both hands share one
         /// hit list, so a Both step still strikes each player at most once.
+        /// <paramref name="frontLive"/> / <paramref name="backLive"/> gate each hand separately (a Delayed back
+        /// blade has its own hit window); a hand that isn't live drops its sweep sample so it can't tunnel later.
         /// </summary>
-        protected void TickBladeHit()
+        protected void TickBladeHit(bool frontLive = true, bool backLive = true)
         {
             if (!_bladeArmed || _activeBladeReach <= 0f || Main.netMode == NetmodeID.MultiplayerClient)
                 return;
 
             ComboHand swingHand = ActiveComboSwingHand;
 
-            if (swingHand != ComboHand.Back)
+            if (swingHand != ComboHand.Back && frontLive)
             {
                 // Capsule thickness follows the equipped weapon, so a swapped-in weapon is tested at its
                 // own width instead of whatever the puppet's default melee weapon happened to be.
                 Vector2 origin = GetHandPosition();
                 Vector2 tip = origin + GetWeaponWorldDirection() * _activeBladeReach;
                 ModifyFrontBladeCapsule(ref origin, ref tip);
-                TestBladeCapsule(origin, tip, FrontHandWeapon.BladeWidth,
+                TestBladeCapsule(origin, tip, FrontHandWeapon.BladeWidth, PuppetHandSlot.Front,
                     ref _hasPreviousBladeSample, ref _previousBladeOrigin, ref _previousBladeTip);
             }
+            else
+            {
+                _hasPreviousBladeSample = false;
+            }
 
-            if (swingHand != ComboHand.Front)
+            if (swingHand != ComboHand.Front && backLive)
             {
                 Vector2 backOrigin = GetBackHandPosition();
                 Vector2 backTip = backOrigin + GetBackWeaponWorldDirection() * _activeBladeReach;
@@ -8756,18 +8805,37 @@ namespace tsorcRevamp.NPCs.Puppets
                 Vector2 backPreviousOrigin = _backHand.PreviousBladeOrigin;
                 Vector2 backPreviousTip = _backHand.PreviousBladeTip;
 
-                TestBladeCapsule(backOrigin, backTip, BackHandWeapon.BladeWidth,
+                TestBladeCapsule(backOrigin, backTip, BackHandWeapon.BladeWidth, PuppetHandSlot.Back,
                     ref backHasPrevious, ref backPreviousOrigin, ref backPreviousTip);
 
                 _backHand.HasPreviousBladeSample = backHasPrevious;
                 _backHand.PreviousBladeOrigin = backPreviousOrigin;
                 _backHand.PreviousBladeTip = backPreviousTip;
             }
+            else
+            {
+                _backHand.HasPreviousBladeSample = false;
+            }
+        }
+
+        /// <summary>Fraction of a Both step's AttackTicks that a BackArc.Delayed back blade trails the front.
+        /// 0 for every other step. Shared by the back curve (TickWeaponAnim) and its hit window.</summary>
+        private static float GetBackArcDelayFraction(MeleeComboStep step)
+        {
+            bool delayed = step.Hand == ComboHand.Both && step.BackArc == ComboBackArc.Delayed;
+            if (!delayed)
+            {
+                return 0f;
+            }
+
+            float delayFraction = step.BackDelayTicks / (float)Math.Max(1, step.AttackTicks);
+            return MathHelper.Clamp(delayFraction, 0f, 0.9f);
         }
 
         // One hand's blade this tick: sweep from last tick's capsule to this one (so fast arcs can't tunnel)
         // against every player not yet hit, spawn the damage hitbox on overlap, then store this tick's capsule.
-        private void TestBladeCapsule(Vector2 origin, Vector2 tip, float bladeWidth,
+        // The hand travels with the hitbox, so IHumanoidMeleeHitEffects can tell which blade connected.
+        private void TestBladeCapsule(Vector2 origin, Vector2 tip, float bladeWidth, PuppetHandSlot hand,
             ref bool hasPreviousSample, ref Vector2 previousOrigin, ref Vector2 previousTip)
         {
             float earlyOutRange = _activeBladeReach + bladeWidth + 40f;
@@ -8804,7 +8872,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     continue;
 
                 Vector2 hitPoint = MeleeBladeCollision.ClosestPointOnSegment(hitOrigin, hitTip, player.Center);
-                SpawnMeleeHitbox(hitPoint, bladeWidth, _activeBladeDamage, _activeBladeKnockback);
+                SpawnMeleeHitbox(hitPoint, bladeWidth, _activeBladeDamage, _activeBladeKnockback, hand);
                 _bladeHitPlayers.Add(i);
                 _lastAttackHitConnected = true;
                 if (IsMeleeComboPhase)
@@ -8827,13 +8895,14 @@ namespace tsorcRevamp.NPCs.Puppets
         /// already resolved by the caller (TickBladeHit) — this is just the trigger that hands
         /// damage/knockback/immune-frame handling to vanilla's existing hostile-projectile pipeline.
         /// </summary>
-        private void SpawnMeleeHitbox(Vector2 center, float size, int damage, float knockback)
+        private void SpawnMeleeHitbox(Vector2 center, float size, int damage, float knockback, PuppetHandSlot hand)
         {
             int box = (int)size;
+            float handAI = PuppetMeleeHitbox.EncodeHand(hand);
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(), center, Vector2.Zero,
                 ModContent.ProjectileType<PuppetMeleeHitbox>(),
-                damage, knockback, Main.myPlayer, box, box);
+                damage, knockback, Main.myPlayer, box, box, handAI);
         }
 
         // ── Telegraph dust ────────────────────────────────────────────────────────
@@ -8953,6 +9022,10 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (_weaponAnim > 0)
                 _weaponAnim--;
+
+            // The back hand's own curve is opt-in per tick; remember whether it was in use, then re-decide below.
+            bool backWasIndependent = _backArcActive;
+            _backArcActive = false;
 
             float t = _weaponAnimMax > 0 ? 1f - (float)_weaponAnim / _weaponAnimMax : 1f;
 
@@ -9856,6 +9929,51 @@ namespace tsorcRevamp.NPCs.Puppets
                         break;
                     }
                 }
+
+                // Per-hand arcs: a Both step whose BackArc isn't Mirror gives the back blade its own curve on the
+                // same clock. Reverse runs the arc end -> start (a scissor: the blades cross mid-swing); Delayed
+                // runs the identical arc BackDelayTicks behind. In the pause the back blade eases onto the front's
+                // pose so the next step starts from shared ground.
+                bool backArcStep = step.Hand == ComboHand.Both
+                    && step.BackArc != ComboBackArc.Mirror
+                    && (step.Motion == ComboMotion.OverheadArc
+                        || step.Motion == ComboMotion.UnderhandArc
+                        || step.Motion == ComboMotion.HorizontalSweep
+                        || step.Motion == ComboMotion.VerticalChop);
+                if (backArcStep)
+                {
+                    var (backStart, backEnd) = Endpoints(step.Motion);
+                    if (step.BackArc == ComboBackArc.Reverse)
+                    {
+                        (backStart, backEnd) = (backEnd, backStart);
+                    }
+
+                    if (inTel)
+                    {
+                        if (UseLogicalMeleeTelegraphs)
+                        {
+                            _backWeaponRotation = LogicalSwingWindup(backEnd, backStart, comboTelegraphT);
+                        }
+                        else
+                        {
+                            _backWeaponRotation = MathHelper.Lerp(_backWeaponRotation, backStart, 0.30f);
+                        }
+                    }
+                    else if (inPause)
+                    {
+                        _backWeaponRotation = MathHelper.Lerp(_backWeaponRotation, _weaponRotation, 0.20f);
+                    }
+                    else
+                    {
+                        // Delayed shifts the same eased curve later in time (not a compressed copy), so the
+                        // trailing strike has the identical speed profile; the near-still tail absorbs the shift.
+                        float delayFraction = GetBackArcDelayFraction(step);
+                        float backProgress = Math.Max(0f, t - delayFraction);
+                        _backWeaponRotation = ApplySwingEase(backStart, backEnd, backProgress, step);
+                    }
+
+                    _backArcActive = true;
+                }
             }
             else if (Phase == AttackPhase.Custom && CustomWeaponRotation.HasValue)
             {
@@ -9889,6 +10007,29 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (UseCompositeArmForAdditionalPhase)
                 ModifyAdditionalPhaseWeaponRotation(ref _weaponRotation);
+
+            // A Custom phase can pose the back weapon on its own (CustomBackWeaponRotation), e.g. arms spread wide.
+            bool customBackPose = Phase == AttackPhase.Custom && CustomBackWeaponRotation.HasValue;
+            if (customBackPose)
+            {
+                _backWeaponRotation = CustomBackWeaponRotation.Value;
+                _backArcActive = true;
+            }
+
+            // When the back hand's own curve ends (a scissor's recovery, a Custom pose released) it eases back onto
+            // the front's pose at 0.2/tick instead of snapping up to ~220° in one tick, and only rejoins the front
+            // once within 0.05 rad. While unused it stays parked on the front, so the next curve starts from there.
+            if (!_backArcActive && backWasIndependent)
+            {
+                float backGap = MathHelper.WrapAngle(_weaponRotation - _backWeaponRotation);
+                _backWeaponRotation += backGap * 0.2f;
+                bool stillApart = Math.Abs(backGap) > 0.05f;
+                _backArcActive = stillApart;
+            }
+            if (!_backArcActive)
+            {
+                _backWeaponRotation = _weaponRotation;
+            }
 
             UpdateSpearGrip(t);
             SpawnSwingVFX(_weaponRotation - _prevWeaponRotation);
@@ -10777,9 +10918,14 @@ namespace tsorcRevamp.NPCs.Puppets
             }
         }
 
+        /// <summary>A puppet that always hovers (a ghost drifting a little above the floor) animates as if it were
+        /// walking: the airborne check is skipped, so the body and legs play the walk cycle from horizontal speed
+        /// instead of freezing on the jump frame. Default false (real airborne pose).</summary>
+        protected virtual bool WalkCycleWhileAirborne => false;
+
         private void SyncFrames()
         {
-            bool onGround = NPC.velocity.Y == 0f;
+            bool onGround = NPC.velocity.Y == 0f || WalkCycleWhileAirborne;
             bool moving   = Math.Abs(NPC.velocity.X) > 0.15f;
 
             // Always advance walk counter when moving on ground — legs animate

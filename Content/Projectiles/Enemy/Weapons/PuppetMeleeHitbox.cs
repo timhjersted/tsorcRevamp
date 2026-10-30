@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -51,6 +52,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.Center = center;
         }
 
+        /// <summary>ai[2] carries the swinging hand as slot + 1, so the default 0 (every other spawn site) still
+        /// reads as the front hand.</summary>
+        public static float EncodeHand(PuppetHandSlot hand) => (int)hand + 1;
+
         // A connected blade hit hands its on-hit effects (debuffs) to the puppet that swung it, through
         // the same interface HumanoidMeleeHitbox uses. Runs on the hit player's machine; puppets that
         // don't implement IHumanoidMeleeHitEffects are unaffected.
@@ -60,7 +65,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             bool hasSource = globalProjectile.TryGetSourceNPC(out NPC sourceNPC);
             if (hasSource && sourceNPC.ModNPC is IHumanoidMeleeHitEffects hitEffects)
             {
-                hitEffects.OnHumanoidMeleeHit(target);
+                PuppetHandSlot hand = PuppetHandSlot.Front;
+                if (Projectile.ai[2] >= 2f)
+                {
+                    hand = PuppetHandSlot.Back;
+                }
+
+                hitEffects.OnHumanoidMeleeHit(target, hand);
             }
         }
     }

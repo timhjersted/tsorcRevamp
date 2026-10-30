@@ -10,6 +10,10 @@ namespace tsorcRevamp.NPCs
     public interface IHumanoidMeleeHitEffects
     {
         void OnHumanoidMeleeHit(Player target);
+
+        /// <summary>Dual-wield puppets: which hand's blade connected (from PuppetMeleeHitbox). Defaults to the
+        /// single-hand overload, so implementers that don't care are unchanged.</summary>
+        void OnHumanoidMeleeHit(Player target, Puppets.PuppetHandSlot hand) => OnHumanoidMeleeHit(target);
     }
 
     public sealed class HumanoidMeleeMove

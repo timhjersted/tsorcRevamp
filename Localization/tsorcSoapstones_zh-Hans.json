@@ -2272,7 +2272,8 @@
   "tileX": 6697,
   "tileY": 1663,
   "textWidth": 340,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "你觉得自己越来越轻了。引力在变化… --NEWLINE   --NEWLINE 试着按向上键（就像重力药水激活一样），以完全适应这个区域内独特的重力。",
@@ -2296,7 +2297,8 @@
   "tileY": 1659,
   "textWidth": 640,
   "style": 1,
-  "category": "lore,location"
+  "category": "lore,location",
+  "skipOnExpanded": true
 }
 {
   "text": "\u0022你看到了吗？\u0022一位女性的声音低语着。 --NEWLINE   --NEWLINE \u0022漂浮在村庄上空的天空神庙？\u0022 --NEWLINE   --NEWLINE \u0022这就是石巨人囚禁光之女皇的地方！\u0022",

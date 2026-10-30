@@ -408,6 +408,9 @@ namespace SwingPreview
             int activeStepTotalTicks = 0;
             bool armed = false;
             float rotation = profile.HoldRotation;
+            // Dual wield per-hand arcs (ComboBackArc): the back blade's own angle while a Both step drives it.
+            float backRotation = rotation;
+            bool backArcActive = false;
 
             // BeginComboStepAttack + BeginComboAttackTicks. SetDisplayWeapon(swing: true) restarts the
             // clock at useAnimation; only an authored-clock arc motion then resizes it to the step.
@@ -525,6 +528,34 @@ namespace SwingPreview
                         phaseTimer, activeStepTotalTicks, notes);
                 }
 
+                // Port of PuppetNPC.TickWeaponAnim's per-hand arc block (ComboBackArc), including the ease back onto
+                // the front pose when a back curve ends (0.2/tick until within 0.05 rad), and parking while unused.
+                bool backWasIndependent = backArcActive;
+                backArcActive = false;
+                bool backArcStep = phase != PhaseRecovery
+                    && current.Hand == ComboHand.Both
+                    && current.BackArc != ComboBackArc.Mirror
+                    && (current.Motion == ComboMotion.OverheadArc
+                        || current.Motion == ComboMotion.UnderhandArc
+                        || current.Motion == ComboMotion.HorizontalSweep
+                        || current.Motion == ComboMotion.VerticalChop);
+                if (backArcStep)
+                {
+                    backRotation = BackArcPose(spec, phase, current, rotation, backRotation, t, phaseTimer);
+                    backArcActive = true;
+                    notes.Add($"back hand: {current.BackArc} arc" + (current.BackArc == ComboBackArc.Delayed ? $" ({current.BackDelayTicks}t behind)" : ""));
+                }
+                if (!backArcActive && backWasIndependent)
+                {
+                    float backGap = MathHelper.WrapAngle(rotation - backRotation);
+                    backRotation += backGap * 0.2f;
+                    backArcActive = Math.Abs(backGap) > 0.05f;
+                }
+                if (!backArcActive)
+                {
+                    backRotation = rotation;
+                }
+
                 // Leaps arm only on the landing tick (DoComboMeleeHit at endStep), i.e. the last
                 // attack frame here since airtime is not simulated.
                 bool frameArmed = armed;
@@ -589,8 +620,13 @@ namespace SwingPreview
                     notes.Add("recovery: weapon sheathed from here (WeaponSheathed); any walking it does in game is not simulated");
                 }
 
+                float? frameBackRotation = null;
+                if (backArcActive)
+                {
+                    frameBackRotation = backRotation;
+                }
                 EmitFrame(spec, run, writer, poses, tick, phase, current.Motion, stepIndex, steps.Length, rotation, frameArmed,
-                    direction, airborne, weaponHidden);
+                    direction, airborne, weaponHidden, frameBackRotation);
                 if (profile.Name == "RedKnight")
                 {
                     // Mirrors RedKnight.OverrideSpearGrip: cocked 0.32 outside the attack, the shared thrust curve for
@@ -1149,9 +1185,47 @@ namespace SwingPreview
 
         // ── Shared ────────────────────────────────────────────────────────────────
 
+        /// <summary>Port of the per-hand arc block in PuppetNPC.TickWeaponAnim: the back blade's own curve on a Both
+        /// step. Reverse runs the arc end -> start; Delayed shifts the same eased curve BackDelayTicks later; in the
+        /// pause it eases onto the front's pose. Re-sync with the game if that block changes.</summary>
+        private static float BackArcPose(SwingSpec spec, string phase, MeleeComboStep step, float frontRotation,
+            float backRotation, float t, int phaseTimer)
+        {
+            PuppetProfile profile = spec.Profile;
+            bool inTel = phase == PhaseTelegraph;
+            (float backStart, float backEnd) = Endpoints(spec, step.Motion,
+                inTel ? "MeleeComboTelegraph" : "MeleeComboAttack");
+            if (step.BackArc == ComboBackArc.Reverse)
+            {
+                (backStart, backEnd) = (backEnd, backStart);
+            }
+
+            if (inTel)
+            {
+                float telegraphT = 1f - phaseTimer / (float)Math.Max(1, ComboTelegraphTicks(profile, step));
+                if (profile.LogicalTelegraphs)
+                {
+                    return LogicalSwingWindup(backEnd, backStart, telegraphT, profile);
+                }
+                return MathHelper.Lerp(backRotation, backStart, 0.30f);
+            }
+            if (phase == PhasePause)
+            {
+                return MathHelper.Lerp(backRotation, frontRotation, 0.20f);
+            }
+
+            float delayFraction = 0f;
+            if (step.BackArc == ComboBackArc.Delayed)
+            {
+                delayFraction = MathHelper.Clamp(step.BackDelayTicks / (float)Math.Max(1, step.AttackTicks), 0f, 0.9f);
+            }
+            float backProgress = Math.Max(0f, t - delayFraction);
+            return ApplySwingEase(profile, backStart, backEnd, backProgress, step);
+        }
+
         private static void EmitFrame(SwingSpec spec, int run, StreamWriter writer, List<PoseFrame> poses,
             int tick, string phase, ComboMotion motion, int stepIndex, int stepCount, float rotation, bool armed,
-            int direction, bool airborne, bool weaponHidden)
+            int direction, bool airborne, bool weaponHidden, float? backRotation = null)
         {
             FlailPreviewSample flail = default;
             if (spec.FlailDemo != null)
@@ -1236,6 +1310,7 @@ namespace SwingPreview
                 TwoHanded = spec.Profile.TwoHanded,
                 FrontSwingBlend = frontBlend,
                 BackSwingBlend = backBlend,
+                BackWeaponRotation = backRotation,
                 FlailVisible = flail.Visible,
                 FlailOffsetX = flail.X,
                 FlailOffsetY = flail.Y,

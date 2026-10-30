@@ -51,6 +51,54 @@
       "newY": 1053,
       "type": "move",
       "note": "\"The Merchant tells you a rumor...\" soapstone. Moved 7 tiles down from its expanded formula position at 5254,1046. Legacy adventure + remix remain at 5254,846."
+    },
+    {
+      "legacyX": 7002,
+      "legacyY": 1495,
+      "newX": 6731,
+      "newY": 1948,
+      "type": "move",
+      "note": "\"You look down into the dark pit below... The Rage awaits.\" soapstone. Relocated with The Rage's arena on the expanded map only."
+    },
+    {
+      "legacyX": 7095,
+      "legacyY": 1457,
+      "newX": 6824,
+      "newY": 1910,
+      "type": "move",
+      "note": "Miakoda \"...when they are harmed too quickly, they are known to enrage...\" soapstone. Relocated with The Rage's arena on the expanded map only."
+    },
+    {
+      "legacyX": 7102,
+      "legacyY": 1457,
+      "newX": 6831,
+      "newY": 1910,
+      "type": "move",
+      "note": "Miakoda \"You will know the Rage is about to enrage when its body glows brightly with fire...\" soapstone. Relocated with The Rage's arena on the expanded map only."
+    },
+    {
+      "legacyX": 7000,
+      "legacyY": 1845,
+      "newX": 6728,
+      "newY": 2264,
+      "type": "move",
+      "note": "The Rage event ring and spawn (hardcoded TheRage + DynamicEvents.json entry share this coord). Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 6721,
+      "legacyY": 1905,
+      "newX": 7482,
+      "newY": 2321,
+      "type": "move",
+      "note": "Grand Occultist event ring and spawn (adventure-map event; remix has its own at 8239,1870). Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 1066,
+      "legacyY": 529,
+      "newX": 288,
+      "newY": 227,
+      "type": "move",
+      "note": "Death boss event ring and spawn (adventure-map event; remix has its own at 8091,557). Relocated on the expanded map only."
     }
   ]
 }

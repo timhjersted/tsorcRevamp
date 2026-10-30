@@ -31,6 +31,7 @@ namespace SwingPreview
         public bool WeaponHidden;         // PuppetNPC.WeaponSheathed: no weapon, arms at rest
         public float FrontSwingBlend = 1f; // dual wield: 1 = front hand follows WeaponRotation, 0 = carry pose
         public float BackSwingBlend;       // dual wield: same for the back hand
+        public float? BackWeaponRotation;  // dual wield: the back blade's own swing angle (ComboBackArc); null = mirrors WeaponRotation
         public bool FlailVisible;
         public float FlailOffsetX;
         public float FlailOffsetY;
@@ -365,7 +366,8 @@ namespace SwingPreview
             if (dualWield)
             {
                 frontWeaponRotation = Lerp(art.OffHandCarryRotation, frame.WeaponRotation, frame.FrontSwingBlend);
-                backWeaponRotation = Lerp(art.OffHandCarryRotation, frame.WeaponRotation, frame.BackSwingBlend);
+                float backSwingRotation = frame.BackWeaponRotation ?? frame.WeaponRotation;
+                backWeaponRotation = Lerp(art.OffHandCarryRotation, backSwingRotation, frame.BackSwingBlend);
                 armRotation = frontWeaponRotation - (float)Math.PI / 2f;
                 backArmRotation = backWeaponRotation - (float)Math.PI / 2f;
             }

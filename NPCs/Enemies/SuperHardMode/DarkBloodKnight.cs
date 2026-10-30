@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     /// Super Hardmode blood elite rebuilt on the puppet foundation. Its sword and whip are
     /// deliberately dodgeable commitments; its Tendon Bow plays fixed, learnable shot phrases.
     /// </summary>
-    public class DarkBloodKnight : PuppetNPC
+    public class DarkBloodKnight : PuppetNPC, IEnemyWhipOwner
     {
         private const string ScarletHewName = "Scarlet Hew";
         private const string ButchersReversalName = "Butcher's Reversal";
@@ -177,9 +177,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool SecondaryRangedAvailable => NPC.life <= NPC.lifeMax * 0.75f;
 
         private bool IsBlackfirePhase => NPC.life <= NPC.lifeMax * 0.5f;
-        public Vector2 BloodWhipAnchor => PuppetHandPosition;
-        public Vector2 BloodWhipAim => _lockedWhipAim;
-        public bool IsBloodWhipActive => _activeComboUsesWhip
+        // IEnemyWhipOwner: the Dark Harvest lash (EnemyWhipProjectileBase) reads these every tick.
+        public Vector2 WhipAnchor => PuppetHandPosition;
+        public Vector2 WhipAim => _lockedWhipAim;
+        public bool IsWhipActive => _activeComboUsesWhip
             && (Phase == AttackPhase.MeleeComboTelegraph
                 || Phase == AttackPhase.MeleeComboAttack
                 || Phase == AttackPhase.MeleeComboPause
@@ -386,7 +387,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             if (combo.Name == DarkHarvestLashName)
                 return distance >= 112f
-                    && distance <= BloodKnightDarkHarvestWhip.MaximumReach;
+                    && distance <= BloodKnightDarkHarvestWhip.MaximumReachPixels;
             return true;
         }
 

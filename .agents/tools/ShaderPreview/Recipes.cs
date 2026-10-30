@@ -102,6 +102,12 @@ namespace ShaderPreview
                 Mantassin("MantassinCrescentSky", "MantassinCrescent", new Vector2(256f, 256f), SkyBlue, 0f),
                 Mantassin("MantassinCrescentCave", "MantassinCrescent", new Vector2(256f, 256f), CaveDark, 0f),
                 Mantassin("MantassinRuneCave", "MantassinRune", new Vector2(96f, 29f), CaveDark, 0f),
+                // Witchking Void Flame (Effects/WitchkingVoidCrescent.fx), sizes from WitchkingVoidFlame: launch (4 tiles tall,
+                // 46px wide) and full size (16 tiles tall, 88px). Active = the band's middle half-thickness (20px) / quad width.
+                WitchkingCrescent("VoidCrescentLaunchSky", new Vector2(46f, 64f), SkyBlue, 20f / 46f),
+                WitchkingCrescent("VoidCrescentLaunchCave", new Vector2(46f, 64f), CaveDark, 20f / 46f),
+                WitchkingCrescent("VoidCrescentFullSky", new Vector2(88f, 256f), SkyBlue, 20f / 88f),
+                WitchkingCrescent("VoidCrescentFullCave", new Vector2(88f, 256f), CaveDark, 20f / 88f),
 
                 // Acolyte of Grand Occultist Madness kit (Effects/OolacileMadness.fx), sizes from AcolyteSpells.cs call sites.
                 // Progress is the per-technique main parameter (mote: unused; eye: lid; ring: radius; glyph: reveal;
@@ -810,6 +816,30 @@ namespace ShaderPreview
 
         // Proposed call site: full-texture premultiplied draw of a noise quad, 2px pixel filter, glintstone palette
         // (deep azure / glint blue / blue-white, matching ArchdeaconGlintStar's GlintColor + GlintCore).
+        // EnemyVFX.DrawWitchkingVoidCrescent call site: full-texture premultiplied draw of a cloud-noise quad, T_PerlinNoise_Tiled
+        // detail (T_VFX_Noise41 seams vertically), 2px pixel filter, dark / bright purple / white. Direction = the per-projectile noise phase.
+        private static Recipe WitchkingCrescent(string name, Vector2 drawSize, Color clear, float midHalfThickness)
+        {
+            return new Recipe
+            {
+                Name = name,
+                Effect = "WitchkingVoidCrescent",
+                Technique = "WitchkingVoidCrescent",
+                Primary = "T_CloudNoise_Tiled",
+                Detail = "T_PerlinNoise_Tiled",
+                DrawSize = drawSize,
+                FullTexture = true,
+                Dark = new Color(46, 8, 78),
+                Mid = new Color(176, 82, 255),
+                Core = new Color(255, 246, 255),
+                Active = midHalfThickness,
+                Direction = 0.37f,
+                Blend = BlendState.AlphaBlend,
+                PixelBlockSize = 2f,
+                Clear = clear,
+            };
+        }
+
         private static Recipe Glintstone(string name, string technique, Vector2 drawSize, Color clear)
         {
             return new Recipe
