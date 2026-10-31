@@ -20,7 +20,7 @@ if (-not $OutputDirectory) {
 
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 $baseDirectory = Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet'
-$sourcePath = Join-Path $RepoRoot 'NPCs\Enemies\GhostFighter\GhostOfTheDarkmoonKnight.png'
+$sourcePath = Join-Path $RepoRoot 'NPCs\UnusedSprites\GhostOfTheDarkmoonKnight.png'
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 
 # Use the NPC's authored olive/gray palette, rather than a whole-image color overlay.
@@ -105,11 +105,16 @@ Write-RecoloredSheet -Source (Join-Path $baseDirectory 'BlackKnightBreastplate_B
 Write-RecoloredSheet -Source (Join-Path $baseDirectory 'BlackKnightGreaves_Legs.png') -Destination (Join-Path $OutputDirectory 'DarkmoonKnightGreaves_Legs.png') -Palette $legsPalette
 
 $npc = [Drawing.Bitmap]::FromFile($sourcePath)
+$legacyGlow = [Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'NPCs\UnusedSprites\Ghost of the Darkmoon Knight Glow.png'))
 $referenceHead = [Drawing.Bitmap]::FromFile((Join-Path $baseDirectory 'BlackKnightHelmet_Head.png'))
 $head = [Drawing.Bitmap]::new(40, 1120, [Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$eyeGlow = [Drawing.Bitmap]::new(40, 1120, [Drawing.Imaging.PixelFormat]::Format32bppArgb)
 try {
     if ($npc.Width -ne 70 -or $npc.Height -ne 896) {
         throw 'Expected the original 70x896 Darkmoon Knight NPC sheet.'
+    }
+    if ($legacyGlow.Width -ne $npc.Width -or $legacyGlow.Height -ne $npc.Height) {
+        throw 'The archived eye glow must match the original NPC sheet.'
     }
 
     for ($frame = 0; $frame -lt 20; $frame++) {
@@ -138,14 +143,28 @@ try {
                     $color = [Drawing.Color]::FromArgb(255, $color.R, $color.G, $color.B)
                     $head.SetPixel(10 + 49 - $x, $frameTop + $referenceTop + $y - 2, $color)
                 }
+
+                # Extract the original full-bright eyes with the identical helmet registration.
+                # The source is left-facing; every puppet cell uses the same mirrored crop.
+                $glowColor = $legacyGlow.GetPixel($x, $y)
+                if ($glowColor.A -gt 0) {
+                    # Legacy PostDraw applied the same glow twice. Bake that coverage into
+                    # one mask so its original intensity survives with a single draw call.
+                    $glowAlpha = [int][Math]::Round(255 * (1 - [Math]::Pow(1 - $glowColor.A / 255.0, 2)))
+                    $glowColor = [Drawing.Color]::FromArgb($glowAlpha, $glowColor.R, $glowColor.G, $glowColor.B)
+                    $eyeGlow.SetPixel(10 + 49 - $x, $frameTop + $referenceTop + $y - 2, $glowColor)
+                }
             }
         }
     }
 
     $head.Save((Join-Path $OutputDirectory 'DarkmoonKnightHelmet_Head.png'), [Drawing.Imaging.ImageFormat]::Png)
+    $eyeGlow.Save((Join-Path $OutputDirectory 'DarkmoonKnightHelmet_Head_Glow.png'), [Drawing.Imaging.ImageFormat]::Png)
 }
 finally {
     $npc.Dispose()
+    $legacyGlow.Dispose()
+    $eyeGlow.Dispose()
     $referenceHead.Dispose()
     $head.Dispose()
 }
@@ -155,4 +174,4 @@ foreach ($part in @('Helmet', 'Breastplate', 'Greaves')) {
     Write-ItemIcon -SheetPath (Join-Path $OutputDirectory "DarkmoonKnight${part}_${suffix}.png") -IconPath (Join-Path $OutputDirectory "DarkmoonKnight${part}.png")
 }
 
-Write-Output "Generated six Darkmoon Knight PNGs in $OutputDirectory"
+Write-Output "Generated seven Darkmoon Knight PNGs (including the eye glow) in $OutputDirectory"

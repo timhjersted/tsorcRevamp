@@ -722,6 +722,7 @@ namespace tsorcRevamp.NPCs
             // Standard fighters
             Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
             Add<Enemies.GhostFighter.GhostOfTheForgottenKnight>(0.3f, 35f);
+            Add<Enemies.GhostFighter.GhostOfTheDarkmoonKnight>(0.3f, 55f);
             Add<AttraidiesIllusion>(0.3f, 30f);
             Add<Enemies.BarrowWight>(0.35f, 40f); // ghost swordsman: tells and recovery stay interruptible
             Add<Enemies.SuperHardMode.BarrowWightNemesis>(0.3f, 50f);

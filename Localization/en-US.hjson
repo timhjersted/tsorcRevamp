@@ -9213,6 +9213,21 @@ Mods: {
 				Tooltip: Grows swifter with the distance you travel
 			}
 
+			TibianValkyrieHeadpiece: {
+				DisplayName: Tibian Valkyrie Headpiece
+				Tooltip: ""
+			}
+
+			TibianValkyrieBreastplate: {
+				DisplayName: Tibian Valkyrie Breastplate
+				Tooltip: ""
+			}
+
+			TibianValkyrieGreaves: {
+				DisplayName: Tibian Valkyrie Greaves
+				Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				Tooltip: ""
 				DisplayName: Great Black Knight Helm
@@ -10926,6 +10941,11 @@ Mods: {
 		}
 
 		Projectiles: {
+			DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
+			DarkmoonCrescent.DisplayName: Moonlight Crescent
+			DarkmoonVigilController.DisplayName: Darkmoon Vigil
+			DarkmoonSliver.DisplayName: Moonlight Sliver
+			DarkmoonExplosion.DisplayName: Moonlight Rupture
 			BloodKnightArrow.DisplayName: Blood Arrow
 			BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
 			WitchkingVoidFlame.DisplayName: Void Flame

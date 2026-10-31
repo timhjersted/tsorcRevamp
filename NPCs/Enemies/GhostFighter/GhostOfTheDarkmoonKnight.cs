@@ -1,305 +1,159 @@
+using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Armor.DarkmoonKnightSet;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
-using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Darkmoon;
+using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
-    class GhostOfTheDarkmoonKnight : ModNPC
+    public partial class GhostOfTheDarkmoonKnight : PuppetNPC, IHumanoidMeleeHitEffects
     {
+        public const int CutExpertDamage = 240, LeapExpertDamage = 300;
+        public const int CrescentBladeExpertDamage = 280, CrescentExpertDamage = 256, BoltExpertDamage = 240;
+        const string CutName = "Mooncut", LeapName = "Moonstep Cleave", CrescentName = "Crescent Severance";
+        enum Move : byte { Cut, Leap, Crescent, Barrage }
+        enum Cast : byte { None, Barrage, Vigil }
+        Cast _cast;
+        AttackBag<Move> _bag;
+        string _requestedCombo;
+        int _serial, _age, _completedActions, _neutralTicks, _restTicks, _graceTicks, _healRetryTicks;
+        int _cutCooldown, _leapCooldown, _crescentCooldown, _barrageCooldown, _vigilCooldown;
+        int _guardTicks, _guardCooldown, _guardFacing = 1, _blockSoundCooldown;
+        int _kiteTicks, _approachTicks, _shotCount, _releasedMask, _castTarget;
+        bool _phaseTwo, _guardUp, _vigilWasPresent;
+        Vector2 _castAim = Vector2.UnitX, _vigilAnchor;
+        static Color Accent => new Color(155, 105, 235);
+        public int EncounterSerial => _serial;
+        bool Server => Main.netMode != NetmodeID.MultiplayerClient;
+        bool Neutral => Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll || Phase == AttackPhase.ClosingDistance;
+        bool Casting => Phase == AttackPhase.MagicTelegraph || Phase == AttackPhase.MagicAttack || Phase == AttackPhase.MagicRecovery;
+        bool BarragePose => _cast == Cast.Barrage && Casting;
+        public DarkmoonVigilController Vigil => DarkmoonVigilController.Find(_serial);
 
+        protected override string InvaderTitle => "Ghost of the Darkmoon Knight";
+        protected override bool AnnounceInvasion => false;
+        protected override bool AnnounceInvaderDefeat => false;
+        public override bool UsesPuppetDifficultyScaling => false;
+        protected override int CasualStrollChance => 0;
+        protected override int HeadArmorItemType => ModContent.ItemType<DarkmoonKnightHelmet>();
+        protected override int BodyArmorItemType => ModContent.ItemType<DarkmoonKnightBreastplate>();
+        protected override int LegsArmorItemType => ModContent.ItemType<DarkmoonKnightGreaves>();
+        protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyBarrowWightSword>();
+        protected override int RangedWeaponItemType => -1;
+        protected override int MagicWeaponItemType => _cast == Cast.Barrage ? -1 : MeleeWeaponItemType;
+        protected override int MeleeDamage => EnemyDamage.Projectile(CutExpertDamage);
+        protected override int RangedDamage => 0;
+        protected override bool HoldAttackSelection => true;
+        protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool WeaponSheathed => BarragePose;
+        protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
+        protected override Vector2 MeleeHandleNorm => new Vector2(6f / 52f, 45f / 52f);
+        protected override float MeleeWeaponDrawScale => 1f;
+        protected override float ComboReachBase => 90f;
+        protected override float MeleeBladeWidth => 12f;
+        protected override float MeleeRange => 0f;
+        protected override float MeleeEngageRange => 72f;
+        protected override float ComboMaxStartRange => 384f;
+        protected override float RangedStartComboMaxRange => 384f;
+        protected override bool UseAuthoredComboSwingClock => true;
+        protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool UseSwingEasing => true;
+        protected override bool UseCompositeArmSwing => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
+        protected override bool UseAimAdaptiveArc => true;
+        protected override float ComboTelegraphMultiplier => 1f;
+        protected override int MinComboTelegraphTicks => 20;
+        protected override int PhaseTelegraphMinimumTicks => 20;
+        protected override int MeleeRecoveryLingerTicks => ActiveMeleeComboName == LeapName ? 16 : 6;
+        protected override int MeleeComboInterStepLingerTicks => 3;
+        protected override float LogicalWindupSettleFraction => 0.43f;
+        protected override Color SlashVFXColor => Accent;
+        protected override float SlashVFXOpacity => 0.45f;
+        protected override float TopSpeed => 1.8f;
+        protected override float Acceleration => 0.09f;
+        protected override float PuppetJumpPower => 11f;
+        protected override float PuppetJumpBoost => 7f;
+        protected override bool UseLandingTimedLeapSlam => true;
+        protected override int LeapSlamDownswingTicks => 14;
+        protected override float LeapAttackUpSpeed => 6f;
+        protected override float LeapAttackForwardSpeed => 9f;
+        protected override float LeapAttackMinimumForwardSpeed => 0f;
+        protected override float LeapMinLungeDistance => 0f;
+        protected override float LeapLandingStandoff => -32f;
+        protected override float LeapSlamCarryRotation => -1.55f;
+        protected override float LeapSlamImpactRotation => 2.36f;
+        protected override bool SuppressGhostWallTeleport => base.SuppressGhostWallTeleport || _graceTicks > 0 || _restTicks > 0 || _guardUp || HasOwnedShots();
+        protected override Color PuppetSkinColor => Color.Black;
+        protected override bool HasSpectralOverlay => true;
+        protected override bool SpectralKeepsArmorDyes => true;
+        protected override float SpectralOverlayScale => 1f;
+        protected override Color SpectralOverlayColor => new Color(155, 165, 210);
+        protected override float SpectralCoreTintStrength => 0.25f;
+        protected override float SpectralCoreOpacity => 0.8f;
+        protected override Color SpectralHaloColor => new Color(90, 75, 150);
+        protected override int SpectralHaloCopyCount => 6;
+        protected override float SpectralHaloRadius => 3f;
+        protected override float SpectralHaloOpacity => 0.18f;
+        protected override float SpectralTrailOpacity => 0.25f;
+        protected override int TeleportTelegraphTicks => 80;
+        protected override int TeleportDustTypeId => DustID.Smoke;
+        protected override Color TeleportDustTint => new Color(55, 55, 65);
 
-        public override void SetStaticDefaults()
+        protected override MeleeCombo[] MeleeComboPoolOverride => Combos;
+        protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float start, ref float end)
         {
-            Main.npcFrameCount[NPC.type] = 16;
+            if (motion == ComboMotion.OverheadArc) { start = -1.55f; end = 2.36f; }
+            if (motion == ComboMotion.UnderhandArc) { start = 2.36f; end = -1.55f; }
         }
 
+        public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
         public override void SetDefaults()
         {
-            NPC.npcSlots = 5;
-            NPC.height = 40;
-            NPC.width = 20;
-            NPC.damage = 55;
-            NPC.defense = 65;
-            NPC.lifeMax = 3000;
-            NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 12000; // was 1250
-            NPC.knockBackResist = 0.0f;
-            AnimationType = 28;
-            Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
-            // "Shadow Shot" — commitFraction 0.5: first half of the tell cancellable (by magic), second half hyperarmor.
-            int shadowShotType = ModContent.ProjectileType<ShadowShot>();
-            UsefulFunctions.AddAttack(NPC, 170, shadowShotType, 20, 9, SoundID.Item17, stopBeforeFiring: false, telegraphTime: 45, commitFraction: 0.5f);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.CanPassThroughWalls = true;
-            EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: the Shadow Shot is a ranged caster — keep more distance, a 7-18 band.
-            globalNPC.KiteRangeMin = 7f;
-            globalNPC.KiteRangeMax = 18f;
-            CombatTempoProfile.Standard(globalNPC, shadowShotType);
-            globalNPC.HasGhostAfterimages = true;
-            // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
-            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
-            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
-            globalNPC.MaxJumpPower = 11f;
-            globalNPC.MaxJumpBoost = 7f;
-            globalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
-            globalNPC.CanUseRopes = true;
-            globalNPC.CanDoubleJump = true;
-            globalNPC.DoubleJumpPower = 7f;
-            globalNPC.TeleportTelegraphTime = 80;
-            globalNPC.TeleportDustType = DustID.Smoke;
-            globalNPC.TeleportDustColor = new Color(55, 55, 65);
-            globalNPC.TeleportDustScale = 0.65f;
-            globalNPC.TeleportDustCount = 20;
+            NPC.npcSlots = 5; NPC.width = 20; NPC.height = 40; NPC.aiStyle = -1;
+            NPC.damage = 0; NPC.defense = 65; NPC.lifeMax = 3000; NPC.value = 12000;
+            NPC.knockBackResist = 0.3f; NPC.HitSound = SoundID.NPCHit1; NPC.DeathSound = SoundID.NPCDeath1;
+            Banner = Type; BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.CanPassThroughWalls = true; g.HasGhostAfterimages = false;
+            g.KiteRangeMin = 5; g.KiteRangeMax = 10; g.KiteLooseness = 0.7f;
+            g.PatrolMode = PatrolMode.Wander; g.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+            g.NavSearchRadius = 50; g.MaxJumpPower = 11; g.MaxJumpBoost = 7; g.CanUseRopes = true;
+            g.TeleportTelegraphTime = 80; g.TeleportDustType = DustID.Smoke;
+            g.TeleportDustColor = new Color(55, 55, 65); g.TeleportDustScale = 0.65f; g.TeleportDustCount = 20;
         }
-
-        int chargeDamage = 0;
-        bool charging = false;
-
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        protected override void RunMovementAI(float speedMult)
         {
-            bool BeforeFourAfterSix = spawnInfo.SpawnTileX < Main.maxTilesX * 0.6f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.8f; //Before 3/10ths or after 7/10ths width (a little wider than ocean bool?) but different because I increased numbers by .2
-
-            if (tsorcRevampWorld.SuperHardMode && BeforeFourAfterSix && spawnInfo.Player.ZoneDungeon)
-            {
-                return 0.6f;
-            }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUnderworldHeight && spawnInfo.Player.ZoneDungeon)
-            {
-                return 0.5f;
-            }
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && spawnInfo.Player.ZoneDungeon)
-            {
-                return 0.4f;
-            }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
-            {
-                return 0.2f;
-            }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneHallow)
-            {
-                return 0.1f;
-            }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneForest && !Main.dayTime)
-            {
-                return 0.3f;
-            }
-
-            return 0;
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.KiteRangeMax = _guardUp || _approachTicks > 0 || Vigil != null ? 0f : 10f;
+            if (Neutral && _restTicks == 0 && _graceTicks == 0)
+                SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * (_guardUp ? 1f : speedMult), acceleration: Acceleration, doorBreakingDamage: 3, attackRange: 700f);
+            else NPC.velocity.X *= 0.65f;
         }
-        #endregion
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
-            target.AddBuff(BuffID.Slow, 600);
-
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.Bleeding, 30 * 60);
-                target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30 * 60);
-            }
-        }
-
+        public void OnHumanoidMeleeHit(Player target) => target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 180);
         public override void HitEffect(NPC.HitInfo hit)
         {
-            if (NPC.life <= 0)
-            {
-                if (!Main.dedServ)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Darkmoon Knight Gore 1").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Black Knight Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Black Knight Gore 3").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Black Knight Gore 2").Type, 1f);
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Black Knight Gore 3").Type, 1f);
-                }
-            }
+            if (Main.dedServ || NPC.life > 0) return;
+            string[] parts = { "Darkmoon Knight Gore 1", "Black Knight Gore 2", "Black Knight Gore 3", "Black Knight Gore 2", "Black Knight Gore 3" };
+            foreach (string name in parts) Gore.NewGore(NPC.GetSource_Death(), NPC.position, Main.rand.NextVector2Circular(6, 6), Mod.Find<ModGore>(name).Type);
         }
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        public override void ModifyNPCLoot(NPCLoot loot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GigantAxe>(), 10));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 4));
-            npcLoot.Add(ItemDropRule.Common(ItemID.FlaskofVenom));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 2));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 4));
-            npcLoot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));
-
-
-        }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, true);
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        public override void AI()
-        {
-            tsorcRevampAIs.FighterAI(NPC, 1.4f, 0.175f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 3, canDodgeroll: true);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
-                Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            if (!hasLos && globalNPC.ProjectileTimer > 0f)
-            {
-                globalNPC.ProjectileTimer = 0f;
-                NPC.netUpdate = true;
-            }
-
-            if (NPC.justHit && globalNPC.ProjectileTimer < globalNPC.ProjectileTelegraphStart && Main.rand.NextBool(4))
-            {
-                globalNPC.ProjectileTimer = 90f;
-                NPC.netUpdate = true;
-            }
-
-
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (Main.rand.NextBool(400))
-                {
-                    charging = true;
-                    NPC.velocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 10);
-                    NPC.netUpdate = true;
-                }
-                if (charging == true)
-                {
-                    NPC.damage = 0;
-                    chargeDamage++;
-                    Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Ichor, 0, 0).noGravity = true;
-                }
-                if (chargeDamage >= 90)
-                {
-                    charging = false;
-                    NPC.damage = 70;
-                    chargeDamage = 0;
-                }
-            }
-        }
-
-        static Texture2D spearTexture;
-        static Texture2D handTexture;
-        static Texture2D darkKnightGlow;
-        const float FrameW = 70f;
-        const float FrameH = 56f;
-        static readonly Vector2[] HandPixel = new Vector2[16]
-        {
-            new Vector2(47, 30), // 0 idle
-            new Vector2(47, 25), // 1 jump
-            new Vector2(48, 33), // 2
-            new Vector2(50, 31), // 3
-            new Vector2(50, 31), // 4
-            new Vector2(50, 31), // 5
-            new Vector2(50, 33), // 6
-            new Vector2(48, 33), // 7
-            new Vector2(48, 33), // 8
-            new Vector2(48, 33), // 9
-            new Vector2(46, 31), // 10
-            new Vector2(44, 31), // 11
-            new Vector2(44, 31), // 12
-            new Vector2(45, 32), // 13
-            new Vector2(48, 33), // 14
-            new Vector2(48, 33), // 15
-        };
-
-        Vector2 CurrentHandWorld()
-        {
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= HandPixel.Length)
-            {
-                frame = 0;
-            }
-
-            Vector2 fp = HandPixel[frame];
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
-            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
-            return new Vector2(x, y);
-        }
-
-        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
-        {
-            if (handTexture == null)
-            {
-                return;
-            }
-
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
-            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
-            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
-        }
-
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-
-            int spriteWidth = NPC.frame.Width; //use same number as ini frameCount
-            int spriteHeight = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-
-            int spritePosDifX = (int)(NPC.frame.Width / 2);
-            int spritePosDifY = NPC.frame.Height - 5; // was npc.frame.Height - 4; if not 5 then 8
-
-            int frame = NPC.frame.Y / spriteHeight;
-
-            int offsetX = (int)(NPC.position.X + (NPC.width / 2) - Main.screenPosition.X - spritePosDifX + 0.5f);
-            int offsetY = (int)(NPC.position.Y + NPC.height - Main.screenPosition.Y - spritePosDifY);
-
-            SpriteEffects flop = SpriteEffects.None;
-            if (NPC.spriteDirection == 1)
-            {
-                flop = SpriteEffects.FlipHorizontally;
-            }
-
-            UsefulFunctions.EnsureLoaded(ref darkKnightGlow, "tsorcRevamp/Gores/Ghost of the Darkmoon Knight Glow");
-
-            //Glowing Eye Effect
-            for (int i = 1; i > -1; i--)
-            {
-                //draw 3 levels of trail
-                int alphaVal = 255 - (1 * i);
-                Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
-                spriteBatch.Draw(darkKnightGlow,
-                    new Rectangle((int)(offsetX), (int)(offsetY), spriteWidth, spriteHeight),
-                    new Rectangle(0, NPC.frame.Height * frame, spriteWidth, spriteHeight),
-                    modifiedColour,
-                    NPC.rotation,  //Just add this here I think
-                    new Vector2(0, 0),
-                    flop,
-                    0);
-            }
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            int shadowShotType = ModContent.ProjectileType<ShadowShot>();
-            Texture2D heldProjTexture = TextureAssets.Projectile[shadowShotType].Value;
-            if (handTexture == null || handTexture.IsDisposed)
-            {
-                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            }
-            if (!globalNPC.InCombatComboRecovery && globalNPC.ProjectileTimer >= globalNPC.ProjectileTelegraphStart)
-            {
-                Lighting.AddLight(NPC.Center, Color.MediumPurple.ToVector3() * 1f); 
-                float rotation = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1).ToRotation() + MathHelper.PiOver2;
-                int frameCount = Main.projFrames[shadowShotType] > 0 ? Main.projFrames[shadowShotType] : 6;
-                int frameHeight = heldProjTexture.Height / frameCount;
-                int projFrame = (int)((Main.GameUpdateCount / 6) % (ulong)frameCount);
-                Rectangle sourceRectangle = new Rectangle(0, projFrame * frameHeight, heldProjTexture.Width, frameHeight);
-                spriteBatch.Draw(heldProjTexture, CurrentHandWorld() - Main.screenPosition, sourceRectangle, drawColor, rotation, sourceRectangle.Size() / 2f, NPC.scale, SpriteEffects.None, 0);
-                DrawHandOverlay(spriteBatch, drawColor);
-            }
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<GigantAxe>(), 10));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<CrimsonPotion>(), 2));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<StrengthPotion>(), 4));
+            loot.Add(ItemDropRule.Common(ItemID.FlaskofVenom));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<ShockwavePotion>(), 2));
+            loot.Add(ItemDropRule.Common(ModContent.ItemType<BattlefrontPotion>(), 4));
+            loot.Add(ItemDropRule.Common(ItemID.BloodMoonStarter, 3));
         }
     }
 }

@@ -1041,12 +1041,12 @@ namespace tsorcRevamp.Systems
             Spawn("GhostOfAHollowWarrior", Invasion.None & !Zone.Snow & Town.AtMostOne & Water.Dry & !Evil & !Zone.Glowshroom & Zone.Graveyard & CatacombWalls, phm: 3f);
 
             // Super Hardmode only. The old lines were already in descending order, so the highest weight wins as before.
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Region.OutsideSpan(0.6f, 0.8f), shm: 0.6f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Depth.Underworld, shm: 0.5f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Time.BloodMoon, shm: 0.4f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon, shm: 0.2f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Forest & Time.Night, shm: 0.3f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Hallow, shm: 0.1f);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Region.OutsideSpan(0.6f, 0.8f), shm: 0.6f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Depth.Underworld, shm: 0.5f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Time.BloodMoon, shm: 0.4f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon, shm: 0.2f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Forest & Time.Night, shm: 0.3f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Hallow, shm: 0.1f, max: 2);
 
             // The catacomb rate is also huge (2.5). The Machine Temple rate lives in GlobalNPC.EditSpawnPool.
             Spawn("GhostOfTheDrowned", Zone.Graveyard & CatacombWalls, phm: 2.5f, hm: 2.5f, shm: 2.5f);

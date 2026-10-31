@@ -10914,6 +10914,11 @@ Mods: {
 		}
 
 		Projectiles: {
+			// DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
+			// DarkmoonCrescent.DisplayName: Moonlight Crescent
+			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
+			// DarkmoonSliver.DisplayName: Moonlight Sliver
+			// DarkmoonExplosion.DisplayName: Moonlight Rupture
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
 			// WitchkingVoidFlame.DisplayName: Void Flame

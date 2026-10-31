@@ -1456,6 +1456,10 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Defaults to the shield item's texture + "_Shield"; override to point elsewhere.</summary>
         protected virtual string ShieldDrawTexturePath =>
             HasShield ? TextureAssets.Item[ShieldItemType].Name + "_Shield" : null;
+        /// <summary>Presentation-only opt-out for shields that appear only during an authored guard.</summary>
+        protected virtual bool ShieldVisible => HasShield;
+        /// <summary>Additional guard poses, including mobile guards and custom shield charges.</summary>
+        protected virtual bool ShieldRaisedForPose => _shielding || _advancingGuard;
         private Texture2D _shieldDrawTex;
         private bool _shieldDrawTexLoaded;
         /// <summary>Minimum guard hold (ticks) when a block is raised away from melee range — long
@@ -10255,6 +10259,18 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private Vector2 GetUnscaledHandPosition()
         {
+            // Empty-hand casts need the same full-stretch palm on a dedicated server, which has
+            // no draw-only Player. This is vanilla GetFrontHandPosition's full-stretch solve.
+            if (FreeFrontArmFacingAngle is float facingAngle && !CompositeArmActive)
+            {
+                float angle = FacingAngleToCompositeArm(facingAngle) + MathHelper.PiOver2;
+                Vector2 center = PuppetVisualPosition
+                    + new Vector2(PuppetVisualWidth, PuppetVisualHeight) * 0.5f;
+                Vector2 wrist = angle.ToRotationVector2() * 10f
+                    + new Vector2(-4f * NPC.direction, -2f)
+                    + new Vector2(0f, 3f * NPC.direction).RotatedBy(angle);
+                return center + new Vector2(0f, NPC.gfxOffY) + wrist;
+            }
             if (_puppet == null)
                 return PuppetVisualCenter;
 
@@ -11391,7 +11407,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         internal void DrawShieldToLayer(ref PlayerDrawSet drawInfo)
         {
-            if (!HasShield || _puppet == null
+            if (!HasShield || !ShieldVisible || _puppet == null
                 || Phase == AttackPhase.Healing || Phase == AttackPhase.FleeToHeal)
                 return;
 
@@ -11420,7 +11436,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 NPC.position.Y + NPC.height - frameH + 4f) - Main.screenPosition + origin;
             // The equip strip supplies the carried position. During the authored guard, lift it
             // toward the chest and push it toward the attacker so the defensive state reads clearly.
-            if (_shielding || _advancingGuard)
+            if (ShieldRaisedForPose)
                 drawPos += new Vector2(NPC.direction * 5f, -5f);
             SpriteEffects spriteFx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 

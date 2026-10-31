@@ -36,6 +36,7 @@ default, not written in the file · `.` off by default, never considered
 | BarrowWight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | BarrowWightBase | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | BlackKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| GhostOfTheDarkmoonKnight | Broadsword | Y | . | Y | Y | Y | Y | . | Y | . | Y | . | Y | Y | Y | . | Y | . |
 | GhostOfTheForgottenKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | GhostOfTheForgottenWarrior | Axe | Y | . | Y | Y* | Y | Y | Y* | . | . | Y | . | Y | Y | Y | . | Y | . |
 | GreatBlackKnight | Flail | Y | . | . | . | . | Y | . | . | . | . | . | . | . | . | . | Y | . |

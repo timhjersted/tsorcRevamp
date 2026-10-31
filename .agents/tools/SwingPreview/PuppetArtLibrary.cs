@@ -37,6 +37,20 @@ namespace SwingPreview
                 };
             }
 
+            if (puppet.Equals("GhostOfTheDarkmoonKnight", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = puppet,
+                    BodySheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightHelmet_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
+                    HandleNormX = 6f / 52f,
+                    HandleNormY = 45f / 52f,
+                };
+            }
+
             if (puppet.Equals("GhostOfTheForgottenKnight", StringComparison.OrdinalIgnoreCase))
             {
                 return new PuppetArt

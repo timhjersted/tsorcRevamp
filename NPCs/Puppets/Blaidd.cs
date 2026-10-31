@@ -273,6 +273,8 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // Raised shield = the advancing guard, or the Shield Charge's tell + sprint.
+        protected override bool ShieldRaisedForPose => ShieldRaised;
+
         private bool ShieldRaised
         {
             get

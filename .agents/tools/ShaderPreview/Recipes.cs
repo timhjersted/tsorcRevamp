@@ -80,6 +80,12 @@ namespace ShaderPreview
         {
             return new[]
             {
+                Darkmoon("DarkmoonBodySky", "DarkmoonMoonlight", "DarkmoonMoonlight", new Vector2(160), SkyBlue),
+                Darkmoon("DarkmoonBodyCave", "DarkmoonMoonlight", "DarkmoonMoonlight", new Vector2(160), CaveDark),
+                Darkmoon("DarkmoonSliverSky", "DarkmoonSliver", "DarkmoonSliver", new Vector2(128, 32), SkyBlue),
+                Darkmoon("DarkmoonSliverCave", "DarkmoonSliver", "DarkmoonSliver", new Vector2(128, 32), CaveDark),
+                Darkmoon("DarkmoonExplosionSky", "DarkmoonExplosion", "DarkmoonExplosion", new Vector2(512), SkyBlue),
+                Darkmoon("DarkmoonExplosionCave", "DarkmoonExplosion", "DarkmoonExplosion", new Vector2(512), CaveDark),
                 // Archdeacon glintstone shader (Effects/ArchdeaconGlintstone.fx) - the live default look since 2026-10-18
                 // (/glintlegacy switches back to the old sprites). Sizes mirror the projectiles' real draw quads.
                 Glintstone("GlintCometSky", "ArchdeaconGlintComet", new Vector2(96f, 32f), SkyBlue),
@@ -904,6 +910,26 @@ namespace ShaderPreview
                 PixelBlockSize = 2f,
                 Clear = clear,
                 Configure = (effect, progress, scale) => effect.Parameters["Extra"]?.SetValue(extra),
+            };
+        }
+
+        // DarkmoonVisuals.Draw uses these exact textures, alpha blend and pre-shape 2px grid.
+        private static Recipe Darkmoon(string name, string effectName, string technique, Vector2 size, Color background)
+        {
+            return new Recipe
+            {
+                Name = name, Effect = effectName, Technique = technique,
+                Primary = "SwirlyNoise", Detail = "VoronoiNoise", DrawSize = size,
+                FullTexture = true, Blend = BlendState.AlphaBlend, PixelBlockSize = 2f,
+                Clear = background, Opacity = 1f,
+                Configure = (effect, progress, scale) =>
+                {
+                    effect.Parameters["Progress"]?.SetValue(effectName == "DarkmoonMoonlight" ? 1f : progress);
+                    effect.Parameters["Growth"]?.SetValue(MathHelper.Clamp(progress * 10f, 0, 1));
+                    effect.Parameters["Fade"]?.SetValue(MathHelper.Clamp((1 - progress) * 1.54f, 0, 1));
+                    effect.Parameters["Active"]?.SetValue(effectName == "DarkmoonExplosion" ? (progress >= 0.1f && progress < 0.35f ? 1f : 0f) : progress);
+                    effect.Parameters["Time"]?.SetValue(12.5f + progress * 3f);
+                },
             };
         }
 
