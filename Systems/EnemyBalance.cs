@@ -536,7 +536,7 @@ namespace tsorcRevamp.Systems
             Enemy("CorruptedElemental", shm: 12000); // standard; authored 2000
             Enemy("CorruptedHornet", shm: 9000); // standard; authored 2000
             Enemy("IceSkeleton", shm: 7000); // standard; authored 2200
-            Enemy("BarrowWightNemesis", shm: 16000); // strong; authored 2500
+            Enemy("BarrowWightNemesis", shm: 24000); // strong; authored 2500
             Enemy("BasiliskHunter", shm: 18000); // strong; authored 2500
             Enemy("OolacileAcolyte", shm: 15000); // strong; authored 5500; caster, contact damage 0
             Enemy("GhostOfTheDarkmoonKnight", shm: 15000); // strong; authored 3000

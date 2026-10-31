@@ -10931,17 +10931,26 @@ namespace tsorcRevamp.NPCs.Puppets
         /// instead of freezing on the jump frame. Default false (real airborne pose).</summary>
         protected virtual bool WalkCycleWhileAirborne => false;
 
+        /// <summary>Opt-in for ghosts that drift vertically: drive walk rows from total speed.
+        /// Defaults off so the Witchking Phantom and existing ground puppets retain their frame clocks.</summary>
+        protected virtual bool WalkCycleUsesVerticalSpeed => false;
+
         private void SyncFrames()
         {
             bool onGround = NPC.velocity.Y == 0f || WalkCycleWhileAirborne;
-            bool moving   = Math.Abs(NPC.velocity.X) > 0.15f;
+            float walkSpeed = Math.Abs(NPC.velocity.X);
+            if (WalkCycleWhileAirborne && WalkCycleUsesVerticalSpeed)
+            {
+                walkSpeed = NPC.velocity.Length();
+            }
+            bool moving = walkSpeed > 0.15f;
 
             // Always advance walk counter when moving on ground — legs animate
             // even during attacks so the puppet doesn't glide with frozen feet.
             // Guard against Main.gamePaused so the animation freezes with every other NPC.
             if (onGround && moving && !Main.gamePaused)
             {
-                _frameCounter += Math.Abs(NPC.velocity.X) * 0.55f
+                _frameCounter += walkSpeed * 0.55f
                     * Math.Max(0f, WalkAnimationSpeedMultiplier);
                 if (_frameCounter >= 14f)
                 {

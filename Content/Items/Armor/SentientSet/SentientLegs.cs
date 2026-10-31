@@ -9,15 +9,22 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 
-[Autoload(false)]
 [AutoloadEquip(EquipType.Legs)]
 public class SentientLegs : ModItem
 {
     public float DistanceTraveled;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
+
+    public override void SetStaticDefaults()
+    {
+        int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+        ArmorIDs.Legs.Sets.HidesTopSkin[equipSlot] = true;
+        ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
+    }
+
     public override void SetDefaults()
     {
-        Item.width = 18;
+        Item.width = 20;
         Item.height = 18;
         Item.defense = 9;
         Item.rare = ItemRarityID.Orange;

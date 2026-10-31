@@ -9,17 +9,23 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 
-[Autoload(false)]
 [AutoloadEquip(EquipType.Head)]
 public class SentientHead : ModItem
 {
     public int DamageDealt;
     public const float BaseDmg = 9;
-    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BaseDmg);
+
+    public override void SetStaticDefaults()
+    {
+        int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
+        ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
+    }
+
     public override void SetDefaults()
     {
-        Item.width = 18;
-        Item.height = 18;
+        Item.width = 28;
+        Item.height = 24;
         Item.defense = 8;
         Item.rare = ItemRarityID.Orange;
         Item.value = PriceByRarity.fromItem(Item);

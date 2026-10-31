@@ -723,6 +723,8 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
             Add<Enemies.GhostFighter.GhostOfTheForgottenKnight>(0.3f, 35f);
             Add<AttraidiesIllusion>(0.3f, 30f);
+            Add<Enemies.BarrowWight>(0.35f, 40f); // ghost swordsman: tells and recovery stay interruptible
+            Add<Enemies.SuperHardMode.BarrowWightNemesis>(0.3f, 50f);
             Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows
             Add<Enemies.SuperHardMode.OolacileAcolyte>(0.2f, 40f); // SHM Madness caster: the Archdeacon's poise; tells and the Babbling Spiral channel are the stagger windows
             Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window

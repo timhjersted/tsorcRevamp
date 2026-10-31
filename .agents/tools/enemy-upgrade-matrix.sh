@@ -63,6 +63,10 @@ cell() {
             cell "NPCs/Enemies/RedKnightPuppet.cs" "$axis" "$archetype"
             return
         fi
+        if grep -qE ': BarrowWightBase\b' "$file"; then
+            cell "NPCs/Enemies/BarrowWightBase.cs" "$axis" "$archetype"
+            return
+        fi
         # RuntimeV2Clip is an initialiser on a combo, not an override.
         if [ "$axis" = "RuntimeV2Clip" ] && grep -q "RuntimeV2Clip" "$file"; then printf 'Y'; return; fi
         printf '.'
@@ -89,11 +93,14 @@ emit_table() {
     done
     printf '%s\n%s\n' "$header" "$sep"
 
-    for f in $(grep -rlE ': (PuppetNPC|RedKnightPuppet)\b' --include=*.cs NPCs | sort); do
+    for f in $(grep -rlE ': (PuppetNPC|RedKnightPuppet|BarrowWightBase)\b' --include=*.cs NPCs | sort); do
         name=$(basename "$f" .cs)
         archetype=$(grep -oE "MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+" "$f" | head -1 | sed 's/.*\.//')
         if [ -z "$archetype" ] && grep -qE ': RedKnightPuppet\b' "$f"; then
             archetype=$(grep -oE 'MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+' NPCs/Enemies/RedKnightPuppet.cs | head -1 | sed 's/.*\.//')
+        fi
+        if [ -z "$archetype" ] && grep -qE ': BarrowWightBase\b' "$f"; then
+            archetype=$(grep -oE 'MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+' NPCs/Enemies/BarrowWightBase.cs | head -1 | sed 's/.*\.//')
         fi
         [ -z "$archetype" ] && archetype="—"
 

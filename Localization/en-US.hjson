@@ -9167,6 +9167,52 @@ Mods: {
 				DisplayName: Black Knight Greaves
 			}
 
+			DarkmoonKnightHelmet: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Helmet
+			}
+
+			DarkmoonKnightBreastplate: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Breastplate
+			}
+
+			DarkmoonKnightGreaves: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Greaves
+			}
+
+			DarkrootSentryHelmet: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Helmet
+			}
+
+			DarkrootSentryBreastplate: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Breastplate
+			}
+
+			DarkrootSentryGreaves: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Greaves
+			}
+
+			SentientHead: {
+				DisplayName: Sentient Helm
+				Tooltip: "Increases damage by {0}%\nGrows stronger with the damage you deal"
+			}
+
+			SentientTorso: {
+				DisplayName: Sentient Cuirass
+				Tooltip: Grows tougher by remembering damage endured
+				SetBonus: Increased life regeneration
+			}
+
+			SentientLegs: {
+				DisplayName: Sentient Greaves
+				Tooltip: Grows swifter with the distance you travel
+			}
+
 			GreatBlackKnightHelm: {
 				Tooltip: ""
 				DisplayName: Great Black Knight Helm
@@ -12539,7 +12585,7 @@ Mods: {
 			DarkrootImp.DisplayName: Darkroot Imp
 
 			OolacileKnight: {
-				DisplayName: Oolacile Knight
+				DisplayName: Darkroot Sentry
 				Intent: An ancient warrior has come to banish you from existence...
 				Hunt: You are being hunted...
 			}

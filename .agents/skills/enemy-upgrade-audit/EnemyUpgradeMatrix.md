@@ -14,6 +14,8 @@ that guide is the equivalent checklist for non-puppet enemies.
 
 ---
 
+The Barrow Wight family also opts into `WalkCycleWhileAirborne` and `WalkCycleUsesVerticalSpeed`: these affect locomotion frames, rather than swing quality, and are not separate columns.
+
 ## Coverage
 
 `Y` opted in · `n` explicitly opted **out** (a decision, not an oversight) · `Y*` on via an archetype
@@ -31,12 +33,15 @@ default, not written in the file · `.` off by default, never considered
 | Witchking | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | Y | . | Y | . |
 | Archdeacon | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AttraidiesIllusion | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
+| BarrowWight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| BarrowWightBase | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | BlackKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | GhostOfTheForgottenKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | GhostOfTheForgottenWarrior | Axe | Y | . | Y | Y* | Y | Y | Y* | . | . | Y | . | Y | Y | Y | . | Y | . |
 | GreatBlackKnight | Flail | Y | . | . | . | . | Y | . | . | . | . | . | . | . | . | . | Y | . |
 | RedKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | RedKnightPuppet | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| BarrowWightNemesis | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | BarrowWightPhantom | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | . | . | Y | . |
 | CrystalKnight | Halberd | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
 | DarkBloodKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |

@@ -12,13 +12,30 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "GhostOfTheForgottenWarrior, GhostOfTheForgottenKnight, Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, GreatBlackKnight, CursedDragon, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "BarrowWight, BarrowWightNemesis, BarrowWightPhantom, GhostOfTheForgottenWarrior, GhostOfTheForgottenKnight, Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, GreatBlackKnight, CursedDragon, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
             if (string.IsNullOrWhiteSpace(puppet)) { return null; }
 
             string P(params string[] parts) => Path.GetFullPath(Path.Combine(repoRoot, Path.Combine(parts)));
+
+            if (puppet.Equals("BarrowWight", StringComparison.OrdinalIgnoreCase)
+                || puppet.Equals("BarrowWightNemesis", StringComparison.OrdinalIgnoreCase)
+                || puppet.Equals("BarrowWightPhantom", StringComparison.OrdinalIgnoreCase))
+            {
+                // Nemesis Brown Dye and spectral overlays are game shaders; this previews the authored armor/grip.
+                return new PuppetArt
+                {
+                    Name = puppet,
+                    BodySheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
+                    HandleNormX = 0.115f,
+                    HandleNormY = 0.875f
+                };
+            }
 
             if (puppet.Equals("GhostOfTheForgottenKnight", StringComparison.OrdinalIgnoreCase))
             {
