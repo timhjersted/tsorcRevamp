@@ -9197,6 +9197,71 @@ Mods: {
 				// DisplayName: Black Knight Greaves
 			}
 
+			DarkmoonKnightHelmet: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Helmet
+			}
+
+			DarkmoonKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Breastplate
+			}
+
+			DarkmoonKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Greaves
+			}
+
+			DarkrootSentryHelmet: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Helmet
+			}
+
+			DarkrootSentryBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Breastplate
+			}
+
+			DarkrootSentryGreaves: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Greaves
+			}
+
+			SentientHead: {
+				// DisplayName: Sentient Helm
+				/* Tooltip:
+					'''
+					Increases damage by {0}%
+					Grows stronger with the damage you deal
+					''' */
+			}
+
+			SentientTorso: {
+				// DisplayName: Sentient Cuirass
+				// Tooltip: Grows tougher by remembering damage endured
+				// SetBonus: Increased life regeneration
+			}
+
+			SentientLegs: {
+				// DisplayName: Sentient Greaves
+				// Tooltip: Grows swifter with the distance you travel
+			}
+
+			TibianValkyrieHeadpiece: {
+				// DisplayName: Tibian Valkyrie Headpiece
+				// Tooltip: ""
+			}
+
+			TibianValkyrieBreastplate: {
+				// DisplayName: Tibian Valkyrie Breastplate
+				// Tooltip: ""
+			}
+
+			TibianValkyrieGreaves: {
+				// DisplayName: Tibian Valkyrie Greaves
+				// Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				// Tooltip: ""
 				// DisplayName: Great Black Knight Helm
@@ -9527,6 +9592,11 @@ Mods: {
 
 			BeetleIdolItem: {
 				// DisplayName: Beetle Idol Item
+				// Tooltip: ""
+			}
+
+			EnemyEphemeralAxe: {
+				// DisplayName: Enemy Ephemeral Axe
 				// Tooltip: ""
 			}
 		}
@@ -11974,6 +12044,11 @@ Mods: {
 			// TaurusJavelin.DisplayName: Earth Trident
 			// TaurusSandCloud.DisplayName: Sand Cloud
 			// TaurusBrimstoneFlame.DisplayName: Brimstone Flame
+			// BlaiddSuppressionFlask.DisplayName: Azure Suppression Flask
+			// BlaiddSuppressionBurst.DisplayName: Azure Suppression
+			// BlaiddDiscardedShield.DisplayName: Discarded Shield
+			// BlaiddMoonWave.DisplayName: Moonlight Wave
+			// BlaiddMoonlightCrescent.DisplayName: Moonlight Crescent
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
@@ -12000,6 +12075,12 @@ Mods: {
 			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 			// AshenLordDragon.DisplayName: Ashen Lord Dragon
 			// ASOL13Dragon.DisplayName: A S O L13 Dragon
+			// BarrowWightBreath.DisplayName: Barrow Wight Breath
+			// BarrowWightStrike.DisplayName: Barrow Wight Strike
+			// CursedDragonPoisonFlask.DisplayName: Cursed Dragon Poison Flask
+			// ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
+			// ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
+			// GigasFrostBurst.DisplayName: Gigas Frost Burst
 		}
 
 		NPCs: {

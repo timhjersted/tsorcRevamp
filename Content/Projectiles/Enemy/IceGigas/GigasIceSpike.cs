@@ -10,7 +10,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
     ///<summary>
     ///Ice Gigas ground spike (Deerclops homage, reusing its vanilla spike texture). Spawned with its
     ///bottom on the ground; frost-patch telegraph for ai[0] ticks, then erupts over a few ticks and
-    ///persists ~2s as damaging terrain before sinking away. ai[1] = height scale (1 = normal).
+    ///persists ~2s as damaging terrain before bursting into frost. ai[1] = height scale.
+    ///ai[2] = frost travel beyond the sprite (default 32px; Glacial Slam uses 64px).
     ///Shared by Glacial Slam's marching waves, Rimefang Spikes and the Stampede's foot-trail.
     ///</summary>
     class GigasIceSpike : ModProjectile
@@ -19,7 +20,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 
         const int RiseTicks = 6;
         const int HoldTicks = 110;
-        const int SinkTicks = 10;
         //Vanilla's own draw code special-cases type 961 (see Main.DrawProj) and crops ONE frame out
         //of a 1x5 vertical strip — the sheet is 5 growth-stage frames, not a single tall image. We
         //were drawing the whole sheet as one sprite, which squashed it to 1/5 height: the "spike"
@@ -32,7 +32,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         float HeightScale => Projectile.ai[1] > 0f ? Projectile.ai[1] : 1f;
         int Timer => (int)Projectile.localAI[0];
         bool Erupted => Timer > TelegraphTicks;
-        bool Sinking => Timer > TelegraphTicks + RiseTicks + HoldTicks;
 
         public override void SetDefaults()
         {
@@ -48,18 +47,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
             Projectile.height = (int)(54 * HeightScale);
-            Projectile.timeLeft = TelegraphTicks + RiseTicks + HoldTicks + SinkTicks;
+            Projectile.timeLeft = TelegraphTicks + RiseTicks + HoldTicks;
         }
 
         public override bool? CanDamage()
         {
-            return Erupted && !Sinking;
+            return Erupted;
         }
 
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0]++;
+            if (Main.dedServ) return;
             float bottom = Projectile.position.Y + Projectile.height;
 
             if (!Erupted)
@@ -83,7 +83,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
                 }
             }
             //Held: occasional cold glints
-            if (!Sinking && Main.rand.NextBool(6))
+            if (Main.rand.NextBool(6))
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), bottom - Main.rand.NextFloat(Projectile.height * RiseProgress()));
                 int glint = Dust.NewDust(pos, 4, 4, DustID.IceRod, 0f, 0f, 100, default, 0.8f);
@@ -99,11 +99,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             {
                 return 0f;
             }
-            if (Sinking)
-            {
-                return 1f - (Timer - TelegraphTicks - RiseTicks - HoldTicks) / (float)SinkTicks;
-            }
             return MathHelper.Min(1f, (Timer - TelegraphTicks) / (float)RiseTicks);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (!Erupted || Main.netMode == NetmodeID.MultiplayerClient) return;
+            float range = Projectile.ai[2] > 0f ? Projectile.ai[2] : 32f;
+            Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer,
+                range, range >= 64f ? 30f : 20f, HeightScale);
         }
 
         //Draw the vanilla Deerclops spike rising out of the ground (bottom-anchored, vertically clipped)
@@ -116,10 +121,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             }
             Texture2D texture = TextureAssets.Projectile[ProjectileID.DeerclopsIceSpike].Value;
             int frameHeight = texture.Height / SheetFrames;
-            Rectangle frame = new Rectangle(0, ArtFrame * frameHeight, texture.Width, frameHeight);
-
-            float drawHeight = Projectile.height * progress;
-            float texScaleY = drawHeight / frameHeight;
+            // Reveal the bottom of the upright sprite; never squash/fold the full sprite.
+            int visibleHeight = System.Math.Max(1, (int)(frameHeight * progress));
+            Rectangle frame = new Rectangle(0, (ArtFrame + 1) * frameHeight - visibleHeight, texture.Width, visibleHeight);
+            float texScaleY = Projectile.height / (float)frameHeight;
             float texScaleX = Projectile.width / (float)texture.Width * 1.4f;
             Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f) - Main.screenPosition;
             SpriteEffects flip = Projectile.whoAmI % 2 == 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

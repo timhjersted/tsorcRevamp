@@ -127,6 +127,7 @@ namespace tsorcRevamp
             Register("GreatRedKnight", "Boss13", "Boss13", MusicID.Boss1);
             Register("BlackKnight", "Boss15", null, MusicID.Boss1);
             Register("LeonhardPhase1", "Invader", "Invader", MusicID.Boss1);
+            Register("IceGigas", "Invader", "Invader", MusicID.Boss1);
             Register("LothricBlackKnight", "Invader", null, MusicID.Boss1);
             RegisterGroup(new[] { "OolacileDemon", "AncientDemon", "DefiledDemon" }, "Boss15", "Boss15", MusicID.Boss2);
             Register("HeroofLumelia", "Boss2", "Boss2", MusicID.Boss2);

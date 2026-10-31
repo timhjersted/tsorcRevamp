@@ -38,6 +38,17 @@ namespace tsorcRevamp.Content.Items
         public static List<int> torchList;
         public static List<int> hasSoulRecipe;
 
+        public override void OnSpawn(Item item, IEntitySource source)
+        {
+            // Vanilla converts Hearts into Candy Apples after checking NPCLoader.blockLoot.
+            // Filter the final NPC loot type here, before Item.NewItem broadcasts it to clients.
+            if (Main.netMode != NetmodeID.MultiplayerClient && item.type == ItemID.CandyApple
+                && source is EntitySource_Loot loot && loot.Entity is NPC)
+            {
+                item.TurnToAir();
+            }
+        }
+
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;

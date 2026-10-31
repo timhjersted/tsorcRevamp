@@ -136,6 +136,11 @@ namespace tsorcRevamp.NPCs.Enemies
             //The trap springs: radial shard burst
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                // The 176x170 frame has empty corners; trace a 128x164 oval around its body,
+                // with ~16px-spaced outward breath streams traveling another ten tiles.
+                Vector2 frostCenter = NPC.Bottom + new Vector2(0f, NPC.gfxOffY + IceGigas.SpriteDrawOffsetY - 82f);
+                Projectile.NewProjectile(NPC.GetSource_Death(), frostCenter, Vector2.Zero,
+                    ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer, 160f, 40f, -1f);
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 vel = (MathHelper.TwoPi * i / 8f + Main.rand.NextFloat(0.3f)).ToRotationVector2() * Main.rand.NextFloat(5f, 7f);

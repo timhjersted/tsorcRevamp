@@ -1394,6 +1394,9 @@ namespace tsorcRevamp.NPCs
         // flat. The wider sprite EDGES clip/sink separately (BeastSinkMaxTiles). Only consulted when MinSurfaceWidth
         // > 0, so non-beasts are unaffected.
         public int MaxSurfaceStep = 2;
+        // Opt-in navigation owner. Assigned only by Gigas and Ice Gigas; other beasts retain
+        // their existing stepping/phasing policy. A future enemy can supply its own instance.
+        public GigasTerrainNavigation StableHeavyNavigation;
         // === Large-beast positioning (SF4 beasts only — all gated on RequiresFlatGround) ===
         // A giant should NEVER freeze: when it can't path to the player it falls back to a large preferred band
         // (KiteRangeMin/Max above) and oscillates in/out instead of standing; it bobs out of melee after each touch;

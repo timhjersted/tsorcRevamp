@@ -9199,7 +9199,11 @@ Mods: {
 
 			SentientHead: {
 				DisplayName: Sentient Helm
-				Tooltip: "Increases damage by {0}%\nGrows stronger with the damage you deal"
+				Tooltip:
+					'''
+					Increases damage by {0}%
+					Grows stronger with the damage you deal
+					'''
 			}
 
 			SentientTorso: {
@@ -9558,6 +9562,11 @@ Mods: {
 
 			BeetleIdolItem: {
 				DisplayName: Beetle Idol Item
+				Tooltip: ""
+			}
+
+			EnemyEphemeralAxe: {
+				DisplayName: Enemy Ephemeral Axe
 				Tooltip: ""
 			}
 		}
@@ -12032,6 +12041,12 @@ Mods: {
 			PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
 			AshenLordDragon.DisplayName: Ashen Lord Dragon
 			ASOL13Dragon.DisplayName: A S O L13 Dragon
+			BarrowWightBreath.DisplayName: Barrow Wight Breath
+			BarrowWightStrike.DisplayName: Barrow Wight Strike
+			CursedDragonPoisonFlask.DisplayName: Cursed Dragon Poison Flask
+			ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
+			ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
+			GigasFrostBurst.DisplayName: Gigas Frost Burst
 		}
 
 		NPCs: {

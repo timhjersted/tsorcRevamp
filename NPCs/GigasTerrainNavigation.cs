@@ -8,9 +8,9 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs
 {
     /// <summary>
-    /// Shared heavy-giant terrain movement for Gigas and Ice Gigas. SmartFighter4 owns ordinary
-    /// routing; this owns only the exceptional, pre-validated building leap and the recovery from
-    /// a visually-invalid one-tile perch.
+    /// Opt-in terrain policy for Gigas and Ice Gigas. SmartFighter4 plans ordinary routes; this
+    /// owns every navigation jump, its exact landing, route handoff, and bounded foot settling.
+    /// Other enemies keep their existing policy unless they explicitly assign this controller.
     /// </summary>
     public sealed class GigasTerrainNavigation
     {
@@ -24,6 +24,12 @@ namespace tsorcRevamp.NPCs
         float runupLastCenterX;
         int runupStallTicks;
         int perchRecoveryCooldown;
+        int settleTicks;
+        int routeRevision;
+        int flightFrames;
+        int localRetryTicks;
+        bool sawAirborne; //server-only observation; clients follow the synced settling transition
+        internal bool IsTraversing => leapTicks > 0 || runupTicks > 0;
 
         public void Send(BinaryWriter writer)
         {
@@ -38,9 +44,13 @@ namespace tsorcRevamp.NPCs
             writer.Write(runupLastCenterX);
             writer.Write(runupStallTicks);
             writer.Write(perchRecoveryCooldown);
+            writer.Write((byte)settleTicks);
+            writer.Write(routeRevision);
+            writer.Write(flightFrames);
+            writer.Write((byte)localRetryTicks);
         }
 
-        public void Receive(BinaryReader reader)
+        public void Receive(BinaryReader reader, NPC npc)
         {
             leapTicks = reader.ReadInt32();
             cooldown = reader.ReadInt32();
@@ -52,11 +62,26 @@ namespace tsorcRevamp.NPCs
             runupLastCenterX = reader.ReadSingle();
             runupStallTicks = reader.ReadInt32();
             perchRecoveryCooldown = reader.ReadInt32();
+            settleTicks = reader.ReadByte();
+            int revision = reader.ReadInt32();
+            flightFrames = reader.ReadInt32();
+            localRetryTicks = reader.ReadByte();
+            if (revision != routeRevision) SmartFighter4AI.ResetStableHeavyRoute(npc);
+            routeRevision = revision;
         }
 
         /// <summary>Returns true while the run-up or committed ballistic arc owns movement.</summary>
         public bool Update(NPC npc)
         {
+            if (perchRecoveryCooldown > 0) perchRecoveryCooldown--;
+            if (localRetryTicks > 0) localRetryTicks--;
+            if (settleTicks > 0)
+            {
+                settleTicks--;
+                npc.velocity.X = 0f;
+                StepAndSettle(npc);
+                return true;
+            }
             if (cooldown > 0)
             {
                 cooldown--;
@@ -79,7 +104,7 @@ namespace tsorcRevamp.NPCs
                     runupLastCenterX = npc.Center.X;
                     runupStallTicks = 0;
                 }
-                if (runupStallTicks >= 45)
+                if (runupStallTicks >= 45 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Log(npc, "runup-blocked", $"target={runupTargetCenterX / 16f:F1}");
                     runupTicks = 0;
@@ -96,9 +121,11 @@ namespace tsorcRevamp.NPCs
                     npc.velocity.X = direction * 1.5f;
                     npc.direction = direction;
                     npc.spriteDirection = direction;
+                    StepAndSettle(npc);
                     return true;
                 }
 
+                if (Main.netMode == NetmodeID.MultiplayerClient) { npc.velocity.X = 0f; return true; }
                 if (TryBuildArc(npc, npc.position, plannedLandingPosition, out float flightTime, out float launchVelocityY)
                     && Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -119,6 +146,7 @@ namespace tsorcRevamp.NPCs
 
             if (leapTicks <= 0 && runupTargetCenterX != 0f)
             {
+                if (Main.netMode == NetmodeID.MultiplayerClient) { runupTicks = 1; return true; }
                 Log(npc, "runup-timeout", $"target={runupTargetCenterX / 16f:F1}");
                 runupTargetCenterX = 0f;
                 runupStallTicks = 0;
@@ -129,31 +157,79 @@ namespace tsorcRevamp.NPCs
 
             if (leapTicks <= 0)
             {
+                // Ordinary falls/evasive hops also invalidate the old route on landing. This
+                // decision is server-owned; the revision and settling timer reach every client.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    bool grounded = npc.velocity.Y >= 0f && npc.collideY && npc.oldVelocity.Y >= 0f;
+                    if (sawAirborne && grounded)
+                    {
+                        sawAirborne = false;
+                        FinishFlight(npc, failed: false);
+                        return true;
+                    }
+                    if (!grounded && Math.Abs(npc.velocity.Y) > 1f) sawAirborne = true;
+                }
                 return false;
             }
 
             leapTicks--;
+            flightFrames++;
             npc.velocity.X = leapVelocityX;
             int leapDirection = Math.Sign(leapVelocityX);
             npc.direction = leapDirection;
             npc.spriteDirection = leapDirection;
 
-            if ((npc.collideY && npc.velocity.Y >= 0f) || (npc.velocity.Y == 0f && leapTicks < 100))
+            if (flightFrames > 2 && npc.collideY && npc.velocity.Y >= 0f && npc.oldVelocity.Y > 0f)
             {
-                Log(npc, "landed", $"x={npc.Center.X / 16f:F1} target={landingCenterX / 16f:F1}");
-                leapTicks = 0;
-                cooldown = 90;
-                npc.netUpdate = true;
-                return false;
+                // A client never ends an arc independently; it holds until the landing snapshot.
+                if (Main.netMode == NetmodeID.MultiplayerClient) { npc.velocity.X = 0f; return true; }
+                bool failed = Math.Abs(npc.Center.X - landingCenterX) > 24f
+                    || Math.Abs(npc.position.Y - plannedLandingPosition.Y) > 16f
+                    || !HasWalkingFooting(npc);
+                Log(npc, failed ? "landing-missed" : "landed", $"x={npc.Center.X / 16f:F1} target={landingCenterX / 16f:F1} settle=12 route=reset");
+                FinishFlight(npc, failed);
+                return true;
             }
             if (leapTicks <= 0)
             {
+                if (Main.netMode == NetmodeID.MultiplayerClient) { leapTicks = 1; return true; }
                 Log(npc, "timeout", $"x={npc.Center.X / 16f:F1} target={landingCenterX / 16f:F1}");
-                cooldown = 120;
-                npc.netUpdate = true;
-                return false;
+                FinishFlight(npc, failed: true);
+                return true;
             }
             return true;
+        }
+
+        void ResetRoute(NPC npc)
+        {
+            SmartFighter4AI.ResetStableHeavyRoute(npc);
+            routeRevision++;
+        }
+
+        internal void CancelForCombat(NPC npc)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !IsTraversing) return;
+            leapTicks = runupTicks = settleTicks = 0;
+            runupTargetCenterX = 0f;
+            sawAirborne = false;
+            ResetRoute(npc);
+        }
+
+        void FinishFlight(NPC npc, bool failed)
+        {
+            if (failed) SmartFighter4AI.RememberStableHeavyFailure(npc, plannedLandingPosition);
+            leapTicks = 0;
+            runupTicks = 0;
+            runupTargetCenterX = 0f;
+            sawAirborne = false;
+            npc.velocity.X = 0f;
+            if (npc.collideY && npc.velocity.Y > 0f) npc.velocity.Y = 0f;
+            settleTicks = 12;
+            cooldown = 90;
+            perchRecoveryCooldown = Math.Max(perchRecoveryCooldown, 90);
+            ResetRoute(npc);
+            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
         }
 
         /// <summary>
@@ -196,13 +272,14 @@ namespace tsorcRevamp.NPCs
 
             if (TryFindRunup(npc, landing, direction, out float runupCenterX))
             {
+                ResetRoute(npc);
                 runupTargetCenterX = runupCenterX;
                 plannedLandingPosition = landing;
                 runupTicks = 150;
                 npc.velocity.X = 0f;
                 runupLastCenterX = npc.Center.X;
                 runupStallTicks = 0;
-                npc.netUpdate = true;
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
                 Log(npc, "runup", $"target={runupCenterX / 16f:F1} landing={(landing.X + npc.width * 0.5f) / 16f:F1}");
                 return true;
             }
@@ -228,7 +305,6 @@ namespace tsorcRevamp.NPCs
 
             if (perchRecoveryCooldown > 0)
             {
-                perchRecoveryCooldown--;
                 return false;
             }
             if (npc.velocity.Y != 0f)
@@ -236,8 +312,8 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
             int supportX = (int)(npc.Center.X / 16f);
-            int supportY = (int)((npc.Bottom.Y + 4f) / 16f);
-            if (UsefulFunctions.IsFootprintSupported(supportX, supportY, 2, 1))
+            int supportY = (int)((npc.Bottom.Y + 1f) / 16f);
+            if (HasWalkingFooting(npc))
             {
                 return false;
             }
@@ -267,6 +343,7 @@ namespace tsorcRevamp.NPCs
         static bool TryFindRecoveryLanding(NPC npc, int supportX, int supportY, int preferredDirection, out Vector2 landingPosition)
         {
             landingPosition = Vector2.Zero;
+            for (int width = 4; width >= 2; width -= 2)
             for (int pass = 0; pass < 2; pass++)
             {
                 int direction = pass == 0 ? preferredDirection : -preferredDirection;
@@ -280,12 +357,14 @@ namespace tsorcRevamp.NPCs
                     }
                     int groundTileY = (int)(groundY / 16f);
                     if (Math.Abs(groundTileY - supportY) > 3
-                        || !UsefulFunctions.IsFootprintSupported(tileX, groundTileY, 2, 1))
+                        || !UsefulFunctions.IsFootprintSupported(tileX, groundTileY, width)
+                        || SmartFighter4AI.IsStableHeavyLandingFailed(npc, tileX, groundTileY - 1))
                     {
                         continue;
                     }
                     Vector2 candidate = new Vector2(tileX * 16f + 8f - npc.width * 0.5f, groundY - npc.height);
-                    if (!Collision.SolidCollision(candidate, npc.width, npc.height))
+                    if (!Collision.SolidCollision(candidate, npc.width, npc.height)
+                        && TryBuildRecoveryArc(npc, npc.position, candidate, out _, out _))
                     {
                         landingPosition = candidate;
                         return true;
@@ -300,16 +379,18 @@ namespace tsorcRevamp.NPCs
             landingPosition = Vector2.Zero;
             int playerTileX = (int)(player.Center.X / 16f);
             float searchStartY = player.Bottom.Y - 20f * 16f;
+            for (int width = 4; width >= 2; width -= 2)
             for (int offset = 0; offset <= 16; offset++)
             {
                 int signedOffset = offset == 0 ? 0 : -direction * offset;
                 int landingTileX = playerTileX + signedOffset;
                 float groundY = FindGroundY(new Vector2(landingTileX * 16f + 8f, searchStartY), 48);
-                if (groundY <= 0f || !UsefulFunctions.IsFootprintSupported(landingTileX, (int)(groundY / 16f), 2))
+                if (groundY <= 0f || !UsefulFunctions.IsFootprintSupported(landingTileX, (int)(groundY / 16f), width))
                 {
                     continue;
                 }
                 Vector2 candidate = new Vector2(landingTileX * 16f + 8f - npc.width * 0.5f, groundY - npc.height);
+                if (SmartFighter4AI.IsStableHeavyLandingFailed(npc, landingTileX, (int)(groundY / 16f) - 1)) continue;
                 float dx = candidate.X - npc.position.X;
                 if (Math.Sign(dx) != direction || Math.Abs(dx) < 192f || Math.Abs(dx) > 1120f
                     || Collision.SolidCollision(candidate, npc.width, npc.height))
@@ -349,63 +430,159 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
-        static bool TryBuildRecoveryArc(NPC npc, Vector2 launchPosition, Vector2 landingPosition, out float flightTime, out float launchVelocityY)
+        internal static bool HasWalkingFooting(NPC npc)
+            => UsefulFunctions.IsFootprintSupported((int)(npc.Center.X / 16f), (int)((npc.Bottom.Y + 1f) / 16f), 2, 1);
+
+        internal static bool IsFlatLanding(NPC npc, int centerX, int floorY, int width = 2)
         {
-            flightTime = 0f;
-            launchVelocityY = 0f;
-            float dx = landingPosition.X - launchPosition.X;
-            float time = MathHelper.Clamp(Math.Abs(dx) / 5.5f, 28f, 50f);
-            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
-            float velocityY = (landingPosition.Y - launchPosition.Y - gravity * time * (time - 1f) * 0.5f) / time;
-            float velocityX = dx / time;
-            if (velocityY < -10f || velocityY > -2f || Math.Abs(velocityX) > 6f
-                || !HasClearance(npc, launchPosition, landingPosition, velocityX, velocityY, gravity, (int)Math.Ceiling(time)))
-            {
-                return false;
-            }
-            flightTime = time;
-            launchVelocityY = velocityY;
-            return true;
+            if (!UsefulFunctions.IsFootprintSupported(centerX, floorY, width)) return false;
+            Vector2 position = new Vector2(centerX * 16f + 8f - npc.width * 0.5f, floorY * 16f - npc.height);
+            return !Collision.SolidCollision(position, npc.width, npc.height);
         }
 
-        static bool TryBuildArc(NPC npc, Vector2 launchPosition, Vector2 landingPosition, out float flightTime, out float launchVelocityY)
+        internal static void StepAndSettle(NPC npc)
         {
-            flightTime = 0f;
-            launchVelocityY = 0f;
-            float dx = landingPosition.X - launchPosition.X;
-            float time = MathHelper.Clamp(Math.Abs(dx) / 10f, 82f, 110f);
-            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
-            float velocityY = (landingPosition.Y - launchPosition.Y - gravity * time * (time - 1f) * 0.5f) / time;
-            float velocityX = dx / time;
-            if (velocityY < -18f || velocityY > -10f || Math.Abs(velocityX) > 12f
-                || !HasClearance(npc, launchPosition, landingPosition, velocityX, velocityY, gravity, (int)Math.Ceiling(time)))
+            if (npc.noGravity || npc.noTileCollide || npc.velocity.Y < 0f) return;
+            Vector2 previousPosition = npc.position;
+            float previousOffset = npc.gfxOffY;
+            float previousStepSpeed = npc.stepSpeed;
+            UsefulFunctions.AutoStepUp(npc);
+            if (npc.position != previousPosition)
             {
-                return false;
-            }
-            flightTime = time;
-            launchVelocityY = velocityY;
-            return true;
-        }
-
-        static bool HasClearance(NPC npc, Vector2 launchPosition, Vector2 landingPosition, float velocityX, float velocityY, float gravity, int flightTicks)
-        {
-            Vector2 simulatedPosition = launchPosition;
-            Vector2 simulatedVelocity = new Vector2(velocityX, velocityY);
-            for (int tick = 0; tick < flightTicks; tick++)
-            {
-                simulatedPosition += simulatedVelocity;
-                simulatedVelocity.Y += gravity;
-                if (tick < flightTicks - 1 && Collision.SolidCollision(simulatedPosition, npc.width, npc.height))
+                // Vanilla's helper checks only three headroom rows. These giants need their
+                // entire body clear, and must retain the same one-step support core as A*.
+                Vector2 next = npc.position + new Vector2(npc.velocity.X, 0f);
+                if (!UsefulFunctions.IsFootprintSupported((int)((next.X + npc.width * 0.5f) / 16f),
+                        (int)((next.Y + npc.height + 1f) / 16f), 2, 1)
+                    || Collision.SolidCollision(next, npc.width, npc.height))
                 {
-                    return false;
+                    npc.position = previousPosition;
+                    npc.gfxOffY = previousOffset;
+                    npc.stepSpeed = previousStepSpeed;
                 }
             }
-            return Vector2.DistanceSquared(simulatedPosition, landingPosition) < 20f * 20f
-                && !Collision.SolidCollision(landingPosition, npc.width, npc.height);
+            if (npc.velocity.Y != 0f || !HasWalkingFooting(npc)) return;
+            int centerX = (int)(npc.Center.X / 16f);
+            int floorY = (int)((npc.Bottom.Y + 1f) / 16f);
+            bool uneven = !UsefulFunctions.IsValidWalkableTile(centerX - 1, floorY)
+                || !UsefulFunctions.IsValidWalkableTile(centerX, floorY);
+            if (uneven)
+                npc.gfxOffY = Math.Min(16f, MathHelper.Lerp(Math.Max(0f, npc.gfxOffY), 16f, 0.35f));
+            // Collision remains on the high support. Only the sprite sinks into the single
+            // adjacent lower tile; two-tile drops never qualify for this drawing adjustment.
         }
+
+        internal bool TryPlannedJump(NPC npc, int targetX, int targetFeetY, float maxJump, float maxSpeed)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || settleTicks > 0 || leapTicks > 0) return false;
+            Vector2 landing = new Vector2(targetX * 16f + 8f - npc.width * 0.5f, (targetFeetY + 1) * 16f - npc.height);
+            if (!TrySolveArc(npc, npc.position, landing, 3.5f, maxJump, maxSpeed, out int ticks, out Vector2 velocity))
+            {
+                SmartFighter4AI.RememberStableHeavyFailure(npc, landing);
+                ResetRoute(npc);
+                npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
+                Log(npc, "plan-rejected", $"landing=({targetX},{targetFeetY}) full-body arc blocked");
+                return false;
+            }
+            plannedLandingPosition = landing;
+            Launch(npc, ticks, velocity.Y, "plan-launch");
+            return true;
+        }
+
+        internal bool TryLocalJump(NPC npc, int direction, float maxJump, float maxSpeed)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || settleTicks > 0 || leapTicks > 0 || localRetryTicks > 0) return false;
+            int startX = (int)(npc.Center.X / 16f);
+            // Prefer a broad flat patch beyond the first bump, then a two-tile fallback.
+            for (int width = 4; width >= 2; width -= 2)
+                for (int distance = 4; distance <= 18; distance++)
+                {
+                    int x = startX + direction * distance;
+                    float groundY = FindGroundY(new Vector2(x * 16f + 8f, npc.Bottom.Y - 8f * 16f), 16);
+                    if (groundY < 0f || !IsFlatLanding(npc, x, (int)(groundY / 16f), width)
+                        || SmartFighter4AI.IsStableHeavyLandingFailed(npc, x, (int)(groundY / 16f) - 1)) continue;
+                    Vector2 landing = new Vector2(x * 16f + 8f - npc.width * 0.5f, groundY - npc.height);
+                    if (!TrySolveArc(npc, npc.position, landing, 3.5f, maxJump, maxSpeed, out int ticks, out Vector2 velocity)) continue;
+                    plannedLandingPosition = landing;
+                    Launch(npc, ticks, velocity.Y, "local-launch");
+                    return true;
+                }
+            localRetryTicks = 30; // Bounded retry when terrain offers no actual landing.
+            return false;
+        }
+
+        static bool TryBuildRecoveryArc(NPC npc, Vector2 start, Vector2 landing, out float time, out float vy)
+        {
+            bool valid = TrySolveArc(npc, start, landing, 3.5f, 10f, 6f, out int ticks, out Vector2 velocity);
+            time = ticks;
+            vy = velocity.Y;
+            return valid;
+        }
+
+        static bool TryBuildArc(NPC npc, Vector2 start, Vector2 landing, out float time, out float vy)
+        {
+            bool valid = TrySolveArc(npc, start, landing, 10f, 18f, 12f, out int ticks, out Vector2 velocity);
+            time = ticks;
+            vy = velocity.Y;
+            return valid;
+        }
+
+        // The server commits one exact arc. Integrate gravity BEFORE movement, cap fall speed,
+        // and check the full 52x110 body against terrain/platforms on every tick, including contact.
+        internal static bool TrySolveArc(NPC npc, Vector2 start, Vector2 landing, float minJump,
+            float maxJump, float maxSpeed, out int flightTicks, out Vector2 launch)
+        {
+            flightTicks = 0;
+            launch = Vector2.Zero;
+            int floorY = (int)Math.Round((landing.Y + npc.height) / 16f);
+            int centerX = (int)((landing.X + npc.width * 0.5f) / 16f);
+            if (!IsFlatLanding(npc, centerX, floorY)) return false;
+            float gravity = npc.gravity > 0f ? npc.gravity : 0.3f;
+            float maxFall = npc.maxFallSpeed > 0f ? npc.maxFallSpeed : 10f;
+            for (float jump = minJump; jump <= maxJump + 0.001f; jump += 0.5f)
+            {
+                float y = start.Y, vy = -jump;
+                int ticks = 0;
+                for (int t = 1; t <= 240; t++)
+                {
+                    vy = Math.Min(vy + gravity, maxFall);
+                    y += vy;
+                    if (vy > 0f && y >= landing.Y - 0.01f) { ticks = t; break; }
+                }
+                if (ticks == 0) continue;
+                float vx = (landing.X - start.X) / ticks;
+                if (Math.Abs(vx) > maxSpeed) continue;
+                Vector2 position = start;
+                vy = -jump;
+                bool clear = true;
+                for (int t = 1; t <= ticks; t++)
+                {
+                    vy = Math.Min(vy + gravity, maxFall);
+                    Vector2 step = new Vector2(vx, vy);
+                    Vector2 allowed = Collision.TileCollision(position, step, npc.width, npc.height);
+                    if (Math.Abs(allowed.X - vx) > 0.01f
+                        || (t < ticks && Math.Abs(allowed.Y - vy) > 0.01f)) { clear = false; break; }
+                    position += allowed;
+                    if (Collision.SolidCollision(position, npc.width, npc.height)) { clear = false; break; }
+                }
+                if (!clear || Vector2.DistanceSquared(position, landing) > 2f * 2f) continue;
+                flightTicks = ticks;
+                launch = new Vector2(vx, -jump);
+                return true;
+            }
+            return false;
+        }
+
 
         void Launch(NPC npc, float flightTime, float launchVelocityY, string action)
         {
+            ResetRoute(npc);
+            flightFrames = 0;
+            runupTicks = 0;
+            runupTargetCenterX = 0f;
+            runupStallTicks = 0;
+            settleTicks = 0;
+            sawAirborne = false;
             leapVelocityX = (plannedLandingPosition.X - npc.position.X) / flightTime;
             landingCenterX = plannedLandingPosition.X + npc.width * 0.5f;
             leapTicks = (int)Math.Ceiling(flightTime + 24f);
@@ -430,7 +607,7 @@ namespace tsorcRevamp.NPCs
             for (int d = 0; d <= maxTilesDown; d++)
             {
                 int y = ty + d;
-                if (y >= Main.maxTilesY - 5)
+                if (y < 5 || y >= Main.maxTilesY - 5)
                 {
                     break;
                 }

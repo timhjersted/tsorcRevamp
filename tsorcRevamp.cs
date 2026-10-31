@@ -872,6 +872,7 @@ namespace tsorcRevamp
             #region BannedItems list
             BannedItems = new List<int>()
             {
+                ItemID.CandyApple,
                 ItemID.RodofDiscord,
                 ItemID.CorruptionKey,
                 ItemID.CrimsonKey,

@@ -145,6 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 			// A two-tile support core may straddle exactly one tile of descent. This keeps the
 			// giant visually centered over a stair-step instead of treating it as a ledge.
 			g.MaxSurfaceStep = 1;
+            g.StableHeavyNavigation = TerrainNavigation;
 			// On-hit evasion: lumber back to reset spacing, or telegraph a hyper-armored charge back in.
 			EvasiveProfile.HeavyBeast(g);
 			// Phase 1 (beast positioner): never stand still — when it can't path to you it falls back to a large
@@ -211,7 +212,7 @@ namespace tsorcRevamp.NPCs.Enemies{
             HolyShieldActive = reader.ReadBoolean();
             WrathApproachLaunched = reader.ReadBoolean();
             WrathApproachVelocityX = reader.ReadSingle();
-            TerrainNavigation.Receive(reader);
+            TerrainNavigation.Receive(reader, NPC);
         }
 
         ///<summary>Poise break (only reachable in neutral or the Wrath of Gold staggerable window): the cast
@@ -219,6 +220,7 @@ namespace tsorcRevamp.NPCs.Enemies{
         ///reading StaggerTimer.</summary>
         public void OnStagger(NPC npc)
         {
+            TerrainNavigation.CancelForCombat(NPC);
             if (State != AttackState.None && Main.netMode != NetmodeID.Server)
             {
                 SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.8f, Pitch = -0.5f }, NPC.Center);
@@ -272,7 +274,7 @@ namespace tsorcRevamp.NPCs.Enemies{
                 else
                 {
                 //Slow, weighty walk — one speed, always. It never runs; its reach is its magic.
-                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, minSurfaceWidth: 2, canWalkBackwards: true); // Two-tile flat support core; wide sprite edges use the bounded ground sink.
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true); // Generic pounces bypass validated terrain landings; the authored slams own combat leaps.
                 bool recoveringFromNarrowPerch = TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
                 if (NPC.lavaWet)
                 {
@@ -379,6 +381,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void StartAttack(AttackState state)
         {
+            TerrainNavigation.CancelForCombat(NPC);
             State = state;
             AttackTimer = 0;
             SlamPhase = 0;
@@ -389,6 +392,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 
         void EndAttack(int cooldown, bool immediateFollowup = false)
         {
+            if (TerrainNavigation.IsTraversing) return;
             LastAttack = State;
             State = AttackState.None;
             AttackTimer = 0;
@@ -736,8 +740,11 @@ namespace tsorcRevamp.NPCs.Enemies{
         {
             //Walking cast: the giant keeps lumbering while the threat forms at the player's position
             //(no dodgeroll/pounce — the cast should read as stately, not acrobatic)
-            tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
-            TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
+            if (!TerrainNavigation.Update(NPC))
+            {
+                tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
+                TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
+            }
             FootstepEffects();
             g.AttackCommitted = true;
 

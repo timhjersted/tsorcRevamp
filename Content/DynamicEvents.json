@@ -515,7 +515,7 @@
   {
     "EventID": "af5a81dc-b77d-478f-a873-8c84e23a2e61",
     "CenterX": 5317.0,
-    "CenterY": 1800.0,
+    "CenterY": 2000.0,
     "Radius": 160000.0,
     "Square": false,
     "TriggerDust": 228,
@@ -527,11 +527,12 @@
     "MapCondition": "DefaultCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
+    "ExpandedNativeCoords": true,
     "Npcs": [
       {
         "NpcName": "tsorcRevamp/DefiledDemon",
         "SpawnX": 5317.0,
-        "SpawnY": 1800.0,
+        "SpawnY": 2000.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -6142,5 +6143,50 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "fcdf6e10-d6bc-4191-bf99-4bfad7f928e2",
+    "CenterX": 7105.0,
+    "CenterY": 1836.0,
+    "Radius": 409600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/IceGigas",
+        "SpawnX": 7105.0,
+        "SpawnY": 1850.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "57532f9a-0035-4ba3-9e9e-edff90b0ac31",
+    "CenterX": 7201.0,
+    "CenterY": 2076.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ExpandedNativeCoords": true,
+    "Npcs": []
   }
 ]

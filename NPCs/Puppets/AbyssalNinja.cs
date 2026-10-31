@@ -185,7 +185,8 @@ namespace tsorcRevamp.NPCs.Puppets
             // Smooth hot pink aura color tint
             Color pinkTint = new Color(255, 105, 180) * 0.85f;
 
-            UsefulFunctions.RestartSpritebatch(ref spriteBatch);
+            // End the current batch before beginning the aura pass; RestartSpritebatch starts a new batch.
+            spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             _auraEffect.Parameters["textureSize"]?.SetValue((float)tsorcRevamp.NoiseWavy.Width);
