@@ -26,12 +26,16 @@ default, not written in the file · `.` off by default, never considered
 | HeroofLumelia | Broadsword | Y | . | . | Y | Y | . | . | . | . | Y | . | Y | Y | . | . | . | . |
 | Artorias | Greatsword | Y | . | Y | Y | Y | Y | . | . | . | Y | Y | Y | Y | Y | Y | Y | . |
 | GrandOccultist | — | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| GreatRedKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | Gwyn | Greatsword | Y | Y | Y | Y | Y | Y | . | Y | n | Y | Y | Y | Y | Y | . | Y | Y |
 | Witchking | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | Y | . | Y | . |
 | Archdeacon | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | AttraidiesIllusion | — | Y | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . | . |
 | BlackKnight | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
+| GhostOfTheForgottenKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |
+| GhostOfTheForgottenWarrior | Axe | Y | . | Y | Y* | Y | Y | Y* | . | . | Y | . | Y | Y | Y | . | Y | . |
 | GreatBlackKnight | Flail | Y | . | . | . | . | Y | . | . | . | . | . | . | . | . | . | Y | . |
+| RedKnight | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | RedKnightPuppet | Halberd | Y | Y | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | . | . | Y | . |
 | BarrowWightPhantom | Broadsword | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | . | . | . | Y | . |
 | CrystalKnight | Halberd | Y | . | Y | Y | Y | Y | . | . | . | Y | . | Y | Y | Y | . | Y | . |

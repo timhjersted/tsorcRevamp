@@ -283,6 +283,17 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        public bool TryStartForgotten(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
+        {
+            float distance = npc.Distance(target.Center);
+            if (Main.netMode == NetmodeID.MultiplayerClient || !CanStart(npc, target, globalNPC)
+                || attackCooldown > 0 || distance < 256f || distance > 820f
+                || !Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1))
+                return false;
+            Begin(npc, target, globalNPC, KnightSpecialAttack.SpearThrow);
+            return true;
+        }
+
         public bool TryStartRed(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
         {
             if (!CanStart(npc, target, globalNPC) || attackCooldown > 0)
@@ -863,7 +874,9 @@ namespace tsorcRevamp.NPCs
             npc.knockBackResist = globalNPC.AttackCommitted ? 0f : globalNPC.BaseKnockBackResist;
             if (Timer == CommitStart(Attack))
             {
-                tsorcRevampAIs.SpawnTelegraphFlash(npc, TelegraphColor(Attack));
+                tsorcRevampAIs.SpawnTelegraphFlash(npc,
+                    npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight forgotten
+                        ? forgotten.AttackAccentColor : TelegraphColor(Attack));
             }
 
             switch (Attack)
@@ -1100,7 +1113,7 @@ namespace tsorcRevamp.NPCs
 
         void TickSpearThrow(NPC npc, Player target, KnightAttackStats stats)
         {
-            if (Timer == 15)
+            if (Timer == 15 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
@@ -1123,7 +1136,9 @@ namespace tsorcRevamp.NPCs
                 Vector2 launchSource = SpearLaunchSource(npc, Direction);
                 int projectileType = royalSpearThrow
                     ? ModContent.ProjectileType<EnemyAncientBloodLanceProj>()
-                    : ModContent.ProjectileType<BlackKnightSpear>();
+                    : npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight
+                        ? ModContent.ProjectileType<ForgottenKnightSpear>()
+                        : ModContent.ProjectileType<BlackKnightSpear>();
                 Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, LockedVelocity,
                     projectileType, EnemyDamage.Projectile(stats.SpearDamage), 0f, Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
@@ -3027,6 +3042,8 @@ namespace tsorcRevamp.NPCs
 
         static Vector2 SpearLaunchSource(NPC npc, int direction)
         {
+            if (npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight forgotten)
+                return forgotten.AttackSpearTipWorld;
             // The puppet knights throw from their real hand, so the flying spear starts where the held one was.
             if (npc.ModNPC is Enemies.RedKnightPuppet redKnight)
             {

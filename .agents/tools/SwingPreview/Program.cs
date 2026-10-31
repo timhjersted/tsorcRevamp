@@ -118,6 +118,23 @@ namespace SwingPreview
                 if (options.Profile)
                 {
                     PrintSpeedProfile(poses);
+                    if (profile.Name == "GhostOfTheForgottenKnight")
+                    {
+                        foreach (int step in poses.Where(p => p.Phase == PhaseAttack).Select(p => p.StepIndex).Distinct())
+                        {
+                            var frames = poses.Where(p => p.Phase == PhaseAttack && p.StepIndex == step).ToArray();
+                            float low = float.MaxValue, high = float.MinValue, peak = 0f;
+                            for (int i = 0; i < frames.Length; i++)
+                            {
+                                float angle = frames[i].CompositeArmRotation * frames[i].Direction;
+                                low = Math.Min(low, angle); high = Math.Max(high, angle);
+                                if (i > 0) peak = Math.Max(peak, Math.Abs(angle
+                                    - frames[i - 1].CompositeArmRotation * frames[i - 1].Direction));
+                            }
+                            Console.WriteLine($"        arm step {step + 1}: envelope {MathHelper.ToDegrees(high - low):0.0} deg," +
+                                $" peak {MathHelper.ToDegrees(peak):0.0} deg/t; spear straightens before the live window");
+                        }
+                    }
                 }
 
                 if (art != null)
@@ -175,7 +192,7 @@ namespace SwingPreview
                 float firstJump = 0f;
                 if (start > 0)
                 {
-                    firstJump = Math.Abs(MathHelper.ToDegrees(poses[start].WeaponRotation - poses[start - 1].WeaponRotation));
+                    firstJump = Math.Abs(MathHelper.ToDegrees(poses[start].WeaponRotation + poses[start].WeaponDrawOffset - poses[start - 1].WeaponRotation - poses[start - 1].WeaponDrawOffset));
                 }
 
                 float peak = 0f;
@@ -187,7 +204,7 @@ namespace SwingPreview
                     float speed = 0f;
                     if (i > start)
                     {
-                        speed = Math.Abs(MathHelper.ToDegrees(poses[i].WeaponRotation - poses[i - 1].WeaponRotation));
+                        speed = Math.Abs(MathHelper.ToDegrees(poses[i].WeaponRotation + poses[i].WeaponDrawOffset - poses[i - 1].WeaponRotation - poses[i - 1].WeaponDrawOffset));
                     }
                     if (speed > peak)
                     {
@@ -201,7 +218,7 @@ namespace SwingPreview
                     perTick.Add(speed.ToString("0", CultureInfo.InvariantCulture));
                 }
 
-                float sweep = Math.Abs(MathHelper.ToDegrees(poses[end].WeaponRotation - poses[start].WeaponRotation));
+                float sweep = Math.Abs(MathHelper.ToDegrees(poses[end].WeaponRotation + poses[end].WeaponDrawOffset - poses[start].WeaponRotation - poses[start].WeaponDrawOffset));
                 string phase = poses[start].Phase.Replace("MeleeCombo", "");
                 string label = $"{poses[start].StepIndex + 1} {phase} {poses[start].Motion}";
                 if (poses[start].WeaponHidden)
@@ -297,7 +314,7 @@ namespace SwingPreview
                 if (IsLandingTimedLeap(profile, step))
                 {
                     attackTicks = Math.Min(attackTicks, profile.LeapAirtimeTicks);
-                    clock = $"landing-timed leap: carried {profile.LeapCarryRotation:0.00} rad, {LeapSlamDownswingTicks}-tick" +
+                    clock = $"landing-timed leap: carried {profile.LeapCarryRotation:0.00} rad, {profile.LeapDownswingTicks}-tick" +
                             $" downswing to {profile.LeapImpactRotation:0.00}";
                     if (step.LeapStrikeRange > 0f)
                     {
@@ -566,24 +583,31 @@ namespace SwingPreview
                     frameArmed &= collisionElapsed >= (spec.Combo.Name == "Crystal Vault" ? 21
                         : current.Motion == ComboMotion.JoustDash ? 6 : 0);
                 }
-                if (profile.Name == "RedKnight" && phase == PhaseAttack && current.Motion == ComboMotion.JoustDash)
+                if ((profile.Name == "RedKnight" || profile.Name == "GhostOfTheForgottenKnight") && phase == PhaseAttack && current.Motion == ComboMotion.JoustDash)
                 {
                     // RedKnight.CanDamageWithMeleeStep: a thrust only hurts once the 6-tick punch is out.
                     int collisionElapsed = activeStepTotalTicks - phaseTimer - 1;
                     frameArmed &= collisionElapsed >= 6;
                 }
+                if (profile.Name == "GhostOfTheForgottenWarrior" && phase == PhaseAttack)
+                {
+                    int collisionElapsed = activeStepTotalTicks - phaseTimer - 1;
+                    frameArmed &= collisionElapsed >= 0 && collisionElapsed < 18;
+                }
                 bool isLeap = current.Motion == ComboMotion.LeapSlam || current.Motion == ComboMotion.LeapThrust;
                 if (phase == PhaseAttack && IsLandingTimedLeap(profile, current))
                 {
-                    // An in-air strike (LeapStrikeRange) sweeps through its downswing; otherwise the
-                    // hit resolves once, on the landing frame.
-                    frameArmed = phaseTimer == 1;
+                    // Landing-timed strikes sweep through the predicted downswing; an in-range
+                    // strike may start earlier in game, where the target position is available.
+                    frameArmed = phaseTimer <= profile.LeapDownswingTicks;
                     if (current.LeapStrikeRange > 0f)
                     {
-                        frameArmed = phaseTimer <= LeapSlamDownswingTicks;
+                        frameArmed = phaseTimer <= profile.LeapDownswingTicks;
                         notes.Add($"leap strike: swings in the air once past the apex with the player within {current.LeapStrikeRange:0}px;" +
-                                  " shown at the latest it can happen (the last 10 ticks before landing)");
+                                  $" shown at the latest it can happen (the last {profile.LeapDownswingTicks} ticks before landing)");
                     }
+                    if (profile.Name == "GhostOfTheForgottenKnight")
+                        frameArmed = phaseTimer <= 10 && phaseTimer > 0;
                     notes.Add($"leap: lands after {profile.LeapAirtimeTicks} ticks here (flat-ground airtime); in game it ends on the real landing");
                 }
                 else if (phase == PhaseAttack && isLeap)
@@ -627,7 +651,7 @@ namespace SwingPreview
                 }
                 EmitFrame(spec, run, writer, poses, tick, phase, current.Motion, stepIndex, steps.Length, rotation, frameArmed,
                     direction, airborne, weaponHidden, frameBackRotation);
-                if (profile.Name == "RedKnight")
+                if ((profile.Name == "RedKnight" || profile.Name == "GhostOfTheForgottenKnight"))
                 {
                     // Mirrors RedKnight.OverrideSpearGrip: cocked 0.32 outside the attack, the shared thrust curve for
                     // JoustDash, held extended (0.97) through the rising sweep.
@@ -636,9 +660,31 @@ namespace SwingPreview
                     {
                         redKnightGrip = tsorcRevamp.NPCs.Enemies.RedKnight.ThrustGrip(t, spec.Combo.Name == "Charging Spear Thrust");
                     }
+                    else if (current.Motion == ComboMotion.LeapSlam)
+                    {
+                        float strikeProgress = MathHelper.Clamp((profile.LeapDownswingTicks - phaseTimer + 1f) / profile.LeapDownswingTicks, 0f, 1f);
+                        redKnightGrip = phase == PhaseAttack
+                            ? tsorcRevamp.NPCs.Enemies.RedKnightPuppet.LeapThrustGrip(strikeProgress)
+                            : phase == PhaseRecovery ? MathHelper.SmoothStep(0.97f, 0.55f, (40f - phaseTimer) / 12f) : 0.45f;
+                    }
                     else if (phase == PhaseAttack)
                     {
                         redKnightGrip = 0.97f;
+                    }
+                    if (profile.Name == "GhostOfTheForgottenKnight")
+                    {
+                        string gamePhase = phase == PhaseTelegraph ? "MeleeComboTelegraph"
+                            : phase == PhaseAttack ? "MeleeComboAttack"
+                            : phase == PhasePause ? "MeleeComboPause" : "MeleeComboRecovery";
+                        float leapProgress = current.Motion == ComboMotion.LeapSlam && phase == PhaseAttack
+                            ? MathHelper.Clamp((profile.LeapDownswingTicks - phaseTimer + 1f) / profile.LeapDownswingTicks, 0f, 1f) : 0f;
+                        float offset = tsorcRevamp.NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight
+                            .ThrustArmOffset(spec.Combo.Name, gamePhase, phaseTimer, leapProgress);
+                        poses[^1].CompositeArmRotation += offset * direction;
+                        poses[^1].WeaponDrawOffset = tsorcRevamp.NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight
+                            .ThrustSpearAngle(spec.Combo.Name, gamePhase, phaseTimer, leapProgress);
+                        redKnightGrip = tsorcRevamp.NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight
+                            .ThrustGrip(spec.Combo.Name, gamePhase, phaseTimer, current.Motion == ComboMotion.LeapSlam ? leapProgress : t);
                     }
                     poses[^1].SpearGrip = redKnightGrip;
                 }
@@ -892,7 +938,7 @@ namespace SwingPreview
                     if (profile.LandingTimedLeapSlam)
                     {
                         // Port of the landing-timed branch + UpdateLeapSlamPose: carried through the
-                        // flight, then SmoothStep carry -> impact over the last LeapSlamDownswingTicks,
+                        // flight, then SmoothStep carry -> impact over the last profile.LeapDownswingTicks,
                         // arriving at impact on the landing frame. Pauses hold the planted pose.
                         if (inTel)
                         {
@@ -903,7 +949,7 @@ namespace SwingPreview
                             return rotation;
                         }
                         int elapsedInLeap = activeStepTotalTicks - phaseTimer;
-                        float downswing = (elapsedInLeap + 1f - (activeStepTotalTicks - LeapSlamDownswingTicks)) / LeapSlamDownswingTicks;
+                        float downswing = (elapsedInLeap + 1f - (activeStepTotalTicks - profile.LeapDownswingTicks)) / profile.LeapDownswingTicks;
                         downswing = MathHelper.Clamp(downswing, 0f, 1f);
                         return MathHelper.SmoothStep(profile.LeapCarryRotation, profile.LeapImpactRotation, downswing);
                     }
@@ -1085,8 +1131,6 @@ namespace SwingPreview
             return a0;
         }
 
-        /// <summary>PuppetNPC.LeapSlamDownswingTicks (private const).</summary>
-        private const int LeapSlamDownswingTicks = 10;
 
         private static bool IsLandingTimedLeap(PuppetProfile profile, MeleeComboStep step)
         {

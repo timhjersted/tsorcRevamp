@@ -58,6 +58,11 @@ cell() {
         esac
         # Methods and table hooks have no "=>" form when overridden as a body.
         if grep -qE "override[^=;{]*\b${axis}\b" "$file"; then printf 'Y'; return; fi
+        # Concrete Red Knight variants inherit their body/animation switches from this base.
+        if grep -qE ': RedKnightPuppet\b' "$file"; then
+            cell "NPCs/Enemies/RedKnightPuppet.cs" "$axis" "$archetype"
+            return
+        fi
         # RuntimeV2Clip is an initialiser on a combo, not an override.
         if [ "$axis" = "RuntimeV2Clip" ] && grep -q "RuntimeV2Clip" "$file"; then printf 'Y'; return; fi
         printf '.'
@@ -84,9 +89,12 @@ emit_table() {
     done
     printf '%s\n%s\n' "$header" "$sep"
 
-    for f in $(grep -rl ": PuppetNPC" --include=*.cs NPCs | sort); do
+    for f in $(grep -rlE ': (PuppetNPC|RedKnightPuppet)\b' --include=*.cs NPCs | sort); do
         name=$(basename "$f" .cs)
         archetype=$(grep -oE "MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+" "$f" | head -1 | sed 's/.*\.//')
+        if [ -z "$archetype" ] && grep -qE ': RedKnightPuppet\b' "$f"; then
+            archetype=$(grep -oE 'MeleeArchetype *=> *WeaponArchetype\.[A-Za-z]+' NPCs/Enemies/RedKnightPuppet.cs | head -1 | sed 's/.*\.//')
+        fi
         [ -z "$archetype" ] && archetype="—"
 
         printf '| %s | %s |' "$name" "$archetype"

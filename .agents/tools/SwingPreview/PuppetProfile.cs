@@ -61,6 +61,7 @@ namespace SwingPreview
         /// <summary>Ticks a leap stays aloft on flat ground: 2 * LeapAttackUpSpeed / gravity 0.3, as
         /// PuppetNPC.BeginLeapAttack's far branch solves it.</summary>
         public int LeapAirtimeTicks = 63;
+        public int LeapDownswingTicks = 10;
 
         /// <summary>PuppetNPC.MeleeHandleNorm - the normalised grip point in the weapon texture that
         /// DrawWeaponToLayer pins to the hand - and MeleeWeaponDrawScale, the sprite's scale relative
@@ -110,6 +111,7 @@ namespace SwingPreview
             profile.AuthoredClockCoversJoustDash = profile.Read("AuthoredClockCoversJoustDash", false);
             profile.LogicalTelegraphs = profile.Read("UseLogicalMeleeTelegraphs", false);
             profile.LandingTimedLeapSlam = profile.Read("UseLandingTimedLeapSlam", false);
+            profile.LeapDownswingTicks = profile.Read("LeapSlamDownswingTicks", 10);
             profile.UseEasedSpin = profile.Read("UseEasedSpin", false);
             profile.OverheadWindupOvershoot = profile.Read("OverheadWindupOvershoot", 0f);
             profile.ComboTelegraphMultiplier = profile.Read("ComboTelegraphMultiplier", 1.35f);

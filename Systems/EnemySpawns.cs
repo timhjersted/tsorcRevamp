@@ -1054,13 +1054,13 @@ namespace tsorcRevamp.Systems
 
             // The old Super Hardmode dungeon lines (0.05 and 0.1) sat behind the Hardmode dungeon lines and never fired; they are now
             // that stage's weight on the dungeon line.
-            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Dungeon, phm: 0.16f, stop: true);
-            Spawn("GhostOfTheForgottenKnight", Zone.Dungeon, hm: 0.1f, shm: 0.05f, stop: true);
-            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f);
+            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Dungeon, phm: 0.16f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenKnight", Zone.Dungeon, hm: 0.1f, shm: 0.05f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f, max: 2);
 
-            Spawn("GhostOfTheForgottenWarrior", Downed.Skeletron & Zone.Dungeon, phm: 0.25f, stop: true);
-            Spawn("GhostOfTheForgottenWarrior", Zone.Dungeon, hm: 0.12f, shm: 0.1f, stop: true);
-            Spawn("GhostOfTheForgottenWarrior", Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f);
+            Spawn("GhostOfTheForgottenWarrior", Downed.Skeletron & Zone.Dungeon, phm: 0.25f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenWarrior", Zone.Dungeon, hm: 0.12f, shm: 0.1f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenWarrior", Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f, max: 2);
 
             // Gigas
 

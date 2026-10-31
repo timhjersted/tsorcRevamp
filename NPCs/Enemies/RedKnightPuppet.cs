@@ -82,12 +82,19 @@ namespace tsorcRevamp.NPCs.Enemies
         const float SkewerStartSwingPose = 1.13f;
         const float SkewerEndSwingPose = -0.11f;
 
-        static readonly MeleeCombo[] RedKnightCombos =
+        protected virtual Color KnightAccentColor => Color.OrangeRed;
+        protected virtual int KnightGlintDust => DustID.Torch;
+        internal Color AttackAccentColor => KnightAccentColor;
+        protected virtual Color KnightLightColor => new Color(150, 25, 35);
+        internal Vector2 AttackSpearTipWorld => PuppetSpearTipPosition;
+
+        static readonly MeleeCombo[] RedKnightCombos = BuildKnightCombos(Color.OrangeRed);
+        protected static MeleeCombo[] BuildKnightCombos(Color accent) => new MeleeCombo[]
         {
             new MeleeCombo
             {
                 Name = DoubleLungeName, BaseWeight = 100, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 75, RecoveryTicks = 36,
+                InitialFlashColor = accent, CooldownAfterUse = 75, RecoveryTicks = 36,
                 Steps = new[]
                 {
                     new MeleeComboStep
@@ -109,7 +116,7 @@ namespace tsorcRevamp.NPCs.Enemies
             new MeleeCombo
             {
                 Name = RisingSkewerName, BaseWeight = 70, Preferred = ComboRangeBand.Close,
-                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 120, RecoveryTicks = 34,
+                InitialFlashColor = accent, CooldownAfterUse = 120, RecoveryTicks = 34,
                 Steps = new[]
                 {
                     new MeleeComboStep
@@ -132,7 +139,7 @@ namespace tsorcRevamp.NPCs.Enemies
             new MeleeCombo
             {
                 Name = ChargingThrustName, BaseWeight = 100, Preferred = ComboRangeBand.Mid,
-                InitialFlashColor = Color.OrangeRed, RangedStartOnly = true, CooldownAfterUse = 150, RecoveryTicks = 42,
+                InitialFlashColor = accent, RangedStartOnly = true, CooldownAfterUse = 150, RecoveryTicks = 42,
                 Steps = new[]
                 {
                     // The dash is authored (OnMeleeComboAttackTick), so no constant push.
@@ -402,6 +409,13 @@ namespace tsorcRevamp.NPCs.Enemies
                 return null;
             }
 
+            if (ActiveMeleeComboMotion == ComboMotion.LeapSlam && UseLandingTimedLeapSlam)
+            {
+                if (Phase == AttackPhase.MeleeComboRecovery)
+                    return MathHelper.SmoothStep(0.97f, SpearGripCarry, (40f - PhaseTimer) / 12f);
+                return Phase == AttackPhase.MeleeComboAttack ? LeapThrustGrip(LeapSlamSwingProgress) : 0.45f;
+            }
+
             if (Phase != AttackPhase.MeleeComboAttack)
             {
                 // Cocked: the shaft drawn back through the fist, ready to punch.
@@ -415,6 +429,15 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             return ThrustGrip(swingClockT, ActiveMeleeComboName == ChargingThrustName);
+        }
+
+        protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
+            => UpdateSpearGrip(progress);
+
+        public static float LeapThrustGrip(float progress)
+        {
+            float tick = progress * 16f;
+            return tick < 6f ? MathHelper.SmoothStep(0.45f, 0.97f, tick / 6f) : 0.97f;
         }
 
         /// <summary>Spear grip through a thrust step: punch out over 6t, hold to the end of the live window, retract
@@ -514,7 +537,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         // Path check for the charge: open air at body height and floor under every 16px of it, out to the overshoot.
-        bool CanChargeTo(Player target)
+        protected bool CanChargeTo(Player target)
         {
             int direction = Math.Sign(target.Center.X - NPC.Center.X);
             if (direction == 0)
@@ -567,8 +590,8 @@ namespace tsorcRevamp.NPCs.Enemies
             // Ember glints gathering on the tip for the last 30t of the tell.
             if (!Main.dedServ && elapsed >= total - 30 && elapsed % 2 == 0)
             {
-                Dust glint = Dust.NewDustPerfect(PuppetSpearTipPosition + Main.rand.NextVector2Circular(3f, 3f), DustID.Torch,
-                    Main.rand.NextVector2Circular(0.6f, 0.6f), 80, default, Main.rand.NextFloat(1f, 1.4f));
+                Dust glint = Dust.NewDustPerfect(PuppetSpearTipPosition + Main.rand.NextVector2Circular(3f, 3f), KnightGlintDust,
+                    Main.rand.NextVector2Circular(0.6f, 0.6f), 80, KnightGlintDust == DustID.Torch ? default : KnightAccentColor, Main.rand.NextFloat(1f, 1.4f));
                 glint.noGravity = true;
             }
         }
@@ -695,12 +718,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 // The base cleared both flags for Custom at the end of its tick; the controller's tell/commit split wins.
                 specialAttacks.SetCombatFlags(NPC, globalNPC);
                 DebugAttackLabel = specialAttacks.DebugAttackName;
-                Lighting.AddLight(NPC.Center, new Color(150, 25, 35).ToVector3() * 0.45f);
+                if (!Main.dedServ) Lighting.AddLight(NPC.Center, KnightLightColor.ToVector3() * 0.45f);
             }
             else
             {
                 DebugAttackLabel = null;
-                Lighting.AddLight(NPC.Center, new Color(150, 25, 35).ToVector3() * 0.35f);
+                if (!Main.dedServ) Lighting.AddLight(NPC.Center, KnightLightColor.ToVector3() * 0.35f);
             }
         }
 
@@ -906,8 +929,8 @@ namespace tsorcRevamp.NPCs.Enemies
             // Ember glint at the raised tip through the throw's draw-back, every other tick: OrangeRed like the trim.
             if (pose.ThrowDrawBack && !Main.dedServ && input.Timer % 2 == 0)
             {
-                Dust glint = Dust.NewDustPerfect(PuppetSpearTipPosition, DustID.Torch,
-                    Main.rand.NextVector2Circular(0.5f, 0.5f), 80, default, Main.rand.NextFloat(0.9f, 1.3f));
+                Dust glint = Dust.NewDustPerfect(PuppetSpearTipPosition, KnightGlintDust,
+                    Main.rand.NextVector2Circular(0.5f, 0.5f), 80, KnightGlintDust == DustID.Torch ? default : KnightAccentColor, Main.rand.NextFloat(0.9f, 1.3f));
                 glint.noGravity = true;
             }
         }

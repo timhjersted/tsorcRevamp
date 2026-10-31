@@ -433,7 +433,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <summary>Carry a leap slam overhead until terrain contact is imminent.</summary>
         protected virtual bool UseLandingTimedLeapSlam => false;
         private float _leapSlamSwingProgress;
-        private const int LeapSlamDownswingTicks = 10;
+        protected virtual int LeapSlamDownswingTicks => 10;
+        protected float LeapSlamSwingProgress => _leapSlamSwingProgress;
+        protected virtual bool CanDamageWithLeapSlamStep(MeleeComboStep step, float progress) => true;
 
         /// <summary>A landing-timed LeapSlam whose step sets LeapStrikeRange began its downswing in
         /// the air because the target came into range. The blade then sweeps every tick until the
@@ -498,6 +500,7 @@ namespace tsorcRevamp.NPCs.Puppets
             float slamPose = MathHelper.SmoothStep(LeapSlamCarryRotation, LeapSlamImpactRotation,
                 _leapSlamSwingProgress);
             _weaponRotation = slamPose + _leapSlamAimOffset;
+
         }
 
         /// <summary>Lets a puppet widen the authored start/end rotations of ordinary combo arcs
@@ -2516,6 +2519,8 @@ namespace tsorcRevamp.NPCs.Puppets
         /// drops back to Idle instead of starting a combo. Movement still runs (override RunMovementAI to
         /// stand still). For authored holds: an owner idling while its summon arrives, a summon fading in/out.</summary>
         protected virtual bool HoldAttackSelection => false;
+        protected virtual bool SuppressGhostWallTeleport => Phase != AttackPhase.Idle
+            && Phase != AttackPhase.CasualStroll && Phase != AttackPhase.ClosingDistance;
 
         /// <summary>The 75-tick stand-still after an unblockable finisher (GuardPressureRecoveryTimer, synced): no new
         /// attack and no pursuit, so the player who ate or dodged it gets a real punish. Subclasses with their own
@@ -3118,6 +3123,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // Attack-armed i-frames (AttackOwnsDodgeIFrames) must not blink the body out in GlobalNPC.PreDraw.
             // Set before AI's early returns so it can never stay stuck on after the attack ends.
             gnpc.SuppressDodgeBlink = AttackOwnsDodgeIFrames;
+            gnpc.SuppressGhostWallTeleport = SuppressGhostWallTeleport;
 
             // Once a party wipe starts the shared handler owns the remaining 240-tick fade. Returning
             // here prevents a frozen player from being targeted and, importantly, stops an in-progress
@@ -6587,7 +6593,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         }
 
                         if (_leapStrikeStarted)
-                            TickBladeHit();
+                            TickBladeHit(CanDamageWithLeapSlamStep(step, _leapSlamSwingProgress), CanDamageWithLeapSlamStep(step, _leapSlamSwingProgress));
 
                         endStep = (--PhaseTimer <= 0) || landed;
                         if (endStep)
@@ -8491,6 +8497,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// having to remember the floor — the player always gets a real 30-tick warning.
         /// </summary>
         private const int MinTelegraphTicks = 30;
+        protected virtual int PhaseTelegraphMinimumTicks => MinTelegraphTicks;
 
         protected void EnterPhase(AttackPhase phase, int duration)
         {
@@ -8567,8 +8574,9 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             Phase      = phase;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SuppressGhostWallTeleport |= SuppressGhostWallTeleport;
             // Guarantee at least 30 ticks of telegraph so the flash always leads the attack by 30.
-            PhaseTimer = isTelegraph ? Math.Max(duration, MinTelegraphTicks) : duration;
+            PhaseTimer = isTelegraph ? Math.Max(duration, PhaseTelegraphMinimumTicks) : duration;
             // Each new telegraph phase gets its own flash.
             if (isTelegraph)
             {
@@ -10048,7 +10056,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <see cref="UseAuthoredSpearGrip"/> opts in, so the visible extension settles on the same
         /// clock as the eased rotation instead of drifting out of sync with it.
         /// </summary>
-        private void UpdateSpearGrip(float swingClockT)
+        protected void UpdateSpearGrip(float swingClockT)
         {
             if (!DrawWeaponAsSpear)
             {

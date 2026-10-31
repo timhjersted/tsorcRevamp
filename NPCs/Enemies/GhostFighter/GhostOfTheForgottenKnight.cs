@@ -1,293 +1,281 @@
+using System;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Armor.ForgottenKnightSet;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.NPCs.Puppets;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
-    class GhostOfTheForgottenKnight : ModNPC, IHumanoidMeleeHitEffects
+    public class GhostOfTheForgottenKnight : RedKnightPuppet, IHumanoidMeleeHitEffects
     {
-        public int spearDamage = 20;
-        public override void SetStaticDefaults()
+        const string LeapName = "Phantom Leap Thrust";
+        static readonly MeleeCombo[] ForgottenCombos = CreateCombos();
+        float _leapAim;
+        protected override string InvaderTitle => "Ghost of the Forgotten Knight";
+        protected override int HeadArmorItemType => ModContent.ItemType<ForgottenKnightHelmet>();
+        protected override int BodyArmorItemType => ModContent.ItemType<ForgottenKnightBreastplate>();
+        protected override int LegsArmorItemType => ModContent.ItemType<ForgottenKnightGreaves>();
+        protected override Color KnightAccentColor => Color.LightBlue;
+        protected override Color KnightLightColor => new Color(120, 130, 160);
+        protected override int KnightGlintDust => DustID.IceTorch;
+        protected override bool ShowWeaponDuringNeutral => true;
+        protected override float TopSpeed => tsorcRevampWorld.SuperHardMode ? 2f : Main.hardMode ? 1.5f : 1.2f;
+        protected override float PuppetJumpPower => 13f;
+        protected override float PuppetJumpBoost => 6f;
+        protected override MeleeCombo[] MeleeComboPoolOverride => ForgottenCombos;
+        protected override bool UseLandingTimedLeapSlam => true;
+        protected override int LeapSlamDownswingTicks => 16;
+        protected override float LeapAttackUpSpeed => 7f;
+        protected override float LeapAttackForwardSpeed => 8f;
+        protected override float LeapAttackMinimumForwardSpeed => 0f;
+        protected override float LeapMinLungeDistance => 0f;
+        protected override float LeapLandingStandoff => -40f;
+        protected override float LeapSlamCarryRotation => MathHelper.PiOver4 + _leapAim;
+        protected override float LeapSlamImpactRotation => LeapSlamCarryRotation;
+        protected override int TeleportTelegraphTicks => 80;
+        protected override int TeleportDustTypeId => DustID.Smoke;
+        protected override Color TeleportDustTint => new Color(55, 55, 65);
+        protected override float TeleportDustScale => 0.65f;
+        protected override int TeleportDustCount => 20;
+        protected override Color PuppetSkinColor => Color.Black;
+        protected override bool HasSpectralOverlay => true;
+        protected override bool SpectralKeepsArmorDyes => true;
+        protected override float SpectralOverlayScale => 1f;
+        protected override Color SpectralOverlayColor => new Color(190, 200, 220);
+        protected override float SpectralCoreTintStrength => 0.3f;
+        protected override float SpectralCoreOpacity => 0.75f;
+        protected override Color SpectralHaloColor => new Color(120, 130, 160);
+        protected override int SpectralHaloCopyCount => 6;
+        protected override float SpectralHaloRadius => 3f;
+        protected override float SpectralHaloOpacity => 0.22f;
+        protected override float SpectralTrailOpacity => 0.35f;
+
+        bool IsThrustPose => (ActiveMeleeComboName == "Double Spear Lunge"
+                || ActiveMeleeComboName == "Charging Spear Thrust" || ActiveMeleeComboName == LeapName)
+            && (Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery);
+
+        // All thrusts share the lower 180-degree hand arc and middle-of-shaft ready grip.
+        // The spear is perpendicular over the rear half of the arc, level for the latter half of the punch.
+        // Double: tell 36, punch 6, live 6..15, return 15..24, pause 26, recovery 36.
+        // Charge: tell 45, punch 6, live 6..19, return 19..30, recovery 42; the dash still owns movement.
+        // Leap: tell 40, cocked throughout flight, punch 6 on the synced 16t strike clock, live 6..15.
+        // Its 40t landing recovery swings back over 12t, then releases to carry over 12t.
+        // The spear-tip capsule follows the same hand, grip and angle; no extra network state is needed.
+        string ThrustPosePhase => Phase == AttackPhase.MeleeComboTelegraph ? "MeleeComboTelegraph"
+            : Phase == AttackPhase.MeleeComboAttack ? "MeleeComboAttack"
+            : Phase == AttackPhase.MeleeComboPause ? "MeleeComboPause" : "MeleeComboRecovery";
+
+        protected override float MeleeCompositeArmRotationOffset => IsThrustPose
+            ? ThrustArmOffset(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer, LeapSlamSwingProgress)
+            : base.MeleeCompositeArmRotationOffset;
+        protected override float SpearDrawRotationOffset => base.SpearDrawRotationOffset
+            + (IsThrustPose ? ThrustSpearAngle(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer, LeapSlamSwingProgress) : 0f);
+
+        // 16 game pixels = 32 pixels in the 2x preview; measured tip/base centers are y0.5/y61.5.
+        public const float ThrustReadyGrip = 0.32f + 16f / 61f;
+
+        public static float ThrustSpearAngle(string combo, string phase, int remaining, float leapProgress)
+            => Math.Max(0f, MathHelper.PiOver4 + ThrustArmOffset(combo, phase, remaining, leapProgress) - MathHelper.PiOver2);
+
+        public static float ThrustArmOffset(string combo, string phase, int remaining, float leapProgress)
         {
-            Main.npcFrameCount[NPC.type] = 16;
+            const float rear = MathHelper.Pi - MathHelper.PiOver4;
+            const float front = -MathHelper.PiOver4;
+            bool leap = combo == LeapName;
+            bool charge = combo == "Charging Spear Thrust";
+            if (phase == "MeleeComboTelegraph")
+                return MathHelper.SmoothStep(0f, rear, (24f - remaining) / 24f);
+            if (phase == "MeleeComboPause") return rear;
+            if (phase == "MeleeComboRecovery")
+            {
+                float elapsedRecovery = (leap ? 40f : charge ? 42f : 36f) - remaining;
+                if (leap)
+                    return elapsedRecovery < 12f ? MathHelper.SmoothStep(front, rear, elapsedRecovery / 12f)
+                        : MathHelper.SmoothStep(rear, 0f, (elapsedRecovery - 12f) / 12f);
+                return MathHelper.SmoothStep(rear, 0f, elapsedRecovery / 12f);
+            }
+            if (phase != "MeleeComboAttack") return 0f;
+            float total = charge ? 30f : 24f;
+            float elapsed = leap ? leapProgress * 16f : total - remaining;
+            if (elapsed < 6f) return MathHelper.SmoothStep(rear, front, elapsed / 6f);
+            float holdEnd = charge ? 19f : 15f;
+            if (leap || elapsed <= holdEnd) return front;
+            return MathHelper.SmoothStep(front, rear, (elapsed - holdEnd) / (total - holdEnd));
         }
+
+        public static float ThrustGrip(string combo, string phase, int remaining, float progress)
+        {
+            bool leap = combo == LeapName;
+            if (phase != "MeleeComboAttack")
+                return leap && phase == "MeleeComboRecovery"
+                    ? MathHelper.SmoothStep(0.97f, ThrustReadyGrip, (40f - remaining) / 12f) : ThrustReadyGrip;
+            bool charge = combo == "Charging Spear Thrust";
+            float total = leap ? 16f : charge ? 30f : 24f;
+            float elapsed = progress * total;
+            if (elapsed < 6f) return MathHelper.SmoothStep(ThrustReadyGrip, 0.97f, elapsed / 6f);
+            float holdEnd = charge ? 19f : 15f;
+            if (leap || elapsed <= holdEnd) return 0.97f;
+            return MathHelper.SmoothStep(0.97f, ThrustReadyGrip, (elapsed - holdEnd) / (total - holdEnd));
+        }
+
+        protected override float? OverrideSpearGrip(float progress) => IsThrustPose
+            ? ThrustGrip(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer,
+                ActiveMeleeComboName == LeapName ? LeapSlamSwingProgress : progress)
+            : base.OverrideSpearGrip(progress);
+
+        static MeleeCombo[] CreateCombos()
+        {
+            var inherited = BuildKnightCombos(Color.LightBlue);
+            // Level spear, 40t tell; 6t punch then 10 live ticks (one roll); no landing hit.
+            // 128/192/256px + 40 overshoot in ~47t needs 3.6/5.0/6.3 px/t, below the 8px/t cap.
+            // Recovery 40t. Aim and the ballistic landing line lock at release; moving after launch can evade it.
+            return new[] { inherited[0], inherited[2], new MeleeCombo
+            {
+                Name = LeapName, BaseWeight = 100, Preferred = ComboRangeBand.Mid,
+                RangedStartOnly = true, InitialFlashColor = Color.LightBlue,
+                CooldownAfterUse = 240, RecoveryTicks = 40,
+                Steps = new[] { new MeleeComboStep
+                {
+                    Motion = ComboMotion.LeapSlam, TelegraphTicks = 40, AttackTicks = 90,
+                    DamageMult = 1.25f, ReachMult = 1f, SwingSpeedMult = 1f,
+                    LeapStrikeRange = 110f, LeapHeightMult = 1f, LeapForwardSpeedMult = 1f,
+                } }
+            } };
+        }
+
+        public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            AnimationType = 28;
             NPC.aiStyle = -1;
-            NPC.height = 40;
             NPC.width = 20;
-            NPC.damage = 30;
-            NPC.defense = 22;
+            NPC.height = 40;
+            NPC.damage = 0;
             NPC.lifeMax = 150;
+            NPC.defense = 22;
+            NPC.value = 750;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.lavaImmune = true;
-            NPC.value = 750; //was 45
-            NPC.knockBackResist = 0.0f;
+            NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.GhostOfTheForgottenKnightBanner>();
+            redKnightsSpearDamage = 80;
             if (Main.hardMode)
             {
                 NPC.lifeMax = 200;
                 NPC.defense = 32;
-                NPC.value = 1000; // was 65
-                NPC.damage = 50;
-                spearDamage = 25;
-                topSpeed = 1.5f;
+                NPC.value = 1000;
+                redKnightsSpearDamage = 100;
             }
-
             if (tsorcRevampWorld.SuperHardMode)
             {
                 NPC.lifeMax = 1000;
                 NPC.defense = 80;
-                NPC.damage = 50;
-                NPC.value = 4000; //was 100
-                spearDamage = 45;
-                topSpeed = 2f;
+                NPC.value = 4000;
+                redKnightsSpearDamage = 180;
             }
-
-            // "Spectral Spear Throw" — commitFraction 0.5: first half cancellable (by magic), second half hyperarmor.
-            int spearProjectileType = ModContent.ProjectileType<BlackKnightSpear>();
-            UsefulFunctions.AddAttack(NPC, 180, spearProjectileType, spearDamage, 8, SoundID.Item17,
-                telegraphColor: Color.LightBlue, stopBeforeFiring: false, needsLineOfSight: true,
-                telegraphTime: 45, commitFraction: 0.5f, lockAimAtTelegraph: true);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            HumanoidMeleeProfile meleeProfile = HumanoidMeleeProfile.Standard(
-                spearDamage,
-                (int)(spearDamage * 1.25f),
-                guardPressureUnblockable: true,
-                guardPressureTelegraphTicks: 90);
-            globalNPC.ConfigureHumanoidMelee(meleeProfile);
-            CombatTempoProfile.Standard(globalNPC,
-                new CombatComboMove(spearProjectileType, 96f, float.MaxValue, canRepeat: true, weight: 1.15f),
-                new CombatComboMove(CombatComboMoveKey.CloseHopMelee, 0f, 90f, canRepeat: true, weight: 1f),
-                new CombatComboMove(CombatComboMoveKey.LongHopMelee, 112f, 240f, canRepeat: false, weight: 0.8f));
-            globalNPC.CanPassThroughWalls = true;
-            EvasiveProfile.Ghost(globalNPC); // phase back / dash / i-frame quick-step on hit
-            // Smart positioning: ordinary pressure favors a 7-14 tile band; distant projectile hits make it close.
-            globalNPC.KiteRangeMin = 7f;
-            globalNPC.KiteRangeMax = 14f;
-            globalNPC.KiteLooseness = 0.55f;
-            globalNPC.HasGhostAfterimages = true;
-            globalNPC.MaxJumpPower = 13f; // experimental: can route up to roughly 15-tile ledges
-            globalNPC.MaxJumpBoost = 6f;
-            // Step 6 ghost levers: drift (Wander) around where it lost the player when it gives up.
-            globalNPC.PatrolMode = NPCs.PatrolMode.Wander;
-            globalNPC.PatrolAnchorSource = NPCs.PatrolAnchorSource.GiveUpLocation;
-            globalNPC.NavSearchRadius = 40; // Phase 2: SmartFighter4AI movement
-            globalNPC.CanUseRopes = true;
-            globalNPC.TeleportTelegraphTime = 80;
-            globalNPC.TeleportDustType = DustID.Smoke;
-            globalNPC.TeleportDustColor = new Color(55, 55, 65);
-            globalNPC.TeleportDustScale = 0.65f;
-            globalNPC.TeleportDustCount = 20;
+            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            g.CanPassThroughWalls = true;
+            EvasiveProfile.Ghost(g);
+            g.EvasiveRetreatJump = false;
+            g.EvasiveRetreatDash = false;
+            g.EvasiveOnHitChanceDenominator = 6;
+            g.EvasiveOnHitCooldownTicks = 120;
+            g.KiteRangeMin = 7f;
+            g.KiteRangeMax = 14f;
+            g.KiteLooseness = 0.55f;
+            g.HasGhostAfterimages = false;
+            g.MaxJumpPower = 13f;
+            g.MaxJumpBoost = 6f;
+            g.PatrolMode = PatrolMode.Wander;
+            g.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+            g.NavSearchRadius = 40;
+            g.CanUseRopes = true;
+            g.TeleportTelegraphTime = 80;
+            g.TeleportDustType = DustID.Smoke;
+            g.TeleportDustColor = new Color(55, 55, 65);
+            g.TeleportDustScale = 0.65f;
+            g.TeleportDustCount = 20;
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
 
-            if (!Main.hardMode && NPC.downedBoss3 && spawnInfo.Player.ZoneDungeon)
+        private protected override bool TryStartControllerAttack(Player target, tsorcRevampGlobalNPC globalNPC)
+            => specialAttacks.TryStartForgotten(NPC, target, globalNPC);
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (!NPC.HasValidTarget) return false;
+            Player target = Main.player[NPC.target];
+            bool leapRange = distance >= 128f && distance <= 256f
+                && Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
+            bool preferLeap = leapRange && (target.Center.Y <= NPC.Center.Y - 32f || !CanChargeTo(target));
+            if (combo.Name == LeapName) return leapRange;
+            if (combo.Name == "Charging Spear Thrust" && preferLeap) return false;
+            return base.CanSelectMeleeCombo(combo, distance, healthFraction);
+        }
+
+        protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+            if (combo.Name != LeapName) return;
+            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.HasValidTarget)
             {
-                return 0.16f; // was .2 : .16 should be 8%
+                Vector2 gap = Main.player[NPC.target].Center - NPC.Center;
+                _leapAim = MathHelper.Clamp((float)Math.Atan2(gap.Y, Math.Abs(gap.X)), -0.6f, 0.6f);
+                if (elapsed >= total - 1) { NPC.netUpdate = true; RequestNetworkSnapshot(); }
             }
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon)
+            if (!Main.dedServ && elapsed >= total - 30 && elapsed % 2 == 0)
             {
-                return 0.1f; // was 0.17
+                var dust = Dust.NewDustPerfect(PuppetSpearTipPosition, KnightGlintDust,
+                    Main.rand.NextVector2Circular(0.6f, 0.6f), 80, Color.LightBlue, 1.2f);
+                dust.noGravity = true;
             }
-            if (NPC.downedBoss3 && spawnInfo.Player.ZoneGraveyard)
-            {
-                return 0.2f; // was 0.17
-            }
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon)
-            {
-                return 0.05f; //.08% is 4.28%
-            }
-
-            return 0;
+            if (elapsed == total - 1 && Main.netMode != NetmodeID.MultiplayerClient)
+                tsorcRevampAIs.SpawnTelegraphFlash(NPC, Color.LightBlue);
         }
 
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        protected override bool CanDamageWithLeapSlamStep(MeleeComboStep step, float progress)
+            => progress >= 6f / 16f && progress < 1f;
+
+        protected override void OnLeapSlamLanded(MeleeComboStep step)
         {
-            ApplyHitDebuff(target);
+            if (Main.dedServ) return;
+            for (int i = 0; i < 20; i++)
+                Dust.NewDustPerfect(NPC.Bottom, DustID.Smoke, new Vector2(Main.rand.NextFloat(-3f, 3f), -Main.rand.NextFloat(2f)),
+                    100, new Color(55, 55, 65), 0.8f);
         }
-
-        public void OnHumanoidMeleeHit(Player target)
-        {
-            ApplyHitDebuff(target);
-        }
-
-        private static void ApplyHitDebuff(Player target)
-        {
-            if (Main.rand.NextBool(2))
-            {
-                target.AddBuff(BuffID.Weak, 60 * 60, false);
-            }
-        }
-
-        float topSpeed = 1.2f;
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, true);
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
         public override void AI()
         {
-            tsorcRevampAIs.FighterAI(NPC, topSpeed, .05f, 0.2f, false, enragePercent: 0.2f, enrageTopSpeed: 2.4f);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-
-            bool hasLos = Collision.CanHit(NPC.position, NPC.width, NPC.height,
-                Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height);
-            if (!hasLos && globalNPC.ProjectileTimer > 0f)
-            {
-                globalNPC.ProjectileTimer = 0f;
-                NPC.netUpdate = true;
-            }
-
-            if (NPC.justHit && globalNPC.ProjectileTimer <= 149 && Main.rand.NextBool(4))
-            {
-                globalNPC.ProjectileTimer = 0f;
-                NPC.netUpdate = true;
-            }
-
-            if (globalNPC.ProjectileTimer >= 150)
-            {
-                if (Main.rand.NextBool(3))
-                {
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
-                }
-            }
+            base.AI();
+            if (!Main.dedServ && Main.rand.NextBool(3))
+                Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, NPC.velocity.X, NPC.velocity.Y);
         }
-
-        #region Draw Spear Texture
-        public static Texture2D spearTexture;
-        static Texture2D handTexture;
-        const float FrameW = 70f;
-        const float FrameH = 56f;
-        static readonly Vector2[] HandPixel = new Vector2[16]
-        {
-            new Vector2(47, 30), // 0 idle
-            new Vector2(47, 25), // 1 jump
-            new Vector2(48, 33), // 2
-            new Vector2(50, 31), // 3
-            new Vector2(50, 31), // 4
-            new Vector2(50, 31), // 5
-            new Vector2(50, 33), // 6
-            new Vector2(48, 33), // 7
-            new Vector2(48, 33), // 8
-            new Vector2(48, 33), // 9
-            new Vector2(46, 31), // 10
-            new Vector2(44, 31), // 11
-            new Vector2(44, 31), // 12
-            new Vector2(45, 32), // 13
-            new Vector2(48, 33), // 14
-            new Vector2(48, 33), // 15
-        };
-        static readonly Vector2 SpearGripOrigin = new Vector2(8f, 38f);
-
-        Vector2 CurrentHandWorld()
-        {
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame < 0 || frame >= HandPixel.Length)
-            {
-                frame = 0;
-            }
-
-            Vector2 fp = HandPixel[frame];
-            float x = NPC.Center.X + (fp.X - FrameW / 2f) * NPC.scale * -NPC.spriteDirection;
-            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - FrameH) * NPC.scale;
-            return new Vector2(x, y);
-        }
-
-        Vector2 CurrentSpearWorld()
-        {
-            Vector2 handWorld = CurrentHandWorld();
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            if (frame == 0)
-            {
-                handWorld.Y -= 21f;
-            }
-            return handWorld;
-        }
-
-        void DrawHeldSpear(SpriteBatch spriteBatch, Vector2 handPosition, float rotation, Color drawColor,
-            tsorcRevampGlobalNPC globalNPC, float gripSlide = 0f)
-        {
-            const float spriteScale = 0.8f;
-            Vector2 gripOrigin = SpearGripOrigin + new Vector2(0f, gripSlide);
-            if (globalNPC.ActiveAttackBypassesShield)
-            {
-                Vector2 forward = (rotation - MathHelper.PiOver2).ToRotationVector2();
-                Vector2 auraCenter = handPosition + forward * gripSlide;
-                AttackTelegraphDraw.DrawUnblockableWeaponAura(
-                    spriteBatch, spearTexture, handPosition, null, rotation, gripOrigin, NPC.scale * spriteScale);
-                drawColor = Color.Lerp(drawColor, new Color(255, 65, 65), 0.8f);
-                Lighting.AddLight(auraCenter + Main.screenPosition, Color.Red.ToVector3() * 0.7f);
-            }
-
-            spriteBatch.Draw(spearTexture, handPosition, null, drawColor, rotation,
-                gripOrigin, NPC.scale * spriteScale, SpriteEffects.None, 0f);
-        }
-        void DrawHandOverlay(SpriteBatch spriteBatch, Color drawColor)
-        {
-            if (handTexture == null)
-            {
-                return;
-            }
-
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Rectangle sourceRectangle = new Rectangle(0, NPC.frame.Y, (int)FrameW, (int)FrameH);
-            Vector2 drawPosition = NPC.Center + new Vector2(0f, 24f + NPC.gfxOffY) - Main.screenPosition;
-            spriteBatch.Draw(handTexture, drawPosition, sourceRectangle, drawColor, NPC.rotation, new Vector2(FrameW / 2f, FrameH), NPC.scale, effects, 0f);
-        }
-
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (spearTexture == null || spearTexture.IsDisposed)
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+            if (specialAttacks.Active && specialAttacks.Timer >= 15 && specialAttacks.Timer < 45)
             {
-                spearTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(BlackKnightGhostSpear)));
-            }
-            if (handTexture == null || handTexture.IsDisposed)
-            {
-                handTexture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Enemies/GhostFighter/GhostOfTheForgottenKnight_Hand", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            }
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.CombatMeleeActive)
-            {
-                int meleeDirection = globalNPC.ActiveCombatMeleeDirection;
-                float maximumExtension = globalNPC.ActiveCombatMeleeKey == CombatComboMoveKey.LongHopMelee ? 22f : 14f;
-                float gripSlide = globalNPC.CombatMeleeThrustProgress * maximumExtension;
-                float rotation = new Vector2(meleeDirection, 0f).ToRotation() + MathHelper.PiOver2;
-                DrawHeldSpear(spriteBatch, CurrentSpearWorld() - Main.screenPosition, rotation, drawColor, globalNPC, gripSlide);
-                DrawHandOverlay(spriteBatch, drawColor);
-                return;
-            }
-
-            if (!globalNPC.InCombatComboRecovery && globalNPC.ProjectileTimer >= globalNPC.ProjectileTelegraphStart)
-            {
-                Lighting.AddLight(NPC.Center, Color.White.ToVector3() * 0.3f);
-                Vector2 aimTarget = globalNPC.LockedShotTargetPosition != Vector2.Zero
-                    ? globalNPC.LockedShotTargetPosition
-                    : Main.player[NPC.target].Center;
-                float rotation = UsefulFunctions.Aim(NPC.Center, aimTarget, 1).ToRotation() + MathHelper.PiOver2;
-                DrawHeldSpear(spriteBatch, CurrentSpearWorld() - Main.screenPosition, rotation, drawColor, globalNPC);
-                DrawHandOverlay(spriteBatch, drawColor);
+                Vector2 aim = specialAttacks.LockedVelocity.SafeNormalize(new Vector2(NPC.direction, 0f));
+                Utils.DrawLine(spriteBatch, PuppetSpearTipPosition, PuppetSpearTipPosition + aim * 320f,
+                    Color.LightBlue * 0.4f, Color.LightBlue * 0f, 2f);
             }
         }
-        #endregion
+        public void OnHumanoidMeleeHit(Player target)
+        {
+            if (Main.rand.NextBool(2)) target.AddBuff(BuffID.Weak, 60 * 60);
+        }
+        public override void SendExtraAI(BinaryWriter writer) { base.SendExtraAI(writer); writer.Write(_leapAim); }
+        public override void ReceiveExtraAI(BinaryReader reader) { base.ReceiveExtraAI(reader); _leapAim = reader.ReadSingle(); }
 
         #region Gore
         public override void OnKill()

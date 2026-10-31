@@ -720,6 +720,8 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             Add<Enemies.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
             // Standard fighters
+            Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
+            Add<Enemies.GhostFighter.GhostOfTheForgottenKnight>(0.3f, 35f);
             Add<AttraidiesIllusion>(0.3f, 30f);
             Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows
             Add<Enemies.SuperHardMode.OolacileAcolyte>(0.2f, 40f); // SHM Madness caster: the Archdeacon's poise; tells and the Babbling Spiral channel are the stagger windows
@@ -1432,6 +1434,7 @@ namespace tsorcRevamp.NPCs
         // pinned against a wall has its velocity zeroed by collision every frame, so the Lerp in the drift never builds the
         // 0.2 px/tick forward speed the gate otherwise demands, and the teleport silently never fired.
         public bool GhostDriftIntent = false;
+        public bool SuppressGhostWallTeleport;
         // Opt-in lever, 0 = off. A player who is VISIBLE but unreachable re-aggros the FSM every frame (LOS inside aggro range
         // forces Pursue), so after SF4's no-path / hard-stuck give-up the enemy just stood at the wall forever. With this set,
         // that give-up goes straight to Patrol (skipping Search: the last-known spot is the unreachable one) and LOS re-aggro is
@@ -2288,6 +2291,8 @@ namespace tsorcRevamp.NPCs
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
             }
 
+            bool suppressGhostTeleport = SuppressGhostWallTeleport;
+            SuppressGhostWallTeleport = false;
             if (!CanPassThroughWalls)
                 return;
 
@@ -2311,6 +2316,11 @@ namespace tsorcRevamp.NPCs
             float _ghostFwdVel = npc.direction * npc.velocity.X;
             bool pushingForward = _ghostFwdVel > 0.2f || GhostDriftIntent;
             GhostDriftIntent = false;
+            if (suppressGhostTeleport || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                GhostWallTimer = 0;
+                return;
+            }
             bool wallBlocked = pushingForward && IsWallBlockingAhead(npc);
 
             if (wallBlocked)
