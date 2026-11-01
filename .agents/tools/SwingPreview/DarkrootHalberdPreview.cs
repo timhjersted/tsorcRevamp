@@ -17,9 +17,9 @@ namespace SwingPreview
             string root = options.RepoRoot;
             var art = new PuppetArt {
                 Name = "DarkrootHalberd-" + (options.Direction < 0 ? "left" : "right"),
-                BodySheet = Path.Combine(root, "Content/Items/Armor/DarkrootSentrySet/DarkrootSentryBreastplate_Body.png"),
-                LegsSheet = Path.Combine(root, "Content/Items/Armor/DarkrootSentrySet/DarkrootSentryGreaves_Legs.png"),
-                HeadSheet = Path.Combine(root, "Content/Items/Armor/DarkrootSentrySet/DarkrootSentryHelmet_Head.png"),
+                BodySheet = Path.Combine(root, "Content/Items/Armor/Enemy/DarkrootSentrySet/DarkrootSentryBreastplate_Body.png"),
+                LegsSheet = Path.Combine(root, "Content/Items/Armor/Enemy/DarkrootSentrySet/DarkrootSentryGreaves_Legs.png"),
+                HeadSheet = Path.Combine(root, "Content/Items/Armor/Enemy/DarkrootSentrySet/DarkrootSentryHelmet_Head.png"),
                 WeaponSprite = Path.Combine(root, "Content/Items/Weapons/Melee/Halberds/DarkrootHalberd.png"),
                 WeaponScale = DarkrootHalberdMotion.DrawScale,
                 WeaponRotationOffset = -DarkrootHalberdMotion.NativeAngle,

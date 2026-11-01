@@ -18,14 +18,14 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 if (-not $OutputDirectory) {
-    $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\DarkrootSentrySet'
+    $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\DarkrootSentrySet'
 }
 if (-not $ComponentsPath) {
     $ComponentsPath = Join-Path $PSScriptRoot 'assets\DarkrootSentry-components.png'
 }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
-$referenceDirectory = Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet'
+$referenceDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet'
 
 $bodyPalette = @{
     '0C0B0C' = '111416'; '15121D' = '202627'; '494B81' = '343D3C'

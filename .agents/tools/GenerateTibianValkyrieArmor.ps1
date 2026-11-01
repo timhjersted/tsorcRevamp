@@ -16,10 +16,10 @@ param(
 )
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Drawing
-if (-not $OutputDirectory) { $OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\TibianValkyrieSet' }
+if (-not $OutputDirectory) { $OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\Enemy\TibianValkyrieSet' }
 $OutputDirectory=[IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
-$baseRoot=Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet'
+$baseRoot=Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet'
 $npc=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'NPCs\Enemies\TibianValkyrie.png'))
 $bodyPalette=@{
     '0C0B0C'='201C1C'; '15121D'='3D3336'; '494B81'='7D727B'

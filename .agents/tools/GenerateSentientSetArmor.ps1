@@ -15,11 +15,11 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
-if (-not $OutputDirectory) { $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\SentientSet' }
+if (-not $OutputDirectory) { $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\SentientSet' }
 if (-not $ComponentsPath) { $ComponentsPath = Join-Path $PSScriptRoot 'assets\SentientSet-components.png' }
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
-$referenceDirectory = Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet'
+$referenceDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet'
 $bodyPalette = @{
     '0C0B0C'='0B0C10'; '15121D'='181A20'; '494B81'='2E313A'
     '5C5F9B'='4A4E59'; '152433'='181A20'; '253E63'='4A4E59'

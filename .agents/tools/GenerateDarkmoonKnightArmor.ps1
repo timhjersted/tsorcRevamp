@@ -15,11 +15,11 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 
 if (-not $OutputDirectory) {
-    $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\DarkmoonKnightSet'
+    $OutputDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\DarkmoonKnightSet'
 }
 
 $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
-$baseDirectory = Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet'
+$baseDirectory = Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet'
 $sourcePath = Join-Path $RepoRoot 'NPCs\UnusedSprites\GhostOfTheDarkmoonKnight.png'
 New-Item -ItemType Directory -Force -Path $OutputDirectory | Out-Null
 

@@ -9,7 +9,7 @@ snapshot of the finished Valkyrie arm masks/outlines; never modifies that set.
 param([Parameter(Mandatory=$true)][string]$RepoRoot,[string]$OutputDirectory,[string]$ArmsTemplatePath,[string]$HandsTemplatePath,[string]$DetailTemplatePath)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Drawing
-if(-not $OutputDirectory){$OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\TibianAmazonSet'}
+if(-not $OutputDirectory){$OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\Enemy\TibianAmazonSet'}
 if(-not $ArmsTemplatePath){$ArmsTemplatePath=Join-Path $RepoRoot '.agents\tools\assets\TibianAmazonArmsTemplate.png'}
 if(-not $HandsTemplatePath){$HandsTemplatePath=Join-Path $RepoRoot '.agents\tools\assets\TibianAmazonHandsTemplate.png'}
 if(-not $DetailTemplatePath){$DetailTemplatePath=Join-Path $RepoRoot '.agents\tools\assets\TibianAmazonDetailTemplate.png'}
@@ -21,7 +21,7 @@ $details=[Drawing.Bitmap]::FromFile($DetailTemplatePath)
 if($details.Width -ne 360 -or $details.Height -ne 224){throw 'Expected a 360x224 authored shoulder/detail layer.'}
 $gloveMask=[bool[,]]::new(360,224)
 if($hands.Width -ne 360 -or $hands.Height -ne 224){throw 'Expected a 360x224 composite hand-position mask.'}
-$referenceHead=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet\BlackKnightHelmet_Head.png'))
+$referenceHead=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet\BlackKnightHelmet_Head.png'))
 if($npc.Width -ne 60 -or $npc.Height -ne 840){throw 'Expected the original 60x840 Amazon sheet.'}
 function Block([Drawing.Bitmap]$Bitmap,[int]$X,[int]$Y,[Drawing.Color]$Color){foreach($dy in 0,1){foreach($dx in 0,1){$Bitmap.SetPixel($X+$dx,$Y+$dy,$Color)}}}
 function Color([string]$Hex){return [Drawing.ColorTranslator]::FromHtml('#'+$Hex)}

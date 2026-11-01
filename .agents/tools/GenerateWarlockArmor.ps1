@@ -8,13 +8,13 @@ Purple sleeve and bare-hand pixels use an independent working arm template.
 [CmdletBinding()]
 param([Parameter(Mandatory=$true)][string]$RepoRoot,[string]$OutputDirectory,[string]$ArmsTemplatePath,[string]$HandsTemplatePath)
 $ErrorActionPreference='Stop';Add-Type -AssemblyName System.Drawing
-if(!$OutputDirectory){$OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\WarlockSet'}
+if(!$OutputDirectory){$OutputDirectory=Join-Path $RepoRoot 'Content\Items\Armor\Enemy\WarlockSet'}
 if(!$ArmsTemplatePath){$ArmsTemplatePath=Join-Path $RepoRoot '.agents\tools\assets\WarlockArmsTemplate.png'}
 if(!$HandsTemplatePath){$HandsTemplatePath=Join-Path $RepoRoot '.agents\tools\assets\WarlockHandsTemplate.png'}
 New-Item -ItemType Directory -Force $OutputDirectory | Out-Null
 $npc=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'NPCs\Enemies\Warlock.png'))
 $arms=[Drawing.Bitmap]::FromFile($ArmsTemplatePath);$hands=[Drawing.Bitmap]::FromFile($HandsTemplatePath)
-$reference=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'Content\Items\Armor\BlackKnightSet\BlackKnightHelmet_Head.png'))
+$reference=[Drawing.Bitmap]::FromFile((Join-Path $RepoRoot 'Content\Items\Armor\Enemy\BlackKnightSet\BlackKnightHelmet_Head.png'))
 if($npc.Width -ne 46 -or $npc.Height -ne 840){throw 'Expected original 46x840 Warlock sheet'}
 foreach($b in @($arms,$hands)){if($b.Width -ne 360 -or $b.Height -ne 224){throw 'Expected a 360x224 arm or hand-position template'}}
 function ColorValue([string]$Hex){[Drawing.ColorTranslator]::FromHtml('#'+$Hex)}

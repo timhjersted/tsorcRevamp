@@ -28,9 +28,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = puppet,
-                    BodySheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
                     WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
                     HandleNormX = 0.115f,
                     HandleNormY = 0.875f
@@ -42,9 +42,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = puppet,
-                    BodySheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightBreastplate_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "DarkmoonKnightSet", "DarkmoonKnightHelmet_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "DarkmoonKnightSet", "DarkmoonKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "DarkmoonKnightSet", "DarkmoonKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "DarkmoonKnightSet", "DarkmoonKnightHelmet_Head.png"),
                     WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
                     HandleNormX = 6f / 52f,
                     HandleNormY = 45f / 52f,
@@ -56,9 +56,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "GhostOfTheForgottenKnight",
-                    BodySheet = P("Content", "Items", "Armor", "ForgottenKnightSet", "ForgottenKnightBreastplate_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "ForgottenKnightSet", "ForgottenKnightGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "ForgottenKnightSet", "ForgottenKnightHelmet_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "ForgottenKnightSet", "ForgottenKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "ForgottenKnightSet", "ForgottenKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "ForgottenKnightSet", "ForgottenKnightHelmet_Head.png"),
                     WeaponSprite = P("Content", "Projectiles", "Enemy", "BlackKnightSpear.png"),
                     WeaponRotationOffset = (float)Math.PI / 4f,
                     SpearHeadNorm = new System.Drawing.PointF(0.5f, 0.5f / 62f),
@@ -71,9 +71,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "GhostOfTheForgottenWarrior",
-                    BodySheet = P("Content", "Items", "Armor", "ForgottenWarriorSet", "ForgottenWarriorArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "ForgottenWarriorSet", "ForgottenWarriorGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "ForgottenWarriorSet", "ForgottenWarriorHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "ForgottenWarriorSet", "ForgottenWarriorArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "ForgottenWarriorSet", "ForgottenWarriorGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "ForgottenWarriorSet", "ForgottenWarriorHelm_Head.png"),
                     WeaponSprite = P("Content", "Projectiles", "Enemy", "EnemyEphemeralThrowingAxeProj.png"),
                     WeaponRotationOffset = (float)Math.PI / 4f,
                     HandleNormX = 7f / 26f,
@@ -157,9 +157,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "RedKnight",
-                    BodySheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightBreastplate_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "RedKnightSet", "RedKnightHelmet_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "RedKnightSet", "RedKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "RedKnightSet", "RedKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "RedKnightSet", "RedKnightHelmet_Head.png"),
                     // BlackKnightSpear: 14x62, tip straight up (rows 0 and 61 at x 6-7). SpearDrawRotationOffset = 45 degrees.
                     WeaponSprite = P("Content", "Projectiles", "Enemy", "BlackKnightSpear.png"),
                     WeaponRotationOffset = (float)Math.PI / 4f,
@@ -174,9 +174,9 @@ namespace SwingPreview
                 {
                     Name = "BlackKnight",
                     // Black Knight set; the game dyes it Reflective Metal, which the preview can't apply.
-                    BodySheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightBreastplate_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "BlackKnightSet", "BlackKnightHelmet_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "BlackKnightSet", "BlackKnightBreastplate_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "BlackKnightSet", "BlackKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "BlackKnightSet", "BlackKnightHelmet_Head.png"),
                     // BlackBlade: 62x62, pommel (0,61), tip (61,0); hand mid-handle at (5,56).
                     WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "BlackBlade.png"),
                     WeaponRotationOffset = 0f,
@@ -192,9 +192,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "GreatBlackKnight",
-                    BodySheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "GreatBlackKnightSet", "GreatBlackKnightHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "GreatBlackKnightSet", "GreatBlackKnightArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "GreatBlackKnightSet", "GreatBlackKnightGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "GreatBlackKnightSet", "GreatBlackKnightHelm_Head.png"),
                     WeaponSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall.png"),
                     FlailBallSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall.png"),
                     FlailChainSprite = P("Content", "Projectiles", "Melee", "Flails", "BerserkerNightmareBall_Chain.png"),
@@ -209,9 +209,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "CursedDragon",
-                    BodySheet = P("Content", "Items", "Armor", "CursedDragonArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "CursedDragonGreaves_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "CursedDragonHelmet_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "CursedDragonArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "CursedDragonGreaves_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "CursedDragonHelmet_Head.png"),
                     // PilgrimSpontoonProj: 110x110, head pixel (0,0), butt (109,109). The norms are CursedDragon's own
                     // SpearHeadNorm/SpearBaseNorm (0.03 / 0.95), and +90 degrees is its SpearDrawRotationOffset.
                     // Wings (Tattered Fairy) are a vanilla XNB and aren't drawn.
@@ -242,9 +242,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "Gwyn",
-                    BodySheet = P("Content", "Items", "Armor", "LordGwynArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "LordGwynLeggings_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "LordGwynHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "LordGwynArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "LordGwynLeggings_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "LordGwynHelm_Head.png"),
                     // EnemySwordOfGwyn overrides Texture to the player sword's sprite.
                     WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "SwordOfLordGwyn.png"),
                     WeaponRotationOffset = 0f,
@@ -274,9 +274,9 @@ namespace SwingPreview
                 return new PuppetArt
                 {
                     Name = "SoulOfCinder",
-                    BodySheet = P("Content", "Items", "Armor", "FirelinkArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "FirelinkLeggings_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "FirelinkHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "FirelinkArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "FirelinkLeggings_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "FirelinkHelm_Head.png"),
                     WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Broadswords", "SeveringDusk.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1.15f,
@@ -378,9 +378,9 @@ namespace SwingPreview
                 {
                     Name = "BarrowWightPhantom",
                     // The real set; the game also draws it through the spectral overlay (tint, halo, trail), not shown here.
-                    BodySheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
-                    LegsSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
-                    HeadSheet = P("Content", "Items", "Armor", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
+                    BodySheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomArmor_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomShroud_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Enemy", "BarrowWightPhantomSet", "BarrowWightPhantomHelm_Head.png"),
                     WeaponSprite = P("Content", "Items", "Weapons", "Enemy", "EnemyBarrowWightSword.png"),
                     WeaponRotationOffset = 0f,
                     DrawScale = 1f,

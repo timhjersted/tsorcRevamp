@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                     continue;
 
                 eyeGlow ??= ModContent.Request<Texture2D>(
-                    "tsorcRevamp/Content/Items/Armor/DarkmoonKnightSet/DarkmoonKnightHelmet_Head_Glow",
+                    "tsorcRevamp/Content/Items/Armor/Enemy/DarkmoonKnightSet/DarkmoonKnightHelmet_Head_Glow",
                     AssetRequestMode.ImmediateLoad);
                 glow.texture = eyeGlow.Value;
                 float opacity = knight.NPC.Opacity;
