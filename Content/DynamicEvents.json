@@ -2545,7 +2545,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/OolacileKnight",
+        "NpcName": "tsorcRevamp/DarkrootSentry",
         "SpawnX": 2382.0,
         "SpawnY": 1882.0,
         "CustomHealth": null,
@@ -3029,7 +3029,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/OolacileKnight",
+        "NpcName": "tsorcRevamp/DarkrootSentry",
         "SpawnX": 5229.0,
         "SpawnY": 1254.0,
         "CustomHealth": null,

@@ -585,11 +585,12 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<DarkrootImp>();
     }
 
-    public class OolacileKnightBanner : EnemyBanner
+    [LegacyName("OolacileKnightBanner")]
+    public class DarkrootSentryBanner : EnemyBanner
     {
         public override int PlaceStyle => 78;
 
-        public override int NPCType => ModContent.NPCType<OolacileKnight>();
+        public override int NPCType => ModContent.NPCType<DarkrootSentry>();
     }
 
     [LegacyName("OolacileSorcererBanner")]

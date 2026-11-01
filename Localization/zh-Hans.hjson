@@ -1250,9 +1250,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
-			OolacileKnightBanner: {
-				DisplayName: "{$NPCs.OolacileKnight.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
+			DarkrootSentryBanner: {
+				DisplayName: "{$NPCs.DarkrootSentry.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootSentry.DisplayName}"
 			}
 
 			OolacileAcolyteBanner: {
@@ -9212,6 +9212,12 @@ Mods: {
 				// DisplayName: Darkmoon Knight Greaves
 			}
 
+			DarkrootHalberd: {
+				DisplayName: 黑森林戟
+				Tooltip: "黑森林哨兵使用的沉重长柄武器\n左键：下劈、上挑，然后向前突刺\n按住右键持续回旋；松开后完成当前一圈"
+				Stamina: "耐力：连招每击消耗 {0} / {1} / {2}；每转一圈消耗 {2}"
+			}
+
 			DarkrootSentryHelmet: {
 				// Tooltip: ""
 				// DisplayName: Darkroot Sentry Helmet
@@ -12653,8 +12659,8 @@ Mods: {
 			ManOfWar.DisplayName: 战争缔造者
 			DarkrootImp.DisplayName: 黑森林小恶魔
 
-			OolacileKnight: {
-				DisplayName: 乌拉席露骑士
+			DarkrootSentry: {
+				DisplayName: 黑森林哨兵
 				Intent: 一位古代战士前来抹除你的存在...
 				Hunt: 你被狩猎了...
 			}

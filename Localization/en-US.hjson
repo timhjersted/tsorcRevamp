@@ -1247,9 +1247,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
-			OolacileKnightBanner: {
-				DisplayName: "{$NPCs.OolacileKnight.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
+			DarkrootSentryBanner: {
+				DisplayName: "{$NPCs.DarkrootSentry.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootSentry.DisplayName}"
 			}
 
 			OolacileAcolyteBanner: {
@@ -9182,6 +9182,12 @@ Mods: {
 				DisplayName: Darkmoon Knight Greaves
 			}
 
+			DarkrootHalberd: {
+				DisplayName: Darkroot Halberd
+				Tooltip: "A heavy polearm of the Darkroot sentries\nLeft click: overhand, underhand, then a forward thrust\nHold right click to sweep continuously; release to finish the current rotation"
+				Stamina: "Stamina: {0} / {1} / {2} per combo strike; {2} per full rotation"
+			}
+
 			DarkrootSentryHelmet: {
 				Tooltip: ""
 				DisplayName: Darkroot Sentry Helmet
@@ -9215,6 +9221,36 @@ Mods: {
 			SentientLegs: {
 				DisplayName: Sentient Greaves
 				Tooltip: Grows swifter with the distance you travel
+			}
+
+			WarlockHeadpiece: {
+				DisplayName: Warlock Headpiece
+				Tooltip: ""
+			}
+
+			WarlockRobe: {
+				DisplayName: Warlock Robe
+				Tooltip: ""
+			}
+
+			WarlockBoots: {
+				DisplayName: Warlock Boots
+				Tooltip: ""
+			}
+
+			TibianAmazonHeadpiece: {
+				DisplayName: Tibian Amazon Headpiece
+				Tooltip: ""
+			}
+
+			TibianAmazonTunic: {
+				DisplayName: Tibian Amazon Tunic
+				Tooltip: ""
+			}
+
+			TibianAmazonBoots: {
+				DisplayName: Tibian Amazon Boots
+				Tooltip: ""
 			}
 
 			TibianValkyrieHeadpiece: {
@@ -12619,7 +12655,7 @@ Mods: {
 			ManOfWar.DisplayName: Man of War
 			DarkrootImp.DisplayName: Darkroot Imp
 
-			OolacileKnight: {
+			DarkrootSentry: {
 				DisplayName: Darkroot Sentry
 				Intent: An ancient warrior has come to banish you from existence...
 				Hunt: You are being hunted...

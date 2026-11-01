@@ -468,8 +468,8 @@ namespace tsorcRevamp.Systems
         // Whether a boss has been killed in this world (the mod's own record, not a vanilla flag).
         public static class Slain
         {
-            public static readonly SpawnCondition OolacileKnight = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>())));
+            public static readonly SpawnCondition DarkrootSentry = new(context =>
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>())));
 
             public static readonly SpawnCondition TheSorrow = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())));
@@ -1277,10 +1277,10 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only, one alive at a time, dry; gates (one in 15 to one in 35) are folded in as 1/N. The chat message the
             // old rule broadcast on a roll now comes from the knight's OnSpawn. The first line is the pre-kill sighting in the
             // jungle sky and surface; the rest are hunts once it has been slain.
-            Spawn("OolacileKnight", Water.Dry & Zone.Jungle & (Depth.Sky | Depth.Surface) & !Slain.OolacileKnight, shm: 0.05f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Dungeon & Time.BloodMoon & Slain.OolacileKnight, shm: 0.0667f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Meteor & Time.BloodMoon & Slain.OolacileKnight, shm: 0.04f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Dungeon & Slain.OolacileKnight, shm: 0.0286f, max: 1);
+            Spawn("DarkrootSentry", Water.Dry & Zone.Jungle & (Depth.Sky | Depth.Surface) & !Slain.DarkrootSentry, shm: 0.05f, max: 1);
+            Spawn("DarkrootSentry", Water.Dry & Zone.Dungeon & Time.BloodMoon & Slain.DarkrootSentry, shm: 0.0667f, max: 1);
+            Spawn("DarkrootSentry", Water.Dry & Zone.Meteor & Time.BloodMoon & Slain.DarkrootSentry, shm: 0.04f, max: 1);
+            Spawn("DarkrootSentry", Water.Dry & Zone.Dungeon & Slain.DarkrootSentry, shm: 0.0286f, max: 1);
 
             // Super Hardmode only, one alive at a time; gates (one in 8 to one in 70) are folded in as 1/N. The old "ocean" test and
             // "gray layer" test mixed tile and pixel units (the ocean covered the west 43% of the map; the gray layer ran through

@@ -140,9 +140,14 @@ namespace tsorcRevamp
 
     public class FirstBossKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
+        readonly bool requireBoss;
+
+        // Existing boss rewards keep their default gate; ordinary enemies can share the saved slain history.
+        public FirstBossKillRule(bool requireBoss = true) => this.requireBoss = requireBoss;
+
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && info.npc.boss;
+            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && (!requireBoss || info.npc.boss);
         }
 
         public bool CanShowItemDropInUI() => true;

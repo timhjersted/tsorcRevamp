@@ -508,6 +508,16 @@ namespace tsorcRevamp
                     NewSlain.Add(newOccultistKey, oldOccultistValue);
                 }
             }
+
+            // Preserve the renamed sentry's hunt progression in existing worlds, including saves containing both names.
+            NPCDefinition oldSentryKey = new NPCDefinition("tsorcRevamp", "OolacileKnight");
+            if (NewSlain.TryGetValue(oldSentryKey, out int oldSentryCount))
+            {
+                NewSlain.Remove(oldSentryKey);
+                NPCDefinition sentryKey = new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>());
+                NewSlain.TryGetValue(sentryKey, out int sentryCount);
+                NewSlain[sentryKey] = Math.Max(sentryCount, oldSentryCount);
+            }
         }
 
         public override void NetSend(BinaryWriter writer)

@@ -266,6 +266,10 @@ namespace tsorcRevamp
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
 
+                // The held halberd pays once per committed strike/rotation; ItemCheck must not charge its channel too.
+                if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>())
+                    return true;
+
                 if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) &&
                     modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
                 {

@@ -17,7 +17,8 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class OolacileKnight : ModNPC
+    [LegacyName("OolacileKnight")]
+    class DarkrootSentry : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -41,7 +42,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0f;
             Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.OolacileKnightBanner>();
+            BannerItem = ModContent.ItemType<Banners.DarkrootSentryBanner>();
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 80;             
             NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
             NPC.lavaImmune = true;
@@ -68,12 +69,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            bool slainBefore = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>()));
-            string messageKey = "NPCs.OolacileKnight.Intent";
+            bool slainBefore = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkrootSentry>()));
+            string messageKey = "NPCs.DarkrootSentry.Intent";
 
             if (slainBefore)
             {
-                messageKey = "NPCs.OolacileKnight.Hunt";
+                messageKey = "NPCs.DarkrootSentry.Hunt";
             }
 
             UsefulFunctions.BroadcastText(LangUtils.GetTextValue(messageKey), 175, 75, 255);
@@ -107,36 +108,36 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (spawnInfo.Water) return 0f;
 
-            if (NPC.AnyNPCs(ModContent.NPCType<OolacileKnight>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<DarkrootSentry>()))
             {
                 return 0;
             }
 
-            if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(20))
+            if (Jungle && tsorcRevampWorld.SuperHardMode && AboveEarth && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkrootSentry>())) && Main.rand.NextBool(20))
 
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Intent"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkrootSentry.Intent"), 175, 75, 255);
                 return 1;
             }
 
-            if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(15))
+            if (Dungeon && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkrootSentry>())) && Main.rand.NextBool(15))
 
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkrootSentry.Hunt"), 175, 75, 255);
                 return 1;
             }
 
-            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(25))
+            if (Meteor && Main.bloodMoon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkrootSentry>())) && Main.rand.NextBool(25))
 
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkrootSentry.Hunt"), 175, 75, 255);
                 return 1;
             }
 
-            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileKnight>())) && Main.rand.NextBool(35))
+            if (Dungeon && tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DarkrootSentry>())) && Main.rand.NextBool(35))
 
             {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.OolacileKnight.Hunt"), 175, 75, 255);
+                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkrootSentry.Hunt"), 175, 75, 255);
                 return 1;
             }
 
@@ -268,7 +269,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
             int spriteWidth = NPC.frame.Width; //use same number as ini Main.npcFrameCount[npc.type]
-            int spriteHeight = TextureAssets.Npc[ModContent.NPCType<OolacileKnight>()].Value.Height / Main.npcFrameCount[NPC.type];
+            int spriteHeight = TextureAssets.Npc[ModContent.NPCType<DarkrootSentry>()].Value.Height / Main.npcFrameCount[NPC.type];
 
             int spritePosDifX = (int)(NPC.frame.Width / 2);
             int spritePosDifY = NPC.frame.Height; // was npc.frame.Height - 4;
@@ -291,7 +292,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 //draw 3 levels of trail
                 int alphaVal = 255 - (15 * i);
                 Color modifiedColour = new Color((int)(alphaVal), (int)(alphaVal), (int)(alphaVal), alphaVal);
-                spriteBatch.Draw((Texture2D)TextureAssets.Gore[Mod.Find<ModGore>("Oolacile Knight Glow").Type],
+                spriteBatch.Draw((Texture2D)TextureAssets.Gore[Mod.Find<ModGore>("Darkroot Sentry Glow").Type],
                     new Rectangle((int)(offsetX - NPC.velocity.X * (i * 0.5f)), (int)(offsetY - NPC.velocity.Y * (i * 0.5f)), spriteWidth, spriteHeight),
                     new Rectangle(0, NPC.frame.Height * frame, spriteWidth, spriteHeight),
                     modifiedColour,
@@ -306,14 +307,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         #region gore
         public override void OnKill()
         {
+            // Loot resolves before OnKill; retain this ordinary enemy's first kill using the shared world history.
+            if (Main.netMode != NetmodeID.MultiplayerClient && tsorcRevampWorld.NewSlain.TryAdd(new NPCDefinition(NPC.type), 1))
+            {
+                if (Main.netMode == NetmodeID.Server) NetMessage.SendData(MessageID.WorldData);
+            }
             if (!Main.dedServ)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 1").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 2").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 3").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 4").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 2").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Oolacile Knight Gore 3").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 1").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 2").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 3").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 4").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 2").Type, 0.9f);
+                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 3").Type, 0.9f);
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -327,6 +333,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>(), 1, 2, 3));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Humanity>(), 100, 1, 1, 30));
+            var halberd = new LeadingConditionRule(new SuperHardmodeRule());
+            var firstKill = ItemDropRule.ByCondition(new FirstBossKillRule(requireBoss: false),
+                ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>());
+            firstKill.OnFailedConditions(ItemDropRule.Common(
+                ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>(), 4));
+            halberd.OnSuccess(firstKill);
+            npcLoot.Add(halberd);
         }
     }
 }

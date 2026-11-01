@@ -46,6 +46,8 @@ namespace SwingPreview
         /// so the puppet, hand and chain translate together while a fixed target remains fixed.</summary>
         public float OwnerOffsetX;
         public float OwnerOffsetY;
+        public float BodySpinRotation; // rigid articulated set-piece rotation, radians
+        public bool OwnerHidden;
         public bool RuneVisible, RuneUnderhand;
         public float RuneAge, RuneFade = 1f;
 
@@ -302,6 +304,7 @@ namespace SwingPreview
             var canvas = new Bitmap(w, h, PixelFormat.Format32bppArgb);
             using Graphics g = Graphics.FromImage(canvas);
             g.Clear(Color.FromArgb(255, 30, 32, 40));
+            if (frame.OwnerHidden) return canvas;
 
             // Nearest-neighbour: this is pixel art, and smoothing would hide exactly the 1-2px
             // registration errors the preview exists to expose.
@@ -311,6 +314,12 @@ namespace SwingPreview
 
             g.ScaleTransform(zoom, zoom);
             g.TranslateTransform(PadX + frame.OwnerOffsetX, PadY + frame.OwnerOffsetY);
+            if (frame.BodySpinRotation != 0)
+            {
+                g.TranslateTransform(CellW / 2f, CellH / 2f);
+                g.RotateTransform(frame.BodySpinRotation * 180f / (float)Math.PI);
+                g.TranslateTransform(-CellW / 2f, -CellH / 2f);
+            }
 
             // Facing left is drawn as the exact mirror of the right-facing pose, about the body cell's
             // centre - which is what the game produces (vanilla flips every layer with the sprite,

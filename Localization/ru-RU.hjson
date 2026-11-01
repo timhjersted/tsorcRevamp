@@ -1214,9 +1214,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
-			OolacileKnightBanner: {
-				DisplayName: Знамя рыцаря Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
+			DarkrootSentryBanner: {
+				DisplayName: Знамя стража Тёмных корней
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootSentry.DisplayName}"
 			}
 
 			OolacileAcolyteBanner: {
@@ -9175,6 +9175,12 @@ Mods: {
 				// DisplayName: Darkmoon Knight Greaves
 			}
 
+			DarkrootHalberd: {
+				DisplayName: Алебарда Тёмных корней
+				Tooltip: "Тяжёлое древковое оружие стражей Тёмных корней\nЛКМ: удар сверху, удар снизу, затем выпад вперёд\nУдерживайте ПКМ для круговых взмахов; при отпускании завершает текущий оборот"
+				Stamina: "Выносливость: {0} / {1} / {2} за удар; {2} за полный оборот"
+			}
+
 			DarkrootSentryHelmet: {
 				// Tooltip: ""
 				// DisplayName: Darkroot Sentry Helmet
@@ -12616,8 +12622,8 @@ Mods: {
 			ManOfWar.DisplayName: Человек войны
 			DarkrootImp.DisplayName: Бес Тёмных корней
 
-			OolacileKnight: {
-				DisplayName: Рыцарь Олачиля
+			DarkrootSentry: {
+				DisplayName: Страж Тёмных корней
 				Intent: Древний воин пришёл, чтобы изгнать вас из жизни...
 				Hunt: На вас объявлена охота...
 			}

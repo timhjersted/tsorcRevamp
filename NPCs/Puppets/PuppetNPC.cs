@@ -3801,8 +3801,11 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Returns true when the puppet should interrupt whatever it is doing to flee and heal.
         /// Checked at the top of PuppetAttackAI every tick.
         /// </summary>
+        protected virtual bool CanBeginEstusHeal => true;
+
         private bool ShouldHeal()
         {
+            if (!CanBeginEstusHeal) return false;
             if (_estusCharges <= 0 || _healCooldown > 0)
             {
                 return false;
@@ -8431,6 +8434,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// Read every tick by UpdateAttackCommitFlags, so a subclass can armor one set-piece and not another.</summary>
         protected virtual bool CustomAttackCommitted => false;
 
+        // Custom ranged controllers use the same grip/style draw path as ordinary bursts.
+        protected void ConfigureCustomRangedWeapon(int itemType, RangedStyle style)
+        {
+            _activeRangedItemType = itemType;
+            _activeRangedStyle = style;
+        }
+
         /// <summary>
         /// Park the puppet in a bespoke, timed set-piece phase for <paramref name="duration"/> ticks: it
         /// holds an optional weapon pose, fires <see cref="DoCustomAttack"/> once now, runs
@@ -10257,8 +10267,13 @@ namespace tsorcRevamp.NPCs.Puppets
                 : hand;
         }
 
+        // Optional deterministic anchor for custom articulated controllers, before any draw-only Player access.
+        protected virtual Vector2? ResolveCompositeHandAnchor(float armRotation, Player.CompositeArmStretchAmount stretch) => null;
+
         private Vector2 GetUnscaledHandPosition()
         {
+            if (CompositeArmActive && ResolveCompositeHandAnchor(CompositeArmRotation, CompositeArmStretch) is Vector2 anchor)
+                return anchor;
             // Empty-hand casts need the same full-stretch palm on a dedicated server, which has
             // no draw-only Player. This is vanilla GetFrontHandPosition's full-stretch solve.
             if (FreeFrontArmFacingAngle is float facingAngle && !CompositeArmActive)

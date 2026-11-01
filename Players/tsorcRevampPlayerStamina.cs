@@ -1031,6 +1031,8 @@ namespace tsorcRevamp
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
+                // Its own tooltip reports all three swing prices and the per-rotation price.
+                if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>()) return;
                 StringBuilder tipToAdd = new();
                 // Checked against WeaponClassifiedTools directly, NOT UsesOutputBasedWeaponCost — that
                 // function now only distinguishes CoinGun from everything else, so it can't be used to

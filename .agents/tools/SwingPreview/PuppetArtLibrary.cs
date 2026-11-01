@@ -12,7 +12,7 @@ namespace SwingPreview
     /// </summary>
     internal static class PuppetArtLibrary
     {
-        internal const string Known = "BarrowWight, BarrowWightNemesis, BarrowWightPhantom, GhostOfTheForgottenWarrior, GhostOfTheForgottenKnight, Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, GreatBlackKnight, CursedDragon, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
+        internal const string Known = "BarrowWight, BarrowWightNemesis, BarrowWightPhantom, GhostOfTheForgottenWarrior, GhostOfTheForgottenKnight, Gwyn, Artorias, ArtoriasPhantom, SoulOfCinder, DarkKnight, DarkBloodKnight, CrystalKnight, RedKnight, BlackKnight, GreatBlackKnight, CursedDragon, TaurusKnight, OwlFather, OolacileCultist, AbysmalOolacileSorcerer, BlackNinja, AbyssalNinja, ShadowNinja, HeroofLumelia, DreadWraith, Ulhan";
 
         internal static PuppetArt Resolve(string puppet, string repoRoot)
         {
@@ -81,6 +81,19 @@ namespace SwingPreview
                 };
             }
 
+            if (puppet.Equals("AbyssalNinja", StringComparison.OrdinalIgnoreCase))
+            {
+                return new PuppetArt
+                {
+                    Name = "AbyssalNinja",
+                    BodySheet = P("Content", "Items", "Armor", "Melee", "AbyssalNinjaSet", "AbyssalNinjaTop_Body.png"),
+                    LegsSheet = P("Content", "Items", "Armor", "Melee", "AbyssalNinjaSet", "AbyssalNinjaBottoms_Legs.png"),
+                    HeadSheet = P("Content", "Items", "Armor", "Melee", "AbyssalNinjaSet", "AbyssalNinjaMask_Head.png"),
+                    WeaponSprite = P("Content", "Items", "Weapons", "Melee", "Runeterra", "Yasuo", "SteelTempest.png"),
+                    HandleNormX = 16f / 86f,
+                    HandleNormY = 68f / 82f,
+                };
+            }
             if (puppet.Equals("ShadowNinja", StringComparison.OrdinalIgnoreCase))
             {
                 return new PuppetArt

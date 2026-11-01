@@ -33,6 +33,8 @@ namespace SwingPreview
 
         private static int Main(string[] args)
         {
+            if (args.Contains("--darkroot-halberd")) return DarkrootHalberdPreview.Run(args);
+            if (args.Contains("--abyssal-poses")) return AbyssalPosePreview.Run(args);
             if (args.Contains("--rune-demo")) return RuneBladePreview.Run(args);
             if (args.Contains("--black-knight-poses"))
             {
