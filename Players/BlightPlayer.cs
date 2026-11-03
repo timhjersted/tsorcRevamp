@@ -20,6 +20,7 @@ namespace tsorcRevamp
         private const int PostDeathDisplayTicks = 6 * 60;
         private int postDeathDisplayTicks;
         private bool deathDisplayStarted;
+        private bool environmentalSyncPending;
 
         public void RequestBuildup(int buildup)
         {
@@ -36,7 +37,7 @@ namespace tsorcRevamp
             ApplyBuildupAuthoritative(buildup);
         }
 
-        internal void ApplyBuildupAuthoritative(int buildup)
+        internal void ApplyBuildupAuthoritative(int buildup, bool syncImmediately = true)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient || !Player.active || Player.dead
                 || Player.buffImmune[ModContent.BuffType<BlightBuildup>()]) return;
@@ -67,7 +68,8 @@ namespace tsorcRevamp
             }
             else Player.AddBuff(ModContent.BuffType<BlightBuildup>(), BlightBuildup.MarkerDurationTicks);
 
-            SyncState(triggerDamage);
+            if (triggerDamage > 0 || syncImmediately) SyncState(triggerDamage);
+            else if (Main.netMode == NetmodeID.Server) environmentalSyncPending = true;
         }
 
         private void ApplyTriggerDamage(int damage)
@@ -84,6 +86,7 @@ namespace tsorcRevamp
         private void SyncState(int triggerDamage = 0, int toWho = -1, int fromWho = -1)
         {
             if (Main.netMode != NetmodeID.Server) return;
+            environmentalSyncPending = false;
             ModPacket packet = Mod.GetPacket();
             packet.Write(tsorcPacketID.SyncBlightState);
             packet.Write((byte)Player.whoAmI);
@@ -167,6 +170,9 @@ namespace tsorcRevamp
 
         public override void PostUpdate()
         {
+            if (Main.netMode == NetmodeID.Server && environmentalSyncPending && Main.GameUpdateCount % 5 == 0)
+                SyncState();
+
             if (!Player.dead && deathDisplayStarted)
             {
                 deathDisplayStarted = false;

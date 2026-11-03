@@ -740,7 +740,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3));
             npcLoot.Add(ItemDropRule.ByCondition(
-                tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule,
+                tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule,
                 ModContent.ItemType<FlameOfTheAbyss>()));
         }
     }

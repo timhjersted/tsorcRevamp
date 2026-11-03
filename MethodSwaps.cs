@@ -355,15 +355,13 @@ namespace tsorcRevamp
             // GetModPlayer would throw IndexOutOfRangeException every draw frame, preventing orig()
             // from running and causing the entire DoDraw to abort — which blocks the update loop.
             int mp = Main.myPlayer;
+            orig(self);
             if (!Main.gameMenu && mp >= 0 && mp < Main.player.Length
                 && Main.player[mp] != null && Main.player[mp].active
-                && Main.player[mp].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+                && AbyssVisualOpacity > 0f)
             {
-                DrawAbyssSpaceBackground();
-                return;
+                DrawAbyssSpaceBackground(AbyssVisualOpacity);
             }
-
-            orig(self);
         }
 
         private static Artorias FindActiveArtorias()
@@ -379,11 +377,19 @@ namespace tsorcRevamp
             return null;
         }
 
-        internal static bool IsAbyssVisualActive()
+        internal static float AbyssVisualOpacity
         {
-            return IsArtoriasAbyssSurgeActive()
-                || Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true;
+            get
+            {
+                if (Main.gameMenu) return 0f;
+                // Combat voids retain their full-strength visuals, independent of world progression.
+                if (IsVesselVoidVisualActive() || IsArtoriasAbyssSurgeActive()) return 1f;
+                if (Systems.AbyssWorldSystem.Active) return Systems.AbyssWorldSystem.Darkness;
+                return Main.LocalPlayer?.HasBuff(ModContent.BuffType<Abyss>()) == true ? 1f : 0f;
+            }
         }
+
+        internal static bool IsAbyssVisualActive() => AbyssVisualOpacity > 0f;
 
         internal static bool IsArtoriasAbyssSurgeActive()
         {
@@ -395,11 +401,11 @@ namespace tsorcRevamp
             return NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden;
         }
 
-        private static void DrawAbyssSpaceBackground()
+        private static void DrawAbyssSpaceBackground(float opacity)
         {
             Texture2D pixel = TextureAssets.MagicPixel.Value;
             Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
-            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black);
+            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black * opacity);
 
             if (abyssLastScreenPosition == Vector2.Zero)
             {
@@ -411,14 +417,14 @@ namespace tsorcRevamp
             bool vesselVoid = IsVesselVoidVisualActive();
             float animationScale = vesselVoid ? 0.5f : 1f;
             DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f,
-                vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255),
-                vesselVoid ? new Color(255, 105, 85) : Color.White, animationScale);
+                (vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255)) * opacity,
+                (vesselVoid ? new Color(255, 105, 85) : Color.White) * opacity, animationScale);
             DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f,
-                vesselVoid ? new Color(255, 95, 70) : Color.White,
-                vesselVoid ? new Color(255, 145, 115) : Color.White, animationScale);
+                (vesselVoid ? new Color(255, 95, 70) : Color.White) * opacity,
+                (vesselVoid ? new Color(255, 145, 115) : Color.White) * opacity, animationScale);
             DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f,
-                vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230),
-                vesselVoid ? new Color(255, 85, 65) : Color.White, animationScale);
+                (vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230)) * opacity,
+                (vesselVoid ? new Color(255, 85, 65) : Color.White) * opacity, animationScale);
         }
 
         internal static void DrawVesselInteriorBackground(float opacity = 1f)
@@ -2411,6 +2417,7 @@ namespace tsorcRevamp
             }
 
             Texture2D pixel = TextureAssets.MagicPixel.Value;
+            float visualOpacity = AbyssVisualOpacity;
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
 
             float parallax = 0.08f;
@@ -2445,7 +2452,7 @@ namespace tsorcRevamp
                     float pulse = 0.5f + 0.5f * (float)Math.Sin(visualTime * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
                     Color accent = vesselVoid ? new Color(255, 55, 45) : new Color(180, 220, 255);
                     Color baseColor = vesselVoid ? new Color(255, 125, 105) : Color.White;
-                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse);
+                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse * visualOpacity);
                     int size = Hash01(cellX, cellY, 233) > 0.85f ? 2 : 1;
 
                     Main.spriteBatch.Draw(pixel, new Rectangle((int)particlePosition.X, (int)particlePosition.Y, size, size), color);

@@ -3,11 +3,10 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
-    // Bundles Weak + a flat 30% defense reduction + TornWings into a single icon/tooltip so it reads as one curse
-    // rather than a pile of unrelated debuffs. The effects are replicated directly (matching vanilla's own
-    // numbers for Weak) instead of stacking the vanilla buffs themselves, so only this one icon shows.
-    // Wearing the Covenant of Artorias ring cures it instantly (see the CovenantOfArtoriasEquipped check below) -
-    // EnterTheAbyss stays true afterward because the ring sets it independently via UpdateEquip/UpdateVanity.
+    // A single custom curse: stat penalties and the TornWings flag are applied directly, without adding
+    // vanilla Weak or a separate Torn Wings buff. Melee damage and flat defense are deliberately unaffected.
+    // The Covenant ring grants immunity. Environmental presence is maintained independently by AbyssWorldSystem;
+    // this flag also preserves temporary boss/enemy Abyss effects outside Super Hardmode, without changing time.
     public class Abyss : ModBuff
     {
         public override void SetStaticDefaults()
@@ -21,12 +20,8 @@ namespace tsorcRevamp.Buffs.Debuffs
             var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
             modPlayer.EnterTheAbyss = true;
 
-            // Weak (vanilla BuffID.Weak numbers). meleeDamage/meleeSpeed are internal on Player and not
-            // accessible from mod code, so use the public GetDamage/GetAttackSpeed accessors instead - same
-            // underlying StatModifier/float, just reached through the public API.
-            player.GetDamage(DamageClass.Melee) -= 0.051f;
-            player.GetAttackSpeed(DamageClass.Melee) -= 0.051f;
-            player.statDefense -= 4;
+            // Slow attacks across damage classes, without Weak's melee-damage or flat-defense loss.
+            player.GetAttackSpeed(DamageClass.Generic) -= 0.08f;
             player.moveSpeed -= 0.1f;
 
             // -30% defense. DefenseStat's * operator multiplies into a separate running FinalMultiplier that's

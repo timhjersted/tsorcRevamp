@@ -10,7 +10,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
-using tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias;
 using tsorcRevamp.Content.Items.Armor.Summon.WitchkingSet;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
@@ -2328,7 +2327,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingsSword>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 15, 20));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             npcLoot.Add(notExpertCondition);
         }
     }

@@ -650,7 +650,6 @@ Mods: {
 			NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
-			AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
 			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag]"
 			BotCOnly: "[c/ff9999: Only drops when the player is Unkindled or a Bearer of the Curse]"
 			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is Unkindled or a Bearer of the Curse]"
@@ -772,7 +771,7 @@ Mods: {
 				'''
 			MarikName: Marik of the Smoldering Bog
 			MarikDesc: A fading champion awaits. In sandbox worlds, use the Soul of Marik spawner.
-			GwynName: Gwyn, Lord of Cinder
+			GwynName: Gwyn, Lord of the First Dawn
 			GwynDesc: Seek the tomb below the Western Ocean.
 		}
 
@@ -1402,10 +1401,11 @@ Mods: {
 				Tooltip:
 					'''
 					To close the seal to the Abyss, you must defeat 6 lords of The Abyss:
-					Artorias, The Blight, The Wyvern Mage Shadow, Seath the Scaleless, and Chaos.
-					With a lord soul from each of these beings,
-					you will be able to summon the final lord: Gwyn, Lord of Cinder.
-					To craft the summoning item for each lord, you will need to return to eight familiar places
+					Water Fiend Kraken, Earth Fiend Lich, Fire Fiend Marilith, Artorias, The Wyvern Mage Shadow, and Seath the Scaleless.
+					Combine 1 Kraken Flesh, 1 Lich Bone, 1 Fiery Scale, 1 Soul of the Ghost Wyvern,
+					1 Soul of Artorias, and 1 Bequeathed Lord Soul Shard at a Demon Altar to craft the Lost Scroll of Gwyn.
+					Use the scroll to summon Gwyn, Lord of the First Dawn.
+					To craft the summoning item for each lord, you will need to return to seven familiar places
 					and collect a unique item dropped from an enemy you will find there: The Western Ocean, the Underground,
 					the Corruption, the Jungle, the Dungeon, the Underworld and the Eastern Ocean.
 					'''
@@ -1562,9 +1562,7 @@ Mods: {
 				DisplayName: Covenant of Artorias
 				Tooltip:
 					'''
-					{$CommonItemTooltip.VanityFunction}
-					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
-					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
+					[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					
 					'''
 			}
 
@@ -1581,7 +1579,7 @@ Mods: {
 					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRingItem.DisplayName} immunities
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeRegen@2}
 					{$CommonItemTooltip.IncreasesMaxLifeByPercent@3}
@@ -1682,7 +1680,7 @@ Mods: {
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					Immunity to Blackout, Obstructed, Freezing and Acid Venom
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					'''
 				Keybind1: "Press "
 				Keybind2: " to massively increase life regen and damage taken temporarily"
@@ -3740,8 +3738,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Ice cold to the touch, it glows with enchanted power
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -3786,7 +3782,7 @@ Mods: {
 			}
 
 			GwynBag: {
-				DisplayName: Treasure Bag (Gwyn, Lord of Cinder)
+				DisplayName: Treasure Bag (Gwyn, Lord of the First Dawn)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3920,9 +3916,8 @@ Mods: {
 				DisplayName: Blight Stone
 				Tooltip:
 					'''
-					Summons The Blight, one of the seven guardians of The Abyss.
-					You must fight this battle on the surface.
-					The Blight cannot be fought with the Covenant of Artorias ring equipped.
+					Summons The Blight, a guardian of the Abyss.
+					Must be used on the surface, outside a Blood Moon.
 					'''
 				Angery: '''"You will be destroyed"'''
 			}
@@ -4139,9 +4134,9 @@ Mods: {
 				DisplayName: Lost Scroll of Gwyn
 				Tooltip:
 					'''
-					Used to summon Gwyn, Lord of Cinder. 
-					Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:
-					Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. 
+					Used to summon Gwyn, Lord of the First Dawn.
+					Gwyn may prove impossible to defeat unless you have defeated 6 guardians of the Abyss:
+					Water Fiend Kraken, Earth Fiend Lich, Fire Fiend Marilith, Artorias, the Wyvern Mage Shadow, and Seath the Scaleless.
 					Only the true warrior of the age will survive this fight. 
 					'''
 				Summon: "Defeat me, and you shall inherit the fire of this world... "
@@ -4915,8 +4910,6 @@ Mods: {
 				Tooltip:
 					'''
 					A persistent flame that can cause incineration from the abyss 
-					[c/ffbf00:Only dropped by fallen souls in the abyss]
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -5842,8 +5835,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Radiating heat, it shimmers with forbidden magic
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -5923,12 +5914,11 @@ Mods: {
 				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
 				Obscured:
 					'''
-					As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon.
-					You feel relieved, but notice your heart is still not at peace. Attraidies was known for his games.
-					Even in death you suspect his sway over the world has not ended.
-					You remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself...
-					[c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]
-					[c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]
+					As the burning remains of Attraidies settle before you, you wait for the weight upon the world to lift.
+					Instead, the horizon darkens. One by one, the last colors of daylight disappear.
+					Attraidies has left you one final game. 
+					[c/00ffd4:Among the ashes lies a drill capable of breaking the strongest gates, still hot to the touch.]
+					Seek the Shaman Elder beyond the Western Sea. There may yet be a way to bring back the dawn.
 					'''
 			}
 
@@ -7788,8 +7778,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					A solid white surface, it casts an eerie purple shadow
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -9223,6 +9211,66 @@ Mods: {
 				Tooltip: Grows swifter with the distance you travel
 			}
 
+			SkeletonHeadpiece: {
+				DisplayName: Skeleton Skull
+				Tooltip: ""
+			}
+
+			SkeletonRibcage: {
+				DisplayName: Skeleton Rib Cage
+				Tooltip: ""
+			}
+
+			SkeletonLegBones: {
+				DisplayName: Skeleton Leg Bones
+				Tooltip: ""
+			}
+
+			BasiliskHeadpiece: {
+				DisplayName: Basilisk Headpiece
+				Tooltip: ""
+			}
+
+			BasiliskCarapace: {
+				DisplayName: Basilisk Carapace
+				Tooltip: ""
+			}
+
+			BasiliskGreaves: {
+				DisplayName: Basilisk Greaves
+				Tooltip: ""
+			}
+
+			FireLurkerHeadpiece: {
+				DisplayName: Fire Lurker Headpiece
+				Tooltip: ""
+			}
+
+			FireLurkerHide: {
+				DisplayName: Fire Lurker Hide
+				Tooltip: ""
+			}
+
+			FireLurkerLegs: {
+				DisplayName: Fire Lurker Legs
+				Tooltip: ""
+			}
+
+			HydrisNecromancerHeadpiece: {
+				DisplayName: Hydris Necromancer Crown
+				Tooltip: ""
+			}
+
+			HydrisNecromancerRobe: {
+				DisplayName: Hydris Necromancer Robe
+				Tooltip: ""
+			}
+
+			HydrisNecromancerBoots: {
+				DisplayName: Hydris Necromancer Boots
+				Tooltip: ""
+			}
+
 			WarlockHeadpiece: {
 				DisplayName: Warlock Headpiece
 				Tooltip: ""
@@ -9696,9 +9744,11 @@ Mods: {
 				Description:
 					'''
 					The Abyss has taken hold of you.
-					Weakened: reduced melee damage, speed, and defense
 					Defense reduced by 30%
-					Torn Wings: you cannot fly
+					8% reduced attack speed
+					Reduced movement speed
+					Torn Wings: disables wing flight, gliding, rocket boots, and jump boosts
+					Prevents positive life regeneration
 					'''
 			}
 
@@ -9714,7 +9764,7 @@ Mods: {
 
 			CowardsAffliction: {
 				DisplayName: Coward's Affliction
-				Description: Do not flee from the Lord of Cinder.
+				Description: Do not flee from the Lord of the First Dawn.
 			}
 
 			Crippled: {
@@ -9886,6 +9936,7 @@ Mods: {
 					'''
 					A dark force is dampening your speed
 					and ability to fly, ride or defy gravity here.
+					Disables fall damage immunity from equipment.
 					'''
 			}
 
@@ -12111,7 +12162,8 @@ Mods: {
 			}
 
 			PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
-			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
+			SHM.BossDeath: The portal to the Abyss narrows, bringing the world closer to dawn, but the foes who remain grow stronger.
+			SHM.OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
 			Player.AllDied: All players have been defeated at least once!
 			BossOutOfRange: begins to lose interst, return to the fight!
 			SolarPillar: The Solar Pillar returns to full strength...
@@ -12382,8 +12434,8 @@ Mods: {
 			}
 
 			Gwyn: {
-				DisplayName: Gwyn, Lord of Cinder
-				DespawnHandler: You have fallen before the Lord of Cinder...
+				DisplayName: Gwyn, Lord of the First Dawn
+				DespawnHandler: You have fallen before the Lord of the First Dawn...
 				SwordShattered: Gwyn's sword has shattered! Gwyn's defenses have been weakened!
 				RainOfDeath: Gwyn's rain of death has strengthened!
 				Fury: Gwyn's fury increases!
@@ -13428,14 +13480,16 @@ Mods: {
 					The ancestors tell me that the portal can be closed, but
 					you must first defeat the 3 Elemental Fiends: one of
 					[c/2f8ee0:Water], one of [c/fcff00:Earth], and one of [c/f53d0a:Fire].
-					You must also defeat 4 more lords of the Abyss:
-					[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					You must also defeat 3 more lords of the Abyss:
+					[c/ffbf00:Artorias], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					The fall of each of these six lords will bring the world closer to dawn, but the curse will remain until Gwyn is defeated.
+					The [c/ffbf00:Covenant of Artorias] can protect you from the curse, but it cannot dispel the world's darkness.
 					'''
 				AdvModeSHMQuote2:
 					'''
 					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
 					to face the final lord, who has tended the flame of the Abyss since the world began.
-					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of the First Dawn].
 					Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
@@ -13443,7 +13497,7 @@ Mods: {
 					'''
 					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
 					to face the final lord, who has tended the flame of the Abyss since the world began.
-					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of the First Dawn].
 					Gwyn's old tomb is buried somewhere in the Eternal Reef, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
@@ -13476,16 +13530,19 @@ Mods: {
 				AdvModeSHMQuote5: Good luck, Red.
 				SandboxSHMQuote1:
 					'''
-					To close the seal to the Abyss, you must defeat the 5 lords of The Abyss:
-					[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
-					[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
-					With a lord soul from each of these beings you will be able to summon the final lord -
-					[c/ff6618:Gwyn, Lord of Cinder].
+					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
+					[c/2f8ee0:Water Fiend Kraken], [c/fcff00:Earth Fiend Lich], [c/f53d0a:Fire Fiend Marilith],
+					[c/ffbf00:Artorias], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					Combine 1 Kraken Flesh, 1 Lich Bone, 1 Fiery Scale, 1 Soul of the Ghost Wyvern,
+					1 Soul of Artorias, and 1 Bequeathed Lord Soul Shard at a Demon Altar to craft the [c/ffbf00:Lost Scroll of Gwyn].
+					Use the scroll to summon [c/ff6618:Gwyn, Lord of the First Dawn].
+					Each of these six lords you defeat will bring the world closer to dawn. Only Gwyn's death can end the curse.
+					The [c/ffbf00:Covenant of Artorias] can protect you from the curse, but it cannot dispel the world's darkness.
 					'''
 				SandboxSHMQuote2:
 					'''
 					To craft the summoning item for each
-					lord, you will need to return to eight familiar places
+					lord, you will need to return to seven familiar places
 					and collect a unique item from an enemy you will find there:
 					[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption],
 					[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].
@@ -13495,7 +13552,7 @@ Mods: {
 					Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge.
 					To find him, you must seek out the [c/383838:Witchking] and restore the dark ring he drops.
 					He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
-					The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
+					The Covenant of Artorias offers protection from the curse while you search.
 					'''
 				SandboxSHMQuote4:
 					'''

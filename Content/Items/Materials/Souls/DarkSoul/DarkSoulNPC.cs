@@ -43,14 +43,18 @@ public class DarkSoulNPC : GlobalNPC
                     }
                     else
                     {
-                        // check whether the SHM boss was killed
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>() || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>()) /*|| npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>()) gwyn CLOSES the abyss portal!*/
+                        bool isRequiredShmBoss = Systems.AbyssWorldSystem.IsRequiredBoss(npc.type);
+                        bool isOptionalShmBoss = npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>();
+
+                        if (isRequiredShmBoss || isOptionalShmBoss)
                         {
-                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.SHM.BossDeath"), Color.Orange); 
+                            string messageKey = isRequiredShmBoss ? "NPCs.SHM.BossDeath" : "NPCs.SHM.OptionalBossDeath";
+                            UsefulFunctions.BroadcastText(LangUtils.GetTextValue(messageKey), Color.Orange);
                         }
 
                         if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())

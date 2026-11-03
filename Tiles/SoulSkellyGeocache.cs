@@ -107,9 +107,6 @@ namespace tsorcRevamp.Tiles
             //Giant Tree, bottom left by roots.
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(2542, 1486, 2, 2), ModContent.ItemType<ProudKnightSoul>(), 3));
 
-            //Big Queen Bee Larvae trap room, above the pyramid
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(5832, 1531, 2, 2), ItemID.WaspGun, 1, -1));
-
             //Corrupt tunnel left of village
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3790, 696, 2, 2), ItemID.Boomstick, 1, PrefixID.Unreal));
 

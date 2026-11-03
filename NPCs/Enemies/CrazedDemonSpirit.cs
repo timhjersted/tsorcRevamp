@@ -667,7 +667,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 20));
             npcLoot.Add(ItemDropRule.Common(ItemID.ManaRegenerationPotion, 25));
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 20));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
         #region Frames
         public override void FindFrame(int currentFrame)

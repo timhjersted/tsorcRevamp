@@ -12,6 +12,7 @@ using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Armor.Melee;
@@ -4513,6 +4514,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AdventureModeRule, ItemID.LargeAmethyst));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule, ModContent.ItemType<GuardianSoul>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<WolfRingItem>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
             npcLoot.Add(notExpertCondition);

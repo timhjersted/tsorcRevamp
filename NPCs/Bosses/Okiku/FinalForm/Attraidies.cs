@@ -1344,12 +1344,17 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
 
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.MartianHint"), new Color(12, 200, 255));
 
                 Main.hardMode = true;
                 tsorcRevampWorld.SuperHardMode = true;
                 tsorcRevampWorld.TheEnd = false;
+                Systems.AbyssWorldSystem.BeginEntry();
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+
                 if (tsorcRevampWorld.RemixMap)
                 {
                     UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.HallowDarker"), new Color(255, 40, 255));

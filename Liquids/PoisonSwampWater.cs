@@ -2,7 +2,7 @@
 //  POISON SWAMP WATER  —  Liquids/PoisonSwampWater.cs
 //
 //  Turns standing water green and applies Poison to submerged players whenever
-//  the "swamp condition" below is met.  All four pieces live here so the system
+//  the "swamp condition" below is met.  The pieces live here so the system
 //  is easy to find, edit, or rip out:
 //
 //    1.  IsInPoisonSwamp()  — single place to change WHEN it activates
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Liquids
     // ──────────────────────────────────────────────────────────────────────────
     //  1. SWAMP CONDITION
     //     Change this one method to change every rule at once.
-    //     Current rule: player is inside both a Jungle and Dungeon biome.
+    //     Active in the Jungle/Dungeon overlap or the underground Jungle.
     //     The Dungeon zone uses our reduced-tile-count detection from
     //     MethodSwaps.cs (Player_InZonePurity), so the Forgotten City qualifies.
     //
@@ -34,9 +34,12 @@ namespace tsorcRevamp.Liquids
     {
         //     Also active near an Eater of Worlds fight, whose toxic drips leave
         //     real water behind (NPCs/EaterOfWorldsToxicDrip.cs).
+        internal static bool IsUndergroundJungle(Player player) =>
+            player.ZoneJungle && (player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight);
+
         internal static bool IsActive(Player player)
         {
-            if (player.ZoneJungle && player.ZoneDungeon)
+            if ((player.ZoneJungle && player.ZoneDungeon) || IsUndergroundJungle(player))
             {
                 return true;
             }
@@ -108,6 +111,7 @@ namespace tsorcRevamp.Liquids
     {
         // 1 per tick = a full meter after ~1.7s of continuous contact.
         public const int BuildupPerTick = 1;
+        private int slowJungleWaterTicks;
 
         public override void PostUpdate()
         {
@@ -119,7 +123,24 @@ namespace tsorcRevamp.Liquids
                 && !Player.honeyWet
                 && !Player.shimmerWet;
 
-            if (!inSwampWater) return;
+            if (!inSwampWater)
+            {
+                slowJungleWaterTicks = 0;
+                return;
+            }
+
+            // Underground Jungle water outside the Dungeon builds poison at one third the usual rate.
+            if (PoisonSwampCondition.IsUndergroundJungle(Player) && !Player.ZoneDungeon)
+            {
+                if (++slowJungleWaterTicks < 3)
+                    return;
+
+                slowJungleWaterTicks = 0;
+            }
+            else
+            {
+                slowJungleWaterTicks = 0;
+            }
 
             Buffs.Debuffs.PoisonBuildup.Apply(Player, BuildupPerTick);
         }

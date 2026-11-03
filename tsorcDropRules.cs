@@ -100,13 +100,6 @@ namespace tsorcRevamp
         public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMRepeatKill");
     }
 
-    public class WithinTheAbyssRule : IItemDropRuleCondition, IProvideItemConditionDescription
-    {
-        public bool CanDrop(DropAttemptInfo info) => info.player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
-        public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.AbyssOnly");
-    }
-
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
         public virtual bool CanDrop(DropAttemptInfo info)

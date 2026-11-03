@@ -73,8 +73,8 @@ namespace tsorcRevamp.Liquids
 
         // Depth falloff: the top lava tile of a pool glows at full strength, each tile below it dimmer, bottoming out
         // at DeepGlowFraction once it has GlowFadeDepth tiles of lava above it. Bubbles, drips and lavafalls are not dimmed.
-        private const int GlowFadeDepth = 8;
-        private const float DeepGlowFraction = 0.15f;
+        private const int GlowFadeDepth = 6;
+        private const float DeepGlowFraction = 0.12f;
 
         // Tile the light scan is working on, captured in GetTileLight because ApplyLiquidLight is only handed the Tile.
         // The scan runs on worker threads (FastParallel), so each thread keeps its own copy.

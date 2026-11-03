@@ -131,51 +131,6 @@ namespace tsorcRevamp
             }
         }
 
-        public class AbyssWorldState
-        {
-            public bool bloodMoon = false;
-            public int moonPhase = 0;
-            public bool dayTime = false;
-            public double time = 0.0;
-            public bool stored = false;
-
-            public void StoreWorldState(bool bloodMoon, int moonPhase, bool dayTime, double time)
-            {
-                if (stored)
-                {
-                    return;
-                }
-
-                this.bloodMoon = bloodMoon;
-                this.moonPhase = moonPhase;
-                this.dayTime = dayTime;
-                this.time = time;
-                stored = true;
-            }
-
-            public void RevertWorldState()
-            {
-                if (!stored)
-                {
-                    return;
-                }
-
-                Main.bloodMoon = bloodMoon;
-                Main.moonPhase = moonPhase;
-                Main.dayTime = dayTime;
-                Main.time = time;
-                stored = false;
-
-                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
-                {
-                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-            }
-        }
-
-        public static AbyssWorldState beforeAbyss;
-
         public override void OnWorldLoad()
         {
             DownedBetsy = false;
@@ -215,7 +170,6 @@ namespace tsorcRevamp
             PendingDroppedSoulStacks = new();
             PendingDroppedSoulOwnerNames = new();
             BossIDsAndCoordinatesInternal = null;
-            beforeAbyss = new();
             DwarvenContractsGiven = 0;
             PopulatePairedBosses();
         }
@@ -1233,6 +1187,99 @@ namespace tsorcRevamp
             }
         }
 
+        // Full 2x2 TEdit markers: slime/slime above pink/pink gives a Proud Knight soul,
+        // and pink/pink above slime/slime gives a Brave Warrior soul. Their reward is encoded
+        // in the resulting tile type, so no coordinate entry is needed.
+        private static void ConvertSoulRewardSkullMarkers()
+        {
+            for (int x = 1; x < Main.maxTilesX - 1; x++)
+            {
+                for (int y = 1; y < Main.maxTilesY - 1; y++)
+                {
+                    Tile topLeft = Main.tile[x, y];
+                    if (!topLeft.HasTile || (topLeft.TileType != TileID.SlimeBlock && topLeft.TileType != TileID.PinkSlimeBlock))
+                        continue;
+
+                    Tile topRight = Main.tile[x + 1, y];
+                    Tile bottomLeft = Main.tile[x, y + 1];
+                    Tile bottomRight = Main.tile[x + 1, y + 1];
+                    ushort otherType = topLeft.TileType == TileID.SlimeBlock ? TileID.PinkSlimeBlock : TileID.SlimeBlock;
+                    if (!topRight.HasTile || topRight.TileType != topLeft.TileType
+                        || !bottomLeft.HasTile || bottomLeft.TileType != otherType
+                        || !bottomRight.HasTile || bottomRight.TileType != otherType)
+                        continue;
+
+                    ushort skullType = (ushort)(topLeft.TileType == TileID.SlimeBlock
+                        ? ModContent.TileType<Tiles.ProudKnightSoulSkull>()
+                        : ModContent.TileType<Tiles.BraveWarriorSoulSkull>());
+                    for (int dx = 0; dx < 2; dx++)
+                    {
+                        for (int dy = 0; dy < 2; dy++)
+                        {
+                            Tile part = Main.tile[x + dx, y + dy];
+                            part.TileType = skullType;
+                            part.TileFrameX = (short)(dx * 18);
+                            part.TileFrameY = (short)(dy * 18);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove the retired Wasp Gun skull from both fresh and already-converted adventure maps.
+        // Its cache coordinate is in legacy 2000-tile world space.
+        private static void RemoveWaspGunSoulSkull()
+        {
+            Point position = ExpandedWorldTransform.MapTile(5832, 1531);
+            int x = position.X;
+            int y = position.Y;
+            if (!WorldGen.InWorld(x + 1, y + 1)) return;
+
+            Tile topLeft = Main.tile[x, y];
+            ushort skullLeft = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
+            ushort skullRight = (ushort)ModContent.TileType<Tiles.SoulSkullR>();
+            bool isSkull = topLeft.HasTile && (topLeft.TileType == skullLeft || topLeft.TileType == skullRight)
+                && topLeft.TileFrameX % 36 == 0 && topLeft.TileFrameY == 0;
+            if (isSkull)
+            {
+                for (int dx = 0; dx < 2 && isSkull; dx++)
+                {
+                    for (int dy = 0; dy < 2; dy++)
+                    {
+                        Tile part = Main.tile[x + dx, y + dy];
+                        if (!part.HasTile || part.TileType != topLeft.TileType
+                            || part.TileFrameX != topLeft.TileFrameX + dx * 18 || part.TileFrameY != dy * 18)
+                        {
+                            isSkull = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (isSkull)
+            {
+                for (int dx = 0; dx < 2; dx++)
+                    for (int dy = 0; dy < 2; dy++)
+                        Main.tile[x + dx, y + dy].ClearTile();
+            }
+            else
+            {
+                Tile bottomLeft = Main.tile[x, y + 1];
+                Tile bottomRight = Main.tile[x + 1, y + 1];
+                bool isMarker = bottomLeft.HasTile && bottomRight.HasTile
+                    && ((bottomLeft.TileType == TileID.SlimeBlock && bottomRight.TileType == TileID.PinkSlimeBlock)
+                        || (bottomLeft.TileType == TileID.PinkSlimeBlock && bottomRight.TileType == TileID.SlimeBlock));
+                if (!isMarker) return;
+
+                bottomLeft.ClearTile();
+                bottomRight.ClearTile();
+            }
+
+            if (Main.netMode == NetmodeID.Server)
+                NetMessage.SendTileSquare(-1, x + 1, y + 1, 4);
+        }
+
         public static void BuildSoapstones()
         {
             string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
@@ -2107,6 +2154,7 @@ namespace tsorcRevamp
                     //Stuff that should only be done by either a solo player or the server
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        RemoveWaspGunSoulSkull();
 
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
@@ -2114,6 +2162,10 @@ namespace tsorcRevamp
                             PlaceModdedTiles();
                             //ReadSoapstonesIntoJson();
                         }
+
+                        // These markers are identified by their block pattern rather than map coordinates.
+                        // Check on every adventure-world load so markers added to an existing map also convert.
+                        ConvertSoulRewardSkullMarkers();
 
                         if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSoapstones)
                         {
@@ -2388,37 +2440,6 @@ namespace tsorcRevamp
                 tsorcScriptedEvents.ScriptedEventCheck();
             }
 
-            bool charm = false;
-            foreach (Player player in Main.ActivePlayers)
-            {
-                if (player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
-                {
-                    charm = true;
-                    break;
-                }
-            }
-            if (charm)
-            {
-                beforeAbyss.StoreWorldState(Main.bloodMoon, Main.moonPhase, Main.dayTime, Main.time);
-
-                Main.bloodMoon = false;
-                Main.moonPhase = 0;
-                Main.dayTime = false;
-                Main.time = 16240.0;
-
-                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
-                {
-                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-            }
-            // Revert back to whatever time it was before the ring was equipped.
-            // This does nothing if nothing was stored
-            else 
-            {
-                beforeAbyss.RevertWorldState();
-            }
-            
             if (!Main.dedServ)
             {
                 if (SuperHardMode)
@@ -2544,6 +2565,7 @@ namespace tsorcRevamp
             Main.hardMode = false;
             tsorcRevampWorld.SuperHardMode = false;
             tsorcRevampWorld.TheEnd = true;
+            Systems.AbyssWorldSystem.RestoreDawn();
 
             //		Main.NewText("You have vanquished the final guardian of the Abyss...");
             //		Main.NewText("The kiln of the First Flame has been ignited!");

@@ -509,7 +509,7 @@ namespace tsorcRevamp
                 tsorcRevampWorld.ResetBossAlive();
             }
 
-            EnterTheAbyss = false;
+            EnterTheAbyss = AbyssWorldSystem.CurseActive;
             SwallowHidden = false;
             SlowfallWingActive = false;
             Suppressed = false;
@@ -2606,7 +2606,7 @@ namespace tsorcRevamp
 
         internal static bool IsSeathWingFallImmune(Player player)
         {
-            if (!player.controlDown) return false;
+            if (player.GetModPlayer<tsorcRevampPlayer>().Suppressed || !player.controlDown) return false;
             if (player.equippedWings != null && player.equippedWings.type == ModContent.ItemType<WingsOfSeath>())
             {
                 return true;
@@ -2635,6 +2635,9 @@ namespace tsorcRevamp
 
         internal static bool IsWingFallProtected(Player player)
         {
+            // Also used by vanilla's separate equipped-wings immunity check in WingFallDamage_Patch.
+            if (player.GetModPlayer<tsorcRevampPlayer>().Suppressed) return false;
+
             bool activelyGliding = player.controlJump
                 && player.velocity.Y * player.gravDir > 0f
                 && player.wingsLogic > 0;
@@ -2668,10 +2671,10 @@ namespace tsorcRevamp
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
             // Passive wings' fall immunity is stripped by WingFallDamage_Patch (vanilla checks equippedWings
-            // separately from noFallDmg); this only ADDS immunity while the player actively glides or hovers,
+            // separately from noFallDmg); normally this ADDS immunity while the player actively glides or hovers,
             // or has the Wings of Seath slow-fall toggle enabled. It must OR into noFallDmg, never assign:
             // Lucky Horseshoe / Obsidian Horseshoe / the horseshoe balloon bundles set noFallDmg in
-            // UpdateEquips, and overwriting it here silently deleted their fall immunity.
+            // UpdateEquips, and overwriting it here would delete their fall immunity outside Suppressed.
             Player.noFallDmg |= IsWingFallProtected(Player);
 
             // Classic keeps vanilla's full wing fall immunity; the wing fall-damage rule is Souls Mode only.
@@ -2680,6 +2683,13 @@ namespace tsorcRevamp
             if (!SoulsMode && HasFunctionalWings(Player))
             {
                 Player.noFallDmg = true;
+            }
+
+            // Suppressed overrides equipment immunity after all equip hooks, including Classic's wing immunity.
+            // The wing helpers above also block the equipped-wings IL guard and Seath's ImmuneTo shortcut.
+            if (Suppressed)
+            {
+                Player.noFallDmg = false;
             }
 
             // Gravity Alignment can reverse gravity while the player already has a vertical velocity.
@@ -2797,6 +2807,14 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            // Run after every ModPlayer's PostUpdateEquips so the Covenant ring's immunity is established.
+            // All peers follow the server-synced boss history; a deterministic refresh needs no buff packets.
+            // The curse begins after the eight-second entry fade and persists everywhere until Gwyn is slain.
+            if (!Player.dead && AbyssWorldSystem.CurseActive)
+            {
+                Player.AddBuff(ModContent.BuffType<Abyss>(), 60);
+            }
+
             // Deliberately NOT in PostUpdateEquips: a Celestriad (or other max-mana source) sitting in the
             // Active Shields 2nd slot adds to MaxManaAmplifier from tsorcRevampActiveShieldPlayer.PostUpdateEquips,
             // a *different* ModPlayer's copy of the same hook. Hook order between two ModPlayer classes for the
@@ -3084,7 +3102,7 @@ namespace tsorcRevamp
             bool entering = EnterTheAbyss;
             WasInAbyss = EnterTheAbyss;
 
-            if (Main.dedServ)
+            if (Main.dedServ || (entering && AbyssWorldSystem.Active))
             {
                 return;
             }
@@ -3158,7 +3176,8 @@ namespace tsorcRevamp
 
         private void SpawnAbyssMist()
         {
-            if ((!EnterTheAbyss && !MethodSwaps.IsAbyssVisualActive()) || Main.dedServ)
+            float visualOpacity = MethodSwaps.AbyssVisualOpacity;
+            if (visualOpacity <= 0f || Main.dedServ)
             {
                 return;
             }
@@ -3173,7 +3192,7 @@ namespace tsorcRevamp
                 abyssMistRefreshTimer--;
             }
 
-            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(2))
+            if (abyssMistSurfaceTiles.Count == 0 || Main.rand.NextFloat() >= 0.5f * visualOpacity)
             {
                 return;
             }
@@ -3297,6 +3316,15 @@ namespace tsorcRevamp
             //Main.NewText("" + Player.lifeRegen);
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
+
+            // World-wide SHM underground rule. Keep this separate from the biome rules so removing it
+            // later restores their original coverage. A boss pauses refreshes; existing stacks expire in 1s.
+            if (tsorcRevampWorld.SuperHardMode && Player.Center.Y > Main.worldSurface * 16.0
+                && !tsorcRevampWorld.BossAlive
+                && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 60);
+            }
 
             // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
             // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.

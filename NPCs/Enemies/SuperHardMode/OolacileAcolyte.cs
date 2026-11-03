@@ -2249,7 +2249,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HealingElixir>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<RedTitanite>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>(), 30));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 2));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<CrimsonPotion>(), 100, 1, 1, 5));
@@ -2258,7 +2258,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npcLoot.Add(new CommonDrop(ModContent.ItemType<BattlefrontPotion>(), 100, 1, 1, 5));
             npcLoot.Add(new CommonDrop(ItemID.BloodMoonStarter, 100, 1, 1, 5));
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<StarlightShardItem>(), 4));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
     }
 }

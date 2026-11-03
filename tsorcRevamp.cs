@@ -142,7 +142,6 @@ namespace tsorcRevamp
         public class tsorcItemDropRuleConditions
         {
             public static IItemDropRuleCondition SuperHardmodeRule;
-            public static IItemDropRuleCondition AbyssRule;
             public static IItemDropRuleCondition FirstBagRule;
             public static IItemDropRuleCondition CursedRule;
             public static IItemDropRuleCondition FirstBagCursedRule;
@@ -522,7 +521,6 @@ namespace tsorcRevamp
 
             #region tsorcItemDropRuleConditions class
             tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
-            tsorcItemDropRuleConditions.AbyssRule = new WithinTheAbyssRule();
             tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
             tsorcItemDropRuleConditions.CursedRule = new CursedRule();
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
@@ -2589,6 +2587,14 @@ namespace tsorcRevamp
                             packet.Write(allowed);
                             packet.Send(-1, whoAmI);
                         }
+                        break;
+                    }
+                case tsorcPacketID.OpenSoulRewardSkull:
+                    {
+                        short tileX = reader.ReadInt16();
+                        short tileY = reader.ReadInt16();
+                        if (Main.netMode == NetmodeID.Server)
+                            Tiles.SoulRewardSkull.TryOpen(tileX, tileY, whoAmI);
                         break;
                     }
                 case tsorcPacketID.ReportBlockedAttack:
@@ -5329,6 +5335,8 @@ namespace tsorcRevamp
         /// <summary>Victim client → server: a server-owned hostile projectile died on my machine right after hitting me. Vanilla only
         /// broadcasts a kill from the owner, so without this the server and other players keep it flying. tsorcGlobalProjectile.</summary>
         public const byte RequestKillHitProjectile = 47;
+        /// <summary>Client asks the server to open a pattern-authored soul skull and spawn its fixed reward.</summary>
+        public const byte OpenSoulRewardSkull = 48;
     }
 
     //config moved to separate file

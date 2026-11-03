@@ -551,6 +551,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RingofArtorias>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WolfRingItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
@@ -601,7 +602,6 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 20, 30));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }

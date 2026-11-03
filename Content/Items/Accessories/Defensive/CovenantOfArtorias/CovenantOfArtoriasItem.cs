@@ -24,8 +24,8 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<SoulOfAttraidies>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20000);
+            recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -33,15 +33,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.EnterTheAbyss = true;
-            player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
-        }
-
-        public override void UpdateVanity(Player player)
-        {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.EnterTheAbyss = true;
             player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
         }
     }

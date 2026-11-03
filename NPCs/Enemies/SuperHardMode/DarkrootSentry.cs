@@ -331,7 +331,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<RedTitanite>(), 1, 2, 3));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<RedTitanite>(), 1, 2, 3));
             npcLoot.Add(new CommonDrop(ModContent.ItemType<Humanity>(), 100, 1, 1, 30));
             var halberd = new LeadingConditionRule(new SuperHardmodeRule());
             var firstKill = ItemDropRule.ByCondition(new FirstBossKillRule(requireBoss: false),
