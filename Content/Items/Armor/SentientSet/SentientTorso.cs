@@ -12,10 +12,9 @@ namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 [AutoloadEquip(EquipType.Body)]
 public class SentientTorso : ModItem
 {
-    public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/SentientSet/SentientTorso";
-
     public int DamageTaken;
-    public float BaseRegen = 3;
+    public float Level = 0;
+    public const float Divisor = 150f;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
     public override void SetStaticDefaults()
@@ -40,21 +39,8 @@ public class SentientTorso : ModItem
     {
         var modPlayer = player.GetModPlayer<SentientSetPlayer>();
         modPlayer.EquippedTorso = this;
-        float level = MathF.Sqrt(DamageTaken / 100f);
-        player.endurance += (level / 100f);
-    }
-    public override bool IsArmorSet(Item head, Item body, Item legs)
-    {
-        return head.type == ModContent.ItemType<SentientHead>()
-            && legs.type == ModContent.ItemType<SentientLegs>();
-    }
-
-    public override void UpdateArmorSet(Player player)
-    {
-        player.setBonus = Language.GetTextValue("Mods.tsorcRevamp.Items.SentientTorso.SetBonus");
-        player.crimsonRegen = true;
-        player.lifeRegen += (int)BaseRegen;
-        player.GetModPlayer<SentientSetPlayer>().SetBonus = true;
+        Level = MathF.Round(MathF.Sqrt(DamageTaken / Divisor), 0);
+        player.endurance += (Level / 100f);
     }
     public override void SaveData(TagCompound tag)
     {
@@ -63,14 +49,15 @@ public class SentientTorso : ModItem
     public override void LoadData(TagCompound tag)
     {
         DamageTaken = tag.GetInt("DmgTaken");
+        Level = MathF.Round(MathF.Sqrt(DamageTaken / Divisor), 0);
     }
 
     public override void ModifyTooltips(List<TooltipLine> tooltips)
     {
-        int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria");
+        int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
         if (ttindex != -1)
         {
-            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Lvl", "Damage absorbed: " + DamageTaken));
+            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Lvl", Language.GetTextValue(Tooltip.Key + "0", DamageTaken, Level)));
         }
     }
     

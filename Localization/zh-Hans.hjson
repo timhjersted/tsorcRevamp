@@ -649,7 +649,6 @@ Mods: {
 			// NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			// NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			// NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
-			AbyssOnly: "[c/ff9999: 仅在装备亚尔特留斯之约时掉落]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
 			FirstBagBotCOnly: "[c/ff9999: 当玩家是被诅咒者时，只能从第一个打开的特定袋子中掉落]"
@@ -1563,12 +1562,7 @@ Mods: {
 
 			CovenantOfArtoriasItem: {
 				// DisplayName: Covenant of Artorias
-				/* Tooltip:
-					'''
-					{$CommonItemTooltip.VanityFunction}
-					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
-					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
-					''' */
+				// Tooltip: '''[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					'''
 			}
 
 			DarkCloakItem: {
@@ -1685,7 +1679,7 @@ Mods: {
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					Immunity to Blackout, Obstructed, Freezing and Acid Venom
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					''' */
 				// Keybind1: "Press "
 				// Keybind2: " to massively increase life regen and damage taken temporarily"
@@ -9214,8 +9208,13 @@ Mods: {
 
 			DarkrootHalberd: {
 				DisplayName: 黑森林戟
-				Tooltip: "黑森林哨兵使用的沉重长柄武器\n左键：下劈、上挑，然后向前突刺\n按住右键持续回旋；松开后完成当前一圈"
-				Stamina: "耐力：连招每击消耗 {0} / {1} / {2}；每转一圈消耗 {2}"
+				Tooltip:
+					'''
+					黑森林哨兵使用的沉重长柄武器
+					左键：下劈、上挑，然后向前突刺
+					按住右键持续回旋；松开后完成当前一圈
+					'''
+				Stamina: 耐力：连招每击消耗 {0} / {1} / {2}；每转一圈消耗 {2}
 			}
 
 			DarkrootSentryHelmet: {
@@ -9235,22 +9234,128 @@ Mods: {
 
 			SentientHead: {
 				// DisplayName: Sentient Helm
-				/* Tooltip:
+				// Tooltip: Grows stronger with the damage you deal
+				/* Tooltip0:
 					'''
-					Increases damage by {0}%
-					Grows stronger with the damage you deal
+					Total damage dealt: {0}
+					Current damage increase: {1}%
+					''' */
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Grants Crimson Armors Set Bonus and
+					{$CommonItemTooltip.LifeRegen@1}
 					''' */
 			}
 
 			SentientTorso: {
 				// DisplayName: Sentient Cuirass
 				// Tooltip: Grows tougher by remembering damage endured
-				// SetBonus: Increased life regeneration
+				/* Tooltip0:
+					'''
+					Total damage taken: {0}
+					Current resistance bonus: {1}
+					''' */
 			}
 
 			SentientLegs: {
 				// DisplayName: Sentient Greaves
 				// Tooltip: Grows swifter with the distance you travel
+				/* Tooltip0:
+					'''
+					Total distance traveled: {0}
+					Current movement speed increase: {1}%
+					''' */
+			}
+
+			SkeletonHeadpiece: {
+				// DisplayName: Skeleton Skull
+				// Tooltip: ""
+			}
+
+			SkeletonRibcage: {
+				// DisplayName: Skeleton Rib Cage
+				// Tooltip: ""
+			}
+
+			SkeletonLegBones: {
+				// DisplayName: Skeleton Leg Bones
+				// Tooltip: ""
+			}
+
+			BasiliskHeadpiece: {
+				// DisplayName: Basilisk Headpiece
+				// Tooltip: ""
+			}
+
+			BasiliskCarapace: {
+				// DisplayName: Basilisk Carapace
+				// Tooltip: ""
+			}
+
+			BasiliskGreaves: {
+				// DisplayName: Basilisk Greaves
+				// Tooltip: ""
+			}
+
+			FireLurkerHeadpiece: {
+				// DisplayName: Fire Lurker Headpiece
+				// Tooltip: ""
+			}
+
+			FireLurkerHide: {
+				// DisplayName: Fire Lurker Hide
+				// Tooltip: ""
+			}
+
+			FireLurkerLegs: {
+				// DisplayName: Fire Lurker Legs
+				// Tooltip: ""
+			}
+
+			HydrisNecromancerHeadpiece: {
+				// DisplayName: Hydris Necromancer Crown
+				// Tooltip: ""
+			}
+
+			HydrisNecromancerRobe: {
+				// DisplayName: Hydris Necromancer Robe
+				// Tooltip: ""
+			}
+
+			HydrisNecromancerBoots: {
+				// DisplayName: Hydris Necromancer Boots
+				// Tooltip: ""
+			}
+
+			WarlockHeadpiece: {
+				// DisplayName: Warlock Headpiece
+				// Tooltip: ""
+			}
+
+			WarlockRobe: {
+				// DisplayName: Warlock Robe
+				// Tooltip: ""
+			}
+
+			WarlockBoots: {
+				// DisplayName: Warlock Boots
+				// Tooltip: ""
+			}
+
+			TibianAmazonHeadpiece: {
+				// DisplayName: Tibian Amazon Headpiece
+				// Tooltip: ""
+			}
+
+			TibianAmazonTunic: {
+				// DisplayName: Tibian Amazon Tunic
+				// Tooltip: ""
+			}
+
+			TibianAmazonBoots: {
+				// DisplayName: Tibian Amazon Boots
+				// Tooltip: ""
 			}
 
 			TibianValkyrieHeadpiece: {
@@ -9605,6 +9710,11 @@ Mods: {
 				// DisplayName: Enemy Ephemeral Axe
 				// Tooltip: ""
 			}
+
+			EnemyAbyssalNinjaSword: {
+				// DisplayName: Enemy Abyssal Ninja Sword
+				// Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -9696,9 +9806,11 @@ Mods: {
 				/* Description:
 					'''
 					The Abyss has taken hold of you.
-					Weakened: reduced melee damage, speed, and defense
 					Defense reduced by 30%
-					Torn Wings: you cannot fly
+					8% reduced attack speed
+					Reduced movement speed
+					Torn Wings: disables wing flight, gliding, rocket boots, and jump boosts
+					Prevents positive life regeneration
 					''' */
 			}
 
@@ -9886,6 +9998,7 @@ Mods: {
 					'''
 					A dark force is dampening your speed
 					and ability to fly, ride or defy gravity here.
+					Disables fall damage immunity from equipment.
 					''' */
 			}
 
@@ -12087,6 +12200,10 @@ Mods: {
 			// ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
 			// ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
 			// GigasFrostBurst.DisplayName: Gigas Frost Burst
+			// AbyssalMeridianSeam.DisplayName: Abyssal Meridian Seam
+			// AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
+			// AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
+			// DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
 		}
 
 		NPCs: {
@@ -12115,7 +12232,12 @@ Mods: {
 			}
 
 			PillarsForcefield: 苍穹某处，宏伟的天界屏障轰然崩塌...
-			SHM.BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
+
+			SHM: {
+				BossDeath: 通往深渊的大门越来越宽，它的子民越来越强大...
+				// OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
+			}
+
 			Player.AllDied: 所有玩家均已被打败！
 			BossOutOfRange: 开始对你失去兴趣，重新返回战斗！
 			SolarPillar: 日耀柱的力量恢复了...
@@ -13930,6 +14052,8 @@ Mods: {
 			}
 
 			SoulSkullR.MapEntry: 灵魂头骨
+			// BraveWarriorSoulSkull.MapEntry: Brave Warrior Soul Skull
+			// ProudKnightSoulSkull.MapEntry: Proud Knight Soul Skull
 		}
 
 		Keybinds: {

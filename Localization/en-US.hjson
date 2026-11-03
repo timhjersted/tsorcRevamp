@@ -1560,10 +1560,7 @@ Mods: {
 
 			CovenantOfArtoriasItem: {
 				DisplayName: Covenant of Artorias
-				Tooltip:
-					'''
-					[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					
-					'''
+				Tooltip: '''[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					'''
 			}
 
 			DarkCloakItem: {
@@ -4907,10 +4904,7 @@ Mods: {
 
 			FlameOfTheAbyss: {
 				DisplayName: Flame of the Abyss
-				Tooltip:
-					'''
-					A persistent flame that can cause incineration from the abyss 
-					'''
+				Tooltip: "A persistent flame that can cause incineration from the abyss "
 			}
 
 			ForgottenIceBowScroll: {
@@ -9172,8 +9166,13 @@ Mods: {
 
 			DarkrootHalberd: {
 				DisplayName: Darkroot Halberd
-				Tooltip: "A heavy polearm of the Darkroot sentries\nLeft click: overhand, underhand, then a forward thrust\nHold right click to sweep continuously; release to finish the current rotation"
-				Stamina: "Stamina: {0} / {1} / {2} per combo strike; {2} per full rotation"
+				Tooltip:
+					'''
+					A heavy polearm of the Darkroot sentries
+					Left click: overhand, underhand, then a forward thrust
+					Hold right click to sweep continuously; release to finish the current rotation
+					'''
+				Stamina: Stamina: {0} / {1} / {2} per combo strike; {2} per full rotation
 			}
 
 			DarkrootSentryHelmet: {
@@ -9193,22 +9192,38 @@ Mods: {
 
 			SentientHead: {
 				DisplayName: Sentient Helm
-				Tooltip:
+				Tooltip: Grows stronger with the damage you deal
+				Tooltip0:
 					'''
-					Increases damage by {0}%
-					Grows stronger with the damage you deal
+					Total damage dealt: {0}
+					Current damage increase: {1}%
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Grants Crimson Armors Set Bonus and
+					{$CommonItemTooltip.LifeRegen@1}
 					'''
 			}
 
 			SentientTorso: {
 				DisplayName: Sentient Cuirass
 				Tooltip: Grows tougher by remembering damage endured
-				SetBonus: Increased life regeneration
+				Tooltip0:
+					'''
+					Total damage taken: {0}
+					Current resistance bonus: {1}
+					'''
 			}
 
 			SentientLegs: {
 				DisplayName: Sentient Greaves
 				Tooltip: Grows swifter with the distance you travel
+				Tooltip0:
+					'''
+					Total distance traveled: {0}
+					Current movement speed increase: {1}%
+					'''
 			}
 
 			SkeletonHeadpiece: {
@@ -9651,6 +9666,11 @@ Mods: {
 
 			EnemyEphemeralAxe: {
 				DisplayName: Enemy Ephemeral Axe
+				Tooltip: ""
+			}
+
+			EnemyAbyssalNinjaSword: {
+				DisplayName: Enemy Abyssal Ninja Sword
 				Tooltip: ""
 			}
 		}
@@ -12134,6 +12154,10 @@ Mods: {
 			ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
 			ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
 			GigasFrostBurst.DisplayName: Gigas Frost Burst
+			AbyssalMeridianSeam.DisplayName: Abyssal Meridian Seam
+			AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
+			AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
+			DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
 		}
 
 		NPCs: {
@@ -12162,8 +12186,12 @@ Mods: {
 			}
 
 			PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
-			SHM.BossDeath: The portal to the Abyss narrows, bringing the world closer to dawn, but the foes who remain grow stronger.
-			SHM.OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
+
+			SHM: {
+				BossDeath: The portal to the Abyss narrows, bringing the world closer to dawn, but the foes who remain grow stronger.
+				OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
+			}
+
 			Player.AllDied: All players have been defeated at least once!
 			BossOutOfRange: begins to lose interst, return to the fight!
 			SolarPillar: The Solar Pillar returns to full strength...
@@ -13982,6 +14010,8 @@ Mods: {
 			}
 
 			SoulSkullR.MapEntry: Soul Skull
+			BraveWarriorSoulSkull.MapEntry: Brave Warrior Soul Skull
+			ProudKnightSoulSkull.MapEntry: Proud Knight Soul Skull
 		}
 
 		Keybinds: {
