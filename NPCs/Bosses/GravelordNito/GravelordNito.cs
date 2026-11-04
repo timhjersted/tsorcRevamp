@@ -6,8 +6,10 @@ using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.Enemy.GravelordNito;
 using tsorcRevamp.Utilities;
 
@@ -3249,6 +3251,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float bodyOriginX = faceRight ? BodyWidth - BodyDrawCenterX : BodyDrawCenterX;
             spriteBatch.Draw(body, drawBottom - screenPos, frame, drawColor, NPC.rotation, new Vector2(bodyOriginX, FrameHeight), NPC.scale, effects, 0f);
             return false;
+        }
+
+        public override void ModifyNPCLoot(NPCLoot npcLoot)
+        {
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GravelordSword>()));
         }
 
         ///<summary>Nito stands in Skeletron's progression slot while Skeletron remains an optional,

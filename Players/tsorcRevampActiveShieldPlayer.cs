@@ -856,10 +856,10 @@ namespace tsorcRevamp
                 guardBroke = true;
             }
 
-            // Post-block regen pause. An ordinary block doubles the class's normal spend delay (60 Unkindled /
-            // 30 BotC); a perfect parry keeps the ordinary one (30 / 15). That gap is the point: the shield-down
-            // window between a kiter's spaced shots was long enough to refill what the block cost, so a
-            // block→shoot loop never lost ground. Doubling it makes sloppy blocking bleed while clean timing
+            // Post-block regen pause. An ordinary block uses the longer block delay (80 Unkindled / 100 BotC,
+            // ~1.33x the spend delay); a perfect parry keeps the ordinary one (60 / 75). That gap is the point: the
+            // shield-down window between a kiter's spaced shots was long enough to refill what the block cost, so a
+            // block→shoot loop never lost ground. The longer pause makes sloppy blocking bleed while clean timing
             // still recovers at the normal rate. Set explicitly rather than leaning on UpdateResource's generic
             // "you spent stamina" detector, so a future change to the parry cost can't silently drop the pause.
             // Mana wards included — they spend a stamina sip per block, and a block is a block.

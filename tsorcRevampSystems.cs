@@ -149,6 +149,11 @@ namespace tsorcRevamp
 
             float hoverRange = 32 / Main.mapFullscreenScale;
 
+            // Hardmode Souls-mode lock: away from a bonfire, icons draw dimmed and can't be clicked.
+            // Checked on the local player only; the warp is a client-side SafeTeleport.
+            bool warpLocked = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BonfireWarpLocked;
+            Color lockedTint = Color.DarkGray * 0.55f;
+
             foreach (Vector2 bonfirePoint in tsorcRevampWorld.LitBonfireList)
             {
                 Vector2 bonfireDrawCoords = bonfirePoint;
@@ -157,8 +162,19 @@ namespace tsorcRevamp
                 bonfireDrawCoords *= mapScale;
                 bonfireDrawCoords += scaledMapCoords;
 
+                bool hovered = (mouseTile - bonfirePoint).Length() <= hoverRange;
+
+                if (warpLocked)
+                {
+                    Main.spriteBatch.Draw(BonfireMinimapTexture, bonfireDrawCoords, null, lockedTint, 0, BonfireMinimapTexture.Size() / 2, 0.85f, SpriteEffects.None, 1);
+
+                    if (hovered)
+                    {
+                        mouseText = LangUtils.GetTextValue("World.TPNeedBonfire");
+                    }
+                }
                 //Step 3: While drawing check if it's in-range of the cursor, and if so give it a rainbow backdrop
-                if ((mouseTile - bonfirePoint).Length() <= hoverRange)
+                else if (hovered)
                 {
                     for (int i = 0; i < 4; i++)
                     {

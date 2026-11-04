@@ -24,6 +24,7 @@ namespace tsorcRevamp.UI
         tsorcUIHoverTextButton ButtonSetSpawn;
         tsorcUIHoverTextButton ButtonPiggyBank;
         tsorcUIHoverTextButton ButtonSafe;
+        tsorcUIHoverTextButton ButtonTravel;
         public override void OnInitialize()
         {
             // Here we define our container UIElement. In DragableUIPanel.cs, you can see that DragableUIPanel is a UIPanel with a couple added features.
@@ -31,9 +32,9 @@ namespace tsorcRevamp.UI
             BonfireUI.SetPadding(0);
             // We need to place this UIElement in relation to its Parent. Later we will be calling `base.Append(BonfireUI);`. 
             // This means that this class, BonfireUIState, will be our Parent. Since BonfireUIState is a UIState, the Left and Top are relative to the top left of the screen.
-            BonfireUI.Left.Set((Main.screenWidth - 160) / 2, 0f);
+            BonfireUI.Left.Set((Main.screenWidth - 208) / 2, 0f);
             BonfireUI.Top.Set((Main.screenHeight + 120) / 2, 0f);
-            BonfireUI.Width.Set(160f, 0f);
+            BonfireUI.Width.Set(208f, 0f);
             BonfireUI.Height.Set(64f, 0f);
             BonfireUI.BackgroundColor = new Color(35, 20, 20);
 
@@ -67,6 +68,15 @@ namespace tsorcRevamp.UI
             ButtonSafe.OnLeftClick += new MouseEvent(ButtonSafeClicked);
             BonfireUI.Append(ButtonSafe);
 
+            Asset<Texture2D> buttonTravelTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonTravel");
+            ButtonTravel = new tsorcUIHoverTextButton(buttonTravelTexture, "Travel");
+            ButtonTravel.Left.Set(154, 0f);
+            ButtonTravel.Top.Set(10, 0f);
+            ButtonTravel.Width.Set(44, 0f);
+            ButtonTravel.Height.Set(44, 0f);
+            ButtonTravel.OnLeftClick += new MouseEvent(ButtonTravelClicked);
+            BonfireUI.Append(ButtonTravel);
+
             Append(BonfireUI);
 
             // As a recap, ExampleUI is a UIState, meaning it covers the whole screen. We attach BonfireUI to ExampleUI some distance from the top left corner.
@@ -79,7 +89,15 @@ namespace tsorcRevamp.UI
             ButtonSetSpawn.HoverText = LangUtils.GetTextValue("UI.SpawnSetHoverText");
             ButtonPiggyBank.HoverText = LangUtils.GetTextValue("UI.AccessPiggyBank");
             ButtonSafe.HoverText = LangUtils.GetTextValue("UI.AccessSafe");
+            ButtonTravel.HoverText = LangUtils.GetTextValue("UI.BonfireTravel");
             base.Update(gameTime);
+        }
+
+        // Shortcut to the fullscreen map, where bonfire warping happens. The warp itself is gated in
+        // tsorcRevampSystems.PostDrawFullscreenMap, so pressing the map key at a bonfire works the same.
+        private void ButtonTravelClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
+            Main.LocalPlayer.TryOpeningFullscreenMap();
         }
 
         private void ButtonSetSpawnClicked(UIMouseEvent evt, UIElement listeningElement)

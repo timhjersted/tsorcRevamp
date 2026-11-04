@@ -537,10 +537,10 @@ namespace tsorcRevamp
             }
             else if (soulsPlayer.Unkindled)
             {
-                // Base 1.85 against 0.85 cost; experimental 2.15 against 1.0 cost. Lower raw regen than BotC, but
-                // the cheaper swings mean Unkindled recovers net faster than BotC at both tiers - on purpose:
-                // waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
-                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 1.85f;
+                // Base 2.0 (raised from 1.85, 2026-11) against 0.85 cost; experimental 2.15 against 1.0 cost. Lower raw
+                // regen than BotC, but the cheaper swings mean Unkindled recovers net faster than BotC at both tiers - on
+                // purpose: waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
+                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 2.0f;
             }
             else
             {
@@ -560,18 +560,19 @@ namespace tsorcRevamp
 
         //const float BoomerangDrainPerFrame = 0.6f;
         /// <summary>
-        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Both classes
-        /// currently share 60 (1 second); BotC has its own constant so the two can be tuned apart.
+        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Unkindled 60
+        /// (1 second); BotC 75 (raised from 60, 2026-11) so pausing between swings forgives the harder mode less.
         ///
         /// Tuning note: the delay is a flat cost, so it eats a larger share of the recovery for whichever
         /// class has the higher regen rate. Giving BotC a shorter pause is the lever if its fast-recovery
         /// identity ever feels muted.
         /// </summary>
         internal const int StaminaRegenDelayTicks = 60;
-        internal const int StaminaRegenDelayTicksBotC = 60;
+        internal const int StaminaRegenDelayTicksBotC = 75;
 
         /// <summary>
-        /// Regen pause applied when a hit is absorbed by a raised shield — 1.5x the ordinary spend delay.
+        /// Regen pause applied when a hit is absorbed by a raised shield — ~1.33x the ordinary spend delay for both
+        /// classes (Unkindled 80 vs 60, BotC 100 vs 75), so neither pays proportionally more to block.
         ///
         /// Blocking a hit is a heavier commitment than a swing: the shield-down window between an enemy's
         /// spaced shots was long enough to refill everything the block cost, which is what made the
@@ -582,12 +583,13 @@ namespace tsorcRevamp
         /// rather than a multiple of the base, so raising the base can silently invert the relationship — and
         /// since PauseStaminaRegen takes the max, a block penalty shorter than a swing's disappears entirely.
         ///
-        /// 1.5x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
+        /// ~1.33x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
         /// block at 2 full seconds, and a greatshield (up to 1.75x on top) at 3.5 — long enough that a single
-        /// block, with no regen while the guard is up, would decide a fight on its own.
+        /// block, with no regen while the guard is up, would decide a fight on its own. (2026-11: was 90 for both
+        /// at 1.5x; BotC raised to 100 alongside its 75-tick spend delay, Unkindled cut to 80 to keep the same ratio.)
         /// </summary>
-        internal const int BlockStaminaRegenDelayTicks = 90;
-        internal const int BlockStaminaRegenDelayTicksBotC = 90;
+        internal const int BlockStaminaRegenDelayTicks = 80;
+        internal const int BlockStaminaRegenDelayTicksBotC = 100;
 
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;
@@ -608,7 +610,7 @@ namespace tsorcRevamp
             ? StaminaRegenDelayTicksBotC
             : StaminaRegenDelayTicks;
 
-        /// <summary>Post-block regen pause for this player's class (1.5x the ordinary one).</summary>
+        /// <summary>Post-block regen pause for this player's class (~1.33x the ordinary one).</summary>
         internal int BlockRegenDelay => Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
             ? BlockStaminaRegenDelayTicksBotC
             : BlockStaminaRegenDelayTicks;

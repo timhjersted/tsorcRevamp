@@ -345,6 +345,13 @@ namespace tsorcRevamp
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
 
+        // Hardmode Souls-mode rule: bonfire map warping only works while resting at a bonfire.
+        // "Resting" = has the Bonfire buff, which BonfireCheckpoint.NearbyEffects refreshes within 80px of a lit bonfire.
+        public bool BonfireWarpLocked => Main.hardMode && SoulsMode && !Player.HasBuff(ModContent.BuffType<Bonfire>());
+
+        // Saved per character so the Hardmode warp-lock notice prints once, including on joining a world already in Hardmode.
+        public bool HardmodeWarpNoticeShown;
+
         // Weapon stamina usage. Classic pays none either way.
         //
         // BASE (0.85 Unkindled / 1.15 BotC, paired with 1.25 and 2.0 regen in tsorcRevampPlayerStamina):
@@ -802,6 +809,14 @@ namespace tsorcRevamp
                 {
                     BonfireUIState.Visible = false;
                 }
+            }
+
+            // One-time notice that Hardmode restricts bonfire warping. Client-local: hardMode arrives with world data,
+            // SoulsMode is this player's saved choice, so no packet is needed.
+            if (Player.whoAmI == Main.myPlayer && Main.hardMode && SoulsMode && !HardmodeWarpNoticeShown)
+            {
+                Main.NewText(LangUtils.GetTextValue("World.HardmodeBonfireWarpNotice"), 250, 110, 90);
+                HardmodeWarpNoticeShown = true;
             }
 
             if (potionBagCountdown > 0)

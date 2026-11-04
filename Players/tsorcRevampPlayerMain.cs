@@ -244,6 +244,7 @@ namespace tsorcRevamp
             tag.Add("BonfiresCrafted", BonfiresCrafted);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("Unkindled", Unkindled);
+            tag.Add("HardmodeWarpNoticeShown", HardmodeWarpNoticeShown);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("rightClickSlot", ItemIO.Save(RightClickSlot.Item));
             tag.Add("Curse", CurseActive);
@@ -353,6 +354,7 @@ namespace tsorcRevamp
             appliedStartingClassStats = tag.GetBool("AppliedStartingClassStats");
             appliedStartingClassStatsVersion = tag.ContainsKey("AppliedStartingClassStatsVersion") ? tag.GetInt("AppliedStartingClassStatsVersion") : (appliedStartingClassStats ? 1 : 0);
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
+            HardmodeWarpNoticeShown = tag.GetBool("HardmodeWarpNoticeShown");
             if (tag.ContainsKey("Unkindled"))
             {
                 Unkindled = tag.GetBool("Unkindled");

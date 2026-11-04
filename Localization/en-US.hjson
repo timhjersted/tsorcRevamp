@@ -614,6 +614,7 @@ Mods: {
 			SpawnRemoved: Spawn point removed!
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
+			BonfireTravel: Travel
 			AccuracyHit: Hit! {0}%
 			AccuracyMiss: Miss! {0}%
 			Rebound: Rebound!
@@ -635,6 +636,8 @@ Mods: {
 			TPToBonfire: Teleport to Bonfire Checkpoint
 			NoTPCombat: Can not teleport while in combat!
 			NoTPBoss: Can not teleport while a boss is alive!
+			TPNeedBonfire: Rest at a bonfire to travel
+			HardmodeBonfireWarpNotice: The bonfires' bond has weakened. You can now only travel between bonfires while resting at one.
 			AbyssalFissure: Abyssal Fissure
 			DropSouls1: "Dropping "
 			DropsSouls2: souls
@@ -6640,6 +6643,11 @@ Mods: {
 			CalciumBlade: {
 				DisplayName: Calcium Blade
 				Tooltip: "'A blade of sharpened bone'"
+			}
+
+			GravelordSword: {
+				DisplayName: Gravelord Sword
+				Tooltip: Chains an overhead cut and a rising cut into a crushing slam.
 			}
 
 			CoralSword: {
