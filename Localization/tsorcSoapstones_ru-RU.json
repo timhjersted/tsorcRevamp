@@ -1881,7 +1881,8 @@
   "tileY": 1694,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "skipOnExpanded": true
 }
 {
   "text": "- Вы обнаружили Озеро цветущих тропинок в подземных джунглях -",

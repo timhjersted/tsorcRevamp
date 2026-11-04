@@ -730,7 +730,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.OolacileAcolyte>(0.2f, 40f); // SHM Madness caster: the Archdeacon's poise; tells and the Babbling Spiral channel are the stagger windows
             Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.DarkrootSentry>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.DarkrootSentry>(0.3f, 50f);
             Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
             Add<Enemies.Dworc.DworcAbysswalker>(0.3f, 35f);
             Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);

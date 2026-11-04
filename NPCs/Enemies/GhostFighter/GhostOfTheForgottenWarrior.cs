@@ -143,6 +143,43 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override bool SlowDownDuringCustom => true;
         protected override bool UseCompositeArmForAdditionalPhase => Phase == AttackPhase.Custom;
 
+        // Fallback spawning for when the EnemySpawns registry is turned off (it replaces this when on).
+        // Mirrors the registry's rates and its 2-alive cap. SHM is checked before HM because hardMode stays true in SHM.
+        public override float SpawnChance(NPCSpawnInfo spawnInfo)
+        {
+            int aliveCount = NPC.CountNPCS(Type);
+
+            if (aliveCount >= 2)
+            {
+                return 0f;
+            }
+
+            if (spawnInfo.Player.ZoneDungeon)
+            {
+                if (tsorcRevampWorld.SuperHardMode)
+                {
+                    return 0.1f;
+                }
+
+                if (Main.hardMode)
+                {
+                    return 0.12f;
+                }
+
+                if (NPC.downedBoss3)
+                {
+                    return 0.25f;
+                }
+            }
+
+            if (spawnInfo.Player.ZoneGraveyard)
+            {
+                return 0.2f;
+            }
+
+            return 0f;
+        }
+
         public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
         public override void SetDefaults()
         {

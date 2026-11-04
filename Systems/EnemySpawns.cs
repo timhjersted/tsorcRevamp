@@ -468,9 +468,6 @@ namespace tsorcRevamp.Systems
         // Whether a boss has been killed in this world (the mod's own record, not a vanilla flag).
         public static class Slain
         {
-            public static readonly SpawnCondition DarkrootSentry = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>())));
-
             public static readonly SpawnCondition TheSorrow = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())));
 
@@ -1267,20 +1264,12 @@ namespace tsorcRevamp.Systems
             Spawn("OolacileCultist", Town.None & Zone.Crimson & (Depth.BelowSurface | (Depth.Surface & Time.Night)), phm: 0.05f, hm: 0.05f, shm: 0.05f);
             Spawn("OolacileCultist", Wall.Is(WallID.PinkDungeonTileUnsafe), phm: 0.2f, hm: 0.2f, shm: 0.2f);
 
-            // Super Hardmode only, one alive at a time; gates (one in 8 to one in 30) are folded in as 1/N.
-            Spawn("DarkrootImp", Zone.Crimson, shm: 0.05f, max: 1);
-            Spawn("DarkrootImp", Zone.Desert, shm: 0.0333f, max: 1);
-            Spawn("DarkrootImp", Zone.UndergroundDesert, shm: 0.05f, max: 1);
-            Spawn("DarkrootImp", Depth.Underworld, shm: 0.0625f, max: 1);
-            Spawn("DarkrootImp", Depth.Underworld & Time.BloodMoon, shm: 0.125f, max: 1);
+            // Super Hardmode only, up to two alive at a time, dry, in the plain underground or plain caverns (vanilla's
+            // NormalUnderground / NormalCaverns: below the surface with no other biome in range).
+            Spawn("DarkrootImp", Water.Dry & (Zone.NormalUnderground | Zone.NormalCaverns), shm: 0.05f, max: 2);
 
-            // Super Hardmode only, one alive at a time, dry; gates (one in 15 to one in 35) are folded in as 1/N. The chat message the
-            // old rule broadcast on a roll now comes from the knight's OnSpawn. The first line is the pre-kill sighting in the
-            // jungle sky and surface; the rest are hunts once it has been slain.
-            Spawn("DarkrootSentry", Water.Dry & Zone.Jungle & (Depth.Sky | Depth.Surface) & !Slain.DarkrootSentry, shm: 0.05f, max: 1);
-            Spawn("DarkrootSentry", Water.Dry & Zone.Dungeon & Time.BloodMoon & Slain.DarkrootSentry, shm: 0.0667f, max: 1);
-            Spawn("DarkrootSentry", Water.Dry & Zone.Meteor & Time.BloodMoon & Slain.DarkrootSentry, shm: 0.04f, max: 1);
-            Spawn("DarkrootSentry", Water.Dry & Zone.Dungeon & Slain.DarkrootSentry, shm: 0.0286f, max: 1);
+            // Same place as the imp. The chat message the old rule broadcast on a roll now comes from the knight's OnSpawn.
+            Spawn("DarkrootSentry", Water.Dry & (Zone.NormalUnderground | Zone.NormalCaverns), shm: 0.05f, max: 2);
 
             // Super Hardmode only, one alive at a time; gates (one in 8 to one in 70) are folded in as 1/N. The old "ocean" test and
             // "gray layer" test mixed tile and pixel units (the ocean covered the west 43% of the map; the gray layer ran through

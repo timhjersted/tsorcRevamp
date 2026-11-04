@@ -99,6 +99,22 @@
       "newY": 227,
       "type": "move",
       "note": "Death boss event ring and spawn (adventure-map event; remix has its own at 8091,557). Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 5402,
+      "legacyY": 1689,
+      "newX": 6122,
+      "newY": 2101,
+      "type": "move",
+      "note": "\"A voice whispers to you... Seek the lord known as Chaos...\" soapstone. Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 5176,
+      "legacyY": 1755,
+      "newX": 4490,
+      "newY": 2186,
+      "type": "move",
+      "note": "\"- You have found the Lost Ruins of Artorias -\" location soapstone. Relocated on the expanded map only."
     }
   ]
 }

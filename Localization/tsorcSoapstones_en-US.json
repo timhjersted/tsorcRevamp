@@ -1917,7 +1917,8 @@
   "tileY": 1694,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "skipOnExpanded": true
 }
 {
   "text": "- You\u0027ve discovered the underground jungle\u0027s Lake of Flowered Paths -",

@@ -2914,6 +2914,44 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.DarkrootVineRequest:
+                    {
+                        byte vineAction = reader.ReadByte();
+                        int vineOwner = reader.ReadByte();
+                        int vineIdentity = reader.ReadInt16();
+
+                        bool validSender = whoAmI >= 0 && whoAmI < Main.maxPlayers && Main.player[whoAmI].active;
+                        if (Main.netMode != NetmodeID.Server || !validSender)
+                        {
+                            break;
+                        }
+
+                        // The vine itself validates: latch only while its tip is live and near the sender, strikes only
+                        // from the player it holds.
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile candidate = Main.projectile[i];
+                            bool sameVine = candidate.active && candidate.owner == vineOwner && candidate.identity == vineIdentity;
+
+                            if (!sameVine || candidate.ModProjectile is not Content.Projectiles.Enemy.DarkrootSentrySpells.DarkrootVine vine)
+                            {
+                                continue;
+                            }
+
+                            if (vineAction == Content.Projectiles.Enemy.DarkrootSentrySpells.DarkrootVine.RequestLatch)
+                            {
+                                vine.TryLatch(Main.player[whoAmI]);
+                            }
+                            else
+                            {
+                                vine.RegisterStrike(whoAmI);
+                            }
+
+                            break;
+                        }
+
+                        break;
+                    }
                 case tsorcPacketID.RequestKillHitProjectile:
                     {
                         int projectileOwner = reader.ReadByte();
@@ -5337,6 +5375,9 @@ namespace tsorcRevamp
         public const byte RequestKillHitProjectile = 47;
         /// <summary>Client asks the server to open a pattern-authored soul skull and spawn its fixed reward.</summary>
         public const byte OpenSoulRewardSkull = 48;
+        /// <summary>Victim client → server: a Darkroot Sentry vine hit me (latch) or I attacked while it holds me (strike).
+        /// Payload: action byte (DarkrootVine.RequestLatch / RequestStrike), projectile owner byte, identity short.</summary>
+        public const byte DarkrootVineRequest = 49;
     }
 
     //config moved to separate file

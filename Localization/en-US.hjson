@@ -9579,6 +9579,11 @@ Mods: {
 				DisplayName: Barrow Wight Sword
 			}
 
+			EnemyDarkrootHalberd: {
+				Tooltip: ""
+				DisplayName: Darkroot Halberd
+			}
+
 			EnemyOccultistStaff: {
 				Tooltip: ""
 				DisplayName: Grand Oolacile Staff
@@ -11061,6 +11066,9 @@ Mods: {
 			DarkmoonCrescent.DisplayName: Moonlight Crescent
 			DarkmoonVigilController.DisplayName: Darkmoon Vigil
 			DarkmoonSliver.DisplayName: Moonlight Sliver
+			DarkrootThorn.DisplayName: Darkroot Thorn
+			DarkrootRoot.DisplayName: Darkroot Root
+			DarkrootVine.DisplayName: Briar Lash
 			DarkmoonExplosion.DisplayName: Moonlight Rupture
 			BloodKnightArrow.DisplayName: Blood Arrow
 			BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
@@ -12737,8 +12745,6 @@ Mods: {
 
 			DarkrootSentry: {
 				DisplayName: Darkroot Sentry
-				Intent: An ancient warrior has come to banish you from existence...
-				Hunt: You are being hunted...
 			}
 
 			OolacileAcolyte: {

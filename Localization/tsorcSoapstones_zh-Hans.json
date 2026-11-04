@@ -1887,7 +1887,8 @@
   "tileY": 1694,
   "textWidth": 560,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "skipOnExpanded": true
 }
 {
   "text": "- 你发现了丛林深处的花间湖 -",

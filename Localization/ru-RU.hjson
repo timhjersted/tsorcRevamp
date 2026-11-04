@@ -12746,8 +12746,6 @@ Mods: {
 
 			DarkrootSentry: {
 				DisplayName: Страж Тёмных корней
-				Intent: Древний воин пришёл, чтобы изгнать вас из жизни...
-				Hunt: На вас объявлена охота...
 			}
 
 			OolacileAcolyte: {

@@ -2404,6 +2404,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <see cref="UseAimAdaptiveArc"/> is on, added to both arc endpoints so the swing biases
         /// toward an airborne/crouched target instead of always arcing level with the ground.</summary>
         private float _comboAimBias;
+        /// <summary>Read-only view of the synced combo aim bias, for subclasses that author their own tell pose and
+        /// must end it exactly on the biased arc start.</summary>
+        protected float ComboAimBias => _comboAimBias;
         private int _thrownComboWeaponIndex = -1;
         private int _thrownWeaponStage;
         private int _thrownWeaponReadTimer;

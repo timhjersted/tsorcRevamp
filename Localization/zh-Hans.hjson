@@ -12783,8 +12783,6 @@ Mods: {
 
 			DarkrootSentry: {
 				DisplayName: 黑森林哨兵
-				Intent: 一位古代战士前来抹除你的存在...
-				Hunt: 你被狩猎了...
 			}
 
 			OolacileAcolyte: {

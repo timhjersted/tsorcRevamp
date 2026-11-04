@@ -192,36 +192,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // Legacy spawn rules, used only while the "New Enemy Spawns" config is off (Systems/EnemySpawns.cs replaces them).
+        // Same rule as the registry: Super Hardmode, dry, plain underground or plain caverns (no other biome), 5%, at most two alive.
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
-            bool inHell = spawnInfo.SpawnTileY >= Main.maxTilesY - 200;
-
-            if (NPC.AnyNPCs(ModContent.NPCType<DarkrootImp>()))
+            if (NPC.CountNPCS(ModContent.NPCType<DarkrootImp>()) >= 2)
             {
                 return 0;
             }
 
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneCrimson && Main.rand.NextBool(20))
-            {
-                return 1;
-            }
+            Player player = spawnInfo.Player;
+            bool plainBelowGround = player.ZoneNormalUnderground || player.ZoneNormalCaverns;
 
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(30))
-            {
-                return 1;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneUndergroundDesert && Main.rand.NextBool(20))
-            {
-                return 1;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && inHell && Main.rand.NextBool(16))
-            {
-                return 1;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && Main.bloodMoon && inHell && Main.rand.NextBool(8))
+            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.Water && plainBelowGround && Main.rand.NextFloat() < 0.05f)
             {
                 return 1;
             }
@@ -947,7 +929,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<RedTitanite>(), 1, 1, 2));
+            // Red Titanite 50% (one), matching the Darkroot Sentry.
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<RedTitanite>(), 2));
         }
     }
 }
