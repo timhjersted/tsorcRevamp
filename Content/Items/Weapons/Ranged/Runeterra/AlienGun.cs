@@ -3,11 +3,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Sounds.AlienGun;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Sounds.ToxicShot;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 {
@@ -18,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
         public override int Rarity => ItemRarityID.LightPurple;
         public override int Value => Item.buyPrice(0, 30, 0, 0);
         public override float Knockback => 5f;
-        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Ranged/AlienGun/";
+        public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(AlienGunSound));
         public override int ProjectileType => ModContent.ProjectileType<AlienLaser>();
         public override int Tier => 2;
         public override string LocalizationPath => "Items.AlienGun.";

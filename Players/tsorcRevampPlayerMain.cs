@@ -21,7 +21,6 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
@@ -67,7 +66,6 @@ using tsorcRevamp.Content.Projectiles.Magic;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Pets;
 using tsorcRevamp.Content.Projectiles.Ranged;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Systems;
@@ -609,14 +607,6 @@ namespace tsorcRevamp
             {
                 Player.ClearBuff(ModContent.BuffType<Rejuvenation>());
                 Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 40 * 60);
-            }
-            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-            {
-                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
-            }
-            if (Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
-            {
-                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
             }
         }
 
@@ -1627,33 +1617,6 @@ namespace tsorcRevamp
                         ReflectionShiftState.Y = 1;
                     }
                 }
-            }
-
-
-            if (tsorcRevamp.specialAbility.JustReleased)
-            {
-
-                #region Scouts Boost & Nuclear Mushrooms
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), ToxicShot.ScoutsBoost2Cooldown * 60);
-                }
-                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Omega>(), ToxicShot.ScoutsBoost2Duration * 60);
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>(), ToxicShot.ScoutsBoost2Cooldown * 60);
-                }
-                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
-                {
-                    if (Main.myPlayer == player.whoAmI)
-                    {
-                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
-                    }
-                    Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
-                }
-                #endregion
-
             }
         }
 

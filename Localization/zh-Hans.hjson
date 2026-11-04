@@ -613,6 +613,7 @@ Mods: {
 			SpawnRemoved: 重生点已移除！
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
+			// BonfireTravel: Travel
 			// AccuracyHit: Hit! {0}%
 			// AccuracyMiss: Miss! {0}%
 			Rebound: 反弹！
@@ -634,6 +635,8 @@ Mods: {
 			TPToBonfire: 传送到篝火检查点
 			NoTPCombat: 战斗时不能传送！
 			NoTPBoss: Boss存活时不能传送！
+			// TPNeedBonfire: Rest at a bonfire to travel
+			// HardmodeBonfireWarpNotice: The bonfires' bond has weakened. You can now only travel between bonfires while resting at one.
 			AbyssalFissure: 深渊裂缝
 			DropSouls1: "掉落 "
 			DropsSouls2: 黑暗之魂
@@ -6691,6 +6694,11 @@ Mods: {
 				Tooltip: 锋利的骨头刀片
 			}
 
+			GravelordSword: {
+				// DisplayName: Gravelord Sword
+				// Tooltip: Chains an overhead cut and a rising cut into a crushing slam.
+			}
+
 			CoralSword: {
 				DisplayName: 珊瑚剑
 				Tooltip: 用于斩杀来自大海的生物，对与水有关的敌人造成 4 倍伤害
@@ -9621,6 +9629,11 @@ Mods: {
 				// DisplayName: Barrow Wight Sword
 			}
 
+			EnemyDarkrootHalberd: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Halberd
+			}
+
 			EnemyOccultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Grand Oolacile Staff
@@ -11107,6 +11120,9 @@ Mods: {
 			// DarkmoonCrescent.DisplayName: Moonlight Crescent
 			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
 			// DarkmoonSliver.DisplayName: Moonlight Sliver
+			// DarkrootThorn.DisplayName: Darkroot Thorn
+			// DarkrootRoot.DisplayName: Darkroot Root
+			// DarkrootVine.DisplayName: Briar Lash
 			// DarkmoonExplosion.DisplayName: Moonlight Rupture
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
@@ -12204,6 +12220,7 @@ Mods: {
 			// AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
 			// AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
 			// DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
+			// GreatswordSwing.DisplayName: Greatsword Swing
 		}
 
 		NPCs: {
@@ -12780,10 +12797,7 @@ Mods: {
 
 			ManOfWar.DisplayName: 战争缔造者
 			DarkrootImp.DisplayName: 黑森林小恶魔
-
-			DarkrootSentry: {
-				DisplayName: 黑森林哨兵
-			}
+			DarkrootSentry.DisplayName: 黑森林哨兵
 
 			OolacileAcolyte: {
 				DisplayName: 大秘术师的侍僧

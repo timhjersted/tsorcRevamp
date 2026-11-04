@@ -23,7 +23,7 @@ public class RuneterraGauntletPlayer : ModPlayer
     
     public override void ProcessTriggers(TriggersSet triggersSet)
     {
-        if (tsorcRevamp.specialAbility.JustReleased)
+        if (tsorcRevamp.specialAbility.JustReleased && !Player.dead)
         {
                 bool holdingControlsAndOrSummonWeapon = (Player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || Player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) 
                                                         && (Player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || Player.HeldItem.DamageType == DamageClass.Summon);
@@ -72,7 +72,7 @@ public class RuneterraGauntletPlayer : ModPlayer
         }
 
 
-        if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
+        if (tsorcRevamp.specialAbility.Current && !Player.dead && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
                                                && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() 
                                                    || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() 
                                                    || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))

@@ -613,6 +613,7 @@ Mods: {
 			SpawnRemoved: Точка возрождения удалена!
 			AccessPiggyBank: Доступ к Копилке
 			AccessSafe: Доступ к сейфу
+			// BonfireTravel: Travel
 			// AccuracyHit: Hit! {0}%
 			// AccuracyMiss: Miss! {0}%
 			Rebound: Отскок!
@@ -634,6 +635,8 @@ Mods: {
 			TPToBonfire: Телепортироваться к костру
 			NoTPCombat: Невозможно телепортироваться во время боя!
 			NoTPBoss: Невозможно телепортироваться, пока босс жив!
+			// TPNeedBonfire: Rest at a bonfire to travel
+			// HardmodeBonfireWarpNotice: The bonfires' bond has weakened. You can now only travel between bonfires while resting at one.
 			AbyssalFissure: Трещина бездны
 			DropSouls1: "Выпавшие "
 			DropsSouls2: души
@@ -6658,6 +6661,11 @@ Mods: {
 				Tooltip: "'Лезвие из заострённой кости'"
 			}
 
+			GravelordSword: {
+				// DisplayName: Gravelord Sword
+				// Tooltip: Chains an overhead cut and a rising cut into a crushing slam.
+			}
+
 			CoralSword: {
 				DisplayName: Коралловый меч
 				Tooltip: Острый, чтобы убивать морских обитателей. Наносит 4-кратный урон водным врагам.
@@ -9584,6 +9592,11 @@ Mods: {
 				// DisplayName: Barrow Wight Sword
 			}
 
+			EnemyDarkrootHalberd: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Halberd
+			}
+
 			EnemyOccultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Grand Oolacile Staff
@@ -11070,6 +11083,9 @@ Mods: {
 			// DarkmoonCrescent.DisplayName: Moonlight Crescent
 			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
 			// DarkmoonSliver.DisplayName: Moonlight Sliver
+			// DarkrootThorn.DisplayName: Darkroot Thorn
+			// DarkrootRoot.DisplayName: Darkroot Root
+			// DarkrootVine.DisplayName: Briar Lash
 			// DarkmoonExplosion.DisplayName: Moonlight Rupture
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
@@ -12167,6 +12183,7 @@ Mods: {
 			// AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
 			// AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
 			// DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
+			// GreatswordSwing.DisplayName: Greatsword Swing
 		}
 
 		NPCs: {
@@ -12743,10 +12760,7 @@ Mods: {
 
 			ManOfWar.DisplayName: Человек войны
 			DarkrootImp.DisplayName: Бес Тёмных корней
-
-			DarkrootSentry: {
-				DisplayName: Страж Тёмных корней
-			}
+			DarkrootSentry.DisplayName: Страж Тёмных корней
 
 			OolacileAcolyte: {
 				DisplayName: Послушник Колдуна Бездны

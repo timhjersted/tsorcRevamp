@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Magic;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 using tsorcRevamp.Content.Projectiles.Throwing;
 
 namespace tsorcRevamp.Systems.Electrocute;

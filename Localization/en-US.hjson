@@ -8056,6 +8056,7 @@ Mods: {
 					[c/adff2f:Nuclear Mushroom] needs {10} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@11})
 					The explosion resulting from the [c/adff2f:Nuclear Mushroom] deals massive damage and applies an even stronger [c/adff2f:Radiation]
 					[c/adff2f:Radiation] applied from the [c/adff2f:Nuclear Mushroom's] explosion stacks with that of [c/ba55d3:Radioactive Darts]
+					You can store up to {12} [c/adff2f:Nuclear Mushrooms] at a time
 					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Radiation] applied by [c/ba55d3:Radioactive Darts] scales with ranged damage and critical strike chance
@@ -10288,7 +10289,7 @@ Mods: {
 
 			NuclearMushroomCooldown: {
 				DisplayName: Nuclear Mushroom Cooldown
-				Description: You cannot deploy another Nuclear Mushroom until this runs out
+				Description: A Nuclear Mushroom is recharging
 			}
 
 			RadioactiveBlindingLaserCooldown: {
@@ -12174,6 +12175,7 @@ Mods: {
 			AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
 			AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
 			DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
+			GreatswordSwing.DisplayName: Greatsword Swing
 		}
 
 		NPCs: {
@@ -12750,10 +12752,7 @@ Mods: {
 
 			ManOfWar.DisplayName: Man of War
 			DarkrootImp.DisplayName: Darkroot Imp
-
-			DarkrootSentry: {
-				DisplayName: Darkroot Sentry
-			}
+			DarkrootSentry.DisplayName: Darkroot Sentry
 
 			OolacileAcolyte: {
 				DisplayName: Acolyte of Grand Occultist
