@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = 1;
-            Projectile.timeLeft = 100 * 60;
+            Projectile.timeLeft = 60 * 60;
             Projectile.ignoreWater = true;
             Projectile.tileCollide = false;
             Projectile.knockBack = 0f;
@@ -127,7 +127,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles
             }
             if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, 
+                    ModContent.ProjectileType<NuclearMushroomExplosion>(), Projectile.damage / 2, Projectile.knockBack * 10, Projectile.owner);
             }
         }
     }

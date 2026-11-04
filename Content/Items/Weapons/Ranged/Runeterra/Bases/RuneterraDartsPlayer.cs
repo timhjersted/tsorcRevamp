@@ -125,7 +125,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
                 {
                     if (Main.myPlayer == Player.whoAmI)
                     {
-                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<NuclearMushroom>(), Player.GetWeaponDamage(Player.HeldItem), Player.GetWeaponKnockback(Player.HeldItem), Main.myPlayer);
+                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, 
+                            ModContent.ProjectileType<NuclearMushroom>(), Player.HeldItem.damage, Player.HeldItem.knockBack, Main.myPlayer);
                     }
 
                     ShroomCount--;

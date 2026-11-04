@@ -29,7 +29,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles
             Projectile.tileCollide = false;
             Projectile.usesIDStaticNPCImmunity = true;
             Projectile.idStaticNPCHitCooldown = 8;
-            Projectile.ContinuouslyUpdateDamageStats = true;
         }
 
         public override void AI()
