@@ -1575,18 +1575,11 @@ namespace tsorcRevamp
             {
                 Player.gravControl2 = false;
 
-                // Suppressed shuts down float/flight from ANY source, not just the Supersonic items: rocket boots and
-                // the bottle extra jumps are disabled here (after the equip pass that sets them); wings are grounded
-                // with Torn Wings/Crippled in PostUpdateMiscEffects.
+                // Suppressed shuts down flight from ANY source, not just the Supersonic items: rocket boots are
+                // disabled here (after the equip pass that sets them); wings are grounded with Torn Wings/Crippled
+                // in PostUpdateMiscEffects. Bottle extra jumps and jump height are deliberately left alone.
                 Player.canRocket = false;
                 Player.rocketTime = 0;
-
-                Player.GetJumpState(ExtraJump.CloudInABottle).Disable();
-                Player.GetJumpState(ExtraJump.BlizzardInABottle).Disable();
-                Player.GetJumpState(ExtraJump.SandstormInABottle).Disable();
-                Player.GetJumpState(ExtraJump.FartInAJar).Disable();
-                Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable();
-                Player.GetJumpState(ExtraJump.UnicornMount).Disable();
             }
 
             // Suppressed / Treacherous Terrain: no mounts at all, minecarts included. Mount items are refused in
@@ -2187,27 +2180,6 @@ namespace tsorcRevamp
                     Player.accRunSpeed = Math.Min(Player.accRunSpeed, suppressedRunSpeed);
                     Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, suppressedRunSpeed);
                     Player.runAcceleration = Math.Min(Player.runAcceleration, suppressedAcceleration);
-
-                    // Vertical nerf to match the horizontal one. jumpSpeed/jumpHeight were already resolved from
-                    // jumpBoost/jumpSpeedBoost earlier this tick (UpdateJumpHeight), so clamp the final values.
-                    // Mounts own their jump stats. Wings don't fly at all while Suppressed (PostUpdateMiscEffects).
-                    // The Triad's Faster Than Sight jump boost is exempt so a Suppressed zone can't cancel it mid-fight.
-                    bool hasTriadFlight = Player.HasBuff<FasterThanSight>();
-                    if (!Player.mount.Active && !hasTriadFlight)
-                    {
-                        float suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeed;
-                        int suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeight;
-
-                        if (isSeath)
-                        {
-                            suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeedSeath;
-                            suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeightSeath;
-                        }
-
-                        Player.jumpSpeed = Math.Min(Player.jumpSpeed, suppressedJumpSpeed);
-                        Player.jumpHeight = Math.Min(Player.jumpHeight, suppressedJumpHeight);
-                    }
-
                 }
             }
 

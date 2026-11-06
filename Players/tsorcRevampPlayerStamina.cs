@@ -560,19 +560,20 @@ namespace tsorcRevamp
 
         //const float BoomerangDrainPerFrame = 0.6f;
         /// <summary>
-        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Unkindled 60
-        /// (1 second); BotC 75 (raised from 60, 2026-11) so pausing between swings forgives the harder mode less.
+        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Unkindled 45
+        /// (0.75 seconds); BotC 60 (1 second), so pausing between swings forgives the harder mode less.
+        /// (2026-11: Unkindled cut from 60; BotC briefly tried at 75, then returned to 60.)
         ///
         /// Tuning note: the delay is a flat cost, so it eats a larger share of the recovery for whichever
         /// class has the higher regen rate. Giving BotC a shorter pause is the lever if its fast-recovery
         /// identity ever feels muted.
         /// </summary>
-        internal const int StaminaRegenDelayTicks = 60;
-        internal const int StaminaRegenDelayTicksBotC = 75;
+        internal const int StaminaRegenDelayTicks = 45;
+        internal const int StaminaRegenDelayTicksBotC = 60;
 
         /// <summary>
         /// Regen pause applied when a hit is absorbed by a raised shield — ~1.33x the ordinary spend delay for both
-        /// classes (Unkindled 80 vs 60, BotC 100 vs 75), so neither pays proportionally more to block.
+        /// classes (Unkindled 60 vs 45, BotC 80 vs 60), so neither pays proportionally more to block.
         ///
         /// Blocking a hit is a heavier commitment than a swing: the shield-down window between an enemy's
         /// spaced shots was long enough to refill everything the block cost, which is what made the
@@ -586,10 +587,10 @@ namespace tsorcRevamp
         /// ~1.33x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
         /// block at 2 full seconds, and a greatshield (up to 1.75x on top) at 3.5 — long enough that a single
         /// block, with no regen while the guard is up, would decide a fight on its own. (2026-11: was 90 for both
-        /// at 1.5x; BotC raised to 100 alongside its 75-tick spend delay, Unkindled cut to 80 to keep the same ratio.)
+        /// at 1.5x; now 60 Unkindled / 80 BotC, ~1.33x the spend delays of 45 / 60.)
         /// </summary>
-        internal const int BlockStaminaRegenDelayTicks = 80;
-        internal const int BlockStaminaRegenDelayTicksBotC = 100;
+        internal const int BlockStaminaRegenDelayTicks = 60;
+        internal const int BlockStaminaRegenDelayTicksBotC = 80;
 
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;

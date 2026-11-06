@@ -34,6 +34,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Halberds
 
         public override bool AltFunctionUse(Player player) => true;
 
+        public override Terraria.Localization.LocalizedText Tooltip => base.Tooltip.WithFormatArgs(
+            DarkrootHalberdRoot.SearchRangeTiles, DarkrootHalberdMotion.RootDamageMultiplier,
+            DarkrootHalberdMotion.DashRangeTiles, DarkrootHalberdMotion.DashDamage);
+
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;

@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             _age++;
             TickDown(ref _cutCooldown); TickDown(ref _leapCooldown); TickDown(ref _crescentCooldown);
             TickDown(ref _barrageCooldown); TickDown(ref _vigilCooldown); TickDown(ref _guardCooldown);
-            TickDown(ref _restTicks); TickDown(ref _blockSoundCooldown); TickDown(ref _approachTicks); TickDown(ref _healRetryTicks);
+            TickDown(ref _restTicks); TickDown(ref _approachTicks); TickDown(ref _healRetryTicks);
             if (Server && !NPC.HasValidTarget) NPC.TargetClosest();
             if (Server && _serial == 0) { _serial = DarkmoonVigilController.NewSerial(); Snapshot(); }
             if (Server && !_phaseTwo && NPC.life < NPC.lifeMax * 0.5f) { _phaseTwo = true; Snapshot(); }

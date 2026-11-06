@@ -73,6 +73,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
         public float Rotation;
         public Vector2 Origin;
         public Vector2 SegmentRange;
+        // Vine only: the whole vine's arc length in px, so the shader sizes bark detail in pixels. 0 elsewhere.
+        public float ArcPixels;
     }
 
     /// <summary>
@@ -97,9 +99,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
             Draw(technique, new[] { quad }, progress, active, opacity);
         }
 
+        static readonly RasterizerState CullNoneScissor = new RasterizerState { CullMode = CullMode.None, ScissorTestEnable = true };
+
         /// <summary>Draws every quad with the same technique inside one Immediate batch. Per-quad uniforms
-        /// (SegmentRange, PixelGrid) are set before each Draw; Immediate mode applies the effect per draw call.</summary>
-        public static void Draw(string technique, WoodQuad[] quads, float progress, float active, float opacity)
+        /// (SegmentRange, PixelGrid) are set before each Draw; Immediate mode applies the effect per draw call.
+        /// clipBelowWorldY: when set, nothing below that world Y is drawn (a scissor at its on-screen line), so a
+        /// shape rising out of the floor never shows its buried part, even through gaps in the floor.</summary>
+        public static void Draw(string technique, WoodQuad[] quads, float progress, float active, float opacity, float? clipBelowWorldY = null)
         {
             if (Main.dedServ || opacity <= 0f || quads.Length == 0)
             {
@@ -116,6 +122,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
             Texture previousTexture = device.Textures[1];
             SamplerState previousSampler = device.SamplerStates[1];
 
+            RasterizerState rasterizer = RasterizerState.CullNone;
+            Rectangle previousScissor = device.ScissorRectangle;
+            if (clipBelowWorldY.HasValue)
+            {
+                // World Y -> back-buffer Y through the same matrix the batch draws with (zoom included).
+                Vector2 clipLine = Vector2.Transform(new Vector2(0f, clipBelowWorldY.Value) - Main.screenPosition, Main.GameViewMatrix.TransformationMatrix);
+                int visibleHeight = (int)MathHelper.Clamp(clipLine.Y, 0f, device.Viewport.Height);
+                if (visibleHeight <= 0)
+                {
+                    return;
+                }
+
+                rasterizer = CullNoneScissor;
+                device.ScissorRectangle = new Rectangle(0, 0, device.Viewport.Width, visibleHeight);
+            }
+
             Main.spriteBatch.End();
             try
             {
@@ -127,7 +149,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 effect.Parameters["Active"]?.SetValue(MathHelper.Clamp(active, 0f, 1f));
                 effect.Parameters["Opacity"]?.SetValue(MathHelper.Clamp(opacity, 0f, 1f));
                 Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
-                    DepthStencilState.None, RasterizerState.CullNone, effect, Main.GameViewMatrix.TransformationMatrix);
+                    DepthStencilState.None, rasterizer, effect, Main.GameViewMatrix.TransformationMatrix);
 
                 foreach (WoodQuad quad in quads)
                 {
@@ -137,6 +159,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                     float blocksY = Math.Max(2f, quad.Size.Y / 2f);
                     effect.Parameters["PixelGrid"]?.SetValue(new Vector4(blocksX, blocksY, 1f / blocksX, 1f / blocksY));
                     effect.Parameters["SegmentRange"]?.SetValue(quad.SegmentRange);
+                    effect.Parameters["ArcPixels"]?.SetValue(quad.ArcPixels);
 
                     Vector2 scale = quad.Size / grain.Size();
                     Vector2 pivot = quad.Origin * grain.Size();
@@ -149,6 +172,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
             {
                 device.Textures[1] = previousTexture;
                 device.SamplerStates[1] = previousSampler;
+                device.ScissorRectangle = previousScissor;
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             }

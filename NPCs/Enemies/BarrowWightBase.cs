@@ -40,6 +40,13 @@ namespace tsorcRevamp.NPCs.Enemies
         private const int LungeLiveTicks = 21;
         private const float BladeReach = 63f;
         private const float LandingRadius = 48f;
+
+        // Plunge positioning: the dive starts PlungeHeight px above the player's floor (a clear column is required).
+        // The approach re-aims above the player every tick, flying at DriftSpeed x PlungeApproachSpeedScale; if it
+        // has not arrived by PlungeApproachTeleportTick it blinks there (a flash at both ends) instead of giving up.
+        private const float PlungeHeight = 160f;
+        private const float PlungeApproachSpeedScale = 2.2f;
+        private const int PlungeApproachTeleportTick = 40;
         private static readonly Color SpiritColor = new Color(185, 165, 230);
 
         private TravelMode _mode;
@@ -697,7 +704,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 case WightMove.Plunge:
                     FindPlunge(target);
                     _plungeCooldown = 480;
-                    BeginStage(MoveStage.PlungeApproach, 90);
+                    BeginStage(MoveStage.PlungeApproach, PlungeApproachTeleportTick + 5);
                     break;
                 case WightMove.Ambush:
                     FindWallExit(target);
@@ -713,15 +720,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         private bool FindPlunge(Player target)
         {
-            Vector2 above = new Vector2(target.Center.X - NPC.width * 0.5f, target.Bottom.Y - 96f - NPC.height);
-            Vector2 descent = Collision.TileCollision(above, new Vector2(0f, 96f), NPC.width, NPC.height);
-            if (Collision.SolidCollision(above, NPC.width, NPC.height + 96) || descent.Y < 95f
+            Vector2 above = new Vector2(target.Center.X - NPC.width * 0.5f, target.Bottom.Y - PlungeHeight - NPC.height);
+            Vector2 descent = Collision.TileCollision(above, new Vector2(0f, PlungeHeight), NPC.width, NPC.height);
+            if (Collision.SolidCollision(above, NPC.width, NPC.height + (int)PlungeHeight) || descent.Y < PlungeHeight - 1f
                 || !TryFindFloor(target.Bottom, 16, out Vector2 landing))
             {
                 return false;
             }
             _landingPosition = landing;
-            _approachPoint = landing + new Vector2(NPC.width * 0.5f, NPC.height * 0.5f - 96f);
+            _approachPoint = landing + new Vector2(NPC.width * 0.5f, NPC.height * 0.5f - PlungeHeight);
             return true;
         }
 
@@ -873,22 +880,45 @@ namespace tsorcRevamp.NPCs.Enemies
                     }
                     break;
                 case MoveStage.PlungeApproach:
-                    SteerTo(_approachPoint, DriftSpeed);
+                    // Keep re-aiming above where the player is now. A blocked column this tick keeps the last good point.
+                    if (authority && NPC.HasValidTarget)
+                    {
+                        FindPlunge(Main.player[NPC.target]);
+                    }
+
+                    SteerTo(_approachPoint, DriftSpeed * PlungeApproachSpeedScale);
                     if (authority && NPC.Distance(_approachPoint) <= 8f)
                     {
                         PhaseTimer = 1;
                     }
+                    else if (authority && elapsed >= PlungeApproachTeleportTick)
+                    {
+                        // Too slow to get there: blink above the player. The flashes mark both ends for every client.
+                        SpawnTelegraphFlash(SpiritColor);
+                        NPC.Center = _approachPoint;
+                        NPC.velocity = Vector2.Zero;
+                        SpawnTelegraphFlash(SpiritColor);
+                        NPC.netUpdate = true;
+                        RequestNetworkSnapshot();
+                        PhaseTimer = 1;
+                    }
                     break;
-                // Plunge: 36t tell, X locks at t24, 96px fall ~15t, then 4t live landing and 45t recovery.
+                // Plunge: 36t tell, tracks over the player until t24 then locks, PlungeHeight (160px) fall ~20t, then 4t live landing and 45t recovery.
                 // The 48px landing radius is marked for the entire tell; a ceiling/platform cancels the approach.
                 case MoveStage.PlungeTell:
                     NPC.velocity = Vector2.Zero;
                     if (authority && elapsed <= 24 && NPC.HasValidTarget)
                     {
                         Player target = Main.player[NPC.target];
-                        if (Math.Abs(target.Center.X - NPC.Center.X) <= 48f && FindPlunge(target))
+                        // Stay over the player until the lock at t24 (35% of the gap per tick); after that the
+                        // marked landing is final, leaving 12 tell ticks plus the fall to get out from under it.
+                        if (FindPlunge(target))
                         {
-                            NPC.Center = new Vector2(_approachPoint.X, NPC.Center.Y);
+                            NPC.Center = Vector2.Lerp(NPC.Center, _approachPoint, 0.35f);
+                            if (elapsed % 6 == 0)
+                            {
+                                NPC.netUpdate = true;
+                            }
                         }
                         if (elapsed == 24)
                         {
@@ -1030,7 +1060,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     break;
                 case MoveStage.PlungeTell:
                     NPC.velocity = Vector2.Zero;
-                    BeginStage(MoveStage.PlungeDrop, 22);
+                    BeginStage(MoveStage.PlungeDrop, 28);
                     break;
                 case MoveStage.PlungeDrop:
                     if (_mode == TravelMode.Walk)

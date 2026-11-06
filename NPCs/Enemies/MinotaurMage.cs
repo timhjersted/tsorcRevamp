@@ -303,17 +303,8 @@ namespace tsorcRevamp.NPCs.Enemies{
                 {
                     SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.2f }, NPC.Center);
                 }
-                //Staff tip ramps up: fire gathering into the cast point
                 float progress = MathHelper.Clamp(AttackTimer / (float)BoltsTelegraphTicks, 0f, 1f);
-                for (int i = 0; i < 1 + (int)(progress * 2f); i++)
-                {
-                    float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    Vector2 pos = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(8f, 24f);
-                    int dust = Dust.NewDust(pos, 4, 4, DustID.Torch, 0f, 0f, 100, default, 1.1f);
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity = (StaffTip - pos) * 0.15f;
-                }
-                Lighting.AddLight(StaffTip, 0.5f * progress, 0.3f * progress, 0.1f * progress);
+                GatherFireAtStaffTip(progress);
             }
             //Three quick bolts, re-aimed each shot with capped intercept prediction.
             if ((AttackTimer == BoltsTelegraphTicks || AttackTimer == BoltsTelegraphTicks + 8 || AttackTimer == BoltsTelegraphTicks + 16)
@@ -371,6 +362,25 @@ namespace tsorcRevamp.NPCs.Enemies{
                     EndAttack(160);
                 }
             }
+        }
+
+        /// <summary>
+        /// Clients: the bolt tell - torch dust drawn in from an 8-24px ring onto the staff tip, 1 per tick rising to 3
+        /// as progress (0..1) fills, with the tip's light brightening to match.
+        /// </summary>
+        void GatherFireAtStaffTip(float progress)
+        {
+            int count = 1 + (int)(progress * 2f);
+            for (int i = 0; i < count; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 pos = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(8f, 24f);
+                int dust = Dust.NewDust(pos, 4, 4, DustID.Torch, 0f, 0f, 100, default, 1.1f);
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity = (StaffTip - pos) * 0.15f;
+            }
+
+            Lighting.AddLight(StaffTip, 0.5f * progress, 0.3f * progress, 0.1f * progress);
         }
 
         Vector2 AimBolt(Player player, float speed)
@@ -466,8 +476,11 @@ namespace tsorcRevamp.NPCs.Enemies{
                 }
             }
             // Hold a full 30 ticks after teleporting; continue gathering through both shots.
-            if (AttackTimer > BlinkTelegraphTicks && AttackTimer <= BlinkTelegraphTicks + BlinkShotDelay + 8)
-                MinotaurFireVFX.Embers(StaffTip, 5f, 2);
+            if (!Main.dedServ && AttackTimer > BlinkTelegraphTicks && AttackTimer <= BlinkTelegraphTicks + BlinkShotDelay + 8)
+            {
+                float gather = MathHelper.Clamp((AttackTimer - BlinkTelegraphTicks) / (float)BlinkShotDelay, 0f, 1f);
+                GatherFireAtStaffTip(gather);
+            }
             if ((AttackTimer == BlinkTelegraphTicks + BlinkShotDelay || AttackTimer == BlinkTelegraphTicks + BlinkShotDelay + 8)
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -688,17 +701,6 @@ namespace tsorcRevamp.NPCs.Enemies{
             if (aimingBolts || aimingBlink || (State == AttackState.FlankingFlames && AttackTimer <= FloorTelegraphTicks))
             {
                 MinotaurFireVFX.Draw(StaffTip, new Vector2(18f, 24f), 0.55f, NPC.whoAmI * 0.17f);
-                if (aimingBolts || aimingBlink)
-                {
-                    Vector2 aim = AimBolt(Main.player[NPC.target], aimingBlink ? 9.5f : 9f).SafeNormalize(Vector2.UnitX);
-                    for (int step = 1; step <= 18; step++)
-                    {
-                        Vector2 point = StaffTip + aim * step * 8f - screenPos;
-                        spriteBatch.Draw(TextureAssets.MagicPixel.Value, point, null,
-                            new Color(255, 100, 20, 0) * (0.25f * (1f - step / 19f)), 0f,
-                            Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0f);
-                    }
-                }
             }
             bool charging = State == AttackState.BullhornCharge && AttackTimer > ChargeTelegraphTicks && AttackTimer <= ChargeTelegraphTicks + ChargeTicks;
             if (charging || NPC.velocity.Length() > 7f)

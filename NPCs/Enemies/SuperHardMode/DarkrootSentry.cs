@@ -96,6 +96,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int _releasedMask;
         float _advanceDistance;
         readonly Vector2[] _lashControls = new Vector2[4];
+        // Every machine, refreshed in AI(): facing-space angle from the back shoulder to a player one of this Sentry's
+        // vines is holding, or null. Drives the free arm so the tether hangs from the palm.
+        float? _tetherArmAngle;
         bool _guardUp;
         int _guardLift;
         int _guardTicks;
@@ -120,7 +123,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         bool _customLive;
         bool _customArmed;
         int _customExpertDamage;
-        int _blockSoundCooldown;
 
         public int EncounterSerial => _serial;
         bool Server => Main.netMode != NetmodeID.MultiplayerClient;
@@ -147,6 +149,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int RangedDamage => 0;
         protected override bool HoldAttackSelection => true;
         protected override bool ShowWeaponDuringNeutral => true;
+        // Carry the halberd in the fist (composite arm at the carry angle the Hew tell starts from) whenever it is out,
+        // including the run-in to an attack, instead of floating off the hand during walks and jumps.
+        protected override bool HoldNeutralWeaponOnCompositeArm => true;
+        protected override bool ShowMeleeWeaponWhileClosingDistance => true;
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Halberd;
         protected override MeleeCombo[] MeleeComboPoolOverride => Combos;
 
@@ -217,7 +223,56 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool ShieldVisible => _guardUp && Neutral;
         // The 10t lift shows the shield lowered first, so the raise is visible before it starts blocking.
         protected override bool ShieldRaisedForPose => ShieldVisible && _guardLift == 0;
-        protected override float? FreeBackArmFacingAngle => ShieldVisible ? 0f : null;
+        protected override float? FreeBackArmFacingAngle
+        {
+            get
+            {
+                if (ShieldVisible)
+                {
+                    return 0f;
+                }
+
+                // A held Briar Lash victim: the hand anchors the tether, so it keeps pointing at them while the
+                // halberd is free to punish. Found every tick in AI() on every machine.
+                if (_tetherArmAngle is float tetherAngle)
+                {
+                    return tetherAngle;
+                }
+
+                bool lashing = Phase == AttackPhase.Custom && _custom == CustomAction.Lash && !_abortRecovery;
+                if (!lashing)
+                {
+                    return null;
+                }
+
+                // Lash cast: raise up-and-back, hold cocked, whip overhand to the aim, hold while the vine is out,
+                // then let the arm fall back to the side over 14t.
+                int elapsed = CustomElapsed;
+                if (elapsed < LashCockTicks)
+                {
+                    return MathHelper.SmoothStep(ArmHangingAngle, LashCockAngle, elapsed / (float)LashCockTicks);
+                }
+
+                if (elapsed < LashWhipStart)
+                {
+                    return LashCockAngle;
+                }
+
+                if (elapsed < LashRelease)
+                {
+                    float whip = (elapsed - LashWhipStart) / (float)(LashRelease - LashWhipStart);
+                    return MathHelper.SmoothStep(LashCockAngle, _pitch, whip);
+                }
+
+                if (elapsed < LashVineEnd)
+                {
+                    return _pitch;
+                }
+
+                float lower = MathHelper.Clamp((elapsed - LashVineEnd) / 14f, 0f, 1f);
+                return MathHelper.SmoothStep(_pitch, ArmHangingAngle, lower);
+            }
+        }
 
         protected override bool SlowDownDuringCustom => _custom != CustomAction.Advance && _custom != CustomAction.Pierce;
         // Hyper-armor only while the Advance body is travelling and its point is out: advance ticks [0, 30).
@@ -419,10 +474,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const int RootLock = 20;
         const int RootLastSink = 136;
         const int RootTotal = 172;
-        // Briar Lash: tell 48 (path locks t32, corridor 16t) | vine extends 16t (tip LIVE) | retracts 18t
-        //   | recovery 36 -> 118.
-        const int LashLock = 32;
+        // Briar Lash, cast from the free (back) hand while the halberd stays at carry:
+        //   tell 48: the hand rises up-and-back over 20t (bud swelling in the palm), path locks t28 (corridor shown
+        //   20t), the arm whips overhand to the aim t42-48 | vine extends 20t (tip LIVE) | retracts 18t | recovery 36.
+        const int LashLock = 28;
         const int LashRelease = 48;
+        const int LashCockTicks = 20;
+        const int LashWhipStart = 42;
+        // Facing-space arm angles (0 = ahead, negative = up): cocked up and behind the head; hanging at the side.
+        const float LashCockAngle = -2.3f;
+        const float ArmHangingAngle = MathHelper.PiOver2;
+        const float LashMinDistance = 128f;
+        const float LashMaxDistance = 560f;
         const int LashVineEnd = 48 + DarkrootVine.ExtendTicks + DarkrootVine.RetractTicks;
         const int LashTotal = LashVineEnd + 36;
         // Oathkeeper pierce: regrip 12 (from the underhand's raised end down to level) + hold 6 | strike 24 as
@@ -585,22 +648,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 case CustomAction.Lash:
                 {
-                    float aim = LevelRotation + _pitch;
-
-                    if (elapsed < 20)
-                    {
-                        rotation = MathHelper.SmoothStep(CarryRotation, aim, elapsed / 20f);
-                        return;
-                    }
-
-                    rotation = aim;
-
-                    if (elapsed >= LashVineEnd)
-                    {
-                        float settle = MathHelper.Clamp((elapsed - LashVineEnd - 6) / 14f, 0f, 1f);
-                        rotation = MathHelper.SmoothStep(aim, CarryRotation, settle);
-                    }
-
+                    // The free hand casts (FreeBackArmFacingAngle); the halberd stays at carry, ready to punish.
                     return;
                 }
             }
@@ -626,11 +674,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             _age++;
 
-            if (_blockSoundCooldown > 0)
-            {
-                _blockSoundCooldown--;
-            }
-
             if (_restTicks > 0)
             {
                 _restTicks--;
@@ -652,6 +695,25 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+
+            // Point the free arm at a player my vine holds. Matched by ai[0] (owner whoAmI) rather than OwnedBy,
+            // because the encounter serial is server-only. Shoulder = vanilla back shoulder (6 * facing, -2).
+            _tetherArmAngle = null;
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                bool myHold = projectile.active && projectile.ModProjectile is DarkrootVine vine
+                    && (int)projectile.ai[0] == NPC.whoAmI && vine.HeldPlayer >= 0;
+
+                if (myHold)
+                {
+                    Player held = Main.player[((DarkrootVine)projectile.ModProjectile).HeldPlayer];
+                    Vector2 shoulder = NPC.Center + new Vector2(6f * NPC.direction, -2f);
+                    Vector2 gap = held.Center - shoulder;
+                    _tetherArmAngle = (float)Math.Atan2(gap.Y, gap.X * NPC.direction);
+                    break;
+                }
+            }
 
             if (Server)
             {
@@ -866,8 +928,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Trace("lash-grab p" + held.whoAmI);
         }
 
-        /// <summary>World position of the halberd's point; the grabbing vine tethers to it.</summary>
-        public Vector2 HalberdTipPosition => PuppetSpearTipPosition;
+        /// <summary>World position of the free (back) hand; the grabbing vine tethers to it.</summary>
+        public Vector2 VineAnchorPosition => PuppetBackHandPosition;
 
         public void Trace(string kind)
         {
@@ -984,7 +1046,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     case Move.Rootwake:
                         return rootwakeEligible;
                     case Move.Lash:
-                        return distance >= 128f && distance <= 320f && BuildLashPath(target, PuppetSpearTipPosition, null);
+                    {
+                        if (distance < LashMinDistance || distance > LashMaxDistance)
+                        {
+                            return false;
+                        }
+
+                        Vector2 releaseHand = PuppetBackHandPositionAt(LivePitch(LashPitchLimit));
+                        return BuildLashPath(target, releaseHand, null);
+                    }
                     default:
                         return false;
                 }
@@ -1398,8 +1468,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        /// <summary>Briar Lash: gather at the head, lock the path at t32 (shown as a corridor for 16t), release the
-        /// vine at t48. The vine owns the live tip; the Sentry holds the pose until it retracts.</summary>
+        /// <summary>Briar Lash: the free hand gathers a bud while it cocks back, the path locks at t28 (shown as a
+        /// corridor for 20t) from where the hand WILL be at the aim, and the vine is released from that hand at t48 as
+        /// the overhand whip lands. The vine owns the live tip; the arm holds the aim until it retracts.</summary>
         void TickLash(int elapsed, Player target)
         {
             if (elapsed == 0 && !Main.dedServ)
@@ -1407,15 +1478,33 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 SoundEngine.PlaySound(SoundID.Item17 with { Pitch = -0.2f }, NPC.Center);
             }
 
-            if (elapsed < LashLock && elapsed % 2 == 0 && !Main.dedServ)
+            // Leaves and splinters drawn into the cocked palm, thicker as the release nears.
+            if (elapsed < LashRelease && !Main.dedServ)
             {
-                DarkrootWoodVFX.Motes(PuppetSpearTipPosition, 1, 12f, true);
+                int moteCount = 1;
+                if (elapsed >= LashLock)
+                {
+                    moteCount = 2;
+                }
+
+                DarkrootWoodVFX.Motes(PuppetBackHandPosition, moteCount, 18f, true);
+            }
+
+            if (elapsed == LashLock && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Grass with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+            }
+
+            if (elapsed == LashRelease && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item152 with { Pitch = -0.3f }, NPC.Center);
             }
 
             if (elapsed == LashLock && Server)
             {
                 _pitch = LivePitch(LashPitchLimit);
-                bool pathValid = target != null && BuildLashPath(target, PuppetSpearTipPosition, _lashControls);
+                Vector2 releaseHand = PuppetBackHandPositionAt(_pitch);
+                bool pathValid = target != null && BuildLashPath(target, releaseHand, _lashControls);
 
                 if (!pathValid)
                 {
@@ -1616,9 +1705,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         /// <summary>
-        /// Briar Lash path from the halberd head to the target centre: cubic Bezier with controls at 1/3 and 2/3 of
+        /// Briar Lash path from the casting hand to the target centre: cubic Bezier with controls at 1/3 and 2/3 of
         /// the chord, bent up to 32px upward. If the bent path clips tiles, the straight path is tried (still before
-        /// the corridor is shown). Valid when arc length &lt;= 384px, head-to-target &gt;= 48px and a 16px corridor is clear.
+        /// the corridor is shown). Valid when arc length &lt;= 640px, hand-to-target &gt;= 48px and a 16px corridor is clear.
         /// Writes the controls into <paramref name="controlsOut"/> when non-null.
         /// </summary>
         bool BuildLashPath(Player target, Vector2 origin, Vector2[] controlsOut)
@@ -1644,7 +1733,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 controls[3] = destination;
                 DarkrootVine.BuildSamples(controls, samples, arcFraction, out float arcLength);
 
-                if (arcLength > 384f)
+                if (arcLength > 640f)
                 {
                     continue;
                 }
@@ -1848,19 +1937,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         /// <summary>Frontal block by the source centre's horizontal side (the same test as Darkmoon's guard; not a
-        /// shield-plane collision). Only once the lift has finished. Clink + pale-green sparks, throttled to 12t.</summary>
+        /// shield-plane collision). Only once the lift has finished. No sound or dust here: tModLoader asks
+        /// CanBeHitBy* every tick for every nearby projectile and swing, not only on real hits, so feedback in this
+        /// check clinked constantly while the shield was up.</summary>
         bool Blocks(Vector2 source)
         {
             bool block = _guardUp && _guardLift == 0 && Neutral && Math.Sign(source.X - NPC.Center.X) == _guardFacing;
-
-            if (block && !Main.dedServ && _blockSoundCooldown == 0)
-            {
-                _blockSoundCooldown = 12;
-                Vector2 shieldFace = NPC.Center + new Vector2(_guardFacing * 14f, -2f);
-                SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.6f, Pitch = 0.3f }, shieldFace);
-                DarkrootWoodVFX.Motes(shieldFace, 5, 6f, false, DustID.GreenTorch);
-            }
-
             return block;
         }
 
@@ -2001,22 +2083,41 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 case CustomAction.Lash:
                 {
-                    // Gathering bud at the head, then the complete committed path as a dim 16px corridor for 16t.
+                    // Gathering bud in the casting palm: grows over 40t to 44px with its sap core lit, so the raised hand
+                    // reads as "something is coming" from across the screen.
                     if (elapsed < LashRelease)
                     {
-                        float growth = MathHelper.Clamp(elapsed / (float)LashLock, 0f, 1f);
-                        DarkrootWoodVFX.Draw("DarkrootBud", head, new Vector2(32f), 0f, new Vector2(0.5f), growth, growth, 0.8f);
+                        Vector2 palm = PuppetBackHandPosition;
+                        float growth = MathHelper.Clamp(elapsed / 40f, 0f, 1f);
+                        DarkrootWoodVFX.Draw("DarkrootBud", palm, new Vector2(44f), 0f, new Vector2(0.5f), growth, growth, 0.95f);
                     }
 
+                    // The committed path for the last 20t: dashes that brighten and pulse (8t period) as the release
+                    // nears, plus a ring at the end point where the tip will arrive.
                     if (elapsed >= LashLock && elapsed < LashRelease)
                     {
                         Vector2[] samples = new Vector2[DarkrootVine.SampleCount + 1];
                         float[] arcFraction = new float[DarkrootVine.SampleCount + 1];
                         DarkrootVine.BuildSamples(_lashControls, samples, arcFraction, out _);
 
+                        float ramp = (elapsed - LashLock) / (float)(LashRelease - LashLock);
+                        float pulse = 0.5f + 0.5f * (float)Math.Sin(elapsed * MathHelper.TwoPi / 8f);
+                        Color lane = Accent * (0.35f + 0.35f * ramp + 0.2f * pulse);
+
                         for (int i = 1; i < samples.Length; i += 2)
                         {
-                            Utils.DrawLine(spriteBatch, samples[i - 1], samples[i], corridor, corridor * 0.6f, 3f);
+                            Utils.DrawLine(spriteBatch, samples[i - 1], samples[i], lane, lane * 0.6f, 4f);
+                        }
+
+                        Vector2 endPoint = samples[DarkrootVine.SampleCount];
+                        float ringRadius = MathHelper.Lerp(28f, 12f, ramp);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            float from = MathHelper.TwoPi * i / 12f;
+                            float to = from + MathHelper.TwoPi / 24f;
+                            Vector2 arcStart = endPoint + from.ToRotationVector2() * ringRadius;
+                            Vector2 arcEnd = endPoint + to.ToRotationVector2() * ringRadius;
+                            Utils.DrawLine(spriteBatch, arcStart, arcEnd, lane, lane, 3f);
                         }
                     }
 
@@ -2107,20 +2208,35 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             DisarmOwnedHazards();
+        }
 
-            if (!Main.dedServ)
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            base.HitEffect(hit);
+            if (Main.dedServ || NPC.life > 0)
             {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 1").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 2").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 3").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 4").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 2").Type, 0.9f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Darkroot Sentry Gore 3").Type, 0.9f);
+                return;
+            }
 
-                for (int i = 0; i < 8; i++)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Blood Splat").Type, 0.9f);
-                }
+            // Spawn armor near the head, hands, feet, and chest on the clients that see the lethal hit.
+            var source = NPC.GetSource_Death();
+            Vector2 position = NPC.position;
+            Vector2 velocity = NPC.velocity * 0.5f;
+            int helmetType = Mod.Find<ModGore>("Darkroot Sentry Gore 1").Type;
+            int armType = Mod.Find<ModGore>("Darkroot Sentry Gore 2").Type;
+            int bootType = Mod.Find<ModGore>("Darkroot Sentry Gore 3").Type;
+            int torsoType = Mod.Find<ModGore>("Darkroot Sentry Gore 4").Type;
+            Gore.NewGore(source, position, velocity + new Vector2(NPC.direction * 1.4f, -4.2f), helmetType);
+            Gore.NewGore(source, position + new Vector2(-3f, 12f), velocity + new Vector2(-2.6f, -2.6f), armType);
+            Gore.NewGore(source, position + new Vector2(11f, 13f), velocity + new Vector2(2.6f, -2f), armType);
+            Gore.NewGore(source, position + new Vector2(-1f, 27f), velocity + new Vector2(-1.6f, -0.8f), bootType);
+            Gore.NewGore(source, position + new Vector2(10f, 27f), velocity + new Vector2(1.7f, -1.2f), bootType);
+            Gore.NewGore(source, position + new Vector2(1f, 12f), velocity + new Vector2(0f, -1.4f), torsoType);
+
+            int bloodType = Mod.Find<ModGore>("Blood Splat").Type;
+            for (int i = 0; i < 8; i++)
+            {
+                Gore.NewGore(source, position, NPC.velocity, bloodType, 0.9f);
             }
         }
 

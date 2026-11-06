@@ -218,6 +218,8 @@ namespace tsorcRevamp
 
             On_NPC.CanBeChasedBy += On_NPC_CanBeChasedBy;
 
+            On_NPC.UpdateNPC_BuffApplyVFX += On_NPC_UpdateNPC_BuffApplyVFX;
+
             On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
 
             On_Player.UpdateEquips += On_Player_UpdateEquips;
@@ -1646,15 +1648,16 @@ namespace tsorcRevamp
             }
         }
 
-        // Fog machines toggle their 2x2 frame between an off block (frameX 0/18) and an on block
-        // (frameX 36/54) when wired - any subtile reading frameX >= 36 means the machine is on.
+        // Echo-painted fog machines stay hidden in every state, on or off - they're never a secret worth
+        // revealing. (Vanilla's on block is frameX 0/18 - fog only emits at frameX 0 - so a frame check
+        // here would have to be inverted; hiding unconditionally sidesteps that.)
         // Chimneys toggle a 3x3 frame the same way but on frameY instead, resting at frameY 0 when off;
         // wiring it on jumps the whole block to frameY 54 (vanilla's own smoke-particle check,
         // TileDrawing.cs, keys off exactly this frameY == 54 on the top-left subtile), then a brief
         // wind-down animation climbs frameY through 108+ before it settles back to 0 - so frameY >= 54
         // on any subtile covers "on or still winding down" without needing to find the corner tile.
-        // Only the activated state should defeat Echo Goggles/Monolith; an inert prop reveals like any
-        // other echo-painted tile.
+        // Only the activated chimney state defeats Echo Goggles/Monolith; an inert chimney reveals like
+        // any other echo-painted tile.
         private static bool AdventureProp_AlwaysInvisibleWhenEchoPainted(Func<Tile, bool> orig, Tile tile)
         {
             if (!tile.IsTileInvisible || !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1662,10 +1665,10 @@ namespace tsorcRevamp
                 return orig(tile);
             }
 
-            bool isActivatedFogMachine = tile.TileType == TileID.FogMachine && tile.TileFrameX >= 36;
+            bool isFogMachine = tile.TileType == TileID.FogMachine;
             bool isActivatedChimney = tile.TileType == TileID.Chimney && tile.TileFrameY >= 54;
 
-            if (isActivatedFogMachine || isActivatedChimney)
+            if (isFogMachine || isActivatedChimney)
             {
                 return false;
             }
@@ -2051,6 +2054,55 @@ namespace tsorcRevamp
         /// Gated on the weapon bench being enabled so <c>/weaponbench off</c> restores vanilla behaviour
         /// exactly — otherwise minions would fixate on a decorative dummy in someone's base.
         /// </summary>
+        // Burning NPCs (On Fire / Hellfire): vanilla spawns a scale-3.5 torch dust on 3 ticks in 4, which reads as
+        // big blocky pixels. Its own fire blocks are skipped by clearing the two flags just for the vanilla VFX
+        // call (they are restored straight after, so damage-over-time - computed elsewhere - is untouched), then a
+        // smaller, sparser flame is spawned here: ~1 tick in 3, scale 1.1-1.6, 1 in 4 a falling ember.
+        private const float BurnDustChance = 0.35f;
+
+        private static void On_NPC_UpdateNPC_BuffApplyVFX(On_NPC.orig_UpdateNPC_BuffApplyVFX orig, NPC self)
+        {
+            bool onFire = self.onFire;
+            bool onFire3 = self.onFire3;
+            self.onFire = false;
+            self.onFire3 = false;
+            try
+            {
+                orig(self);
+            }
+            finally
+            {
+                self.onFire = onFire;
+                self.onFire3 = onFire3;
+            }
+
+            bool burning = onFire || onFire3;
+            if (!burning)
+            {
+                return;
+            }
+
+            // Vanilla's steady burn glow, every tick.
+            Lighting.AddLight((int)(self.Center.X / 16f), (int)(self.Center.Y / 16f), 1f, 0.3f, 0.1f);
+
+            if (Main.dedServ || Main.rand.NextFloat() >= BurnDustChance)
+            {
+                return;
+            }
+
+            Vector2 corner = new Vector2(self.position.X - 2f, self.position.Y - 2f);
+            Dust flame = Dust.NewDustDirect(corner, self.width + 4, self.height + 4, DustID.Torch,
+                self.velocity.X * 0.4f, self.velocity.Y * 0.4f, 100, default, Main.rand.NextFloat(1.1f, 1.6f));
+            flame.noGravity = true;
+            flame.velocity *= 1.2f;
+            flame.velocity.Y -= 0.6f;
+            if (Main.rand.NextBool(4))
+            {
+                flame.noGravity = false;
+                flame.scale *= 0.6f;
+            }
+        }
+
         private static bool On_NPC_CanBeChasedBy(On_NPC.orig_CanBeChasedBy orig, NPC self, object attacker, bool ignoreDontTakeDamage)
         {
             if (self.type == NPCID.TargetDummy && self.active && Utilities.Balance.WeaponBench.AutoEnabled)
@@ -2220,9 +2272,10 @@ namespace tsorcRevamp
                 behindTilesCache.Clear();
                 behindTilesCache.AddRange(_otherBehindTilesProjs);
 
-                // Same problem for the mirror puppets rising out of / sinking into the ground (Soul Mimic summon and
-                // dissolve, the invader's dissolve): draw them here, before the solid tiles, so the ground still hides the
-                // buried part; DrawnBeforeSolidTiles makes vanilla's later behind-tiles pass skip them this frame.
+                // Same problem for the puppets partly buried in the ground (Soul Mimic summon and dissolve, the
+                // invader's dissolve, the Witchking's plunged blade): draw them here, before the solid tiles, so the
+                // ground still hides the buried part; DrawnBeforeSolidTiles makes vanilla's later behind-tiles pass skip
+                // them this frame. Mirror puppets and enemy puppets are separate base classes with the same pair.
                 bool puppetBatchStarted = false;
 
                 try
@@ -2230,10 +2283,17 @@ namespace tsorcRevamp
                     for (int npcIndex = 0; npcIndex < Main.maxNPCs; npcIndex++)
                     {
                         NPC npc = Main.npc[npcIndex];
-                        bool buriedPuppet = npc.active && npc.behindTiles
-                            && npc.ModNPC is NPCs.FriendlyPuppets.MirrorPuppetNPC puppet && puppet.StaysBehindSolidTiles;
+                        if (!npc.active || !npc.behindTiles)
+                        {
+                            continue;
+                        }
 
-                        if (!buriedPuppet)
+                        NPCs.FriendlyPuppets.MirrorPuppetNPC buriedMirrorPuppet = npc.ModNPC as NPCs.FriendlyPuppets.MirrorPuppetNPC;
+                        NPCs.Puppets.PuppetNPC buriedEnemyPuppet = npc.ModNPC as NPCs.Puppets.PuppetNPC;
+                        bool mirrorBuried = buriedMirrorPuppet != null && buriedMirrorPuppet.StaysBehindSolidTiles;
+                        bool enemyBuried = buriedEnemyPuppet != null && buriedEnemyPuppet.StaysBehindSolidTiles;
+
+                        if (!mirrorBuried && !enemyBuried)
                         {
                             continue;
                         }
@@ -2246,10 +2306,18 @@ namespace tsorcRevamp
                             puppetBatchStarted = true;
                         }
 
-                        NPCs.FriendlyPuppets.MirrorPuppetNPC buriedMirrorPuppet = (NPCs.FriendlyPuppets.MirrorPuppetNPC)npc.ModNPC;
-                        buriedMirrorPuppet.DrawnBeforeSolidTiles = false;
-                        self.DrawNPC(npcIndex, true);
-                        buriedMirrorPuppet.DrawnBeforeSolidTiles = true;
+                        if (mirrorBuried)
+                        {
+                            buriedMirrorPuppet.DrawnBeforeSolidTiles = false;
+                            self.DrawNPC(npcIndex, true);
+                            buriedMirrorPuppet.DrawnBeforeSolidTiles = true;
+                        }
+                        else
+                        {
+                            buriedEnemyPuppet.DrawnBeforeSolidTiles = false;
+                            self.DrawNPC(npcIndex, true);
+                            buriedEnemyPuppet.DrawnBeforeSolidTiles = true;
+                        }
                     }
                 }
                 finally

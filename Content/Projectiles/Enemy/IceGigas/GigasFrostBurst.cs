@@ -56,7 +56,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         {
             if (Main.dedServ) return;
             if (Age == 0)
-                SoundEngine.PlaySound(SoundID.Item27 with { Volume = Projectile.ai[2] < 0f ? 0.85f : 0.28f, Pitch = 0.15f }, Projectile.Center);
+            {
+                // ai[2] < 0 = the statue's single big shatter. ai[0] >= 64 = a Glacial Slam spike: 126 of those
+                // burst in a rolling wave, so each is near-silent to keep the wave from rattling.
+                float burstVolume = 0.28f;
+
+                if (Projectile.ai[2] < 0f)
+                {
+                    burstVolume = 0.85f;
+                }
+                else if (Projectile.ai[0] >= 64f)
+                {
+                    burstVolume = 0.08f;
+                }
+
+                SoundEngine.PlaySound(SoundID.Item27 with { Volume = burstVolume, Pitch = 0.15f }, Projectile.Center);
+            }
 
             float travel = Travel(Age);
             Player player = Main.LocalPlayer;

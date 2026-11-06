@@ -92,8 +92,6 @@ namespace tsorcRevamp.NPCs.Enemies
             bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
 
             if (underworld && !Main.hardMode && Main.rand.NextBool(15)) return 1;
-            if (spawnInfo.Player.ZoneCrimson && Main.hardMode && Main.rand.NextBool(25)) return 1;
-            if (spawnInfo.Player.ZoneDesert && Main.hardMode && Main.rand.NextBool(45)) return 1;
             if (underworld && Main.hardMode && Main.rand.NextBool(100)) return 1;
             return 0;
         }

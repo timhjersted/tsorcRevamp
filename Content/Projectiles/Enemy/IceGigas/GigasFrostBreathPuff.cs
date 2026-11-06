@@ -14,6 +14,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
         const int Lifetime = 80;
         const float Decay = 0.978f;
+        //Frost Breath's puffs (ai[0] = 1) reach 33% farther: ~340px → ~450px at its 9px/t launch. The reach comes
+        //from a slower decay over 20 more ticks, not a faster launch, so it still drifts like breath. Undertow's
+        //point-blank exhale (ai[0] = 0) keeps the short form. The lifetime is set on the first AI tick, not OnSpawn,
+        //because OnSpawn only runs on the spawning machine and timeLeft isn't synced.
+        const int LongLifetime = 100;
+        const float LongDecay = 0.984f;
+        public const float LongBreathFlag = 1f;
+
+        static int LifetimeOf(Projectile puff)
+        {
+            if (puff.ai[0] == LongBreathFlag)
+            {
+                return LongLifetime;
+            }
+
+            return Lifetime;
+        }
         readonly Dust[] carriedDust = new Dust[48];
         int nextDust;
         static Asset<Effect> breathEffect;
@@ -41,7 +58,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 
         public override void AI()
         {
-            Projectile.velocity *= Decay;
+            bool longBreath = Projectile.ai[0] == LongBreathFlag;
+
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.localAI[0] = 1f;
+                Projectile.timeLeft = LifetimeOf(Projectile);
+            }
+
+            float decay = Decay;
+
+            if (longBreath)
+            {
+                decay = LongDecay;
+            }
+
+            Projectile.velocity *= decay;
             if (Projectile.velocity.LengthSquared() > 0.01f)
                 Projectile.rotation = Projectile.velocity.ToRotation();
             if (Main.dedServ) return;
@@ -55,7 +87,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
                 dust.alpha = 80 + (int)(175f * (1f - fade));
             }
             if (Projectile.timeLeft <= 8) return;
-            float age = 1f - Projectile.timeLeft / (float)Lifetime;
+            float age = 1f - Projectile.timeLeft / (float)LifetimeOf(Projectile);
             for (int i = 0; i < 2; i++)
             {
                 Dust oldDust = carriedDust[nextDust];
@@ -118,7 +150,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
                     Projectile puff = Main.projectile[i];
                     if (!puff.active || puff.type != Type || !IsVisible(puff)) continue;
                     float fade = MathHelper.Clamp(puff.timeLeft / 12f, 0f, 1f);
-                    float age = 1f - puff.timeLeft / (float)Lifetime;
+                    float age = 1f - puff.timeLeft / (float)LifetimeOf(puff);
                     Vector2 size = new Vector2(56f, 64f) * (1f + age * 0.4f);
                     Vector2 blocks = size * 0.5f;
                     effect.Parameters["Progress"].SetValue(fade);

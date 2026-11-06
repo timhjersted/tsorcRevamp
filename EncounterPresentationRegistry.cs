@@ -224,6 +224,13 @@ namespace tsorcRevamp
             return ByPrimaryNpcType.TryGetValue(primaryNpcType, out entry);
         }
 
+        /// <summary>The encounter an NPC type belongs to, as its primary boss or as one of its completion types
+        /// (the Twins under Cataluminance, the Mecha Dragon under the Wyvern Mage, the Eater of Worlds' segments).</summary>
+        public static bool TryGetByMember(int npcType, out BossEncounterPresentation entry)
+        {
+            return ByCompletionNpcType.TryGetValue(npcType, out entry);
+        }
+
         public static bool TryGetByClue(int clueIndex, out BossEncounterPresentation entry)
         {
             return ByClueIndex.TryGetValue(clueIndex, out entry);

@@ -949,9 +949,8 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only, one alive at a time. The old test allowed one distant town NPC (UnderOne).
             SpawnNightBoosted("DarkKnight", Town.UnderOne & (Zone.Corruption | Zone.Dungeon) & !Zone.Meteor & !Zone.Jungle & !Depth.Underworld & !Zone.Hallow & !Region.Ocean, shm: 0.2f, max: 1);
 
+            // Underworld only (it used to also spawn in Hardmode Crimson and Desert).
             Spawn("DemonElemental", Depth.Underworld, phm: 0.067f, hm: 0.01f, shm: 0.01f, max: 2);
-            Spawn("DemonElemental", Zone.Crimson, hm: 0.04f, shm: 0.04f, max: 2);
-            Spawn("DemonElemental", Zone.Desert, hm: 0.022f, shm: 0.022f, max: 2);
 
             // DemonLordApocalypse
 

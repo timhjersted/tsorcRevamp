@@ -14,10 +14,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
     /// <summary>
     /// Briar Lash vine. Follows a cubic Bezier the owner locked and showed as a corridor (four controls, synced in
     /// ExtraAI), cached as 32 arc-length samples so draw and damage read the same points.
-    ///   age 1..16      the tip travels the whole arc (SmoothStep in arc length) - LIVE, 8px radius tip only
-    ///   age 17..34     harmless retraction back along the same arc into the halberd head, then removed
+    ///   age 1..20      the tip travels the whole arc (SmoothStep in arc length) - LIVE, 8px radius tip only
+    ///   age 21..38     harmless retraction back along the same arc into the casting hand, then removed
     ///   age 1000..1012 cancelled (owner staggered / died / target lost): frozen in place, fades out
-    ///   age 2000..2120 LATCHED: the tip hit a player, so the vine wraps them and tethers them to the halberd. Hold
+    ///   age 2000..2120 LATCHED: the tip hit a player, so the vine wraps them and tethers them to the free hand. Hold
     ///                  (no movement, no roll; attacking still works) for up to 2s. Two attacks by the held player
     ///                  snap it early; so does staggering or killing the Sentry. The Sentry gets one punish attack.
     /// The cable behind the tip is visual only. A wall appearing in front of the tip retracts it instead.
@@ -27,7 +27,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
     /// </summary>
     public class DarkrootVine : DarkrootHazard
     {
-        public const int ExtendTicks = 16;
+        // 20t to cover up to 640px of arc (Briar Lash reaches 560px): ~32px/tick at the far end.
+        public const int ExtendTicks = 20;
         public const int RetractTicks = 18;
         public const int SampleCount = 32;
         const int Cancelled = 1000;
@@ -298,7 +299,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 NPC owner = Main.npc[(int)Projectile.ai[0]];
                 if (owner.active && owner.ModNPC is DarkrootSentry sentry)
                 {
-                    _controls[0] = sentry.HalberdTipPosition;
+                    _controls[0] = sentry.VineAnchorPosition;
                 }
 
                 _controls[3] = held.Center;
@@ -490,6 +491,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                     Rotation = delta.ToRotation(),
                     Origin = new Vector2(0.5f, 0.5f),
                     SegmentRange = new Vector2(segmentStart, segmentEnd),
+                    ArcPixels = _arcLength,
                 };
                 visibleSegments++;
             }
@@ -505,6 +507,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 tipFraction = 0.001f;
             }
 
+            // Thorns and leaves first, so the cable drawn over them hides each one's root.
+            DarkrootWoodVFX.Draw("DarkrootVineThorns", quads, tipProgress, tipFraction, opacity);
             DarkrootWoodVFX.Draw("DarkrootVine", quads, tipProgress, tipFraction, opacity);
 
             if (Latched)
@@ -541,6 +545,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                             Rotation = delta.ToRotation(),
                             Origin = new Vector2(0.5f, 0.5f),
                             SegmentRange = new Vector2(grainStart, grainStart + 0.03f),
+                            // ~6.5px per coil segment over a 0.03 range: keeps the bark twist at the cable's scale.
+                            ArcPixels = 220f,
                         });
                     }
                 }

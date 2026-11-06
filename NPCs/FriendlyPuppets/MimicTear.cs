@@ -67,12 +67,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const int RetargetIntervalTicks = 15;
         /// <summary>Enemies further than this from the OWNER are ignored: the mimic fights near you, not off-screen.</summary>
         private const float TargetLeashFromOwner = 45f * 16f;
-        /// <summary>Enemies further than this from the mimic are not picked up.</summary>
+        /// <summary>Enemies further than this (35 tiles) from the mimic are not picked up.</summary>
         private const float TargetAcquireRange = 35f * 16f;
-        /// <summary>Following: anywhere 6–12 tiles from the owner it stands still; outside that it walks to 9 tiles.</summary>
-        private const float FollowNearDistance = 6f * 16f;
-        private const float FollowFarDistance = 12f * 16f;
-        private const float FollowSettleDistance = 9f * 16f;
+        /// <summary>Following: anywhere 5–20 tiles from the owner it's "in the band" (idles there); outside it, it
+        /// walks back in to 8 tiles.</summary>
+        private const float FollowNearDistance = 5f * 16f;
+        private const float FollowFarDistance = 20f * 16f;
+        private const float FollowSettleDistance = 8f * 16f;
+        /// <summary>While the owner walks, it starts catching up once more than 12 tiles behind (see the follow block).</summary>
+        private const float WalkingFollowStartDistance = 12f * 16f;
         /// <summary>Idle routine (no target, owner standing still): walk to a new spot in the follow band at a walking pace,
         /// then stand for 1.5–4 s facing the owner, and repeat. Spots closer than 2 tiles to where it is are skipped (it
         /// just waits again). ESTIMATE.</summary>
@@ -80,6 +83,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const float IdleWalkSpeedFraction = 0.4f;
         private const int IdlePauseMinTicks = 90;
         private const int IdlePauseMaxTicks = 240;
+        /// <summary>Idle walk counts as arrived within 1.5 tiles: SF4 itself brakes within 1 tile of a waypoint, so a
+        /// tighter test could leave it standing "not arrived" forever. A walk that hasn't arrived after 5 s (blocked
+        /// terrain) is abandoned and becomes a pause.</summary>
+        private const float IdleArriveSlack = 24f;
+        private const int IdleWalkTimeoutTicks = 300;
         /// <summary>Summoned this far behind the owner (3 tiles), so the rise is in view.</summary>
         private const float SummonOffset = 48f;
         /// <summary>Summon: pool spreads for SummonPoolTicks, then the body rises out of it until SummonTicks (1.5 s).</summary>
@@ -118,6 +126,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>SmartFighter4's door value: non-zero lets it path through closed doors and open them (it opens,
         /// it doesn't destroy — see SmartFighter4AI.TryDoor). 4 is SF4's own default.</summary>
         private const int DoorOpenValue = 4;
+        /// <summary>SF4 A* search window (tiles; SF4 caps it at 80). Farther waypoints are planned toward the nearest
+        /// reachable spot and replanned as it closes in.</summary>
+        private const int NavSearchRadiusTiles = 80;
+        /// <summary>SF4 jump ceilings (launch / held boost), the same as PuppetNPC's defaults.</summary>
+        private const float JumpPower = 10f;
+        private const float JumpBoost = 6f;
         /// <summary>Knockback taken, as a fraction of a normal NPC's (0 = none). ESTIMATE.</summary>
         private const float KnockbackTaken = 0.6f;
 
@@ -175,6 +189,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private bool _idleWalking;
         private float _idleTargetX;
         private int _idlePauseTicks = IdlePauseMinTicks;
+        private int _idleWalkTicks;
+        private bool _catchingUp;
 
         // All machines: local timer for the current state (reset when ai[3] changes), used for drink pose/progress.
         private MimicState _lastSeenState = MimicState.Fight;
@@ -238,8 +254,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             NPC.value = 0f;
             NPC.knockBackResist = KnockbackTaken;
 
-            // Ropes are a per-NPC opt-in for SmartFighter4 (doors are enabled by the value passed to Run).
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+            // SmartFighter4 navigation. NavSearchRadius is the A* window in tiles: left at its default 0, SF4 clamps
+            // it to 1, finds no span near any waypoint, reports Blocked and brakes — the mimic never moved.
+            // Ropes are a per-NPC opt-in (doors are enabled by the value passed to Run). Jump numbers match puppets.
+            tsorcRevampGlobalNPC navigation = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            navigation.NavSearchRadius = NavSearchRadiusTiles;
+            navigation.CanUseRopes = true;
+            navigation.MaxJumpPower = JumpPower;
+            navigation.MaxJumpBoost = JumpBoost;
             NPC.ai[1] = -1f;
         }
 
@@ -1113,16 +1135,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     && Math.Abs(NPC.Center.Y - owner.Center.Y) < FollowFarDistance
                     && sideOfOwner == Math.Sign(offsetFromOwner);
 
-                // In the band while the owner walks: hold, as before (it re-follows once it falls out of the band).
-                if (inFollowBand && ownerWalking)
+                // Owner on the move: follow loosely. It starts catching up once it is out of the band or more than
+                // 12 tiles behind, and keeps walking until it's back at ~8 tiles behind; in between it holds. The
+                // hysteresis stops it stop-starting at a single distance while trailing a running owner.
+                if (ownerWalking)
                 {
                     _idleWalking = false;
-                    NPC.velocity.X *= 0.8f;
-                    return;
+                    bool behindOwner = sideOfOwner == Math.Sign(offsetFromOwner);
+                    bool fallenBehind = !inFollowBand || gapToOwner > WalkingFollowStartDistance;
+                    bool backAtSettle = behindOwner && gapToOwner <= FollowSettleDistance + IdleArriveSlack;
+
+                    if (fallenBehind)
+                    {
+                        _catchingUp = true;
+                    }
+                    else if (backAtSettle)
+                    {
+                        _catchingUp = false;
+                    }
+
+                    if (!_catchingUp)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                        return;
+                    }
+                }
+                else
+                {
+                    _catchingUp = false;
                 }
 
-                // Out of the band: follow back in, and start the idle routine over once there.
-                if (!inFollowBand)
+                // Out of the band (or catching up to a walking owner): head for 8 tiles from the owner on its side;
+                // the idle routine starts over once it's back in the band with the owner standing still.
+                if (!inFollowBand || _catchingUp)
                 {
                     _idleWalking = false;
                     waypoint = owner.Center + new Vector2(sideOfOwner * FollowSettleDistance, 0f);
@@ -1132,7 +1177,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     // Idle routine (server-side rolls): pause facing the owner, then walk to a new spot in the band on
                     // its own side, at a walking pace; arriving starts the next pause.
-                    if (_idleWalking && Math.Abs(_idleTargetX - NPC.Center.X) <= EngagementSlack)
+                    if (_idleWalking)
+                    {
+                        _idleWalkTicks++;
+                    }
+
+                    bool idleArrived = Math.Abs(_idleTargetX - NPC.Center.X) <= IdleArriveSlack;
+                    bool idleWalkTimedOut = _idleWalkTicks >= IdleWalkTimeoutTicks;
+
+                    if (_idleWalking && (idleArrived || idleWalkTimedOut))
                     {
                         _idleWalking = false;
                         _idlePauseTicks = Main.rand.Next(IdlePauseMinTicks, IdlePauseMaxTicks + 1);
@@ -1165,6 +1218,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         }
 
                         _idleWalking = true;
+                        _idleWalkTicks = 0;
                         _idleTargetX = spotX;
                         NPC.netUpdate = true;
                     }

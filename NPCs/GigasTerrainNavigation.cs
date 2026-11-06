@@ -461,15 +461,38 @@ namespace tsorcRevamp.NPCs
                     npc.stepSpeed = previousStepSpeed;
                 }
             }
-            if (npc.velocity.Y != 0f || !HasWalkingFooting(npc)) return;
+            if (npc.velocity.Y != 0f || !HasWalkingFooting(npc))
+            {
+                return;
+            }
+
+            // Sink the sprite 16px only while the two-tile core straddles a real 1-tile step-down: one column flush
+            // (HasWalkingFooting guarantees it) and the other EMPTY at the feet row. A slope or half-block there is
+            // not a step, so it no longer counts. Collision stays on the high support; only the sprite moves.
             int centerX = (int)(npc.Center.X / 16f);
             int floorY = (int)((npc.Bottom.Y + 1f) / 16f);
-            bool uneven = !UsefulFunctions.IsValidWalkableTile(centerX - 1, floorY)
-                || !UsefulFunctions.IsValidWalkableTile(centerX, floorY);
-            if (uneven)
-                npc.gfxOffY = Math.Min(16f, MathHelper.Lerp(Math.Max(0f, npc.gfxOffY), 16f, 0.35f));
-            // Collision remains on the high support. Only the sprite sinks into the single
-            // adjacent lower tile; two-tile drops never qualify for this drawing adjustment.
+            bool leftFlush = UsefulFunctions.IsValidWalkableTile(centerX - 1, floorY);
+            bool rightFlush = UsefulFunctions.IsValidWalkableTile(centerX, floorY);
+            bool stepDownOnLeft = !leftFlush && !WorldGen.SolidTile(centerX - 1, floorY);
+            bool stepDownOnRight = !rightFlush && !WorldGen.SolidTile(centerX, floorY);
+            bool straddlingStep = stepDownOnLeft || stepDownOnRight;
+
+            if (straddlingStep)
+            {
+                float easedSink = MathHelper.Lerp(Math.Max(0f, npc.gfxOffY), 16f, 0.35f);
+                npc.gfxOffY = Math.Min(16f, easedSink);
+            }
+            else if (leftFlush && rightFlush && npc.gfxOffY > 0f)
+            {
+                // Both core tiles flat: ease the sink back out. Vanilla only decays gfxOffY by stepSpeed, which
+                // is 0 unless a step-up just ran, so without this a sink set once stayed for the rest of the fight.
+                npc.gfxOffY = MathHelper.Lerp(npc.gfxOffY, 0f, 0.25f);
+
+                if (npc.gfxOffY < 0.5f)
+                {
+                    npc.gfxOffY = 0f;
+                }
+            }
         }
 
         internal bool TryPlannedJump(NPC npc, int targetX, int targetFeetY, float maxJump, float maxSpeed)

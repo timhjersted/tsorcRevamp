@@ -14,7 +14,9 @@ float2 PrimaryTextureSize;
 
 float2 LocalUV(float2 coords)
 {
-    return coords * PrimaryTextureSize / max(DrawSize, float2(1.0, 1.0));
+    float2 uv = coords * PrimaryTextureSize / max(DrawSize, float2(1.0, 1.0));
+    // Progress holds the extra quad scale. Undo it about the center so the smoke can fade past the old edges.
+    return (uv - 0.5) * (1.0 + Progress) + 0.5;
 }
 
 float MantleMask(float2 uv, out float edge)

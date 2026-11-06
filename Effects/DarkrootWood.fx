@@ -13,8 +13,11 @@ float Active;        // 1 while lethal (brighter sap). Vine: repurposed as the t
 float Opacity;       // fade, 0..1
 float4 PixelGrid;    // xy = 2px block count across the quad, zw = reciprocal (computed in C#)
 float2 SegmentRange; // Vine: arc fraction at this segment quad's start / end. Root: x = per-root seed 0..1
+float ArcPixels;     // Vine: the whole vine's arc length in px (SegmentRange * ArcPixels = px along the vine)
 
 static const float3 BarkColor = float3(0.29, 0.19, 0.12);
+static const float3 DeepBark = float3(0.12, 0.075, 0.045);
+static const float3 PaleBark = float3(0.52, 0.38, 0.24);
 static const float3 MossColor = float3(0.40, 0.62, 0.25);
 static const float3 SapColor = float3(0.86, 0.88, 0.72);
 
@@ -80,32 +83,65 @@ float4 Root(float2 coords : TEXCOORD0) : COLOR0
     return float4(color * Opacity, alpha);
 }
 
-// Vine segment: uv.x along this segment, uv.y across a 20px quad. along = arc fraction of the whole vine.
-// Cable half-width .5 (5px). Within the last Active (= 16px as an arc fraction) before the tip it swells to .8
-// (8px radius, the damage radius) and then closes to a point exactly at Progress.
+// Vine segment: uv.x along this segment, uv.y across a 20px quad (1 across unit = 10px). along = arc fraction of the
+// whole vine; px = the same distance in pixels (ArcPixels), so bark detail keeps its size on a short or long vine.
+// Cable half-width .42-.58 (4.2-5.8px, knotted by Perlin). Within the last Active (= 16px as an arc fraction) before
+// the tip it swells by .3 (to ~8px, the damage radius) and closes to a point exactly at Progress.
+// Surface: two strands twisting every 12px (dark grooves to pale crowns), mottled by grain and Voronoi plates, moss
+// where the grain runs high, round-shaded across the width. Thorns are a separate technique (VineThorns, below).
 float4 Vine(float2 coords : TEXCOORD0) : COLOR0
 {
     float2 uv = PixelateShaderUV(coords, PixelGrid);
     float along = lerp(SegmentRange.x, SegmentRange.y, uv.x);
-    float across = abs(uv.y - 0.5) * 2.0;
+    float side = uv.y * 2.0 - 1.0;
+    float across = abs(side);
+    float px = along * ArcPixels;
     float toTip = (Progress - along) / max(Active, 0.001);
 
     float swell = saturate(1.0 - abs(toTip - 0.55) * 1.6);
     float tipClose = saturate(toTip * 3.0);
-    float halfWidth = (0.5 + swell * 0.3) * tipClose;
+    float knot = tex2D(PrimarySampler, float2(px * 0.012, 0.37)).r;
+    float halfWidth = (0.42 + knot * 0.16 + swell * 0.3) * tipClose;
+    float cable = saturate((halfWidth - across) * 9.0);
 
-    float grain = tex2D(PrimarySampler, float2(along * 6.0 - Time * 0.8, uv.y * 2.0)).r;
-    float twist = tex2D(DetailSampler, float2(along * 9.0 + uv.y * 0.8, uv.y * 0.6)).r;
+    // strand = distance from the strand crown (0) to the groove (.5): diagonal bands 12px apart leaning across.
+    float strand = abs(frac(px * 0.083 + side * 0.7) - 0.5);
+    float plates = tex2D(DetailSampler, float2(px * 0.03, uv.y * 0.6)).r;
+    float grain = tex2D(PrimarySampler, float2(px * 0.05 - Time * 0.3, uv.y * 1.5)).r;
 
-    float body = saturate((halfWidth - across) * 9.0);
-    float sap = saturate(1.0 - across * 4.0) * grain * body;
-    float tipGlow = swell * body;
+    float tone = saturate(0.95 - strand * 1.5 + grain * 0.35) * (0.45 + plates * 0.75) * (1.0 - across * 0.45);
+    float3 bark = lerp(DeepBark, PaleBark, tone) + MossColor * saturate(grain * 2.5 - 1.6);
 
-    float alpha = body * Opacity;
-    float3 color = BarkColor * (0.45 + twist * 0.7) * body
-        + MossColor * sap * 0.6
-        + SapColor * tipGlow * 0.3;
-    return float4(color * Opacity, alpha);
+    float3 color = bark * cable + SapColor * swell * cable * 0.35;
+    return float4(color * Opacity, cable * Opacity);
+}
+
+// Vine thorns: drawn on the same quads just BEFORE Vine, so the cable covers each thorn's root (split from Vine to
+// fit ps_2_0). Same width maths as Vine. Band units (1 band = 18px): one thorn per band on alternating sides, base
+// half-thickness .14 band (2.5px) narrowing to a point 4px past the cable edge, leaning toward the tip. Every third
+// band is a moss-green leaf instead. Decorative only (outside the tip's damage radius); none on the swollen tip.
+float4 VineThorns(float2 coords : TEXCOORD0) : COLOR0
+{
+    float2 uv = PixelateShaderUV(coords, PixelGrid);
+    float along = lerp(SegmentRange.x, SegmentRange.y, uv.x);
+    float side = uv.y * 2.0 - 1.0;
+    float px = along * ArcPixels;
+    float toTip = (Progress - along) / max(Active, 0.001);
+
+    float swell = saturate(1.0 - abs(toTip - 0.55) * 1.6);
+    float tipClose = saturate(toTip * 3.0);
+    float knot = tex2D(PrimarySampler, float2(px * 0.012, 0.37)).r;
+    float halfWidth = (0.42 + knot * 0.16 + swell * 0.3) * tipClose;
+
+    float band = px * 0.0556;
+    float barbSide = frac(band * 0.5) > 0.5 ? side : -side;
+    float outward = barbSide - halfWidth;
+    float barb = saturate((0.14 - outward * 0.35 - abs(frac(band) - 0.3 - outward * 0.6)) * 30.0);
+    barb *= saturate((outward > -0.2 ? tipClose : 0.0) - swell * 2.0);
+    float leaf = frac(band * 0.334) > 0.667 ? 1.0 : 0.0;
+
+    float3 thorn = lerp(DeepBark * 1.8, MossColor * 0.9, leaf);
+    return float4(thorn * barb * Opacity, barb * Opacity);
 }
 
 // Bud: telegraph. Low-opacity knot that condenses as Progress grows; Active brightens a sap core as release nears.
@@ -140,6 +176,11 @@ technique DarkrootRoot
 technique DarkrootVine
 {
     pass P0 { PixelShader = compile ps_2_0 Vine(); }
+}
+
+technique DarkrootVineThorns
+{
+    pass P0 { PixelShader = compile ps_2_0 VineThorns(); }
 }
 
 technique DarkrootBud

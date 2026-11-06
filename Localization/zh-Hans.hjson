@@ -6696,7 +6696,11 @@ Mods: {
 
 			GravelordSword: {
 				// DisplayName: Gravelord Sword
-				// Tooltip: Chains an overhead cut and a rising cut into a crushing slam.
+				/* Tooltip:
+					'''
+					Chains an overhead cut and a rising cut into a crushing slam
+					The slam deals {0}x damage
+					''' */
 			}
 
 			CoralSword: {
@@ -9555,7 +9559,14 @@ Mods: {
 
 			ArtoriasGreatsword: {
 				// DisplayName: Artorias Greatsword
-				// Tooltip: ""
+				/* Tooltip:
+					'''
+					Tap: a three-swing combo; each cut throws an abyss crescent for {0} mana
+					Crescents deal {1}% of the sword's damage as magic damage and fly {2} tiles
+					The third swing is a slam for {3}x damage
+					Hold: forward-flip leap toward the cursor (up to {4} tiles) that slams for {6}x damage
+					and sends a wall of abyss smoke {5} tiles along the ground each way
+					''' */
 			}
 
 			EnemyGreatFireAxe: {
@@ -9567,7 +9578,7 @@ Mods: {
 				// DisplayName: Sword Of Lord Gwyn
 				/* Tooltip:
 					'''
-					Tap left click: slash with the First Flame
+					Tap left click: a three-swing First Flame combo whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Tap right click: spend {1} mana on a rising flame dash
 					Hold right click: spend {2} mana on Cinder Nova
@@ -9576,7 +9587,7 @@ Mods: {
 				/* AdvancedTooltip:
 					'''
 					Aim at or above a point 3 tiles below your feet:
-					Tap left click: slash with the First Flame
+					Tap left click: a three-swing First Flame combo whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Aim more than 3 tiles below your feet:
 					Tap left click: spend {1} mana on a rising flame dash
@@ -12221,6 +12232,16 @@ Mods: {
 			// AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
 			// DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
 			// GreatswordSwing.DisplayName: Greatsword Swing
+			// ArtoriasGreatswordLeap.DisplayName: Artorias Greatsword Leap
+			// ArtoriasGreatswordSlash.DisplayName: Artorias Greatsword Slash
+			// ArtoriasGreatswordSmokeWave.DisplayName: Artorias Greatsword Smoke Wave
+			// SwordOfLordGwynSlamLightning.DisplayName: Sword Of Lord Gwyn Slam Lightning
+			// DarkrootHalberdRoot.DisplayName: Darkroot Halberd Root
+			// ArtoriasBladeSlash.DisplayName: Artorias Blade Slash
+			// DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
+			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
+			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
 		}
 
 		NPCs: {
@@ -13897,7 +13918,12 @@ Mods: {
 
 			// VesselWatcher.DisplayName: Strange Eye
 			// Hydra.DisplayName: Hydra
-			// IceGigas.DisplayName: Ice Gigas
+
+			IceGigas: {
+				// DisplayName: Ice Gigas
+				// DespawnHandler: The Ice Gigas sinks back into the frozen silence...
+			}
+
 			// FrozenGigasStatue.DisplayName: Frozen Echo
 			// SpellboundGhoul.DisplayName: Spellbound Ghoul
 			// Massacre.DisplayName: Juggernaut
@@ -14017,6 +14043,7 @@ Mods: {
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
 			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
+			// HellkiteDrake.DisplayName: Hellkite Drake
 		}
 
 		Prefixes: {

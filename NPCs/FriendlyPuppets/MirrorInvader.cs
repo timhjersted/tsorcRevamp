@@ -86,6 +86,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const float WaypointRefreshDistance = 32f;
         /// <summary>SmartFighter4 door value: opens doors, doesn't destroy them (SF4's own default).</summary>
         private const int DoorOpenValue = 4;
+        /// <summary>SF4 A* search window (tiles; SF4 caps it at 80).</summary>
+        private const int NavSearchRadiusTiles = 80;
+        /// <summary>SF4 jump ceilings (launch / held boost), the same as PuppetNPC's defaults.</summary>
+        private const float JumpPower = 10f;
+        private const float JumpBoost = 6f;
         /// <summary>Too close for its shot this long, or out of reach with its weapon this long: switch weapon.</summary>
         private const int TooCloseSwitchTicks = 30;
         private const int OutOfReachSwitchTicks = 120;
@@ -267,7 +272,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             NPC.knockBackResist = KnockbackTaken;
             NPC.value = 0f;
             NPC.ai[2] = -1f;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
+
+            // SmartFighter4 navigation. NavSearchRadius is the A* window in tiles: left at its default 0, SF4 clamps
+            // it to 1, finds no span near any waypoint, reports Blocked and brakes, so the invader stood still.
+            // Ropes are a per-NPC opt-in (doors come from the value passed to Run). Jump numbers match puppets.
+            tsorcRevampGlobalNPC navigation = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            navigation.NavSearchRadius = NavSearchRadiusTiles;
+            navigation.CanUseRopes = true;
+            navigation.MaxJumpPower = JumpPower;
+            navigation.MaxJumpBoost = JumpBoost;
         }
 
         // ── Spawning (server / single player) ─────────────────────────────────────────────────────

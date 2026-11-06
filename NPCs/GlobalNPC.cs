@@ -230,6 +230,11 @@ namespace tsorcRevamp.NPCs
         // handler despawn makes the handler re-run its burst + flash every tick, forever.
         public bool DespawnedByHandler;
 
+        // Set by a non-boss event NPC that runs its own NPCDespawnHandler (e.g. Ice Gigas). When its event fails
+        // because everyone died, ScriptedEvent.EndEvent leaves it alive so the handler can play the boss-style fade
+        // (text, dust, flash) instead of deleting it on the spot. Bosses never need it: EndEvent already skips them.
+        public bool UsesOwnDespawnHandler;
+
         //Stores which NPC in that event this is
         public int ScriptedEventIndex;
 

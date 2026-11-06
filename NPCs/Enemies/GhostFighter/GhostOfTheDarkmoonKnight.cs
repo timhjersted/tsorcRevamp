@@ -27,7 +27,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         string _requestedCombo;
         int _serial, _age, _completedActions, _neutralTicks, _restTicks, _graceTicks, _healRetryTicks;
         int _cutCooldown, _leapCooldown, _crescentCooldown, _barrageCooldown, _vigilCooldown;
-        int _guardTicks, _guardCooldown, _guardFacing = 1, _blockSoundCooldown;
+        int _guardTicks, _guardCooldown, _guardFacing = 1;
         int _kiteTicks, _approachTicks, _shotCount, _releasedMask, _castTarget;
         bool _phaseTwo, _guardUp, _vigilWasPresent;
         Vector2 _castAim = Vector2.UnitX, _vigilAnchor;
@@ -53,7 +53,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override int MeleeDamage => EnemyDamage.Projectile(CutExpertDamage);
         protected override int RangedDamage => 0;
         protected override bool HoldAttackSelection => true;
-        protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool ShowWeaponDuringNeutral => false;
         protected override bool WeaponSheathed => BarragePose;
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
         protected override Vector2 MeleeHandleNorm => new Vector2(6f / 52f, 45f / 52f);
@@ -107,12 +107,21 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override int TeleportTelegraphTicks => 80;
         protected override int TeleportDustTypeId => DustID.Smoke;
         protected override Color TeleportDustTint => new Color(55, 55, 65);
+        protected override int OnKillDustCount => 0;
 
         protected override MeleeCombo[] MeleeComboPoolOverride => Combos;
         protected override void ModifyMeleeArcEndpoints(ComboMotion motion, ref float start, ref float end)
         {
             if (motion == ComboMotion.OverheadArc) { start = -1.55f; end = 2.36f; }
             if (motion == ComboMotion.UnderhandArc) { start = 2.36f; end = -1.55f; }
+
+            // The logical windup eases carry -> arc END -> arc START. With this 224deg arc that dips the blade
+            // under the body and whirls it ~220deg back up around the hand. Collapsing the end onto the start
+            // for the tell turns it into a straight ease from carry into the raised (or low) guard, then a hold.
+            if (Phase == AttackPhase.MeleeComboTelegraph && (motion == ComboMotion.OverheadArc || motion == ComboMotion.UnderhandArc))
+            {
+                end = start;
+            }
         }
 
         public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
@@ -139,12 +148,16 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             else NPC.velocity.X *= 0.65f;
         }
         public void OnHumanoidMeleeHit(Player target) => target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 180);
-        public override void HitEffect(NPC.HitInfo hit)
+        public override void OnKill()
         {
-            if (Main.dedServ || NPC.life > 0) return;
-            string[] parts = { "Darkmoon Knight Gore 1", "Black Knight Gore 2", "Black Knight Gore 3", "Black Knight Gore 2", "Black Knight Gore 3" };
-            foreach (string name in parts) Gore.NewGore(NPC.GetSource_Death(), NPC.position, Main.rand.NextVector2Circular(6, 6), Mod.Find<ModGore>(name).Type);
+            if (Server)
+            {
+                Vector2 riseVelocity = new Vector2(0f, -0.45f);
+                int cloudType = ModContent.ProjectileType<DarkmoonDeathCloud>();
+                Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, riseVelocity, cloudType, 0, 0f, Main.myPlayer);
+            }
         }
+
         public override void ModifyNPCLoot(NPCLoot loot)
         {
             loot.Add(ItemDropRule.Common(ModContent.ItemType<GigantAxe>(), 10));

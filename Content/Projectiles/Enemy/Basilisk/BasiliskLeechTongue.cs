@@ -279,11 +279,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             Projectile.hostile = false;
             Projectile.tileCollide = false;
 
-            if (TryAttachToPlayer())
-            {
-                return;
-            }
-
             Vector2 mouth = GetMouthPosition(owner);
             Vector2 toMouth = mouth - Projectile.Center;
             if (toMouth.Length() < 14f)
@@ -385,7 +380,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         private bool TryAttachToPlayer()
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (!CanGrabPlayer || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return false;
             }

@@ -1,0 +1,1783 @@
+using System;
+using System.IO;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using Terraria;
+using Terraria.Audio;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.DemonFamily;
+using tsorcRevamp.Utilities;
+
+namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
+{
+    // Development encounter. Spawn through an NPC spawner while its arena and attacks are being tested.
+    public class HellkiteDrake : ModNPC, IDebugAttackLabel, IStaggerable
+    {
+        public enum DrakeState
+        {
+            Settle,
+            Ground,
+            Turn,
+            Bite,
+            Breath,
+            TailSlam,
+            Takeoff,
+            AirApproach,
+            AirBreath,
+            Land,
+            Recover
+        }
+
+        public const float ArtScale = 1f;
+        public const int BiteTell = 30;
+        public const int BiteLive = 12;
+        public const int BreathTell = 50;
+        public const int BreathLive = 60;
+        public const int TailTell = 46;
+        public const int TailLive = 12;
+        public const int AirTell = 44;
+        public const int AirLive = 48;
+        private const int TurnStretchFactor = 3;
+        private const int TurnTicks = 104 * TurnStretchFactor;
+        private const int TurnNeckTicks = 70 * TurnStretchFactor;
+        private const int TurnNeckRootTicks = 30 * TurnStretchFactor;
+        private const int TurnBodyTick = 26 * TurnStretchFactor;
+        private const int TurnHeadTick = 9 * TurnStretchFactor;
+        private const int GroundMinimum = 90;
+        // Pivot about the planted near claw (source contact spans x=390–439), aligned with NPC.Bottom.
+        private static readonly Vector2 SourceFloor = new Vector2(414f, 474f);
+        private static readonly int[] WalkTicks = { 13, 8, 6, 4, 13, 8, 6, 4 };
+        private static readonly int[] WingCycle = { 3, 2, 1, 1, 2, 3, 4, 4 };
+        private static readonly int[] TurnWingRows = { 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0 };
+        private static readonly int[] NeckParts = { 16, 17, 1, 2, 3, 15 };
+        private static readonly float[] NeckTurnAngles = { 0.55f, 0.75f, 0.9f, 1f, 1f };
+        private static readonly Vector2[] TurnFootContacts =
+        {
+            new Vector2(414f, 473f),
+            new Vector2(426f, 473f),
+            new Vector2(446f, 473f),
+            new Vector2(468f, 473f),
+            new Vector2(494f, 465f),
+            new Vector2(462f, 463f),
+            new Vector2(466f, 441f),
+            new Vector2(442f, 469f)
+        };
+        private static readonly Vector2[] TailRest =
+        {
+            new Vector2(504f, 332f),
+            new Vector2(604f, 360f),
+            new Vector2(752f, 360f),
+            new Vector2(872f, 256f),
+            new Vector2(800f, 188f)
+        };
+
+        private static readonly Part[] Parts =
+        {
+            new Part("Torso", 298, 160, new Vector2(400f, 332f), new Vector2(194f, 70f), 1),
+            new Part("Neck1Forward", 160, 184, new Vector2(280f, 388f), new Vector2(38f, 126f), 1),
+            new Part("Neck2", 112, 116, new Vector2(260f, 392f), new Vector2(94f, 62f), 1),
+            new Part("Neck3", 94, 98, new Vector2(176f, 392f), new Vector2(74f, 58f), 1),
+            new Part("Tail1", 124, 108, new Vector2(504f, 332f), new Vector2(16f, 46f), 1),
+            new Part("Tail2", 178, 88, new Vector2(604f, 360f), new Vector2(16f, 46f), 1),
+            new Part("Tail3", 172, 138, new Vector2(752f, 360f), new Vector2(18f, 114f), 1),
+            new Part("TailTip", 124, 96, new Vector2(872f, 256f), new Vector2(90f, 74f), 1),
+            new Part("ShoulderFill", 204, 136, new Vector2(400f, 332f), new Vector2(100f, 88f), 1),
+            new Part("WingNear", 524, 466, new Vector2(316f, 302f), new Vector2(20f, 290f), 5),
+            new Part("WingFar", 286, 318, new Vector2(270f, 300f), new Vector2(156f, 190f), 5),
+            new Part("WingNearWalk", 324, 70, new Vector2(316f, 302f), new Vector2(10f, 50f), 8),
+            new Part("WingFarWalk", 148, 54, new Vector2(270f, 300f), new Vector2(24f, 48f), 8),
+            new Part("LegNear", 178, 168, new Vector2(492f, 354f), new Vector2(110f, 44f), 10),
+            new Part("LegFar", 164, 152, new Vector2(416f, 364f), new Vector2(104f, 38f), 10),
+            new Part("HeadMouth", 154, 130, new Vector2(112f, 364f), new Vector2(106f, 76f), 3),
+            new Part("NeckRoot", 160, 184, new Vector2(320f, 344f), new Vector2(78f, 114f), 1),
+            new Part("Neck1Mid", 160, 184, new Vector2(300f, 366f), new Vector2(58f, 120f), 1),
+            new Part("ShoulderScales", 160, 184, new Vector2(400f, 332f), new Vector2(158f, 102f), 1),
+            new Part("NeckRootExtension", 160, 184, new Vector2(320f, 344f), new Vector2(78f, 114f), 1),
+            new Part("Neck1MidExtension", 160, 184, new Vector2(300f, 366f), new Vector2(58f, 120f), 1),
+            new Part("Neck1ForwardExtension", 160, 184, new Vector2(280f, 388f), new Vector2(38f, 126f), 1),
+            new Part("ShoulderSkin", 160, 208, new Vector2(400f, 332f), new Vector2(158f, 102f), 1)
+        };
+
+        private readonly Bone[] bones = new Bone[23];
+        private readonly Vector2[] tailJoints = new Vector2[5];
+        private readonly Vector2[] turnJoints = new Vector2[6];
+        private AttackBag<DrakeState> attackBag;
+        private Vector2 lockedAim = -Vector2.UnitX;
+        private Vector2 lockedImpact;
+        private Vector2 waypoint;
+        private Vector2 home;
+        private Vector2 previousMouth;
+        private Vector2 previousTail;
+        private float walkClock;
+        private float biteSpeed = 7.5f;
+        private int flightCooldown;
+        private int tailCooldown;
+        private int groundedTicks;
+        private int recoveryTicks = 40;
+        private int turnFacing = -1;
+        private int sequence;
+        private int visualSequence = -1;
+        private int blockedTicks;
+        private bool initialized;
+
+        public DrakeState State => (DrakeState)(int)NPC.ai[0];
+        public int StateTimer => (int)NPC.ai[1];
+        public int Facing
+        {
+            get
+            {
+                if (State == DrakeState.Turn)
+                {
+                    return StateTimer >= TurnBodyTick ? -turnFacing : turnFacing;
+                }
+
+                return NPC.ai[2] < 0f ? -1 : 1;
+            }
+        }
+        public int Sequence => sequence;
+        public Vector2 Mouth { get; private set; }
+        public Vector2 Jaw { get; private set; }
+        public Vector2 TailEnd { get; private set; }
+        public Vector2 TailJoint { get; private set; }
+        public Vector2 TailBase { get; private set; }
+        public Vector2 BreathDirection { get; private set; }
+        public bool Airborne => State == DrakeState.Takeoff || State == DrakeState.AirApproach
+            || State == DrakeState.AirBreath || State == DrakeState.Land;
+        public string DebugAttackLabel => "Hellkite Drake " + DebugLabels.Humanize(State.ToString()) + " " + StateTimer;
+
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.MustAlwaysDraw[Type] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            NPC.width = 140;
+            NPC.height = 148;
+            NPC.scale = 1f;
+            NPC.aiStyle = -1;
+            NPC.lifeMax = 475000;
+            NPC.defense = 100;
+            NPC.damage = 0;
+            NPC.boss = true;
+            NPC.knockBackResist = 0f;
+            NPC.value = 0f;
+            NPC.npcSlots = 10f;
+            NPC.noTileCollide = false;
+            NPC.noGravity = false;
+            NPC.netAlways = true;
+            NPC.HitSound = SoundID.NPCHit13;
+            NPC.DeathSound = SoundID.Item119;
+            Music = MusicID.Boss2;
+        }
+
+        public override bool PreKill()
+        {
+            // Test kills should not enter the global boss reward and saved-progression hooks.
+            return false;
+        }
+
+        public override void HitEffect(NPC.HitInfo hit)
+        {
+            if (Main.dedServ || NPC.life > 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 48; i++)
+            {
+                Vector2 position = Vector2.Lerp(Mouth, TailBase, Main.rand.NextFloat());
+                Vector2 velocity = Main.rand.NextVector2Circular(4f, 3f);
+                Dust ember = Dust.NewDustPerfect(position, DustID.Torch, velocity, 80, default, 1.1f);
+                ember.noGravity = true;
+                Dust.NewDustPerfect(position, DustID.Smoke, velocity * 0.5f, 140, new Color(65, 48, 40), 1.2f);
+            }
+        }
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            return false;
+        }
+
+        public override bool? CanFallThroughPlatforms()
+        {
+            return false;
+        }
+
+        public override void AI()
+        {
+            bool authority = Main.netMode != NetmodeID.MultiplayerClient;
+            if (!initialized)
+            {
+                if (!authority)
+                {
+                    UpdatePose();
+                    return;
+                }
+
+                NPC.TargetClosest(false);
+                NPC.ai[2] = -1f;
+                if (NPC.HasValidTarget && Main.player[NPC.target].Center.X > NPC.Center.X)
+                {
+                    NPC.ai[2] = 1f;
+                }
+
+                home = NPC.Bottom;
+                initialized = true;
+                EnterState(DrakeState.Settle);
+            }
+
+            if (authority && !NPC.HasValidTarget)
+            {
+                NPC.TargetClosest(false);
+            }
+
+            if (!NPC.HasValidTarget || Vector2.DistanceSquared(NPC.Center, Main.player[NPC.target].Center) > 36000000f)
+            {
+                NPC.noGravity = false;
+                NPC.velocity.X *= 0.9f;
+                NPC.EncourageDespawn(120);
+                if (authority && State != DrakeState.Settle)
+                {
+                    EnterState(DrakeState.Settle);
+                }
+
+                UpdatePose();
+                return;
+            }
+
+            NPC.timeLeft = 750;
+            NPC.noTileCollide = false;
+            NPC.noGravity = Airborne;
+            NPC.spriteDirection = Facing;
+            NPC.direction = Facing;
+            Player target = Main.player[NPC.target];
+            bool onGround = NPC.collideY && NPC.velocity.Y >= 0f;
+            tsorcRevampGlobalNPC global = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            global.AttackTelegraphing = false;
+            global.AttackCommitted = State != DrakeState.Ground && State != DrakeState.Recover;
+
+            if (authority)
+            {
+                flightCooldown = Math.Max(0, flightCooldown - 1);
+                tailCooldown = Math.Max(0, tailCooldown - 1);
+                if (onGround && !Airborne)
+                {
+                    groundedTicks++;
+                }
+            }
+
+            previousMouth = Mouth;
+            previousTail = TailEnd;
+            UpdatePose();
+
+            switch (State)
+            {
+                case DrakeState.Settle:
+                    NPC.velocity.X *= 0.8f;
+                    if (authority && onGround)
+                    {
+                        home = NPC.Bottom;
+                        EnterState(DrakeState.Ground);
+                    }
+                    break;
+
+                case DrakeState.Ground:
+                    TickGround(target, onGround, authority);
+                    break;
+
+                case DrakeState.Turn:
+                    NPC.velocity.X = 0f;
+                    if (authority && StateTimer == TurnBodyTick)
+                    {
+                        NPC.ai[2] = -turnFacing;
+                        NPC.netUpdate = true;
+                    }
+
+                    if (authority && StateTimer >= TurnTicks)
+                    {
+                        EnterState(DrakeState.Ground);
+                    }
+                    break;
+
+                case DrakeState.Bite:
+                    NPC.velocity.X *= 0.75f;
+                    if (StateTimer < BiteTell - 8)
+                    {
+                        lockedAim = AimAt(target.Center, 0.45f);
+                    }
+
+                    if (authority && StateTimer == BiteTell - 8)
+                    {
+                        lockedAim = AimAt(target.Center, 0.45f);
+                        float gap = (target.Center.X - Mouth.X) * Facing;
+                        biteSpeed = MathHelper.Clamp((gap + 22f) / BiteLive, 4f, 12.5f);
+                        NPC.netUpdate = true;
+                    }
+
+                    if (StateTimer >= BiteTell && StateTimer < BiteTell + BiteLive)
+                    {
+                        NPC.velocity.X = Facing * biteSpeed;
+                    }
+
+                    if (authority && StateTimer == BiteTell)
+                    {
+                        SpawnAttack(0, 75);
+                    }
+
+                    if (authority && StateTimer >= BiteTell + BiteLive + 8)
+                    {
+                        BeginRecovery(34);
+                    }
+                    break;
+
+                case DrakeState.Breath:
+                    NPC.velocity.X *= 0.75f;
+                    if (StateTimer < BreathTell - 12)
+                    {
+                        lockedAim = AimAt(target.Center, 0.55f);
+                    }
+
+                    if (authority && StateTimer == BreathTell - 12)
+                    {
+                        lockedAim = AimAt(target.Center, 0.55f);
+                        NPC.netUpdate = true;
+                    }
+
+                    if (authority && StateTimer >= BreathTell && StateTimer < BreathTell + BreathLive
+                        && (StateTimer - BreathTell) % 2 == 0)
+                    {
+                        SpawnBreath(70);
+                    }
+
+                    if (authority && StateTimer >= BreathTell + BreathLive)
+                    {
+                        BeginRecovery(62);
+                    }
+                    break;
+
+                case DrakeState.TailSlam:
+                    NPC.velocity.X *= 0.7f;
+                    if (authority && StateTimer == TailTell)
+                    {
+                        SpawnAttack(2, 90);
+                    }
+
+                    if (authority && StateTimer >= TailTell + TailLive + 10)
+                    {
+                        tailCooldown = 150;
+                        BeginRecovery(42);
+                    }
+                    break;
+
+                case DrakeState.Takeoff:
+                case DrakeState.AirApproach:
+                case DrakeState.AirBreath:
+                case DrakeState.Land:
+                    TickAir(target, onGround, authority);
+                    break;
+
+                case DrakeState.Recover:
+                    NPC.velocity.X *= 0.8f;
+                    if (authority && StateTimer >= recoveryTicks)
+                    {
+                        EnterState(DrakeState.Ground);
+                    }
+                    break;
+            }
+
+            if (!Airborne && State != DrakeState.Turn && Math.Abs(NPC.velocity.X) > 0.1f)
+            {
+                walkClock += Math.Abs(NPC.velocity.X) / 1.7f;
+                walkClock %= 62f;
+            }
+
+            UpdatePose();
+            if (!Main.dedServ)
+            {
+                TickPresentation();
+            }
+
+            NPC.ai[1]++;
+        }
+
+        private void TickGround(Player target, bool onGround, bool authority)
+        {
+            float forward = (target.Center.X - Mouth.X) * Facing;
+            float behind = (target.Center.X - TailBase.X) * -Facing;
+            Player rearTarget = null;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player candidate = Main.player[i];
+                if (!candidate.active || candidate.dead)
+                {
+                    continue;
+                }
+
+                float rearDistance = (candidate.Center.X - TailBase.X) * -Facing;
+                if (rearDistance >= 65f && rearDistance <= 260f
+                    && Math.Abs(candidate.Bottom.Y - NPC.Bottom.Y) < 110f)
+                {
+                    rearTarget = candidate;
+                    break;
+                }
+            }
+
+            float desiredSpeed = 0f;
+            if (forward > 90f)
+            {
+                desiredSpeed = Facing * 1.7f;
+            }
+            else if (forward < -120f && behind < 50f)
+            {
+                desiredSpeed = -Facing * 0.7f;
+            }
+
+            Vector2 probe = NPC.Bottom + new Vector2(Math.Sign(desiredSpeed) * (NPC.width / 2f + 12f), 2f);
+            bool support = Supported(probe) || Supported(probe + Vector2.UnitY * 12f);
+            if (!support || NPC.collideX)
+            {
+                desiredSpeed = 0f;
+            }
+
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, desiredSpeed, 0.12f);
+            if (!authority || !onGround || StateTimer < 24)
+            {
+                return;
+            }
+
+            if (StateTimer % 18 != 0)
+            {
+                return;
+            }
+
+            attackBag ??= new AttackBag<DrakeState>(cards =>
+            {
+                cards.Add(DrakeState.Bite);
+                cards.Add(DrakeState.Breath);
+                cards.Add(DrakeState.TailSlam);
+                cards.Add(DrakeState.Takeoff);
+            });
+
+            bool Eligible(DrakeState move)
+            {
+                if (move == DrakeState.Bite)
+                {
+                    return forward >= -15f && forward <= 90f && Math.Abs(target.Center.Y - Mouth.Y) < 140f
+                        && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
+                }
+
+                if (move == DrakeState.Breath)
+                {
+                    return forward >= 90f && forward <= 420f && Vector2.DistanceSquared(target.Center, Mouth) <= 420f * 420f
+                        && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
+                }
+
+                if (move == DrakeState.TailSlam)
+                {
+                    return rearTarget != null && tailCooldown == 0;
+                }
+
+                return flightCooldown == 0 && groundedTicks >= GroundMinimum && behind < 65f;
+            }
+
+            if (attackBag.TryDraw(Eligible, out DrakeState chosen))
+            {
+                if (chosen == DrakeState.TailSlam)
+                {
+                    if (!FindLanding(rearTarget.Center.X, NPC.Bottom.Y - 80f, out Vector2 landing)
+                        || !Collision.CanHitLine(TailBase, 1, 1, landing - Vector2.UnitY * 8f, 1, 1))
+                    {
+                        BeginRecovery(24);
+                        return;
+                    }
+
+                    lockedImpact = landing - Vector2.UnitY * 6f;
+                }
+
+                if (chosen == DrakeState.Takeoff)
+                {
+                    waypoint = NPC.Bottom + new Vector2(0f, -180f);
+                    if (!ClearRoute(NPC.Bottom, waypoint, true))
+                    {
+                        flightCooldown = 180;
+                        return;
+                    }
+
+                    groundedTicks = 0;
+                    blockedTicks = 0;
+                }
+
+                lockedAim = AimAt(target.Center, 0.55f);
+                EnterState(chosen);
+                return;
+            }
+
+            if ((target.Center.X - NPC.Center.X) * Facing < -80f)
+            {
+                turnFacing = Facing;
+                NPC.velocity.X = 0f;
+                EnterState(DrakeState.Turn);
+            }
+        }
+
+        private void TickAir(Player target, bool onGround, bool authority)
+        {
+            if (authority && !onGround && StateTimer > 12
+                && !AirSpaceClear(NPC.Bottom + NPC.velocity * 2f))
+            {
+                NPC.velocity *= 0.2f;
+                StartLanding();
+                return;
+            }
+
+            if (authority && (NPC.collideX || NPC.collideY))
+            {
+                blockedTicks++;
+            }
+            else if (authority)
+            {
+                blockedTicks = 0;
+            }
+
+            if (State == DrakeState.Takeoff)
+            {
+                if (StateTimer < 12)
+                {
+                    NPC.velocity *= 0.6f;
+                    return;
+                }
+
+                NPC.velocity = Vector2.Lerp(NPC.velocity, (waypoint - NPC.Bottom).SafeNormalize(-Vector2.UnitY) * 4f, 0.12f);
+                if (authority && (blockedTicks > 8 || StateTimer > 85))
+                {
+                    StartLanding();
+                    return;
+                }
+
+                if (authority && Vector2.DistanceSquared(NPC.Bottom, waypoint) < 400f)
+                {
+                    if (!FindLanding(target.Center.X, target.Bottom.Y - 96f, out lockedImpact))
+                    {
+                        StartLanding();
+                        return;
+                    }
+
+                    // Leave the mouth in front of the target at native scale; the torso sits a neck-length farther back.
+                    float mouthOffset = Math.Abs(Mouth.X - NPC.Bottom.X);
+                    float hoverDistance = mouthOffset + 170f;
+                    waypoint = lockedImpact + new Vector2(-Facing * hoverDistance, -140f);
+                    if (!ClearRoute(NPC.Bottom, waypoint, true))
+                    {
+                        StartLanding();
+                        return;
+                    }
+
+                    EnterState(DrakeState.AirApproach);
+                }
+            }
+            else if (State == DrakeState.AirApproach)
+            {
+                Vector2 difference = waypoint - NPC.Bottom;
+                float speed = Math.Min(5f, difference.Length() * 0.08f);
+                NPC.velocity = Vector2.Lerp(NPC.velocity, difference.SafeNormalize(Vector2.Zero) * speed, 0.16f);
+                if (authority && (blockedTicks > 8 || StateTimer > 180))
+                {
+                    StartLanding();
+                }
+                else if (authority && difference.LengthSquared() < 900f)
+                {
+                    EnterState(DrakeState.AirBreath);
+                }
+            }
+            else if (State == DrakeState.AirBreath)
+            {
+                NPC.velocity *= 0.85f;
+                if (StateTimer >= AirTell && StateTimer < AirTell + AirLive)
+                {
+                    NPC.velocity.X = Facing * 2f;
+                }
+
+                if (authority && StateTimer >= AirTell && StateTimer < AirTell + AirLive
+                    && (StateTimer - AirTell) % 2 == 0)
+                {
+                    SpawnBreath(68);
+                }
+
+                if (authority && (StateTimer >= AirTell + AirLive || blockedTicks > 8))
+                {
+                    StartLanding();
+                }
+            }
+            else if (State == DrakeState.Land)
+            {
+                if (authority && onGround && StateTimer > 4)
+                {
+                    groundedTicks = 0;
+                    flightCooldown = 300;
+                    home = NPC.Bottom;
+                    BeginRecovery(56);
+                    return;
+                }
+
+                float distanceX = waypoint.X - NPC.Bottom.X;
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, MathHelper.Clamp(distanceX * 0.06f, -3f, 3f), 0.12f);
+                NPC.velocity.Y = MathHelper.Lerp(NPC.velocity.Y, MathHelper.Clamp((waypoint.Y - NPC.Bottom.Y) * 0.05f, -2f, 5f), 0.1f);
+                if (authority && (blockedTicks > 12 || StateTimer > 180))
+                {
+                    StartLanding();
+                }
+            }
+        }
+
+        private void StartLanding()
+        {
+            if (!FindLanding(NPC.Center.X, NPC.Bottom.Y - 64f, out waypoint, true)
+                && !FindLanding(home.X, home.Y - 80f, out waypoint, true))
+            {
+                // Descend against normal tile collision until a surface catches the support core.
+                waypoint = NPC.Bottom + Vector2.UnitY * 160f;
+            }
+
+            blockedTicks = 0;
+            EnterState(DrakeState.Land);
+        }
+
+        private bool FindLanding(float nearX, float startY, out Vector2 landing, bool fullBody = false)
+        {
+            for (int i = 0; i < 17; i++)
+            {
+                int offset = (i + 1) / 2 * 40;
+                if (i % 2 == 0)
+                {
+                    offset = -offset;
+                }
+
+                float x = MathHelper.Clamp(nearX + offset, 80f, Main.maxTilesX * 16f - 80f);
+                int startTile = Math.Max(10, (int)(startY / 16f));
+                int lastTile = Math.Min(Main.maxTilesY - 10, startTile + 70);
+                for (int y = startTile; y < lastTile; y++)
+                {
+                    Vector2 bottom = new Vector2(x, y * 16f);
+                    if (!Supported(bottom + new Vector2(-38f, 2f))
+                        || !Supported(bottom + new Vector2(38f, 2f)))
+                    {
+                        continue;
+                    }
+
+                    Vector2 top = bottom - new Vector2(NPC.width / 2f, NPC.height);
+                    if (!Collision.SolidCollision(top, NPC.width, NPC.height)
+                        && (!fullBody || AirSpaceClear(bottom)))
+                    {
+                        landing = bottom;
+                        return true;
+                    }
+                }
+            }
+
+            landing = Vector2.Zero;
+            return false;
+        }
+
+        private static bool Supported(Vector2 position)
+        {
+            int x = (int)(position.X / 16f);
+            int y = (int)(position.Y / 16f);
+            if (!WorldGen.InWorld(x, y, 5))
+            {
+                return false;
+            }
+
+            Tile tile = Framing.GetTileSafely(x, y);
+            return tile.HasUnactuatedTile && (Main.tileSolid[tile.TileType]
+                || Main.tileSolidTop[tile.TileType] && tile.TileFrameY == 0);
+        }
+
+        private bool ClearRoute(Vector2 start, Vector2 end, bool airEnvelope = false)
+        {
+            float distance = Vector2.Distance(start, end);
+            int samples = Math.Max(1, (int)Math.Ceiling(distance / 12f));
+            for (int i = 1; i <= samples; i++)
+            {
+                Vector2 bottom = Vector2.Lerp(start, end, i / (float)samples);
+                Vector2 top = bottom - new Vector2(NPC.width / 2f, NPC.height);
+                if (Collision.SolidCollision(top, NPC.width, NPC.height))
+                {
+                    return false;
+                }
+
+                if (airEnvelope && !AirSpaceClear(bottom))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool AirSpaceClear(Vector2 bottom)
+        {
+            // Reserve the full wing-and-tail envelope while flying above the mountain.
+            // Its lower edge stays above the support line so a flat launch floor remains valid.
+            float left = -418f;
+            if (Facing > 0)
+            {
+                left = -502f;
+            }
+
+            Vector2 top = bottom + new Vector2(left, -468f);
+            return !Collision.SolidCollision(top, 920, 456);
+        }
+
+        private Vector2 AimAt(Vector2 target, float maxPitch)
+        {
+            Vector2 difference = target - Mouth;
+            float pitch = MathF.Atan2(difference.Y, Math.Max(30f, difference.X * Facing));
+            pitch = MathHelper.Clamp(pitch, -maxPitch, maxPitch);
+            return new Vector2(Facing * MathF.Cos(pitch), MathF.Sin(pitch));
+        }
+
+        private void EnterState(DrakeState next)
+        {
+            NPC.ai[0] = (float)next;
+            NPC.ai[1] = 0f;
+            sequence++;
+            NPC.netUpdate = true;
+        }
+
+        private void BeginRecovery(int duration)
+        {
+            recoveryTicks = duration;
+            EnterState(DrakeState.Recover);
+        }
+
+        private void SpawnAttack(int kind, int damage)
+        {
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, Vector2.Zero,
+                ModContent.ProjectileType<HellkiteDrakeAttack>(), damage, 0f, Main.myPlayer,
+                NPC.whoAmI, kind, sequence);
+        }
+
+        private void SpawnBreath(int damage)
+        {
+            UpdatePose();
+            Vector2 direction = BreathDirection.RotatedBy(Main.rand.NextFloat(-0.018f, 0.018f));
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, direction * DemonBreath.Speed,
+                ModContent.ProjectileType<HellkiteDrakeFlame>(), damage, 0f, Main.myPlayer,
+                (float)DemonTier.Ancient, NPC.whoAmI);
+        }
+
+        public void OnStagger(NPC npc)
+        {
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (Airborne)
+                {
+                    StartLanding();
+                }
+                else
+                {
+                    BeginRecovery(56);
+                }
+            }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(initialized);
+            writer.Write(sequence);
+            writer.Write(turnFacing);
+            writer.Write(recoveryTicks);
+            writer.Write(walkClock);
+            writer.Write(biteSpeed);
+            writer.Write(lockedAim.X);
+            writer.Write(lockedAim.Y);
+            writer.Write(lockedImpact.X);
+            writer.Write(lockedImpact.Y);
+            writer.Write(waypoint.X);
+            writer.Write(waypoint.Y);
+            writer.Write(home.X);
+            writer.Write(home.Y);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            initialized = reader.ReadBoolean();
+            sequence = reader.ReadInt32();
+            turnFacing = reader.ReadInt32();
+            recoveryTicks = reader.ReadInt32();
+            walkClock = reader.ReadSingle();
+            biteSpeed = reader.ReadSingle();
+            lockedAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            lockedImpact = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            waypoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            home = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
+
+        private int WalkRow()
+        {
+            if (State == DrakeState.Turn || Math.Abs(NPC.velocity.X) < 0.1f)
+            {
+                return 0;
+            }
+
+            float clock = walkClock;
+            for (int i = 0; i < WalkTicks.Length; i++)
+            {
+                if (clock < WalkTicks[i])
+                {
+                    return i;
+                }
+
+                clock -= WalkTicks[i];
+            }
+
+            return 0;
+        }
+
+        private float Projection()
+        {
+            return -Facing;
+        }
+
+        private Vector2 ToWorld(Vector2 source)
+        {
+            Vector2 offset = source - SourceFloor;
+            offset.X *= Projection();
+            return NPC.Bottom + offset * ArtScale;
+        }
+
+        private Vector2 ToSource(Vector2 world)
+        {
+            Vector2 source = (world - NPC.Bottom) / ArtScale;
+            source.X /= Projection();
+            return source + SourceFloor;
+        }
+
+        private void UpdatePose()
+        {
+            // Sample the same authored turn over three game ticks per pose tick, preserving every
+            // layer's path while giving the head time to cross before the delayed body flip.
+            float turnClock = StateTimer / (float)TurnStretchFactor;
+            float phase = walkClock / 62f * MathHelper.TwoPi;
+            if (Airborne)
+            {
+                phase = StateTimer * 0.07f;
+            }
+
+            int walkRow = WalkRow();
+            float bodyDrop = 0f;
+            if (!Airborne && (walkRow == 1 || walkRow == 5))
+            {
+                bodyDrop = 4f;
+            }
+
+            for (int i = 0; i < Parts.Length; i++)
+            {
+                bones[i] = new Bone(Parts[i].RestPivot, Parts[i].RestPivot, 0f);
+                if (i < 13)
+                {
+                    bones[i].Position.Y += bodyDrop;
+                }
+            }
+
+            bones[11].FrameRow = walkRow;
+            bones[12].FrameRow = (walkRow + 7) % 8;
+            bones[13].FrameRow = walkRow;
+            bones[14].FrameRow = (walkRow + 4) % 8;
+            if (State == DrakeState.Turn)
+            {
+                // Lift the folded wings around the body flip, then ease them down as the tail settles.
+                // Rows and shoulder angles follow the synced turn timer; drawing never advances the animation.
+                int nearStep = Math.Clamp((int)(turnClock / 7f), 0, TurnWingRows.Length - 1);
+                int farStep = Math.Clamp((int)((turnClock - 6f) / 7f), 0, TurnWingRows.Length - 1);
+                bones[11].FrameRow = TurnWingRows[nearStep];
+                bones[12].FrameRow = (TurnWingRows[farStep] + 7) % 8;
+
+                float nearRaise = MathHelper.Clamp(turnClock / 24f, 0f, 1f);
+                float nearFold = MathHelper.Clamp((turnClock - 24f) / 64f, 0f, 1f);
+                nearRaise = MathHelper.SmoothStep(0f, 1f, nearRaise);
+                nearFold = MathHelper.SmoothStep(0f, 1f, nearFold);
+                bones[11].Rotation = -0.16f * nearRaise * (1f - nearFold);
+
+                float farRaise = MathHelper.Clamp((turnClock - 6f) / 26f, 0f, 1f);
+                float farFold = MathHelper.Clamp((turnClock - 32f) / 66f, 0f, 1f);
+                farRaise = MathHelper.SmoothStep(0f, 1f, farRaise);
+                farFold = MathHelper.SmoothStep(0f, 1f, farFold);
+                bones[12].Rotation = -0.12f * farRaise * (1f - farFold);
+
+                // Rock the chest over the planted feet as the throat rises, then lower it after the flip.
+                // Rotate the torso and attached shoulder layers around SourceFloor without scaling the art.
+                float chestAngle = TurnChestAngle(turnClock);
+                Vector2 chestOffset = Parts[0].RestPivot - SourceFloor;
+                Vector2 chestPosition = SourceFloor + chestOffset.RotatedBy(chestAngle);
+                bones[0] = new Bone(Parts[0].RestPivot, chestPosition, chestAngle);
+
+                for (int i = 8; i <= 12; i++)
+                {
+                    bones[i].Position = bones[0].Map(Parts[i].RestPivot);
+                    bones[i].Rotation += chestAngle;
+                }
+
+                // Step with the near foot while the far claw supports the turn. Measured contact
+                // points pin the foot's world-space arc across the body flip without deforming the leg art.
+                int stepRow = Math.Clamp((int)((turnClock - 2f) / 6f), 0, 8) % 8;
+                float stepProgress = MathHelper.Clamp((turnClock - 2f) / 48f, 0f, 1f);
+                float stepArc = MathF.Sin(MathHelper.Pi * stepProgress);
+                Vector2 footWorld = NPC.Bottom + new Vector2(turnFacing * 18f * stepArc, -1f - 22f * stepArc);
+                Vector2 footOffset = TurnFootContacts[stepRow] - Parts[13].RestPivot;
+                bones[13].Position = ToSource(footWorld) - footOffset;
+                bones[13].FrameRow = stepRow;
+
+                float braceIn = MathHelper.Clamp(turnClock / 8f, 0f, 1f);
+                float braceOut = MathHelper.Clamp((turnClock - 58f) / 20f, 0f, 1f);
+                braceIn = MathHelper.SmoothStep(0f, 1f, braceIn);
+                braceOut = MathHelper.SmoothStep(0f, 1f, braceOut);
+                bones[14].Position += new Vector2(-8f, 8f) * braceIn * (1f - braceOut);
+            }
+
+            float neckBend = 0.04f * MathF.Sin(phase);
+            float secondBend = -0.03f * MathF.Sin(phase - 0.4f);
+            float thirdBend = 0.025f * MathF.Sin(phase - 0.8f);
+            if (State == DrakeState.Bite)
+            {
+                float curl = MathHelper.Clamp(StateTimer / (float)BiteTell, 0f, 1f);
+                if (StateTimer >= BiteTell)
+                {
+                    curl = MathHelper.Lerp(1f, -0.3f, MathHelper.Clamp((StateTimer - BiteTell) / 6f, 0f, 1f));
+                }
+
+                neckBend += 0.45f * curl;
+                secondBend -= 0.85f * curl;
+                thirdBend += 0.4f * curl;
+                float drop = MathHelper.Clamp((StateTimer - BiteTell + 2f) / 6f, 0f, 1f);
+                neckBend -= 0.25f * drop;
+            }
+
+            // Share the bend outside the turn so the overlapping throat links stay aligned while attacking.
+            Vector2 neckRoot = bones[0].Map(Parts[16].RestPivot);
+            if (State == DrakeState.Bite)
+            {
+                // The lowered resting neck needs jaw clearance during the lunge. Raise the chain
+                // 26px over the final eight tell ticks, keeping the drawn jaw and damage sockets together.
+                float jawClearance = MathHelper.Clamp((StateTimer - BiteTell + 8f) / 8f, 0f, 1f);
+                neckRoot.Y -= 26f * MathHelper.SmoothStep(0f, 1f, jawClearance);
+            }
+
+            bones[16] = new Bone(Parts[16].RestPivot, neckRoot, neckBend);
+            bones[17] = new Bone(Parts[17].RestPivot, bones[16].Map(Parts[17].RestPivot), neckBend);
+            bones[1] = new Bone(Parts[1].RestPivot, bones[17].Map(Parts[1].RestPivot), neckBend);
+            bones[2] = new Bone(Parts[2].RestPivot, bones[1].Map(Parts[2].RestPivot), neckBend + secondBend);
+            bones[3] = new Bone(Parts[3].RestPivot, bones[2].Map(Parts[3].RestPivot), neckBend + secondBend + thirdBend);
+            Vector2 headPosition = bones[3].Map(Parts[15].RestPivot);
+            float headAngle = 0.02f * MathF.Sin(phase - 0.8f);
+            if (State == DrakeState.Bite || State == DrakeState.Breath || State == DrakeState.AirBreath)
+            {
+                Vector2 aim = lockedAim;
+                if (State == DrakeState.AirBreath)
+                {
+                    aim = (lockedImpact - ToWorld(headPosition)).SafeNormalize(new Vector2(Facing, 0.5f));
+                }
+
+                headAngle = -MathF.Atan2(aim.Y, aim.X * Facing);
+                headAngle = MathHelper.Clamp(headAngle, -1.15f, 0.65f);
+            }
+
+            bones[15] = new Bone(Parts[15].RestPivot, headPosition, headAngle);
+            if (State == DrakeState.Turn)
+            {
+                PoseTurnNeck();
+            }
+
+            // The dorsal crest belongs to the shoulder. Flex it slightly around the torso pivot so
+            // the long scales stay above the back instead of following a full neck rotation into the floor.
+            bones[18] = new Bone(Parts[18].RestPivot, bones[0].Map(Parts[18].RestPivot), bones[0].Rotation);
+            if (State == DrakeState.Turn)
+            {
+                float crestProgress = MathHelper.Clamp(turnClock / 32f, 0f, 1f);
+                bones[18].Rotation += 0.08f * MathF.Sin(MathHelper.Pi * crestProgress);
+            }
+
+            bones[19] = bones[16];
+            bones[20] = bones[17];
+            bones[21] = bones[1];
+            bones[22] = new Bone(Parts[22].RestPivot, bones[0].Map(Parts[22].RestPivot), bones[0].Rotation);
+
+            for (int i = 0; i < tailJoints.Length; i++)
+            {
+                tailJoints[i] = TailRest[i] + Vector2.UnitY * bodyDrop;
+            }
+
+            if (State == DrakeState.TailSlam)
+            {
+                Vector2 raised = TailRest[0] + new Vector2(170f, -175f);
+                Vector2 end = raised;
+                if (StateTimer < TailTell)
+                {
+                    float progress = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(StateTimer / 34f, 0f, 1f));
+                    end = Vector2.Lerp(TailRest[4], raised, progress);
+                }
+                else
+                {
+                    float progress = MathHelper.Clamp((StateTimer - TailTell) / 9f, 0f, 1f);
+                    progress *= progress;
+                    end = Vector2.Lerp(raised, ToSource(lockedImpact), progress);
+                }
+
+                SolveTail(end);
+            }
+            else
+            {
+                for (int i = 1; i < tailJoints.Length; i++)
+                {
+                    float weight = i / 4f;
+                    tailJoints[i].Y += MathF.Sin(phase - weight * 1.3f) * weight * 20f;
+                    tailJoints[i].X += MathF.Sin(phase - 0.9f) * weight * 5f;
+                }
+            }
+
+            if (State == DrakeState.Turn)
+            {
+                PoseTurnTail();
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Vector2 restDirection = TailRest[i + 1] - TailRest[i];
+                    Vector2 posedDirection = tailJoints[i + 1] - tailJoints[i];
+                    float rotation = posedDirection.ToRotation() - restDirection.ToRotation();
+                    bones[4 + i] = new Bone(Parts[4 + i].RestPivot, tailJoints[i], rotation);
+                }
+            }
+
+            // These source sockets include the 32px lowered head placement and still point to the same art pixels.
+            Mouth = ToWorld(bones[15].Map(new Vector2(16f, 372f)));
+            Jaw = ToWorld(bones[15].Map(new Vector2(76f, 368f)));
+            TailBase = ToWorld(tailJoints[0]);
+            TailJoint = ToWorld(tailJoints[3]);
+            TailEnd = ToWorld(tailJoints[4]);
+            BreathDirection = lockedAim;
+            if (State == DrakeState.AirBreath)
+            {
+                BreathDirection = (lockedImpact - Mouth).SafeNormalize(Vector2.UnitY);
+            }
+        }
+
+        private static float TurnChestAngle(float turnClock)
+        {
+            float chestRise = MathHelper.Clamp(turnClock / 18f, 0f, 1f);
+            float chestLower = MathHelper.Clamp((turnClock - 18f) / 42f, 0f, 1f);
+            chestRise = MathHelper.SmoothStep(0f, 1f, chestRise);
+            chestLower = MathHelper.SmoothStep(0f, 1f, chestLower);
+            return 0.06f * chestRise * (1f - chestLower);
+        }
+
+        private void PoseTurnNeck()
+        {
+            float turnClock = StateTimer / (float)TurnStretchFactor;
+            float bodyFlipClock = TurnBodyTick / (float)TurnStretchFactor;
+            float neckSettleClock = TurnNeckTicks / (float)TurnStretchFactor;
+            float neckRootClock = TurnNeckRootTicks / (float)TurnStretchFactor;
+            // Reach V7's frame-50 pose by the delayed body flip, then finish the remaining settle.
+            // Smootherstep and Hermite share a 0.6 pose-tick/tick speed at the flip, avoiding a stop or restart.
+            const float flipNeckClock = 55.25364f;
+            const float passageRate = 0.6f;
+            float neckClock;
+            if (turnClock < bodyFlipClock)
+            {
+                float advance = MathHelper.Clamp(turnClock / bodyFlipClock, 0f, 1f);
+                float advanceSquared = advance * advance;
+                float advanceCubed = advanceSquared * advance;
+                float easePolynomial = 6f * advanceSquared - 15f * advance + 10f;
+                float easedAdvance = advanceCubed * easePolynomial;
+                float carriedClock = passageRate * turnClock;
+                float remainingClock = flipNeckClock - passageRate * bodyFlipClock;
+                neckClock = carriedClock + remainingClock * easedAdvance;
+            }
+            else
+            {
+                float settleDuration = neckSettleClock - bodyFlipClock;
+                float release = MathHelper.Clamp((turnClock - bodyFlipClock) / settleDuration, 0f, 1f);
+                neckClock = MathHelper.Hermite(flipNeckClock, passageRate * settleDuration, neckSettleClock, 0f, release);
+            }
+
+            float neckChestAngle = TurnChestAngle(neckClock);
+            Vector2 neckChestOffset = Parts[0].RestPivot - SourceFloor;
+            Vector2 neckChestPosition = SourceFloor + neckChestOffset.RotatedBy(neckChestAngle);
+            Bone neckChest = new Bone(Parts[0].RestPivot, neckChestPosition, neckChestAngle);
+
+            // Overlap the swing and extension so the neck carries speed through the delayed torso flip.
+            // New-facing world targets are independent of Facing; only the final approach eases to rest.
+            float lead = MathHelper.Clamp(neckClock / 32f, 0f, 1f);
+            lead = MathHelper.SmoothStep(0f, 1f, lead);
+            Vector2 oldRootOffset = neckChest.Map(Parts[NeckParts[0]].RestPivot) - SourceFloor;
+            oldRootOffset.X *= -turnFacing;
+            // Slide the hidden attachment through the chest as it swivels, giving the snout enough
+            // reach to emerge past the new-facing body before the torso flips, without stretching links.
+            Vector2 rootLead = new Vector2(-turnFacing * 80f * lead, 0f);
+            turnJoints[0] = NPC.Bottom + (oldRootOffset + rootLead) * ArtScale;
+            int lastJoint = turnJoints.Length - 1;
+
+            for (int i = 0; i < lastJoint; i++)
+            {
+                Vector2 restSegment = Parts[NeckParts[i + 1]].RestPivot - Parts[NeckParts[i]].RestPivot;
+                float angle = MathHelper.Pi * NeckTurnAngles[i] * lead + neckChestAngle;
+                Vector2 segment = restSegment.RotatedBy(angle);
+                segment.X *= -turnFacing;
+                turnJoints[i + 1] = turnJoints[i] + segment * ArtScale;
+            }
+
+            if (neckClock > 16f)
+            {
+                float settle = (neckClock - 16f) / (neckSettleClock - 16f);
+                settle = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(settle, 0f, 1f));
+                float rootSettle = (neckClock - 16f) / (neckRootClock - 16f);
+                rootSettle = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(rootSettle, 0f, 1f));
+                Vector2 newRootOffset = oldRootOffset;
+                newRootOffset.X = -newRootOffset.X;
+                Vector2 restingRoot = NPC.Bottom + newRootOffset * ArtScale;
+                Vector2 headOffset = neckChest.Map(Parts[15].RestPivot) - SourceFloor;
+                headOffset.X *= turnFacing;
+                Vector2 restingHead = NPC.Bottom + headOffset * ArtScale;
+                Vector2 root = Vector2.Lerp(turnJoints[0], restingRoot, rootSettle);
+                Vector2 target = Vector2.Lerp(turnJoints[lastJoint], restingHead, settle);
+
+                // Guide every joint toward the resting shape before solving its lengths. Keeping a
+                // curled seed until the last tick leaves a different valid bend that would snap at release.
+                for (int i = 0; i <= lastJoint; i++)
+                {
+                    Vector2 restingOffset = neckChest.Map(Parts[NeckParts[i]].RestPivot) - SourceFloor;
+                    restingOffset.X *= turnFacing;
+                    Vector2 restingJoint = NPC.Bottom + restingOffset * ArtScale;
+                    turnJoints[i] = Vector2.Lerp(turnJoints[i], restingJoint, settle);
+                }
+
+                for (int pass = 0; pass < 10; pass++)
+                {
+                    turnJoints[lastJoint] = target;
+                    for (int i = lastJoint - 1; i >= 0; i--)
+                    {
+                        float length = Vector2.Distance(Parts[NeckParts[i]].RestPivot, Parts[NeckParts[i + 1]].RestPivot) * ArtScale;
+                        Vector2 direction = (turnJoints[i] - turnJoints[i + 1]).SafeNormalize(Vector2.UnitY);
+                        turnJoints[i] = turnJoints[i + 1] + direction * length;
+                    }
+
+                    turnJoints[0] = root;
+                    for (int i = 0; i < lastJoint; i++)
+                    {
+                        float length = Vector2.Distance(Parts[NeckParts[i]].RestPivot, Parts[NeckParts[i + 1]].RestPivot) * ArtScale;
+                        Vector2 direction = (turnJoints[i + 1] - turnJoints[i]).SafeNormalize(Vector2.UnitY);
+                        turnJoints[i + 1] = turnJoints[i] + direction * length;
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < lastJoint; i++)
+            {
+                int partIndex = NeckParts[i];
+                // Give each neck layer its own facing so the torso flip cannot mirror an already turned neck.
+                float textureTurnClock = bodyFlipClock;
+                if (i < 3)
+                {
+                    textureTurnClock = 30f + i * 4f;
+                }
+
+                int textureFacing = -turnFacing;
+                if (neckClock < textureTurnClock)
+                {
+                    textureFacing = turnFacing;
+                }
+
+                int horizontalSign = textureFacing * Facing;
+                Vector2 restSegment = Parts[NeckParts[i + 1]].RestPivot - Parts[partIndex].RestPivot;
+                restSegment.X *= horizontalSign;
+                Vector2 posedSegment = ToSource(turnJoints[i + 1]) - ToSource(turnJoints[i]);
+                float angle = posedSegment.ToRotation() - restSegment.ToRotation();
+                bones[partIndex] = new Bone(Parts[partIndex].RestPivot, ToSource(turnJoints[i]), angle);
+                bones[partIndex].HorizontalSign = horizontalSign;
+            }
+
+            int headFacing = turnFacing;
+            if (StateTimer >= TurnHeadTick)
+            {
+                headFacing = -turnFacing;
+            }
+
+            bones[15] = new Bone(Parts[15].RestPivot, ToSource(turnJoints[lastJoint]), 0f);
+            bones[15].HorizontalSign = headFacing * Facing;
+        }
+
+        private void PoseTurnTail()
+        {
+            float turnClock = StateTimer / (float)TurnStretchFactor;
+            // Carry the tail through the torso flip in world space. Stagger joint rotations from base
+            // to tip over authored pose ticks 0–104. Every section starts rotating with the head; longer distal
+            // durations give follow-through without a delayed start or an imperceptibly slow first phase.
+            Vector2 canonicalRoot = tailJoints[0];
+            Vector2 oldOffset = canonicalRoot - SourceFloor;
+            oldOffset.X *= -turnFacing;
+            Vector2 newOffset = oldOffset;
+            newOffset.X = -newOffset.X;
+            float rootProgress = MathHelper.Clamp(turnClock / 52f, 0f, 1f);
+            rootProgress = MathHelper.SmoothStep(0f, 1f, rootProgress);
+            Vector2 worldJoint = NPC.Bottom + Vector2.Lerp(oldOffset, newOffset, rootProgress) * ArtScale;
+            tailJoints[0] = ToSource(worldJoint);
+            Vector2 previousCanonical = canonicalRoot;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 nextCanonical = tailJoints[i + 1];
+                Vector2 canonicalSegment = nextCanonical - previousCanonical;
+                float restAngle = canonicalSegment.ToRotation();
+                float turnAngle = MathHelper.WrapAngle(MathHelper.Pi - 2f * restAngle);
+                if (i < 2 && turnAngle > 0f)
+                {
+                    // Coil above the back instead of sweeping the long proximal sections through the floor.
+                    turnAngle -= MathHelper.TwoPi;
+                }
+
+                float duration = 80f + i * 8f;
+                float progress = MathHelper.Clamp(turnClock / duration, 0f, 1f);
+                float easedProgress = MathHelper.SmoothStep(0f, 1f, progress);
+                float remaining = 1f - progress;
+                progress = easedProgress + 0.35f * progress * remaining * remaining;
+                Vector2 worldSegment = canonicalSegment.RotatedBy(turnAngle * progress);
+                worldSegment.X *= -turnFacing;
+                Vector2 nextWorld = worldJoint + worldSegment * ArtScale;
+                tailJoints[i + 1] = ToSource(nextWorld);
+
+                // Keep each section's artwork independent of the torso's facing. Handedness changes
+                // at that section's own coil midpoint, carrying dorsal spikes into the new resting profile.
+                int textureFacing = turnFacing;
+                if (progress >= 0.5f)
+                {
+                    textureFacing = -turnFacing;
+                }
+
+                int horizontalSign = textureFacing * Facing;
+                Vector2 textureSegment = TailRest[i + 1] - TailRest[i];
+                textureSegment.X *= horizontalSign;
+                Vector2 sourceSegment = tailJoints[i + 1] - tailJoints[i];
+                float rotation = sourceSegment.ToRotation() - textureSegment.ToRotation();
+                bones[i + 4] = new Bone(Parts[i + 4].RestPivot, tailJoints[i], rotation);
+                bones[i + 4].HorizontalSign = horizontalSign;
+                worldJoint = nextWorld;
+                previousCanonical = nextCanonical;
+            }
+        }
+
+        private void SolveTail(Vector2 target)
+        {
+            Vector2 root = tailJoints[0];
+            float total = 0f;
+            for (int i = 0; i < 4; i++)
+            {
+                total += Vector2.Distance(TailRest[i], TailRest[i + 1]);
+            }
+
+            if (Vector2.Distance(root, target) > total - 1f)
+            {
+                target = root + (target - root).SafeNormalize(Vector2.UnitX) * (total - 1f);
+            }
+
+            for (int pass = 0; pass < 7; pass++)
+            {
+                tailJoints[4] = target;
+                for (int i = 3; i >= 0; i--)
+                {
+                    float length = Vector2.Distance(TailRest[i], TailRest[i + 1]);
+                    Vector2 direction = (tailJoints[i] - tailJoints[i + 1]).SafeNormalize(-Vector2.UnitX);
+                    tailJoints[i] = tailJoints[i + 1] + direction * length;
+                }
+
+                tailJoints[0] = root;
+                for (int i = 0; i < 4; i++)
+                {
+                    float length = Vector2.Distance(TailRest[i], TailRest[i + 1]);
+                    Vector2 direction = (tailJoints[i + 1] - tailJoints[i]).SafeNormalize(Vector2.UnitX);
+                    tailJoints[i + 1] = tailJoints[i] + direction * length;
+                }
+            }
+        }
+
+        public static Vector2 ClipLine(Vector2 start, Vector2 end)
+        {
+            Vector2 difference = end - start;
+            int samples = Math.Max(1, (int)Math.Ceiling(difference.Length() / 6f));
+            Vector2 previous = start;
+            for (int i = 1; i <= samples; i++)
+            {
+                Vector2 current = Vector2.Lerp(start, end, i / (float)samples);
+                if (Collision.SolidCollision(current - new Vector2(3f), 6, 6))
+                {
+                    return previous;
+                }
+
+                previous = current;
+            }
+
+            return end;
+        }
+
+        public bool DamageGeometry(int kind, out Vector2 start, out Vector2 end, out Vector2 sweptStart, out Vector2 sweptEnd)
+        {
+            // Projectiles tick after NPC movement. Refresh the sockets after the engine's tile-collided translation.
+            UpdatePose();
+            start = Mouth;
+            end = Mouth;
+            sweptStart = Mouth;
+            sweptEnd = Mouth;
+            if (kind == 0 && State == DrakeState.Bite && StateTimer >= BiteTell && StateTimer < BiteTell + BiteLive)
+            {
+                start = Jaw;
+                end = ClipLine(Jaw, Mouth);
+                sweptStart = previousMouth;
+                if (Vector2.DistanceSquared(sweptStart, Mouth) > 10000f)
+                {
+                    sweptStart = Mouth;
+                }
+
+                sweptEnd = ClipLine(sweptStart, Mouth);
+                return true;
+            }
+
+            if (kind == 2 && State == DrakeState.TailSlam && StateTimer >= TailTell && StateTimer < TailTell + TailLive)
+            {
+                start = TailJoint;
+                end = ClipLine(TailJoint, TailEnd);
+                sweptStart = previousTail;
+                if (Vector2.DistanceSquared(sweptStart, TailEnd) > 40000f)
+                {
+                    sweptStart = TailEnd;
+                }
+
+                sweptEnd = ClipLine(sweptStart, TailEnd);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void TickPresentation()
+        {
+            if (visualSequence != sequence)
+            {
+                visualSequence = sequence;
+                if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl")
+                    {
+                        Volume = 0.75f,
+                        Pitch = -0.15f
+                    }, Mouth);
+                }
+                else if (State == DrakeState.TailSlam)
+                {
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.45f, Pitch = -0.6f }, TailBase);
+                }
+            }
+
+            int tell = BreathTell;
+            if (State == DrakeState.AirBreath)
+            {
+                tell = AirTell;
+            }
+
+            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer < tell && StateTimer > tell - 18)
+            {
+                Vector2 offset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f, 32f);
+                Dust ember = Dust.NewDustPerfect(Mouth + offset, DustID.RedTorch, -offset * 0.12f, 80, default, 1.1f);
+                ember.noGravity = true;
+                Lighting.AddLight(Mouth, 0.6f, 0.16f, 0.02f);
+            }
+
+            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer >= tell
+                && (StateTimer - tell) % 12 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, Pitch = -0.35f }, Mouth);
+            }
+
+            if (State == DrakeState.TailSlam && StateTimer < TailTell && StateTimer % 3 == 0)
+            {
+                Dust mark = Dust.NewDustPerfect(lockedImpact + new Vector2(Main.rand.NextFloat(-18f, 18f), 0f),
+                    DustID.Dirt, new Vector2(0f, -0.8f), 80, new Color(190, 126, 65), 0.9f);
+                mark.noGravity = true;
+            }
+
+            if (State == DrakeState.TailSlam && StateTimer == TailTell + 9)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.55f, Pitch = -0.55f }, TailEnd);
+                for (int i = 0; i < 26; i++)
+                {
+                    Dust.NewDustPerfect(TailEnd, DustID.Dirt,
+                        new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-4f, -1f)), 0, default, 1.1f);
+                }
+            }
+
+            if (Airborne && StateTimer % 30 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.35f, Pitch = -0.4f }, NPC.Center);
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            UpdatePose();
+            int nearLeg = bones[13].FrameRow;
+            int farLeg = bones[14].FrameRow;
+            int wingNear = 11;
+            int wingFar = 12;
+            int nearWingRow = bones[11].FrameRow;
+            int farWingRow = bones[12].FrameRow;
+            if (Airborne)
+            {
+                nearLeg = 9;
+                farLeg = 8;
+                wingNear = 9;
+                wingFar = 10;
+                int flap = StateTimer / 4 % WingCycle.Length;
+                nearWingRow = WingCycle[flap];
+                farWingRow = WingCycle[(flap + 1) % WingCycle.Length];
+                if (State == DrakeState.Takeoff && StateTimer < 12)
+                {
+                    nearLeg = 8;
+                    nearWingRow = 2;
+                    farWingRow = 2;
+                }
+
+                if (State == DrakeState.Land && Vector2.DistanceSquared(NPC.Bottom, waypoint) < 1600f)
+                {
+                    nearLeg = 0;
+                    farLeg = 4;
+                    nearWingRow = 2;
+                    farWingRow = 2;
+                }
+            }
+
+            int mouthRow = 0;
+            if (State == DrakeState.Bite)
+            {
+                mouthRow = 1;
+                if (StateTimer >= BiteTell - 6)
+                {
+                    mouthRow = 2;
+                }
+            }
+            else if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+            {
+                mouthRow = 1;
+                int tell = BreathTell;
+                if (State == DrakeState.AirBreath)
+                {
+                    tell = AirTell;
+                }
+
+                if (StateTimer >= tell - 12)
+                {
+                    mouthRow = 2;
+                }
+            }
+
+            DrawPart(spriteBatch, wingFar, farWingRow, screenPos, drawColor * 0.8f);
+            DrawPart(spriteBatch, 14, farLeg, screenPos, drawColor * 0.85f);
+            DrawPart(spriteBatch, 13, nearLeg, screenPos, drawColor);
+            DrawPart(spriteBatch, 8, 0, screenPos, drawColor);
+            for (int i = 7; i >= 4; i--)
+            {
+                DrawPart(spriteBatch, i, 0, screenPos, drawColor);
+            }
+
+            DrawPart(spriteBatch, 22, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 19, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 20, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 21, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 16, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 17, 0, screenPos, drawColor);
+
+            for (int i = 3; i >= 1; i--)
+            {
+                DrawPart(spriteBatch, i, 0, screenPos, drawColor);
+            }
+
+            if (State == DrakeState.Turn)
+            {
+                DrawPart(spriteBatch, 15, mouthRow, screenPos, drawColor);
+            }
+
+            DrawPart(spriteBatch, 18, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, 0, 0, screenPos, drawColor);
+            DrawPart(spriteBatch, wingNear, nearWingRow, screenPos, drawColor);
+            if (State != DrakeState.Turn)
+            {
+                DrawPart(spriteBatch, 15, mouthRow, screenPos, drawColor);
+            }
+
+            if (State == DrakeState.Breath && StateTimer < BreathTell && StateTimer >= BreathTell - 12)
+            {
+                Vector2 end = ClipLine(Mouth, Mouth + lockedAim * DemonBreath.Speed * DemonBreath.LifetimeTicks);
+                DrawLine(spriteBatch, Mouth - screenPos, end - screenPos, Color.Orange * 0.45f, 2f);
+            }
+
+            if (State == DrakeState.AirBreath && StateTimer < AirTell)
+            {
+                DrawLine(spriteBatch, lockedImpact - new Vector2(36f, 0f) - screenPos,
+                    lockedImpact + new Vector2(36f, 0f) - screenPos, Color.Orange * 0.7f, 3f);
+            }
+
+            if (ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode)
+            {
+                Utils.DrawBorderString(spriteBatch, DebugAttackLabel, NPC.Top - screenPos - new Vector2(90f, 40f),
+                    Color.White, 0.7f);
+            }
+
+            return false;
+        }
+
+        private void DrawPart(SpriteBatch spriteBatch, int index, int row, Vector2 screenPos, Color color)
+        {
+            Part part = Parts[index];
+            part.Asset ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HellkiteDrake)) + "_" + part.Name);
+            Texture2D texture = part.Asset.Value;
+            Rectangle frame = new Rectangle(0, Math.Clamp(row, 0, part.Rows - 1) * part.Height, part.Width, part.Height);
+            Vector2 origin = part.Origin;
+            float projection = Projection();
+            SpriteEffects effects = SpriteEffects.None;
+            float rotation = bones[index].Rotation * projection;
+            if (projection * bones[index].HorizontalSign < 0f)
+            {
+                effects = SpriteEffects.FlipHorizontally;
+                origin.X = frame.Width - origin.X;
+            }
+
+            Vector2 scale = new Vector2(ArtScale);
+            spriteBatch.Draw(texture, ToWorld(bones[index].Position) - screenPos, frame, color, rotation, origin, scale, effects, 0f);
+        }
+
+        internal static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, float width)
+        {
+            Vector2 difference = end - start;
+            Rectangle pixel = new Rectangle(0, 0, 1, 1);
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, start, pixel, color, difference.ToRotation(),
+                new Vector2(0f, 0.5f), new Vector2(difference.Length(), width), SpriteEffects.None, 0f);
+        }
+
+        private sealed class Part
+        {
+            public readonly string Name;
+            public readonly int Width;
+            public readonly int Height;
+            public readonly Vector2 RestPivot;
+            public readonly Vector2 Origin;
+            public readonly int Rows;
+            public Asset<Texture2D> Asset;
+
+            public Part(string name, int width, int height, Vector2 restPivot, Vector2 origin, int rows)
+            {
+                Name = name;
+                Width = width;
+                Height = height;
+                RestPivot = restPivot;
+                Origin = origin;
+                Rows = rows;
+            }
+        }
+
+        private struct Bone
+        {
+            public Vector2 Rest;
+            public Vector2 Position;
+            public float Rotation;
+            public int HorizontalSign;
+            public int FrameRow;
+
+            public Bone(Vector2 rest, Vector2 position, float rotation)
+            {
+                Rest = rest;
+                Position = position;
+                Rotation = rotation;
+                HorizontalSign = 1;
+                FrameRow = 0;
+            }
+
+            public readonly Vector2 Map(Vector2 source)
+            {
+                Vector2 offset = source - Rest;
+                offset.X *= HorizontalSign;
+                return Position + offset.RotatedBy(Rotation);
+            }
+        }
+    }
+
+    public class HellkiteDrakeAttack : ModProjectile
+    {
+        private readonly bool[] hitPlayers = new bool[Main.maxPlayers];
+        private Vector2 start;
+        private Vector2 end;
+        private Vector2 sweptStart;
+        private Vector2 sweptEnd;
+        private bool live;
+        private bool ending;
+        private bool released;
+
+        // Collision follows the posed jaw or tail; the visible sprite is drawn by the NPC.
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Projectiles.InvisibleNothingProj));
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 12;
+            Projectile.height = 12;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 180;
+            Projectile.netImportant = true;
+        }
+
+        public override bool ShouldUpdatePosition()
+        {
+            return false;
+        }
+
+        public override void AI()
+        {
+            int ownerIndex = (int)Projectile.ai[0];
+            int kind = (int)Projectile.ai[1];
+            live = false;
+            if (!ending && ownerIndex >= 0 && ownerIndex < Main.maxNPCs)
+            {
+                NPC owner = Main.npc[ownerIndex];
+                if (owner.active && owner.ModNPC is HellkiteDrake drake && drake.Sequence == (int)Projectile.ai[2])
+                {
+                    live = drake.DamageGeometry(kind, out Vector2 posedStart, out Vector2 posedEnd,
+                        out Vector2 posedSweptStart, out Vector2 posedSweptEnd);
+                    if (live)
+                    {
+                        start = posedStart;
+                        end = posedEnd;
+                        sweptStart = posedSweptStart;
+                        sweptEnd = posedSweptEnd;
+                    }
+                }
+            }
+
+            if (!live && !ending)
+            {
+                // A carrier can arrive one packet before its owner's transition. Wait briefly with damage disabled.
+                if (!released && Projectile.timeLeft > 168)
+                {
+                    return;
+                }
+
+                ending = true;
+                Projectile.timeLeft = Math.Min(Projectile.timeLeft, 12);
+            }
+
+            if (!ending)
+            {
+                released = true;
+                Vector2 minimum = Vector2.Min(Vector2.Min(start, end), Vector2.Min(sweptStart, sweptEnd));
+                Vector2 maximum = Vector2.Max(Vector2.Max(start, end), Vector2.Max(sweptStart, sweptEnd));
+                Projectile.position = minimum - new Vector2(32f);
+                Projectile.width = Math.Max(12, (int)(maximum.X - minimum.X) + 64);
+                Projectile.height = Math.Max(12, (int)(maximum.Y - minimum.Y) + 64);
+            }
+        }
+
+        public override bool? CanDamage()
+        {
+            return live && !ending;
+        }
+
+        public override bool CanHitPlayer(Player target)
+        {
+            return !hitPlayers[target.whoAmI];
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            hitPlayers[target.whoAmI] = true;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            float width = 26f;
+            if ((int)Projectile.ai[1] == 2)
+            {
+                width = 28f;
+            }
+
+            float point = 0f;
+            bool primary = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                start, end, width, ref point);
+            bool swept = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                sweptStart, sweptEnd, width, ref point);
+            bool visible = Collision.CanHitLine(start, 1, 1, targetHitbox.Center.ToVector2(), 1, 1);
+            return (primary || swept) && visible;
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ || !released)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 16; i++)
+            {
+                Vector2 position = Vector2.Lerp(start, end, Main.rand.NextFloat());
+                Dust ember = Dust.NewDustPerfect(position, DustID.Torch,
+                    Main.rand.NextVector2Circular(2.5f, 2.5f), 100, default, 0.75f);
+                ember.noGravity = true;
+            }
+        }
+    }
+
+    // Reuse Ancient Demon's moving red-flame, ember, smoke and gutter effects.
+    // ai[0] is the Ancient palette; ai[1] is the owning Drake's NPC slot.
+    public class HellkiteDrakeFlame : DemonBreath
+    {
+        public override void AI()
+        {
+            int ownerIndex = (int)Projectile.ai[1];
+            bool ownerValid = ownerIndex >= 0 && ownerIndex < Main.maxNPCs;
+            if (ownerValid)
+            {
+                NPC owner = Main.npc[ownerIndex];
+                ownerValid = owner.active && owner.ModNPC is HellkiteDrake;
+            }
+
+            if (!ownerValid)
+            {
+                Projectile.hostile = false;
+                Projectile.timeLeft = Math.Min(Projectile.timeLeft, 14);
+            }
+
+            base.AI();
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            // Share Ancient Demon's artwork while keeping Drake hits free of its tier-specific curse debuffs.
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
+        }
+    }
+}

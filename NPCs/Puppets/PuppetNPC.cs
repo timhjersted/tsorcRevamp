@@ -1460,6 +1460,10 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual bool ShieldVisible => HasShield;
         /// <summary>Additional guard poses, including mobile guards and custom shield charges.</summary>
         protected virtual bool ShieldRaisedForPose => _shielding || _advancingGuard;
+
+        /// <summary>Extra offset for the raised (guarding) shield on top of the equip strip's carry position: X is
+        /// toward the facing direction, Y is screen-down. Default lifts it 5px and pushes it 5px toward the attacker.</summary>
+        protected virtual Vector2 ShieldRaisedOffset => new Vector2(5f, -5f);
         private Texture2D _shieldDrawTex;
         private bool _shieldDrawTexLoaded;
         /// <summary>Minimum guard hold (ticks) when a block is raised away from melee range — long
@@ -2005,6 +2009,15 @@ namespace tsorcRevamp.NPCs.Puppets
         /// back to the natural walk/idle draw. Default false.</summary>
         protected virtual bool WeaponSheathed => false;
         protected virtual bool ShowWeaponDuringNeutral => false;
+
+        /// <summary>Opt-in with <see cref="ShowWeaponDuringNeutral"/>: hold the neutral carried weapon on the composite
+        /// front arm (at <see cref="MeleeCarryRotation"/>) instead of the legacy 4-row hand table. The weapon then stays
+        /// in the fist through the walk cycle (including the walk frames' 2px body bob) and jumps, and the arm no longer
+        /// plays the walk swing or the jump frame's sudden raise - it eases with the carry angle. Default false.</summary>
+        protected virtual bool HoldNeutralWeaponOnCompositeArm => false;
+
+        private bool NeutralWeaponOnCompositeArm => HoldNeutralWeaponOnCompositeArm && ShowWeaponDuringNeutral
+            && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll);
         /// <summary>Draw a neutral carried weapon behind the puppet instead of in the attacking hand's layer.</summary>
         protected virtual bool DrawHeldWeaponBehindBody => false;
         protected virtual bool ShowRangedWeaponDuringRecovery => false;
@@ -2297,7 +2310,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     return _weaponRotation;
                 }
 
-                return MathHelper.Lerp(OffHandCarryRotation, _weaponRotation, _frontHandSwingBlend);
+                float basePose = MathHelper.Lerp(OffHandCarryRotation, _weaponRotation, EaseHandBlend(_frontHandSwingBlend));
+                return BlendHandSwitchPoses(basePose, ComboHand.Front);
             }
         }
 
@@ -2321,7 +2335,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     swingRotation = _backWeaponRotation;
                 }
 
-                return MathHelper.Lerp(OffHandCarryRotation, swingRotation, _backHandSwingBlend);
+                float basePose = MathHelper.Lerp(OffHandCarryRotation, swingRotation, EaseHandBlend(_backHandSwingBlend));
+                return BlendHandSwitchPoses(basePose, ComboHand.Back);
             }
         }
 
@@ -2382,6 +2397,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     _backHandSwingBlend = 1f;
                 }
             }
+
+            UpdateHandSwitchPoses(swingHand);
         }
 
         private static float MoveBlendToward(float current, float target, float maxStep)
@@ -2391,6 +2408,227 @@ namespace tsorcRevamp.NPCs.Puppets
                 return Math.Min(target, current + maxStep);
             }
             return Math.Max(target, current - maxStep);
+        }
+
+        /// <summary>Hand-switch windup (opt-in; 0 = off). When the next combo step swings the OTHER hand, that hand
+        /// starts its own windup this many ticks before the current step's attack ends, instead of crossfading onto
+        /// the swing during the pause. It eases from wherever it is to the next arc's start cocked back by
+        /// <see cref="OffHandWindupAnticipation"/>, then settles onto the exact start as the pause ends, so each
+        /// follow-up is telegraphed while the first blade is still finishing. While on, the hand leaving the swing
+        /// parks on its finishing pose and only eases back to carry during the next strike's follow-through, and every
+        /// other hand crossfade is smoothstepped.</summary>
+        protected virtual int OffHandWindupLeadTicks => 0;
+
+        /// <summary>Radians the hand-switch windup cocks past the next arc's start, against the swing direction.</summary>
+        protected virtual float OffHandWindupAnticipation => 0.25f;
+
+        // Share of the hand-switch windup spent travelling to the cocked pose; the rest settles onto the start.
+        private const float OffHandWindupCockFraction = 0.65f;
+        // Ticks a windup cut short (the combo ended instead of continuing) takes to ease back to the hand's own pose.
+        private const int OffHandWindupReleaseTicks = 10;
+
+        // The incoming hand's windup. Weight 1 = the windup drives that hand outright; after an interrupted windup it
+        // decays to 0 so the hand eases back instead of snapping. Visual only: hands never arm during it.
+        private ComboHand _incomingWindupHand = ComboHand.Front;
+        private float _incomingWindupRotation;
+        private float _incomingWindupFrom;
+        private float _incomingWindupWeight;
+        private bool _incomingWindupRunning;
+
+        // Outgoing hand on a hand switch: parks on its finishing pose through the pause and the first
+        // OffHandSettleDelayTicks of the next strike, then eases (SmoothStep) to its carry over OffHandSettleTicks, during
+        // that strike's follow-through. So only one blade moves at a time around the hand-off.
+        private const int OffHandSettleDelayTicks = 10;
+        private const int OffHandSettleTicks = 20;
+        private ComboHand _outgoingSettleHand = ComboHand.Front;
+        private float _outgoingSettleFrom;
+        private float _outgoingSettleRotation;
+        private int _outgoingSettleTicks;
+        private bool _outgoingSettleActive;
+
+        private float EaseHandBlend(float blend)
+        {
+            if (OffHandWindupLeadTicks <= 0)
+            {
+                return blend;
+            }
+            return MathHelper.SmoothStep(0f, 1f, blend);
+        }
+
+        // The hand-switch overrides on top of a hand's crossfaded pose: the outgoing park/settle, then the incoming
+        // windup (which wins when both touch the same hand, e.g. a hand settling into its own next windup).
+        private float BlendHandSwitchPoses(float basePose, ComboHand hand)
+        {
+            float pose = basePose;
+            if (_outgoingSettleActive && _outgoingSettleHand == hand)
+            {
+                pose = _outgoingSettleRotation;
+            }
+            if (_incomingWindupWeight > 0f && _incomingWindupHand == hand)
+            {
+                pose = MathHelper.Lerp(pose, _incomingWindupRotation, _incomingWindupWeight);
+            }
+            return pose;
+        }
+
+        // Runs after the hand blends each tick (OffHandWindupLeadTicks > 0 only).
+        // Incoming windup clock: from (attack ticks left == lead) through the whole pause, progress = elapsed / (lead +
+        // pause). Path: current pose -> cocked (first 65%) -> next arc start (rest), both legs SmoothStep, so it
+        // accelerates out and decelerates into each pose. Outgoing park: see OffHandSettleDelayTicks.
+        private void UpdateHandSwitchPoses(ComboHand swingHand)
+        {
+            if (OffHandWindupLeadTicks <= 0)
+            {
+                _incomingWindupWeight = 0f;
+                _outgoingSettleActive = false;
+                return;
+            }
+
+            bool stepPhase = Phase == AttackPhase.MeleeComboAttack || Phase == AttackPhase.MeleeComboPause;
+            bool comboLive = stepPhase && _activeMeleeComboIndex >= 0 && _activeMeleeCombo.Steps != null
+                && _meleeComboStepIndex >= 0 && _meleeComboStepIndex < _activeMeleeCombo.Steps.Length;
+            int nextIndex = _meleeComboStepIndex + 1;
+            bool hasNext = comboLive && nextIndex < _activeMeleeCombo.Steps.Length;
+
+            MeleeComboStep currentStep = default;
+            MeleeComboStep nextStep = default;
+            bool frontJoins = false;
+            bool backJoins = false;
+            if (hasNext)
+            {
+                currentStep = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                nextStep = _activeMeleeCombo.Steps[nextIndex];
+                frontJoins = currentStep.Hand == ComboHand.Back && nextStep.Hand != ComboHand.Back;
+                backJoins = currentStep.Hand == ComboHand.Front && nextStep.Hand != ComboHand.Front;
+            }
+
+            // ── Outgoing park. Starts on the pause's first tick of a clean switch (the other hand alone swings next). ──
+            bool cleanSwitch = (frontJoins && nextStep.Hand == ComboHand.Front) || (backJoins && nextStep.Hand == ComboHand.Back);
+            if (Phase == AttackPhase.MeleeComboPause && cleanSwitch && !_outgoingSettleActive)
+            {
+                ComboHand leavingHand = ComboHand.Front;
+                if (frontJoins)
+                {
+                    leavingHand = ComboHand.Back;
+                }
+                if (leavingHand == ComboHand.Front)
+                {
+                    _outgoingSettleFrom = FrontHandPoseRotation;
+                    _frontHandSwingBlend = 0f;
+                }
+                else
+                {
+                    _outgoingSettleFrom = BackHandPoseRotation;
+                    _backHandSwingBlend = 0f;
+                }
+                _outgoingSettleHand = leavingHand;
+                _outgoingSettleRotation = _outgoingSettleFrom;
+                _outgoingSettleTicks = 0;
+                _outgoingSettleActive = true;
+            }
+
+            // The leaving hand's blend was zeroed above, so once the settle ends its own pose is exactly the carry.
+            if (_outgoingSettleActive)
+            {
+                if (Phase != AttackPhase.MeleeComboPause)
+                {
+                    _outgoingSettleTicks++;
+                }
+                float settleProgress = MathHelper.Clamp((_outgoingSettleTicks - OffHandSettleDelayTicks) / (float)OffHandSettleTicks, 0f, 1f);
+                _outgoingSettleRotation = MathHelper.SmoothStep(_outgoingSettleFrom, OffHandCarryRotation, settleProgress);
+                bool settled = _outgoingSettleTicks >= OffHandSettleDelayTicks + OffHandSettleTicks;
+                bool handSwingingAgain = Phase == AttackPhase.MeleeComboAttack
+                    && (swingHand == ComboHand.Both || swingHand == _outgoingSettleHand);
+                if (settled || handSwingingAgain)
+                {
+                    _outgoingSettleActive = false;
+                }
+            }
+
+            // ── Incoming windup. ──
+            bool windupThisTick = false;
+            ComboHand incomingHand = ComboHand.Front;
+            float windupProgress = 0f;
+            if (frontJoins || backJoins)
+            {
+                incomingHand = ComboHand.Back;
+                if (frontJoins)
+                {
+                    incomingHand = ComboHand.Front;
+                }
+
+                int leadTicks = Math.Min(OffHandWindupLeadTicks, Math.Max(1, _activeComboStepTotalTicks));
+                int pauseTicks = Math.Max(0, currentStep.PostStepPause);
+                int elapsedTicks = -1;
+                if (Phase == AttackPhase.MeleeComboAttack && PhaseTimer <= leadTicks)
+                {
+                    elapsedTicks = leadTicks - PhaseTimer;
+                }
+                else if (Phase == AttackPhase.MeleeComboPause)
+                {
+                    elapsedTicks = leadTicks + Math.Max(0, pauseTicks - PhaseTimer);
+                }
+
+                if (elapsedTicks >= 0)
+                {
+                    windupThisTick = true;
+                    int windupTicks = Math.Max(1, leadTicks + pauseTicks);
+                    windupProgress = MathHelper.Clamp((elapsedTicks + 1f) / windupTicks, 0f, 1f);
+                }
+            }
+
+            if (windupThisTick)
+            {
+                // First tick: start from the hand's real pose (carry, a settle in progress, a crossfade), so nothing jumps.
+                if (!_incomingWindupRunning || _incomingWindupHand != incomingHand)
+                {
+                    if (incomingHand == ComboHand.Front)
+                    {
+                        _incomingWindupFrom = FrontHandPoseRotation;
+                    }
+                    else
+                    {
+                        _incomingWindupFrom = BackHandPoseRotation;
+                    }
+                    _incomingWindupHand = incomingHand;
+                    _incomingWindupRunning = true;
+                }
+
+                // Cock against the swing: the next arc's direction comes from the same endpoints its strike will use.
+                (float arcStart, float arcEnd) = WeaponArchetypeTables.SwingArcEndpoints(nextStep.Motion, OverheadWindupOvershoot);
+                ModifyMeleeArcEndpoints(nextStep.Motion, ref arcStart, ref arcEnd);
+                if (UseAlternateFlip && _comboSwingFlipped)
+                {
+                    (arcStart, arcEnd) = (arcEnd, arcStart);
+                }
+                float swingSign = Math.Sign(arcEnd - arcStart);
+                float startPose = ComboStepStartRotation(nextStep);
+                float cockedPose = startPose - swingSign * OffHandWindupAnticipation;
+
+                if (windupProgress < OffHandWindupCockFraction)
+                {
+                    float cockProgress = windupProgress / OffHandWindupCockFraction;
+                    _incomingWindupRotation = MathHelper.SmoothStep(_incomingWindupFrom, cockedPose, cockProgress);
+                }
+                else
+                {
+                    float settleProgress = (windupProgress - OffHandWindupCockFraction) / (1f - OffHandWindupCockFraction);
+                    _incomingWindupRotation = MathHelper.SmoothStep(cockedPose, startPose, settleProgress);
+                }
+                _incomingWindupWeight = 1f;
+                return;
+            }
+
+            _incomingWindupRunning = false;
+
+            // The step the windup led into has started: its swing clock sits on the same start pose, so hand over now.
+            bool handIsSwinging = swingHand == ComboHand.Both || swingHand == _incomingWindupHand;
+            if (Phase == AttackPhase.MeleeComboAttack && handIsSwinging)
+            {
+                _incomingWindupWeight = 0f;
+                return;
+            }
+            _incomingWindupWeight = Math.Max(0f, _incomingWindupWeight - 1f / OffHandWindupReleaseTicks);
         }
 
         /// <summary>Direction locked for the entire active combo.  Player can dodgeroll through
@@ -10273,6 +10511,26 @@ namespace tsorcRevamp.NPCs.Puppets
         // Optional deterministic anchor for custom articulated controllers, before any draw-only Player access.
         protected virtual Vector2? ResolveCompositeHandAnchor(float armRotation, Player.CompositeArmStretchAmount stretch) => null;
 
+        /// <summary>
+        /// The bob vanilla gives the composite torso and arms: PlayerDrawLayers shifts them by
+        /// OffsetsPlayerHeadgear[body row] - (0, 2), which is 2px up on walk rows 7-9 and 14-16 and zero on every
+        /// Use, jump and idle row. GetFront/BackHandPosition ignore it, so a held weapon sat 2px low on those frames.
+        /// </summary>
+        private Vector2 CompositeBodyBob
+        {
+            get
+            {
+                if (_puppet == null)
+                {
+                    return Vector2.Zero;
+                }
+
+                int row = Math.Clamp(_puppet.bodyFrame.Y / FrameHeight, 0, Main.OffsetsPlayerHeadgear.Length - 1);
+                float bob = Main.OffsetsPlayerHeadgear[row].Y - 2f;
+                return new Vector2(0f, bob);
+            }
+        }
+
         private Vector2 GetUnscaledHandPosition()
         {
             if (CompositeArmActive && ResolveCompositeHandAnchor(CompositeArmRotation, CompositeArmStretch) is Vector2 anchor)
@@ -10302,7 +10560,7 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 Vector2 composite = _puppet.GetFrontHandPosition(CompositeArmStretch, CompositeArmRotation);
                 if (composite != Vector2.Zero)
-                    return composite;
+                    return composite + CompositeBodyBob;
             }
 
             // Row of the body frame in the player sprite sheet (Use1=1 … Use4=4, walk/idle=other).
@@ -10340,6 +10598,30 @@ namespace tsorcRevamp.NPCs.Puppets
         /// anchored to the off-hand blade.</summary>
         protected Vector2 PuppetBackHandPosition => GetBackHandPosition();
         protected Vector2 PuppetBackWeaponDirection => GetBackWeaponWorldDirection();
+
+        /// <summary>
+        /// Where the free back hand WOULD be with the arm fully stretched at a facing-space angle (0 = ahead,
+        /// negative = up), whatever pose is drawn this tick. For locking a cast's origin before the arm gets there.
+        /// Same maths as a <see cref="FreeBackArmFacingAngle"/> pose, including walk bob and visual scale.
+        /// </summary>
+        protected Vector2 PuppetBackHandPositionAt(float facingAngle)
+        {
+            if (_puppet == null)
+            {
+                return PuppetVisualCenter;
+            }
+
+            float rotation = FacingAngleToCompositeArm(facingAngle);
+            Vector2 hand = _puppet.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, rotation) + CompositeBodyBob;
+
+            float visualScale = Math.Max(1, ArmorTemplateScale) * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
+            if (visualScale != 1f)
+            {
+                hand = NPC.Bottom + (hand - NPC.Bottom) * visualScale;
+            }
+
+            return hand;
+        }
 
         /// <summary>World-space bow grip for <see cref="UseBowStringDrawPose"/>: the outstretched back hand.
         /// Arrows should leave from here — the front hand is on the string, back near the cheek.</summary>
@@ -10400,7 +10682,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 rotation = FacingAngleToCompositeArm(freeBackFacing);
             }
 
-            Vector2 composite = _puppet.GetBackHandPosition(stretch, rotation);
+            Vector2 composite = _puppet.GetBackHandPosition(stretch, rotation) + CompositeBodyBob;
             if (composite != Vector2.Zero)
             {
                 return composite;
@@ -11353,8 +11635,23 @@ namespace tsorcRevamp.NPCs.Puppets
             return true;
         }
 
+        /// <summary>True while part of the puppet is buried and must stay behind solid tiles (e.g. the Witchking's
+        /// plunged blade; the subclass also sets NPC.behindTiles). Hunter vision (detectCreature) makes vanilla draw
+        /// behind-tiles NPCs AFTER the solid tiles; MethodSwaps.Main_DoDraw_Tiles_Solid draws these first instead and sets
+        /// <see cref="DrawnBeforeSolidTiles"/>. Same pair as MirrorPuppetNPC, which has its own base class.</summary>
+        internal virtual bool StaysBehindSolidTiles => false;
+
+        /// <summary>Set by the Hunter workaround after it drew this puppet: vanilla's own behind-tiles pass later the same
+        /// frame skips PreDraw's body and PostDraw's extras, and PostDraw clears it.</summary>
+        internal bool DrawnBeforeSolidTiles;
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (DrawnBeforeSolidTiles)
+            {
+                return false;
+            }
+
             if (_puppet == null)
                 InitPuppet();
 
@@ -11455,7 +11752,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // The equip strip supplies the carried position. During the authored guard, lift it
             // toward the chest and push it toward the attacker so the defensive state reads clearly.
             if (ShieldRaisedForPose)
-                drawPos += new Vector2(NPC.direction * 5f, -5f);
+                drawPos += new Vector2(NPC.direction * ShieldRaisedOffset.X, ShieldRaisedOffset.Y);
             SpriteEffects spriteFx = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             drawInfo.DrawDataCache.Add(new DrawData(
@@ -11754,6 +12051,13 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            // tModLoader calls PostDraw even when PreDraw returned false; the early pass already drew these.
+            if (DrawnBeforeSolidTiles)
+            {
+                DrawnBeforeSolidTiles = false;
+                return;
+            }
+
             DrawFireSlashVFX();
             DrawFlailsAbovePuppet(drawColor);
         }
@@ -13345,6 +13649,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // A weapon shown during the run-in is held on the composite arm too. Otherwise the arm plays the walk
             // cycle while the sprite sits at the static 4-row hand offset, and the two visibly drift apart.
             (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance) ||
+            NeutralWeaponOnCompositeArm ||
             UseCompositeArmForAdditionalPhase);
 
         /// <summary>Receives the current ball position from a projectile-owned flail. Most patterns

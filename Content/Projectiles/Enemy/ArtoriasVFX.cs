@@ -27,6 +27,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static Asset<Effect> purpleFireEffect;
         static Asset<Effect> floorFireEffect;
         static Asset<Effect> homingVolleyEffect;
+        static Asset<Effect> nebulaCrescentEffect;
 
         static Asset<Texture2D> smoothNoise;
         static Asset<Texture2D> brokenNoise;
@@ -78,6 +79,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             purpleFireEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasPurpleFire", AssetRequestMode.ImmediateLoad);
             floorFireEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasFloorFire", AssetRequestMode.ImmediateLoad);
             homingVolleyEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasHomingVolley", AssetRequestMode.ImmediateLoad);
+            nebulaCrescentEffect ??= ModContent.Request<Effect>(EffectRoot + "ArtoriasNebulaCrescent", AssetRequestMode.ImmediateLoad);
 
             smoothNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_NoiseF1", AssetRequestMode.ImmediateLoad);
             brokenNoise ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_Noise41", AssetRequestMode.ImmediateLoad);
@@ -196,13 +198,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal static void DrawSwordSwipe(Vector2 center, float rotation, Vector2 size,
             float progress, float opacity)
         {
+            DrawSwordSwipe(center, rotation, size, progress, opacity, new Color(8, 2, 20), new Color(102, 32, 176), new Color(232, 68, 198));
+        }
+
+        /// <summary>The same sword swipe in another palette: dark = body shadow, mid = heat band, core = the edge.</summary>
+        internal static void DrawSwordSwipe(Vector2 center, float rotation, Vector2 size,
+            float progress, float opacity, Color darkColor, Color midColor, Color coreColor)
+        {
             LoadAssets();
             // 2px blocks, not the 5px default: that is the block size the arc was tuned at in the
             // offline preview (AbyssSlashArcV2), and the shader's PixelateShaderUV reads it via
             // PixelGrid.
             Draw(swordSwipeEffect, "ArtoriasSwordSwipe", marbleNoise, slashFibers,
-                center, size, rotation, new Color(8, 2, 20), new Color(102, 32, 176),
-                new Color(232, 68, 198), opacity, progress, 1f, 1f,
+                center, size, rotation, darkColor, midColor,
+                coreColor, opacity, progress, 1f, 1f,
                 BlendState.AlphaBlend, fullTexture: true, pixelBlockSize: 2f);
         }
 
@@ -325,22 +334,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // frame centre) because the sprite touches x=165 of its 170px frame, and the one-block glow
         // past that edge needs room inside the quad. NOT padded vertically: that would sample the
         // neighbouring sheet frames and draw their glow as stray specks; the sprite has 8-18 empty rows.
-        internal static void DrawFanCrescent(Texture2D texture, Rectangle frame, Vector2 center,
-            float rotation, float frameDrawSize, float opacity)
+        /// <summary>Spiral Fan's spinning blade: a procedural crescent of churning abyss nebula (ArtoriasNebulaCrescent.fx),
+        /// opening toward +x before <paramref name="rotation"/>. <paramref name="phase"/> (0..1) offsets its noise so a
+        /// ring of crescents never shows the same pattern. Premultiplied, 2px pixel filter.</summary>
+        internal static void DrawNebulaCrescent(Vector2 center, float rotation, float size, float phase, float opacity)
         {
             LoadAssets();
-            const int FramePadding = 8;
-            Rectangle paddedFrame = new(frame.X - FramePadding, frame.Y,
-                frame.Width + FramePadding * 2, frame.Height);
-            float worldPixelsPerTexel = frameDrawSize / frame.Width;
-            Vector2 drawSize = paddedFrame.Size() * worldPixelsPerTexel;
-
-            // PointClamp: the sprite's alpha is binary, and the shader's outline/glow read it per block.
-            DrawBoomerang(boomerangEffect, "ArtoriasFanCrescentPixelated", texture, paddedFrame,
-                brokenNoise.Value, center, drawSize, rotation, new Color(34, 8, 66),
-                new Color(146, 58, 238), new Color(222, 186, 255), opacity,
-                0f, 0f, 1f, 0f, SamplerState.PointClamp,
-                blendState: BlendState.AlphaBlend, pixelBlockSize: 2f);
+            // The full TurbulentNoise texture is the quad, so the shader's coords are already 0..1 across it.
+            Draw(nebulaCrescentEffect, "ArtoriasNebulaCrescent", turbulentNoise, smoothNoise,
+                center, new Vector2(size, size), rotation, VoidBlack, new Color(138, 52, 226),
+                new Color(226, 196, 255), opacity, 0f, 1f, phase, BlendState.AlphaBlend,
+                fullTexture: true, pixelBlockSize: 2f);
         }
 
         // Two passes: a solid pixelated underlay (fixes "too translucent" - pure additive can never
@@ -539,13 +543,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         internal static void DrawMantle(Vector2 center, Vector2 size, float opacity, float intensity, float flowDirection)
         {
+            DrawMantle(center, size, opacity, intensity, flowDirection, VoidBlack, AbyssIndigo, AbyssViolet, KnightSilver);
+        }
+
+        internal static void DrawMantle(Vector2 center, Vector2 size, float opacity, float intensity, float flowDirection,
+            Color shadowColor, Color bodyColor, Color edgeColor, Color highlightColor, bool fullTexture = false, float padding = 0f)
+        {
             LoadAssets();
+            // Give the smoke room to fade. The shader reads padding through Progress to keep the core at its original size.
+            Vector2 paddedSize = size * (1f + padding);
             Draw(mantleEffect, "ArtoriasMantleBody", roundSmoke, brokenNoise,
-                center, size, 0f, VoidBlack, AbyssIndigo, KnightSilver,
-                opacity, 0f, intensity, flowDirection, BlendState.AlphaBlend);
+                center, paddedSize, 0f, shadowColor, bodyColor, highlightColor,
+                opacity, padding, intensity, flowDirection, BlendState.AlphaBlend, fullTexture: fullTexture);
             Draw(mantleEffect, "ArtoriasMantleEdge", aura, brokenNoise,
-                center, size, 0f, VoidBlack, AbyssViolet, KnightSilver,
-                opacity, 0f, intensity, flowDirection, BlendState.Additive);
+                center, paddedSize, 0f, shadowColor, edgeColor, highlightColor,
+                opacity, padding, intensity, flowDirection, BlendState.Additive, fullTexture: fullTexture);
         }
 
         static void Draw(Asset<Effect> effectAsset, string techniqueName,

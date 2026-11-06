@@ -8,21 +8,17 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 {
+    /// <summary>
+    /// The Sword of Lord Gwyn's rising flame dash (right click). Held like the left-click combo: the front arm
+    /// straight out along the blade (vanilla composite arm), the rear hand on the handle, the sword drawn at the
+    /// same scale with its grip point in the fist - geometry read from the SwordOfLordGwyn Greatsword.
+    /// ai[0] = 1 (dash; the old ground slash mode is gone), ai[1] = facing, ai[2] = 1 when empowered.
+    /// </summary>
     class SwordOfLordGwynSlash : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SwordOfLordGwyn));
 
-        // Player-facing draw scale for the 128px SwordOfGwyn sprite. 1.0 = native size (0.5 read as too
-        // small on the player).
-        const float DrawScale = 1.0f;
-        // Hitbox kept proportional to the drawn blade so the sword hits where it visibly reaches
-        // (142/42 are the full-size-sprite values).
-        const float BladeLength = 142f * DrawScale;
-        const float BladeWidth = 42f * DrawScale;
-        // Grip position within the sprite (handle is lower-left): the pivot the sword is drawn
-        // around, so the hilt sits IN the hand instead of floating mid-blade like the old 0.45.
-        const float GripNormX = 0.19f;
-        const float GripNormY = 0.81f;
+        const float BladeWidth = 32f;
         const int DashSwingLifetime = 28;
         const int DashLifetime = DashSwingLifetime + 10;
         const int DashBrakeStartTick = 8;
@@ -40,6 +36,13 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
         bool cinderTrailInitialized;
         float cinderTrailY;
         float lastCinderX;
+
+        // This tick's pose, set in AI: fist, blade tip, draw rotation and scale.
+        Vector2 hand;
+        Vector2 tip;
+        float drawRotation;
+        float drawScale = 1f;
+        bool poseReady;
 
         public override void SetStaticDefaults()
         {
@@ -87,7 +90,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             player.itemTime = 2;
             player.itemAnimation = 2;
             player.ChangeDir(Direction);
-            SwordOfLordGwynPlayerAnimation.SetUseFrame(player, CurrentUseFrame());
+            UpdatePose(player);
 
             if (DashSlash)
             {
@@ -96,9 +99,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
                 UpdateCinderTrail(player);
             }
 
-            Vector2 start = BladeStart();
-            Vector2 end = BladeEnd();
-            // Blade is twice as long at DrawScale 1.0, so counts are raised (was 5/3) to keep the fire as dense along it.
+            Vector2 start = hand;
+            Vector2 end = tip;
             for (int i = 0; i < (DashSlash ? 8 : 5); i++)
             {
                 Vector2 pos = Vector2.Lerp(start, end, Main.rand.NextFloat());
@@ -106,6 +108,21 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
                 int dust = Dust.NewDust(pos - new Vector2(3f), 6, 6, type, player.velocity.X * 0.1f, player.velocity.Y * 0.1f, 60, default, DashSlash ? 1.9f : 1.35f);
                 Main.dust[dust].noGravity = true;
             }
+
+            if (DashSlash && Timer <= AnimationLifetime)
+            {
+                // Rolling FireBreath flames peel off the outer blade and hang in the air behind the dash.
+                Vector2 bladeNormal = (end - start).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.PiOver2);
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 flamePosition = Vector2.Lerp(start, end, Main.rand.NextFloat(0.35f, 1f));
+                    Vector2 flameVelocity = player.velocity * 0.15f + bladeNormal * Main.rand.NextFloat(-1.2f, 1.2f);
+                    float flameScale = Main.rand.NextFloat(0.55f, 0.9f);
+                    int flameLife = Main.rand.Next(18, 27);
+                    global::tsorcRevamp.VFX.VFX.FlameLobe(flamePosition, flameVelocity, flameScale, flameLife);
+                }
+            }
+
             Lighting.AddLight(Projectile.Center, 0.8f, 0.42f, 0.12f);
 
             if (Timer >= Lifetime)
@@ -116,8 +133,52 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
+            if (!poseReady)
+            {
+                return false;
+            }
+
             float point = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), BladeStart(), BladeEnd(), BladeWidth, ref point);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), hand, tip, BladeWidth, ref point);
+        }
+
+        /// <summary>
+        /// Arms and blade for this tick, the same rig as GreatswordSwing: composite front arm along the blade
+        /// (0 = arm down, so world angle - pi/2), rear hand solved onto the handle, sprite rotated so the grip-to-tip
+        /// line matches the blade angle and flipped vertically when facing left.
+        /// </summary>
+        void UpdatePose(Player player)
+        {
+            Greatsword sword = player.HeldItem.ModItem as Greatsword;
+            if (sword == null)
+            {
+                sword = ContentSamples.ItemsByType[ModContent.ItemType<SwordOfLordGwyn>()].ModItem as Greatsword;
+            }
+
+            float worldAngle = CurrentAngle();
+            Vector2 axis = worldAngle.ToRotationVector2();
+            float armRotation = worldAngle - MathHelper.PiOver2;
+            player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRotation);
+            hand = player.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, armRotation);
+
+            drawScale = player.GetAdjustedItemScale(sword.Item);
+            if (player.gravDir == 1f)
+            {
+                float handleLength = Vector2.Distance(sword.Grip, sword.HiltTop) * drawScale;
+                float backArmRotation = GreatswordMotion.BackArmRotation(hand - player.MountedCenter, axis, Direction, handleLength, out _);
+                player.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, backArmRotation);
+            }
+
+            Vector2 bladeAxis = sword.BladeTip - sword.Grip;
+            float bladeLength = bladeAxis.Length() * drawScale;
+            if (Direction < 0)
+            {
+                bladeAxis.Y = -bladeAxis.Y;
+            }
+
+            drawRotation = worldAngle - bladeAxis.ToRotation();
+            tip = hand + axis * bladeLength;
+            poseReady = true;
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
@@ -150,12 +211,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
         {
             float baseAngle = CurrentBaseAngle();
             return Direction == 1 ? baseAngle : MathHelper.Pi - baseAngle;
-        }
-
-        int CurrentUseFrame()
-        {
-            float progress = MathHelper.Clamp(Timer / AnimationLifetime, 0f, 0.999f);
-            return (int)(progress * 4f);
         }
 
         void ApplyDashBraking(Player player)
@@ -231,28 +286,25 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
                 Projectile.owner);
         }
 
-        Vector2 BladeStart()
-        {
-            Player player = Main.player[Projectile.owner];
-            return SwordOfLordGwynPlayerAnimation.GetHandPosition(player, CurrentUseFrame());
-        }
-
-        Vector2 BladeEnd()
-        {
-            return BladeStart() + CurrentAngle().ToRotationVector2() * BladeLength;
-        }
-
         public override bool PreDraw(ref Color lightColor)
         {
+            if (!poseReady)
+            {
+                return false;
+            }
+
             Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
-            // Mirror the grip's X for a left-facing (flipped) draw so the hilt stays in the hand
-            // for both facings (origin is in pre-flip texture space).
-            float originX = Direction == 1 ? texture.Width * GripNormX : texture.Width * (1f - GripNormX);
-            Vector2 origin = new Vector2(originX, texture.Height * GripNormY);
-            SpriteEffects effects = Direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            float drawRotation = Projectile.rotation + (Direction == 1 ? MathHelper.PiOver4 : MathHelper.Pi - MathHelper.PiOver4);
+            Greatsword sword = ContentSamples.ItemsByType[ModContent.ItemType<SwordOfLordGwyn>()].ModItem as Greatsword;
+            Vector2 origin = sword.Grip;
+            SpriteEffects effects = SpriteEffects.None;
+            if (Direction < 0)
+            {
+                effects = SpriteEffects.FlipVertically;
+                origin.Y = texture.Height - origin.Y;
+            }
+
             Color color = Color.White * MathHelper.Clamp(Projectile.timeLeft / 6f, 0.35f, 1f);
-            Main.EntitySpriteDraw(texture, BladeStart() - Main.screenPosition, null, color, drawRotation, origin, DashSlash ? DrawScale * 1.18f : DrawScale, effects, 0);
+            Main.EntitySpriteDraw(texture, hand - Main.screenPosition, null, color, drawRotation, origin, drawScale, effects, 0);
             return false;
         }
     }

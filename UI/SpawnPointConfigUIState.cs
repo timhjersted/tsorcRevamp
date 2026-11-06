@@ -36,6 +36,8 @@ namespace tsorcRevamp.UI
         private UIText ringValue;
         private UIText dustLabel;
         private UIText dustValue;
+        private UIText burstLabel;
+        private UIText burstValue;
 
         private UIText radiusLabel;
         private UIText radiusMinus;
@@ -220,7 +222,7 @@ namespace tsorcRevamp.UI
             panel.Left.Set(-200f, 0.833f); // Centered in the right third of screen
             panel.Top.Set(-300f, 0.5f); // Centered vertically
             panel.Width.Set(400f, 0f); // 20px wider single column width
-            panel.Height.Set(625f, 0f); // Taller height to stack everything (extra row for World Condition)
+            panel.Height.Set(650f, 0f); // Taller height to stack everything (extra rows for World Condition + Spawn Burst)
             panel.BackgroundColor = new Color(30, 30, 40) * 0.95f; // Sleek dark panel
             Append(panel);
 
@@ -434,15 +436,42 @@ namespace tsorcRevamp.UI
             };
             panel.Append(dustValue);
 
-            // Option 6: Trigger Radius Control
+            // Option 6: Spawn Burst — each NPC materializes with a burst of the Trigger Dust (the ring's color).
+            burstLabel = new UIText("Spawn Burst:", 0.85f);
+            burstLabel.Left.Set(10, 0);
+            burstLabel.Top.Set(185, 0);
+            panel.Append(burstLabel);
+
+            burstValue = new UIText("[ Off ]", 0.85f);
+            burstValue.HAlign = 1f;
+            burstValue.Left.Set(-20f, 0f);
+            burstValue.Top.Set(185, 0);
+            burstValue.TextColor = Color.Red;
+            burstValue.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
+                burstValue.TextColor = Color.White;
+            };
+            burstValue.OnMouseOut += (UIMouseEvent evt, UIElement listeningElement) => {
+                RefreshDetails();
+            };
+            burstValue.OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
+                if (CurrentEvent != null)
+                {
+                    CurrentEvent.SpawnBurst = !CurrentEvent.SpawnBurst;
+                    tsorcScriptedEvents.SaveDynamicEvents();
+                    RefreshDetails();
+                }
+            };
+            panel.Append(burstValue);
+
+            // Option 7: Trigger Radius Control
             radiusLabel = new UIText("Trigger Radius:", 0.85f);
             radiusLabel.Left.Set(10, 0);
-            radiusLabel.Top.Set(185, 0);
+            radiusLabel.Top.Set(210, 0);
             panel.Append(radiusLabel);
 
             radiusMinus = new UIText("[ - ]", 0.85f);
             radiusMinus.Left.Set(-140f, 1f);
-            radiusMinus.Top.Set(185, 0);
+            radiusMinus.Top.Set(210, 0);
             radiusMinus.TextColor = Color.LightSkyBlue;
             radiusMinus.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 radiusMinus.TextColor = Color.White;
@@ -464,13 +493,13 @@ namespace tsorcRevamp.UI
 
             radiusValue = new UIText("30 tiles", 0.85f);
             radiusValue.Left.Set(-105f, 1f);
-            radiusValue.Top.Set(185, 0);
+            radiusValue.Top.Set(210, 0);
             radiusValue.TextColor = Color.White;
             panel.Append(radiusValue);
 
             radiusPlus = new UIText("[ + ]", 0.85f);
             radiusPlus.Left.Set(-40f, 1f);
-            radiusPlus.Top.Set(185, 0);
+            radiusPlus.Top.Set(210, 0);
             radiusPlus.TextColor = Color.LightSkyBlue;
             radiusPlus.OnMouseOver += (UIMouseEvent evt, UIElement listeningElement) => {
                 radiusPlus.TextColor = Color.White;
@@ -493,14 +522,14 @@ namespace tsorcRevamp.UI
             // Configured spawns title (large = false)
             spawnsTitle = new UIText("CONFIGURED ENEMY SPAWNS:", 0.8f);
             spawnsTitle.Left.Set(10, 0);
-            spawnsTitle.Top.Set(215, 0);
+            spawnsTitle.Top.Set(240, 0);
             spawnsTitle.TextColor = Color.SkyBlue;
             panel.Append(spawnsTitle);
 
             // Scrollable NPC List
             npcList = new UIList();
             npcList.Left.Set(10, 0);
-            npcList.Top.Set(240, 0);
+            npcList.Top.Set(265, 0);
             npcList.Width.Set(355, 0); // Wider list
             npcList.Height.Set(110, 0); // Shorter list (stacked vertically)
             panel.Append(npcList);
@@ -509,7 +538,7 @@ namespace tsorcRevamp.UI
             scrollbar = new UIScrollbar();
             scrollbar.SetView(100f, 1000f);
             scrollbar.Height.Set(110, 0);
-            scrollbar.Top.Set(240, 0);
+            scrollbar.Top.Set(265, 0);
             scrollbar.Left.Set(370, 0); // Moved to right edge of 400px panel
             panel.Append(scrollbar);
             npcList.SetScrollbar(scrollbar);
@@ -517,13 +546,13 @@ namespace tsorcRevamp.UI
             // ================= NPC SEARCH & SELECTION (STACKED BELOW) =================
             searchTitle = new UIText("SELECT ENEMY TO PLACE:", 0.8f);
             searchTitle.Left.Set(10, 0);
-            searchTitle.Top.Set(360, 0); // Stacked below configured spawns
+            searchTitle.Top.Set(385, 0); // Stacked below configured spawns
             searchTitle.TextColor = new Color(255, 204, 0); // Gold Title
             panel.Append(searchTitle);
 
             searchBar = new UIEnemySearchBar();
             searchBar.Left.Set(10, 0);
-            searchBar.Top.Set(385, 0);
+            searchBar.Top.Set(410, 0);
             searchBar.Width.Set(355, 0); // Wider search bar
             searchBar.Height.Set(30, 0);
             searchBar.BackgroundColor = new Color(40, 40, 50) * 0.95f;
@@ -532,7 +561,7 @@ namespace tsorcRevamp.UI
 
             npcSearchList = new UIList();
             npcSearchList.Left.Set(10, 0);
-            npcSearchList.Top.Set(425, 0);
+            npcSearchList.Top.Set(450, 0);
             npcSearchList.Width.Set(355, 0); // Wider search list
             npcSearchList.Height.Set(185, 0); // Fills remaining height
             panel.Append(npcSearchList);
@@ -540,7 +569,7 @@ namespace tsorcRevamp.UI
             searchScrollbar = new UIScrollbar();
             searchScrollbar.SetView(100f, 1000f);
             searchScrollbar.Height.Set(185, 0);
-            searchScrollbar.Top.Set(425, 0);
+            searchScrollbar.Top.Set(450, 0);
             searchScrollbar.Left.Set(370, 0); // Moved to right edge of 400px panel
             panel.Append(searchScrollbar);
             npcSearchList.SetScrollbar(searchScrollbar);
@@ -753,10 +782,10 @@ namespace tsorcRevamp.UI
             // Remember its position so we can rebind after SaveDynamicEvents() reloads (and replaces) the list.
             editingNpcIndex = npcIndex;
 
-            // Single-NPC events: lower sections hidden, so edit panel starts at Y=215.
-            // Multi-NPC events: edit panel appears below the spawns list at Y=360.
+            // Single-NPC events: lower sections hidden, so edit panel starts at Y=240.
+            // Multi-NPC events: edit panel appears below the spawns list at Y=385.
             bool isSingle = CurrentEvent?.SingleNpcMarker == true;
-            float startY = isSingle ? 215f : 360f;
+            float startY = isSingle ? 240f : 385f;
 
             editTitle.Top.Set(startY, 0);
 
@@ -1043,6 +1072,17 @@ namespace tsorcRevamp.UI
 
             dustValue.SetText($"[ {GetDustName(CurrentEvent.TriggerDust)} ]");
             dustValue.TextColor = GetDustColor(CurrentEvent.TriggerDust);
+
+            if (CurrentEvent.SpawnBurst)
+            {
+                burstValue.SetText("[ On ]");
+                burstValue.TextColor = Color.Lime;
+            }
+            else
+            {
+                burstValue.SetText("[ Off ]");
+                burstValue.TextColor = Color.Red;
+            }
 
             float currentTiles = (float)Math.Sqrt(CurrentEvent.Radius) / 16f;
             radiusValue.SetText($"{(int)currentTiles} tiles");

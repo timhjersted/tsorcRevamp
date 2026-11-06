@@ -26,6 +26,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         const float WobbleAmplitude = 2f;  //px of side-to-side
         const float WobblePeriod = 10f;    //ticks per full shake
         const int GrowTicks = GrowFrameTicks * 4;
+        //Hoarfrost Creep lays 40 segments 8 ticks apart and each one plays its own erupt/drop/shatter sound,
+        //so per-segment volumes stay low or the carpet stacks into a machine-gun rattle.
+        const float EruptVolume = 0.15f;
+        const float DropVolume = 0.15f;
+        const float ShatterVolume = 0.12f;
 
         int TelegraphTicks => (int)Projectile.ai[0];
         bool Ceiling => Projectile.ai[1] == 1f;
@@ -99,7 +104,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
                 {
                     Falling = true;
                     Projectile.tileCollide = true;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.45f, Pitch = 0.5f }, Projectile.Center);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = DropVolume, Pitch = 0.5f }, Projectile.Center);
                     Projectile.netUpdate = true;
                 }
                 return;
@@ -124,7 +129,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             Projectile.frame = System.Math.Min(3, grown / GrowFrameTicks);
             if (grown == 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.5f, Pitch = -0.2f + Main.rand.NextFloat(0.2f) }, Projectile.Center);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = EruptVolume, Pitch = -0.2f + Main.rand.NextFloat(0.2f) }, Projectile.Center);
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), surfaceY);
@@ -173,7 +178,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.4f, Pitch = 0.3f }, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = ShatterVolume, Pitch = 0.3f }, Projectile.Center);
             for (int i = 0; i < 10; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(2.5f, 2.5f);

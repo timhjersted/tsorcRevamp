@@ -136,6 +136,11 @@ namespace tsorcRevamp.Utilities.Balance
                 attribution.RegisterHit(npc.whoAmI), projectile.type);
         }
 
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            BalanceLog.NotifySpawned(npc, source);
+        }
+
         public override void OnKill(NPC npc)
         {
             BalanceLog.NotifyKilled(npc);
@@ -154,7 +159,7 @@ namespace tsorcRevamp.Utilities.Balance
         {
             if (ItemID.Sets.BossBag[item.type] && source is EntitySource_Loot)
             {
-                BalanceLog.NotifyBossBag();
+                BalanceLog.NotifyBossBag(source);
             }
         }
 
@@ -265,12 +270,16 @@ namespace tsorcRevamp.Utilities.Balance
         public override void PostUpdateEverything()
         {
             BalanceLog.Update();
+            BalanceLog.UpdateHeartbeat();
             EnemyKillLog.Update();
             WeaponBench.Update();
         }
 
         public override void OnWorldUnload()
         {
+            // The play time since the last 5-minute heartbeat, so a short visit is not lost.
+            BalanceLog.WriteHeartbeat("world_exit");
+
             // A fight in progress when the world closes is still worth keeping — it's a real
             // "player gave up on this boss" data point.
             BalanceLog.AbortForWorldChange();

@@ -1,8 +1,6 @@
 using System.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Puppets;
@@ -19,8 +17,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // 0.38 rad/tick = ~22°/tick, ~3.6 turns a second: a buzzing blade, still under the ~30°/tick
         // where a 60fps spin starts to strobe or read as turning backwards.
         const float FanCrescentSpinPerTick = 0.38f;
-        // World px one 170px sprite frame is drawn at (the old crisp core was 54x52).
-        const float FanCrescentFrameDrawSize = 60f;
+        // World px of the nebula crescent's quad; the crescent itself spans ~86% of it (~65px), a little over the
+        // 60px sprite frame it replaced, since its edges are soft.
+        const float FanCrescentDrawSize = 76f;
+        // Golden-ratio step per projectile identity: a 0..1 noise phase that differs for every crescent in a ring.
+        const float FanNoisePhaseStep = 0.618f;
 
         bool UsesFanBoomerangVFX => Projectile.ai[1] >= 0.5f;
         // ai[2] = Spiral Fan's sweep direction (+1/-1), so the crescents spin the way the fan turns.
@@ -157,11 +158,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             if (UsesFanBoomerangVFX)
             {
-                Texture2D texture = TextureAssets.Projectile[Type].Value;
-                // Frames 0-2 only: frame 3 of the sheet is a few scattered specks, which the pixel
-                // filter turns into a blinking cloud instead of a crescent every fourth frame.
-                int crescentFrameIndex = Projectile.frame % 3;
-                Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, crescentFrameIndex);
+                float noisePhase = (Projectile.identity * FanNoisePhaseStep) % 1f;
 
                 // 1 in flight; ramps to 0 over FanFadeTicks once it has left every player's screen.
                 float fade = 1f;
@@ -174,7 +171,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 // ribbon/orbit; the crescent itself stays purple.
                 bool returning = _fanFlight == FanFlight.Returning;
 
-                // Pixelated afterimages at 87% size (the old 0.27 vs 0.31 sprite scale ratio).
+                // Nebula afterimages at 87% size, spun to their recorded rotations.
                 for (int i = Projectile.oldPos.Length - 2; i >= 3; i -= 4)
                 {
                     if (Projectile.oldPos[i] == Vector2.Zero)
@@ -185,8 +182,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     float history = 1f - i / (float)Projectile.oldPos.Length;
                     Vector2 oldCenter = Projectile.oldPos[i] + Projectile.Size * 0.5f;
                     float echoOpacity = (0.22f + history * 0.30f) * fade;
-                    ArtoriasVFX.DrawFanCrescent(texture, frame, oldCenter, Projectile.oldRot[i],
-                        FanCrescentFrameDrawSize * 0.87f, echoOpacity);
+                    ArtoriasVFX.DrawNebulaCrescent(oldCenter, Projectile.oldRot[i],
+                        FanCrescentDrawSize * 0.87f, noisePhase, echoOpacity);
                 }
 
                 // Ribbon and orbit keep the travel heading, not the spin: they describe the path.
@@ -196,10 +193,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 ArtoriasVFX.DrawBoomerangOrbit(Projectile.Center, Vector2.One * 92f,
                     rotation * 0.28f, returning, curveDirection: 1f, opacity: 0.86f * fade);
 
-                // The spinning crescent on top. It is opaque and outlined, so it carries the
-                // projectile's silhouette on its own - the old alpha body sprite is gone.
-                ArtoriasVFX.DrawFanCrescent(texture, frame, Projectile.Center, Projectile.rotation,
-                    FanCrescentFrameDrawSize, fade);
+                // The spinning nebula crescent on top (procedural; replaced the purple sprite crescent). Its dense
+                // body and silver inner edge carry the projectile's silhouette over the ribbon and orbit.
+                ArtoriasVFX.DrawNebulaCrescent(Projectile.Center, Projectile.rotation,
+                    FanCrescentDrawSize, noisePhase, fade);
 
                 // Turnaround cue: the same expanding magenta vortex Boomerang Crescent flashes.
                 if (returning && _fanStateTicks < FanTurnPulseTicks)

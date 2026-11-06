@@ -18,6 +18,8 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override string ShieldDrawTexturePath => "tsorcRevamp/Content/Items/Accessories/Defensive/Shields/IceboundMythrilAegis_Shield";
         protected override bool ShieldVisible => _guardUp && Neutral;
         protected override bool ShieldRaisedForPose => ShieldVisible;
+        // The Aegis sprite sits 12px further out than the default raised offset puts it; pull it back to the arm.
+        protected override Vector2 ShieldRaisedOffset => new Vector2(-7f, -5f);
         protected override float? FreeBackArmFacingAngle => ShieldVisible ? 0f : null;
         protected override float? FreeFrontArmFacingAngle => BarragePose ? BarrageArmAngle : null;
         protected override int EstusChargesMax => 1;
@@ -153,9 +155,9 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         }
         bool Blocks(Vector2 source)
         {
+            // No sound or dust here: tModLoader asks CanBeHitBy* every tick for every nearby projectile and swing,
+            // not only on real hits, so feedback in this check played constantly while the shield was up.
             bool block = _guardUp && Neutral && Math.Sign(source.X - NPC.Center.X) == _guardFacing;
-            if (block && !Main.dedServ && _blockSoundCooldown == 0)
-            { _blockSoundCooldown = 12; SoundEngine.PlaySound(SoundID.Dig, NPC.Center); DarkmoonVisuals.Motes(NPC.Center + new Vector2(_guardFacing * 16, 0), Color.LightBlue, 5, 6); }
             return block;
         }
         public override bool? CanBeHitByItem(Player player, Item item) => Blocks(player.Center) ? false : base.CanBeHitByItem(player, item);

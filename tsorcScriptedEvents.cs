@@ -2005,6 +2005,8 @@ namespace tsorcRevamp
                     newEvent.SetCustomDrops(dEvent.ExtraLootItems, dEvent.ExtraLootAmounts, true);
                 }
                 
+                newEvent.spawnBurst = dEvent.SpawnBurst;
+
                 // Track the EventID internally so we can save it on completion!
                 newEvent.DynamicEventID = dEvent.EventID;
 
@@ -2213,6 +2215,7 @@ namespace tsorcRevamp
                 dynamicEvent.Square = ev.square;
                 dynamicEvent.TriggerDust = ev.dustID;
                 dynamicEvent.VisibleRing = ev.visible;
+                dynamicEvent.SpawnBurst = ev.spawnBurst;
                 dynamicEvent.SaveOnCompletion = ev.save;
                 dynamicEvent.TextToDisplay = ev.eventText;
                 dynamicEvent.TextColorHex = $"{ev.eventTextColor.R:X2}{ev.eventTextColor.G:X2}{ev.eventTextColor.B:X2}{ev.eventTextColor.A:X2}";
@@ -2708,6 +2711,9 @@ namespace tsorcRevamp
         public bool save;
         //Controls whether the event's range is made visible to the player with dust
         public bool visible;
+        //Controls whether each NPC materializes with a burst of the event's dustID (the ring's dust) when it spawns.
+        //Hardcoded events keep it on; dynamic events opt in per event from the Enemy Debug Tome's event panel.
+        public bool spawnBurst = true;
         //Controls whether this is a boss event or not
         //If it is, then it will never re-activate while any boss in its spawn list is alive
         //It will also provide a peace candle effect
@@ -2986,11 +2992,12 @@ namespace tsorcRevamp
             {
                 for (int j = 0; j < eventNPCs.Count; j++)
                 {
-                    // Size the smoke cloud to the NPC's bounding box (×1.25) so the telegraph matches the enemy that appears.
+                    // Size the smoke cloud to the NPC's bounding box (×1.5625 = 1.25 × 1.25) so the telegraph covers the
+                    // whole sprite, which usually overhangs the hitbox.
                     NPC sizeRef = new NPC();
                     sizeRef.SetDefaults(eventNPCs[j].type);
-                    int boxW = (int)(sizeRef.width * 1.25f);
-                    int boxH = (int)(sizeRef.height * 1.25f);
+                    int boxW = (int)(sizeRef.width * 1.5625f);
+                    int boxH = (int)(sizeRef.height * 1.5625f);
 
                     // NPC.NewNPC places the sprite centered horizontally and bottom-aligned at (spawnCoords*16).
                     Vector2 spawnBottom = new Vector2(eventNPCs[j].spawnCoords.X * 16, eventNPCs[j].spawnCoords.Y * 16);
@@ -3132,7 +3139,10 @@ namespace tsorcRevamp
 
                 NPC thisNPC = eventNPCs[i].npc;
 
-                SpawnMaterializationDust(thisNPC);
+                if (spawnBurst)
+                {
+                    SpawnMaterializationDust(thisNPC);
+                }
 
                 NPCs.tsorcRevampGlobalNPC eventGlobalNPC = thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
                 eventGlobalNPC.ScriptedEventOwner = this;
@@ -3189,23 +3199,22 @@ namespace tsorcRevamp
         {
             // Keep each mote the same size; scale the area they occupy to the NPC instead. The event's dustID is
             // also the dust used by its trigger ring, so the ring and the materialization payoff share a palette.
+            // Alpha 100 / scale 2 keeps the motes readable against the grey smoke; speed 2.5–8 px/tick throws them past
+            // the smoke cloud so the burst reads as a pop rather than more haze.
             float radiusX = Math.Max(npc.width * 0.5f, 4f);
             float radiusY = Math.Max(npc.height * 0.5f, 4f);
             float averageDiameter = (npc.width + npc.height) * 0.5f;
-            int dustCount = (int)MathHelper.Clamp(averageDiameter, 12f, 60f);
-            float burstSpeed = MathHelper.Clamp((float)Math.Sqrt(npc.width * npc.height) / 20f, 0.75f, 3f);
+            int dustCount = (int)MathHelper.Clamp(averageDiameter, 30f, 80f);
+            float burstSpeed = MathHelper.Clamp((float)Math.Sqrt(npc.width * npc.height) / 8f, 2.5f, 8f);
 
             for (int i = 0; i < dustCount; i++)
             {
                 Vector2 offset = Main.rand.NextVector2Circular(radiusX, radiusY);
                 Vector2 direction = offset.SafeNormalize(Main.rand.NextVector2Unit());
-                Dust dust = Dust.NewDustPerfect(
-                    npc.Center + offset,
-                    dustID,
-                    direction * Main.rand.NextFloat(burstSpeed * 0.55f, burstSpeed),
-                    200,
-                    default,
-                    1f);
+                Vector2 velocity = direction * Main.rand.NextFloat(burstSpeed * 0.4f, burstSpeed);
+                float scale = Main.rand.NextFloat(1.6f, 2.4f);
+
+                Dust dust = Dust.NewDustPerfect(npc.Center + offset, dustID, velocity, 100, default, scale);
                 dust.noGravity = true;
             }
         }
@@ -3252,7 +3261,9 @@ namespace tsorcRevamp
                         foreach (EventNPC thisEventNPC in eventNPCs)
                         {
                             NPC thisNPC = thisEventNPC.npc;
-                            if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss)
+                            bool fadesItself = thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().UsesOwnDespawnHandler;
+
+                            if (thisNPC.active && thisNPC.type == thisEventNPC.type && !thisNPC.boss && !fadesItself)
                             {
                                 //UsefulFunctions.BroadcastText("[DEBUG] Event failed, despawning NPC");
                                 thisNPC.active = false;
@@ -3393,6 +3404,9 @@ namespace tsorcRevamp
         public bool Square { get; set; }
         public int TriggerDust { get; set; }
         public bool VisibleRing { get; set; }
+        // Materialization burst in the TriggerDust when each NPC spawns. Off unless toggled in the event panel.
+        public bool SpawnBurst { get; set; }
+        public bool ShouldSerializeSpawnBurst() => SpawnBurst;
         public bool SaveOnCompletion { get; set; }
         public string TextToDisplay { get; set; }
         public string TextColorHex { get; set; }

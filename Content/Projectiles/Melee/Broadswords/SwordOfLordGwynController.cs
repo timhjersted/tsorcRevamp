@@ -5,6 +5,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
 using SwordOfLordGwyn = tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.SwordOfLordGwyn;
 
@@ -79,6 +80,21 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             }
 
             if (Timer <= TapWindow)
+            {
+                if (!channeling)
+                {
+                    if (Main.myPlayer == Projectile.owner)
+                    {
+                        CastTap(player);
+                    }
+                    Projectile.Kill();
+                }
+                return;
+            }
+
+            // A hold that began mid-combo waits for the swing in progress to finish, so the spear or nova charge
+            // never appears in the middle of a cut. Letting go before then still counts as a tap.
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<GreatswordSwing>()] > 0)
             {
                 if (!channeling)
                 {
@@ -173,14 +189,10 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             Rectangle frame = new Rectangle(0, frameIndex * frameHeight, tex.Width, frameHeight);
             Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(frameIndex);
             Vector2 aim = HeldAim(player);
+            // The sprite's head points RIGHT (+X): rotating to the aim alone points it at the cursor either way.
             float rotation = aim.ToRotation();
-            SpriteEffects effects = aim.X < 0f ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            if (effects == SpriteEffects.FlipHorizontally)
-            {
-                origin.X = tex.Width - origin.X;
-            }
             Main.EntitySpriteDraw(tex, hand - Main.screenPosition, frame, Color.White, rotation,
-                origin, 0.6f, effects, 0);
+                origin, 0.6f, SpriteEffects.None, 0);
             return false;
         }
 
@@ -188,12 +200,39 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
         {
             if (Mode == 0)
             {
-                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.25f }, player.Center);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<SwordOfLordGwynSlash>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, player.direction);
+                // Next step of the greatsword combo. A tap during a swing was already paid for by this item use,
+                // so it is queued and starts the moment the current swing ends.
+                if (player.HeldItem.ModItem is not SwordOfLordGwyn sword)
+                {
+                    return;
+                }
+
+                if (player.ownedProjectileCounts[ModContent.ProjectileType<GreatswordSwing>()] > 0)
+                {
+                    player.GetModPlayer<GreatswordComboPlayer>().QueueSwing();
+                    return;
+                }
+
+                int facing = 1;
+                if (Main.MouseWorld.X < player.Center.X)
+                {
+                    facing = -1;
+                }
+
+                sword.StartSwing(player, Projectile.GetSource_FromThis(), Projectile.damage, Projectile.knockBack, facing);
             }
             else
             {
+                // The dash cancels a combo swing still in progress rather than carrying it along.
+                int swingType = ModContent.ProjectileType<GreatswordSwing>();
+                foreach (Projectile swing in Main.ActiveProjectiles)
+                {
+                    if (swing.owner == player.whoAmI && swing.type == swingType)
+                    {
+                        swing.Kill();
+                    }
+                }
+
                 CastRisingDash(player);
             }
         }
@@ -281,6 +320,19 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity = (player.Center - pos) * 0.08f;
             }
+            // Rolling FireBreath flames spiral in toward Gwyn, more and larger as the charge fills.
+            if (Main.rand.NextFloat() < 0.35f + progress * 0.65f)
+            {
+                float flameAngle = Main.rand.NextFloat(MathHelper.TwoPi);
+                float flameRadius = MathHelper.Lerp(96f, 40f, progress) + Main.rand.NextFloat(16f);
+                Vector2 inward = -flameAngle.ToRotationVector2();
+                Vector2 tangent = inward.RotatedBy(MathHelper.PiOver2);
+                Vector2 flamePosition = player.Center - inward * flameRadius;
+                Vector2 flameVelocity = inward * flameRadius * 0.05f + tangent * 1.2f;
+                float flameScale = MathHelper.Lerp(0.45f, 0.85f, progress);
+                global::tsorcRevamp.VFX.VFX.FlameLobe(flamePosition, flameVelocity, flameScale, 16, 0f);
+            }
+
             Lighting.AddLight(player.Center, 0.8f * progress, 0.45f * progress, 0.15f * progress);
 
             if (charge >= NovaChargeTicks)

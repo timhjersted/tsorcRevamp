@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.VFX
@@ -23,7 +24,9 @@ namespace tsorcRevamp.VFX
         Spark,
         SmokeA,
         SmokeB,
-        BeamCap
+        BeamCap,
+        FireBreath,  // the Ancient Demon's fire-breath flame sprite; give it AngularVelocity so it rolls
+        Fireball     // Projectiles/Fireball1: a 16px flame blob, for rising flame geysers
     }
 
     public enum VFXBlend : byte
@@ -147,6 +150,8 @@ namespace tsorcRevamp.VFX
         private Texture2D smokeTextureA;
         private Texture2D smokeTextureB;
         private Texture2D beamCapTexture;
+        private Texture2D fireBreathTexture;
+        private Texture2D fireballTexture;
 
         public override void Load()
         {
@@ -159,6 +164,8 @@ namespace tsorcRevamp.VFX
             smokeTextureA = ModContent.Request<Texture2D>("tsorcRevamp/Textures/Clouds/Cloud_0").Value;
             smokeTextureB = ModContent.Request<Texture2D>("tsorcRevamp/Textures/Clouds/Cloud_3").Value;
             beamCapTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(GenericLaser))).Value;
+            fireBreathTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(FireBreath))).Value;
+            fireballTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Fireball1))).Value;
         }
 
         public override void Unload()
@@ -180,6 +187,8 @@ namespace tsorcRevamp.VFX
             smokeTextureA = null;
             smokeTextureB = null;
             beamCapTexture = null;
+            fireBreathTexture = null;
+            fireballTexture = null;
         }
 
         internal static void AddParticle(VFXParticleData data)
@@ -431,6 +440,8 @@ namespace tsorcRevamp.VFX
                 VFXParticleTexture.SmokeA => smokeTextureA,
                 VFXParticleTexture.SmokeB => smokeTextureB,
                 VFXParticleTexture.BeamCap => beamCapTexture,
+                VFXParticleTexture.FireBreath => fireBreathTexture,
+                VFXParticleTexture.Fireball => fireballTexture,
                 _ => sparkTexture,
             };
         }

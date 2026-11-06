@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
@@ -119,8 +120,13 @@ namespace tsorcRevamp.Utilities.Balance
         /// 8 = language-independent names: prefixCounts keyed by internal prefix name (EquipSlot.prefixKey) and gear.buffs as
         /// internal buff names; new gear stats (resistance, thorns, luck, moveSpeed, attackSpeed, armorPenetration, manaCost,
         /// staminaRegenMult), the curse rolls (gear.curse / gear.powerfulCurse), per-buff uptime (encounter buffUptime), and stamina
-        /// gained by source (encounter staminaGained).</summary>
-        internal const int LoggerRevision = 8;
+        /// gained by source (encounter staminaGained).
+        /// 9 = multi-NPC fights are one encounter named after their root boss: EncounterPresentationRegistry groups (Twins under
+        /// Cataluminance, Mecha Dragon under Wyvern Mage, Eater of Worlds body and tail now count as boss damage), bosses spawned by a
+        /// participant join at spawn (Serris X, the Okiku chain), a fight first hit on a body segment is named after its head, and a
+        /// boss bag only ends the fight when a participant dropped it and no other participant is alive. New encounter field
+        /// bossesInFight; new "heartbeat" lines (play and active time every 5 minutes and on world exit).</summary>
+        internal const int LoggerRevision = 9;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -160,6 +166,17 @@ namespace tsorcRevamp.Utilities.Balance
         private static int _damageThisSecond;
         private static long _lastBossLifeSum;
         private static long _lowestBossLifeSum;
+
+        // The current fight's EncounterPresentationRegistry entry. When it has several member types (the Twins with Cataluminance,
+        // Wyvern Mage with its dragon, the Eater of Worlds' segments), every member counts as a boss part.
+        private static BossEncounterPresentation _fightEntry;
+
+        // Which NPC spawned each slot, from GlobalNPC.OnSpawn: parent slot and type, plus the child's type so a reused slot is
+        // recognised. Keeps a phase handoff (Serris -> Serris X, the Okiku chain) in one fight and names a fight after its root boss.
+        private static readonly Dictionary<int, (int ParentSlot, int ParentType, int ChildType)> SpawnParents = new();
+
+        // NPCs a participant spawned this tick. Joined on the next Update, once the spawner has had the chance to set realLife.
+        private static readonly List<(int Slot, int Type)> PendingSpawnJoins = new();
 
         // lifeMax each boss head was last seen with, to catch a boss that raises its own max mid-fight (Pinwheel 2k -> 5k).
         private static readonly Dictionary<int, int> ParticipantLifeMax = new();
@@ -296,9 +313,7 @@ namespace tsorcRevamp.Utilities.Balance
             if (!Active || damageDone <= 0 || npc == null || player == null || player.whoAmI != Main.myPlayer)
                 return;
 
-            // A boss part is anything boss-flagged, or a linked body segment of a part already in the fight
-            // (the Destroyer's body is not boss-flagged but shares the head's life through realLife).
-            bool isBossPart = IsBossAnchor(npc) || (npc.realLife >= 0 && Participants.ContainsKey(npc.realLife));
+            bool isBossPart = IsFightPart(npc);
 
             if (_current == null)
             {
@@ -324,25 +339,15 @@ namespace tsorcRevamp.Utilities.Balance
                     return;
                 }
 
-                Begin(npc, player);
-            }
-
-            bool alreadyJoined = Participants.TryGetValue(npc.whoAmI, out int joinedType) && joinedType == npc.type;
-            if (isBossPart && !alreadyJoined)
-            {
-                Participants[npc.whoAmI] = npc.type;
-                _current.participantCount++;
-
-                // A linked body segment mirrors its head's life, so adding it would count that life N times. A head links to itself.
-                if (npc.realLife < 0 || npc.realLife == npc.whoAmI)
-                {
-                    _current.bossMaxLifeTotal += npc.lifeMax;
-                    ParticipantLifeMax[npc.whoAmI] = npc.lifeMax;
-                }
+                // The fight is named and anchored after its root boss, whichever part took the first hit: a body segment's
+                // head, the boss that spawned this one, or the registry's primary (Cataluminance for the Twins).
+                NPC anchor = FindFightRoot(npc);
+                Begin(anchor, player);
             }
 
             if (isBossPart)
             {
+                JoinParticipant(npc);
                 _emptySinceTick = -1;
             }
 
@@ -428,6 +433,152 @@ namespace tsorcRevamp.Utilities.Balance
             else
             {
                 _current.totalDamageToOthers += damageDone;
+            }
+        }
+
+        /// <summary>
+        /// True when hits on this NPC are hits on the boss: anything boss-flagged, a body segment linked through realLife to a
+        /// part already in the fight (the Destroyer's body), or a member type of the fight's registry group (the Eater of Worlds'
+        /// body and tail, which are neither boss-flagged nor linked). Before a fight opens, the NPC's own registry group is used.
+        /// </summary>
+        private static bool IsFightPart(NPC npc)
+        {
+            if (IsBossAnchor(npc))
+            {
+                return true;
+            }
+
+            bool linkedSegment = npc.realLife >= 0 && Participants.ContainsKey(npc.realLife);
+            if (linkedSegment)
+            {
+                return true;
+            }
+
+            BossEncounterPresentation entry = _fightEntry;
+            if (_current == null)
+            {
+                EncounterPresentationRegistry.TryGetByMember(npc.type, out entry);
+            }
+
+            // A one-type entry is just a boss registering itself; only real groups add members.
+            bool isGroupMember = entry != null && entry.CompletionNpcTypes.Count > 1 && entry.CompletionNpcTypes.Contains(npc.type);
+            return isGroupMember;
+        }
+
+        /// <summary>
+        /// The NPC a fight containing this one is named after. Steps: a linked body segment goes to its head (realLife); then up the
+        /// spawn chain while the spawner is a living boss (Damned Soul -> Dark Shogun Mask); then to the registry group's primary if
+        /// one is alive (Retinazer -> Cataluminance, Mecha Dragon -> Wyvern Mage, any Eater of Worlds segment -> its first head).
+        /// </summary>
+        private static NPC FindFightRoot(NPC npc)
+        {
+            NPC root = npc;
+
+            bool isLinkedSegment = root.realLife >= 0 && root.realLife != root.whoAmI;
+            if (isLinkedSegment && Main.npc[root.realLife].active)
+            {
+                root = Main.npc[root.realLife];
+            }
+
+            // Capped so a corrupt parent cycle can never hang the game.
+            for (int step = 0; step < 8; step++)
+            {
+                bool hasParent = SpawnParents.TryGetValue(root.whoAmI, out var link) && link.ChildType == root.type;
+                if (!hasParent)
+                {
+                    break;
+                }
+
+                NPC parent = Main.npc[link.ParentSlot];
+                bool parentIsLivingBoss = parent.active && parent.type == link.ParentType && IsBossAnchor(parent);
+                if (!parentIsLivingBoss)
+                {
+                    break;
+                }
+
+                root = parent;
+            }
+
+            bool inGroup = EncounterPresentationRegistry.TryGetByMember(root.type, out BossEncounterPresentation entry);
+            if (inGroup && entry.PrimaryNpcType != root.type)
+            {
+                foreach (NPC candidate in Main.ActiveNPCs)
+                {
+                    if (candidate.type == entry.PrimaryNpcType)
+                    {
+                        root = candidate;
+                        break;
+                    }
+                }
+            }
+
+            return root;
+        }
+
+        /// <summary>Adds an NPC to the current fight's participants once. A linked body segment mirrors its head's life, so only
+        /// heads and independent parts add to bossMaxLifeTotal and bossesInFight. A head links to itself.</summary>
+        private static void JoinParticipant(NPC npc)
+        {
+            bool alreadyJoined = Participants.TryGetValue(npc.whoAmI, out int joinedType) && joinedType == npc.type;
+            if (alreadyJoined)
+            {
+                return;
+            }
+
+            Participants[npc.whoAmI] = npc.type;
+            _current.participantCount++;
+
+            bool ownsItsLife = npc.realLife < 0 || npc.realLife == npc.whoAmI;
+            if (!ownsItsLife)
+            {
+                return;
+            }
+
+            _current.bossMaxLifeTotal += npc.lifeMax;
+            ParticipantLifeMax[npc.whoAmI] = npc.lifeMax;
+
+            string partName = npc.ModNPC?.Name ?? npc.TypeName;
+            if (!_current.bossesInFight.Contains(partName))
+            {
+                _current.bossesInFight.Add(partName);
+            }
+        }
+
+        /// <summary>
+        /// GlobalNPC.OnSpawn: remembers which NPC spawned this one (for <see cref="FindFightRoot"/>), and queues a boss part spawned by
+        /// a fight participant to join the fight next tick - so a handoff to a new form (Serris X) does not end the encounter
+        /// when the player hasn't hit the new form within the grace window.
+        /// </summary>
+        internal static void NotifySpawned(NPC npc, IEntitySource source)
+        {
+            if (!Active)
+            {
+                return;
+            }
+
+            NPC parent = null;
+            if (source is EntitySource_Parent parentSource && parentSource.Entity is NPC parentNpc)
+            {
+                parent = parentNpc;
+            }
+
+            if (parent == null)
+            {
+                SpawnParents.Remove(npc.whoAmI);
+                return;
+            }
+
+            SpawnParents[npc.whoAmI] = (parent.whoAmI, parent.type, npc.type);
+
+            if (_current == null)
+            {
+                return;
+            }
+
+            bool parentInFight = Participants.TryGetValue(parent.whoAmI, out int parentType) && parentType == parent.type;
+            if (parentInFight)
+            {
+                PendingSpawnJoins.Add((npc.whoAmI, npc.type));
             }
         }
 
@@ -551,17 +702,60 @@ namespace tsorcRevamp.Utilities.Balance
             OpenAttackByNpc[npc.whoAmI] = (attackName, tick);
         }
 
-        /// <summary>A boss bag spawned from loot. That only ever happens on a real kill, so it ends the encounter as
-        /// one - including bosses that hand off to a final form and never fire OnKill on the anchor.</summary>
-        internal static void NotifyBossBag()
+        /// <summary>
+        /// A boss bag spawned from loot: a real kill, including bosses that hand off to a final form and never fire OnKill.
+        /// A bag from an NPC outside the fight is ignored (a Queen Bee killed during Dark Cloud ended Dark Cloud as an 11s
+        /// "kill"). A participant's bag ends the fight now only when no other participant is alive; otherwise it is noted and
+        /// the fight ends as a kill once the rest are gone (several Queen Bees at once).
+        /// </summary>
+        internal static void NotifyBossBag(IEntitySource source)
         {
             if (_current == null)
             {
                 return;
             }
 
+            NPC dropper = null;
+            if (source is EntitySource_Loot lootSource && lootSource.Entity is NPC lootNpc)
+            {
+                dropper = lootNpc;
+            }
+
+            // No NPC behind the bag: the old rule, which is all there is to go on.
+            if (dropper == null)
+            {
+                _bagDropped = true;
+                End("kill");
+                return;
+            }
+
+            bool dropperInFight = Participants.TryGetValue(dropper.whoAmI, out int dropperType) && dropperType == dropper.type;
+            if (!dropperInFight)
+            {
+                return;
+            }
+
             _bagDropped = true;
-            End("kill");
+
+            // The dropper's own linked segments die with it, so they don't count as someone still fighting.
+            bool otherPartAlive = false;
+            foreach (KeyValuePair<int, int> pair in Participants)
+            {
+                NPC participant = Main.npc[pair.Key];
+                bool alive = participant.active && participant.type == pair.Value && participant.life > 0;
+                bool isDropperOrItsSegment = pair.Key == dropper.whoAmI || participant.realLife == dropper.whoAmI;
+
+                if (alive && !isDropperOrItsSegment)
+                {
+                    otherPartAlive = true;
+                    break;
+                }
+            }
+
+            if (!otherPartAlive)
+            {
+                End("kill");
+            }
         }
 
         /// <summary>Logs the iframe duration one hit actually granted (already includes iframe-extending
@@ -701,6 +895,21 @@ namespace tsorcRevamp.Utilities.Balance
                 }
             }
 
+            // Boss parts a participant spawned last tick (a new form, a summoned partner). realLife is set by now.
+            foreach ((int slot, int type) in PendingSpawnJoins)
+            {
+                NPC spawned = Main.npc[slot];
+                bool stillThere = spawned.active && spawned.type == type;
+
+                if (stillThere && IsFightPart(spawned))
+                {
+                    JoinParticipant(spawned);
+                    _emptySinceTick = -1;
+                }
+            }
+
+            PendingSpawnJoins.Clear();
+
             // Every living participant's life, summed. A linked segment mirrors its head's life, so it is skipped.
             int aliveCount = 0;
             long lifeSum = 0;
@@ -799,6 +1008,115 @@ namespace tsorcRevamp.Utilities.Balance
 
         internal static void AbortForWorldChange() => End("abandoned");
 
+        // ---------------------------------------------------------------- session heartbeat
+
+        // One heartbeat line per 5 minutes of unpaused play (ticks). A crash or Alt-F4 loses at most this much play time.
+        private const int HeartbeatIntervalTicks = 60 * 60 * 5;
+
+        // No input for a minute counts as idle: AFK at a bonfire, or the game left running in the background.
+        private const int IdleAfterTicks = 60 * 60;
+
+        private static int _heartbeatPlayTicks;
+        private static int _heartbeatActiveTicks;
+        private static int _ticksSinceInput;
+        private static int _lastMouseX;
+        private static int _lastMouseY;
+
+        /// <summary>Counts play and active ticks for the heartbeat. Runs from PostUpdateEverything, which the game skips while
+        /// paused, so a tick counted here is a tick of unpaused play in a world.</summary>
+        internal static void UpdateHeartbeat()
+        {
+            if (!Active)
+            {
+                return;
+            }
+
+            Player player = Main.LocalPlayer;
+
+            bool mouseMoved = Main.mouseX != _lastMouseX || Main.mouseY != _lastMouseY;
+            _lastMouseX = Main.mouseX;
+            _lastMouseY = Main.mouseY;
+
+            bool pressedMovement = player.controlLeft || player.controlRight || player.controlUp || player.controlDown || player.controlJump;
+            bool pressedAction = player.controlUseItem || player.controlUseTile || player.controlThrow || player.controlHook || player.controlInv || player.controlMount;
+
+            if (mouseMoved || pressedMovement || pressedAction)
+            {
+                _ticksSinceInput = 0;
+            }
+            else
+            {
+                _ticksSinceInput++;
+            }
+
+            _heartbeatPlayTicks++;
+
+            if (_ticksSinceInput < IdleAfterTicks)
+            {
+                _heartbeatActiveTicks++;
+            }
+
+            if (_heartbeatPlayTicks >= HeartbeatIntervalTicks)
+            {
+                WriteHeartbeat("interval");
+            }
+        }
+
+        /// <summary>Writes the play time counted since the last heartbeat and resets the counters. Also called on world exit,
+        /// where <see cref="Active"/> may already read false (the menu is up), so it checks the narrower conditions itself.</summary>
+        internal static void WriteHeartbeat(string reason)
+        {
+            bool canWrite = Enabled && !Main.dedServ && Main.netMode == NetmodeID.SinglePlayer && Main.LocalPlayer != null;
+            if (!canWrite || _heartbeatPlayTicks <= 0)
+            {
+                return;
+            }
+
+            try
+            {
+                Player player = Main.LocalPlayer;
+
+                var soulsSnapshot = new GearSnapshot();
+                CaptureSoulsMode(player, soulsSnapshot);
+
+                int downedBossCount = 0;
+                if (tsorcRevampWorld.NewSlain != null)
+                {
+                    downedBossCount = tsorcRevampWorld.NewSlain.Count;
+                }
+
+                var heartbeat = new SessionHeartbeat
+                {
+                    session = SessionId,
+                    characterTag = CharacterTag,
+                    modVersion = ModVersion(),
+                    at = DateTimeOffset.Now.ToString("O", CultureInfo.InvariantCulture),
+                    reason = reason,
+                    playSeconds = _heartbeatPlayTicks / 60,
+                    activeSeconds = _heartbeatActiveTicks / 60,
+                    soulsMode = soulsSnapshot.soulsMode,
+                    gameMode = Main.GameMode,
+                    hardmode = Main.hardMode,
+                    superHardMode = tsorcRevampWorld.SuperHardMode,
+                    downedBossCount = downedBossCount,
+                    encountersThisSession = EncountersThisSession,
+                    inBossFight = _current != null,
+                };
+
+                string path = PrepareCharacterFile(heartbeat.characterTag, heartbeat.modVersion, heartbeat.gameMode, heartbeat.soulsMode);
+                AppendLine(path, heartbeat);
+            }
+            catch
+            {
+                // Telemetry must never take the game down with it.
+            }
+            finally
+            {
+                _heartbeatPlayTicks = 0;
+                _heartbeatActiveTicks = 0;
+            }
+        }
+
         // ---------------------------------------------------------------- lifecycle
 
         private static void Begin(NPC boss, Player player)
@@ -894,6 +1212,25 @@ namespace tsorcRevamp.Utilities.Balance
                 targetTtkMaxSeconds = TargetTtkMaxSeconds,
                 gear = CaptureGear(player),
             };
+
+            EncounterPresentationRegistry.TryGetByMember(boss.type, out _fightEntry);
+            PendingSpawnJoins.Clear();
+
+            // Everything already alive that belongs to this fight joins now, so a partner that has not been hit yet (the other
+            // Twin, the Wyvern Mage's dragon, every Eater of Worlds segment) is in the life totals from the first second.
+            foreach (NPC other in Main.ActiveNPCs)
+            {
+                if (!IsFightPart(other))
+                {
+                    continue;
+                }
+
+                NPC otherRoot = FindFightRoot(other);
+                if (otherRoot.whoAmI == boss.whoAmI)
+                {
+                    JoinParticipant(other);
+                }
+            }
 
             _startGearFingerprint = GearFingerprint(player);
 
@@ -1258,6 +1595,8 @@ namespace tsorcRevamp.Utilities.Balance
             }
             finally
             {
+                _fightEntry = null;
+                PendingSpawnJoins.Clear();
                 Weapons.Clear();
                 NpcDamageByType.Clear();
                 Participants.Clear();

@@ -838,6 +838,17 @@ namespace tsorcRevamp.Content.Projectiles
                 FrostBuildup.Apply(target, NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead.FrostBuildupPerHit);
             }
 
+            // Every damaging ice hit from the Ice Gigas or its Frozen Echo / Mirror statues builds Frost. Children inherit
+            // SourceNPCType, so hailstone and pillar shards count too. GigasIceShard is shared with Quara and the Cleric;
+            // the source check keeps those unaffected. Runs on the hit player's machine; Apply reports to the server.
+            bool firedByIceGigas = SourceNPCType == ModContent.NPCType<NPCs.Enemies.IceGigas>()
+                || SourceNPCType == ModContent.NPCType<NPCs.Enemies.FrozenGigasStatue>();
+
+            if (projectile.hostile && info.Damage > 0 && firedByIceGigas)
+            {
+                FrostBuildup.Apply(target, NPCs.Enemies.IceGigas.FrostBuildupPerHit);
+            }
+
             // Every shot Plantera fires builds Miasma, keyed off the synced SourceNPCType.
             if (projectile.hostile && info.Damage > 0 && SourceNPCType == NPCID.Plantera)
             {

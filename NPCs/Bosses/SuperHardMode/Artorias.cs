@@ -36,7 +36,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     /// <summary>
     /// What Artorias and his spectral phantom (<see cref="ArtoriasPhantom"/>) share: the armour and greatsword
     /// loadout, movement speed, the swing tuning (arc endpoints, combo customisation, landing-timed slam) and
-    /// the tracked void sword crescents. Boss-only systems (ring, novas, shield, special attacks) stay on
+    /// the tracked sword-swing trails. Boss-only systems (ring, novas, shield, special attacks) stay on
     /// <see cref="Artorias"/>. Abstract, so tModLoader never loads it as an NPC of its own.
     /// </summary>
     abstract class ArtoriasSwordsman : PuppetNPC
@@ -55,10 +55,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override float TopSpeed => 2.9f;
         protected override float Acceleration => 0.12f;
 
-        // Leaps (Ground Pound, Hollow Pounce): 5.5 px/t horizontal cap, 6.1 once below half health. The base default was
-        // TopSpeed x 1.7. ReliableJumpStartRange reads this, so Hollow Pounce's selection range follows the phase.
-        const float LeapSpeedPhaseOne = 5.5f;
-        const float LeapSpeedPhaseTwo = 6.1f;
+        // Leaps (Ground Pound, Hollow Pounce, Leaping Reversal): 6.05 px/t horizontal cap - Owl Father's TopSpeed x 2.05 -
+        // and 6.7 once below half health (was 5.5 / 6.1, which read slower than Owl). ReliableJumpStartRange reads this, so
+        // the leaps' selection range follows the phase.
+        const float LeapSpeedPhaseOne = 6.05f;
+        const float LeapSpeedPhaseTwo = 6.7f;
 
         protected override float LeapAttackForwardSpeed
         {
@@ -80,13 +81,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Greatsword;
 
-        // ── Dash combos are gap-closers ─────────────────────────────────────────────
+        // ── Dash combos and Ground Pound are gap-closers ──────────────────────────────
         // The shared Greatsword table's two dash combos (Spin-Dash, Running Cleave) were ordinary Mid-band picks that only
         // started inside ~105px - the one place a dash is pointless - so they almost never ran. Here they are
         // RangedStartOnly: chosen only beyond melee reach, out to RangedStartComboMaxRange, at RangedStartMeleeComboChance
-        // per idle tick, and their pushes run at DashPushTopSpeed instead of his 2.9 px/t walk (a 1.4x push was 4.1 px/t).
-        // The pool is a copy of the shared table with just that flag flipped, plus Artorias's own combos (ArtoriasOwnCombos
-        // below), so other greatsword wielders are untouched.
+        // per idle tick, and their pushes run at ComboForwardPushTopSpeed instead of his 2.9 px/t walk.
+        // They are also band Any (a Mid pick is x0.4 past ~220px, where Hollow Pounce's Any x2 buried them at ~20% of
+        // gap-closer picks) and cool down in DashGapCloserCooldownTicks instead of 160.
+        // Ground Pound becomes a leap gap-closer too (see ConvertGroundPoundToLeap).
+        // The pool is a copy of the shared table (structs; step arrays cloned before any edit) plus Artorias's own combos
+        // (ArtoriasOwnCombos below), so other greatsword wielders are untouched.
+        const int DashGapCloserCooldownTicks = 120;
         static MeleeCombo[] _dashGapCloserPool;
 
         protected override MeleeCombo[] MeleeComboPoolOverride
@@ -105,6 +110,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         if (isDashCombo)
                         {
                             pool[i].RangedStartOnly = true;
+                            pool[i].Preferred = ComboRangeBand.Any;
+                            pool[i].CooldownAfterUse = DashGapCloserCooldownTicks;
+                        }
+
+                        if (pool[i].Name == GroundPoundName && pool[i].Steps != null && pool[i].Steps.Length > 0)
+                        {
+                            ConvertGroundPoundToLeap(ref pool[i]);
                         }
                     }
 
@@ -115,6 +127,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
+        // Ground Pound as Owl Father's High Leaping Slam: the shared table plays it as GroundSlam (a plain swing with no jump),
+        // and a close-band pick from inside ~104px was just a hop in place. Here it is a RangedStartOnly leap (band Any, gated
+        // to 140px..ReliableJumpStartRange in CanSelectMeleeCombo), high (x1.18) and quick (44t authored = 52t on screen).
+        // Apex retarget + 2.2x fall: the locked horizontal speed re-aims at the target at the apex, and the drop is fast.
+        // Airtime: rise 9.5 x 1.18 / 0.3 = 37t, fall ~25t at 2.2x gravity, so ~62t; 115 leaves room like Owl's 115.
+        // Damage 0.8x (the shared 2.0x was landing ~380-400 against 80 defense). Hit fires on landing (UseLandingTimedLeapSlam).
+        const int GroundPoundTelegraphTicks = 44;
+        const int GroundPoundLeapTicks = 115;
+        const float GroundPoundLeapHeightMult = 1.18f;
+        const float GroundPoundLeapForwardMult = 1.05f;
+
+        static void ConvertGroundPoundToLeap(ref MeleeCombo combo)
+        {
+            combo.RangedStartOnly = true;
+            combo.Preferred = ComboRangeBand.Any;
+            // The array still belongs to the shared table: clone before writing a step.
+            combo.Steps = (MeleeComboStep[])combo.Steps.Clone();
+
+            MeleeComboStep slam = combo.Steps[0];
+            slam.Motion = ComboMotion.LeapSlam;
+            slam.TelegraphTicks = GroundPoundTelegraphTicks;
+            slam.AttackTicks = GroundPoundLeapTicks;
+            slam.DamageMult = 0.8f;
+            slam.LeapHeightMult = GroundPoundLeapHeightMult;
+            slam.LeapForwardSpeedMult = GroundPoundLeapForwardMult;
+            slam.LeapApexRetargetStrength = 1f;
+            slam.LeapDescentGravityMult = 2.2f;
+            combo.Steps[0] = slam;
+        }
+
         protected override float RangedStartComboMaxRange => 440f;
         // Melee never loses a roll: the ordinary swings only start inside ComboMaxStartRange (Artorias's own override), and the
         // dashes and leaps (RangedStartOnly) are offered all the way out to RangedStartComboMaxRange.
@@ -122,6 +164,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int RangedStartMeleeComboChance => 100;
         // JoustDash push 1.4x / 1.6x -> ~8.4 / 9.6 px/t: a ~120-150px lunge per dash step, ~340px for Spin-Dash's spin + dash.
         protected override float ComboForwardPushTopSpeed => 6f;
+        // Owl Father's tell scale (default 1.35): every combo tell ~11% shorter, e.g. Heavy Chop 61 -> 54t, Hollow Pounce
+        // 43 -> 38t. The shortest light tell stays at the 30t MinComboTelegraphTicks floor, well over the ~20t reaction need.
+        protected override float ComboTelegraphMultiplier => 1.2f;
         protected override bool UseCompositeArmSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override bool UseSwingEasing => true;
@@ -245,11 +290,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Step-in per cut (MeleeComboStep.StepInDistance): px travelled across the step, peaking on the strike and
         // decaying with the blade, so he drives into each cut instead of planting (the engine's 0.65x/tick brake
         // stopped him dead within ~5t). Peak = px / (in/3 + out*(1-e^-k)/k) at 1x tempo:
-        //   Heavy Chop      56px  -> 7.8 px/t    Rising Slash  40px -> 6.7 px/t    Running Cleave cut  48px -> 8.0 px/t
-        // Most of it lands inside the live window, adding ~40-50px of reach; a roll away (~110px) still clears it.
-        const float HeavyChopStepIn = 56f;
-        const float RisingSlashStepIn = 40f;
-        const float RunningCleaveStepIn = 48f;
+        //   Heavy Chop      72px  -> 10.0 px/t   Rising Slash  56px -> 9.4 px/t    Running Cleave cut  60px -> 10.0 px/t
+        // Raised ~30% (was 56 / 40 / 48) so the cuts lunge like Owl Father's. Most of it lands inside the live window,
+        // adding ~55-65px of reach; every value stays under the ~110px a roll away covers, so that still clears it.
+        const float HeavyChopStepIn = 72f;
+        const float RisingSlashStepIn = 56f;
+        const float RunningCleaveStepIn = 60f;
+        // The Reversals' opening overhead (Abyssal Reversal's cut 1), raised with the others (was 40).
+        const float ReversalOpenerStepIn = 56f;
 
         protected override void CustomizeMeleeCombo(ref MeleeCombo combo, float healthFraction)
         {
@@ -313,30 +361,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 combo.Steps[i] = step;
             }
 
-            // "Ground Pound" (shared Greatsword combo table) plays as GroundSlam, which is just the
-            // OverheadArc/VerticalChop pose with no jump - it read as a plain swing, not a pound, and
-            // its 2.0x DamageMult was landing for ~380-400 against 80 defense. Retarget it onto
-            // LeapSlam (jump toward the player, overhead pose, hit fires on landing) so it actually
-            // pounds the ground, and cut the damage 60% (2.0x -> 0.8x) to match.
-            if (combo.Name == GroundPoundName && combo.Steps.Length > 0)
-            {
-                MeleeComboStep slam = combo.Steps[0];
-                slam.Motion = ComboMotion.LeapSlam;
-                slam.DamageMult = 0.8f;
-                // GroundSlam's authored 24 ticks were sized for a chop from a standing pose. A leap
-                // is airborne for 2 * LeapAttackUpSpeed / gravity = 2 * 9.5 / 0.3 = ~63 ticks before
-                // it can touch down at all, so the step's timer used to expire roughly 39 ticks short
-                // and resolve the "pound" in mid-air. 90 matches every other authored LeapSlam in the
-                // repo and leaves headroom for the horizontal travel on top of the arc.
-                slam.AttackTicks = 90;
-                // Owl Father's leap ballistics on top of the class-wide lead and ascent tracking above: at the apex the locked
-                // horizontal velocity re-aims at where the target is NOW (a long jump no longer guarantees a walked-out-from-under
-                // whiff), and the fall runs at 2.2x gravity so the drop is quick, not a float.
-                slam.LeapApexRetargetStrength = 1f;
-                slam.LeapDescentGravityMult = 2.2f;
-                combo.Steps[0] = slam;
-            }
-
             // The shared table's sword arcs, retimed onto Artorias's own Weighted curves (table above). The Motion
             // checks stop a later edit of the shared table from putting a sword curve on a thrust or a spin.
             if (combo.Name == "Heavy Chop" && combo.Steps.Length > 0 && combo.Steps[0].Motion == ComboMotion.OverheadArc)
@@ -370,13 +394,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // ── Artorias's own combos, ported from Owl Father's kit ──────────────────────────────────────────────────
         // Appended to the shared Greatsword table in MeleeComboPoolOverride. Ticks below are on-screen ticks (the tell is
-        // authored / 1.35 x). The phantom shares the pool at 1.4x tempo; the two health-gated combos never unlock for it.
+        // authored x 1.2, floored at 30t). The phantom shares the pool at 1.4x tempo; the health-gated combos never unlock for it.
         //
         // Abyssal Reversal (overhead, then a rising cut) and Rising Reversal (rising cut, then a closing overhead)
         //   Owl: Down-Up / Up-Down Reversal. Close band, weight 70, cooldown 150.
         // Poses:    overhead -1.48 -> 2.29 (216° envelope, ~173° live), underhand 2.05 -> -1.55 (206°, ~165° live). Each cut ends
         //           within 14° of where the next starts, so the 14t pause is a pure hold.
-        // Tell:     28t authored = 37t on screen; cut 2 has none.
+        // Tell:     28t authored = 33t on screen; cut 2 has none.
         // Strike:   opener 8/24 k7 35°/t, live 12.1t. Rising cut 6/22 k5.5 34°/t, live 10.8t. Finisher 10/26 k8 33°/t, live 13.9t.
         // Chain:    cut 2's live window starts 34t (overhead first) / 31t (rising first) after cut 1's ends - both >= 30t, so each
         //           cut is separately rollable with no condition. Cut 2 still needs cut 1 to have hit, or the target to be within
@@ -392,17 +416,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //           costs 30 stamina; the cut itself is one rollable 12.9t window. Open: ~13t tail + 34t recovery.
         //
         // Cursebreaker (below 66% health)    Owl: Greatfire Breaker. Close band, weight 52, cooldown 250.
-        // Tell:     45t authored = 60t. Strike is Heavy Chop's curve (13/26 k9, 30°/t, live 16.5t), 1.6x damage, 48px step-in.
+        // Tell:     45t authored = 54t. Strike is Heavy Chop's curve (13/26 k9, 30°/t, live 16.5t), 1.6x damage, 48px step-in.
         // Impact:   the blade meets the floor ~18t in (92% of the sweep), and two shadow waves leave his feet: 7 px/t for 640px,
         //           armed after 12t. A player who rolled through the cut meets them >= 40t after the step began, after the
         //           earliest re-roll, so a jump (the wave is 42px tall) or a second roll answers them. Open: ~22t tail + 36t recovery.
         //
         // Hollow Pounce    Owl: Greatfire Pursuit Slam. RangedStartOnly gap-closer, any band, weight 80, cooldown 170.
-        // Tell:     32t authored = 43t. Low fast leap: height x0.62 (~39t airtime), forward x1.7 of LeapAttackForwardSpeed
-        //           (9.35 px/t cap, 10.4 in phase two). Selectable from 140px out to ReliableJumpStartRange (~389px, ~429px in
+        // Tell:     32t authored = 38t. Low fast leap: height x0.62 (~39t airtime), forward x1.7 of LeapAttackForwardSpeed
+        //           (10.3 px/t cap, 11.4 in phase two). Selectable from 140px out to ReliableJumpStartRange (~426px, ~470px in
         //           phase two), so it never comes down short.
         // Strike:   inside 120px past the apex the downswing goes live in the air, otherwise the landing slam hits (never both).
         //           One roll covers either. 26t recovery.
+        //
+        // Leaping Reversal (below 66% health)    Owl: High Leaping Slam - Rising Follow-Up. RangedStartOnly, any band, weight
+        //           42, cooldown 280, gated 140px..ReliableJumpStartRange like the other leaps.
+        // Tell:     40t authored = 48t, then a high leap (x1.22 height, x1.05 forward = 6.35 px/t, 7.0 in phase two; ~38t rise)
+        //           that re-aims at the apex and falls at 2.2x gravity. The slam hits on landing (1.2x).
+        // Cut 2:    after a 10t planted hold, the rising cut (6/22 k5.5, 34°/t, live 10.8t, 1.15x, 56px step-in) starts from the
+        //           slam's low finish (~2.1), so it shares endpoints with no snap.
+        // Chain:    cut 2 goes live only ~13t after the slam's window ends - inside a late roller's 22-30t post-roll gap - so it
+        //           is CONDITIONAL (attack-timing-design rule 3): only if the slam hit, or the target is still inside cut 2's
+        //           reach + step-in (ShouldContinueMeleeCombo). Rolling away from the landing ends the combo.
+        // Counter:  roll the landing, then roll or space the rising cut. Open: ~11t tail + 30t recovery.
         // Protected: Artorias's follow-up table (MeleeFollowUpComboName) names these too.
         protected const string AbyssalReversalName = "Abyssal Reversal";
         protected const string RisingReversalName = "Rising Reversal";
@@ -410,9 +445,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected const string CursebreakerName = "Cursebreaker";
         protected const string HollowPounceName = "Hollow Pounce";
         protected const string GroundPoundName = "Ground Pound";
+        protected const string LeapingReversalName = "Leaping Reversal";
 
         const float EnragedMoveHealthFraction = 0.66f;
-        const float ReversalFinisherStepIn = 48f;
+        const float ReversalFinisherStepIn = 64f;
         const float HollowPounceMinRange = 140f;
 
         // Feinting Retreat's re-entry closes the gap the hop opened, aiming to end FeintReentryCloseTo px from the target.
@@ -437,6 +473,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         static readonly MeleeComboStep AbyssalReversalCutTwo = WeightedCut(
             ComboMotion.UnderhandArc, 0, RisingSlashCurve, 0, 1.0f, 1.1f, RisingSlashStepIn);
+        static readonly MeleeComboStep LeapingReversalCutTwo = WeightedCut(
+            ComboMotion.UnderhandArc, 0, RisingSlashCurve, 0, 1.15f, 1.15f, RisingSlashStepIn);
         static readonly MeleeComboStep RisingReversalCutTwo = WeightedCut(
             ComboMotion.OverheadArc, 0, ReversalFinisherCurve, 0, 1.15f, 1.2f, ReversalFinisherStepIn);
 
@@ -453,7 +491,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 MoveBrake = 0.15f,
                 Steps = new[]
                 {
-                    WeightedCut(ComboMotion.OverheadArc, 28, ReversalOverheadCurve, 14, 0.85f, 1.15f, 40f),
+                    WeightedCut(ComboMotion.OverheadArc, 28, ReversalOverheadCurve, 14, 0.85f, 1.15f, ReversalOpenerStepIn),
                     AbyssalReversalCutTwo,
                 },
             },
@@ -539,6 +577,36 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     },
                 },
             },
+            new MeleeCombo
+            {
+                Name = LeapingReversalName,
+                BaseWeight = 42,
+                Preferred = ComboRangeBand.Any,
+                InitialFlashColor = new Color(200, 110, 255),
+                CooldownAfterUse = 280,
+                HeavyCommit = true,
+                RangedStartOnly = true,
+                RecoveryTicks = 30,
+                MoveBrake = 0.15f,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.LeapSlam,
+                        TelegraphTicks = 40,
+                        AttackTicks = 118,
+                        PostStepPause = 10,
+                        DamageMult = 1.2f,
+                        ReachMult = 1.25f,
+                        SwingSpeedMult = 1f,
+                        LeapHeightMult = 1.22f,
+                        LeapForwardSpeedMult = 1.05f,
+                        LeapDescentGravityMult = 2.2f,
+                        LeapApexRetargetStrength = 1f,
+                    },
+                    LeapingReversalCutTwo,
+                },
+            },
         };
 
         /// <summary>One Weighted sword cut for ArtoriasOwnCombos: the curve sets the step's length, easing and hit window.</summary>
@@ -562,13 +630,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
-            bool healthGated = combo.Name == FeintingRetreatName || combo.Name == CursebreakerName;
+            bool healthGated = combo.Name == FeintingRetreatName || combo.Name == CursebreakerName
+                || combo.Name == LeapingReversalName;
             if (healthGated && healthFraction > EnragedMoveHealthFraction)
             {
                 return false;
             }
 
-            if (combo.Name == HollowPounceName)
+            bool leapGapCloser = combo.Name == HollowPounceName || combo.Name == GroundPoundName
+                || combo.Name == LeapingReversalName;
+            if (leapGapCloser)
             {
                 // Short gaps are the sprint-in's job; past the leap's reliable reach it would come down short.
                 bool tooClose = distance < HollowPounceMinRange;
@@ -584,7 +655,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
         {
-            bool reversalCutTwo = nextStepIndex == 1 && (comboName == AbyssalReversalName || comboName == RisingReversalName);
+            bool reversalCutTwo = nextStepIndex == 1 && (comboName == AbyssalReversalName || comboName == RisingReversalName
+                || comboName == LeapingReversalName);
             if (!reversalCutTwo)
             {
                 return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
@@ -601,6 +673,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (comboName == RisingReversalName)
             {
                 cutTwo = RisingReversalCutTwo;
+            }
+            else if (comboName == LeapingReversalName)
+            {
+                cutTwo = LeapingReversalCutTwo;
             }
 
             float reach = ComboReachBase * 0.7f * cutTwo.ReachMult + cutTwo.StepInDistance;
@@ -621,14 +697,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             nextStep.StepInDistance = MathHelper.Clamp(gap - FeintReentryCloseTo, FeintReentryMinStepIn, FeintReentryMaxStepIn);
         }
 
-        // Ground Pound and Hollow Pounce are the only LeapSlam-motion steps in Artorias's moveset, so this fires once per
+        // Ground Pound, Hollow Pounce and Leaping Reversal are the only LeapSlam-motion steps in Artorias's moveset, so this fires once per
         // leap: a shockwave-style impact under the wielder the moment the slam actually touches down. It hangs off
         // OnLeapSlamLanded rather than DoComboMeleeHit because that hook only runs on a real landing - a leap that times out
         // airborne (blocked, or the player ran out of reach) ends with no ground effect instead of detonating one in open sky.
-        // Ground Pound alone also throws up the curse-cloud eruption.
+        // Ground Pound alone also throws up the curse-cloud eruption. Both raise the persistent landing column.
         protected override void OnLeapSlamLanded(MeleeComboStep step)
         {
-            SpawnLandingImpactVFX(NPC.Bottom, 86f, 68f);
+            SpawnLandingImpactVFX(NPC.Bottom, LandingColumnWidth, LandingColumnHeight, column: true);
 
             bool groundPound = ActiveMeleeComboName == GroundPoundName;
             if (groundPound && Main.netMode != NetmodeID.MultiplayerClient)
@@ -656,17 +732,31 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnLeapSlamLanded(step);
         }
 
+        // Leap landings' abyss column (Ground Pound, Hollow Pounce, Skyward Lunge): 180px footprint, 200px eruption
+        // height, so the tall core stands ~224px (14 tiles) over a ~87px-wide smoke/debuff core. The old 86x68 fracture
+        // read as a puff at his feet.
+        protected const float LandingColumnWidth = 180f;
+        protected const float LandingColumnHeight = 200f;
+
         /// <summary>Ground fracture at <paramref name="position"/> (the feet). Damage 0 = cosmetic; above 0 the
-        /// projectile's hitbox covers exactly the eruption it draws.</summary>
-        protected void SpawnLandingImpactVFX(Vector2 position, float width, float height, int damage = 0)
+        /// projectile's hitbox covers exactly the eruption it draws. <paramref name="column"/> = the persistent 90t
+        /// abyss column (smoke + Weight of Shadow) instead of the quick 18t fracture.</summary>
+        protected void SpawnLandingImpactVFX(Vector2 position, float width, float height, int damage = 0, bool column = false)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
+
+            float columnFlag = 0f;
+            if (column)
+            {
+                columnFlag = 1f;
+            }
+
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
                 ModContent.ProjectileType<ArtoriasLandingImpactVFX>(), damage, 0f,
-                Main.myPlayer, width, height);
+                Main.myPlayer, width, height, columnFlag);
         }
 
         protected override void DoMeleeAttack()
@@ -705,31 +795,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        // ── Melee sweep crescents (Gwyn's VanillaSwordArc pattern) ───────────────────────────────
+        // ── Melee sweep trails (the player Artorias Greatsword's Slash.fx ribbon) ─────────────────
         // Artorias's greatsword art is 70x70 with the default (0.10, 0.85) grip, so its farthest corner is
-        // sqrt(63^2 + 59.5^2) = 86.7px from the hand, x1.1 PuppetDrawScale = ~95px on screen. VanillaSwordArc
-        // puts its crescent's outer rim at Radius (94px reference x1.1 internal scale), so the cutting edge
-        // rides the real blade tip instead of stopping at the blade's midpoint.
+        // sqrt(63^2 + 59.5^2) = 86.7px from the hand, x1.1 PuppetDrawScale = ~95px on screen: the hand-to-tip
+        // reach the trail band and the blade hit checks are both sized from.
         protected const float ArtoriasSwordArcRadius = 95f;
         // Mirrors PuppetNPC.LeapSlamDownswingTicks (private there): Ground Pound's landing downswing length.
         const int LandingSwordArcTicks = 10;
-        static readonly Color SwordArcDark = new(24, 8, 48);
-        static readonly Color SwordArcBody = new(120, 52, 210);
-        static readonly Color SwordArcCore = new(210, 170, 255);
-        // Artorias's void palette: the crescent's shader overlay and his thrust sheath.
+        // Artorias's void palette: his thrust sheath and other abyss blade effects.
         protected static readonly Color SlashDark = new(22, 6, 36);
         protected static readonly Color SlashMid = new(143, 42, 190);
         protected static readonly Color SlashCore = new(220, 166, 236);
         bool _landingSwordArcSpawned;
 
-        /// <summary>Spawns the purple four-frame VanillaSwordArc for ONE real sword sweep, with the
-        /// VoidSlashCrescent shader drawn through the crescent sprite. Call it on the first tick the blade
-        /// sweeps; TrackPuppetBlade then pins it to the live hand and blade angle every frame, so it cannot
-        /// show outside the swing or drift off the sword.</summary>
-        /// <param name="duration">The sweep's own tick count; the arc fades out as it ends.</param>
-        /// <param name="reverse">True for sweeps that travel against the overhead direction (underhand).</param>
+        /// <summary>Spawns one ArtoriasBladeSlash (the player Artorias Greatsword's Slash.fx ribbon) for ONE real sword
+        /// sweep. Call it on the first tick the blade sweeps; every client then traces the live hand and blade angle,
+        /// so the ribbon follows the actual cut, in whichever direction it travels.</summary>
+        /// <param name="duration">The sweep's own tick count; the ribbon stops growing and fades as it ends.</param>
         /// <param name="hitWindowEnd">Step fraction after which the blade is harmless; 0 = live all step.</param>
-        protected void SpawnArtoriasSwordArc(int duration, bool reverse = false, float hitWindowEnd = 0f)
+        protected void SpawnArtoriasSwordArc(int duration, float hitWindowEnd = 0f)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -738,56 +822,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             duration = Math.Max(1, duration);
 
-            // Every Artorias sweep raises its weapon rotation (the overhead-chop direction) except an
-            // underhand rise. The sign only flips the sheet vertically so the crescent trails the blade.
-            int sweepDirection = NPC.direction;
-            if (reverse)
-            {
-                sweepDirection = -sweepDirection;
-            }
-
             // Fade over the last 5 ticks, or from the step's HitWindowEnd onward when it has one, so the
-            // crescent is gone once the blade stops being a hitbox. 2-tick fade-in stops a first-frame pop.
+            // ribbon is dissolving once the blade stops being a hitbox.
             float fadeOutFraction = Math.Min(0.35f, 5f / duration);
             if (hitWindowEnd > 0f)
             {
                 fadeOutFraction = 1f - hitWindowEnd;
             }
 
-            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
-            {
-                Texture = VanillaSwordArcTexture.NightsEdge,
-                Easing = VanillaSwordArcEasing.Linear,
-                Duration = duration,
-                StartAngle = PuppetWeaponDirection.ToRotation(),
-                SweepAngle = sweepDirection * MathHelper.Pi,
-                Radius = ArtoriasSwordArcRadius,
-                Opacity = 0.66f,
-                FadeInFraction = Math.Min(0.12f, 2f / duration),
-                FadeOutFraction = fadeOutFraction,
-                AfterimageLag = MathHelper.PiOver4,
-                AfterimageOpacity = 0.58f,
-                BodyOpacity = 0.82f,
-                CoreOpacity = 0.2f,
-                DrawTipSparkle = false,
-                TintWithWorldLighting = true,
-                DarkColor = SwordArcDark,
-                BodyColor = SwordArcBody,
-                CoreColor = SwordArcCore,
-                DrawCinderOverlay = true,
-                CinderOverlayStyle = VanillaSwordArcCinderStyle.Void,
-                CinderOverlayOpacity = 0.8f,
-                CinderOverlayDarkColor = SlashDark,
-                CinderOverlayFlameColor = SlashMid,
-                CinderOverlayCoreColor = SlashCore,
-                DustType = -1,
-                DustCount = 0,
-                TrackPuppetBlade = true,
-                EnableCollision = false,
-            };
+            int fadeStartTick = (int)Math.Round(duration * (1f - fadeOutFraction));
 
-            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
-                settings, Vector2.Zero, hostile: false);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<ArtoriasBladeSlash>(), 0, 0f, Main.myPlayer,
+                NPC.whoAmI, duration, fadeStartTick);
+        }
+
+        /// <summary>Live hand, blade direction and hand-to-tip reach for ArtoriasBladeSlash (the puppet accessors are protected).</summary>
+        internal void GetBladeSlashPose(out Vector2 pivot, out Vector2 direction, out float reach)
+        {
+            pivot = PuppetHandPosition;
+            direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            reach = ArtoriasSwordArcRadius;
         }
 
         protected override void OnMeleeComboStarted(MeleeCombo combo)
@@ -828,7 +883,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            // One crescent per damaging sweep, on the step's first tick (elapsed reads 0 once per step).
+            // One trail per damaging sweep, on the step's first tick (elapsed reads 0 once per step).
             // Thrusts (JoustDash) keep the sheath in Artorias.DrawSwordSlashVFX, and Ground Pound's LeapSlam
             // waits for its landing downswing below, because the jump itself is a harmless carry.
             bool sweepMotion = step.Motion == ComboMotion.OverheadArc || step.Motion == ComboMotion.UnderhandArc
@@ -839,8 +894,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            bool underhand = step.Motion == ComboMotion.UnderhandArc;
-            SpawnArtoriasSwordArc(total, underhand, step.HitWindowEnd);
+            SpawnArtoriasSwordArc(total, step.HitWindowEnd);
         }
 
         protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
@@ -931,6 +985,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case "Rising Slash":
                 case "Spin-Dash":
                 case AbyssalReversalName:
+                case LeapingReversalName:
                     return "Heavy Chop";
                 case "Heavy Chop":
                 case "Running Cleave":
@@ -946,7 +1001,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // ── Attack bag ───────────────────────────────────────────────────────────────────────────────────────────
         // Neutral selection is a shuffled bag of cards - one per special plus BagMeleeComboCards "melee combo" cards - in place
         // of nine independent per-tick rolls (which always beat melee to the punch and made the 4-5% moves rare). Each card is
-        // played once per pass, so every attack comes round and the special:combo split is fixed (9:6 = 60:40).
+        // played once per pass, so every attack comes round and the special:combo split is fixed (9:9 = 50:50; was 9:6,
+        // which left him projectile-heavy).
         //
         // How it drives the base class: TickAttackBag arms ONE card each neutral tick, the first in bag order whose range gate is
         // open right now. Each special's Can* override is true only while it is armed (and every chance is 100), so the engine's
@@ -965,7 +1021,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Pierce, JumpSlash, FlipSlash, AbyssSlash, Tendril, AbyssShard, HomingVolley, MiasmaUpswing, SpiralFan, MeleeCombo,
         }
 
-        const int BagMeleeComboCards = 6;
+        const int BagMeleeComboCards = 9;
         const int BagArmedTimeoutTicks = 45;
         // Abyss Slash's ceiling, just past the ring's 1600px diameter: the far-range floor, so no distance is left without a card.
         const float AbyssSlashFloorRange = 1800f;
@@ -1783,7 +1839,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 else if (grounded)
                 {
-                    SpawnLandingImpactVFX(NPC.Bottom, JumpSlashImpactWidth, JumpSlashImpactHeight, EnemyDamage.Projectile(JumpSlashImpactDamage));
+                    SpawnLandingImpactVFX(NPC.Bottom, JumpSlashImpactWidth, JumpSlashImpactHeight, EnemyDamage.Projectile(JumpSlashImpactDamage),
+                        column: true);
                     _jumpSlashImpactPending = false;
                 }
             }
@@ -1955,7 +2012,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float SlashQuadThrustHeightMult = 0.365f;
 
         /// <summary>Draws the VoidSlashVFX thrust sheath over the real sword during stabs. Sweeps are NOT
-        /// drawn here: they are tracked VanillaSwordArc projectiles (ArtoriasSwordsman.SpawnArtoriasSwordArc).
+        /// drawn here: they are ArtoriasBladeSlash trails (ArtoriasSwordsman.SpawnArtoriasSwordArc).
         /// Purely visual — TickBladeHit carries the actual hitbox regardless of what this draws.</summary>
         void DrawSwordSlashVFX()
         {
@@ -3017,9 +3074,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         //           body and sword shake 1 -> 3px, void motes converge on the tip, and the last 20t draw a dust line
         //           along the dash path.
         // Dash:     straight line, gravity off, at a point SkywardAimPastTarget px beyond the target's position (led by
-        //           distance / 16, <= 70t), so the blade passes through them and he lands past them. Speed ramps
-        //           0 -> 16 px/t with the square of time over 5t. Ends on arrival + 8t overshoot, 70t max, a tile or a
-        //           blade hit; the blade is live the whole dash.
+        //           distance / 24, <= 70t), so the blade passes through them and he lands past them. Speed ramps
+        //           0 -> 24 px/t with the square of time over 3t. Ends on arrival + 8t overshoot, 70t max, a tile or a
+        //           blade hit; the blade is live the whole dash. The landing raises a 90t abyss column.
         // Miss:     momentum x0.35 and a normal fall. 50% roll: double jump as the fall starts (cloud ring at the feet),
         //           ballistic arc solved at the target (vy <= 11, vx <= 8 px/t), carrying the pose of the swing its height
         //           calls for. Within 120px: target above his centre -> underhand 2.05 -> -1.55, in 6 / out 20, k 6
@@ -3062,11 +3119,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float SkywardJumpRise = 120f;
         const int SkywardAimTicks = 30;
         const int SkywardAimLineTicks = 20;
-        const float SkywardDashSpeed = 16f;
-        const int SkywardDashAccelTicks = 5;
+        // 24 px/t (was 16: too slow to threaten), reached within 3t (was 5) so the launch reads as a snap.
+        const float SkywardDashSpeed = 24f;
+        const int SkywardDashAccelTicks = 3;
         // Must be able to cover AerialMaxRange (600px) plus drift during the 30t apex pause, or the dash
-        // times out and stops short of a target who never moved. 600px alone already needs ~49t (600/16
-        // path + 3.33 ramp-loss + 8 overshoot) - the old fixed 40 whiffed even a stationary max-range target.
+        // times out and stops short of a target who never moved. 600px needs ~35t (600/24 path + 2 ramp-loss
+        // + 8 overshoot); 70 leaves room for MiasmaChainMaxRange and a target who runs.
         const int SkywardDashMaxTicks = 70;
         const int SkywardOvershootTicks = 8;
         // Horizontal distance past the intercept point the dash aims at. Aiming AT the target's centre from the apex
@@ -3452,7 +3510,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                     if (_aerialStageTicks >= SkywardAimTicks)
                     {
-                        // The ramp (speed grows with t² over 5t) covers a third of full-speed distance, so it adds 2/3 of
+                        // The ramp (speed grows with t² over 3t) covers a third of full-speed distance, so it adds 2/3 of
                         // its ticks to the flight; then the 8t overshoot so an on-time dash always reaches the aim point.
                         float pathTicks = Vector2.Distance(NPC.Center, aimPoint) / SkywardDashSpeed;
                         float rampLossTicks = SkywardDashAccelTicks * 2f / 3f;
@@ -3649,9 +3707,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             PlayAerialStageStartCue(AerialStage.Strike);
             TryMeleeHit(reach: ArtoriasSwordArcRadius);
 
-            // A rising cut travels against the overhead direction, so its crescent trails the other way.
-            bool risingCut = endRotation < _strikeStartRotation;
-            SpawnArtoriasSwordArc(curve.TotalTicks, risingCut, curve.HitWindowEnd);
+            SpawnArtoriasSwordArc(curve.TotalTicks, curve.HitWindowEnd);
         }
 
         void BeginAerialLanding()
@@ -3661,6 +3717,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_lastAerialWasLunge)
             {
                 _aerialLandingTicks = SkywardLandingTicks;
+                // Skyward Lunge comes down in the same abyss column as the leap slams (cosmetic + Weight of Shadow, no hit).
+                // Server-only spawn (inside the helper); a client adopting Landing from a snapshot gets the synced projectile.
+                SpawnLandingImpactVFX(NPC.Bottom, LandingColumnWidth, LandingColumnHeight, column: true);
             }
         }
 
@@ -4170,8 +4229,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (elapsed == 0)
             {
-                // Underhand, so the crescent trails the rising blade.
-                SpawnArtoriasSwordArc(total, reverse: true);
+                SpawnArtoriasSwordArc(total);
             }
 
             if (Main.dedServ)

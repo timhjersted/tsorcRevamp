@@ -6188,5 +6188,34 @@
     "SingleNpcMarker": false,
     "ExpandedNativeCoords": true,
     "Npcs": []
+  },
+  {
+    "EventID": "e914f163-5131-4f73-ad00-b74f3398ff88",
+    "CenterX": 6053.0,
+    "CenterY": 2094.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ExpandedNativeCoords": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Artorias",
+        "SpawnX": 6054.0,
+        "SpawnY": 2108.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

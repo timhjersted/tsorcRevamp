@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
@@ -19,7 +20,7 @@ namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
     /// Invader puppet — Blaidd (Wolf Mask + Plaguebringer's Cloak + Jim's Leggings + Yoraiz0r's Scowl).
-    /// Pure melee duelist. Phase 1: one-handed Titanium Sword + Spiked Iron Shield, advancing behind the raised shield
+    /// Pure melee duelist. Phase 1: one-handed Royal Greatsword + Spiked Iron Shield, advancing behind the raised shield
     /// at full speed, Shield Bash opener. Phase 2 (below 50%): tears the shield off, goes two-handed and faster.
     /// The Azure Suppression Flask (Suppressed + Grapple Malfunction, 100-tile ring) is his only ranged act.
     /// Stock swings borrow OwlFather / StuddedLeatherWarrior timings. Design: tsorcDocs/Blaidd_Rework_Proposal.md.
@@ -207,7 +208,7 @@ namespace tsorcRevamp.NPCs.Puppets
         private int _bashFollowUpWindow;
         private int _fightTicks;
 
-        // ── Loadout (all vanilla) ─────────────────────────────────────────────────
+        // ── Armor loadout ─────────────────────────────────────────────────────────
         protected override int HeadArmorItemType => ItemID.WolfMask;
         protected override int BodyArmorItemType => ItemID.PlaguebringerChestplate; // "Plaguebringer's Cloak"
         protected override int LegsArmorItemType => ItemID.JimsLeggings;
@@ -227,7 +228,7 @@ namespace tsorcRevamp.NPCs.Puppets
         };
 
         // ── Weapons ───────────────────────────────────────────────────────────────
-        protected override int MeleeWeaponItemType => ItemID.TitaniumSword;
+        protected override int MeleeWeaponItemType => ModContent.ItemType<RoyalGreatsword>();
         // The flask is drawn with the vanilla Flask of Nanites sprite (blue glass) through the shared throw pose.
         protected override int RangedWeaponItemType => ItemID.FlaskofNanites;
         protected override RangedStyle RangedAnimStyle => RangedStyle.Throw;
@@ -317,7 +318,9 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // ── Melee swing polish (OwlFather's opt-ins) ──────────────────────────────
-        protected override Vector2 MeleeHandleNorm => new Vector2(0.12f, 0.88f);
+        protected override Vector2 MeleeHandleNorm => RoyalGreatsword.GripPosition / 96f;
+        // Keep the visible grip-to-tip span near his existing 67px standard and 81px heavy reach.
+        protected override float MeleeWeaponDrawScale => 0.65f;
         protected override float ComboReachBase => 96f;
         protected override float MeleeWeaponRotationOffset => 1.0f;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
@@ -1960,6 +1963,7 @@ namespace tsorcRevamp.NPCs.Puppets
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 400, 600));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RoyalGreatsword>()));
         }
 
         public override void OnKill()

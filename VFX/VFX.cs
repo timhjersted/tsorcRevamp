@@ -223,6 +223,38 @@ namespace tsorcRevamp.VFX
             }
         }
 
+        /// <summary>
+        /// One rolling flame: the Ancient Demon's FireBreath sprite (or another flame texture), spinning at a random
+        /// rate and direction, cooling from gold to deep orange while it shrinks to ~half size. rise is upward
+        /// px/tick² (flames climb as they burn).
+        /// </summary>
+        public static void FlameLobe(Vector2 position, Vector2 velocity, float scale, int lifetime, float rise = 0.04f,
+            VFXParticleTexture texture = VFXParticleTexture.FireBreath)
+        {
+            float spin = Main.rand.NextFloat(0.08f, 0.2f);
+            if (Main.rand.NextBool())
+            {
+                spin = -spin;
+            }
+
+            VFXSystem.AddParticle(new VFXParticleData
+            {
+                Position = position,
+                Velocity = velocity,
+                Acceleration = new Vector2(0f, -rise),
+                StartColor = new Color(255, 225, 95),
+                EndColor = new Color(235, 55, 12),
+                StartScale = scale,
+                EndScale = scale * 0.55f,
+                Rotation = Main.rand.NextFloat(MathHelper.TwoPi),
+                AngularVelocity = spin,
+                Damping = 0.94f,
+                Lifetime = lifetime,
+                Texture = texture,
+                Blend = VFXBlend.Alpha
+            });
+        }
+
         private static Vector2[] BuildLine(Vector2 start, Vector2 end, int pointCount)
         {
             Vector2[] points = new Vector2[pointCount];

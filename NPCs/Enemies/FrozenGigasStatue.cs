@@ -28,6 +28,12 @@ namespace tsorcRevamp.NPCs.Enemies
         //Mid-Hardmode values; SHM encounters get the parent's flat ×1.3 bump (progress scaling is global, in ProgressionScalingPlayer)
         int FanDamage => ScaleDamage(36);
         int ShatterShardDamage => ScaleDamage(28);
+        int ShatterBreathDamage => ScaleDamage(16); //the Gigas's own BreathDamage: small rapid ticks + Chilled
+
+        //Shatter breath: a ring of Frost Breath's long puffs. Same 9px/t launch and long decay, so the same ~450px reach.
+        const int ShatterBreathPuffs = 12;
+        const float ShatterBreathSpeed = 9f;
+        const float ShatterBreathStartRadius = 40f; //born just outside the body, not inside its silhouette
         static int ScaleDamage(int baseDamage) => tsorcRevampWorld.SuperHardMode ? (int)(baseDamage * 1.3f) : baseDamage;
 
         int Lifetime => NPC.ai[0] > 0f ? (int)NPC.ai[0] : 300;
@@ -140,7 +146,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 // with ~16px-spaced outward breath streams traveling another ten tiles.
                 Vector2 frostCenter = NPC.Bottom + new Vector2(0f, NPC.gfxOffY + IceGigas.SpriteDrawOffsetY - 82f);
                 Projectile.NewProjectile(NPC.GetSource_Death(), frostCenter, Vector2.Zero,
-                    ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer, 160f, 40f, -1f);
+                    ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer, 160f, IceGigas.FrostBuildupPerHit, -1f);
+
+                for (int i = 0; i < ShatterBreathPuffs; i++)
+                {
+                    Vector2 direction = (MathHelper.TwoPi * i / ShatterBreathPuffs).ToRotationVector2();
+                    Vector2 puffStart = frostCenter + direction * ShatterBreathStartRadius;
+                    Projectile.NewProjectile(NPC.GetSource_Death(), puffStart, direction * ShatterBreathSpeed,
+                        ModContent.ProjectileType<GigasFrostBreathPuff>(), ShatterBreathDamage, 1f, Main.myPlayer, GigasFrostBreathPuff.LongBreathFlag);
+                }
                 for (int i = 0; i < 8; i++)
                 {
                     Vector2 vel = (MathHelper.TwoPi * i / 8f + Main.rand.NextFloat(0.3f)).ToRotationVector2() * Main.rand.NextFloat(5f, 7f);

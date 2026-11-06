@@ -10,6 +10,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
     public abstract class DarkmoonOwnedShot : ModProjectile
     {
         protected virtual int LiveTicks => 60;
+        protected virtual Color MoteColor => Color.MediumPurple;
         public bool IsLive => Projectile.ai[2] <= 0 && Projectile.localAI[0] < LiveTicks;
         public bool OwnedBy(int npc, int serial) => Projectile.ai[0] == npc && Projectile.ai[1] == serial;
         public void BeginFade()
@@ -33,10 +34,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             if (Projectile.localAI[0] >= LiveTicks && Projectile.ai[2] == 0) BeginFade();
             if (Projectile.ai[2] > 0) Projectile.velocity *= 0.85f;
             Projectile.rotation = Projectile.velocity.ToRotation();
-            if (!Main.dedServ && Projectile.localAI[0] % 3 == 0) DarkmoonVisuals.Motes(Projectile.Center, Color.MediumPurple, 1, 4);
+            if (!Main.dedServ && Projectile.localAI[0] % 3 == 0) DarkmoonVisuals.Motes(Projectile.Center, MoteColor, 1, 4);
         }
         protected float Opacity => Projectile.ai[2] > 0 ? MathHelper.Clamp(Projectile.timeLeft / 12f, 0, 1) : 1;
-        public override void OnKill(int timeLeft) => DarkmoonVisuals.Motes(Projectile.Center, Color.MediumPurple, 40, 10);
+        public override void OnKill(int timeLeft) => DarkmoonVisuals.Motes(Projectile.Center, MoteColor, 40, 10);
         protected bool SweptCircle(Rectangle box, float radius)
         {
             float point = 0;
@@ -53,8 +54,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         { target.AddBuff(BuffID.WitheredArmor, 300); target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 300); }
     }
+    /// <summary>
+    /// Crescent Severance's blade wave: Artorias's sword-swipe shader (the AbyssSlash look) in turquoise with a white
+    /// core. The swipe animation loops every SwipeCycleTicks; drawn smaller than Artorias's 94x110 so the visual
+    /// stays close to this shot's 20x40 lens hitbox.
+    /// </summary>
     public class DarkmoonCrescent : DarkmoonOwnedShot
     {
+        const int SwipeCycleTicks = 16;
+        static readonly Vector2 SwipeSize = new Vector2(64f, 76f);
+        static readonly Color SwipeDark = new Color(4, 22, 34);
+        static readonly Color SwipeMid = new Color(40, 210, 215);
+        static readonly Color SwipeCore = Color.White;
+
+        protected override Color MoteColor => Color.Turquoise;
         public override string Texture => "tsorcRevamp/Content/Projectiles/Melee/MLGSCrescent";
         public override void SetDefaults() { base.SetDefaults(); Projectile.tileCollide = true; }
         public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac)
@@ -75,6 +88,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             }
             return false;
         }
-        public override bool PreDraw(ref Color lightColor) { DarkmoonVisuals.DrawCrescent(Projectile.Center, Projectile.rotation, Opacity); return false; }
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float swipeProgress = Projectile.localAI[0] % SwipeCycleTicks / SwipeCycleTicks;
+            Lighting.AddLight(Projectile.Center, new Vector3(0.2f, 0.8f, 0.85f) * Opacity);
+            global::tsorcRevamp.Content.Projectiles.Enemy.ArtoriasVFX.DrawSwordSwipe(Projectile.Center, Projectile.rotation, SwipeSize,
+                swipeProgress, 0.94f * Opacity, SwipeDark, SwipeMid, SwipeCore);
+            return false;
+        }
     }
 }

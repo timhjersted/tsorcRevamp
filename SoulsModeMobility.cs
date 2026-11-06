@@ -55,15 +55,6 @@ namespace tsorcRevamp
         public const float WingsOfSeathHoverFlightAcceleration = 0.26f;
         public const float WingsOfSeathAscentMultiplier = 3.20f;
 
-        // Suppressed vertical caps: the run-speed nerf (6f, Seath 7f) left jumping and wing ascent untouched, so
-        // vertical mobility dwarfed horizontal. Same split as the run caps: the three named items share one cap,
-        // Wings of Seath keeps a slightly higher one. Jump speed is px/tick (vanilla base 5.01, jumpBoost 6.51);
-        // jump height is ticks the jump key keeps adding lift (vanilla base 15, jumpBoost 20).
-        public const float SuppressedJumpSpeed = 5.8f;
-        public const float SuppressedJumpSpeedSeath = 6.3f;
-        public const int SuppressedJumpHeight = 18;
-        public const int SuppressedJumpHeightSeath = 20;
-
         // The mobility rework now applies in every mode; the config toggle was removed. The !Enabled() branches
         // in the four mobility items are the OLD Classic stats, kept unreachable on purpose so the toggle can be
         // restored by reverting this check. Classic's one difference (wing fall immunity) gates on SoulsMode directly.
