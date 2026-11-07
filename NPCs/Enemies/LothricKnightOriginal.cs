@@ -113,16 +113,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            UsefulFunctions.DustRing(NPC.Center, 300, DustID.YellowTorch, 5, 2f);
-            if (NPC.Distance(player.Center) < 300)
-            {
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
-            }
-            if (Main.hardMode && NPC.Distance(player.Center) < 300)
-            {
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-            }
-
             int lifePercentage = (NPC.life * 100) / NPC.lifeMax;
             float acceleration = 0.02f;
             float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2.5f);

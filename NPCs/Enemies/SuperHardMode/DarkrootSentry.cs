@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         float _advanceDistance;
         readonly Vector2[] _lashControls = new Vector2[4];
         // Every machine, refreshed in AI(): facing-space angle from the back shoulder to a player one of this Sentry's
-        // vines is holding, or null. Drives the free arm so the tether hangs from the palm.
+        // vines is holding, or null. The free arm directs the earthen snare toward its captive.
         float? _tetherArmAngle;
         bool _guardUp;
         int _guardLift;
@@ -232,7 +232,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     return 0f;
                 }
 
-                // A held Briar Lash victim: the hand anchors the tether, so it keeps pointing at them while the
+                // A held Briar Lash victim: the casting hand keeps pointing toward the earth-bound victim while the
                 // halberd is free to punish. Found every tick in AI() on every machine.
                 if (_tetherArmAngle is float tetherAngle)
                 {
@@ -475,7 +475,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const int RootLastSink = 136;
         const int RootTotal = 172;
         // Briar Lash, cast from the free (back) hand while the halberd stays at carry:
-        //   tell 48: the hand rises up-and-back over 20t (bud swelling in the palm), path locks t28 (corridor shown
+        //   tell 48: the hand rises up-and-back over 20t, an earth root locks at t28 (corridor shown
         //   20t), the arm whips overhand to the aim t42-48 | vine extends 20t (tip LIVE) | retracts 18t | recovery 36.
         const int LashLock = 28;
         const int LashRelease = 48;
@@ -696,7 +696,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Point the free arm at a player my vine holds. Matched by ai[0] (owner whoAmI) rather than OwnedBy,
+            // Direct the free arm toward a player held by the ground vines. Matched by ai[0] rather than OwnedBy,
             // because the encounter serial is server-only. Shoulder = vanilla back shoulder (6 * facing, -2).
             _tetherArmAngle = null;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -928,9 +928,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             Trace("lash-grab p" + held.whoAmI);
         }
 
-        /// <summary>World position of the free (back) hand; the grabbing vine tethers to it.</summary>
-        public Vector2 VineAnchorPosition => PuppetBackHandPosition;
-
         public void Trace(string kind)
         {
             if (!Server || !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
@@ -1052,8 +1049,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             return false;
                         }
 
-                        Vector2 releaseHand = PuppetBackHandPositionAt(LivePitch(LashPitchLimit));
-                        return BuildLashPath(target, releaseHand, null);
+                        return BuildLashPath(target, null);
                     }
                     default:
                         return false;
@@ -1135,6 +1131,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _abortRecovery = false;
             _customLive = false;
             _releasedMask = 0;
+            if (action == CustomAction.Lash)
+            {
+                Array.Clear(_lashControls, 0, _lashControls.Length);
+            }
+
             StartCustomAttack(totalTicks, MeleeWeaponItemType);
             Snapshot();
         }
@@ -1468,9 +1469,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        /// <summary>Briar Lash: the free hand gathers a bud while it cocks back, the path locks at t28 (shown as a
-        /// corridor for 20t) from where the hand WILL be at the aim, and the vine is released from that hand at t48 as
-        /// the overhand whip lands. The vine owns the live tip; the arm holds the aim until it retracts.</summary>
+        /// <summary>Briar Lash: the hand commands an earthen root. At t28 its ground origin and path lock and remain
+        /// marked for 20t; t48 releases the moving tip for 20t, followed by 18t of harmless retraction.
+        /// The source is at least 192px away and approximately the Sentry's distance from the target.</summary>
         void TickLash(int elapsed, Player target)
         {
             if (elapsed == 0 && !Main.dedServ)
@@ -1478,7 +1479,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 SoundEngine.PlaySound(SoundID.Item17 with { Pitch = -0.2f }, NPC.Center);
             }
 
-            // Leaves and splinters drawn into the cocked palm, thicker as the release nears.
+            // Before the lock, gather at the casting palm; afterward the committed earth source stirs.
             if (elapsed < LashRelease && !Main.dedServ)
             {
                 int moteCount = 1;
@@ -1487,24 +1488,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     moteCount = 2;
                 }
 
-                DarkrootWoodVFX.Motes(PuppetBackHandPosition, moteCount, 18f, true);
-            }
+                Vector2 gatheringPoint = PuppetBackHandPosition;
+                if (elapsed >= LashLock && _lashControls[0] != Vector2.Zero)
+                {
+                    gatheringPoint = _lashControls[0];
+                }
 
-            if (elapsed == LashLock && !Main.dedServ)
-            {
-                SoundEngine.PlaySound(SoundID.Grass with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
-            }
-
-            if (elapsed == LashRelease && !Main.dedServ)
-            {
-                SoundEngine.PlaySound(SoundID.Item152 with { Pitch = -0.3f }, NPC.Center);
+                DarkrootWoodVFX.Motes(gatheringPoint, moteCount, 18f, true);
             }
 
             if (elapsed == LashLock && Server)
             {
                 _pitch = LivePitch(LashPitchLimit);
-                Vector2 releaseHand = PuppetBackHandPositionAt(_pitch);
-                bool pathValid = target != null && BuildLashPath(target, releaseHand, _lashControls);
+                bool pathValid = target != null && BuildLashPath(target, _lashControls);
 
                 if (!pathValid)
                 {
@@ -1515,6 +1511,21 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 Trace("lash-lock");
                 Snapshot();
+            }
+
+            bool groundReady = _lashControls[0] != Vector2.Zero;
+            if (groundReady && !Main.dedServ)
+            {
+                if (elapsed == LashLock)
+                {
+                    SoundEngine.PlaySound(SoundID.Grass with { Volume = 1f, Pitch = -0.5f }, _lashControls[0]);
+                }
+
+                if (elapsed == LashRelease)
+                {
+                    SoundEngine.PlaySound(SoundID.Item152 with { Pitch = -0.3f }, _lashControls[0]);
+                    DarkrootWoodVFX.Motes(_lashControls[0], 12, 10f, false, DustID.WoodFurniture);
+                }
             }
 
             if (elapsed == LashRelease && Server)
@@ -1705,60 +1716,82 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         /// <summary>
-        /// Briar Lash path from the casting hand to the target centre: cubic Bezier with controls at 1/3 and 2/3 of
-        /// the chord, bent up to 32px upward. If the bent path clips tiles, the straight path is tried (still before
-        /// the corridor is shown). Valid when arc length &lt;= 640px, hand-to-target &gt;= 48px and a 16px corridor is clear.
-        /// Writes the controls into <paramref name="controlsOut"/> when non-null.
+        /// Lock a ground root approximately as far from the player as the Sentry is, with at least 192px of
+        /// horizontal clearance. Try nearby earth surfaces on the caster's side, then validate a marked 16px
+        /// corridor to the committed target point; no usable ground or blocked paths reject the attack.
         /// </summary>
-        bool BuildLashPath(Player target, Vector2 origin, Vector2[] controlsOut)
+        bool BuildLashPath(Player target, Vector2[] controlsOut)
         {
-            Vector2 destination = target.Center;
-            Vector2 chord = destination - origin;
-            float chordLength = chord.Length();
-            if (chordLength < 48f)
+            int side = Math.Sign(NPC.Center.X - target.Center.X);
+            if (side == 0)
             {
-                return false;
+                side = -NPC.direction;
             }
 
+            float sourceDistance = Math.Max(DarkrootVine.MinimumSpawnDistance, NPC.Distance(target.Center));
+            float groundY = Math.Max(NPC.Bottom.Y, target.Bottom.Y);
+            float[] slides = { 0f, 16f, -16f, 32f, -32f };
             Vector2[] controls = new Vector2[4];
             Vector2[] samples = new Vector2[DarkrootVine.SampleCount + 1];
             float[] arcFraction = new float[DarkrootVine.SampleCount + 1];
-            float[] bends = { Math.Min(32f, chordLength * 0.12f), 0f };
 
-            foreach (float bend in bends)
+            foreach (float slide in slides)
             {
-                controls[0] = origin;
-                controls[1] = origin + chord / 3f + new Vector2(0f, -bend);
-                controls[2] = origin + chord * (2f / 3f) + new Vector2(0f, -bend);
-                controls[3] = destination;
-                DarkrootVine.BuildSamples(controls, samples, arcFraction, out float arcLength);
-
-                if (arcLength > 640f)
+                float distance = sourceDistance + slide;
+                if (distance < DarkrootVine.MinimumSpawnDistance)
                 {
                     continue;
                 }
 
-                bool clear = true;
-                for (int i = 1; i < samples.Length; i++)
+                Vector2 search = new(target.Center.X + side * distance, groundY);
+                if (!DarkrootVine.TryFindGround(search, target.Center, 12, out Vector2 floor))
                 {
-                    if (Collision.SolidCollision(samples[i] - new Vector2(8f), 16, 16))
+                    continue;
+                }
+
+                Vector2 origin = floor - new Vector2(0f, 8f);
+                Vector2 chord = target.Center - origin;
+                float chordLength = chord.Length();
+                if (chordLength < DarkrootVine.MinimumSpawnDistance || chordLength > DarkrootVine.MaximumPathLength)
+                {
+                    continue;
+                }
+
+                float[] bends = { Math.Min(40f, chordLength * 0.12f), 0f };
+                foreach (float bend in bends)
+                {
+                    controls[0] = origin;
+                    controls[1] = origin + chord / 3f + new Vector2(0f, -bend);
+                    controls[2] = origin + chord * (2f / 3f) + new Vector2(0f, -bend);
+                    controls[3] = target.Center;
+                    DarkrootVine.BuildSamples(controls, samples, arcFraction, out float arcLength);
+                    if (arcLength > DarkrootVine.MaximumPathLength)
                     {
-                        clear = false;
-                        break;
+                        continue;
                     }
-                }
 
-                if (!clear)
-                {
-                    continue;
-                }
+                    bool clear = true;
+                    for (int i = 0; i < samples.Length; i++)
+                    {
+                        if (Collision.SolidCollision(samples[i] - new Vector2(8f), 16, 16))
+                        {
+                            clear = false;
+                            break;
+                        }
+                    }
 
-                if (controlsOut != null)
-                {
-                    Array.Copy(controls, controlsOut, 4);
-                }
+                    if (!clear)
+                    {
+                        continue;
+                    }
 
-                return true;
+                    if (controlsOut != null)
+                    {
+                        Array.Copy(controls, controlsOut, 4);
+                    }
+
+                    return true;
+                }
             }
 
             return false;
@@ -2083,24 +2116,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                 case CustomAction.Lash:
                 {
-                    // Gathering bud in the casting palm: grows over 40t to 44px with its sap core lit, so the raised hand
-                    // reads as "something is coming" from across the screen.
-                    if (elapsed < LashRelease)
-                    {
-                        Vector2 palm = PuppetBackHandPosition;
-                        float growth = MathHelper.Clamp(elapsed / 40f, 0f, 1f);
-                        DarkrootWoodVFX.Draw("DarkrootBud", palm, new Vector2(44f), 0f, new Vector2(0.5f), growth, growth, 0.95f);
-                    }
-
                     // The committed path for the last 20t: dashes that brighten and pulse (8t period) as the release
-                    // nears, plus a ring at the end point where the tip will arrive.
-                    if (elapsed >= LashLock && elapsed < LashRelease)
+                    // nears, a sprite sprouting at its ground source, and a ring at the committed target point.
+                    if (elapsed >= LashLock && elapsed < LashRelease && _lashControls[0] != Vector2.Zero)
                     {
                         Vector2[] samples = new Vector2[DarkrootVine.SampleCount + 1];
                         float[] arcFraction = new float[DarkrootVine.SampleCount + 1];
                         DarkrootVine.BuildSamples(_lashControls, samples, arcFraction, out _);
 
                         float ramp = (elapsed - LashLock) / (float)(LashRelease - LashLock);
+                        DarkrootVine.DrawSprout(_lashControls[0] + new Vector2(0f, 8f), 0.35f + ramp * 0.65f, 1f);
                         float pulse = 0.5f + 0.5f * (float)Math.Sin(elapsed * MathHelper.TwoPi / 8f);
                         Color lane = Accent * (0.35f + 0.35f * ramp + 0.2f * pulse);
 
@@ -2152,6 +2177,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.DarkrootSentryBanner>();
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.AllowDynamicEventNaturalDespawn = true;
             globalNPC.NavSearchRadius = 80;
             globalNPC.CanUseRopes = true;
             globalNPC.CanPassThroughWalls = false;
@@ -2162,12 +2188,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.PatrolAnchorSource = PatrolAnchorSource.SpawnPoint;
             globalNPC.PatrolRange = 10;
             globalNPC.PatrolUsesNavigation = true;
-        }
-
-        //Never despawn except by timing out
-        public override bool CheckActive()
-        {
-            return false;
         }
 
         // Legacy fallback for when New Enemy Spawns is off; with it on, the registry (Systems/EnemySpawns.cs) decides

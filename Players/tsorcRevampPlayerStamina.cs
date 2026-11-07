@@ -240,7 +240,7 @@ namespace tsorcRevamp
         public void RecordWeaponOutputDamage(int itemType, int damageDone)
         {
             // Hits a mirror puppet lands through a borrowed ItemCheck are not the player's output; counting
-            // them would let the Mimic Tear (whose damage derives from this EMA) feed back into itself.
+            // them would let the Soul Mimic (whose damage derives from this EMA) feed back into itself.
             if (NPCs.FriendlyPuppets.MirrorPuppetSwap.Active)
             {
                 return;

@@ -52,42 +52,61 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             moon ??= ModContent.Request<Effect>("tsorcRevamp/Effects/DarkmoonMoonlight", AssetRequestMode.ImmediateLoad);
             Draw(moon.Value, "DarkmoonWarning", center, new Vector2(360), 0, progress, 0.6f, 0, 0);
         }
+        static Asset<Effect> light;
+        static Asset<Texture2D> lightNoise;
+
         /// <summary>
-        /// One tick of a moonlight beam, drawn as three noise-textured VFX strips (wide soft glow, flowing body,
-        /// white-hot core) from the tail up to the head along direction. Brightest and widest just behind the head,
-        /// tapering to nothing at both ends, fading toward the tail. Call every tick from update code on clients
-        /// (VFX strips added in update live exactly one frame at lifetime 2).
+        /// Draws one DarkmoonLight.fx quad additively: "DarkmoonRay" (aim telegraph) or "DarkmoonShard" (light shard).
+        /// center is the quad centre, rotation its long axis, size = (length, width) in px. The shader paints soft
+        /// falloff, a white core and noise flow inside it. Call from a draw hook (restores the default batch after).
         /// </summary>
-        public static void BeamStrip(Vector2 head, Vector2 direction, float length, float width, float opacity)
+        public static void DrawLight(string technique, Vector2 center, float rotation, Vector2 size, float opacity)
         {
-            if (Main.dedServ || opacity <= 0.01f) return;
-            const int PointCount = 12;
-            Vector2[] points = new Vector2[PointCount];
-            float[] glowWidths = new float[PointCount];
-            float[] bodyWidths = new float[PointCount];
-            float[] coreWidths = new float[PointCount];
-            for (int i = 0; i < PointCount; i++)
+            if (Main.dedServ || opacity <= 0.01f)
             {
-                // u: 0 at the tail, 1 at the head. The profile peaks at u = 0.8 and pinches to a point at the tip.
-                float u = i / (float)(PointCount - 1);
-                points[i] = head - direction * length * (1f - u);
-                float rise = MathHelper.Clamp(u / 0.8f, 0f, 1f);
-                float tipPinch = MathHelper.Clamp((1f - u) / 0.2f, 0f, 1f);
-                float profile = (float)Math.Sqrt(rise) * (float)Math.Sqrt(tipPinch);
-                glowWidths[i] = width * 2.2f * profile;
-                bodyWidths[i] = width * profile;
-                coreWidths[i] = Math.Max(1f, width * 0.32f * profile);
+                return;
             }
 
-            Color glowTail = new Color(60, 110, 200) * 0f;
-            Color glowHead = new Color(120, 180, 255) * (0.45f * opacity);
-            Color bodyTail = new Color(150, 200, 255) * (0.1f * opacity);
-            Color bodyHead = new Color(190, 225, 255) * (0.9f * opacity);
-            Color coreTail = Color.White * (0.15f * opacity);
-            Color coreHead = Color.White * opacity;
-            global::tsorcRevamp.VFX.VFX.Strip(points, glowWidths, glowTail, glowHead, global::tsorcRevamp.VFX.VFXMaterial.Wavy, 2, 2.5f, 0.03f, 1.5f, 0.2f);
-            global::tsorcRevamp.VFX.VFX.Strip(points, bodyWidths, bodyTail, bodyHead, global::tsorcRevamp.VFX.VFXMaterial.Turbulent, 2, 3.5f, -0.05f);
-            global::tsorcRevamp.VFX.VFX.Strip(points, coreWidths, coreTail, coreHead, global::tsorcRevamp.VFX.VFXMaterial.Solid, 2);
+            light ??= ModContent.Request<Effect>("tsorcRevamp/Effects/DarkmoonLight", AssetRequestMode.ImmediateLoad);
+            lightNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/T_PerlinNoise_Tiled", AssetRequestMode.ImmediateLoad);
+            Effect effect = light.Value;
+            Texture2D noise = lightNoise.Value;
+
+            Main.spriteBatch.End();
+            try
+            {
+                effect.CurrentTechnique = effect.Techniques[technique];
+                effect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Opacity"]?.SetValue(opacity);
+                effect.Parameters["Aspect"]?.SetValue(size.X / Math.Max(1f, size.Y));
+                effect.Parameters["FlowScale"]?.SetValue(size.X / 96f);
+
+                // 2px blocks across the on-screen quad, pre-divided here (ps_2_0 has no preshader).
+                float blocksX = Math.Max(2f, size.X / 2f);
+                float blocksY = Math.Max(2f, size.Y / 2f);
+                effect.Parameters["PixelGrid"]?.SetValue(new Vector4(blocksX, blocksY, 1f / blocksX, 1f / blocksY));
+
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+                    DepthStencilState.None, RasterizerState.CullNone, effect, Main.GameViewMatrix.TransformationMatrix);
+                Vector2 scale = size / noise.Size();
+                Main.spriteBatch.Draw(noise, center - Main.screenPosition, null, Color.White, rotation, noise.Size() * 0.5f, scale, SpriteEffects.None, 0);
+                Main.spriteBatch.End();
+            }
+            finally
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                    DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+        }
+
+        /// <summary>
+        /// A light shard whose head point (82% along the shader's spindle) sits at head, pointing along direction.
+        /// Used for the fired DarkmoonSliver and for the shards forming at a moon's rim before a fan releases.
+        /// </summary>
+        public static void DrawShard(Vector2 head, Vector2 direction, float length, float width, float opacity)
+        {
+            Vector2 center = head - direction * length * 0.32f;
+            DrawLight("DarkmoonShard", center, direction.ToRotation(), new Vector2(length, width), opacity);
         }
 
         public static void DrawExplosion(Vector2 center, float progress, float arrivalAngle, float scale = 1f, float opacity = 1f)

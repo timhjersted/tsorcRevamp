@@ -29,12 +29,28 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         public bool Slam;             // finisher that meets the ground: impact effects + Greatsword.OnSlamImpact
     }
 
+    /// <summary>The three cuts a greatsword combo is built from. The values index a weapon's ComboSteps array.</summary>
+    public enum GreatswordCut
+    {
+        Overhead = 0,
+        Rising = 1,
+        Slam = 2
+    }
+
     /// <summary>
     /// Pure swing maths shared by GreatswordSwing and the offline SwingPreview harness (--greatsword).
     /// </summary>
     public static class GreatswordMotion
     {
-        public const int ComboLength = 3;
+        /// <summary>Longest combo: rising, overhead, rising, slam. One opened with an overhead is three swings.</summary>
+        public const int MaxComboSwings = 4;
+
+        /// <summary>The slam can land from this combo position on (0-based: the third swing).</summary>
+        public const int FirstSlamPosition = 2;
+
+        /// <summary>Swing codes packed beside the weapon type in GreatswordSwing ai[0]: position (4) x cut (3) x entry cut (3).</summary>
+        public const int SwingCodeCount = MaxComboSwings * 3 * 3;
+
         public const int MinimumSwingTicks = 8;
 
         // Damage stops once this share of the cut's arc is covered; the rest is the slow settle into the finish.
@@ -49,7 +65,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         public const float Low = 0.18f;
         public const float High = -2.10f;
 
-        // Overhead cut -> rising cut -> heavy slam. The slam has the longest windup and the softest start.
+        // [0] overhead cut, [1] rising cut, [2] heavy slam (indexed by GreatswordCut). [0] and [1] give their cut's
+        // ANGLES; their TIMING belongs to the combo position instead (see BuildSwing). The slam has the longest windup
+        // and the softest start.
         public static readonly GreatswordStep[] DefaultSteps =
         {
             new GreatswordStep
@@ -88,10 +106,54 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             }
         };
 
-        public static float EntryAngle(GreatswordStep[] steps, int step)
+        /// <summary>
+        /// Which cut comes next. Overhead and rising cuts alternate, and a combo opens opposite to the last swing made
+        /// (a slam counts as overhead), so the blade always carries on from where it stopped. The first overhead at the
+        /// third swing or later is the slam, ending the combo: opened overhead = overhead, rising, slam; opened rising =
+        /// rising, overhead, rising, slam. After a slam the next combo opens rising, so chained combos are four swings.
+        /// </summary>
+        public static GreatswordCut NextCut(GreatswordCut lastCut, int position)
         {
-            int previous = (step + ComboLength - 1) % ComboLength;
-            return steps[previous].FinishAngle;
+            bool lastWasRising = lastCut == GreatswordCut.Rising;
+
+            if (!lastWasRising)
+            {
+                return GreatswordCut.Rising;
+            }
+
+            if (position >= FirstSlamPosition)
+            {
+                return GreatswordCut.Slam;
+            }
+
+            return GreatswordCut.Overhead;
+        }
+
+        /// <summary>
+        /// The step data for one swing. A slam is steps[2] as authored. A cut takes its arc (loaded and finish angles)
+        /// from its own entry, steps[0] overhead or steps[1] rising, but its timing and damage from the combo position:
+        /// the opener plays steps[0]'s cadence, every later cut steps[1]'s, whichever way it swings.
+        /// </summary>
+        public static GreatswordStep BuildSwing(GreatswordStep[] steps, GreatswordCut cut, int position)
+        {
+            if (cut == GreatswordCut.Slam)
+            {
+                return steps[(int)GreatswordCut.Slam];
+            }
+
+            int timingIndex = 1;
+
+            if (position == 0)
+            {
+                timingIndex = 0;
+            }
+
+            GreatswordStep arc = steps[(int)cut];
+            GreatswordStep swing = steps[timingIndex];
+            swing.LoadedAngle = arc.LoadedAngle;
+            swing.FinishAngle = arc.FinishAngle;
+            swing.Slam = false;
+            return swing;
         }
 
         /// <summary>
@@ -125,12 +187,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             return covered / totalArea;
         }
 
-        /// <summary>Facing-space blade angle at progress (0..1) through the given step.</summary>
-        public static float Angle(GreatswordStep[] steps, int step, float progress)
+        /// <summary>Facing-space blade angle at progress (0..1) through a swing that starts from entry (the previous
+        /// swing's finish angle).</summary>
+        public static float Angle(GreatswordStep current, float entry, float progress)
         {
-            GreatswordStep current = steps[step];
-            float entry = EntryAngle(steps, step);
-
             // Windup: smooth in-and-out into the loaded pose, so the swing starts with a little acceleration.
             if (progress < current.WindupFraction)
             {
@@ -202,14 +262,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         protected internal abstract Vector2 CuttingEdge { get; }
         protected internal abstract Vector2 BladeTip { get; }
 
-        /// <summary>The three combo steps. Override to give a sword its own arcs, easing and timings.</summary>
+        /// <summary>Overhead cut, rising cut, slam (indexed by GreatswordCut; see GreatswordMotion.BuildSwing for how a
+        /// combo combines them). Override to give a sword its own arcs, easing and timings.</summary>
         public virtual GreatswordStep[] ComboSteps => GreatswordMotion.DefaultSteps;
 
         /// <summary>Ticks of a DurationScale 1 step before melee speed.</summary>
         public virtual int BaseSwingTicks => Item.useAnimation;
 
-        /// <summary>Draw the broadsword-rework slash trail (in the item's slashColor) behind each cut.</summary>
-        public virtual bool UsesSlashTrail => false;
+        /// <summary>Use Moonlight's Slash shader with the rendered heel/tip and a short active-cut
+        /// lifetime. Set the item's slashColor; blade geometry and player scale are automatic.</summary>
+        public virtual bool UsesBladeSlash => false;
+        public virtual bool UsesSlashTrail => UsesBladeSlash;
 
         /// <summary>Owner only. The slam's blade met the ground (or finished its cut in the air).</summary>
         public virtual void OnSlamImpact(Projectile swing, Player player, Vector2 impact, bool hitGround)
@@ -221,12 +284,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
         }
 
-        public virtual void OnSwingHitNPC(Projectile swing, NPC target, int step)
+        public virtual void OnSwingHitNPC(Projectile swing, NPC target, int position)
         {
         }
 
-        /// <summary>Owner only. The cut has just become able to hit (once per step).</summary>
-        public virtual void OnStrikeStart(Projectile swing, Player player, int step)
+        /// <summary>Owner only. The cut has just become able to hit (once per swing). position = place in the combo, 0-based.</summary>
+        public virtual void OnStrikeStart(Projectile swing, Player player, int position)
         {
         }
 
@@ -279,18 +342,25 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         }
 
         /// <summary>
-        /// Owner only. Spawns the next combo step. The step and its duration ride in the projectile's ai[], so every
-        /// client plays the same swing from the spawn packet.
+        /// Owner only. Spawns the next swing of the combo. Its position, cut and entry cut (the previous swing, whose
+        /// finish it winds up from) and its duration ride in the projectile's ai[], so every client plays the same
+        /// swing from the spawn packet.
         /// </summary>
         internal void StartSwing(Player player, IEntitySource source, int damage, float knockback, int facing)
         {
             GreatswordComboPlayer combo = player.GetModPlayer<GreatswordComboPlayer>();
-            int step = combo.NextStep;
-            GreatswordStep stepData = ComboSteps[step];
+            int position = combo.NextPosition;
+            GreatswordCut entryCut = combo.LastCut;
+            GreatswordCut cut = GreatswordMotion.NextCut(entryCut, position);
+            GreatswordStep swing = GreatswordMotion.BuildSwing(ComboSteps, cut, position);
 
-            float scaledTicks = BaseSwingTicks * stepData.DurationScale;
+            float scaledTicks = BaseSwingTicks * swing.DurationScale;
             int duration = Math.Max(GreatswordMotion.MinimumSwingTicks, CombinedHooks.TotalAnimationTime(scaledTicks, player, Item));
-            int packedSwing = Item.type * GreatswordMotion.ComboLength + step;
+
+            // ai[0] = weapon type * SwingCodeCount + swing code; the code is position + 4 * (cut + 3 * entry cut).
+            int cutCode = (int)cut + 3 * (int)entryCut;
+            int swingCode = position + GreatswordMotion.MaxComboSwings * cutCode;
+            int packedSwing = Item.type * GreatswordMotion.SwingCodeCount + swingCode;
 
             int projectileIndex = Projectile.NewProjectile(source, player.MountedCenter, Vector2.UnitX * facing,
                 ModContent.ProjectileType<GreatswordSwing>(), damage, knockback, player.whoAmI, packedSwing, 0f, duration);
@@ -299,36 +369,83 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             {
                 Main.projectile[projectileIndex].CritChance = (int)player.GetWeaponCrit(Item);
                 combo.ResetCombo();
+                combo.LastCut = cut;
             }
         }
     }
 
     public sealed class GreatswordComboPlayer : ModPlayer
     {
+        internal struct ComboState
+        {
+            internal int WeaponType;
+            internal int WeaponSlot;
+            internal int NextPosition;
+            internal ulong Expires;
+            internal bool SwingQueued;
+            internal GreatswordCut LastCut;
+        }
+
         private int weaponType;
         private int weaponSlot;
-        private int nextStep;
+        private int nextPosition;
         private ulong comboExpires;
         private bool swingQueued;
 
-        internal int NextStep
+        /// <summary>The last swing started, kept across combos (a dropped combo, a dodge, a weapon swap): the next swing
+        /// is its opposite. Starts as Slam, as if the blade rests low, so the first swing ever rises.</summary>
+        internal GreatswordCut LastCut { get; set; } = GreatswordCut.Slam;
+
+        // The mimic borrows this ModPlayer too. Save all combo state so its cuts and queued inputs cannot
+        // advance or consume the real player's combo (or another puppet's combo).
+        internal ComboState CaptureCombo()
+        {
+            ComboState state = new ComboState();
+            state.WeaponType = weaponType;
+            state.WeaponSlot = weaponSlot;
+            state.NextPosition = nextPosition;
+            state.Expires = comboExpires;
+            state.SwingQueued = swingQueued;
+            state.LastCut = LastCut;
+            return state;
+        }
+
+        internal void RestoreCombo(ComboState state)
+        {
+            weaponType = state.WeaponType;
+            weaponSlot = state.WeaponSlot;
+            nextPosition = state.NextPosition;
+            comboExpires = state.Expires;
+            swingQueued = state.SwingQueued;
+            LastCut = state.LastCut;
+        }
+
+        internal int NextPosition
         {
             get
             {
                 if (Player.HeldItem.type == weaponType && Player.selectedItem == weaponSlot && Main.GameUpdateCount <= comboExpires)
                 {
-                    return nextStep;
+                    return nextPosition;
                 }
 
                 return 0;
             }
         }
 
-        internal void CompleteSwing(int step)
+        /// <summary>A swing played to its end: the next tap within 45 ticks continues the combo, unless it was the
+        /// slam, which ends it (position back to 0).</summary>
+        internal void CompleteSwing(int position, GreatswordCut cut)
         {
             weaponType = Player.HeldItem.type;
             weaponSlot = Player.selectedItem;
-            nextStep = (step + 1) % GreatswordMotion.ComboLength;
+            nextPosition = position + 1;
+
+            if (cut == GreatswordCut.Slam)
+            {
+                nextPosition = 0;
+            }
+
             comboExpires = Main.GameUpdateCount + 45;
         }
 
@@ -348,7 +465,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         internal void ResetCombo()
         {
             weaponType = 0;
-            nextStep = 0;
+            nextPosition = 0;
         }
 
         public override void ResetEffects()
@@ -359,7 +476,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                 swingQueued = false;
             }
 
-            if (nextStep != 0 && (NextStep == 0 || dodging))
+            if (nextPosition != 0 && (NextPosition == 0 || dodging))
             {
                 ResetCombo();
             }
@@ -372,17 +489,20 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         }
     }
 
-    public sealed class GreatswordSwing : ModProjectile
+    public sealed class GreatswordSwing : ModProjectile, Projectiles.VFX.IBladeSlashSource
     {
         private static readonly SoundStyle SlamSound = new("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
         {
             Volume = 0.45f
         };
 
-        // ai[0] packs weapon type and combo step, ai[1] counts elapsed ticks, ai[2] is the step's duration.
-        // Facing rides in velocity.X. Everything a client needs to replay the swing is in the spawn packet.
-        private int WeaponType => (int)Projectile.ai[0] / GreatswordMotion.ComboLength;
-        private int Step => (int)Projectile.ai[0] % GreatswordMotion.ComboLength;
+        // ai[0] packs weapon type and swing code (Greatsword.StartSwing), ai[1] counts elapsed ticks, ai[2] is the
+        // swing's duration. Facing rides in velocity.X. Everything a client needs to replay the swing is in the spawn packet.
+        private int WeaponType => (int)Projectile.ai[0] / GreatswordMotion.SwingCodeCount;
+        private int SwingCode => (int)Projectile.ai[0] % GreatswordMotion.SwingCodeCount;
+        private int Position => SwingCode % GreatswordMotion.MaxComboSwings;
+        private GreatswordCut Cut => (GreatswordCut)(SwingCode / GreatswordMotion.MaxComboSwings % 3);
+        private GreatswordCut EntryCut => (GreatswordCut)(SwingCode / GreatswordMotion.MaxComboSwings / 3);
 
         private Vector2 hand;
         private Vector2 heel;
@@ -404,6 +524,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         private bool spawnedTrail;
         private bool strikeStarted;
         private bool holdResolved;
+        public Color SwordSlashColor { get; private set; }
+        public int SwordSlashSequence => 0;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
@@ -468,7 +590,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             }
 
             GreatswordStep[] steps = weapon.ComboSteps;
-            GreatswordStep step = steps[Step];
+            SwordSlashColor = swingItem.GetGlobalItem<tsorcInstancedGlobalItem>().slashColor;
+            GreatswordStep step = GreatswordMotion.BuildSwing(steps, Cut, Position);
+            float entryAngle = steps[(int)EntryCut].FinishAngle;
             float duration = Math.Max(GreatswordMotion.MinimumSwingTicks, Projectile.ai[2]);
             float age = Projectile.ai[1];
 
@@ -507,7 +631,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
             player.ChangeDir(facing);
             float progress = (age + 1f) / duration;
-            float angle = GreatswordMotion.Angle(steps, Step, progress);
+            float angle = GreatswordMotion.Angle(step, entryAngle, progress);
 
             // A slam that has met the ground stops there (slams cut toward larger angles) instead of sweeping on
             // through the floor to its authored finish.
@@ -569,16 +693,18 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                 strikeStarted = true;
                 if (isOwner)
                 {
-                    weapon.OnStrikeStart(Projectile, player, Step);
+                    weapon.OnStrikeStart(Projectile, player, Position);
                 }
             }
 
             if (strikeActive && !spawnedTrail && isOwner && weapon.UsesSlashTrail)
             {
-                // Broadsword-rework slash trail. ai[0] = identity + 1 makes it follow this projectile's rotation.
+                // ai[0] identifies this swing; Slash reads IBladeSlashSource for exact blade geometry/lifetime.
                 spawnedTrail = true;
+                float bladeDriven = weapon.UsesBladeSlash ? 1f : 0f;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                    ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Projectile.owner, Projectile.identity + 1);
+                    ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Projectile.owner,
+                    Projectile.identity + 1, bladeDriven);
             }
 
             if (!Main.dedServ)
@@ -616,7 +742,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             }
 
             GreatswordComboPlayer combo = player.GetModPlayer<GreatswordComboPlayer>();
-            combo.CompleteSwing(Step);
+            combo.CompleteSwing(Position, Cut);
             bool queued = combo.ConsumeQueuedSwing();
             Projectile.Kill();
 
@@ -653,6 +779,14 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             }
 
             return hand + offset.RotatedBy(drawRotation);
+        }
+
+        public bool TryGetSwordSlashPose(out Vector2 bladeHand, out Vector2 bladeHeel, out Vector2 bladeTip)
+        {
+            bladeHand = hand;
+            bladeHeel = heel;
+            bladeTip = tip;
+            return poseReady && strikeActive && !holdResolved && float.IsNaN(slamStopAngle);
         }
 
         private void TryResolveSlam(Player player, Greatsword weapon, bool isOwner, bool requireGround, float currentAngle)
@@ -716,7 +850,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
             if (Main.player[Projectile.owner].HeldItem.ModItem is Greatsword weapon)
             {
-                modifiers.SourceDamage *= weapon.ComboSteps[Step].DamageMultiplier;
+                GreatswordStep swing = GreatswordMotion.BuildSwing(weapon.ComboSteps, Cut, Position);
+                modifiers.SourceDamage *= swing.DamageMultiplier;
             }
         }
 
@@ -724,7 +859,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
             if (Main.player[Projectile.owner].HeldItem.ModItem is Greatsword weapon)
             {
-                weapon.OnSwingHitNPC(Projectile, target, Step);
+                weapon.OnSwingHitNPC(Projectile, target, Position);
             }
         }
 

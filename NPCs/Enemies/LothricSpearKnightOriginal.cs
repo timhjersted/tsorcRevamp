@@ -135,17 +135,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             Player player = Main.player[NPC.target];
-            //when close to enemy, grapple and mobility hindered
-            UsefulFunctions.DustRing(NPC.Center, 300, DustID.YellowTorch, 5, 2f);
-            if (NPC.Distance(player.Center) < 300)
-            {
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
-            }
-            if (Main.hardMode && NPC.Distance(player.Center) < 300)
-            {
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-            }
-
             float acceleration = 0.02f;
             float top_speed = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ComputeHealthScaledSpeed(NPC, 2f);
             float braking_power = 0.2f; //Breaking power to slow down after moving above top_speed

@@ -10,7 +10,7 @@ using Terraria.ModLoader.IO;
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
     /// <summary>
-    /// Lets enemies fight a friendly puppet (the Mimic Tear) instead of its owner.
+    /// Lets enemies fight a friendly puppet (the Soul Mimic) instead of its owner.
     ///
     /// Every enemy AI in Terraria — vanilla, FighterAI, SmartFighter4, PuppetNPC — targets a PLAYER through
     /// <c>Main.player[npc.target]</c>. Rewriting all of them to target an NPC is impossible, so this uses the same
@@ -34,6 +34,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>NPC index of the friendly puppet this enemy is fighting instead of its target player, or -1.</summary>
         public int DecoyPuppetIndex = -1;
+
+        // Server-only deadlines. Clients only need the selected decoy, already sent through extra AI.
+        internal ulong DecoyExpiresAt;
+        internal ulong DecoyAllowedAfter;
 
         /// <summary>Ticks this NPC has existed. Bosses only become decoy-able after
         /// <see cref="FriendlyPuppetAggroSystem.BossAggroDelayTicks"/>, so their opening setup runs against the real player.</summary>
@@ -72,11 +76,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>How often the server re-decides who each enemy is fighting.</summary>
         private const int AggroIntervalTicks = 30;
 
+        private const int DecoyCommitTicks = 5 * 60;
+        private const int PlayerCommitTicks = 5 * 60;
+        private const int AttackFinishGraceTicks = 2 * 60;
+
         /// <summary>Puppets further than this from an enemy (30 tiles) are never picked.</summary>
         private const float AggroRange = 30f * 16f;
 
-        /// <summary>The puppet must be this much closer than the player (3 tiles) to steal attention, and the player
-        /// this much closer to steal it back — hysteresis, so enemies don't flip targets every check. ESTIMATE.</summary>
+        /// <summary>The puppet must be 3 tiles closer to acquire attention. A timed commitment then prevents
+        /// distance jitter from switching targets until the decoy window ends.</summary>
         private const float AggroSwitchMargin = 3f * 16f;
 
         /// <summary>A boss can't be drawn onto a puppet for its first 5 seconds: bosses set up arenas, intro positions
@@ -97,7 +105,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         }
 
         /// <summary>Server (and single player): every <see cref="AggroIntervalTicks"/>, each enemy (bosses only once 5 s old) picks either
-        /// its target player or the nearest aggro-drawing puppet, whichever is meaningfully closer.</summary>
+        /// its target player or a closer puppet. A puppet gets 5 seconds, followed by 5 seconds on real players.</summary>
         public override void PostUpdateNPCs()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -148,18 +156,25 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     Player targetPlayer = Main.player[enemy.target];
                     float playerDistance = float.MaxValue;
+                    bool hasLivingPlayer = targetPlayer.active && !targetPlayer.dead;
 
-                    if (targetPlayer.active && !targetPlayer.dead)
+                    if (hasLivingPlayer)
                     {
                         playerDistance = Vector2.Distance(enemy.Center, targetPlayer.Center);
                     }
 
                     FriendlyPuppetNPC nearestPuppet = null;
+                    FriendlyPuppetNPC currentPuppet = null;
                     float nearestDistance = AggroRange;
 
                     foreach (FriendlyPuppetNPC puppet in EligiblePuppets)
                     {
                         float puppetDistance = Vector2.Distance(enemy.Center, puppet.NPC.Center);
+
+                        if (puppet.NPC.whoAmI == aggro.DecoyPuppetIndex && puppetDistance < AggroRange)
+                        {
+                            currentPuppet = puppet;
+                        }
 
                         if (puppetDistance < nearestDistance)
                         {
@@ -168,26 +183,38 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         }
                     }
 
-                    if (nearestPuppet != null)
+                    tsorcRevampGlobalNPC combat = enemy.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                    bool attackInProgress = combat.AttackTelegraphing || combat.AttackCommitted;
+                    ulong now = Main.GameUpdateCount;
+                    bool decoyWindowOpen = now < aggro.DecoyExpiresAt;
+                    bool finishingAttack = attackInProgress && now < aggro.DecoyExpiresAt + AttackFinishGraceTicks;
+
+                    // Keep the SAME puppet through its commitment, even if another mimic moves closer. Let a
+                    // telegraphed attack finish for up to 2 extra seconds, so continuous attacks cannot lock aggro forever.
+                    if (hasLivingPlayer && currentPuppet != null && (decoyWindowOpen || finishingAttack))
                     {
-                        // Sticky: once on the puppet, it stays until the player is a margin closer.
-                        bool alreadyOnPuppet = aggro.DecoyPuppetIndex == nearestPuppet.NPC.whoAmI;
-                        float margin = AggroSwitchMargin;
-
-                        if (alreadyOnPuppet)
-                        {
-                            margin = -AggroSwitchMargin;
-                        }
-
-                        if (nearestDistance + margin < playerDistance)
-                        {
-                            newDecoy = nearestPuppet.NPC.whoAmI;
-                        }
+                        newDecoy = currentPuppet.NPC.whoAmI;
+                    }
+                    else if (hasLivingPlayer && aggro.DecoyPuppetIndex < 0 && now >= aggro.DecoyAllowedAfter
+                        && !attackInProgress && nearestPuppet != null && nearestDistance + AggroSwitchMargin < playerDistance)
+                    {
+                        newDecoy = nearestPuppet.NPC.whoAmI;
                     }
                 }
 
                 if (newDecoy != aggro.DecoyPuppetIndex)
                 {
+                    if (newDecoy >= 0)
+                    {
+                        aggro.DecoyExpiresAt = Main.GameUpdateCount + DecoyCommitTicks;
+                    }
+                    else
+                    {
+                        // Applies to every mimic, not just the last one: multiple summons cannot chain-taunt.
+                        aggro.DecoyAllowedAfter = Main.GameUpdateCount + PlayerCommitTicks;
+                        enemy.TargetClosest(false);
+                    }
+
                     aggro.DecoyPuppetIndex = newDecoy;
                     enemy.netUpdate = true;
                 }
@@ -277,7 +304,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             FriendlyPuppetNPC puppet = FriendlyPuppetAggroSystem.DecoyPuppet;
 
-            // dontTakeDamage covers the puppet's own i-frames (the Mimic Tear's dodge roll, its summon rise): the hit
+            // dontTakeDamage covers the puppet's own i-frames (the Soul Mimic's dodge roll, its summon rise): the hit
             // is still swallowed, it just lands on nothing.
             // The strike's HitEffect starts the puppet's shared post-hit immunity.
             if (puppet.PostHitImmunity <= 0 && !puppet.NPC.dontTakeDamage)

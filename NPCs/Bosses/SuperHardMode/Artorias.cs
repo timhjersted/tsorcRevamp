@@ -46,6 +46,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int BodyArmorItemType => ModContent.ItemType<ArtoriasArmor>();
         protected override int LegsArmorItemType => ModContent.ItemType<ArtoriasGreaves>();
         protected override float PuppetDrawScale => 1.1f;
+        protected override bool HasBladeSlashVFX => true;
+        protected override Color BladeSlashVFXColor => new Color(35, 145, 255);
+        protected override Vector2 BladeSlashHeelNorm => new Vector2(40f / 96f, 54f / 96f);
+        protected override Vector2 BladeSlashTipNorm => new Vector2(95f / 96f, 1f / 96f);
         protected override Color PuppetSkinColor => new Color(20, 23, 38);
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyArtoriasGreatsword>();
@@ -732,15 +736,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             base.OnLeapSlamLanded(step);
         }
 
-        // Leap landings' abyss column (Ground Pound, Hollow Pounce, Skyward Lunge): 180px footprint, 200px eruption
-        // height, so the tall core stands ~224px (14 tiles) over a ~87px-wide smoke/debuff core. The old 86x68 fracture
-        // read as a puff at his feet.
+        // Leap landings: the persistent column stretches its 200px input to 404px above the floor, with a 22px lower
+        // fade. Its ~87px-wide core deals 120 Expert damage until the last 24t fade; the base stays the same size.
         protected const float LandingColumnWidth = 180f;
         protected const float LandingColumnHeight = 200f;
+        const int LandingColumnDamage = 120;
 
-        /// <summary>Ground fracture at <paramref name="position"/> (the feet). Damage 0 = cosmetic; above 0 the
-        /// projectile's hitbox covers exactly the eruption it draws. <paramref name="column"/> = the persistent 90t
-        /// abyss column (smoke + Weight of Shadow) instead of the quick 18t fracture.</summary>
+        /// <summary>Ground fracture at <paramref name="position"/> (the feet). Damage 0 keeps quick fractures cosmetic;
+        /// persistent columns use LandingColumnDamage unless a positive damage is supplied. Their hitbox follows the
+        /// rising eruption. <paramref name="column"/> selects the 90t smoke/Weight of Shadow column over the 18t fracture.</summary>
         protected void SpawnLandingImpactVFX(Vector2 position, float width, float height, int damage = 0, bool column = false)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -752,6 +756,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (column)
             {
                 columnFlag = 1f;
+
+                if (damage <= 0)
+                {
+                    damage = EnemyDamage.Projectile(LandingColumnDamage);
+                }
             }
 
             Projectile.NewProjectile(NPC.GetSource_FromThis(), position, Vector2.Zero,
@@ -763,7 +772,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, PitchVariance = 0.2f }, NPC.Center);
             TryMeleeHit();
-            SpawnArtoriasSwordArc(GetMeleeSwingTicks(MeleeAttackTicks), hitWindowEnd: MeleeAttackCurve.HitWindowEnd);
         }
 
         protected override void DoRangedAttack()
@@ -795,61 +803,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
         }
 
-        // ── Melee sweep trails (the player Artorias Greatsword's Slash.fx ribbon) ─────────────────
-        // Artorias's greatsword art is 70x70 with the default (0.10, 0.85) grip, so its farthest corner is
-        // sqrt(63^2 + 59.5^2) = 86.7px from the hand, x1.1 PuppetDrawScale = ~95px on screen: the hand-to-tip
-        // reach the trail band and the blade hit checks are both sized from.
+        // Keep the established combat reach independent of the rendered 96x96 sword. The shared
+        // Slash renderer measures its own final sprite geometry, including the puppet draw scale.
         protected const float ArtoriasSwordArcRadius = 95f;
-        // Mirrors PuppetNPC.LeapSlamDownswingTicks (private there): Ground Pound's landing downswing length.
-        const int LandingSwordArcTicks = 10;
-        // Artorias's void palette: his thrust sheath and other abyss blade effects.
-        protected static readonly Color SlashDark = new(22, 6, 36);
-        protected static readonly Color SlashMid = new(143, 42, 190);
-        protected static readonly Color SlashCore = new(220, 166, 236);
-        bool _landingSwordArcSpawned;
-
-        /// <summary>Spawns one ArtoriasBladeSlash (the player Artorias Greatsword's Slash.fx ribbon) for ONE real sword
-        /// sweep. Call it on the first tick the blade sweeps; every client then traces the live hand and blade angle,
-        /// so the ribbon follows the actual cut, in whichever direction it travels.</summary>
-        /// <param name="duration">The sweep's own tick count; the ribbon stops growing and fades as it ends.</param>
-        /// <param name="hitWindowEnd">Step fraction after which the blade is harmless; 0 = live all step.</param>
-        protected void SpawnArtoriasSwordArc(int duration, float hitWindowEnd = 0f)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            duration = Math.Max(1, duration);
-
-            // Fade over the last 5 ticks, or from the step's HitWindowEnd onward when it has one, so the
-            // ribbon is dissolving once the blade stops being a hitbox.
-            float fadeOutFraction = Math.Min(0.35f, 5f / duration);
-            if (hitWindowEnd > 0f)
-            {
-                fadeOutFraction = 1f - hitWindowEnd;
-            }
-
-            int fadeStartTick = (int)Math.Round(duration * (1f - fadeOutFraction));
-
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<ArtoriasBladeSlash>(), 0, 0f, Main.myPlayer,
-                NPC.whoAmI, duration, fadeStartTick);
-        }
-
-        /// <summary>Live hand, blade direction and hand-to-tip reach for ArtoriasBladeSlash (the puppet accessors are protected).</summary>
-        internal void GetBladeSlashPose(out Vector2 pivot, out Vector2 direction, out float reach)
-        {
-            pivot = PuppetHandPosition;
-            direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
-            reach = ArtoriasSwordArcRadius;
-        }
-
-        protected override void OnMeleeComboStarted(MeleeCombo combo)
-        {
-            base.OnMeleeComboStarted(combo);
-            _landingSwordArcSpawned = false;
-        }
+        protected static readonly Color SlashDark = new(4, 18, 52);
+        protected static readonly Color SlashMid = new(35, 145, 255);
+        protected static readonly Color SlashCore = new(190, 230, 255);
 
         protected override void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
@@ -883,34 +842,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
             }
 
-            // One trail per damaging sweep, on the step's first tick (elapsed reads 0 once per step).
-            // Thrusts (JoustDash) keep the sheath in Artorias.DrawSwordSlashVFX, and Ground Pound's LeapSlam
-            // waits for its landing downswing below, because the jump itself is a harmless carry.
-            bool sweepMotion = step.Motion == ComboMotion.OverheadArc || step.Motion == ComboMotion.UnderhandArc
-                || step.Motion == ComboMotion.HorizontalSweep || step.Motion == ComboMotion.VerticalChop
-                || step.Motion == ComboMotion.GroundSlam || step.Motion == ComboMotion.Spin;
-            if (elapsed != 0 || step.DamageMult <= 0f || !sweepMotion)
-            {
-                return;
-            }
-
-            SpawnArtoriasSwordArc(total, step.HitWindowEnd);
-        }
-
-        protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
-        {
-            base.OnLandingTimedLeapSlamSwingTick(step, progress);
-            if (_landingSwordArcSpawned || step.DamageMult <= 0f)
-            {
-                return;
-            }
-
-            // The downswing can begin a few frames before touchdown (predicted landing), so the arc only
-            // covers what is left of it. The 5-tick floor keeps a same-frame landing visible.
-            float remainingFraction = 1f - MathHelper.Clamp(progress, 0f, 1f);
-            int remainingSwingTicks = Math.Max(5, (int)Math.Ceiling(remainingFraction * LandingSwordArcTicks));
-            SpawnArtoriasSwordArc(remainingSwingTicks);
-            _landingSwordArcSpawned = true;
         }
     }
 
@@ -2012,7 +1943,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const float SlashQuadThrustHeightMult = 0.365f;
 
         /// <summary>Draws the VoidSlashVFX thrust sheath over the real sword during stabs. Sweeps are NOT
-        /// drawn here: they are ArtoriasBladeSlash trails (ArtoriasSwordsman.SpawnArtoriasSwordArc).
+        /// drawn here: the shared Slash renderer samples the final held sword's sprite geometry.
         /// Purely visual — TickBladeHit carries the actual hitbox regardless of what this draws.</summary>
         void DrawSwordSlashVFX()
         {
@@ -2025,11 +1956,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             // IsMainSwordThrust is only true during the thrust's own attack phase.
             if (IsMainSwordThrust)
             {
-                Vector2 pivot = PuppetHandPosition;
-                Vector2 direction = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
-                // The 70x70 greatsword's authored handle-to-tip diagonal is about 87px; ordinary
-                // collision reach can be shorter, but the sheath must still meet the visible blade.
-                float reach = Math.Max(86f, PuppetActiveBladeReach);
+                if (!TryGetRenderedBladePose(out Vector2 pivot, out _, out Vector2 tip))
+                {
+                    return;
+                }
+
+                Vector2 blade = tip - pivot;
+                Vector2 direction = blade.SafeNormalize(new Vector2(NPC.direction, 0f));
+                float reach = blade.Length();
                 float progress = PuppetWeaponAnimationProgress;
                 Vector2 center = pivot + direction * (reach * 0.55f);
                 float rotation = direction.ToRotation();
@@ -2717,7 +2651,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
-            SpawnArtoriasSwordArc(JumpSlashAttackTicks, hitWindowEnd: JumpSlashCurve.HitWindowEnd);
+            SpawnBladeSlashVFX(JumpSlashAttackTicks, hitWindowEnd: JumpSlashCurve.HitWindowEnd);
             // The swing often starts mid-air (target in reach), so the ground AOE is queued for real touchdown in AI.
             _jumpSlashImpactPending = true;
         }
@@ -2765,7 +2699,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TryMeleeHit(reach: ArtoriasSwordArcRadius);
 
             int flightTicks = (int)Math.Ceiling(2f * FlipSlashLaunchUpSpeed / 0.3f);
-            SpawnArtoriasSwordArc(flightTicks);
+            SpawnBladeSlashVFX(flightTicks);
         }
 
         protected override void OnFlipSlashLand()
@@ -2782,7 +2716,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int strikeTicks = FlipSlashStrikeEaseInTicks + FlipSlashStrikeEaseOutTicks;
             float strikeHitWindowEnd = FlipSlashStrikeLiveTicks / (float)strikeTicks;
-            SpawnArtoriasSwordArc(strikeTicks, hitWindowEnd: strikeHitWindowEnd);
+            SpawnBladeSlashVFX(strikeTicks, hitWindowEnd: strikeHitWindowEnd);
         }
 
         // The blade meets the ground on the strike's peak tick, so the impact and the orb release fire
@@ -2921,7 +2855,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override void DoAbyssSlashFire(int swipeIndex)
         {
             // Both variants release on a real AbyssSlashSwipe sweep, the orb finisher included.
-            SpawnArtoriasSwordArc(AbyssSlashSwipeTicks, hitWindowEnd: AbyssSlashSwipeCurve.HitWindowEnd);
+            SpawnBladeSlashVFX(AbyssSlashSwipeTicks, hitWindowEnd: AbyssSlashSwipeCurve.HitWindowEnd);
 
             if (swipeIndex == 0)
             {
@@ -3046,7 +2980,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.15f }, NPC.Center);
             TryMeleeHit(reach: 100f);
-            SpawnArtoriasSwordArc(TendrilSwingTicks, hitWindowEnd: TendrilSwingCurve.HitWindowEnd);
+            SpawnBladeSlashVFX(TendrilSwingTicks, hitWindowEnd: TendrilSwingCurve.HitWindowEnd);
         }
 
         // ── Aerial answers: Rising Uppercut + Skyward Lunge ──────────────────────────────────────
@@ -3707,7 +3641,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             PlayAerialStageStartCue(AerialStage.Strike);
             TryMeleeHit(reach: ArtoriasSwordArcRadius);
 
-            SpawnArtoriasSwordArc(curve.TotalTicks, curve.HitWindowEnd);
+            SpawnBladeSlashVFX(curve.TotalTicks, curve.HitWindowEnd);
         }
 
         void BeginAerialLanding()
@@ -3717,7 +3651,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (_lastAerialWasLunge)
             {
                 _aerialLandingTicks = SkywardLandingTicks;
-                // Skyward Lunge comes down in the same abyss column as the leap slams (cosmetic + Weight of Shadow, no hit).
+                // Skyward Lunge comes down in the same damaging abyss column as the leap slams, with Weight of Shadow.
                 // Server-only spawn (inside the helper); a client adopting Landing from a snapshot gets the synced projectile.
                 SpawnLandingImpactVFX(NPC.Bottom, LandingColumnWidth, LandingColumnHeight, column: true);
             }
@@ -4081,7 +4015,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (elapsed == 0)
             {
-                SpawnArtoriasSwordArc(total);
+                SpawnBladeSlashVFX(total);
             }
 
             if (Main.dedServ)
@@ -4229,7 +4163,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (elapsed == 0)
             {
-                SpawnArtoriasSwordArc(total);
+                SpawnBladeSlashVFX(total);
             }
 
             if (Main.dedServ)
@@ -4295,7 +4229,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             if (elapsed == 0)
             {
-                SpawnArtoriasSwordArc(total);
+                SpawnBladeSlashVFX(total);
             }
 
             if (Main.dedServ)

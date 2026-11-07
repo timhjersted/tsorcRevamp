@@ -64,7 +64,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private float _lungeDistance;
         private Vector2 _lungeVelocityThisTick;
         private bool _edgeProjectileReleased;
-        private bool _falseRetreatArcSpawned;
 
         protected override string InvaderTitle => "Dark Knight";
         protected override bool AnnounceInvasion => false;
@@ -128,12 +127,46 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool UseLogicalMeleeTelegraphs => true;
         protected override bool UseCompositeArmSwing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
-        // VanillaSwordArc owns these sword cuts. The legacy Slash.png overlay would otherwise
-        // double-draw a second, disconnected crescent over the blade-aligned effect.
-        protected override bool HasSlashVFX => false;
-        protected override Color SlashVFXColor => new Color(125, 55, 205);
-        protected override float SlashVFXOpacity => 0.48f;
-        protected override float SlashVFXScale => 0.58f;
+        // The level sword uses a +45-degree swing pose. Remove that wrist angle from the arm
+        // during the lunge so the shoulder, hand and blade extend straight toward the target.
+        protected override float MeleeCompositeArmRotationOffset => UmbralLungePoseActive ? -MathHelper.PiOver4 : 0f;
+        protected override int AfterimageSampleLimit => 10;
+        protected override float AfterimageOpacity => 0.35f;
+
+        private bool UmbralLungePoseActive => ActiveMeleeComboName == UmbralLungeName
+            && (Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause
+                || Phase == AttackPhase.MeleeComboRecovery);
+        protected override bool HasSwordArcVFX => true;
+        protected override Color SwordArcVFXColor
+        {
+            get
+            {
+                if (ActiveMeleeComboName == EdgeOfNightName)
+                {
+                    return new Color(155, 70, 245);
+                }
+
+                return new Color(100, 48, 190);
+            }
+        }
+
+        protected override void ModifySwordArcVFX(MeleeComboStep step, VanillaSwordArcSettings settings)
+        {
+            if (ActiveMeleeComboName != EdgeOfNightName)
+            {
+                return;
+            }
+
+            settings.Opacity = 0.7f;
+            settings.AfterimageOpacity = 0.8f;
+            settings.BodyOpacity = 0.9f;
+            settings.CoreOpacity = 0.52f;
+            settings.DustCount = 2;
+            settings.DustScale = 1f;
+            settings.DustTangentialSpeed = 1.7f;
+        }
 
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 100;
@@ -389,6 +422,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 1;
+            NPCID.Sets.TrailCacheLength[NPC.type] = 12;
+            NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
@@ -466,7 +501,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             // Preserve the final authored dash velocity through the transition tick, then clear it
             // before recovery so the knight stops at the end of the piercing pass.
             if (Phase != AttackPhase.MeleeComboAttack)
+            {
                 _lungeVelocityThisTick = Vector2.Zero;
+                AfterimageTicks = 0;
+            }
 
             base.AI();
             UpdatePressureCounter();
@@ -477,6 +515,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 && _lungeVelocityThisTick != Vector2.Zero)
             {
                 NPC.velocity.X = _lungeVelocityThisTick.X;
+                AfterimageTicks = 2;
             }
         }
 
@@ -506,7 +545,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.OnMeleeComboStarted(combo);
             _lungeVelocityThisTick = Vector2.Zero;
             _edgeProjectileReleased = false;
-            _falseRetreatArcSpawned = false;
 
             if (combo.Name == FalseRetreatName)
             {
@@ -525,7 +563,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 }
             }
 
-            if (combo.Name == UmbralLungeName && NPC.HasValidTarget)
+            if (combo.Name == UmbralLungeName && NPC.HasValidTarget
+                && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player target = Main.player[NPC.target];
                 _lungeDirection = new Vector2(target.Center.X < NPC.Center.X ? -1f : 1f, 0f);
@@ -533,7 +572,34 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             if (Main.netMode == NetmodeID.Server)
+            {
                 NPC.netUpdate = true;
+            }
+        }
+
+        protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            if (combo.Name != UmbralLungeName || Main.dedServ || elapsed % 2 != 0)
+            {
+                return;
+            }
+
+            // Gather purple motes onto the blade over the existing 36-tick tell; the dash's
+            // cached body silhouettes take over at release without extending its damage window.
+            float progress = elapsed / (float)System.Math.Max(1, total);
+            float radius = MathHelper.Lerp(22f, 5f, progress);
+            Vector2 tip = PuppetWeaponTipPosition(ComboReachBase * 0.7f * step.ReachMult);
+
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(radius, radius);
+                Vector2 velocity = -offset * 0.12f;
+                Dust dust = Dust.NewDustPerfect(tip + offset, DustID.Shadowflame, velocity,
+                    90, new Color(145, 70, 225), 0.9f);
+                dust.noGravity = true;
+            }
+
+            Lighting.AddLight(tip, 0.18f, 0.05f, 0.3f);
         }
 
         protected override bool ShouldContinueMeleeCombo(
@@ -551,42 +617,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override void OnMeleeComboAttackTick(
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
-            // The crescent is a visual companion for the rendered blade, never a second attack.
-            // It starts from the live sword pose, follows this NPC's motion, and uses the exact
-            // Weighted clock as the swing; its fade begins when the real blade disarms.
-            if (elapsed == 0
-                && step.DamageMult > 0f
-                && IsNightEdgeArcSwing(step.Motion)
-                && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                SpawnNightEdgeSwingArc(combo.Name, step, total);
-            }
-
-            // False Retreat carries the sword harmlessly through its leap. Once the landing-timed
-            // downswing has actually begun, add its short arc; a pure landing is handled below in
-            // OnLeapSlamLanded, where the exact impact pose is still available.
-            if (combo.Name == FalseRetreatName
-                && step.Motion == ComboMotion.LeapSlam
-                && !_falseRetreatArcSpawned
-                && Main.netMode != NetmodeID.MultiplayerClient
-                && TryGetMeleeSlashTrailPose(out _, out _, out _, out _, out _,
-                    out _, out _, out _))
-            {
-                _falseRetreatArcSpawned = true;
-                SpawnNightEdgeSwingArc(combo.Name, step, LeapSlamImpactArcTicks, impactSlam: true);
-            }
-
             if (combo.Name == UmbralLungeName && step.Motion == ComboMotion.JoustDash)
             {
                 // The 36-tick tell commits the facing direction, but the travel distance is solved
                 // again on release. A player who creates space during the tell can therefore draw
                 // out a much longer lunge without causing an unreadable last-frame re-face.
-                if (elapsed == 0 && NPC.HasValidTarget)
+                if (elapsed == 0 && NPC.HasValidTarget && Main.netMode != NetmodeID.MultiplayerClient)
+                {
                     ResolveUmbralLungeDistance(Main.player[NPC.target]);
+                    NPC.netUpdate = true;
+                }
 
                 float totalWeight = 0f;
+
                 for (int tick = 0; tick < total; tick++)
+                {
                     totalWeight += LungeSpeedWeight(tick, total);
+                }
 
                 float speed = _lungeDistance * LungeSpeedWeight(elapsed, total) / Math.Max(0.001f, totalWeight);
                 _lungeVelocityThisTick = _lungeDirection * speed;
@@ -603,88 +650,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 _edgeProjectileReleased = true;
                 ReleaseEdgeOfNight();
             }
-        }
-
-        private static bool IsNightEdgeArcSwing(ComboMotion motion)
-            => motion == ComboMotion.OverheadArc
-                || motion == ComboMotion.UnderhandArc;
-
-        private const int LeapSlamImpactArcTicks = 10;
-
-        protected override void OnLeapSlamLanded(MeleeComboStep step)
-        {
-            if (ActiveMeleeComboName == FalseRetreatName
-                && step.Motion == ComboMotion.LeapSlam
-                && !_falseRetreatArcSpawned
-                && Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                // SpawnForNPC samples the impact pose before the combo changes phase; the VFX
-                // retains it for the short fade rather than falling back to the NPC centre.
-                _falseRetreatArcSpawned = true;
-                SpawnNightEdgeSwingArc(FalseRetreatName, step, LeapSlamImpactArcTicks, impactSlam: true);
-            }
-        }
-
-        private void SpawnNightEdgeSwingArc(string comboName, MeleeComboStep step, int total,
-            bool impactSlam = false)
-        {
-            float authoredSweep = comboName switch
-                {
-                    BlacksteelCutName or KnightsMeasureName => MathHelper.ToRadians(225f),
-                    RisingReversalName or FalseRetreatName => MathHelper.ToRadians(220f),
-                    EdgeOfNightName => MathHelper.ToRadians(240f),
-                    _ => MathHelper.ToRadians(220f),
-                };
-            if (step.Motion == ComboMotion.UnderhandArc)
-                authoredSweep = -authoredSweep;
-
-            bool signatureSwing = comboName == EdgeOfNightName;
-            float hitWindowEnd = step.HitWindowEnd > 0f ? step.HitWindowEnd : 0.5f;
-            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
-            int arcDuration = impactSlam ? total + 2 : total;
-            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
-            {
-                Texture = VanillaSwordArcTexture.NightsEdge,
-                Easing = VanillaSwordArcEasing.Weighted,
-                WeightedEaseInTicks = step.EaseInTicks,
-                WeightedEaseOutTicks = step.EaseOutTicks,
-                WeightedEaseOutDecay = step.EaseOutDecay,
-                Duration = arcDuration,
-                StartAngle = PuppetWeaponDirection.ToRotation(),
-                SweepAngle = authoredSweep * NPC.direction,
-                Radius = Math.Max(72f, bladeReach * 1.08f),
-                Opacity = signatureSwing ? 0.7f : 0.42f,
-                FadeInFraction = 0.04f,
-                // The ten-tick landing downswing stays solid while its blade check is live,
-                // then fades across the two extra follow-through frames.
-                FadeOutFraction = impactSlam ? 0.25f : 1f - hitWindowEnd,
-                AfterimageLag = MathHelper.PiOver4,
-                AfterimageOpacity = signatureSwing ? 0.8f : 0.58f,
-                BodyOpacity = signatureSwing ? 0.9f : 0.68f,
-                CoreOpacity = signatureSwing ? 0.52f : 0.28f,
-                TipSparkleOpacity = signatureSwing ? 0.66f : 0.28f,
-                DarkColor = new Color(24, 8, 48),
-                BodyColor = signatureSwing ? new Color(155, 70, 245) : new Color(100, 48, 190),
-                CoreColor = signatureSwing ? new Color(225, 170, 255) : new Color(165, 115, 230),
-                DustType = DustID.Shadowflame,
-                DustColor = signatureSwing ? new Color(180, 90, 255) : new Color(120, 65, 210),
-                DustCount = signatureSwing ? 2 : 1,
-                DustAlpha = 90,
-                DustScale = signatureSwing ? 1f : 0.76f,
-                DustRadiusFraction = 0.93f,
-                DustAngularSpread = 0.48f,
-                DustTangentialSpeed = signatureSwing ? 1.7f : 1.05f,
-                DustVelocityJitter = 0.28f,
-                DustInheritAnchorVelocity = 0.15f,
-                DrawTipSparkle = false,
-                TrackPuppetBlade = true,
-                EnableCollision = false,
-            };
-
-            // TrackPuppetBlade reads the animated hand position each frame, so no static offset
-            // can accumulate when the composite arm changes pose.
-            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
-                settings, Vector2.Zero, hostile: false);
         }
 
         private void ResolveUmbralLungeDistance(Player target)

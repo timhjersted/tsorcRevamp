@@ -10,7 +10,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// Great Red Knight's airborne-only Cinder Rain drop. Destined Death flame art, blood/wraith
     /// breakup, its matching debuff, and a synchronized expiry altitude distinguish it from poison rain.
     /// </summary>
-    public class CinderRainDrop : ModProjectile
+    public class DestinedDeathBreath : ModProjectile
     {
 
         public override void SetDefaults()

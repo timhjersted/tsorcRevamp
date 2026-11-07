@@ -1339,7 +1339,7 @@ namespace tsorcRevamp.NPCs
                 float waveDrift = (wave - (CinderRainWaveCount - 1) * 0.5f) * 0.12f;
                 Vector2 velocity = new(Main.rand.NextFloat(-0.65f, 0.65f) + waveDrift, 7.1f);
                 Projectile.NewProjectile(npc.GetSource_FromThis(), origin, velocity,
-                    ModContent.ProjectileType<CinderRainDrop>(), EnemyDamage.Projectile(damage), 2f, Main.myPlayer,
+                    ModContent.ProjectileType<DestinedDeathBreath>(), EnemyDamage.Projectile(damage), 2f, Main.myPlayer,
                     ai0: LockedTarget.Y - CinderRainExpireHeight);
             }
         }

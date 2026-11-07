@@ -87,16 +87,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override int TeleportDustCount => 20;
         protected override Color PuppetSkinColor => Color.Black;
         protected override bool HasSpectralOverlay => true;
+        protected override bool UseHollowWarriorGhostEffect => true;
         protected override bool SpectralKeepsArmorDyes => true;
         protected override float SpectralOverlayScale => 1f;
         protected override Color SpectralOverlayColor => new Color(190, 200, 220);
         protected override float SpectralCoreTintStrength => 0.3f;
         protected override float SpectralCoreOpacity => 0.75f;
-        protected override Color SpectralHaloColor => new Color(120, 130, 160);
-        protected override int SpectralHaloCopyCount => 6;
-        protected override float SpectralHaloRadius => 3f;
-        protected override float SpectralHaloOpacity => 0.22f;
-        protected override float SpectralTrailOpacity => 0.35f;
 
 
         // Ghost Hew: 219-degree envelope / ~175 live; tell 26, Weighted 10/40 k6,

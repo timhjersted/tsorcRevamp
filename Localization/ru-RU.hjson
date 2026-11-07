@@ -2255,6 +2255,11 @@ Mods: {
 				Tooltip: Уменьшает получаемый урон
 			}
 
+			DevDefenseRing: {
+				// DisplayName: Dev Defense Ring
+				// Tooltip: For developer testing only
+			}
+
 			AbyssArrow: {
 				DisplayName: Стрела бездны
 				Tooltip: Накладывает инферно бездны
@@ -6665,8 +6670,18 @@ Mods: {
 				// DisplayName: Gravelord Sword
 				/* Tooltip:
 					'''
-					Chains an overhead cut and a rising cut into a crushing slam
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
 					The slam deals {0}x damage
+					''' */
+			}
+
+			RoyalGreatsword: {
+				// DisplayName: Royal Greatsword
+				/* Tooltip:
+					'''
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
+					The slam deals {0}x damage
+					An old royal blade, worn by Blaidd's battles
 					''' */
 			}
 
@@ -7551,7 +7566,7 @@ Mods: {
 					'''
 					Summons a Soul Mimic: a liquid-metal copy of you
 					It fights with the weapon you are holding and those in hotbar slots 1 and 2
-					It has your health, defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
+					It has {3} times your max health, your defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
 					Takes all your summoner slots, up to {0}
 					Lasts {1} minutes, then dissolves
 					Cannot be used again for {2} minutes (resets on death)
@@ -9524,9 +9539,9 @@ Mods: {
 				// DisplayName: Artorias Greatsword
 				/* Tooltip:
 					'''
-					Tap: a three-swing combo; each cut throws an abyss crescent for {0} mana
+					Tap: alternating overhead and rising cuts, opening opposite your last swing; each cut throws an abyss crescent for {0} mana
 					Crescents deal {1}% of the sword's damage as magic damage and fly {2} tiles
-					The third swing is a slam for {3}x damage
+					The combo ends in a slam for {3}x damage
 					Hold: forward-flip leap toward the cursor (up to {4} tiles) that slams for {6}x damage
 					and sends a wall of abyss smoke {5} tiles along the ground each way
 					''' */
@@ -9541,7 +9556,7 @@ Mods: {
 				// DisplayName: Sword Of Lord Gwyn
 				/* Tooltip:
 					'''
-					Tap left click: a three-swing First Flame combo whose final slam calls down lightning
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Tap right click: spend {1} mana on a rising flame dash
 					Hold right click: spend {2} mana on Cinder Nova
@@ -9550,7 +9565,7 @@ Mods: {
 				/* AdvancedTooltip:
 					'''
 					Aim at or above a point 3 tiles below your feet:
-					Tap left click: a three-swing First Flame combo whose final slam calls down lightning
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Aim more than 3 tiles below your feet:
 					Tap left click: spend {1} mana on a rising flame dash
@@ -9606,6 +9621,11 @@ Mods: {
 			EnemyDarkrootHalberd: {
 				// Tooltip: ""
 				// DisplayName: Darkroot Halberd
+			}
+
+			EnemyIceSkeletonSpear: {
+				// Tooltip: ""
+				// DisplayName: Rime Spear
 			}
 
 			EnemyOccultistStaff: {
@@ -9700,6 +9720,21 @@ Mods: {
 
 			EnemyAbyssalNinjaSword: {
 				// DisplayName: Enemy Abyssal Ninja Sword
+				// Tooltip: ""
+			}
+
+			EnemyGildedIronSpear: {
+				// Tooltip: ""
+				// DisplayName: Enemy Gilded Iron Spear
+			}
+
+			EnemyGildedDualBladedAxe: {
+				// Tooltip: ""
+				// DisplayName: Enemy Gilded Dual Bladed Axe
+			}
+
+			EnemyTibianAmazonKnife: {
+				// DisplayName: Enemy Tibian Amazon Knife
 				// Tooltip: ""
 			}
 		}
@@ -10771,12 +10806,12 @@ Mods: {
 				// Description: The Archer Spirit will shoot down your enemies!
 			}
 
-			MimicTearBuff: {
+			SoulMimicBuff: {
 				// DisplayName: Soul Mimic
 				// Description: Your reflection fights beside you until its time runs out. Cancel this to dismiss it.
 			}
 
-			MimicTearCooldown: {
+			SoulMimicCooldown: {
 				// DisplayName: Soul Mimic Recovery
 				// Description: The Mimic Rune cannot be used again yet. Clears on death.
 			}
@@ -11097,6 +11132,7 @@ Mods: {
 			// DarkrootThorn.DisplayName: Darkroot Thorn
 			// DarkrootRoot.DisplayName: Darkroot Root
 			// DarkrootVine.DisplayName: Briar Lash
+			// IceSkeletonRimeShard.DisplayName: Lance of Rime
 			// DarkmoonExplosion.DisplayName: Moonlight Rupture
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
@@ -12067,7 +12103,8 @@ Mods: {
 			// EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 			// RunePrison.DisplayName: Rune Prison
 			// FirstRunePrison.DisplayName: First Rune Prison
-			// CinderRainDrop.DisplayName: Cinder Rain Drop
+			// DestinedDeathBreath.DisplayName: Destined Death Breath
+			// BlightBreath.DisplayName: Blight Breath
 			// KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
 			// OolacileFireBolt.DisplayName: Oolacile Fire Bolt
 			// OolacileFirePatch.DisplayName: Oolacile Fire Patch
@@ -12205,6 +12242,10 @@ Mods: {
 			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
 			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
+			// TibianAmazonKnife.DisplayName: Tibian Amazon Knife
+			// TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
+			// WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
+			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
 		}
 
 		NPCs: {
@@ -14002,7 +14043,7 @@ Mods: {
 			DeathReaper.DisplayName: Слуга Смерти
 			// DeathSickleWeapon.DisplayName: Death Sickle Weapon
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
-			// MimicTear.DisplayName: Soul Mimic
+			// SoulMimic.DisplayName: Soul Mimic
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
 			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."

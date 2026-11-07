@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Enemies
     ///
     /// Kit (one server-side AttackBag; every action is one Custom-phase clock):
     ///   Valkyrie's Waltz   axe chop -> spear thrust -> axe return -> spear finisher (on hit or close only)
-    ///   Gilded Cross       spear thrust with a delayed axe cut, one combined live window
+    ///   Gilded Cross       spear thrust with a delayed axe cut (on hit or reachable only)
     ///   Charging Thrust    distance-solved spear dash that stops 64px past the target (gap-closer)
     ///   Skyfall Cleave     axe leap slam, swept in the air once past the apex (gap-closer)
     ///   Gilded Javelin     throws the held spear, then a 24t re-arm beat with the spear fading back in
@@ -103,20 +103,21 @@ namespace tsorcRevamp.NPCs.Enemies
         // Step 1 AXE   Poses -1.62 -> 2.22 (envelope 220 deg; live ~176). Tell 36t: axe raised over 18t, spear to guard,
         //              glint on the axe head for the last 12t. Weighted 10/0/45 k7 -> peak 220 / (10/3 + 45 * 0.999 / 7)
         //              = 22.6 deg/t. Live while speed >= 30% of peak: [5.5, 17.7) of the step = t42-53 (12t).
-        //              Push-in 18px shaped like the blade. Ends t91 (near-still tail).
+        //              Push-in 48px shaped like the blade. Ends t91 (near-still tail).
         // Step 2 SPEAR Wind-up (draw back) t91-98 as the chop's tail settles; strike t99: 6t cubic ease-in extension,
         //              4t hold, 12t decaying retract. Live t99-108 (extension + hold, 10t), 45t after step 1's ends.
-        //              Push-in 24px, fast start, gone by the hold's end.
+        //              Push-in 40px, fast start, gone by the hold's end.
         // Step 3 AXE   Wind-up t118-135 over the thrust's retract: the low axe cocks 0.45 rad further back, then settles
         //              on 2.22. Rising return 2.22 -> -1.40 (envelope 207; live ~166), Weighted 8/0/40 k7 -> peak 207 /
         //              (8/3 + 40 * 0.999 / 7) = 24.7 deg/t from t136. Live t141-150 (10t), 32t after the thrust's ends.
-        //              Push-in 20px with the swing.
-        // Finisher     Decided at t184 (step 3's end), BEFORE re-facing: any earlier step connected, or the target is
-        //              within 80px on the committed side. Otherwise straight to the 40t recovery.
-        // Step 4 SPEAR Wind-up t184-191, strike t192, live t192-201 (10t), 41t after step 3's ends. Push-in 40px.
+        //              Push-in 48px with the swing.
+        // Continuation at t91/t118: preceding contact earns the next beat; a miss requires its own reach + live push.
+        // Finisher     Decided at t184, BEFORE re-facing: the preceding axe connected, or the next thrust can reach
+        //              on the committed side. Otherwise straight to the 40t recovery.
+        // Step 4 SPEAR Wind-up t184-191, strike t192, live t192-201 (10t), 41t after step 3's ends. Push-in 48px.
         // Recovery 40  Spear retracts to carry over the first 20t, axe returns to the shoulder over the last 20t.
-        // Counter      Live windows 10-12t with >= 32t gaps: 3-4 separate rolls standing still, or back out of 96px
-        //              after step 1 and the finisher never fires. 254t (~4.2s) with the finisher, 224t without.
+        // Counter      Live windows 10-12t with >= 32t gaps: 3-4 separate rolls standing still, or disengage beyond
+        //              the next weapon's reach + live push after a miss. 254t (~4.2s) full, shorter on a failed follow-up.
         public const int WaltzTell = 36;
         public const int WaltzStep1Ticks = 55;
         public const int WaltzThrust2Draw = 91;
@@ -131,11 +132,10 @@ namespace tsorcRevamp.NPCs.Enemies
         public const int WaltzStep4End = 214;
         public const int WaltzRecovery = 40;
         public const int WaltzTotal = 254;
-        const float WaltzStep1StepIn = 18f;
-        const float WaltzThrustStepIn = 24f;
-        const float WaltzStep3StepIn = 20f;
-        const float WaltzFinisherStepIn = 40f;
-        const float WaltzFinisherRange = 80f;
+        public const float WaltzStep1StepIn = 48f;
+        public const float WaltzThrustStepIn = 40f;
+        public const float WaltzStep3StepIn = 48f;
+        public const float WaltzFinisherStepIn = 48f;
         // Axe wind-up anticipation: cock this far against the coming swing (65% of the wind-up), then settle on its start.
         const float AxeWindupAnticipation = 0.45f;
 
@@ -145,11 +145,12 @@ namespace tsorcRevamp.NPCs.Enemies
         // Tell 40t: spear levelled high and drawn back, axe on the shoulder behind it so the shafts form an X; gold glint
         //              at the crossing for the last 12t. Aim locks at t30.
         // Beat 1 SPEAR strike t40: 6t cubic ease-in extension, 4t hold, 12t decaying retract. Live t40-49 (10t).
-        //              Push-in 24px, fast start, gone by t50.
+        //              Push-in 40px, fast start, gone by t50.
         // Beat 2 AXE   Wind-up t66-83 over the spear's retract (cocks up-back to -1.65, settles on -1.20; glint last 6t).
         //              Strike t84: -1.20 -> 2.20 (envelope 195 deg, live ~156: a compact second beat by design),
         //              Weighted 8/0/36 k7 -> peak 195 / (8/3 + 36 * 0.999 / 7) = 25.0 deg/t. Live t89-98 (10t), 39t after
-        //              the thrust's ends: each beat rolls separately. Push-in 20px with the swing.
+        //              the thrust's ends: each beat rolls separately. Push-in 48px with the swing.
+        // Continuation at t66: thrust contact earns the axe cut; a miss requires the axe's reach + live push.
         // Open:        axe tail to t128, then 40t recovery. Total 168t.
         public const int CrossTell = 40;
         public const int CrossAxeWindup = 66;
@@ -159,8 +160,8 @@ namespace tsorcRevamp.NPCs.Enemies
         public const int CrossTotal = 168;
         public const float CrossAxeFrom = -1.20f;
         public const float CrossAxeTo = 2.20f;
-        const float CrossThrustStepIn = 24f;
-        const float CrossAxeStepIn = 20f;
+        public const float CrossThrustStepIn = 40f;
+        public const float CrossAxeStepIn = 48f;
 
         // ── Charging Thrust ───────────────────────────────────────────────────────────────────────────────────
         // Tell 32t: spear levelled and drawn far back, axe raised for balance, dust kicks at her feet for the last 10t.
@@ -201,7 +202,7 @@ namespace tsorcRevamp.NPCs.Enemies
         // Tell 30t: spear lifted 0.6 rad above the aim with the hand slid up toward the head (the shaft drawn back over
         // the shoulder); gold glint at the point for the last 12t; aim tracks until t22, then locks for 8t.
         // Release t30: the held spear IS the projectile - it leaves from the drawn tip position, the hand prop is hidden
-        // the same tick. 10px/t, gravity 0.12, low arc solved onto a point 48px past the target.
+        // the same tick. Up to 10px/t, gravity 0.12, leading the target through the lock delay and flight.
         // Follow-through 12t, then the 24t re-arm: the arm reaches back over the shoulder and a fresh spear fades in.
         // Spear moves are gated until it is back. Total 76t.
         public const int JavelinTell = 30;
@@ -209,7 +210,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public const int JavelinFollowThrough = 12;
         public const int JavelinRearm = 24;
         public const int JavelinTotal = 76;
-        const float JavelinOvershoot = 48f;
 
         // ── Synced state (SendExtraAI / ReceiveExtraAI, in this order) ─────────────────────────────────────────
         bool _phaseTwo;
@@ -228,6 +228,8 @@ namespace tsorcRevamp.NPCs.Enemies
         int _strikeStart = -1;
         int _landTick = -1;
         Vector2 _javelinVelocity;
+        Vector2 _javelinTargetPosition;
+        Vector2 _javelinTargetVelocity;
         int _spearMissingTicks;
         int _restTicks;
 
@@ -238,7 +240,8 @@ namespace tsorcRevamp.NPCs.Enemies
         int _age;
         int _neutralTicks;
         int _finisherWaitTicks;
-        bool _waltzHit;
+        bool _beatHit;
+        bool _previousBeatHit;
 
         // ── Per-tick, recomputed on every machine in DoCustomTick; hit tests run on the server ──────────────────
         // A hit window is one live strike; its id changes between strikes so each strike hits each player once.
@@ -503,8 +506,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (_abortRecovery)
             {
-                // Hold the pose the action stopped in for 6t, then ease both hands to carry over 12t.
-                float easeBack = MathHelper.Clamp((elapsed - 6) / 12f, 0f, 1f);
+                // Hold 6t, then return over up to 24t so a low axe does not rewind faster than its strike.
+                // Short aborts reserve two final carry ticks; recovery duration and damage timing stay unchanged.
+                float settleTicks = _actionTotal - 8f;
+                settleTicks = MathHelper.Clamp(settleTicks, 1f, 24f);
+                float easeBack = MathHelper.Clamp((elapsed - 6) / settleTicks, 0f, 1f);
                 spear = MathHelper.SmoothStep(_abortSpear, SpearCarry, easeBack);
                 grip = MathHelper.SmoothStep(_abortGrip, CarryGrip, easeBack);
                 axe = MathHelper.SmoothStep(_abortAxe, AxeCarry, easeBack);
@@ -1019,11 +1025,20 @@ namespace tsorcRevamp.NPCs.Enemies
                     case Move.Cross:
                         return SpearInHand && distance <= 80f && verticalGap < 48f;
                     case Move.Charge:
-                        return SpearInHand && distance >= 112f && distance <= 240f && SolveChargeLane(target) >= ChargeMinimumTravel;
+                    {
+                        if (!SpearInHand || distance < 112f || distance > 240f)
+                        {
+                            return false;
+                        }
+
+                        float laneDistance = SolveChargeLane(target);
+                        return ChargeLaneCanReachTarget(target, laneDistance);
+                    }
                     case Move.Skyfall:
                         return distance >= 160f && distance <= 320f && verticalGap < 96f && SkyfallHeadroom();
                     case Move.Javelin:
-                        return SpearInHand && distance >= 240f && distance <= 560f && JavelinArcClear(target, out _);
+                        return SpearInHand && distance >= 240f && distance <= 560f
+                            && JavelinArcClear(target, JavelinTell - JavelinLock, out _, out _);
                     default:
                         return false;
                 }
@@ -1058,7 +1073,8 @@ namespace tsorcRevamp.NPCs.Enemies
             _move = move;
             _pitch = 0f;
             _waltzFinisher = true;
-            _waltzHit = false;
+            _beatHit = false;
+            _previousBeatHit = false;
             _strikeStart = -1;
             _landTick = -1;
             _dashDistance = 0f;
@@ -1173,6 +1189,45 @@ namespace tsorcRevamp.NPCs.Enemies
             if (_lockedTarget >= 0 && _lockedTarget < Main.maxPlayers && Main.player[_lockedTarget].active)
             {
                 target = Main.player[_lockedTarget];
+            }
+
+            if (Server)
+            {
+                // Contact was sampled after base.AI on the preceding live tick. Keep history server-only;
+                // the existing abort pose/clock and finisher payload carry each visible decision to clients.
+                bool beatEnded = _move == Move.Waltz
+                    && (elapsed == 54 || elapsed == WaltzThrust2Strike + 10 || elapsed == 151);
+                beatEnded |= _move == Move.Cross && elapsed == CrossTell + 10;
+                if (beatEnded)
+                {
+                    _previousBeatHit = _beatHit;
+                    _beatHit = false;
+                }
+
+                if (!_previousBeatHit)
+                {
+                    bool unreachable = false;
+                    float spearReach = SpearShaftTexels * ExtendedGrip * SpearDrawScale;
+                    if (_move == Move.Waltz && elapsed == WaltzThrust2Draw)
+                    {
+                        unreachable = !CanReachNextBeat(target, spearReach, WaltzThrustStepIn, 1, 9, 10, 4f);
+                    }
+                    else if (_move == Move.Waltz && elapsed == WaltzStep3Windup)
+                    {
+                        unreachable = !CanReachNextBeat(target, AxeReach, WaltzStep3StepIn, 8, 40, 15, 7f);
+                    }
+                    else if (_move == Move.Cross && elapsed == CrossAxeWindup)
+                    {
+                        unreachable = !CanReachNextBeat(target, AxeReach, CrossAxeStepIn, 8, 36, 15, 7f);
+                    }
+
+                    if (unreachable)
+                    {
+                        Trace("whiff-recovery", "next beat out of reach", false);
+                        AbortIntoRecovery(WaltzRecovery);
+                        return;
+                    }
+                }
             }
 
             // Facing and aim follow the target only in each action's tracking windows (tells before their lock,
@@ -1304,24 +1359,27 @@ namespace tsorcRevamp.NPCs.Enemies
                 PushIn(ShapedSpeed(WaltzFinisherStepIn, finisher, 1, 0, 9, 4f));
             }
 
-            // Finisher decision, before the wind-up re-faces: any step connected, or the target close and in front.
+            // Owl Father's hit-or-reachable rule uses the preceding strike, not any hit earlier in the combo.
+            // Check the thrust's own live advance before its wind-up re-faces the target.
             if (elapsed == WaltzStep3End && Server)
             {
                 bool close = false;
                 if (target != null)
                 {
                     int targetSide = Math.Sign(target.Center.X - NPC.Center.X);
-                    close = targetSide == _lockFacing && NPC.Distance(target.Center) <= WaltzFinisherRange;
+                    float spearReach = SpearShaftTexels * ExtendedGrip * SpearDrawScale;
+                    close = targetSide == _lockFacing
+                        && CanReachNextBeat(target, spearReach, WaltzFinisherStepIn, 1, 9, 10, 4f);
                 }
 
-                _waltzFinisher = _waltzHit || close;
+                _waltzFinisher = _previousBeatHit || close;
                 if (!_waltzFinisher)
                 {
                     _actionTotal = WaltzStep3End + WaltzRecovery;
                     PhaseTimer = _actionTotal - elapsed;
                 }
 
-                Trace("waltz-finisher", "hit " + _waltzHit + " close " + close, false);
+                Trace("waltz-finisher", "previous hit " + _previousBeatHit + " reachable " + close, false);
                 Snapshot();
             }
 
@@ -1415,6 +1473,25 @@ namespace tsorcRevamp.NPCs.Enemies
             _spearExpert = SpearThrustExpert[tier];
         }
 
+        // Budget the next weapon's own blade reach plus advance delivered by its final live tick.
+        // The harmless settling tail adds no reach; damage still requires the existing capsule collision.
+        bool CanReachNextBeat(Player target, float reach, float stepIn, int easeIn, int easeOut, int liveEnd, float decay)
+        {
+            if (target == null || target.dead)
+            {
+                return false;
+            }
+
+            float liveAdvance = 0f;
+            for (int i = 0; i < liveEnd; i++)
+            {
+                liveAdvance += ShapedSpeed(stepIn, i, easeIn, 0, easeOut, decay);
+            }
+
+            float distance = NPC.Distance(target.Center);
+            return distance <= reach + liveAdvance;
+        }
+
         /// <summary>Eased push-in for one tick of a beat: forward at <paramref name="speed"/>, or stopped by a wall ahead.
         /// Marks the tick as action-owned movement so the neutral walker and the brake leave it alone.</summary>
         void PushIn(float speed)
@@ -1466,7 +1543,8 @@ namespace tsorcRevamp.NPCs.Enemies
                     _dashDistance = SolveChargeLane(target);
                 }
 
-                if (_dashDistance < ChargeMinimumTravel)
+                bool targetAhead = target != null && (target.Center.X - NPC.Center.X) * _lockFacing > 0f;
+                if (!targetAhead || !ChargeLaneCanReachTarget(target, _dashDistance))
                 {
                     Trace("charge-lane", "rejected " + (int)_dashDistance + "px", false);
                     AbortIntoRecovery(36);
@@ -1568,6 +1646,20 @@ namespace tsorcRevamp.NPCs.Enemies
             return travel;
         }
 
+        // A short valid floor segment is insufficient if the dash and extended spear still stop before the player.
+        // Both selection and release use this check; a late jump or blocked lane earns a harmless recovery.
+        bool ChargeLaneCanReachTarget(Player target, float laneDistance)
+        {
+            if (target == null || target.dead || laneDistance < ChargeMinimumTravel)
+            {
+                return false;
+            }
+
+            float spearReach = SpearShaftTexels * ExtendedGrip * SpearDrawScale;
+            float horizontalGap = Math.Abs(target.Center.X - NPC.Center.X);
+            return horizontalGap <= laneDistance + spearReach;
+        }
+
         void TickSkyfall(int elapsed, Player target)
         {
             int tier = DamageTier();
@@ -1635,9 +1727,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 bool landed = airTicks >= 6 && NPC.velocity.Y == 0f;
                 bool timedOut = airTicks >= SkyfallMaxAirTicks;
-                if (Server && (landed || timedOut))
+                if (Server && landed)
                 {
                     Land(elapsed, tier);
+                }
+                else if (Server && timedOut)
+                {
+                    // Falling beyond the authored airtime is not a landing: do not spawn a floor shock in mid-air.
+                    Trace("skyfall-timeout", "abort airborne", false);
+                    AbortIntoRecovery(WaltzRecovery);
+                    return;
                 }
             }
             else
@@ -1731,7 +1830,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 bool clear = false;
                 if (target != null)
                 {
-                    clear = JavelinArcClear(target, out _javelinVelocity);
+                    clear = JavelinArcClear(target, JavelinTell - JavelinLock, out _, out _javelinVelocity);
                 }
 
                 if (!clear)
@@ -1741,28 +1840,43 @@ namespace tsorcRevamp.NPCs.Enemies
                     return;
                 }
 
+                _javelinTargetVelocity = new Vector2(target.velocity.X, target.velocity.Y * 0.5f);
+                _javelinTargetPosition = target.Center + _javelinTargetVelocity * (JavelinTell - JavelinLock);
                 Snapshot();
             }
 
             if (elapsed == JavelinTell)
             {
+                Vector2 launchSource = PuppetSpearTipPosition;
+                if (Server)
+                {
+                    // Re-solve from the actual release tip, using only the target motion captured eight ticks ago.
+                    // Recompute flight time for that origin without tracking a last-second dodge.
+                    _javelinVelocity = TibianValkyrieJavelin.SolveLaunch(launchSource, _javelinTargetPosition,
+                        _javelinTargetVelocity, 0, out Vector2 aimPoint);
+                    if (!JavelinLaneClear(launchSource, aimPoint, _javelinVelocity))
+                    {
+                        AbortIntoRecovery(24);
+                        return;
+                    }
+                }
+
                 // The held spear leaves the hand: hidden 12t, then fades back in over the 24t re-arm.
                 _spearMissingTicks = JavelinFollowThrough + JavelinRearm;
 
                 if (Server)
                 {
                     int damage = EnemyDamage.Projectile(JavelinExpert[DamageTier()]);
-                    Projectile.NewProjectile(NPC.GetSource_FromThis(), PuppetSpearTipPosition, _javelinVelocity,
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), launchSource, _javelinVelocity,
                         ModContent.ProjectileType<TibianValkyrieJavelin>(), damage, 3f, Main.myPlayer);
                     Snapshot();
                 }
             }
         }
 
-        /// <summary>Server: launch solved from the drawn spear point onto a spot 48px past the target, and stepped
-        /// 2px/t along its arc until it passes that spot; any solid tile on the way (a lip in front, a ceiling) blocks
-        /// the throw. Uses the cocked pose's tip, which is within a few px of the release point.</summary>
-        bool JavelinArcClear(Player target, out Vector2 velocity)
+        // Selection uses a body-relative feasibility probe; the lock uses the real spear tip.
+        // Lead horizontal motion fully and vertical motion halfway, so jumping does not project far above the arena.
+        bool JavelinArcClear(Player target, int releaseDelay, out Vector2 aimPoint, out Vector2 velocity)
         {
             int side = Math.Sign(target.Center.X - NPC.Center.X);
             if (side == 0)
@@ -1771,25 +1885,52 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             Vector2 start = NPC.Center + new Vector2(side * 12f, -14f);
-            Vector2 aimPoint = target.Center + new Vector2(side * JavelinOvershoot, 0f);
-            velocity = TibianValkyrieJavelin.SolveLaunch(start, aimPoint);
+            if (Phase == AttackPhase.Custom && _move == Move.Javelin)
+            {
+                start = PuppetSpearTipPosition;
+            }
+
+            Vector2 targetVelocity = new Vector2(target.velocity.X, target.velocity.Y * 0.5f);
+            velocity = TibianValkyrieJavelin.SolveLaunch(start, target.Center, targetVelocity, releaseDelay, out aimPoint);
+            return JavelinLaneClear(start, aimPoint, velocity);
+        }
+
+        // Sample the real 14px projectile box every 4px, including at the intercept, to reject walls and low ceilings.
+        bool JavelinLaneClear(Vector2 start, Vector2 aimPoint, Vector2 velocity)
+        {
+            if (velocity == Vector2.Zero)
+            {
+                return false;
+            }
+
+            float side = Math.Sign(aimPoint.X - start.X);
 
             Vector2 position = start;
             Vector2 stepVelocity = velocity;
-            for (int tick = 0; tick < 120; tick++)
+            for (int tick = 0; tick < TibianValkyrieJavelin.MaxFlightTicks; tick++)
             {
                 stepVelocity.Y += TibianValkyrieJavelin.Gravity;
-                position += stepVelocity;
+                Vector2 nextPosition = position + stepVelocity;
+                int sampleCount = Math.Max(1, (int)Math.Ceiling(stepVelocity.Length() / 4f));
+                for (int i = 1; i <= sampleCount; i++)
+                {
+                    Vector2 sample = Vector2.Lerp(position, nextPosition, i / (float)sampleCount);
+                    if (Collision.SolidCollision(sample - new Vector2(7f), 14, 14))
+                    {
+                        return false;
+                    }
+                }
 
-                bool pastTarget = (position.X - target.Center.X) * side > 0f;
+                position = nextPosition;
+                bool pastTarget = side != 0f && (position.X - aimPoint.X) * side >= 0f;
                 if (pastTarget)
                 {
                     return true;
                 }
 
-                if (Collision.SolidCollision(position - new Vector2(4f), 8, 8))
+                if (side == 0f && Vector2.DistanceSquared(position, aimPoint) <= 100f)
                 {
-                    return false;
+                    return true;
                 }
             }
 
@@ -1909,10 +2050,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     damage, 3f, Main.myPlayer, box, box, PuppetMeleeHitbox.EncodeHand(hand));
                 _hitPlayers.Add(i);
 
-                if (_move == Move.Waltz)
-                {
-                    _waltzHit = true;
-                }
+                _beatHit = true;
             }
 
             previousOrigin = origin;
@@ -2190,6 +2328,8 @@ namespace tsorcRevamp.NPCs.Enemies
             writer.Write(_strikeStart);
             writer.Write(_landTick);
             writer.WriteVector2(_javelinVelocity);
+            writer.WriteVector2(_javelinTargetPosition);
+            writer.WriteVector2(_javelinTargetVelocity);
             writer.Write(_spearMissingTicks);
             writer.Write(_restTicks);
         }
@@ -2213,6 +2353,8 @@ namespace tsorcRevamp.NPCs.Enemies
             _strikeStart = reader.ReadInt32();
             _landTick = reader.ReadInt32();
             _javelinVelocity = reader.ReadVector2();
+            _javelinTargetPosition = reader.ReadVector2();
+            _javelinTargetVelocity = reader.ReadVector2();
             _spearMissingTicks = reader.ReadInt32();
             _restTicks = reader.ReadInt32();
         }

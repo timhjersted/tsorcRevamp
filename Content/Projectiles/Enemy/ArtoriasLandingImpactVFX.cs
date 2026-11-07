@@ -14,8 +14,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// Quick (Flip Slash, Cursebreaker): flashes up and fades in 18t.
     /// Column (Jump Slash, Ground Pound / Hollow Pounce, Skyward Lunge): rises over 10t, holds for 90t total with dark-blue
     /// smoke rolling up through it, and gives Weight of Shadow to any player standing in it.
-    /// Damage 0 = no hit; damage > 0 = the impact itself hits (the quick fracture's first 58%, or the column's first 14t),
-    /// over exactly the two eruption columns it draws. The lingering column never deals damage.</summary>
+    /// Damage 0 = no hit; damage > 0 = the quick fracture hits through its first 58%, while the persistent column
+    /// hits throughout its rise and hold. Both stop dealing damage when their final fade begins.</summary>
     class ArtoriasLandingImpactVFX : ModProjectile
     {
         const int QuickLifetime = 18;
@@ -26,8 +26,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const int ColumnLifetime = 90;
         // Rise: the shader's Progress eases 0 -> 1 over ColumnRiseTicks; the column's top is fully revealed by ~7t.
         const int ColumnRiseTicks = 10;
-        // The impact hit window: the rise plus a few ticks. After it the column is only smoke and a debuff.
-        const int ColumnDamageTicks = 14;
         // The wide base flashes bright on impact, then settles over ColumnSettleTicks after the rise.
         const int ColumnSettleTicks = 20;
         const int ColumnFadeTicks = 24;
@@ -105,7 +103,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             if (ColumnMode)
             {
-                return Age >= 1 && Age <= ColumnDamageTicks;
+                return Age >= 1 && Projectile.timeLeft > ColumnFadeTicks;
             }
 
             float progress = Progress;
@@ -127,10 +125,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             float floorY = Projectile.Center.Y - 5f;
             float riseFraction = MathHelper.Clamp(ShaderProgress / EruptionRiseProgress, 0f, 1f);
 
-            // Tall column: quad centre floor - 0.45h, size 0.62w x 1.12h.
-            float tallQuadBottom = floorY - height * 0.45f + height * 0.56f;
+            // Persistent column: top rises from 1.01h to 2.02h above the floor; bottom stays 0.11h below it.
+            float tallQuadHeight = height * TallHeightScale;
+            float tallQuadBottom = floorY - height * TallCenterHeightScale + tallQuadHeight * 0.5f;
             float tallHalfWidth = width * 0.62f * EruptionCoreHalfWidth;
-            float tallHeight = height * 1.12f * riseFraction;
+            float tallHeight = tallQuadHeight * riseFraction;
             Rectangle tallColumn = new Rectangle((int)(Projectile.Center.X - tallHalfWidth), (int)(tallQuadBottom - tallHeight),
                 (int)(tallHalfWidth * 2f), (int)tallHeight);
 
@@ -146,6 +145,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         // The column thins to 80% width as it fades out, so it dissolves inward instead of just going transparent.
         float ColumnWidthScale => ColumnMode ? MathHelper.Lerp(0.8f, 1f, Fade) : 1f;
+
+        // Share draw/collision geometry: double only the persistent column's upward reach, keeping its floor anchor.
+        float TallHeightScale => ColumnMode ? 2.13f : 1.12f;
+
+        float TallCenterHeightScale => ColumnMode ? 0.955f : 0.45f;
 
         public override void AI()
         {
@@ -186,7 +190,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 float height = Projectile.ai[1];
                 float coreHalfWidth = Projectile.ai[0] * ColumnWidthScale * 0.62f * EruptionCoreHalfWidth;
                 float riseFraction = MathHelper.Clamp(ShaderProgress / EruptionRiseProgress, 0f, 1f);
-                float columnTop = floor.Y - height * 1.12f * riseFraction;
+                float tallQuadHeight = height * TallHeightScale;
+                float tallQuadBottom = floor.Y - height * TallCenterHeightScale + tallQuadHeight * 0.5f;
+                float columnTop = tallQuadBottom - tallQuadHeight * riseFraction;
 
                 // Light the column top to bottom: three points along it, dimming with the fade.
                 for (int i = 0; i < 3; i++)
@@ -277,8 +283,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             // Rift thickness is half the eruption height: 34px at the default 68 height.
             ArtoriasVFX.DrawGroundRift(floor, new Vector2(width, height * 0.5f), progress, 0.70f * fade);
-            ArtoriasVFX.DrawEruption(floor - new Vector2(0f, height * 0.45f),
-                new Vector2(width * 0.62f, height * 1.12f), progress, tallOpacity * fade);
+            ArtoriasVFX.DrawEruption(floor - new Vector2(0f, height * TallCenterHeightScale),
+                new Vector2(width * 0.62f, height * TallHeightScale), progress, tallOpacity * fade);
             ArtoriasVFX.DrawEruption(floor - new Vector2(0f, height * 0.30f),
                 new Vector2(width * 0.92f, height * 0.72f), progress, wideOpacity * fade);
             return false;

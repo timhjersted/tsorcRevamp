@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override bool AnnounceInvasion => false;
         protected override bool AnnounceInvaderDefeat => false;
         public override bool UsesPuppetDifficultyScaling => false;
+        protected override bool DespawnsOnPartyWipe => false;
         protected override int CasualStrollChance => 0;
         protected override int HeadArmorItemType => ModContent.ItemType<DarkmoonKnightHelmet>();
         protected override int BodyArmorItemType => ModContent.ItemType<DarkmoonKnightBreastplate>();
@@ -94,16 +95,12 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override bool SuppressGhostWallTeleport => base.SuppressGhostWallTeleport || _graceTicks > 0 || _restTicks > 0 || _guardUp || HasOwnedShots();
         protected override Color PuppetSkinColor => Color.Black;
         protected override bool HasSpectralOverlay => true;
+        protected override bool UseHollowWarriorGhostEffect => true;
         protected override bool SpectralKeepsArmorDyes => true;
         protected override float SpectralOverlayScale => 1f;
         protected override Color SpectralOverlayColor => new Color(155, 165, 210);
         protected override float SpectralCoreTintStrength => 0.25f;
         protected override float SpectralCoreOpacity => 0.8f;
-        protected override Color SpectralHaloColor => new Color(90, 75, 150);
-        protected override int SpectralHaloCopyCount => 6;
-        protected override float SpectralHaloRadius => 3f;
-        protected override float SpectralHaloOpacity => 0.18f;
-        protected override float SpectralTrailOpacity => 0.25f;
         protected override int TeleportTelegraphTicks => 80;
         protected override int TeleportDustTypeId => DustID.Smoke;
         protected override Color TeleportDustTint => new Color(55, 55, 65);
@@ -127,17 +124,38 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
         public override void SetDefaults()
         {
-            NPC.npcSlots = 5; NPC.width = 20; NPC.height = 40; NPC.aiStyle = -1;
-            NPC.damage = 0; NPC.defense = 65; NPC.lifeMax = 3000; NPC.value = 12000;
-            NPC.knockBackResist = 0.3f; NPC.HitSound = SoundID.NPCHit1; NPC.DeathSound = SoundID.NPCDeath1;
-            Banner = Type; BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
-            var g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.CanPassThroughWalls = true; g.HasGhostAfterimages = false;
-            g.KiteRangeMin = 5; g.KiteRangeMax = 10; g.KiteLooseness = 0.7f;
-            g.PatrolMode = PatrolMode.Wander; g.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
-            g.NavSearchRadius = 50; g.MaxJumpPower = 11; g.MaxJumpBoost = 7; g.CanUseRopes = true;
-            g.TeleportTelegraphTime = 80; g.TeleportDustType = DustID.Smoke;
-            g.TeleportDustColor = new Color(55, 55, 65); g.TeleportDustScale = 0.65f; g.TeleportDustCount = 20;
+            NPC.npcSlots = 5;
+            NPC.width = 20;
+            NPC.height = 40;
+            NPC.aiStyle = -1;
+            NPC.damage = 0;
+            NPC.defense = 65;
+            NPC.lifeMax = 3000;
+            NPC.value = 12000;
+            NPC.knockBackResist = 0.3f;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath1;
+            Banner = Type;
+            BannerItem = ModContent.ItemType<Banners.GhostOfTheDarkmoonKnightBanner>();
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.AllowDynamicEventNaturalDespawn = true;
+            globalNPC.CanPassThroughWalls = true;
+            globalNPC.HasGhostAfterimages = false;
+            globalNPC.KiteRangeMin = 5;
+            globalNPC.KiteRangeMax = 10;
+            globalNPC.KiteLooseness = 0.7f;
+            globalNPC.PatrolMode = PatrolMode.Wander;
+            globalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+            globalNPC.NavSearchRadius = 50;
+            globalNPC.MaxJumpPower = 11;
+            globalNPC.MaxJumpBoost = 7;
+            globalNPC.CanUseRopes = true;
+            globalNPC.TeleportTelegraphTime = 80;
+            globalNPC.TeleportDustType = DustID.Smoke;
+            globalNPC.TeleportDustColor = new Color(55, 55, 65);
+            globalNPC.TeleportDustScale = 0.65f;
+            globalNPC.TeleportDustCount = 20;
         }
         protected override void RunMovementAI(float speedMult)
         {

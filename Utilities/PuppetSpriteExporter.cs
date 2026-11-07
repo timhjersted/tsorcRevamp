@@ -240,7 +240,9 @@ namespace tsorcRevamp.Utilities
                 NPC npc = new NPC { whoAmI = 0 };
                 npc.SetDefaults(job.NpcType);
                 if (npc.ModNPC is not PuppetNPC puppet)
+                {
                     throw new InvalidOperationException($"NPC type {job.NpcType} is not a PuppetNPC.");
+                }
 
                 Vector2 screenPosition = new Vector2(
                     (renderTarget.Width - npc.width) * 0.5f,
@@ -248,7 +250,9 @@ namespace tsorcRevamp.Utilities
                 Vector2 worldPosition = Main.screenPosition + screenPosition;
 
                 if (!puppet.DrawExportPose(worldPosition, job.WithPrimaryWeapon))
+                {
                     throw new InvalidOperationException("No primary weapon is configured.");
+                }
 
                 spriteBatch.End();
                 exportBatchStarted = false;
@@ -256,8 +260,8 @@ namespace tsorcRevamp.Utilities
                 RestoreTargets(device, previousTargets);
                 targetsRestored = true;
 
-                string suffix = job.WithPrimaryWeapon ? "PrimaryWeapon" : "Idle";
-                string filename = $"{SanitizeFileName(job.Name)}_{suffix}.png";
+                string suffix = job.WithPrimaryWeapon ? "_PrimaryWeapon" : string.Empty;
+                string filename = $"{SanitizeFileName(job.Name)}{suffix}.png";
                 SaveCropped(renderTarget, Path.Combine(outputDirectory, filename), out Color[] croppedPixels, out int croppedWidth, out int croppedHeight);
 
                 // The idle pose also yields the boss head icon, named as tModLoader expects (<Class>_Head_Boss).
@@ -270,9 +274,14 @@ namespace tsorcRevamp.Utilities
             finally
             {
                 if (exportBatchStarted)
+                {
                     spriteBatch.End();
+                }
+
                 if (!targetsRestored)
+                {
                     RestoreTargets(device, previousTargets);
+                }
 
                 // PostDrawInterface expects the cursor/UI sprite batch to remain active for the
                 // tooltip and mouse layers that Terraria draws immediately after this hook.

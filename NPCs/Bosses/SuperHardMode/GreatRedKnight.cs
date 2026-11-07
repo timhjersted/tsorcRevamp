@@ -188,13 +188,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             Player target = Main.player[NPC.target];
 
-            // Proximity debuffs on the targeted player's own machine (a buff added elsewhere never reaches them).
-            if (!Main.dedServ && NPC.target == Main.myPlayer && NPC.Distance(target.Center) < 700)
-            {
-                target.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
-                target.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 1 * 60, false);
-            }
-
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (dominionDeathTimer < 0)
             {

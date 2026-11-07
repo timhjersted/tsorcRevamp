@@ -133,7 +133,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             Lighting.AddLight(Vector2.Lerp(hand, tip, 0.6f), 0.8f, 0.42f, 0.12f);
         }
 
-        public override void OnSwingHitNPC(Projectile swing, NPC target, int step)
+        public override void OnSwingHitNPC(Projectile swing, NPC target, int position)
         {
             target.AddBuff(BuffID.OnFire3, 5 * 60);
         }

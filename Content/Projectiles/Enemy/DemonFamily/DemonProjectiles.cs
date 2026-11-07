@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -74,6 +75,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
             return new Vector3(0.9f, 0.5f, 0.12f);
         }
 
+        // Defiled's breath builds Blight; give its tell and moving flames the supplied sprite's pale-gold light.
+        public static Vector3 BreathLightColor(DemonTier tier)
+        {
+            if (tier == DemonTier.Defiled)
+            {
+                return new Vector3(0.45f, 0.36f, 0.15f);
+            }
+
+            return LightColor(tier);
+        }
+
         /// <summary>The tint used for the body flash, the commit flash and the despawn text.</summary>
         public static Color TintColor(DemonTier tier)
         {
@@ -134,6 +146,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
             return accent;
         }
 
+        // Blight breath uses gold flecks in its black smoke; other attacks retain their existing status colours.
+        public static Dust SpawnBreathAccent(DemonTier tier, Vector2 position, int width, int height, Vector2 velocity, float scale)
+        {
+            if (tier != DemonTier.Defiled)
+            {
+                return SpawnAccent(tier, position, width, height, velocity, scale);
+            }
+
+            Dust accent = Dust.NewDustDirect(position, width, height, DustID.YellowTorch, 0f, 0f, 100, default, scale);
+            accent.noGravity = true;
+            accent.velocity = velocity;
+            return accent;
+        }
+
         /// <summary>
         /// The tier's debuff for one hit. Called from OnHitPlayer hooks, which run on the hit player's own machine, so
         /// AddBuff / ApplyExplicit there syncs normally (unlike the old T3 server-side Abyss on cast).
@@ -159,10 +185,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
         }
     }
 
-    // One puff of a demon's breath. Dust-only, coloured by tier (ai[0]). Grows 0.6x → 1.4x over its life at constant speed,
-    // so reach = Speed x LifetimeTicks (≈ 450px; the demon gates the breath at 420), and thins over the last FadeTicks
+    // One puff of a demon's breath. Tier-coloured dust (ai[0]), plus a spinning flame sprite matching its element.
+    // Dust grows 0.6x → 1.4x over its life at constant speed,
+    // so default reach is Speed x LifetimeTicks (450px; Blight lasts 30 ticks longer), and thins over the last FadeTicks
     // instead of popping. Stops on tiles. Pierces the player (a stream, not a bolt): its 40t post-hit immunity spaces hits.
-    // Debuff per hit: T1 On Fire 4s, T2 Curse +10, T3 Destined Death +1 and Abyss 30s.
+    // T1 hits inflict On Fire 4s; T3 hits add Destined Death +1 and Abyss 30s. T2 uses BlightBreath's exposure clock.
     public class DemonBreath : ModProjectile
     {
         public const float Speed = 9f;
@@ -171,9 +198,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
         private const int OnFireTicks = 4 * 60;
         private const int CurseAmount = 10;
 
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
+        // Intentional sharing: restore the original Oolacile flame art without changing the shared FireBreath projectile.
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(FireBreath));
 
-        private DemonTier Tier => (DemonTier)(int)Projectile.ai[0];
+        protected virtual DemonTier Tier => (DemonTier)(int)Projectile.ai[0];
+
+        protected virtual int PuffLifetimeTicks => LifetimeTicks;
 
         public override void SetDefaults()
         {
@@ -184,19 +214,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
             Projectile.penetrate = -1;
             Projectile.tileCollide = true;
             Projectile.ignoreWater = true;
-            Projectile.timeLeft = LifetimeTicks;
+            Projectile.timeLeft = PuffLifetimeTicks;
             Projectile.DamageType = DamageClass.Magic;
         }
 
         public override void AI()
         {
             DemonTier tier = Tier;
-            float age = LifetimeTicks - Projectile.timeLeft;
-            float growth = MathHelper.Clamp(age / LifetimeTicks, 0f, 1f);
+            int lifetime = PuffLifetimeTicks;
+            float age = lifetime - Projectile.timeLeft;
+            float growth = MathHelper.Clamp(age / lifetime, 0f, 1f);
             float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
             float scale = MathHelper.Lerp(0.6f, 1.4f, growth);
 
-            Lighting.AddLight(Projectile.Center, DemonElement.LightColor(tier) * fade);
+            Lighting.AddLight(Projectile.Center, DemonElement.BreathLightColor(tier) * fade);
 
             if (Main.dedServ)
             {
@@ -235,12 +266,44 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
             Dust fine = Dust.NewDustPerfect(fineSpot, flameDust, fineVelocity, 120, default, Main.rand.NextFloat(0.5f, 0.95f) * fade);
             fine.noGravity = true;
 
-            // Accent: T1 trailing orange ember, T2 curse-pink, T3 black smoke.
+            // Accent: T1 trailing orange ember, T2 Blight-gold, T3 black smoke.
             if (Main.rand.NextBool(3))
             {
                 Vector2 accentVelocity = -forward * Main.rand.NextFloat(0.3f, 1.2f);
-                DemonElement.SpawnAccent(tier, Projectile.position, Projectile.width, Projectile.height, accentVelocity, 1.3f * scale * fade);
+                DemonElement.SpawnBreathAccent(tier, Projectile.position, Projectile.width, Projectile.height, accentVelocity, 1.3f * scale * fade);
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // All three flame sprites are one 38x36 frame, with no leading edge; they tumble inside the dust stream.
+            // Fit the sprite core to the 24px hitbox, grow in over 4 ticks and share the dust's 14-tick fade.
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            if (Tier == DemonTier.Ancient)
+            {
+                int spriteType = ModContent.ProjectileType<DestinedDeathBreath>();
+                texture = TextureAssets.Projectile[spriteType].Value;
+            }
+
+            float age = PuffLifetimeTicks - Projectile.timeLeft;
+            float growth = MathHelper.Clamp((age + 1f) / 4f, 0f, 1f);
+            float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+            float drawScale = Projectile.width / (float)texture.Width * growth;
+
+            // Derive phase and spin from identity so clients need no random rolls or extra synced fields.
+            float spinDirection = 1f;
+            if ((Projectile.identity & 1) == 0)
+            {
+                spinDirection = -1f;
+            }
+
+            float startingAngle = Projectile.identity * 2.399963f;
+            float rotation = startingAngle + age * 0.20f * spinDirection;
+            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            Color drawColor = Color.White * fade;
+            Main.EntitySpriteDraw(texture, drawPosition, null, drawColor, rotation, origin, drawScale, SpriteEffects.None, 0f);
+            return false;
         }
 
         public override void OnKill(int timeLeft)

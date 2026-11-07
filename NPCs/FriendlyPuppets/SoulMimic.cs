@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
@@ -14,7 +15,7 @@ using tsorcRevamp.Systems.EstusFlask;
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
     /// <summary>
-    /// The Mimic Tear: a reflective copy of its owner that walks with them, fights with their weapons (through the
+    /// The Soul Mimic: a reflective copy of its owner that walks with them, fights with their weapons (through the
     /// owner's own ItemCheck — see <see cref="MirrorPuppetSwap"/>), and has their max HP, defense, stamina, mana,
     /// Estus and Cerulean. Design: tsorcDocs/MimicTear_FriendlyPuppet_Design.md.
     ///
@@ -25,7 +26,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     ///
     /// ai[0] = owner, ai[1] = target NPC index (-1 none), ai[2] = active loadout slot, ai[3] = <see cref="MimicState"/>.
     /// </summary>
-    public class MimicTear : FriendlyPuppetNPC
+    // Was MimicTear until 2026-11. The NPC itself is never saved; the legacy name keeps name-keyed world data (bestiary,
+    // kill counts) resolving to it.
+    [LegacyName("MimicTear")]
+    public class SoulMimic : FriendlyPuppetNPC
     {
         public enum MimicState
         {
@@ -42,16 +46,20 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             Dissolving = 6,
         }
 
-        /// <summary>Minion slots the Mimic Tear takes: all the owner has, up to this many. Shown in the Mimic Rune tooltip.</summary>
+        /// <summary>Minion slots the Soul Mimic takes: all the owner has, up to this many. Shown in the Mimic Rune tooltip.</summary>
         public const int MinionSlotCost = 3;
-        /// <summary>Resummon cooldown, applied as the MimicTearCooldown debuff (cleared on death). Shown in the tooltip.</summary>
+        /// <summary>Resummon cooldown, applied as the SoulMimicCooldown debuff (cleared on death). Shown in the tooltip.</summary>
         public const int ResummonCooldownSeconds = 300;
         /// <summary>How long a Soul Mimic lasts before it dissolves on its own, counted from spawn. Shown in the tooltip.
         /// Equal to the cooldown on purpose: the rune comes off cooldown as the mimic it made runs out.</summary>
         public const int LifetimeSeconds = 300;
+        /// <summary>Its max HP is the owner's times this. 1x died far too fast: it holds aggro for the whole fight and
+        /// can't play defensively like a player. Applied on every machine in ApplyStats (the synced stat stays the owner's
+        /// raw max HP). Shown in the Mimic Rune tooltip. ESTIMATE.</summary>
+        public const int HealthMultiplier = 5;
         /// <summary>Length of the dissolve (1 s).</summary>
         private const int DissolveTicks = 60;
-        /// <summary>How long the MimicTearBuff lasts with no mimic alive — covers the spawn round-trip in multiplayer.
+        /// <summary>How long the SoulMimicBuff lasts with no mimic alive — covers the spawn round-trip in multiplayer.
         /// The server also waits this long after spawning before it treats "owner has no buff" as a dismissal.</summary>
         public const int SummonBuffGraceTicks = 300;
 
@@ -312,7 +320,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private static void SpawnFor(int ownerIndex, MimicStats stats)
         {
             Player owner = Main.player[ownerIndex];
-            int mimicType = ModContent.NPCType<MimicTear>();
+            int mimicType = ModContent.NPCType<SoulMimic>();
 
             // One mimic per owner.
             for (int i = 0; i < Main.maxNPCs; i++)
@@ -343,7 +351,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             NPC npc = Main.npc[npcIndex];
-            MimicTear mimic = (MimicTear)npc.ModNPC;
+            SoulMimic mimic = (SoulMimic)npc.ModNPC;
             mimic.ApplyStats(stats);
             npc.life = npc.lifeMax;
             npc.direction = owner.direction;
@@ -367,7 +375,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             _stats = stats;
             _estusCharges = stats.EstusChargesMax;
-            NPC.lifeMax = Math.Max(1, stats.LifeMax);
+            int scaledLifeMax = stats.LifeMax * HealthMultiplier;
+            NPC.lifeMax = Math.Max(1, scaledLifeMax);
             NPC.defense = stats.Defense;
             NPC.defDefense = stats.Defense;
         }
@@ -528,10 +537,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            // Dismissed: the owner cancelled (or lost) the MimicTearBuff. Player buffs reach the server through
+            // Dismissed: the owner cancelled (or lost) the SoulMimicBuff. Player buffs reach the server through
             // vanilla's own sync, so wait out the spawn round-trip before trusting "no buff".
             _serverAgeTicks++;
-            int summonBuffType = ModContent.BuffType<Buffs.Weapons.Summon.MimicTearBuff>();
+            int summonBuffType = ModContent.BuffType<Buffs.Weapons.Summon.SoulMimicBuff>();
             bool dismissed = _serverAgeTicks > SummonBuffGraceTicks && !owner.HasBuff(summonBuffType);
 
             // Its time is up (LifetimeSeconds from spawn), or it was dismissed: melt back into the pool, then go.
@@ -1479,6 +1488,23 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 aimWorld += target.velocity * travelTicks;
             }
 
+            // Click like a player instead of holding the button forever. A held button only re-arms autoReuse
+            // weapons (vanilla TryAllowingItemReuse), and the greatsword engine reads a HELD button as a different
+            // move: Sword of Lord Gwyn swings only on a release inside its tap window, so a held mimic just stood
+            // with the sunlight spear raised. Greatswords tap (press one tick, release the next); other
+            // non-autoReuse weapons release for one tick between uses; channelled held projectiles keep holding.
+            // aimWorld stays on the target through a release tick: the Gwyn controller aims its tap at the cursor.
+            bool tapInputWeapon = weapon.ModItem is Greatsword;
+            bool pressedLastTick = UseState.PreviousControlUseItem;
+            bool tapRelease = tapInputWeapon && pressedLastTick;
+            bool useIdle = UseState.ItemAnimation == 0;
+            bool releaseBetweenUses = !weapon.autoReuse && !weapon.channel && useIdle && pressedLastTick;
+
+            if (tapRelease || releaseBetweenUses)
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -1759,15 +1785,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         }
     }
 
-    /// <summary>/mimic — summon a Mimic Tear (until the summon item exists). Chat command: runs on the owner's client,
+    /// <summary>/mimic — summon a Soul Mimic (until the summon item exists). Chat command: runs on the owner's client,
     /// which snapshots its own stats and, in multiplayer, asks the server to spawn it.</summary>
-    public class MimicTearCommand : ModCommand
+    public class SoulMimicCommand : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
 
         public override string Command => "mimic";
 
-        public override string Description => "Summon a Mimic Tear: a reflective copy of you with your HP, defense, Estus, Cerulean and weapons (held + hotbar 1/2). /mimictest clear removes it.";
+        public override string Description => "Summon a Soul Mimic: a reflective copy of you with your HP, defense, Estus, Cerulean and weapons (held + hotbar 1/2). /mimictest clear removes it.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
@@ -1777,10 +1803,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             // Debug path: skips the Mimic Rune cooldown and slot checks, but still needs the buff — the server treats a
-            // mimic whose owner has no MimicTearBuff as dismissed.
-            caller.Player.AddBuff(ModContent.BuffType<Buffs.Weapons.Summon.MimicTearBuff>(), MimicTear.SummonBuffGraceTicks);
-            MimicTear.RequestSpawn(caller.Player);
-            caller.Reply("Mimic Tear summoned (debug: no cooldown).", Color.Lime);
+            // mimic whose owner has no SoulMimicBuff as dismissed.
+            caller.Player.AddBuff(ModContent.BuffType<Buffs.Weapons.Summon.SoulMimicBuff>(), SoulMimic.SummonBuffGraceTicks);
+            SoulMimic.RequestSpawn(caller.Player);
+            caller.Reply("Soul Mimic summoned (debug: no cooldown).", Color.Lime);
         }
     }
 }

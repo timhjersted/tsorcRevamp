@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Puppets
     ///   Player-friendly projectiles will damage the puppet itself and not the player.
     ///   Create a Projectiles/Enemy/ copy for every weapon the puppet uses at range.
     /// </summary>
-    public abstract class PuppetNPC : ModNPC, IStaggerable
+    public abstract class PuppetNPC : ModNPC, IStaggerable, IBladeSlashSource
     {
         public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
@@ -417,6 +417,82 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float SlashVFXOpacity => 0.4f;
         protected virtual float SlashVFXScale => 1f;
         protected virtual bool SuppressSlashVFXForCurrentPhase => false;
+
+        // Opt in with a palette color; the shared combo driver attaches one harmless arc to each
+        // real cut, delaying landing-timed slams until the sword actually leaves its carry pose.
+        protected virtual bool HasSwordArcVFX => false;
+        protected virtual Color SwordArcVFXColor => Color.White;
+        protected virtual VanillaSwordArcTexture SwordArcVFXTexture => VanillaSwordArcTexture.NightsEdge;
+
+        // The Moonlight/players' Slash renderer, sized from the final rendered weapon rather than
+        // combat reach. Blade markers are normalized sprite coordinates before mirroring.
+        protected virtual bool HasBladeSlashVFX => false;
+        protected virtual Color BladeSlashVFXColor => Color.White;
+        protected virtual Vector2 BladeSlashHeelNorm => new Vector2(0.25f, 0.65f);
+        protected virtual Vector2 BladeSlashTipNorm => new Vector2(0.98f, 0.02f);
+
+        Color IBladeSlashSource.SwordSlashColor => BladeSlashVFXColor;
+        int IBladeSlashSource.SwordSlashSequence => _phaseSequence;
+
+        bool IBladeSlashSource.TryGetSwordSlashPose(out Vector2 hand, out Vector2 bladeHeel, out Vector2 bladeTip)
+        {
+            bool hasPose = TryGetRenderedBladePose(out hand, out bladeHeel, out bladeTip);
+            return HasBladeSlashVFX && hasPose && !IsLeapSlamCarry;
+        }
+
+        protected bool TryGetRenderedBladePose(out Vector2 hand, out Vector2 bladeHeel, out Vector2 bladeTip)
+        {
+            hand = Vector2.Zero;
+            bladeHeel = Vector2.Zero;
+            bladeTip = Vector2.Zero;
+
+            if (Main.dedServ || LastHeldWeaponDrawUpdate != Main.GameUpdateCount
+                || LastHeldWeaponDraw.texture == null || !_weaponVisible
+                || _heldItemType != MeleeWeaponItemType)
+            {
+                return false;
+            }
+
+            DrawData draw = LastHeldWeaponDraw;
+            Vector2 frameSize = draw.texture.Size();
+
+            if (draw.sourceRect.HasValue)
+            {
+                frameSize = draw.sourceRect.Value.Size();
+            }
+
+            // This position IS the final grip anchor. The captured DrawData already contains
+            // DrawPlayer, template and spectral scaling, so none of them may be applied twice.
+            hand = draw.position + Main.screenPosition;
+            bladeHeel = Slash.TransformBladePixel(frameSize * BladeSlashHeelNorm, frameSize,
+                draw.origin, draw.scale, draw.rotation, draw.effect, hand);
+            bladeTip = Slash.TransformBladePixel(frameSize * BladeSlashTipNorm, frameSize,
+                draw.origin, draw.scale, draw.rotation, draw.effect, hand);
+            return true;
+        }
+
+        protected void SpawnBladeSlashVFX(int duration, float hitWindowEnd = 0f)
+        {
+            if (!HasBladeSlashVFX || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int emissionTicks = Math.Max(1, duration);
+
+            if (hitWindowEnd > 0f)
+            {
+                emissionTicks = Math.Max(1, (int)Math.Ceiling(duration * hitWindowEnd));
+            }
+
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<Slash>(), 0, 0f, Main.myPlayer,
+                NPC.whoAmI + 1, 2f, emissionTicks);
+        }
+
+        protected virtual void ModifySwordArcVFX(MeleeComboStep step, VanillaSwordArcSettings settings)
+        {
+        }
 
         /// <summary>Per-phase escape hatch for attacks that temporarily replace the melee weapon
         /// with a bespoke holdout. Returning true suppresses the ordinary held-item sprite.</summary>
@@ -2072,7 +2148,7 @@ namespace tsorcRevamp.NPCs.Puppets
             Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack ||
             Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery;
 
-        /// <summary>True while a melee swing is live or about to be (telegraph + attack). Read by the Mimic Tear to
+        /// <summary>True while a melee swing is live or about to be (telegraph + attack). Read by the Soul Mimic to
         /// decide when to roll away; recovery/pause are excluded because the danger has passed.</summary>
         public bool IsMeleeSwingThreatening => Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack;
 
@@ -5247,6 +5323,7 @@ namespace tsorcRevamp.NPCs.Puppets
                         _bladeArmed = false;
                         DoMeleeAttack();
                         EnterPhase(AttackPhase.MeleeAttack, GetMeleeSwingTicks(MeleeAttackTicks));
+                        SpawnBladeSlashVFX(GetMeleeSwingTicks(MeleeAttackTicks), MeleeAttackCurve.HitWindowEnd);
                     }
                     break;
 
@@ -6736,6 +6813,8 @@ namespace tsorcRevamp.NPCs.Puppets
                 {
                     LockComboDirection();
                     var step = _activeMeleeCombo.Steps[_meleeComboStepIndex];
+                    TrySpawnSwordArcVFX(step, Math.Max(0, _activeComboStepTotalTicks - PhaseTimer),
+                        Math.Max(1, _activeComboStepTotalTicks));
                     OnMeleeComboAttackTick(
                         _activeMeleeCombo,
                         step,
@@ -6825,7 +6904,10 @@ namespace tsorcRevamp.NPCs.Puppets
                         {
                             UpdateLeapSlamPose(landed);
                             if (_leapSlamSwingProgress > 0f)
+                            {
+                                TrySpawnSwordArcVFX(step, -1, LeapSlamDownswingTicks + 2);
                                 OnLandingTimedLeapSlamSwingTick(step, _leapSlamSwingProgress);
+                            }
                         }
 
                         // The predicted-landing downswing starts ~10 ticks BEFORE touchdown, so the
@@ -6857,7 +6939,10 @@ namespace tsorcRevamp.NPCs.Puppets
                                 TickBladeHit();
                             }
                             if (landingTimedSlam && landed)
+                            {
+                                TrySpawnSwordArcVFX(step, -1, LeapSlamDownswingTicks + 2);
                                 OnLeapSlamLanded(step);
+                            }
                             _comboLeapLaunched = false;
                             _leapStrikeStarted = false;
                         }
@@ -7617,6 +7702,7 @@ namespace tsorcRevamp.NPCs.Puppets
                     _weaponAnimMax = _attackRuntimeV2.Clip.ActiveTicks;
                     _weaponAnim = _attackRuntimeV2.TicksRemaining;
                     MeleeComboStep activeStep = _activeMeleeCombo.Steps[0];
+                    TrySpawnSwordArcVFX(activeStep, _attackRuntimeV2.StageTick, _attackRuntimeV2.Clip.ActiveTicks);
                     OnMeleeComboAttackTick(
                         _activeMeleeCombo,
                         activeStep,
@@ -8855,6 +8941,33 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         private void SlowDown() => NPC.velocity.X *= 0.80f;
+
+        /// <summary>
+        /// Speed (px/t) at tick <paramref name="elapsed"/> of a body move that covers <paramref name="distance"/> px
+        /// shaped like a swing: a (t/in)^2 ramp over <paramref name="easeIn"/> ticks, <paramref name="cruise"/> ticks at
+        /// peak, then e^(-k p) decay over <paramref name="easeOut"/> ticks. The peak is solved so the ticks sum to the
+        /// distance: peak * (in/3 + cruise + out * (1 - e^-k) / k) = distance. For push-ins, lunges and dashes.
+        /// </summary>
+        public static float ShapedSpeed(float distance, float elapsed, int easeIn, int cruise, int easeOut, float decay)
+        {
+            float integral = easeIn / 3f + cruise + easeOut * (1f - (float)Math.Exp(-decay)) / decay;
+            float peak = distance / integral;
+            float sample = elapsed + 0.5f;
+
+            if (sample < easeIn)
+            {
+                float rampProgress = sample / easeIn;
+                return peak * rampProgress * rampProgress;
+            }
+
+            if (sample < easeIn + cruise)
+            {
+                return peak;
+            }
+
+            float decayProgress = MathHelper.Clamp((sample - easeIn - cruise) / easeOut, 0f, 1f);
+            return peak * (float)Math.Exp(-decay * decayProgress);
+        }
 
         /// <summary>
         /// Preemptive quick-step: when the player is mid-swing within melee reach, roll
@@ -10716,9 +10829,16 @@ namespace tsorcRevamp.NPCs.Puppets
         /// the tip sits at -45° when _weaponRotation=0, dir=1, no flip (the standard broadsword
         /// convention used across all puppets).
         /// </summary>
+        /// <summary>
+        /// True when the hand holds the magic prop as a staff. A puppet whose magic item IS its melee weapon
+        /// (Darkmoon Knight casts with its sword) must keep drawing and colliding as a sword: otherwise every melee
+        /// swing used the staff's centred grip, scale and rotation offset - the sword held mid-blade, twisted.
+        /// </summary>
+        private bool HoldingMagicStaff => _heldItemType == MagicWeaponItemType && MagicWeaponItemType != MeleeWeaponItemType;
+
         private Vector2 GetWeaponWorldDirection()
         {
-            if (_heldItemType == MagicWeaponItemType)
+            if (HoldingMagicStaff)
             {
                 return GetDiagonalSpriteWorldDirection(_weaponRotation + MagicWeaponRotationOffset, BladeFlipActive);
             }
@@ -11531,7 +11651,9 @@ namespace tsorcRevamp.NPCs.Puppets
         internal bool DrawExportPose(Vector2 worldPosition, bool withPrimaryWeapon)
         {
             if (_puppet == null)
+            {
                 InitPuppet();
+            }
 
             NPC.active = true;
             NPC.position = worldPosition;
@@ -11540,7 +11662,9 @@ namespace tsorcRevamp.NPCs.Puppets
             NPC.spriteDirection = 1;
 
             if (HasWings)
+            {
                 _flight ??= new EnemyFlightController(FlightConfig);
+            }
 
             // First configured weapon wins, in preference order; magic is the fallback.
             int primaryWeapon = MagicWeaponItemType;
@@ -11560,7 +11684,9 @@ namespace tsorcRevamp.NPCs.Puppets
 
 
             if (withPrimaryWeapon && primaryWeapon <= 0)
+            {
                 return false;
+            }
 
             if (withPrimaryWeapon)
             {
@@ -11605,6 +11731,17 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             SyncPuppet();
+
+            if (!withPrimaryWeapon)
+            {
+                // Always-carried weapons can keep a composite arm raised even after the export hides the prop.
+                // Restore both natural idle arms so they hang beside the body instead of covering the face/chest.
+                _puppet.inventory[0] = new Item();
+                _puppet.itemAnimation = 0;
+                _puppet.itemRotation = 0f;
+                _puppet.SetCompositeArmFront(false, Player.CompositeArmStretchAmount.Full, 0f);
+                _puppet.SetCompositeArmBack(false, Player.CompositeArmStretchAmount.Full, 0f);
+            }
 
             // Export every configured wing set even when that puppet normally folds/hides it while
             // grounded. Frame zero is the stable closed/idle frame used by the normal wing layer.
@@ -11761,6 +11898,156 @@ namespace tsorcRevamp.NPCs.Puppets
 
         private static Texture2D _slashVFXTex;
         private static bool _slashVFXTexLoadAttempted;
+
+        // ── Shared blade-tracking sword arcs ─────────────────────────────────────────────────
+        private bool _swordArcSpawned;
+
+        private void TrySpawnSwordArcVFX(MeleeComboStep step, int elapsed, int total)
+        {
+            if ((!HasSwordArcVFX && !HasBladeSlashVFX) || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            if (elapsed == 0)
+            {
+                _swordArcSpawned = false;
+            }
+
+            if (_swordArcSpawned || step.DamageMult <= 0f)
+            {
+                return;
+            }
+
+            // A thrust has no swept crescent. Feints, retreats and carried weapons likewise
+            // stay bare; only motions that visibly sweep a blade use this effect.
+            bool swinging = step.Motion == ComboMotion.OverheadArc
+                || step.Motion == ComboMotion.UnderhandArc
+                || step.Motion == ComboMotion.HorizontalSweep
+                || step.Motion == ComboMotion.VerticalChop
+                || step.Motion == ComboMotion.GroundSlam
+                || step.Motion == ComboMotion.IaidoDraw
+                || step.Motion == ComboMotion.DoubleSpinSlam
+                || step.Motion == ComboMotion.Spin
+                || step.Motion == ComboMotion.RisingUppercutLeap
+                || step.Motion == ComboMotion.LeapSlam;
+
+            if (!swinging)
+            {
+                return;
+            }
+
+            bool landingTimedSlam = UseLandingTimedLeapSlam && step.Motion == ComboMotion.LeapSlam;
+
+            if (landingTimedSlam && _leapSlamSwingProgress <= 0f)
+            {
+                return;
+            }
+
+            (float startRotation, float endRotation) = WeaponArchetypeTables.SwingArcEndpoints(
+                step.Motion, OverheadWindupOvershoot);
+            ModifyMeleeArcEndpoints(step.Motion, ref startRotation, ref endRotation);
+            float sweep = endRotation - startRotation;
+            int duration = total;
+
+            if (landingTimedSlam)
+            {
+                sweep = LeapSlamImpactRotation - LeapSlamCarryRotation;
+                duration = LeapSlamDownswingTicks + 2;
+            }
+            else if (step.Motion == ComboMotion.RisingUppercutLeap)
+            {
+                // Match the running carry (1.9 rad) to the uppercut's high finish (-1 rad).
+                sweep = -2.9f;
+                duration = Math.Min(total, GetWeaponUseAnimation(MeleeWeaponItemType));
+            }
+            else if (step.Motion == ComboMotion.DoubleSpinSlam)
+            {
+                sweep = MathHelper.TwoPi * 2f;
+            }
+            else if (step.Motion == ComboMotion.Spin)
+            {
+                sweep = MathHelper.TwoPi;
+            }
+
+            if (UseAlternateFlip && _comboSwingFlipped)
+            {
+                sweep = -sweep;
+            }
+
+            float hitWindowEnd = 1f;
+
+            if (step.HitWindowEnd > 0f)
+            {
+                hitWindowEnd = step.HitWindowEnd;
+            }
+
+            float fadeOutFraction = Math.Max(0.2f, 1f - hitWindowEnd);
+
+            if (HasBladeSlashVFX)
+            {
+                _swordArcSpawned = true;
+                SpawnBladeSlashVFX(duration, hitWindowEnd);
+                return;
+            }
+
+            if (landingTimedSlam)
+            {
+                fadeOutFraction = 0.25f;
+            }
+
+            VanillaSwordArcEasing easing = VanillaSwordArcEasing.SmoothStep;
+
+            if (step.Ease == SwingEaseStyle.Weighted)
+            {
+                easing = VanillaSwordArcEasing.Weighted;
+            }
+
+            Color palette = SwordArcVFXColor;
+            VanillaSwordArcSettings settings = new VanillaSwordArcSettings
+            {
+                Texture = SwordArcVFXTexture,
+                Easing = easing,
+                WeightedEaseInTicks = step.EaseInTicks,
+                WeightedEaseOutTicks = step.EaseOutTicks,
+                WeightedEaseOutDecay = step.EaseOutDecay,
+                Duration = duration,
+                StartAngle = PuppetWeaponDirection.ToRotation(),
+                SweepAngle = sweep * NPC.direction,
+                Radius = Math.Max(72f, ComboReachBase * 0.7f * step.ReachMult * 1.08f),
+                Opacity = 0.42f,
+                FadeInFraction = 0.04f,
+                FadeOutFraction = fadeOutFraction,
+                AfterimageLag = MathHelper.PiOver4,
+                AfterimageOpacity = 0.58f,
+                BodyOpacity = 0.68f,
+                CoreOpacity = 0.28f,
+                DarkColor = Color.Lerp(Color.Black, palette, 0.24f),
+                BodyColor = palette,
+                CoreColor = Color.Lerp(palette, Color.White, 0.45f),
+                DustType = DustID.Shadowflame,
+                DustColor = Color.Lerp(palette, Color.White, 0.12f),
+                DustCount = 1,
+                DustAlpha = 90,
+                DustScale = 0.76f,
+                DustRadiusFraction = 0.93f,
+                DustAngularSpread = 0.48f,
+                DustTangentialSpeed = 1.05f,
+                DustVelocityJitter = 0.28f,
+                DustInheritAnchorVelocity = 0.15f,
+                DrawTipSparkle = false,
+                TrackPuppetBlade = true,
+                EnableCollision = false,
+            };
+
+            ModifySwordArcVFX(step, settings);
+
+            // Spawns are authoritative; the existing projectile syncs its palette/settings and
+            // follows the live hand on every peer. Two extra slam frames preserve its impact fade.
+            _swordArcSpawned = true;
+            VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer,
+                settings, Vector2.Zero, hostile: false);
+        }
 
         // ── Generic shader-based slash trail (opt-in alternative to HasSlashVFX above) ─────────
         // A DynamicTrail ribbon (see PuppetSwordSlashTrail) driven by this puppet's own live hand
@@ -12137,6 +12424,9 @@ namespace tsorcRevamp.NPCs.Puppets
         // The finished player draw cache becomes the spectral body. This preserves every armor
         // layer and the hand/weapon attachment without a second solid small puppet underneath.
         protected virtual bool HasSpectralOverlay => false;
+        // Hollow Warrior's moving blue shimmer, applied to the composed armor/weapon cache instead
+        // of its old NPC sheet. Opt-in keeps oversized phantoms on their existing radial halo.
+        protected virtual bool UseHollowWarriorGhostEffect => false;
         /// <summary>Keep armor/wing dye shaders on the enlarged spectral body (halo and trail copies stay
         /// flat). Off by default: ghost-style overlays are meant to read as a tinted silhouette.</summary>
         protected virtual bool SpectralKeepsArmorDyes => false;
@@ -12182,15 +12472,108 @@ namespace tsorcRevamp.NPCs.Puppets
         private void UpdateSpectralHistory()
         {
             if (Main.dedServ || !HasSpectralOverlay)
+            {
                 return;
+            }
+
             if (_spectralOldPositions == null)
             {
-                _spectralOldPositions = new Vector2[18];
+                int historyLength = UseHollowWarriorGhostEffect ? 8 : 18;
+                _spectralOldPositions = new Vector2[historyLength];
                 Array.Fill(_spectralOldPositions, NPC.position);
             }
+
+            if (UseHollowWarriorGhostEffect)
+            {
+                float travelSquared = Vector2.DistanceSquared(_spectralOldPositions[0], NPC.position);
+                if (travelSquared > 320f * 320f)
+                {
+                    // A teleport starts a new trail; never leave disconnected copies at the old landing.
+                    Array.Fill(_spectralOldPositions, NPC.position);
+                }
+
+                // Match GlobalNPC.UpdateInvisibilityTrail: sample each two pixels of travel.
+                if (travelSquared < 4f)
+                {
+                    return;
+                }
+            }
+
             for (int i = _spectralOldPositions.Length - 1; i > 0; i--)
+            {
                 _spectralOldPositions[i] = _spectralOldPositions[i - 1];
+            }
+
             _spectralOldPositions[0] = NPC.position;
+        }
+
+        private void ComposeHollowWarriorGhost(ref PlayerDrawSet drawInfo)
+        {
+            Vector2 center = NPC.Center - Main.screenPosition;
+            if (_spectralOldPositions != null)
+            {
+                int trailCount = _spectralOldPositions.Length;
+                for (int k = trailCount - 1; k >= 0; k--)
+                {
+                    Vector2 offset = _spectralOldPositions[k] - NPC.position;
+                    float distanceSquared = offset.LengthSquared();
+                    if (distanceSquared < 1f || distanceSquared > 320f * 320f)
+                    {
+                        continue;
+                    }
+
+                    float fade = (trailCount - k) / (float)trailCount;
+                    float opacity = MathHelper.Lerp(0.03f, 0.16f, fade);
+                    float scale = 1f - k * 0.035f;
+                    foreach (DrawData core in _spectralDrawCache)
+                    {
+                        DrawData trail = core;
+                        trail.position = center + (core.position - center) * scale + offset;
+                        trail.scale *= scale;
+                        trail.color *= opacity;
+                        trail.shader = 0;
+                        drawInfo.DrawDataCache.Add(trail);
+                    }
+                }
+            }
+
+            drawInfo.DrawDataCache.AddRange(_spectralDrawCache);
+
+            // The same three independent waves as GlobalNPC.PostDraw, in pixels and visual ticks.
+            // Zero alpha retains additive RGB under the player's premultiplied AlphaBlend batch.
+            float time = (float)Main.timeForVisualEffects;
+            float waveX = (float)Math.Sin(time * 0.16f + NPC.whoAmI) * 2.2f;
+            float waveY = (float)Math.Cos(time * 0.11f + NPC.whoAmI * 0.7f) * 1.4f;
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 offset;
+                Color shimmerColor;
+                if (i == 0)
+                {
+                    offset = new Vector2(waveX, waveY);
+                    shimmerColor = Color.Cyan * 0.08f;
+                }
+                else if (i == 1)
+                {
+                    offset = -new Vector2(waveY, waveX) * 0.75f;
+                    shimmerColor = new Color(80, 180, 255) * 0.072f;
+                }
+                else
+                {
+                    offset = new Vector2((float)Math.Sin(time * 0.31f) * 1.1f, -waveY);
+                    shimmerColor = new Color(150, 230, 255) * 0.0512f;
+                }
+
+                shimmerColor.A = 0;
+                foreach (DrawData core in _spectralDrawCache)
+                {
+                    DrawData shimmer = core;
+                    shimmer.position += offset;
+                    shimmer.color = shimmerColor * (core.color.A / 255f);
+                    shimmer.shader = 0;
+                    drawInfo.DrawDataCache.Add(shimmer);
+                }
+            }
         }
 
         /// <summary>Whole-body flip angle (radians, + = clockwise on screen) for somersault set-pieces. Rotates every
@@ -12227,7 +12610,9 @@ namespace tsorcRevamp.NPCs.Puppets
         internal void TransformSpectralDrawData(ref PlayerDrawSet drawInfo)
         {
             if (drawInfo.drawPlayer != _puppet)
+            {
                 return;
+            }
 
             ApplyBodySpin(ref drawInfo);
             TransformLargeArmorTemplate(ref drawInfo);
@@ -12242,7 +12627,9 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             if (!HasSpectralOverlay)
+            {
                 return;
+            }
 
             Vector2 feet = NPC.Bottom - Main.screenPosition;
             _spectralDrawCache.Clear();
@@ -12266,6 +12653,13 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             drawInfo.DrawDataCache.Clear();
 
+            if (ShowSpectralGhostCopies && UseHollowWarriorGhostEffect)
+            {
+                ComposeHollowWarriorGhost(ref drawInfo);
+                AddLargeArmorMaskOverlay(ref drawInfo);
+                return;
+            }
+
             if (ShowSpectralGhostCopies)
             {
                 Color haloColor = SpectralHaloColor * SpectralHaloOpacity;
@@ -12274,7 +12668,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     Vector2 offset = new Vector2(SpectralHaloRadius, 0f)
                         .RotatedBy(MathHelper.TwoPi * i / SpectralHaloCopyCount);
                     if (SpectralExcludeDownwardCopies && offset.Y > 0.01f)
+                    {
                         continue;
+                    }
                     foreach (DrawData core in _spectralDrawCache)
                     {
                         DrawData halo = core;
@@ -12294,9 +12690,13 @@ namespace tsorcRevamp.NPCs.Puppets
                         Vector2 offset = _spectralOldPositions[k] - NPC.position;
                         // Avoid stacking stationary copies or spanning an instantaneous teleport.
                         if (offset.LengthSquared() < 1f || offset.LengthSquared() > 320f * 320f)
+                        {
                             continue;
+                        }
                         if (SpectralExcludeDownwardCopies && offset.Y > 1f)
+                        {
                             continue;
+                        }
                         Color trailColor = SpectralHaloColor
                             * ((_spectralOldPositions.Length - k) / (float)_spectralOldPositions.Length
                                 * SpectralTrailOpacity);
@@ -12480,7 +12880,7 @@ namespace tsorcRevamp.NPCs.Puppets
         /// </summary>
         internal void DrawSlashToLayer(ref PlayerDrawSet drawInfo)
         {
-            if (!HasSlashVFX || SuppressSlashVFXForCurrentPhase || IsLeapSlamCarry)
+            if (HasBladeSlashVFX || HasSwordArcVFX || !HasSlashVFX || SuppressSlashVFXForCurrentPhase || IsLeapSlamCarry)
                 return;
 
             bool standardSwing = Phase == AttackPhase.MeleeAttack || Phase == AttackPhase.StabAttack
@@ -12738,7 +13138,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // projectile) draws as MELEE — handle-anchored at full melee scale — not as a centred thrown item.
             bool heldRangedLike = (_heldItemType == RangedWeaponItemType && RangedWeaponItemType != MeleeWeaponItemType)
                                || _heldItemType == SecondaryRangedWeaponItemType
-                               || _heldItemType == MagicWeaponItemType;
+                               || HoldingMagicStaff;
             bool heldCrossbowLike = _heldItemType == _activeRangedItemType
                                  && _activeRangedStyle == RangedStyle.Crossbow;
             bool heldBowLike = _heldItemType == _activeRangedItemType
@@ -12908,7 +13308,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // up with (and fight) that correction, so it's excluded here.
             if (!heldRangedLike && !holdingSpearNow)
                 drawRotation = GetMeleeDrawRotation();
-            if (_heldItemType == MagicWeaponItemType)
+            if (HoldingMagicStaff)
                 drawRotation = (_weaponRotation + MagicWeaponRotationOffset)
                     * (MirrorMagicWeaponRotationByFacing ? NPC.direction : 1);
             if (holdingSpearNow)

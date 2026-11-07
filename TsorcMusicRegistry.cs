@@ -210,6 +210,7 @@ namespace tsorcRevamp
             foreach (ModNPC npc in ModContent.GetContent<ModNPC>())
             {
                 if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
+                    && npc is not NPCs.Enemies.SuperHardMode.DarkrootSentry
                     && npc is not NPCs.Bosses.SuperHardMode.ArtoriasPhantom)
                 {
                     Assignments[npc.Type] = new TrackAssignment(
@@ -235,6 +236,7 @@ namespace tsorcRevamp
             Register("GreatRedKnight", "Boss13", "Boss13", MusicID.Boss1);
             Register("BlackKnight", "Boss15", null, MusicID.Boss1);
             Register("LeonhardPhase1", "Invader", "Invader", MusicID.Boss1);
+            Register("Blaidd", "Boss4", "Invader", MusicID.Boss1);
             Register("Gigas", "GoblinInvasion", "GoblinInvasion", MusicID.GoblinInvasion, SceneEffectPriority.BossLow);
             Register("IceGigas", "Boss12", "Boss12", MusicID.Boss2);
             Register("LothricBlackKnight", "Invader", null, MusicID.Boss1);

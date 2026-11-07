@@ -695,7 +695,7 @@ namespace tsorcRevamp.Content.Projectiles
                 // minion output as the cost of a single cast, pinning it at the relativePower clamp forever.
                 // Excluding it lets the staff fall back to its own damage value, so a summon is priced like
                 // the single deliberate action it is. Minions still pay their own way just below.
-                // Friendly-puppet (Mimic Tear) projectiles are excluded for the same reason as minions:
+                // Friendly-puppet (Soul Mimic) projectiles are excluded for the same reason as minions:
                 // they are not the player's own output, and the puppet's damage derives from this EMA.
                 bool fromFriendlyPuppet = projectile.GetGlobalProjectile<NPCs.FriendlyPuppets.MirrorPuppetProjectile>().FromMirrorPuppet;
 

@@ -1618,33 +1618,6 @@
     ]
   },
   {
-    "EventID": "089a14c7-be08-4987-a789-0cdfeb65888a",
-    "CenterX": 5344.0,
-    "CenterY": 1692.0,
-    "Radius": 102400.0,
-    "Square": false,
-    "TriggerDust": 62,
-    "VisibleRing": true,
-    "SaveOnCompletion": true,
-    "TextToDisplay": "Artorias, the Abysswalker arrives to tear you from this plane...",
-    "TextColorHex": "FFD700FF",
-    "WorldCondition": null,
-    "MapCondition": "",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "tsorcRevamp/Artorias",
-        "SpawnX": 5344.0,
-        "SpawnY": 1692.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
-      }
-    ]
-  },
-  {
     "EventID": "1fb604c1-a98a-4dc4-95f8-99f1f1fdcc41",
     "CenterX": 4508.0,
     "CenterY": 1745.0,
@@ -4622,6 +4595,7 @@
     "Square": false,
     "TriggerDust": 6,
     "VisibleRing": true,
+    "SpawnBurst": true,
     "SaveOnCompletion": true,
     "TextToDisplay": null,
     "TextColorHex": null,
@@ -4631,9 +4605,9 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "SkeletronHead",
-        "SpawnX": 4979.0,
-        "SpawnY": 1390.0,
+        "NpcName": "tsorcRevamp/GravelordNito",
+        "SpawnX": 4954.0,
+        "SpawnY": 1409.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -6193,7 +6167,7 @@
     "EventID": "e914f163-5131-4f73-ad00-b74f3398ff88",
     "CenterX": 6053.0,
     "CenterY": 2094.0,
-    "Radius": 230400.0,
+    "Radius": 160000.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": true,
@@ -6210,7 +6184,35 @@
       {
         "NpcName": "tsorcRevamp/Artorias",
         "SpawnX": 6054.0,
-        "SpawnY": 2108.0,
+        "SpawnY": 2099.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "8cab59bd-db36-4a2f-9171-c23473c03252",
+    "CenterX": 5344.0,
+    "CenterY": 1692.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 297,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Blaidd",
+        "SpawnX": 5374.0,
+        "SpawnY": 1696.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

@@ -58,7 +58,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         protected internal override Vector2 BladeTip => new(92f, 4f);
 
         public override GreatswordStep[] ComboSteps => RoyalSteps;
-        public override bool UsesSlashTrail => true;
+        public override bool UsesBladeSlash => true;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(FinisherDamageMultiplier);
 
         public override void SetDefaults()
@@ -75,8 +75,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = new Color(145, 168, 196);
-            // Fit the driven trail to the 107px span from the middle of the grip to the blade tip.
-            instancedGlobal.slashVisualScale = 0.594f;
         }
     }
 }

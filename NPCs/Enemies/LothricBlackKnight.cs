@@ -155,18 +155,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            UsefulFunctions.DustRing(NPC.Center, 500, DustID.RedTorch, 5, 2f);
-            if (NPC.Distance(player.Center) < 500)
-            {
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-            }
-            if (Main.hardMode && NPC.Distance(player.Center) < 500)
-            {
-                player.AddBuff(ModContent.BuffType<Crippled>(), 30, false);
-                player.AddBuff(ModContent.BuffType<BrokenSpirit>(), 30, false);
-            }
-
             var projSlash = ModContent.ProjectileType<MediumWeaponSlash>();
             var projStab = ModContent.ProjectileType<Spearhead>();
 

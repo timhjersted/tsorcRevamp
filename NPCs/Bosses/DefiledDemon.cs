@@ -17,8 +17,8 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses
 {
     // Defiled Demon — late pre-HM boss near the Fire Temple, tier 2 of the demon family (shared AI in DemonBase.cs).
-    // Element: black flame with curse-pink accents; every hit builds Curse (breath +10, lob/fountain +15, punisher +20,
-    // contact +25 — a full curse at ~4–7 hits). Phase 2 adds the base's reversed second breath sweep.
+    // Element: black flame; breath builds one Blight per tick of exposure, with pale-gold accents.
+    // Other hits build Curse (lob/fountain +15, punisher +20, contact +25). Phase 2 adds a reversed second breath sweep.
     // Signature: Fire Fountain — eight shells thrown up off its shoulders that hang overhead, glint, and dive at the player
     // one by one, while it walks again underneath them.
     [AutoloadBossHead]
@@ -101,7 +101,7 @@ namespace tsorcRevamp.NPCs.Bosses
             int firstBurstTick = FountainTellTicks + 1;
             int secondBurstTick = firstBurstTick + FountainBurstGap;
 
-            // Tell: black smoke boils up off its shoulders with curse-pink sparks, the body flushing pink; growl at tick 1.
+            // Tell: black smoke boils up off its shoulders with curse-pink sparks; growl at tick 1.
             if (AttackTimer <= FountainTellTicks)
             {
                 Poise.AttackCommitted = true;

@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Movement;
 using tsorcRevamp.Content.Projectiles;
 
@@ -126,7 +127,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 StaminaInitialized = true;
             }
 
-            // Captured BEFORE the subclass hook so stamina it spends there (the Mimic Tear's dodge roll) also
+            // Captured BEFORE the subclass hook so stamina it spends there (the Soul Mimic's dodge roll) also
             // counts as "spent this tick" and pauses regen, exactly like a weapon swing.
             float staminaBefore = StaminaCurrent;
 
@@ -635,7 +636,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         }
 
         // ── Body helpers shared by the Soul Mimic and the mirror invader (server side) ─────────────────
-        // Moved here from MimicTear.cs unchanged when the invader became their second user (design §12.12 step 5).
+        // Moved here from SoulMimic.cs unchanged when the invader became their second user (design §12.12 step 5).
 
         // Engagement bands per weapon kind (pixels): where it likes to stand, and the furthest it will attack from.
         internal const float SpearLikePreferred = 80f;
@@ -1061,7 +1062,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return false;
         }
 
-        /// <summary>Offset the clone is drawn at (the Mimic Tear's rise out of its pool). Position only — the
+        /// <summary>Offset the clone is drawn at (the Soul Mimic's rise out of its pool). Position only — the
         /// NPC's hitbox doesn't move.</summary>
         protected virtual Vector2 DisplayDrawOffset => Vector2.Zero;
 
@@ -1339,6 +1340,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// in by reference. Shared with the owner, a puppet's swing start would wipe the owner's cooldowns (letting the
         /// owner's swing re-hit) and every extra ItemCheck would tick them down again. Null until the first swap.</summary>
         public int[] MeleeNpcHitCooldown;
+
+        public int[] OwnedProjectileCounts;
+        public GreatswordComboPlayer.ComboState GreatswordCombo;
+        public bool GreatswordComboInitialized;
     }
 
     /// <summary>
@@ -1459,6 +1464,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public int ReuseDelay;
             public int AttackCD;
             public int ToolTime;
+            public int AltFunctionUse;
             public float ItemRotation;
             public Vector2 ItemLocation;
             public int ItemWidth;
@@ -1491,6 +1497,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public float StaminaCurrent;
             public int StaminaOldItemAnimation;
             public int[] MeleeNpcHitCooldown;
+            public int[] OwnedProjectileCounts;
+            public GreatswordComboPlayer.ComboState GreatswordCombo;
             public Vector2 BroadswordMouseWorld;
             public Item FirstAmmoSlotItem;
             public int MouseX;
@@ -1515,6 +1523,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.ReuseDelay = owner.reuseDelay;
                 snapshot.AttackCD = owner.attackCD;
                 snapshot.ToolTime = owner.toolTime;
+                snapshot.AltFunctionUse = owner.altFunctionUse;
                 snapshot.ItemRotation = owner.itemRotation;
                 snapshot.ItemLocation = owner.itemLocation;
                 snapshot.ItemWidth = owner.itemWidth;
@@ -1547,6 +1556,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
                 snapshot.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
                 snapshot.MeleeNpcHitCooldown = owner.meleeNPCHitCooldown;
+                snapshot.OwnedProjectileCounts = owner.ownedProjectileCounts;
+                snapshot.GreatswordCombo = owner.GetModPlayer<GreatswordComboPlayer>().CaptureCombo();
                 snapshot.BroadswordMouseWorld = owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld;
                 snapshot.FirstAmmoSlotItem = owner.inventory[FirstAmmoSlot];
                 snapshot.MouseX = Main.mouseX;
@@ -1572,6 +1583,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.reuseDelay = ReuseDelay;
                 owner.attackCD = AttackCD;
                 owner.toolTime = ToolTime;
+                owner.altFunctionUse = AltFunctionUse;
                 owner.itemRotation = ItemRotation;
                 owner.itemLocation = ItemLocation;
                 owner.itemWidth = ItemWidth;
@@ -1604,6 +1616,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = StaminaCurrent;
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = StaminaOldItemAnimation;
                 owner.meleeNPCHitCooldown = MeleeNpcHitCooldown;
+                owner.ownedProjectileCounts = OwnedProjectileCounts;
+                owner.GetModPlayer<GreatswordComboPlayer>().RestoreCombo(GreatswordCombo);
                 owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld = BroadswordMouseWorld;
                 owner.inventory[FirstAmmoSlot] = FirstAmmoSlotItem;
                 Main.mouseX = MouseX;
@@ -1654,6 +1668,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.reuseDelay = useState.ReuseDelay;
                 owner.attackCD = useState.AttackCD;
                 owner.toolTime = useState.ToolTime;
+                owner.altFunctionUse = 0;
                 owner.itemRotation = useState.ItemRotation;
                 owner.itemLocation = useState.ItemLocation;
                 owner.itemWidth = useState.ItemWidth;
@@ -1668,6 +1683,42 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
 
                 owner.meleeNPCHitCooldown = useState.MeleeNpcHitCooldown;
+
+                // Projectiles share the real network owner, but weapon limits belong to each actor. Rebuild
+                // the puppet's cache from its tags so the owner's active sword cannot block an autonomous attack.
+                if (useState.OwnedProjectileCounts == null || useState.OwnedProjectileCounts.Length != owner.ownedProjectileCounts.Length)
+                {
+                    useState.OwnedProjectileCounts = new int[owner.ownedProjectileCounts.Length];
+                }
+
+                Array.Clear(useState.OwnedProjectileCounts, 0, useState.OwnedProjectileCounts.Length);
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile projectile = Main.projectile[i];
+
+                    if (!projectile.active || projectile.owner != owner.whoAmI)
+                    {
+                        continue;
+                    }
+
+                    MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+                    if (tag.FromMirrorPuppet && tag.PuppetNpcIndex == puppet.NPC.whoAmI)
+                    {
+                        useState.OwnedProjectileCounts[projectile.type]++;
+                    }
+                }
+
+                owner.ownedProjectileCounts = useState.OwnedProjectileCounts;
+
+                if (!useState.GreatswordComboInitialized)
+                {
+                    useState.GreatswordCombo.LastCut = GreatswordCut.Slam;
+                    useState.GreatswordComboInitialized = true;
+                }
+
+                owner.GetModPlayer<GreatswordComboPlayer>().RestoreCombo(useState.GreatswordCombo);
 
                 // Use input: hold while wanted; "release" whenever last tick wasn't held, so
                 // non-autoReuse weapons can start a new use. Tile/right-click input is always off.
@@ -1735,6 +1786,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 useState.PreviousControlUseItem = wantsUse;
                 useState.AimWorld = aimWorld;
                 useState.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
+                useState.GreatswordCombo = owner.GetModPlayer<GreatswordComboPlayer>().CaptureCombo();
                 puppet.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
                 puppet.ManaCurrent = owner.statMana;
             }
@@ -1799,6 +1851,29 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             On_NetMessage.SendData += FilterSwapPackets;
             On_Projectile.AI += RunPuppetProjectileAI;
+            On_Player.UpdateProjectileCaches += ExcludePuppetProjectileCounts;
+        }
+
+        private static void ExcludePuppetProjectileCounts(On_Player.orig_UpdateProjectileCaches orig, Player player, int playerIndex)
+        {
+            orig(player, playerIndex);
+
+            // Vanilla counts every projectile with this network owner. Remove puppet shots from the real
+            // player's weapon limits; RunAsPuppet installs a separate cache while each puppet acts.
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.owner != playerIndex)
+                {
+                    continue;
+                }
+
+                if (projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet)
+                {
+                    player.ownedProjectileCounts[projectile.type]--;
+                }
+            }
         }
 
         /// <summary>

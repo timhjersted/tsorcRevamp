@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Utilities;
 
@@ -336,8 +337,15 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override bool UseLandingTimedLeapSlam => true;
         protected override int MeleeComboInterStepLingerTicks => 3;
         protected override int MeleeRecoveryLingerTicks => 6;
-        protected override bool HasSlashVFX => true;
-        protected override Color SlashVFXColor => new Color(200, 220, 255);
+        protected override bool HasSwordArcVFX => true;
+        protected override Color SwordArcVFXColor => new Color(150, 185, 225);
+        protected override VanillaSwordArcTexture SwordArcVFXTexture => VanillaSwordArcTexture.Excalibur;
+
+        protected override void ModifySwordArcVFX(MeleeComboStep step, VanillaSwordArcSettings settings)
+        {
+            settings.Opacity = 0.48f;
+            settings.DustType = DustID.SilverFlame;
+        }
 
         // The borrowed arcs only sweep ~110-130°. Extend the LOW end (overhead's finish, underhand's start) by
         // ~26°, widening every cut while keeping the shared low pose that lets Down-Up / Up-Down chain without a snap.
@@ -820,7 +828,7 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int CasualStrollChance => 0;
         protected override int AbandonedDespawnTicks => 600;
 
-        protected override int TeleportTelegraphTicks => 130;
+        protected override int TeleportTelegraphTicks => 30;
         protected override int TeleportDustCount => 22;
         protected override Color TeleportDustTint => new Color(185, 185, 195);
 
@@ -891,6 +899,28 @@ namespace tsorcRevamp.NPCs.Puppets
 
         public override void AI()
         {
+            // Only blink to recover a lost sightline. This also gates navigation's stuck/lava escapes,
+            // which otherwise queue blinks even while he can see and engage the player.
+            tsorcRevampGlobalNPC teleportState = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool hasLineOfSight = false;
+
+            if (NPC.HasValidTarget)
+            {
+                Player teleportTarget = Main.player[NPC.target];
+                hasLineOfSight = Collision.CanHitLine(NPC.Center, 1, 1, teleportTarget.Center, 1, 1);
+            }
+
+            teleportState.CanTeleport = NPC.HasValidTarget && !hasLineOfSight;
+
+            if (hasLineOfSight && teleportState.TeleportCountdown > 0
+                && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                teleportState.TeleportCountdown = 0;
+                teleportState.TeleportTelegraph = Vector2.Zero;
+                NPC.alpha = 0;
+                teleportState.RequestNetworkSnapshot();
+            }
+
             if (_bashCooldown > 0)
             {
                 _bashCooldown--;
@@ -1283,11 +1313,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
-            if (_customKind == BlaiddCustomKind.ShieldBash || _customKind == BlaiddCustomKind.ShieldCharge)
-            {
-                SoundEngine.PlaySound(SoundID.Item37 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
-            }
-            else if (_customKind == BlaiddCustomKind.Unleash)
+            if (_customKind == BlaiddCustomKind.Unleash)
             {
                 SoundEngine.PlaySound(SoundID.Item119 with { Volume = 0.8f, Pitch = -0.4f }, NPC.Center);
             }
@@ -1954,6 +1980,9 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            // The windup is the entire 30-tick teleport; do not add a hidden arrival hold or a second mist pair.
+            globalNPC.TeleportAppearanceDelay = 0;
+            globalNPC.TeleportArrivalMistTime = 0;
             // Giving up: walk back to the arena spawn, then AbandonedDespawnTicks ends the encounter. A player within
             // 60 tiles with a complete route re-aggroes him (OwlFather's setup).
             globalNPC.PatrolMode = PatrolMode.ReturnToSpawn;
@@ -1995,6 +2024,11 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (bashHit)
             {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item37 with { Volume = 0.8f, Pitch = -0.3f }, target.Center);
+                }
+
                 target.AddBuff(BuffID.WitheredWeapon, BashWitheredWeaponTicks, false);
                 return;
             }

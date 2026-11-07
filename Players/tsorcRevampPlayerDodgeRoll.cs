@@ -91,7 +91,7 @@ namespace tsorcRevamp
         private bool perfectDodgeTriggered;
 
         /// <summary>Stamina one dodge roll costs this player right now: 30 base, x1.25 while Tired, less the Artorias
-        /// Abysswalker reduction. Shared with the Mimic Tear, whose rolls are charged to its own pool at this rate.</summary>
+        /// Abysswalker reduction. Shared with the Soul Mimic, whose rolls are charged to its own pool at this rate.</summary>
         public float RollStaminaCost
         {
             get

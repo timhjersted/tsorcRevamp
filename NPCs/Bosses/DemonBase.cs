@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DemonFamily;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
@@ -23,9 +24,9 @@ namespace tsorcRevamp.NPCs.Bosses
     //
     // Neutral: FighterAI walk straight at the player (no kite band — the body itself is a threat that forces movement).
     // Every NeutralPause the server deals a card from an AttackBag:
-    //   Demon Breath  mouth-ember tell (staggerable for 2/3, then a commit flash) → rises ~3 tiles, sweeps a breath stream
-    //                 across the player → panting recovery. Phase 2 on T2/T3: a second, reversed sweep.
-    //   Cinder Lob    horn gather (one pulse per shell) → 3/5/7 fireballs solved to land on and past the player.
+    //   Demon Breath  walking mouth-ember tell (staggerable for 2/3, then a commit flash), with normal gravity throughout.
+    //                 Sweeps across the player → panting recovery. Phase 2 on T2/T3: a second, reversed sweep.
+    //   Cinder Lob    horn gather (T3: mouth), one pulse per shell → 3/5/7 fireballs solved to land on and past the player.
     //   Demon Leap    skid back → a distance-solved leap that lands its body on the player (on a cooldown, and as a
     //                 gap-closer past LeapBagMaxRange) — a dodge check, not a reposition.
     //   + the tier's signature card(s).
@@ -58,13 +59,12 @@ namespace tsorcRevamp.NPCs.Bosses
         const int NeutralPauseRandom = 40;
 
         static readonly int[] BreathTellTicks = { 70, 60, 50 };
-        static readonly int[] BreathSweepTicks = { 45, 60, 75 };
-        static readonly float[] BreathDegreesPerTick = { 1.2f, 1.5f, 1.8f };
+        // Defiled sustains each 90-degree sweep for 120 ticks; halve its turn rate to preserve the same firing arc.
+        static readonly int[] BreathSweepTicks = { 45, 120, 75 };
+        static readonly float[] BreathDegreesPerTick = { 1.2f, 0.75f, 1.8f };
         static readonly int[] BreathRecoveryTicks = { 45, 40, 35 };
         const int BreathShotInterval = 3;
         const float BreathMaxRange = 420f;   // DemonBreath reach is 9 px/t x 50t = 450px
-        const float BreathRiseVelocity = -2.4f; // net -2.1 px/t after gravity: ~48px (3 tiles) over the commit third of the tell
-        const int BreathCeilingTiles = 7;    // no rise unless this much air sits above its head
 
         static readonly int[] LobCounts = { 3, 5, 7 };
         const int LobTellTicks = 35;
@@ -118,7 +118,6 @@ namespace tsorcRevamp.NPCs.Bosses
         int leapLandedTick;
 
         // Local only, derived from the synced timeline each tick (no sync needed).
-        bool breathHover;
         protected float bodyFlash; // 0..1 additive tint re-draw, set by tells each tick
         protected Color bodyFlashTint; // reset to the tier tint each tick; a tell may recolour it
         bool statsInitialized;
@@ -523,8 +522,11 @@ namespace tsorcRevamp.NPCs.Bosses
             int sweepEnd = tellTicks + sweepTicks * sweepCount;
             int recoveryEnd = sweepEnd + BreathRecoveryTicks[tier];
 
-            // Tell: plant and smoulder at the mouth, tracking the player. Breakable until the commit flash at 2/3, then
-            // it rises ~3 tiles (if there's headroom) and the sweep locks on the last tick.
+            // All tiers keep normal terrain movement and gravity through the breath, including recovery.
+            tsorcRevampAIs.FighterAI(NPC, WalkSpeed, 0.1f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false);
+
+            // Tell: smoulder at the mouth, tracking the player. Breakable until the commit flash at 2/3.
+            // The sweep locks on the last tick.
             if (AttackTimer <= tellTicks)
             {
                 if (AttackTimer <= commitTick)
@@ -536,7 +538,6 @@ namespace tsorcRevamp.NPCs.Bosses
                     Poise.AttackCommitted = true;
                 }
 
-                NPC.velocity.X *= 0.85f;
                 FaceTowards(target.Center.X);
 
                 if (AttackTimer == 1)
@@ -550,13 +551,7 @@ namespace tsorcRevamp.NPCs.Bosses
 
                 if (AttackTimer == commitTick)
                 {
-                    breathHover = HasHeadroom(BreathCeilingTiles);
                     CommitCue(Mouth);
-                }
-
-                if (AttackTimer > commitTick && breathHover)
-                {
-                    NPC.velocity.Y = BreathRiseVelocity;
                 }
 
                 if (AttackTimer == tellTicks && Main.netMode != NetmodeID.MultiplayerClient)
@@ -578,13 +573,6 @@ namespace tsorcRevamp.NPCs.Bosses
             if (AttackTimer <= sweepEnd)
             {
                 Poise.AttackCommitted = true;
-                NPC.velocity.X *= 0.8f;
-
-                // Hold the hover: -0.3 cancels the gravity vanilla adds after AI().
-                if (breathHover)
-                {
-                    NPC.velocity.Y = -NpcGravity;
-                }
 
                 int sweepTick = AttackTimer - tellTicks - 1;
                 int sweepIndex = sweepTick / sweepTicks;
@@ -607,20 +595,25 @@ namespace tsorcRevamp.NPCs.Bosses
                     PlaySound(SoundID.Item34 with { Volume = 0.6f });
                 }
 
-                Lighting.AddLight(Mouth, DemonElement.LightColor(Tier));
+                Lighting.AddLight(Mouth, DemonElement.BreathLightColor(Tier));
 
                 bool shotTick = sweepTick % BreathShotInterval == 0;
                 if (shotTick && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Vector2 velocity = aim * DemonBreath.Speed + Main.rand.NextVector2Circular(0.6f, 0.6f);
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity, ModContent.ProjectileType<DemonBreath>(), breathDamage, 0f, Main.myPlayer, (float)Tier);
+                    int projectileType = ModContent.ProjectileType<DemonBreath>();
+                    if (Tier == DemonTier.Defiled)
+                    {
+                        projectileType = ModContent.ProjectileType<BlightBreath>();
+                    }
+
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity, projectileType, breathDamage, 0f, Main.myPlayer, (float)Tier);
                 }
 
                 return;
             }
 
-            // Recovery: lands, pants smoke. No armor — the punish window.
-            NPC.velocity.X *= 0.9f;
+            // Recovery: keeps walking and pants smoke. No armor — the punish window.
             EmitExhaust(2);
 
             if (AttackTimer == sweepEnd + 1)
@@ -639,25 +632,35 @@ namespace tsorcRevamp.NPCs.Bosses
             int lobCount = LobCounts[TierIndex];
             int lastLobTick = LobTellTicks + 1 + (lobCount - 1) * LobInterval;
 
-            // Tell: fire gathers between the horns, one bright pulse per shell queued.
-            if (AttackTimer <= LobTellTicks)
+            if (AttackTimer <= lastLobTick)
             {
                 Poise.AttackCommitted = true;
                 NPC.velocity.X *= 0.85f;
                 FaceTowards(target.Center.X);
+            }
 
+            // Ancient spits its lobs: the tell, release burst and ballistic solve share the mouth anchor.
+            Vector2 origin = Horns;
+            if (Tier == DemonTier.Ancient)
+            {
+                origin = Mouth;
+            }
+
+            // Tell: fire gathers at the release point, one bright pulse per shell queued.
+            if (AttackTimer <= LobTellTicks)
+            {
                 if (AttackTimer == 1)
                 {
                     PlaySound(SoundID.Item20 with { Volume = 0.5f, Pitch = -0.5f });
                 }
 
                 float progress = AttackTimer / (float)LobTellTicks;
-                EmitGather(Horns, MathHelper.Lerp(36f, 6f, progress), progress);
+                EmitGather(origin, MathHelper.Lerp(36f, 6f, progress), progress);
 
                 int pulseInterval = Math.Max(1, LobTellTicks / lobCount);
                 if (AttackTimer % pulseInterval == 0)
                 {
-                    EmitBurst(Horns, 8, 2.5f);
+                    EmitBurst(origin, 8, 2.5f);
                 }
 
                 return;
@@ -666,20 +669,16 @@ namespace tsorcRevamp.NPCs.Bosses
             // Release: one shell every LobInterval, each re-aimed at the player's current spot plus its landing offset.
             if (AttackTimer <= lastLobTick)
             {
-                Poise.AttackCommitted = true;
-                NPC.velocity.X *= 0.85f;
-                FaceTowards(target.Center.X);
-
                 int ticksIntoLobs = AttackTimer - LobTellTicks - 1;
                 if (ticksIntoLobs % LobInterval == 0)
                 {
                     int lobIndex = ticksIntoLobs / LobInterval;
                     PlaySound(SoundID.Item20 with { Volume = 0.6f, Pitch = -0.3f });
-                    EmitBurst(Horns, 10, 3f);
+                    EmitBurst(origin, 10, 3f);
 
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        LaunchFireball(target, LobLandingOffsets[lobIndex], DemonFireball.ModeLob, lobDamage);
+                        LaunchFireball(target, origin, LobLandingOffsets[lobIndex], DemonFireball.ModeLob, lobDamage);
                     }
                 }
 
@@ -736,7 +735,7 @@ namespace tsorcRevamp.NPCs.Bosses
         /// <summary>Server-only. The punisher's one shot, from the horns. Default: a heavy DemonFireball onto the player.</summary>
         protected virtual void FirePunisher(Player target)
         {
-            LaunchFireball(target, 0f, DemonFireball.ModeHeavy, punisherDamage);
+            LaunchFireball(target, Horns, 0f, DemonFireball.ModeHeavy, punisherDamage);
         }
 
         void TickLeap()
@@ -896,9 +895,9 @@ namespace tsorcRevamp.NPCs.Bosses
             }
         }
 
-        // Server-only. One fireball from the horns onto the floor under (player + offset along the demon→player line).
+        // Server-only. One fireball from origin onto the floor under (player + offset along the demon→player line).
         // Same discrete solve as SolveLeap with DemonFireball.Gravity; airtime grows with distance.
-        protected void LaunchFireball(Player target, float landingOffset, float mode, int damage)
+        protected void LaunchFireball(Player target, Vector2 origin, float landingOffset, float mode, int damage)
         {
             float awayDirection = Math.Sign(target.Center.X - NPC.Center.X);
             if (awayDirection == 0f)
@@ -919,7 +918,6 @@ namespace tsorcRevamp.NPCs.Bosses
                 }
             }
 
-            Vector2 origin = Horns;
             Vector2 landing = new Vector2(landingX, floorY - 8f);
             float flightTicks = MathHelper.Clamp(Math.Abs(landing.X - origin.X) / 6f, 28f, 60f);
             float gravityDrop = DemonFireball.Gravity * flightTicks * (flightTicks + 1f) * 0.5f;
@@ -1053,10 +1051,10 @@ namespace tsorcRevamp.NPCs.Bosses
 
             if (progress >= 0.4f && Main.rand.NextBool(4))
             {
-                DemonElement.SpawnAccent(Tier, mouth - new Vector2(4f), 8, 8, Vector2.Zero, scale);
+                DemonElement.SpawnBreathAccent(Tier, mouth - new Vector2(4f), 8, 8, Vector2.Zero, scale);
             }
 
-            Lighting.AddLight(mouth, DemonElement.LightColor(Tier) * (0.3f + scale * 0.4f));
+            Lighting.AddLight(mouth, DemonElement.BreathLightColor(Tier) * (0.3f + scale * 0.4f));
         }
 
         /// <summary>Tier-coloured motes drawn inward from `radius` px onto `center` (horn gather, body converge).</summary>
@@ -1228,7 +1226,7 @@ namespace tsorcRevamp.NPCs.Bosses
         // Body flash: the same frame re-drawn on top with A = 0 (additive) in the tier tint, strength bodyFlash.
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (bodyFlash <= 0f)
+            if (bodyFlash <= 0f || Tier == DemonTier.Defiled)
             {
                 return;
             }

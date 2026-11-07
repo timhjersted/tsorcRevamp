@@ -75,7 +75,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                 Projectile.netUpdate = true;
             }
             clock++;
-            AddFormingBeams();
             if (!Server)
             {
                 foreach (Moon m in moons)
@@ -251,46 +250,50 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             return true;
         }
         /// <summary>
-        /// Clients: each fan about to fire shows its three beams forming at the moon's rim over the last 24 ticks,
-        /// growing from a short dim spark to the full beam the shot leaves with. Mirrors the aim PreDraw uses.
+        /// Clients, from PreDraw: the 24 ticks before a fan fires. Each of the three aim lines is a glowing ray of
+        /// moonlight out to 640px (dim while still tracking, bright and pulsing once locked), and at the rim a light
+        /// shard grows from a short dim spark into the full shard the shot leaves with. Same aim as FireFan.
         /// </summary>
-        void AddFormingBeams()
+        void DrawFanTelegraph(Moon m)
         {
-            if (Main.dedServ || !initialized)
+            int release = 30 + m.Fans * 90;
+            int left = release - m.Timer;
+            if (left > 24 || left < 0)
             {
                 return;
             }
 
-            foreach (Moon m in moons)
+            Vector2 aim = m.Aim;
+            if (!m.Locked && Target >= 0 && Target < Main.maxPlayers)
             {
-                if (m.Stage != Stage.Pursuit || m.Fans >= 4)
-                {
-                    continue;
-                }
+                aim = (Main.player[Target].Center - m.Position).SafeNormalize(Vector2.UnitX);
+            }
 
-                int release = 30 + m.Fans * 90;
-                int left = release - m.Timer;
-                if (left > 24 || left < 0)
-                {
-                    continue;
-                }
+            float forming = MathHelper.Clamp((24 - left) / 24f, 0.1f, 1f);
 
-                Vector2 aim = m.Aim;
-                if (!m.Locked && Target >= 0 && Target < Main.maxPlayers)
-                {
-                    aim = (Main.player[Target].Center - m.Position).SafeNormalize(Vector2.UnitX);
-                }
+            // Ray brightness: 0.45 while tracking; once locked 0.7 plus a 0.15 pulse (5-tick period) so the commit reads.
+            float rayOpacity = 0.45f;
+            float rayWidth = 16f;
+            if (m.Locked)
+            {
+                float pulse = 0.5f + 0.5f * (float)Math.Sin(m.Timer * MathHelper.TwoPi / 5f);
+                rayOpacity = 0.7f + 0.15f * pulse;
+                rayWidth = 24f;
+            }
 
-                float forming = MathHelper.Clamp((24 - left) / 24f, 0.1f, 1f);
-                for (int j = -1; j <= 1; j++)
-                {
-                    Vector2 direction = aim.RotatedBy(MathHelper.ToRadians(24) * j);
-                    Vector2 origin = m.Position + direction * 56;
-                    Vector2 head = origin + direction * (12f + 40f * forming);
-                    DarkmoonVisuals.BeamStrip(head, direction, 40f + 130f * forming, 6f + 8f * forming, forming * 0.8f);
-                }
+            for (int j = -1; j <= 1; j++)
+            {
+                Vector2 direction = aim.RotatedBy(MathHelper.ToRadians(24) * j);
+                Vector2 origin = m.Position + direction * 56;
+                Vector2 rayCenter = origin + direction * (RayLength * 0.5f);
+                DarkmoonVisuals.DrawLight("DarkmoonRay", rayCenter, direction.ToRotation(), new Vector2(RayLength, rayWidth), rayOpacity * forming);
+
+                Vector2 head = origin + direction * (12f + 40f * forming);
+                DarkmoonVisuals.DrawShard(head, direction, 60f + 130f * forming, 20f + 24f * forming, forming * 0.85f);
             }
         }
+
+        const float RayLength = 640f;
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -304,16 +307,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                 DarkmoonVisuals.DrawMoon(m.Position, 1f, opacity, charge, i);
                 if (m.Stage == Stage.Pursuit && m.Fans < 4)
                 {
-                    int release = 30 + m.Fans * 90, left = release - m.Timer;
-                    if (left <= 24 && left >= 0)
-                    {
-                        Vector2 aim = m.Locked ? m.Aim : Target >= 0 && Target < Main.maxPlayers ? (Main.player[Target].Center - m.Position).SafeNormalize(Vector2.UnitX) : m.Aim;
-                        for (int j = -1; j <= 1; j++)
-                        {
-                            Vector2 d = aim.RotatedBy(MathHelper.ToRadians(24) * j), origin = m.Position + d * 56;
-                            DarkmoonVisuals.Line(origin, origin + d * 640, Color.LightBlue * (m.Locked ? 0.55f : 0.25f), 1f);
-                        }
-                    }
+                    DrawFanTelegraph(m);
                 }
                 if (m.Stage == Stage.Terminal) DarkmoonVisuals.DrawWarning(m.CrashPoint, MathHelper.Clamp(m.Timer / 18f, 0, 1));
             }

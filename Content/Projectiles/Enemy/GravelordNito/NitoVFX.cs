@@ -117,8 +117,41 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 MathHelper.Clamp((progress - 0.48f) / 0.34f, 0f, 1f));
         }
 
+        internal static void DrawGraveHandNova(Vector2 center, int age, float maxRadius, float halfThickness)
+        {
+            LoadAssets();
+            float globalProgress = age / (float)NitoDeathNova.HandBlastVisualTicks;
+            float pulseDuration = NitoDeathNova.HandBlastPulseTicks / (float)NitoDeathNova.HandBlastVisualTicks;
+
+            // Darkmoon's staggered construction: independently aged, turned and sized ruptures,
+            // drawn newest-first so the primary blast stays readable above the softer aftershocks.
+            for (int pulse = NitoDeathNova.HandBlastPulseCount - 1; pulse >= 0; pulse--)
+            {
+                float delay = pulse * NitoDeathNova.HandBlastPulseSpacing / (float)NitoDeathNova.HandBlastVisualTicks;
+                float scale = 0.82f + pulse * 0.09f;
+                float phase = 0.19f + pulse * 0.37f;
+                float rotation = pulse * 1.1f;
+                float opacity = 0.8f - pulse * 0.09f;
+                bool pyre = pulse % 2 == 1;
+                DrawDeathBlastLayer(center, maxRadius * 2.2f, globalProgress, delay,
+                    pulseDuration, scale, phase, pyre, opacity, rotation);
+            }
+
+            // Every luminous seam is damaging. Drawing and collision use the same pulse clock,
+            // radius and thickness; the lower-opacity blast bodies are decorative material inside it.
+            for (int pulse = 0; pulse < NitoDeathNova.HandBlastPulseCount; pulse++)
+            {
+                if (!NitoDeathNova.HandBlastRingAt(age, pulse, maxRadius, out float radius, out float opacity))
+                {
+                    continue;
+                }
+
+                DrawDeathRing(center, radius, halfThickness, opacity * 0.58f, 1f);
+            }
+        }
+
         static void DrawDeathBlastLayer(Vector2 center, float diameter, float globalProgress,
-            float delay, float duration, float scale, float phase, bool pyre, float opacity)
+            float delay, float duration, float scale, float phase, bool pyre, float opacity, float rotation = 0f)
         {
             float progress = (globalProgress - delay) / duration;
             if (progress <= 0f || progress >= 1f)
@@ -130,7 +163,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             Color dark = pyre ? PyreBlack : new Color(15, 6, 27);
             Color mid = pyre ? new Color(142, 20, 34) : new Color(103, 42, 142);
             Color core = pyre ? new Color(223, 65, 58) : new Color(174, 139, 196);
-            Draw(deathNovaEffect, "NitoDeathBlast", billow, flow, center, Vector2.One * diameter, 0f,
+            Draw(deathNovaEffect, "NitoDeathBlast", billow, flow, center, Vector2.One * diameter, rotation,
                 dark, mid, core, opacity * fade, progress, 1f / scale, phase, BlendState.AlphaBlend);
         }
 

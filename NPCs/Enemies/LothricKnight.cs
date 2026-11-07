@@ -130,10 +130,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        // Grapple Malfunction / Torn Wings aura radius (25 tiles) and the ring's dust count per tick.
-        private const float AuraRadiusPx = 25f * 16f;
-        private const int AuraDustPerTick = 3;
-
         public override void AI()
         {
             Player player = Main.player[NPC.target];
@@ -144,21 +140,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 globalNPC.AttackTelegraphing = false;
                 globalNPC.AttackCommitted = false;
                 return;
-            }
-
-            // Anti-mobility aura, 25 tiles (400px). The ring only marks the edge, so it's kept faint: 3 dusts a tick
-            // spread over the whole circumference (was 5 over a 300px ring).
-            UsefulFunctions.DustRing(NPC.Center, AuraRadiusPx, DustID.YellowTorch, AuraDustPerTick, 2f);
-
-            bool inAura = NPC.Distance(player.Center) < AuraRadiusPx;
-            if (inAura)
-            {
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
-            }
-
-            if (Main.hardMode && inAura)
-            {
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
             }
 
             bool grounded = NPC.velocity.Y == 0;

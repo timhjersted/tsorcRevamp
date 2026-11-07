@@ -53,8 +53,11 @@ float4 EruptionPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : C
     float3 color = lerp(DarkColor, MidColor, plume + exactCore);
     color = lerp(color, CoreColor, silverChannel);
     float intensity = plume * 0.35 + exactCore * 0.68 + silverChannel * 1.35;
+    // Dissolve the entire white/violet column before either quad edge. The top fades over 22% of its height,
+    // and the lower 10% gently sinks into the ground, on the same 4px grid as the column's body.
+    float verticalFade = smoothstep(0.0, 0.22, uv.y) * (1.0 - smoothstep(0.90, 1.0, uv.y));
     return float4(sampleColor.rgb * color * intensity,
-        sampleColor.a * saturate(plume * 0.52 + exactCore + silverChannel) * Opacity);
+        sampleColor.a * saturate(plume * 0.52 + exactCore + silverChannel) * Opacity * verticalFade);
 }
 
 // AbyssShard's warning portal is a side-view breach rising out of the tile surface. It deliberately

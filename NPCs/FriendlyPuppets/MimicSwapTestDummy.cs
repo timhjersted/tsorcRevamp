@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
     /// <summary>
-    /// Step-0 go/no-go rig for the Mimic Tear swap (tsorcDocs/MimicTear_FriendlyPuppet_Design.md §11).
+    /// Step-0 go/no-go rig for the Soul Mimic swap (tsorcDocs/MimicTear_FriendlyPuppet_Design.md §11).
     /// A motionless reflective copy of the player that uses hotbar slot 1 or 2 through the owner's real
     /// ItemCheck. Spawned and steered with /mimictest. Not obtainable in normal play.
     ///
@@ -255,7 +255,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override string Usage => "/mimictest [spawn|hostile|invader|clear|cursor|target|1|2|ease on|ease off]";
 
-        public override string Description => "Mimic Tear swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
+        public override string Description => "Soul Mimic swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {

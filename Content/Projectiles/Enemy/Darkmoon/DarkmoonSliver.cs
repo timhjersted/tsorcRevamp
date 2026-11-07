@@ -25,25 +25,57 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             if (Projectile.ai[0] >= 40) Projectile.velocity *= 0.85f;
             if (!Main.dedServ && (int)Projectile.ai[0] % 3 == 0) DarkmoonVisuals.Motes(Projectile.Center, Color.LightBlue, 1, 5);
 
-            // The visible beam: head at the front of the 96px damage body, a 170px light streak behind it (it
-            // trails past the hitbox on purpose - the tail is harmless glow). Thins and fades after its live window.
-            if (!Main.dedServ)
+            // Shed light while flying: 2 additive sparks a tick from random points along the visible streak, drifting
+            // out sideways and back, so the shard leaves a glittering wake instead of a hard-edged bar.
+            if (!Main.dedServ && Projectile.ai[0] < 40)
             {
                 Vector2 direction = Projectile.rotation.ToRotationVector2();
-                float opacity = 1f;
-                if (Projectile.ai[0] >= 40)
+                Vector2 normal = direction.RotatedBy(MathHelper.PiOver2);
+                for (int i = 0; i < 2; i++)
                 {
-                    opacity = MathHelper.Clamp(Projectile.timeLeft / 12f, 0, 1);
+                    float along = Main.rand.NextFloat(-90f, 50f);
+                    Vector2 sparkPosition = Projectile.Center + direction * along + normal * Main.rand.NextFloat(-5f, 5f);
+                    Vector2 sparkVelocity = normal * Main.rand.NextFloat(-1.2f, 1.2f) - direction * Main.rand.NextFloat(0.5f, 2f);
+                    global::tsorcRevamp.VFX.VFXSystem.AddParticle(new global::tsorcRevamp.VFX.VFXParticleData
+                    {
+                        Position = sparkPosition,
+                        Velocity = sparkVelocity,
+                        StartColor = Color.White,
+                        EndColor = new Color(90, 150, 255) * 0f,
+                        StartScale = Main.rand.NextFloat(0.25f, 0.5f),
+                        EndScale = 0.05f,
+                        Rotation = sparkVelocity.ToRotation(),
+                        Damping = 0.93f,
+                        Lifetime = Main.rand.Next(14, 26),
+                        Texture = global::tsorcRevamp.VFX.VFXParticleTexture.Spark,
+                        Blend = global::tsorcRevamp.VFX.VFXBlend.Additive,
+                    });
                 }
+            }
 
-                Vector2 head = Projectile.Center + direction * 52f;
-                DarkmoonVisuals.BeamStrip(head, direction, BeamLength, BeamWidth, opacity);
-                Lighting.AddLight(Projectile.Center, new Vector3(0.45f, 0.65f, 1f) * opacity);
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.45f, 0.65f, 1f) * VisibleOpacity);
             }
         }
 
-        const float BeamLength = 170f;
-        const float BeamWidth = 14f;
+        // Visible shard: head at the front of the 96px damage body; the 190px spindle trails past the hitbox on purpose
+        // (the tail is harmless glow). 44px quad = halo out to ~1.7x the 12px-radius body. Fades over the last 12t.
+        const float ShardLength = 190f;
+        const float ShardWidth = 44f;
+
+        float VisibleOpacity
+        {
+            get
+            {
+                if (Projectile.ai[0] < 40)
+                {
+                    return 1f;
+                }
+
+                return MathHelper.Clamp(Projectile.timeLeft / 12f, 0, 1);
+            }
+        }
         public override bool? Colliding(Rectangle broadphase, Rectangle target)
         {
             Vector2 axis = Projectile.rotation.ToRotationVector2();
@@ -56,8 +88,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             }
             return false;
         }
-        // Drawn entirely by the VFX strips added in AI.
-        public override bool PreDraw(ref Color lightColor) => false;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            // A 6% flicker (two out-of-step sines) keeps the light alive without strobing.
+            float time = Main.GlobalTimeWrappedHourly;
+            float flicker = 0.94f + 0.03f * (float)Math.Sin(time * 31f + Projectile.whoAmI) + 0.03f * (float)Math.Sin(time * 47f);
+            Vector2 direction = Projectile.rotation.ToRotationVector2();
+            Vector2 head = Projectile.Center + direction * 52f;
+            DarkmoonVisuals.DrawShard(head, direction, ShardLength, ShardWidth, VisibleOpacity * flicker);
+            return false;
+        }
         public override void OnHitPlayer(Player target, Player.HurtInfo info) => target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 180);
         public override void OnKill(int timeLeft) => DarkmoonVisuals.Motes(Projectile.Center, Color.LightBlue, 40, 12);
     }

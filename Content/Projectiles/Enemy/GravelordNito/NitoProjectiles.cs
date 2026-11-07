@@ -270,11 +270,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         const float ExpandSpeed = 8f;
         internal const float RingHalfThickness = 24f; // also read by NitoGraveHand to size its blast dust
+        internal const int HandBlastVisualTicks = 90;
+        internal const int HandBlastPulseCount = 5;
+        internal const int HandBlastPulseSpacing = 8;
+        internal const int HandBlastPulseTicks = HandBlastVisualTicks - (HandBlastPulseCount - 1) * HandBlastPulseSpacing;
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 260f;
         // ai[1] is deliberately opt-in: Quietus and the other existing nova users retain their
         // current debuffs/dust, while a grave-hand detonation gets the Destined Death treatment.
         bool GraveHandDetonation => Projectile.ai[1] > 0.5f;
         float Radius => Projectile.localAI[0];
+        int DamageTicks => (int)(MaxRadius / ExpandSpeed) + 3;
+        float CollisionHalfThickness => GraveHandDetonation ? RingHalfThickness * 1.25f : RingHalfThickness;
+        int Age => (int)Projectile.ai[2];
 
         public override void SetDefaults()
         {
@@ -285,62 +292,125 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             Projectile.penetrate = -1;
             Projectile.timeLeft = 45;
             Projectile.aiStyle = 0;
+            Projectile.netImportant = true;
         }
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            Projectile.timeLeft = (int)(MaxRadius / ExpandSpeed) + 3;
+            Projectile.timeLeft = DamageTicks;
+            if (GraveHandDetonation)
+            {
+                Projectile.timeLeft = System.Math.Max(1, HandBlastVisualTicks - Age);
+            }
+        }
+
+        // Shared by collision, dust and drawing: five expanding damage rings overlap across 90 ticks.
+        // Each ring lasts 58 ticks; starts at 0/8/16/24/32 leave no gap in the sequence.
+        internal static bool HandBlastRingAt(int age, int pulse, float maxRadius, out float radius, out float opacity)
+        {
+            int pulseAge = age - pulse * HandBlastPulseSpacing;
+            radius = 0f;
+            opacity = 0f;
+            if (pulseAge < 0 || pulseAge >= HandBlastPulseTicks)
+            {
+                return false;
+            }
+
+            radius = maxRadius * (pulseAge + 1f) / HandBlastPulseTicks;
+            opacity = MathHelper.Clamp((HandBlastPulseTicks - pulseAge) / 8f, 0f, 1f);
+            return true;
         }
 
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
+            Projectile.ai[2]++;
             Projectile.localAI[0] += ExpandSpeed;
-            if (Main.netMode != NetmodeID.Server)
+
+            if (!Main.dedServ)
             {
-                // The hand variant replaces the old orange/purple ring dust with a restrained
-                // black-wraith and blood wake. Its shader remains the source of the readable hit ring.
-                // The plain nova keeps 34 dust/tick up to a 300px radius (its old density), then adds
-                // more as the ring grows so a 600px Death Nova ring isn't a sparse dotted circle.
-                int dustCount = GraveHandDetonation ? 10 : System.Math.Clamp((int)(Radius * 0.11f), 34, 66);
+                // Decorate each hand-blast ring with a restrained wraith wake. Other novas retain
+                // 34–66 dust per tick, scaling density with their radius to avoid a sparse dotted ring.
+                int dustCount = System.Math.Clamp((int)(Radius * 0.11f), 34, 66);
+                if (GraveHandDetonation)
+                {
+                    dustCount = 0;
+                    for (int pulse = 0; pulse < HandBlastPulseCount; pulse++)
+                    {
+                        if (!HandBlastRingAt(Age - 1, pulse, MaxRadius, out float ringRadius, out float ringOpacity))
+                        {
+                            continue;
+                        }
+
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Vector2 radial = Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2();
+                            Vector2 position = Projectile.Center + radial * ringRadius;
+                            Dust dust = Dust.NewDustPerfect(position, DustID.Wraith, radial * 1.5f,
+                                115, new Color(24, 2, 20), 0.85f * ringOpacity);
+                            dust.noGravity = true;
+                        }
+                    }
+                }
+
                 for (int i = 0; i < dustCount; i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
                     Vector2 radial = angle.ToRotationVector2();
                     Vector2 pos = Projectile.Center + radial * (Radius + Main.rand.NextFloat(-7f, 7f));
-                    if (GraveHandDetonation)
+                    Dust dust = Dust.NewDustPerfect(pos,
+                        Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.BoneTorch,
+                        radial * 2.2f, 75, default, Main.rand.NextFloat(1f, 1.5f));
+                    dust.noGravity = true;
+                }
+
+                int pulseAge = Age - 1;
+                if (GraveHandDetonation && pulseAge % HandBlastPulseSpacing == 0
+                    && pulseAge / HandBlastPulseSpacing < HandBlastPulseCount)
+                {
+                    int pulse = pulseAge / HandBlastPulseSpacing;
+                    float strength = 1f - pulse * 0.15f;
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f * strength, Pitch = -0.3f + pulse * 0.12f }, Projectile.Center);
+                    for (int i = 0; i < 32; i++)
                     {
-                        bool blood = Main.rand.NextBool(3);
-                        Dust d = Dust.NewDustPerfect(pos, blood ? DustID.Blood : DustID.Wraith,
-                            radial * Main.rand.NextFloat(1.5f, 3.2f), blood ? 55 : 115,
-                            blood ? new Color(145, 18, 28) : new Color(16, 2, 22),
-                            Main.rand.NextFloat(0.62f, 1.12f));
-                        d.noGravity = !blood || Main.rand.NextBool(2);
-                        d.noLight = !blood;
-                        if (!blood)
-                        {
-                            d.fadeIn = Main.rand.NextFloat(0.9f, 1.25f);
-                        }
-                    }
-                    else
-                    {
-                        Dust d = Dust.NewDustPerfect(pos,
-                            Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.BoneTorch,
-                            radial * 2.2f, 75, default, Main.rand.NextFloat(1f, 1.5f));
-                        d.noGravity = true;
+                        Vector2 direction = Main.rand.NextVector2Unit();
+                        Vector2 position = Projectile.Center + direction * Main.rand.NextFloat(8f, MaxRadius * 0.8f);
+                        Dust dust = Dust.NewDustPerfect(position, DustID.Wraith,
+                            direction * Main.rand.NextFloat(1.5f, 4f) * strength, 110,
+                            new Color(32, 4, 24), Main.rand.NextFloat(0.65f, 1.1f));
+                        dust.noGravity = true;
                     }
                 }
+
+                float lightFade = 1f;
+                if (GraveHandDetonation)
+                {
+                    lightFade = MathHelper.Clamp(Projectile.timeLeft / 30f, 0f, 1f);
+                }
+
+                Vector3 lightColor = new Vector3(0.45f, 0.35f, 0.65f);
+                if (GraveHandDetonation)
+                {
+                    lightColor = new Vector3(0.52f, 0.08f, 0.12f);
+                }
+
+                Lighting.AddLight(Projectile.Center, lightColor * lightFade);
             }
-            Lighting.AddLight(Projectile.Center, GraveHandDetonation
-                ? new Vector3(0.52f, 0.08f, 0.12f)
-                : new Vector3(0.45f, 0.35f, 0.65f));
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             if (Radius > 2f)
             {
-                NitoVFX.DrawQuietusNova(Projectile.Center, Radius, MaxRadius, RingHalfThickness, 0.95f);
+                if (GraveHandDetonation)
+                {
+                    NitoVFX.DrawGraveHandNova(Projectile.Center, Age - 1, MaxRadius, CollisionHalfThickness);
+                }
+                else
+                {
+                    NitoVFX.DrawQuietusNova(Projectile.Center, Radius, MaxRadius, RingHalfThickness, 0.95f);
+                }
+
                 float flashProgress = MathHelper.Clamp(Radius / 88f, 0f, 1f);
                 if (flashProgress < 1f)
                 {
@@ -348,18 +418,36 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                         flashProgress, 0.72f * (1f - flashProgress));
                 }
             }
-            return true;
+            return false;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            Vector2 closest = new Vector2(MathHelper.Clamp(Projectile.Center.X, targetHitbox.Left, targetHitbox.Right), MathHelper.Clamp(Projectile.Center.Y, targetHitbox.Top, targetHitbox.Bottom));
+            Vector2 closest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
             float distClosest = Vector2.Distance(Projectile.Center, closest);
             float distFarthest = 0f;
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Left, targetHitbox.Top)));
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Right, targetHitbox.Top)));
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Left, targetHitbox.Bottom)));
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Right, targetHitbox.Bottom)));
+            if (GraveHandDetonation)
+            {
+                for (int pulse = 0; pulse < HandBlastPulseCount; pulse++)
+                {
+                    if (!HandBlastRingAt(Age - 1, pulse, MaxRadius, out float ringRadius, out _))
+                    {
+                        continue;
+                    }
+
+                    if (distClosest <= ringRadius + CollisionHalfThickness && distFarthest >= ringRadius - CollisionHalfThickness)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             return distClosest <= Radius + RingHalfThickness && distFarthest >= Radius - RingHalfThickness;
         }
 
@@ -402,7 +490,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
+            Vector2 floorAnchor = Projectile.Bottom;
             Projectile.height = (int)(54 * HeightScale);
+            Projectile.Bottom = floorAnchor;
             Projectile.timeLeft = TelegraphTicks + RiseTicks + HoldTicks + SinkTicks;
         }
 
@@ -526,7 +616,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         internal const float InitialHandOffset = 150f;
         const float OutwardTravelDistance = 300f;
         const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
-        const float BlastRadius = 125f;   // ~250px across
+        const float BlastRadius = 125f * 1.25f;
+        internal const int HandHeight = 156;
 
         // Cached motion trail: oldPos samples (one per tick) drawn as fading ghost hands behind the
         // real one while it is travelling. Stride 4 x 20 samples = ghosts 4/8/12/16 ticks back, i.e.
@@ -538,8 +629,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         // Blast dust reach. The damaging ring's outer edge is the nova radius plus its half thickness;
         // the dust is meant to fly 25% past that. Reach layers are noGravity and vanilla dust only
         // damps X by 0.99/tick, so speed = distance / DustFlightTicks is close to what actually flies.
-        const float DamageRingOuterRadius = BlastRadius + NitoDeathNova.RingHalfThickness; // 149
-        const float DustReachRadius = DamageRingOuterRadius * 1.25f;                       // ~186
+        const float DamageRingOuterRadius = BlastRadius + NitoDeathNova.RingHalfThickness * 1.25f;
+        const float DustReachRadius = DamageRingOuterRadius * 1.25f;
         const float DustFlightTicks = 16f;
 
         int EmergeTick => TelegraphTicks;
@@ -560,7 +651,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             // This is the one deliberate gameplay change in the shader pass: the grab area doubles with
             // it, so visual and hitbox stay in parity. Halve these two numbers to revert.
             Projectile.width = 172;
-            Projectile.height = 156;
+            Projectile.height = HandHeight;
             Projectile.tileCollide = false;
             Projectile.penetrate = -1;
             Projectile.timeLeft = 70;
@@ -569,11 +660,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            // NewProjectile centres the hitbox on the spawn point, so doubling the height would have
-            // buried the hand's wrist 39px further into the floor and dragged the ground-rift telegraph
-            // (drawn at Projectile.Bottom) underground with it. Re-anchor so the BOTTOM sits where the
-            // old 78px hand's bottom sat.
-            Projectile.position.Y -= 39f;
             Projectile.timeLeft = ConvergeStartTick + MaxConvergeTicks + 20;
         }
 
@@ -748,12 +834,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         void Detonate(Vector2 blastCenter)
         {
-            SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, Pitch = -0.3f }, blastCenter);
-            UsefulFunctions.ScreenShake(blastCenter, 7f, 16);
-            SpawnDestinedDeathBlastDust(blastCenter);
+            if (!Main.dedServ)
+            {
+                UsefulFunctions.ScreenShake(blastCenter, 7f, 16);
+                SpawnDestinedDeathBlastDust(blastCenter);
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // ai[1] opts this nova into black/blood dust and one 10-second Destined Death proc.
+                // ai[1] opts this nova into the 90-tick, five-ring Destined Death detonation.
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), blastCenter, Vector2.Zero,
                     ModContent.ProjectileType<NitoDeathNova>(), Projectile.damage, 6f, Projectile.owner,
                     BlastRadius, 1f);

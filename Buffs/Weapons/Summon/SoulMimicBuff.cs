@@ -5,11 +5,13 @@ using tsorcRevamp.NPCs.FriendlyPuppets;
 namespace tsorcRevamp.Buffs.Weapons.Summon
 {
     /// <summary>
-    /// The Mimic Tear's lifetime. While the owner's mimic exists this refreshes itself; cancel it (right-click) and
-    /// the server despawns the mimic (MimicTear.AI: "dismissed"); if the mimic dies it runs out two ticks later.
-    /// Applied with MimicTear.SummonBuffGraceTicks, which it simply counts down until the mimic first appears.
+    /// The Soul Mimic's lifetime. While the owner's mimic exists this refreshes itself; cancel it (right-click) and
+    /// the server despawns the mimic (SoulMimic.AI: "dismissed"); if the mimic dies it runs out two ticks later.
+    /// Applied with SoulMimic.SummonBuffGraceTicks, which it simply counts down until the mimic first appears.
     /// </summary>
-    public class MimicTearBuff : ModBuff
+    // Was MimicTearBuff until 2026-11. Not saved (buffNoSave), so the legacy name only keeps old lookups by name working.
+    [LegacyName("MimicTearBuff")]
+    public class SoulMimicBuff : ModBuff
     {
         // PLACEHOLDER sprite (copy of ArcherSpiritBuff) — replace with bespoke art.
 
@@ -21,7 +23,7 @@ namespace tsorcRevamp.Buffs.Weapons.Summon
 
         public override void Update(Player player, ref int buffIndex)
         {
-            int mimicType = ModContent.NPCType<MimicTear>();
+            int mimicType = ModContent.NPCType<SoulMimic>();
 
             for (int i = 0; i < Main.maxNPCs; i++)
             {

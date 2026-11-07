@@ -27,7 +27,9 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             Main.npcFrameCount[NPC.type] = 20;
             NPCID.Sets.TrailCacheLength[NPC.type] = 5;
-            NPCID.Sets.TrailingMode[NPC.type] = 0;
+            // Keep the attack trail close to the body: mode 1 records every tick instead of mode 0's
+            // spaced samples, which leave detached silhouettes during a fast thrust.
+            NPCID.Sets.TrailingMode[NPC.type] = 1;
         }
         public int lothricDamage = 25;
         public int lothricSmallDamage = 18;
@@ -141,10 +143,6 @@ namespace tsorcRevamp.NPCs.Enemies
             set => NPC.ai[AI_Timer_Slot] = value;
         }
 
-        // Grapple Malfunction / Torn Wings aura radius (25 tiles) and the ring's dust count per tick.
-        private const float AuraRadiusPx = 25f * 16f;
-        private const int AuraDustPerTick = 3;
-
         public override void AI()
         {
             Player player = Main.player[NPC.target];
@@ -164,21 +162,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 globalNPC.AttackTelegraphing = false;
                 globalNPC.AttackCommitted = false;
                 return;
-            }
-
-            // Anti-mobility aura, 25 tiles (400px). The ring only marks the edge, so it's kept faint: 3 dusts a tick
-            // spread over the whole circumference (was 5 over a 300px ring).
-            UsefulFunctions.DustRing(NPC.Center, AuraRadiusPx, DustID.YellowTorch, AuraDustPerTick, 2f);
-
-            bool inAura = NPC.Distance(player.Center) < AuraRadiusPx;
-            if (inAura)
-            {
-                player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 2);
-            }
-
-            if (Main.hardMode && inAura)
-            {
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
             }
 
             bool grounded = NPC.velocity.Y == 0;
@@ -796,26 +779,46 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Vector2 drawOrigin = new Vector2(NPC.position.X, NPC.position.Y);
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            if ((NPC.velocity.X > 3f || NPC.velocity.X < -3f || NPC.velocity.Y != 0) && (AI_State == State_JumpThrust || AI_State == State_LungeThrust))
+            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
+            Rectangle sourceRectangle = new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88);
+            SpriteEffects effects = SpriteEffects.None;
+            Vector2 drawOrigin = new Vector2(80f, 46f);
+
+            if (NPC.spriteDirection == 1)
             {
-                for (int k = 0; k < NPC.oldPos.Length; k++)
+                effects = SpriteEffects.FlipHorizontally;
+                drawOrigin = new Vector2(37f, 46f);
+            }
+
+            Vector2 drawOffset = NPC.Size * 0.5f;
+            bool movingQuickly = Math.Abs(NPC.velocity.X) > 3f || NPC.velocity.Y != 0f;
+            bool thrusting = AI_State == State_JumpThrust || AI_State == State_LungeThrust;
+
+            if (movingQuickly && thrusting)
+            {
+                // A faint, nearby motion trail, not another solid knight. Skip the current sample and
+                // stale history beyond 3 tiles; draw oldest first using the live sprite's exact anchor.
+                const float MaximumTrailDistance = 3f * 16f;
+
+                for (int i = NPC.oldPos.Length - 1; i >= 1; i--)
                 {
-                    Vector2 drawPos = NPC.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, NPC.gfxOffY);
-                    Color color = NPC.GetAlpha(lightColor) * ((float)(NPC.oldPos.Length - k) / (float)NPC.oldPos.Length);
-                    if (NPC.direction == 1)
-                        spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 26, NPC.position.Y + 26), NPC.scale, effects, 0f);
-                    else
-                        spriteBatch.Draw(TextureAssets.Npc[NPC.type].Value, drawPos, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), color, NPC.rotation, new Vector2(NPC.position.X + 70, NPC.position.Y + 26), NPC.scale, effects, 0f);
+                    Vector2 historicalPosition = NPC.oldPos[i];
+                    float distanceSquared = Vector2.DistanceSquared(historicalPosition, NPC.position);
+
+                    if (historicalPosition == Vector2.Zero || distanceSquared > MaximumTrailDistance * MaximumTrailDistance)
+                    {
+                        continue;
+                    }
+
+                    float trailFade = (NPC.oldPos.Length - i) / (float)NPC.oldPos.Length;
+                    Color trailColor = NPC.GetAlpha(lightColor) * (trailFade * 0.25f);
+                    Vector2 trailPosition = historicalPosition + drawOffset - screenPos;
+                    spriteBatch.Draw(texture, trailPosition, sourceRectangle, trailColor, NPC.rotation, drawOrigin, NPC.scale, effects, 0f);
                 }
             }
 
-            Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            if (NPC.spriteDirection == 1)
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), lightColor, NPC.rotation, new Vector2(37, 46), NPC.scale, effects, 0f);
-            else
-                spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 116, 88), lightColor, NPC.rotation, new Vector2(80, 46), NPC.scale, effects, 0f);
+            Vector2 bodyPosition = NPC.position + drawOffset - screenPos;
+            spriteBatch.Draw(texture, bodyPosition, sourceRectangle, lightColor, NPC.rotation, drawOrigin, NPC.scale, effects, 0f);
             return false;
         }
 

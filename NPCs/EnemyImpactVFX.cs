@@ -24,7 +24,8 @@ namespace tsorcRevamp.NPCs
         None,
         Blood,
         GhostDust,
-        StoneBlood
+        StoneBlood,
+        IceShard
     }
 
     /// <summary>
@@ -83,8 +84,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<HollowWarriorOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Hydra>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HydrisNecromancer>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<IceGigas>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<IceSkeleton>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleSentree>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileBody>()] = EnemyImpactMaterial.Blood,
@@ -171,6 +170,10 @@ namespace tsorcRevamp.NPCs
 
             // Mineral life gets a dense grey, gravity-affected stone spray instead of blood.
             [ModContent.NPCType<StoneGolem>()] = EnemyImpactMaterial.StoneBlood,
+
+            // Frozen bone sheds blue ice chips: falling crystal-shard dust, lit so it reads in dark caves.
+            [ModContent.NPCType<IceGigas>()] = EnemyImpactMaterial.IceShard,
+            [ModContent.NPCType<IceSkeleton>()] = EnemyImpactMaterial.IceShard,
 
             // Technical NPCs, projectiles implemented as NPCs, and Eland's bespoke blood effects.
             [ModContent.NPCType<DestroyerLaserProbe>()] = EnemyImpactMaterial.None,
@@ -278,6 +281,11 @@ namespace tsorcRevamp.NPCs
                     dustType = DustID.Stone;
                     color = new Color(132, 132, 142);
                     scale *= 0.9f;
+                    break;
+
+                case EnemyImpactMaterial.IceShard:
+                    dustType = DustID.BlueCrystalShard;
+                    scale *= 1.1f;
                     break;
             }
 

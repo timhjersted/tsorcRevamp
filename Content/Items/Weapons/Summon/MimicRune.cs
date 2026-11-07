@@ -9,19 +9,19 @@ using tsorcRevamp.NPCs.FriendlyPuppets;
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {
     /// <summary>
-    /// Summons a Soul Mimic (the MimicTear NPC — NPCs/FriendlyPuppets/MimicTear.cs). No recipe — it is a drop.
+    /// Summons a Soul Mimic (the SoulMimic NPC — NPCs/FriendlyPuppets/SoulMimic.cs). No recipe — it is a drop.
     ///
     /// Unlike the Spirit Bells this spawns no minion projectile: the mimic is an NPC, its minion slots are reserved
-    /// by MirrorPuppetOwnerPlayer, its lifetime is <see cref="MimicTearBuff"/> and its cooldown is
-    /// <see cref="MimicTearCooldown"/>. Damage is 0 on purpose: the mimic's damage comes from the weapons it copies,
+    /// by MirrorPuppetOwnerPlayer, its lifetime is <see cref="SoulMimicBuff"/> and its cooldown is
+    /// <see cref="SoulMimicCooldown"/>. Damage is 0 on purpose: the mimic's damage comes from the weapons it copies,
     /// and a damage of 0 keeps the Spirit Ashes summon-weapon rules (SpiritAshesItem.IsSummonWeapon) off it.
     /// </summary>
     public class MimicRune : ModItem
     {
         // PLACEHOLDER sprite (copy of ArcherSpiritBell) — replace with bespoke art.
 
-        // {0} minion slots, {1} minutes it lasts, {2} minutes of cooldown.
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MimicTear.MinionSlotCost, MimicTear.LifetimeSeconds / 60, MimicTear.ResummonCooldownSeconds / 60);
+        // {0} minion slots, {1} minutes it lasts, {2} minutes of cooldown, {3} times your max health.
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulMimic.MinionSlotCost, SoulMimic.LifetimeSeconds / 60, SoulMimic.ResummonCooldownSeconds / 60, SoulMimic.HealthMultiplier);
 
         public override void SetStaticDefaults()
         {
@@ -44,7 +44,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
 
         public override bool CanUseItem(Player player)
         {
-            if (player.HasBuff(ModContent.BuffType<MimicTearCooldown>()))
+            if (player.HasBuff(ModContent.BuffType<SoulMimicCooldown>()))
             {
                 return false;
             }
@@ -52,7 +52,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             // Needs at least one minion slot, and room for the slots it will take (all of them, up to MinionSlotCost).
             // Counted from the live minions rather than player.slotsMinions, which vanilla has just zeroed at this
             // point in the update. Refusing here follows the Spirit Bells: no evicting unrelated minions.
-            float slotsNeeded = System.Math.Min(MimicTear.MinionSlotCost, player.maxMinions);
+            float slotsNeeded = System.Math.Min(SoulMimic.MinionSlotCost, player.maxMinions);
             float slotsInUse = 0f;
 
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -77,9 +77,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
                 return true;
             }
 
-            player.AddBuff(ModContent.BuffType<MimicTearBuff>(), MimicTear.SummonBuffGraceTicks);
-            player.AddBuff(ModContent.BuffType<MimicTearCooldown>(), MimicTear.ResummonCooldownSeconds * 60);
-            MimicTear.RequestSpawn(player);
+            player.AddBuff(ModContent.BuffType<SoulMimicBuff>(), SoulMimic.SummonBuffGraceTicks);
+            player.AddBuff(ModContent.BuffType<SoulMimicCooldown>(), SoulMimic.ResummonCooldownSeconds * 60);
+            SoulMimic.RequestSpawn(player);
             return true;
         }
     }

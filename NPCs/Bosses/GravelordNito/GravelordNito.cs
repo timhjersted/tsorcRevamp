@@ -88,14 +88,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int ThrustFlashLeadTicks = 30;
         const int ThrustFlashTicks = 15;
 
-        // Miasma Hem: a pair of poison-fog clouds that trail Nito's own position for the whole fight
-        // (spawned at OnSpawn, never expire — no attack state, no selection roll) instead of sitting at
-        // a fixed arena point. Punishes drifting toward the edges by keeping a slow "don't go past here"
-        // presence on both sides of him at all times.
-        const float MiasmaHemOffsetPixels = 25f * 16f; // 400px = 25 tiles either side of Nito's live position
-        // Deliberately far below any of Nito's own movement speeds (0.62 idle up to ~11 mid-dash) so a
-        // sudden reposition visibly outruns the clouds; they take real time to catch back up.
-        const float MiasmaHemChaseSpeed = 0.55f;
+        // Fixed arena boundaries: sample the floor once, 30 tiles either side of the spawn point.
+        // Individual puffs still drift, but boss movement never drags the hazard away from that floor.
+        const float MiasmaHemOffsetPixels = 30f * 16f;
         const int MiasmaHemFadeInTicks = 60; // the one-time "don't pop in" fade right as the fight starts
         const float MiasmaHemWidthPixels = 144f;  // 9 tiles — unchanged
         const float MiasmaHemHeightPixels = 96f;  // 6 tiles — was 3; doubled puffs need the extra room
@@ -181,14 +176,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         AttackState QueuedAttack = AttackState.None;
         int QueuedSlashKind = -1;
         Vector2 MiasmaAimDirection = Vector2.UnitX;
-        // Live-tracked cloud X positions (see MiasmaHemChaseSpeed) and the one-time fade-in counter.
-        // None of these are synced: each machine chases its own already-synced view of NPC.Center
-        // independently, and only the server's own copy ever feeds an actual debuff decision (see
-        // UpdateMiasmaHem), so a few pixels/ticks of cross-machine difference here is inconsequential —
-        // purely cosmetic, same category as the DragRunLeapLaunched precedent elsewhere in this file.
-        float MiasmaHemLeftX;
-        float MiasmaHemRightX;
+        // Server-sampled floor anchors are synced so the rendered fog and buildup share one position,
+        // including for clients joining after Nito has moved away from his spawn point.
+        Vector2 MiasmaHemLeftCenter;
+        Vector2 MiasmaHemRightCenter;
         int MiasmaHemAge;
+        NPCDespawnHandler despawnHandler;
+        bool IsDespawning;
 
         // Miasma buildup earned in the fog (1 per tick inside), per player index, held until the next
         // report. Batched so the meter's hit-burst dust and SyncState packet fire 6x/s instead of 60x/s.
@@ -353,6 +347,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             globalNPC.KiteLooseness = 0.45f;
             globalNPC.PatrolMode = NPCs.PatrolMode.Wander; // "tsorcRevamp.NPCs" would resolve to the Mod class, not the namespace
             EvasiveProfile.HeavyBeast(globalNPC);
+            despawnHandler = new NPCDespawnHandler(DustID.BoneTorch);
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0f;
@@ -398,6 +393,12 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             writer.Write((byte)ComboLength);
             writer.Write((byte)ComboEndStep);
             writer.Write(ComboKinds);
+            writer.Write(MiasmaHemLeftCenter.X);
+            writer.Write(MiasmaHemLeftCenter.Y);
+            writer.Write(MiasmaHemRightCenter.X);
+            writer.Write(MiasmaHemRightCenter.Y);
+            writer.Write(MiasmaHemAge);
+            writer.Write(IsDespawning);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -432,15 +433,26 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ComboLength = reader.ReadByte();
             ComboEndStep = reader.ReadByte();
             ComboKinds = reader.ReadInt32();
+            MiasmaHemLeftCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            MiasmaHemRightCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            MiasmaHemAge = reader.ReadInt32();
+            IsDespawning = reader.ReadBoolean();
         }
 
-        ///<summary>Seeds both Miasma Hem clouds on their own side of Nito's spawn point. Runs on every
-        ///machine (unlike a synced field, this needs no cross-machine agreement — see the field comment
-        ///above), each reading its own already-known NPC.Center at the moment the NPC becomes active.</summary>
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            MiasmaHemLeftX = NPC.Center.X - MiasmaHemOffsetPixels;
-            MiasmaHemRightX = NPC.Center.X + MiasmaHemOffsetPixels;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Vector2 leftFloorOrigin = NPC.Bottom - new Vector2(MiasmaHemOffsetPixels, 0f);
+            Vector2 rightFloorOrigin = NPC.Bottom + new Vector2(MiasmaHemOffsetPixels, 0f);
+            FindGroundSurface(leftFloorOrigin, out Vector2 leftFloor, 120);
+            FindGroundSurface(rightFloorOrigin, out Vector2 rightFloor, 120);
+            MiasmaHemLeftCenter = leftFloor - new Vector2(0f, MiasmaHemHeightPixels * 0.5f);
+            MiasmaHemRightCenter = rightFloor - new Vector2(0f, MiasmaHemHeightPixels * 0.5f);
+            NPC.netUpdate = true;
         }
 
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
@@ -489,14 +501,30 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         public override void AI()
         {
             NPC.damage = 0;
-            if (!HasLivingPlayer())
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // No death animation or loot: this is a true encounter despawn when the party wipes.
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                despawnHandler.TargetAndDespawn(NPC.whoAmI);
+                if (!IsDespawning && despawnHandler.IsDespawning)
                 {
-                    NPC.active = false;
+                    IsDespawning = true;
+                    KillOwnedSwordSlashes();
                     NPC.netUpdate = true;
                 }
+            }
+
+            if (!NPC.active)
+            {
+                return;
+            }
+
+            if (IsDespawning)
+            {
+                NPC.dontTakeDamage = true;
+                NPC.velocity.X *= 0.85f;
+                MiasmaHemAge = Math.Max(0, MiasmaHemAge - 1);
+                tsorcRevampGlobalNPC despawningGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+                despawningGlobalNPC.AttackTelegraphing = false;
+                despawningGlobalNPC.AttackCommitted = false;
                 return;
             }
 
@@ -504,9 +532,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             // never a gap in the fight where the fog isn't present.
             UpdateMiasmaHem();
 
-            if (NPC.target < 0 || NPC.target >= Main.maxPlayers || !Main.player[NPC.target].active || Main.player[NPC.target].dead)
+            if (!NPC.HasValidTarget)
             {
-                NPC.TargetClosest(false);
+                return;
             }
 
             Player player = Main.player[NPC.target];
@@ -1829,43 +1857,17 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
         }
 
-        ///<summary>MIASMA HEM: two poison-fog clouds that trail Nito's own X position (not a fixed arena
-        ///point, and not the player's) for the entire fight, from OnSpawn until he dies — always on,
-        ///never picked or telegraphed as a separate attack. Runs every tick regardless of State,
-        ///including staggers and phase transitions, so there's never a gap in the pressure.
-        ///
-        ///No contact HIT by design: this deliberately bypasses the normal hostile-projectile/Player.Hurt
-        ///pipeline (a 0-damage hit through that path would still grant the vanilla post-hit immunity
-        ///window — Player.Hurt sets `immune = true` and applies knockback unconditionally, neither gated
-        ///on Damage > 0 — which would let a player farm free i-frames, and takes knockback, just by
-        ///standing in the fog). Instead this scans players and calls AddBuff directly, matching the
-        ///existing VesselOfSouls.TickVoid pattern in this codebase: decided only where
-        ///Main.netMode != MultiplayerClient (the "one authority" rule), so only the server/singleplayer
-        ///copy of the cloud position ever feeds a real decision.
-        ///
-        ///Damage comes from Miasma buildup (1 per tick inside the fog): a full meter procs the Miasma drain,
-        ///which, like any debuff drain, goes through lifeRegen rather than Player.Hurt — so still no
-        ///immune-window grant and no knockback. Called on the server here, MiasmaBuildup.Apply goes straight
-        ///to the authoritative meter (MiasmaPlayer.ApplyBuildupAuthoritative) and syncs it to clients.</summary>
+        // Keep the floor-anchored boundary active through attacks and staggers. Server-owned buildup
+        // bypasses Player.Hurt, so standing in the fog grants neither knockback nor free hit immunity.
         void UpdateMiasmaHem()
         {
             MiasmaHemAge = Math.Min(MiasmaHemAge + 1, MiasmaHemFadeInTicks);
-
-            // Chase the live boss position at a capped speed on every machine (see the field comment —
-            // this needs no sync). A sudden reposition (a dash, a leap) outruns the clouds; they take
-            // real time to catch back up rather than snapping to the new spot.
-            float targetLeft = NPC.Center.X - MiasmaHemOffsetPixels;
-            float targetRight = NPC.Center.X + MiasmaHemOffsetPixels;
-            MiasmaHemLeftX += Math.Clamp(targetLeft - MiasmaHemLeftX, -MiasmaHemChaseSpeed, MiasmaHemChaseSpeed);
-            MiasmaHemRightX += Math.Clamp(targetRight - MiasmaHemRightX, -MiasmaHemChaseSpeed, MiasmaHemChaseSpeed);
 
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
 
-            Vector2 leftCenter = new Vector2(MiasmaHemLeftX, NPC.Center.Y);
-            Vector2 rightCenter = new Vector2(MiasmaHemRightX, NPC.Center.Y);
             int crippledType = ModContent.BuffType<Buffs.Debuffs.Crippled>();
 
             bool reportTick = Main.GameUpdateCount % MiasmaHemBuildupReportIntervalTicks == 0;
@@ -1879,7 +1881,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     continue;
                 }
 
-                if (MiasmaHemOverlaps(target.Center, leftCenter) || MiasmaHemOverlaps(target.Center, rightCenter))
+                if (MiasmaHemOverlaps(target.Center, MiasmaHemLeftCenter) || MiasmaHemOverlaps(target.Center, MiasmaHemRightCenter))
                 {
                     // Buildup accrues every tick inside (reported in batches below). Darkness is vision-only,
                     // Crippled is movement-only; both refresh every tick in the fog and neither knocks back.
@@ -1923,6 +1925,15 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     column / (float)(MiasmaHemGridColumns - 1)) + (hash - 0.5f) * 22f;
                 float baseY = MathHelper.Lerp(-MiasmaHemHeightPixels * 0.4f, MiasmaHemHeightPixels * 0.4f,
                     row / (float)(MiasmaHemGridRows - 1)) + (HashToUnit(puffIndex + 97) - 0.5f) * 14f;
+
+                // Three low puffs close the walking-height gap. Their existing +/-8px bob keeps
+                // their centers 16–32px (one to two tiles) above the sampled floor at every phase.
+                if (i >= MiasmaHemPuffCount - 3)
+                {
+                    int lowPuff = i - (MiasmaHemPuffCount - 3);
+                    baseX = (lowPuff - 1) * 48f;
+                    baseY = MiasmaHemHeightPixels * 0.5f - 24f;
+                }
 
                 // Drift: each puff wanders left/right over roughly 1.5-4 tiles on its own period, so the
                 // cloud never pulses as one rigid block. Vertical bob is smaller — a hem, not a storm.
@@ -2444,18 +2455,6 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             LastAttack = completedAttack;
         }
 
-        static bool HasLivingPlayer()
-        {
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                if (Main.player[i].active && !Main.player[i].dead)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         const float PlatformHeightTolerance = 56f; // 3.5 tiles of foot-height separation
 
         // Platforms are useful arena footing, so Nito stands on them while his feet are roughly level
@@ -2858,11 +2857,32 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 return;
             }
+
+            // Resolve the player's floor before placing either hand; jumping cannot lift the pair
+            // into mid-air. A missing flank floor cancels the pair instead of leaving half a clap.
+            if (!FindGroundSurface(player.Bottom, out Vector2 playerFloor, 120))
+            {
+                return;
+            }
+
             const float HandSpread = NitoGraveHand.InitialHandOffset; // shared with the exact 300px retreat target
-            float centerX = player.Bottom.X;
+            if (!FindGroundSurface(playerFloor - new Vector2(HandSpread, 0f), out Vector2 leftFloor)
+                || !FindGroundSurface(playerFloor + new Vector2(HandSpread, 0f), out Vector2 rightFloor))
+            {
+                return;
+            }
+
+            float centerX = playerFloor.X;
             for (int i = -1; i <= 1; i += 2)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Bottom + new Vector2(i * HandSpread, -34f),
+                Vector2 handFloor = leftFloor;
+                if (i > 0)
+                {
+                    handFloor = rightFloor;
+                }
+
+                Vector2 handCenter = handFloor - new Vector2(0f, NitoGraveHand.HandHeight * 0.5f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), handCenter,
                     Vector2.Zero, ModContent.ProjectileType<NitoGraveHand>(), HeavySlashDamage, 2f, Main.myPlayer,
                     telegraphTicks, centerX, i > 0 ? 1f : 0f);
             }
@@ -2874,20 +2894,15 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 return;
             }
-            // Only erupt from a real floor surface (solid tile with open space above). If there is no
-            // such surface below the target — the player is airborne over a pit, in a tight spot, etc.
-            // — skip the spike entirely rather than spawning it buried inside solid rock where it would
-            // read as a stuck sliver. Platforms are passed through (they aren't treated as the floor).
+            // Reject distant lower floors so a sword cannot spend its whole reach below the player.
+            // A solid starting tile is searched upward, allowing for Nito's deliberate terrain sink.
             if (!FindGroundSurface(roughBottom, out Vector2 bottom))
             {
                 return;
             }
-            // NewProjectile treats the position argument as the CENTER (it subtracts half width/height
-            // internally), and NitoGraveSpike's height is 54*heightScale — so the center needs to sit
-            // HALF that height above the surface for the spike's bottom edge to land exactly on the
-            // ground. The old `54f * heightScale` (a full height, not half) planted the center a full
-            // height too high, leaving the spike floating ~27-36px (1-2 tiles) above the real ground.
-            Projectile.NewProjectile(NPC.GetSource_FromThis(), bottom - new Vector2(0f, 27f * heightScale), Vector2.Zero, ModContent.ProjectileType<NitoGraveSpike>(), DeathDamage, 3f, Main.myPlayer, delay, heightScale);
+            // Spawn with the default 54px hitbox bottom on the floor. OnSpawn preserves that bottom
+            // when it applies heightScale, rather than burying the taller variants in the terrain.
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), bottom - new Vector2(0f, 27f), Vector2.Zero, ModContent.ProjectileType<NitoGraveSpike>(), DeathDamage, 3f, Main.myPlayer, delay, heightScale);
         }
 
         void SpawnPhaseTwoPyre(Vector2 roughBottom, int damage)
@@ -2900,16 +2915,31 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 ModContent.ProjectileType<NitoPyreFire>(), Math.Max(1, damage), 0f, Main.myPlayer);
         }
 
-        ///<summary>Scans downward from just above <paramref name="origin"/> for the first SOLID tile
-        ///that has open space (air or a platform) directly above it — a true floor the spike can burst
-        ///up through. Platforms themselves are skipped (passed through), so spikes track the real
-        ///ground beneath them. Returns false when no such surface is found in range.</summary>
-        static bool FindGroundSurface(Vector2 origin, out Vector2 surface)
+        // Start at foot height, climbing out of solid terrain or descending through air to a floor.
+        // The normal two-tile drop limit keeps eruptions on the target tier; hands can search below jumps.
+        internal static bool FindGroundSurface(Vector2 origin, out Vector2 surface, int maxDropTiles = 2)
         {
             int tileX = Math.Clamp((int)(origin.X / 16f), 5, Main.maxTilesX - 5);
-            int startY = Math.Clamp((int)(origin.Y / 16f) - 3, 5, Main.maxTilesY - 6);
-            for (int y = startY; y <= startY + 30 && y < Main.maxTilesY - 5; y++)
+            int startY = Math.Clamp((int)(origin.Y / 16f), 5, Main.maxTilesY - 6);
+            Tile startTile = Main.tile[tileX, startY];
+            bool startsSolid = startTile.HasTile && !startTile.IsActuated
+                && Main.tileSolid[startTile.TileType] && !Main.tileSolidTop[startTile.TileType];
+            int searchDirection = 1;
+            int searchTiles = maxDropTiles;
+            if (startsSolid)
             {
+                searchDirection = -1;
+                searchTiles = 12;
+            }
+
+            for (int step = 0; step <= searchTiles; step++)
+            {
+                int y = startY + step * searchDirection;
+                if (y < 5 || y >= Main.maxTilesY - 5)
+                {
+                    break;
+                }
+
                 Tile tile = Main.tile[tileX, y];
                 bool solid = tile.HasTile && !tile.IsActuated && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType];
                 if (!solid)
@@ -2920,7 +2950,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 bool openAbove = !above.HasTile || above.IsActuated || !Main.tileSolid[above.TileType] || Main.tileSolidTop[above.TileType];
                 if (openAbove)
                 {
-                    surface = new Vector2(origin.X, y * 16f);
+                    float surfaceY = y * 16f;
+                    if (tile.IsHalfBlock)
+                    {
+                        surfaceY += 8f;
+                    }
+
+                    surface = new Vector2(origin.X, surfaceY);
                     return true;
                 }
             }
@@ -3100,8 +3136,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 float miasmaHemFadeIn = MiasmaHemAge / (float)MiasmaHemFadeInTicks;
                 // indexOffset keeps the left/right clouds' per-puff hashes from lining up identically.
-                DrawMiasmaHemCloud(new Vector2(MiasmaHemLeftX, NPC.Center.Y), miasmaHemFadeIn, 0);
-                DrawMiasmaHemCloud(new Vector2(MiasmaHemRightX, NPC.Center.Y), miasmaHemFadeIn, 1000);
+                DrawMiasmaHemCloud(MiasmaHemLeftCenter, miasmaHemFadeIn, 0);
+                DrawMiasmaHemCloud(MiasmaHemRightCenter, miasmaHemFadeIn, 1000);
             }
 
             if ((State == AttackState.SwordRain || State == AttackState.GravelordJudgment)

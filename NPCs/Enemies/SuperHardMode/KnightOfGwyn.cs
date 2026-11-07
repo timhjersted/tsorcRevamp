@@ -68,9 +68,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
 
 
-        //chaos
-        int holdTimer = 0;
-
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
@@ -152,25 +149,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 teleportCooldown--;
             }
 
-            //announce magical barrier warning once
-            if (holdTimer > 1)
-            {
-                holdTimer--;
-            }
-            //proximity debuff and warning
-            if (Vector2.Distance(NPC.Center, Main.player[NPC.target].Center) < 1200)
-            {
-
-                player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-
-                if (holdTimer <= 0)
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.KnightOfGwyn.Protection"), 175, 75, 255);
-                    holdTimer = 12000;
-                }
-
-            }
-
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -225,14 +203,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     DarkBeadShotCounter++;
 
-                }
-
-
-                //DEBUFFS
-                if (NPC.Distance(player.Center) < 600)
-                {
-                    player.AddBuff(ModContent.BuffType<TornWings>(), 60, false);
-                    player.AddBuff(ModContent.BuffType<GrappleMalfunction>(), 60, false);
                 }
 
 

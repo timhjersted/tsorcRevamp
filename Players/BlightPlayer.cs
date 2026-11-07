@@ -22,6 +22,9 @@ namespace tsorcRevamp
         private bool deathDisplayStarted;
         private bool environmentalSyncPending;
 
+        // Server-only cooldown shared by all breath puffs, so overlap adds at most one stack per tick.
+        internal ulong NextBlightBreathBuildupTick;
+
         public void RequestBuildup(int buildup)
         {
             buildup = Math.Clamp(buildup, 1, BlightBuildup.MaximumBuildup);

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -23,6 +22,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public const float DrawScale = 0.75f;
         const int LifeTicks = 150;
         const int FadeTicks = 12;
+        public const int MaxFlightTicks = LifeTicks - FadeTicks;
         const int StuckFadeTicks = 40;
 
         // Measured from the 104x104 art: head (1, 1) -> butt (102, 102). The tip texel is pinned to Projectile.Center.
@@ -142,28 +142,30 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         }
 
         /// <summary>
-        /// Launch velocity at <see cref="LaunchSpeed"/> that lands on <paramref name="aimPoint"/>: the low ballistic arc
-        /// under <see cref="Gravity"/>. Falls back to a 45 degree lob when the point is out of range. Shared by the
-        /// Valkyrie's selection gate (arc clearance) and her release.
+        /// Earliest reachable intercept at up to LaunchSpeed, including the remaining tell and target motion.
+        /// Uses the projectile's exact gravity-before-movement steps; zero means unreachable before the flight fades.
+        /// Selection, lock and release share this solve instead of falling back to a throw that cannot connect.
         /// </summary>
-        public static Vector2 SolveLaunch(Vector2 start, Vector2 aimPoint)
+        public static Vector2 SolveLaunch(Vector2 start, Vector2 targetPosition, Vector2 targetVelocity, int releaseDelay, out Vector2 aimPoint)
         {
-            Vector2 gap = aimPoint - start;
-            float horizontal = Math.Abs(gap.X);
-            float rise = -gap.Y;
-            int side = gap.X < 0f ? -1 : 1;
             float speedSquared = LaunchSpeed * LaunchSpeed;
-            float discriminant = speedSquared * speedSquared - Gravity * (Gravity * horizontal * horizontal + 2f * rise * speedSquared);
+            aimPoint = targetPosition;
 
-            float angle = MathHelper.PiOver4;
-            if (discriminant >= 0f && horizontal > 1f)
+            for (int flightTicks = 1; flightTicks <= MaxFlightTicks; flightTicks++)
             {
-                float lowArc = (speedSquared - (float)Math.Sqrt(discriminant)) / (Gravity * horizontal);
-                angle = (float)Math.Atan(lowArc);
+                int predictionTicks = releaseDelay + flightTicks;
+                Vector2 predictedTarget = targetPosition + targetVelocity * predictionTicks;
+                Vector2 gap = predictedTarget - start;
+                float gravityDrop = Gravity * flightTicks * (flightTicks + 1f) * 0.5f;
+                Vector2 velocity = new Vector2(gap.X / flightTicks, (gap.Y - gravityDrop) / flightTicks);
+                if (velocity.LengthSquared() <= speedSquared)
+                {
+                    aimPoint = predictedTarget;
+                    return velocity;
+                }
             }
 
-            Vector2 velocity = new Vector2(side * (float)Math.Cos(angle), -(float)Math.Sin(angle)) * LaunchSpeed;
-            return velocity;
+            return Vector2.Zero;
         }
     }
 }

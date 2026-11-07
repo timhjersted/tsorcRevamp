@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,7 +17,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
     // Ancient Demon of the Abyss — SHM wandering elite, tier 3 of the demon family (shared AI in NPCs/Bosses/DemonBase.cs).
     // Element: bright red flame with black smoke; every hit adds a Destined Death stack (max 6) and refreshes Abyss 30s.
-    // Drawn with a dark-red silhouette rim. Signatures:
+    // Signatures:
     //   Doom Orb       (bag x1) darkness gathers over the horns → a harmless orb drifts 10 tiles above the player and
     //                  fires 4 straight bolts, each glinting 20t first, then implodes. Max one alive.
     //   Death's Grasp  (phase 2, bag x1) fire pools at its feet → a low red-black wave crawls along the floor to where the
@@ -38,10 +36,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const float GraspMinDistance = 48f;
         const float GraspMaxRange = 640f;
         const float GraspMaxFloorStep = 96f; // player's feet within 6 tiles of its own
-
-        // Silhouette: the frame re-drawn behind itself at 8 offsets this many px out, in SilhouetteColor.
-        const float SilhouetteOffset = 2f;
-        static readonly Color SilhouetteColor = new Color(90, 0, 0, 200);
 
         int orbBoltDamage;
         int graspDamage;
@@ -296,21 +290,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             {
                 EndAttack();
             }
-        }
-
-        // Dark-red rim: the frame drawn 8 times behind itself, SilhouetteOffset px out in each direction. Then the base's
-        // leap afterimages and the normal draw.
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            Texture2D texture = TextureAssets.Npc[Type].Value;
-
-            for (int i = 0; i < 8; i++)
-            {
-                Vector2 offset = (i * MathHelper.PiOver4).ToRotationVector2() * SilhouetteOffset;
-                DrawBodyFrame(spriteBatch, texture, NPC.Center + offset, screenPos, SilhouetteColor * NPC.Opacity);
-            }
-
-            return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

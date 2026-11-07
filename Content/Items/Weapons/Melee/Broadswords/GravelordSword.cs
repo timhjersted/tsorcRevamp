@@ -12,6 +12,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         protected internal override Vector2 CuttingEdge => new(72f, 85f);
         protected internal override Vector2 BladeTip => new(128f, 1f);
 
+        public override bool UsesBladeSlash => true;
+
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ComboSteps[2].DamageMultiplier);
 
         public override void SetDefaults()
@@ -26,6 +28,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
             Item.rare = ItemRarityID.Orange;
             Item.value = PriceByRarity.Orange_3;
+
+            Item.GetGlobalItem<tsorcInstancedGlobalItem>().slashColor = Color.White;
         }
     }
 }

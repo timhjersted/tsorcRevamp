@@ -34,8 +34,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         public const float ArtScale = 1f;
         public const int BiteTell = 30;
         public const int BiteLive = 12;
-        public const int BreathTell = 50;
-        public const int BreathLive = 60;
+        public const int BreathTell = 70;
+        public const int BreathLive = 45;
+        public const int BreathCloseTicks = 12;
+        public const int BreathShotInterval = 3;
+        public const float BreathSweepDegreesPerTick = 1.2f;
         public const int TailTell = 46;
         public const int TailLive = 12;
         public const int AirTell = 44;
@@ -44,11 +47,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private const int TurnTicks = 104 * TurnStretchFactor;
         private const int TurnNeckTicks = 70 * TurnStretchFactor;
         private const int TurnNeckRootTicks = 30 * TurnStretchFactor;
-        private const int TurnBodyTick = 26 * TurnStretchFactor;
+        private const int TurnBodyTick = 50;
+        private const int TurnNeckLeadTick = 24 * TurnStretchFactor;
         private const int TurnHeadTick = 9 * TurnStretchFactor;
         private const int GroundMinimum = 90;
+        private const float LegWalkPlaybackRate = 2f;
         // Pivot about the planted near claw (source contact spans x=390–439), aligned with NPC.Bottom.
         private static readonly Vector2 SourceFloor = new Vector2(414f, 474f);
+        private static readonly Vector2 BreathMouthSocket = new Vector2(54f, 382f);
         private static readonly int[] WalkTicks = { 13, 8, 6, 4, 13, 8, 6, 4 };
         private static readonly int[] WingCycle = { 3, 2, 1, 1, 2, 3, 4, 4 };
         private static readonly int[] TurnWingRows = { 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0 };
@@ -351,12 +357,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     }
 
                     if (authority && StateTimer >= BreathTell && StateTimer < BreathTell + BreathLive
-                        && (StateTimer - BreathTell) % 2 == 0)
+                        && (StateTimer - BreathTell) % BreathShotInterval == 0)
                     {
                         SpawnBreath(70);
                     }
 
-                    if (authority && StateTimer >= BreathTell + BreathLive)
+                    if (authority && StateTimer >= BreathTell + BreathLive + BreathCloseTicks)
                     {
                         BeginRecovery(62);
                     }
@@ -475,8 +481,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
                 if (move == DrakeState.Breath)
                 {
-                    return forward >= 90f && forward <= 420f && Vector2.DistanceSquared(target.Center, Mouth) <= 420f * 420f
-                        && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
+                    Vector2 mappedMouth = bones[15].Map(BreathMouthSocket);
+                    Vector2 breathOrigin = ToWorld(mappedMouth);
+                    float breathForward = (target.Center.X - breathOrigin.X) * Facing;
+                    return breathForward >= 90f && breathForward <= 420f
+                        && Vector2.DistanceSquared(target.Center, breathOrigin) <= 420f * 420f
+                        && Collision.CanHitLine(breathOrigin, 1, 1, target.Center, 1, 1);
                 }
 
                 if (move == DrakeState.TailSlam)
@@ -605,12 +615,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
 
                 if (authority && StateTimer >= AirTell && StateTimer < AirTell + AirLive
-                    && (StateTimer - AirTell) % 2 == 0)
+                    && (StateTimer - AirTell) % BreathShotInterval == 0)
                 {
                     SpawnBreath(68);
                 }
 
-                if (authority && (StateTimer >= AirTell + AirLive || blockedTicks > 8))
+                if (authority && (StateTimer >= AirTell + AirLive + BreathCloseTicks || blockedTicks > 8))
                 {
                     StartLanding();
                 }
@@ -766,11 +776,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         private void SpawnBreath(int damage)
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
             UpdatePose();
-            Vector2 direction = BreathDirection.RotatedBy(Main.rand.NextFloat(-0.018f, 0.018f));
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, direction * DemonBreath.Speed,
+            Vector2 velocity = BreathDirection * DemonBreath.Speed + Main.rand.NextVector2Circular(0.6f, 0.6f);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity,
                 ModContent.ProjectileType<HellkiteDrakeFlame>(), damage, 0f, Main.myPlayer,
-                (float)DemonTier.Ancient, NPC.whoAmI);
+                (float)DemonTier.Oolacile, NPC.whoAmI);
+        }
+
+        private Vector2 GetBreathAim()
+        {
+            if (State == DrakeState.AirBreath)
+            {
+                return (lockedImpact - Mouth).SafeNormalize(Vector2.UnitY);
+            }
+
+            Vector2 direction = lockedAim;
+            int sweepTick = StateTimer - BreathTell;
+            if (State == DrakeState.Breath && sweepTick >= -8)
+            {
+                // Match Oolacile's 54-degree sweep, mirrored about the committed aim for each facing.
+                float totalDegrees = BreathSweepDegreesPerTick * BreathLive;
+                int aimedTick = Math.Clamp(sweepTick, 0, BreathLive - 1);
+                float offsetDegrees = -totalDegrees * 0.5f + BreathSweepDegreesPerTick * aimedTick;
+                if (sweepTick < 0)
+                {
+                    float ready = (sweepTick + 8f) / 8f;
+                    offsetDegrees *= MathHelper.SmoothStep(0f, 1f, ready);
+                }
+                else if (sweepTick >= BreathLive)
+                {
+                    float finish = MathHelper.Clamp((sweepTick - BreathLive) / (float)BreathCloseTicks, 0f, 1f);
+                    offsetDegrees *= 1f - MathHelper.SmoothStep(0f, 1f, finish);
+                }
+                direction = direction.RotatedBy(MathHelper.ToRadians(offsetDegrees) * Facing);
+            }
+
+            return direction;
         }
 
         public void OnStagger(NPC npc)
@@ -820,14 +866,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             home = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
 
-        private int WalkRow()
+        private int WalkRow(float playbackRate)
         {
             if (State == DrakeState.Turn || Math.Abs(NPC.velocity.X) < 0.1f)
             {
                 return 0;
             }
 
-            float clock = walkClock;
+            float clock = walkClock * playbackRate;
+            clock %= 62f;
             for (int i = 0; i < WalkTicks.Length; i++)
             {
                 if (clock < WalkTicks[i])
@@ -871,7 +918,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 phase = StateTimer * 0.07f;
             }
 
-            int walkRow = WalkRow();
+            int walkRow = WalkRow(1f);
+            int legWalkRow = WalkRow(LegWalkPlaybackRate);
+            int mouthRow = 0;
+            float breathClosing = 0f;
+            if (State == DrakeState.Bite)
+            {
+                mouthRow = 1;
+                if (StateTimer >= BiteTell - 6)
+                {
+                    mouthRow = 2;
+                }
+            }
+            else if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+            {
+                int tellTicks = BreathTell;
+                int liveTicks = BreathLive;
+                if (State == DrakeState.AirBreath)
+                {
+                    tellTicks = AirTell;
+                    liveTicks = AirLive;
+                }
+
+                int releaseEnd = tellTicks + liveTicks;
+                float closingProgress = MathHelper.Clamp((StateTimer - releaseEnd) / (float)BreathCloseTicks, 0f, 1f);
+                breathClosing = MathHelper.SmoothStep(0f, 1f, closingProgress);
+                if (StateTimer >= tellTicks - 16 && StateTimer < tellTicks - 8)
+                {
+                    mouthRow = 1;
+                }
+                else if (StateTimer >= tellTicks - 8 && StateTimer < releaseEnd)
+                {
+                    mouthRow = 2;
+                }
+                else if (StateTimer >= releaseEnd && StateTimer < releaseEnd + BreathCloseTicks / 2)
+                {
+                    mouthRow = 1;
+                }
+            }
+
             float bodyDrop = 0f;
             if (!Airborne && (walkRow == 1 || walkRow == 5))
             {
@@ -889,8 +974,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             bones[11].FrameRow = walkRow;
             bones[12].FrameRow = (walkRow + 7) % 8;
-            bones[13].FrameRow = walkRow;
-            bones[14].FrameRow = (walkRow + 4) % 8;
+            // Cycle only the feet faster; the synced walk clock still drives the slower body and wings.
+            bones[13].FrameRow = legWalkRow;
+            bones[14].FrameRow = (legWalkRow + 4) % 8;
             if (State == DrakeState.Turn)
             {
                 // Lift the folded wings around the body flip, then ease them down as the tail settles.
@@ -925,10 +1011,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     bones[i].Rotation += chestAngle;
                 }
 
-                // Step with the near foot while the far claw supports the turn. Measured contact
-                // points pin the foot's world-space arc across the body flip without deforming the leg art.
-                int stepRow = Math.Clamp((int)((turnClock - 2f) / 6f), 0, 8) % 8;
-                float stepProgress = MathHelper.Clamp((turnClock - 2f) / 48f, 0f, 1f);
+                // Take one normal-speed step around the flip instead of stretching eight leg frames
+                // over the whole turn. Six game ticks per pose preserve the original walking cadence.
+                float stepClock = StateTimer - (TurnBodyTick - 24f);
+                int stepRow = Math.Clamp((int)(stepClock / 6f), 0, 8) % 8;
+                float stepProgress = MathHelper.Clamp(stepClock / 48f, 0f, 1f);
                 float stepArc = MathF.Sin(MathHelper.Pi * stepProgress);
                 Vector2 footWorld = NPC.Bottom + new Vector2(turnFacing * 18f * stepArc, -1f - 22f * stepArc);
                 Vector2 footOffset = TurnFootContacts[stepRow] - Parts[13].RestPivot;
@@ -969,6 +1056,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 float jawClearance = MathHelper.Clamp((StateTimer - BiteTell + 8f) / 8f, 0f, 1f);
                 neckRoot.Y -= 26f * MathHelper.SmoothStep(0f, 1f, jawClearance);
             }
+            else if (State == DrakeState.Breath)
+            {
+                // Give the opened jaw clearance over flat ground while the flame sweeps downward.
+                float jawLift = MathHelper.Clamp((StateTimer - BreathTell + 16f) / 16f, 0f, 1f);
+                neckRoot.Y -= 26f * MathHelper.SmoothStep(0f, 1f, jawLift) * (1f - breathClosing);
+            }
 
             bones[16] = new Bone(Parts[16].RestPivot, neckRoot, neckBend);
             bones[17] = new Bone(Parts[17].RestPivot, bones[16].Map(Parts[17].RestPivot), neckBend);
@@ -980,13 +1073,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             if (State == DrakeState.Bite || State == DrakeState.Breath || State == DrakeState.AirBreath)
             {
                 Vector2 aim = lockedAim;
-                if (State == DrakeState.AirBreath)
+                if (State == DrakeState.Breath)
+                {
+                    aim = GetBreathAim();
+                }
+                else if (State == DrakeState.AirBreath)
                 {
                     aim = (lockedImpact - ToWorld(headPosition)).SafeNormalize(new Vector2(Facing, 0.5f));
                 }
 
                 headAngle = -MathF.Atan2(aim.Y, aim.X * Facing);
-                headAngle = MathHelper.Clamp(headAngle, -1.15f, 0.65f);
+                float upperLimit = 0.65f;
+                if (State == DrakeState.Breath)
+                {
+                    upperLimit = 1.15f;
+                }
+                headAngle = MathHelper.Clamp(headAngle, -1.15f, upperLimit);
+                headAngle = MathHelper.Lerp(headAngle, 0.02f * MathF.Sin(phase - 0.8f), breathClosing);
             }
 
             bones[15] = new Bone(Parts[15].RestPivot, headPosition, headAngle);
@@ -994,6 +1097,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 PoseTurnNeck();
             }
+            bones[15].FrameRow = mouthRow;
 
             // The dorsal crest belongs to the shoulder. Flex it slightly around the torso pivot so
             // the long scales stay above the back instead of following a full neck rotation into the floor.
@@ -1058,16 +1162,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
 
             // These source sockets include the 32px lowered head placement and still point to the same art pixels.
-            Mouth = ToWorld(bones[15].Map(new Vector2(16f, 372f)));
+            Vector2 mouthSocket = new Vector2(16f, 372f);
+            if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+            {
+                // Head-frame pixel (48,94) sits inside the open jaw rather than on the snout tip.
+                mouthSocket = BreathMouthSocket;
+            }
+            Mouth = ToWorld(bones[15].Map(mouthSocket));
             Jaw = ToWorld(bones[15].Map(new Vector2(76f, 368f)));
             TailBase = ToWorld(tailJoints[0]);
             TailJoint = ToWorld(tailJoints[3]);
             TailEnd = ToWorld(tailJoints[4]);
-            BreathDirection = lockedAim;
-            if (State == DrakeState.AirBreath)
-            {
-                BreathDirection = (lockedImpact - Mouth).SafeNormalize(Vector2.UnitY);
-            }
+            BreathDirection = GetBreathAim();
         }
 
         private static float TurnChestAngle(float turnClock)
@@ -1082,29 +1188,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private void PoseTurnNeck()
         {
             float turnClock = StateTimer / (float)TurnStretchFactor;
-            float bodyFlipClock = TurnBodyTick / (float)TurnStretchFactor;
+            float neckLeadClock = TurnNeckLeadTick / (float)TurnStretchFactor;
             float neckSettleClock = TurnNeckTicks / (float)TurnStretchFactor;
             float neckRootClock = TurnNeckRootTicks / (float)TurnStretchFactor;
-            // Reach V7's frame-50 pose by the delayed body flip, then finish the remaining settle.
-            // Smootherstep and Hermite share a 0.6 pose-tick/tick speed at the flip, avoiding a stop or restart.
+            // Keep the frame-72 neck milestone independent of the frame-50 body flip to preserve its pace.
+            // Smootherstep and Hermite share a 0.6 pose-tick/tick speed at that milestone, avoiding a pause.
             const float flipNeckClock = 55.25364f;
             const float passageRate = 0.6f;
             float neckClock;
-            if (turnClock < bodyFlipClock)
+            if (turnClock < neckLeadClock)
             {
-                float advance = MathHelper.Clamp(turnClock / bodyFlipClock, 0f, 1f);
+                float advance = MathHelper.Clamp(turnClock / neckLeadClock, 0f, 1f);
                 float advanceSquared = advance * advance;
                 float advanceCubed = advanceSquared * advance;
                 float easePolynomial = 6f * advanceSquared - 15f * advance + 10f;
                 float easedAdvance = advanceCubed * easePolynomial;
                 float carriedClock = passageRate * turnClock;
-                float remainingClock = flipNeckClock - passageRate * bodyFlipClock;
+                float remainingClock = flipNeckClock - passageRate * neckLeadClock;
                 neckClock = carriedClock + remainingClock * easedAdvance;
             }
             else
             {
-                float settleDuration = neckSettleClock - bodyFlipClock;
-                float release = MathHelper.Clamp((turnClock - bodyFlipClock) / settleDuration, 0f, 1f);
+                float settleDuration = neckSettleClock - neckLeadClock;
+                float release = MathHelper.Clamp((turnClock - neckLeadClock) / settleDuration, 0f, 1f);
                 neckClock = MathHelper.Hermite(flipNeckClock, passageRate * settleDuration, neckSettleClock, 0f, release);
             }
 
@@ -1184,7 +1290,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 int partIndex = NeckParts[i];
                 // Give each neck layer its own facing so the torso flip cannot mirror an already turned neck.
-                float textureTurnClock = bodyFlipClock;
+                float textureTurnClock = neckLeadClock;
                 if (i < 3)
                 {
                     textureTurnClock = 30f + i * 4f;
@@ -1391,18 +1497,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 tell = AirTell;
             }
 
-            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer < tell && StateTimer > tell - 18)
+            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer < tell)
             {
-                Vector2 offset = Main.rand.NextVector2Unit() * Main.rand.NextFloat(12f, 32f);
-                Dust ember = Dust.NewDustPerfect(Mouth + offset, DustID.RedTorch, -offset * 0.12f, 80, default, 1.1f);
-                ember.noGravity = true;
-                Lighting.AddLight(Mouth, 0.6f, 0.16f, 0.02f);
+                // Reuse Oolacile's mouth smoulder and swell, including its orange accent palette.
+                float progress = StateTimer / (float)tell;
+                float emberScale = 0.45f;
+                int emberCount = 1;
+                if (progress >= 0.4f)
+                {
+                    float swell = (progress - 0.4f) / 0.6f;
+                    emberScale = MathHelper.Lerp(0.6f, 1.9f, swell);
+                    emberCount = 2;
+                }
+
+                for (int i = 0; i < emberCount; i++)
+                {
+                    Vector2 spot = Mouth + Main.rand.NextVector2Circular(3f, 3f);
+                    Dust ember = Dust.NewDustPerfect(spot, DemonElement.FlameDust(DemonTier.Oolacile),
+                        Main.rand.NextVector2Circular(0.6f, 0.6f), 0, default, emberScale);
+                    ember.noGravity = true;
+                }
+                if (progress >= 0.4f && Main.rand.NextBool(4))
+                {
+                    DemonElement.SpawnBreathAccent(DemonTier.Oolacile, Mouth - new Vector2(4f), 8, 8, Vector2.Zero, emberScale);
+                }
+                Lighting.AddLight(Mouth, DemonElement.BreathLightColor(DemonTier.Oolacile) * (0.3f + emberScale * 0.4f));
             }
 
+            int liveTicks = BreathLive;
+            if (State == DrakeState.AirBreath)
+            {
+                liveTicks = AirLive;
+            }
             if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer >= tell
+                && StateTimer < tell + liveTicks
                 && (StateTimer - tell) % 12 == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, Pitch = -0.35f }, Mouth);
+            }
+            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer == tell + liveTicks)
+            {
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, Mouth);
             }
 
             if (State == DrakeState.TailSlam && StateTimer < TailTell && StateTimer % 3 == 0)
@@ -1462,32 +1597,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
             }
 
-            int mouthRow = 0;
-            if (State == DrakeState.Bite)
-            {
-                mouthRow = 1;
-                if (StateTimer >= BiteTell - 6)
-                {
-                    mouthRow = 2;
-                }
-            }
-            else if (State == DrakeState.Breath || State == DrakeState.AirBreath)
-            {
-                mouthRow = 1;
-                int tell = BreathTell;
-                if (State == DrakeState.AirBreath)
-                {
-                    tell = AirTell;
-                }
+            int mouthRow = bones[15].FrameRow;
 
-                if (StateTimer >= tell - 12)
-                {
-                    mouthRow = 2;
-                }
-            }
-
+            // Shade the rear leg without fading it. Color multiplication also scales alpha,
+            // so restore the body's alpha to keep the leg opaque over the background.
+            Color farLegColor = drawColor * 0.85f;
+            farLegColor.A = drawColor.A;
             DrawPart(spriteBatch, wingFar, farWingRow, screenPos, drawColor * 0.8f);
-            DrawPart(spriteBatch, 14, farLeg, screenPos, drawColor * 0.85f);
+            DrawPart(spriteBatch, 14, farLeg, screenPos, farLegColor);
             DrawPart(spriteBatch, 13, nearLeg, screenPos, drawColor);
             DrawPart(spriteBatch, 8, 0, screenPos, drawColor);
             for (int i = 7; i >= 4; i--)
@@ -1524,6 +1641,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 Vector2 end = ClipLine(Mouth, Mouth + lockedAim * DemonBreath.Speed * DemonBreath.LifetimeTicks);
                 DrawLine(spriteBatch, Mouth - screenPos, end - screenPos, Color.Orange * 0.45f, 2f);
+                float halfSweep = MathHelper.ToRadians(BreathLive * BreathSweepDegreesPerTick * 0.5f);
+                for (int i = -1; i <= 1; i += 2)
+                {
+                    Vector2 edgeAim = lockedAim.RotatedBy(halfSweep * i);
+                    Vector2 edge = ClipLine(Mouth, Mouth + edgeAim * DemonBreath.Speed * DemonBreath.LifetimeTicks);
+                    DrawLine(spriteBatch, Mouth - screenPos, edge - screenPos, Color.Orange * 0.25f, 1f);
+                }
             }
 
             if (State == DrakeState.AirBreath && StateTimer < AirTell)
@@ -1747,8 +1871,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         }
     }
 
-    // Reuse Ancient Demon's moving red-flame, ember, smoke and gutter effects.
-    // ai[0] is the Ancient palette; ai[1] is the owning Drake's NPC slot.
+    // Reuse Oolacile's flame sprite, orange dust, On Fire hit and complete projectile lifecycle.
+    // ai[0] is the Oolacile palette; ai[1] is the owning Drake's NPC slot.
     public class HellkiteDrakeFlame : DemonBreath
     {
         public override void AI()
@@ -1770,14 +1894,5 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             base.AI();
         }
 
-        public override void OnHitPlayer(Player target, Player.HurtInfo info)
-        {
-            // Share Ancient Demon's artwork while keeping Drake hits free of its tier-specific curse debuffs.
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            return false;
-        }
     }
 }

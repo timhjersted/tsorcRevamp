@@ -3128,7 +3128,7 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.RequestFriendlyPuppetSpawn:
                 {
-                    NPCs.FriendlyPuppets.MimicTear.ReceiveSpawnRequest(reader, whoAmI);
+                    NPCs.FriendlyPuppets.SoulMimic.ReceiveSpawnRequest(reader, whoAmI);
                     break;
                 }
 
@@ -5357,8 +5357,8 @@ namespace tsorcRevamp
         /// <summary>Victim client → server: a puppet's Piercing Dash reached this player outside i-frames. Player.immune is not
         /// networked, so only the victim's machine can say whether a roll passed through the dash.</summary>
         public const byte RequestPierceGrab = 40;
-        /// <summary>Owner client → server: spawn my Mimic Tear with this snapshot of my stats (max HP, defense, Estus).
-        /// Estus numbers aren't synced, and clients can't spawn NPCs. See NPCs/FriendlyPuppets/MimicTear.cs.</summary>
+        /// <summary>Owner client → server: spawn my Soul Mimic with this snapshot of my stats (max HP, defense, Estus).
+        /// Estus numbers aren't synced, and clients can't spawn NPCs. See NPCs/FriendlyPuppets/SoulMimic.cs.</summary>
         public const byte RequestFriendlyPuppetSpawn = 41;
         /// <summary>Puppet owner → server → other clients: status flags the server's AI needs (winded, drinking),
         /// plus the streamed pose while the puppet is mid-use, so other players see its swings. MirrorPuppetNPC.cs.</summary>

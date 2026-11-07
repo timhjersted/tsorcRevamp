@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             // Player weapons never hit a friendly puppet. Hostile projectiles fall through to vanilla, which hits
             // friendly NPCs (Projectile.Damage: npc.friendly && !dontTakeDamageFromHostiles) — that only matters
-            // for subclasses that turn off dontTakeDamage (the Mimic Tear has HP).
+            // for subclasses that turn off dontTakeDamage (the Soul Mimic has HP).
             bool playerProjectile = projectile.friendly && !projectile.hostile;
 
             if (playerProjectile)

@@ -94,18 +94,19 @@ namespace tsorcRevamp.NPCs.Enemies
         //              knife for the last 10t. Aim tracks until t20.
         // Beat 1 FRONT descending slash -1.55 -> 2.10 (envelope 209 deg, live ~170: short knife cuts by identity).
         //              Weighted 7/0/30 k7 over 37t -> peak 209 / (7/3 + 30 * 0.999 / 7) = 31.6 deg/t (28.2 per tick sampled).
-        //              Live while speed >= 30% of peak, as measured: [5, 14) of the step = t33-41 (9t). Push-in 16px.
+        //              Live while speed >= 30% of peak, as measured: [5, 14) of the step = t33-41 (9t). Push-in 56px.
         // Beat 2 BACK  wind-up t58-75 over beat 1's tail (cocks 0.40 further down-back, settles on 2.25); rising slash
-        //              2.25 -> -1.25 (200 deg) from t76, same curve, live t81-89 (9t), 40t after beat 1's. Push-in 16px.
+        //              2.25 -> -1.25 (200 deg) from t76, same curve, live t81-89 (9t), 40t after beat 1's. Push-in 56px.
         // Beat 3 FRONT overhand stab: draw t109-128 (the low knife rises up-back over beat 2's tail), strike t129: 6t
-        //              cubic drive onto the aim, 4t hold, 12t settle. Live t129-138 (10t), 40t after beat 2's. Push-in 28px.
-        // Finisher     decided at t151, BEFORE re-facing: any earlier beat connected, or the target within 72px on the
-        //              committed side. Otherwise straight into the 36t recovery (187t total).
+        //              cubic drive onto the aim, 4t hold, 12t settle. Live t129-138 (10t), 40t after beat 2's. Push-in 40px.
+        // Continuation two consecutive misses abort into 36t recovery at t109 if the stab's live advance cannot reach.
+        // Finisher     decided at t151, BEFORE re-facing: the previous beat connected, or the scissor's live advance
+        //              can reach the target on the committed side. Otherwise straight into 36t recovery (187t total).
         // Beat 4 BOTH  scissor: wind-up t151-172, strike t173: front rises 2.10 -> -1.40 while back falls -1.25 -> 2.35
         //              (200 / 206 deg), Weighted 8/0/32 k7 over 40t -> ~29.5 deg/t. One shared live window t178-187
-        //              (10t), 40t after beat 3's. Push-in 24px. Then 36t recovery: 249t (4.2s) total.
-        // Counter      four separate rolls standing still (each live <= 10t, >= 40t apart), or back out of 72px after beat 3
-        //              and the finisher never fires.
+        //              (10t), 40t after beat 3's. Push-in 48px. Then 36t recovery: 249t (4.2s) total.
+        // Counter      four separate rolls standing still (each live <= 10t, >= 40t apart), or disengage beyond the next
+        //              beat's reach plus live advance; two misses end the string instead of swinging at empty space.
         public const int FlurryTell = 28;
         public const int SlashTicks = 37;
         public const int FlurryCutTwoWindup = 58;
@@ -119,24 +120,24 @@ namespace tsorcRevamp.NPCs.Enemies
         public const int FlurryScissorEnd = 213;
         public const int FlurryRecovery = 36;
         public const int FlurryTotal = 249;
-        const float FlurrySlashStepIn = 16f;
-        const float FlurryStabStepIn = 28f;
-        const float FlurryScissorStepIn = 24f;
-        const float FlurryFinisherRange = 72f;
+        public const float FlurrySlashStepIn = 56f;
+        public const float FlurryStabStepIn = 40f;
+        public const float FlurryScissorStepIn = 48f;
 
         // ── Viper's Kiss ──────────────────────────────────────────────────────────────────────────────────────
         // Tell 22t     back knife drawn up-back for the stab, front knife lifted to guard; glint on the back knife last 8t.
-        // Beat 1 BACK  stab at t22: 6t cubic drive onto the aim, 4t hold, 12t settle. Live t22-31 (10t). Push-in 24px.
+        // Beat 1 BACK  stab at t22: 6t cubic drive onto the aim, 4t hold, 12t settle. Live t22-31 (10t). Push-in 40px.
         // Beat 2 FRONT wind-up t45-66 over the stab's settle (front knife raised behind the head), descending slash
-        //              -1.55 -> 2.10 from t67, Weighted 7/0/30 k7. Live t72-80 (9t), 41t after the stab's. Push-in 18px.
+        //              -1.55 -> 2.10 from t67, Weighted 7/0/30 k7. Live t72-80 (9t), 41t after the stab's. Push-in 48px.
+        // Continuation at t45: a hit earns the slash; a miss only continues if its reach plus live advance can connect.
         // Recovery     30t from t104. Total 134t (2.2s).
         public const int ViperTell = 22;
         public const int ViperSlashWindup = 45;
         public const int ViperSlash = 67;
         public const int ViperRecoveryStart = 104;
         public const int ViperTotal = 134;
-        const float ViperStabStepIn = 24f;
-        const float ViperSlashStepIn = 18f;
+        public const float ViperStabStepIn = 40f;
+        public const float ViperSlashStepIn = 48f;
 
         // ── Shadow Pounce ─────────────────────────────────────────────────────────────────────────────────────
         // Tell 30t     both knives raised overhead, steel glint on both, heel dust for the last 10t. Lock at t24.
@@ -219,7 +220,9 @@ namespace tsorcRevamp.NPCs.Enemies
         int _age;
         int _neutralTicks;
         int _finisherWaitTicks;
-        bool _flurryHit;
+        bool _beatHit;
+        bool _previousBeatHit;
+        int _consecutiveWhiffs;
         int _crowdTicks;
         int _lastLife = -1;
         int _lastHitAge = -1000;
@@ -1093,7 +1096,9 @@ namespace tsorcRevamp.NPCs.Enemies
             _move = move;
             _pitch = 0f;
             _flurryFinisher = true;
-            _flurryHit = false;
+            _beatHit = false;
+            _previousBeatHit = false;
+            _consecutiveWhiffs = 0;
             _strikeStart = -1;
             _landTick = -1;
             _leapVelocityX = 0f;
@@ -1210,6 +1215,45 @@ namespace tsorcRevamp.NPCs.Enemies
             if (_lockedTarget >= 0 && _lockedTarget < Main.maxPlayers && Main.player[_lockedTarget].active)
             {
                 target = Main.player[_lockedTarget];
+            }
+
+            if (Server)
+            {
+                // Resolve contact after the final live tick was sampled by TickWeaponHits on the preceding update.
+                // These counters stay server-only; AbortIntoRecovery and the finisher choice sync the visible branch.
+                bool beatEnded = _move == Move.Flurry
+                    && (elapsed == FlurryTell + 14 || elapsed == FlurryCutTwo + 14 || elapsed == FlurryStab + 10);
+                beatEnded |= _move == Move.Viper && elapsed == ViperTell + 10;
+                if (beatEnded)
+                {
+                    _previousBeatHit = _beatHit;
+                    _beatHit = false;
+                    if (_previousBeatHit)
+                    {
+                        _consecutiveWhiffs = 0;
+                    }
+                    else
+                    {
+                        _consecutiveWhiffs++;
+                    }
+                }
+
+                bool flurryOutOfReach = _move == Move.Flurry && elapsed == FlurryStabDraw
+                    && _consecutiveWhiffs >= 2 && !CanReachNextBeat(target, FlurryStabStepIn, 1, 9, 10, 4f);
+                bool viperOutOfReach = _move == Move.Viper && elapsed == ViperSlashWindup
+                    && !_previousBeatHit && !CanReachNextBeat(target, ViperSlashStepIn, 7, 30, 14, 7f);
+                if (flurryOutOfReach || viperOutOfReach)
+                {
+                    int recoveryTicks = FlurryRecovery;
+                    if (viperOutOfReach)
+                    {
+                        recoveryTicks = ViperTotal - ViperRecoveryStart;
+                    }
+
+                    Trace("whiff-recovery", "misses " + _consecutiveWhiffs, false);
+                    AbortIntoRecovery(recoveryTicks);
+                    return;
+                }
             }
 
             // Facing and aim follow the target only in each action's tracking windows (tells before their lock, the
@@ -1343,24 +1387,26 @@ namespace tsorcRevamp.NPCs.Enemies
                 PushIn(ShapedSpeed(FlurryScissorStepIn, scissor, 8, 0, 32, 7f));
             }
 
-            // Finisher decision, before the wind-up re-faces: any beat connected, or the target close and in front.
+            // Like Owl Father's reversal, a landed preceding beat earns the follow-up. Otherwise budget only the
+            // advance before the scissor turns harmless, so a long-ago hit cannot keep an unreachable string alive.
             if (elapsed == FlurryDecision && Server)
             {
                 bool close = false;
                 if (target != null)
                 {
                     int targetSide = Math.Sign(target.Center.X - NPC.Center.X);
-                    close = targetSide == _lockFacing && NPC.Distance(target.Center) <= FlurryFinisherRange;
+                    close = targetSide == _lockFacing
+                        && CanReachNextBeat(target, FlurryScissorStepIn, 8, 32, 15, 7f);
                 }
 
-                _flurryFinisher = _flurryHit || close;
+                _flurryFinisher = _previousBeatHit || close;
                 if (!_flurryFinisher)
                 {
                     _actionTotal = FlurryDecision + FlurryRecovery;
                     PhaseTimer = _actionTotal - elapsed;
                 }
 
-                Trace("flurry-finisher", "hit " + _flurryHit + " close " + close, false);
+                Trace("flurry-finisher", "previous hit " + _previousBeatHit + " reachable " + close, false);
                 Snapshot();
             }
 
@@ -1444,6 +1490,25 @@ namespace tsorcRevamp.NPCs.Enemies
                     _strikeExpert = SlashExpert[tier];
                 }
             }
+        }
+
+        // Follow-up feasibility uses the existing 64px melee band plus only the push delivered while still live.
+        // Summing the same sampled curve as PushIn avoids counting the harmless settle as useful closing distance.
+        bool CanReachNextBeat(Player target, float stepIn, int easeIn, int easeOut, int liveEnd, float decay)
+        {
+            if (target == null || target.dead)
+            {
+                return false;
+            }
+
+            float liveAdvance = 0f;
+            for (int i = 0; i < liveEnd; i++)
+            {
+                liveAdvance += ShapedSpeed(stepIn, i, easeIn, 0, easeOut, decay);
+            }
+
+            float distance = NPC.Distance(target.Center);
+            return distance <= MeleeRange + liveAdvance;
         }
 
         /// <summary>Eased push-in for one tick of a beat: forward at <paramref name="speed"/>, or stopped by a wall ahead.
@@ -1887,10 +1952,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     damage, 2f, Main.myPlayer, box, box, PuppetMeleeHitbox.EncodeHand(hand));
                 _hitPlayers.Add(i);
 
-                if (_move == Move.Flurry)
-                {
-                    _flurryHit = true;
-                }
+                _beatHit = true;
             }
 
             previousOrigin = origin;

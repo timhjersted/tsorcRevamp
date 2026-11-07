@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
         public override int HoldActionTicks => LeapHoldTicks;
 
-        public override bool UsesSlashTrail => true;
+        public override bool UsesBladeSlash => true;
 
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(
             SlashManaCost, (int)(SlashDamageScale * 100), SlashRangeTiles, ArtoriasSteps[2].DamageMultiplier, LeapRangeTiles, SmokeWallTiles,
@@ -95,8 +95,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = Color.DarkViolet;
-            // Centre the slash band at ~0.75 of the 126px fist-to-tip reach so its outer edge meets the tip.
-            instancedGlobal.slashVisualScale = 0.7f;
         }
 
         public override bool CanUseItem(Player player)
@@ -105,7 +103,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             return base.CanUseItem(player) && !leaping;
         }
 
-        public override void OnStrikeStart(Projectile swing, Player player, int step)
+        public override void OnStrikeStart(Projectile swing, Player player, int position)
         {
             // No mana, no crescent: the swing itself still lands.
             int manaCost = (int)(SlashManaCost * player.manaCost);
