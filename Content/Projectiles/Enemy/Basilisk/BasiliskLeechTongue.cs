@@ -20,8 +20,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         private const int StateFlying = 0;
         private const int StateAttached = 1;
         private const int StateRetracting = 2;
-        // The tongue detaches at 35 tiles, while a fired tongue can reach 45 tiles before its
-        // 7.5-tile follow-through retracts. This keeps escape from an attachment achievable.
+        // Fleeing past 35 tiles bursts the victim for half maximum life. Flight can reach
+        // 45 tiles plus 7.5 tiles of follow-through; attachment has no duration limit.
         public const float MaxAttachedLength = 35f * 16f;
         public const float MaxLaunchRange = 45f * 16f;
         public const float LaunchOvershoot = 7.5f * 16f;
@@ -59,6 +59,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         private int attachedPullTimer;
         private bool longRangePull;
         private bool tetherBreakBloodPending;
+        private int presentedState = StateFlying;
+
+        public int AttachedVictim => (int)Projectile.ai[1] == StateAttached ? targetWho : -1;
 
 
         public override void SetStaticDefaults()
@@ -85,11 +88,31 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         {
             if (!TryGetOwner(out NPC owner))
             {
-                Projectile.Kill();
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.Kill();
+                }
+
                 return;
             }
 
             Projectile.timeLeft = 420;
+            int currentState = (int)Projectile.ai[1];
+            if (presentedState != currentState)
+            {
+                presentedState = currentState;
+                if (!Main.dedServ)
+                {
+                    SoundStyle sound = SoundID.NPCHit8 with { Volume = 0.35f, Pitch = -0.25f };
+                    if (currentState == StateAttached)
+                    {
+                        sound = SoundID.NPCHit13 with { Volume = 0.55f, Pitch = 0.25f };
+                    }
+
+                    SoundEngine.PlaySound(sound, Projectile.Center);
+                }
+            }
+
             if ((int)Projectile.ai[1] != StateAttached)
             {
                 Projectile.rotation += 0.05f * Projectile.direction;
@@ -324,12 +347,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI);
+                NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, player.whoAmI);
             }
 
             if (player.statLife <= 0)
             {
-                player.KillMe(deathReason, drain, player.Center.X < owner.Center.X ? -1 : 1, false);
+                int hitDirection = player.Center.X < owner.Center.X ? -1 : 1;
+                player.KillMe(deathReason, drain, hitDirection, false);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendPlayerDeath(player.whoAmI, deathReason, drain, hitDirection, false);
+                }
             }
 
             if (owner.active && owner.life > 0)
@@ -341,7 +369,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (!CanGrabPlayer)
+            if (!CanGrabPlayer || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
@@ -446,12 +474,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             longRangePullTimer = 0;
             attachedPullTimer = 0;
             Projectile.netUpdate = true;
-            SoundEngine.PlaySound(SoundID.NPCHit13 with { Volume = 0.55f, Pitch = 0.25f }, Projectile.Center);
         }
 
         private void UpdateAttachmentPull(NPC owner, Player player)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            // The victim also predicts the pull: ordinary PlayerControls packets can be ignored
+            // by their owning client. Other clients only observe the synced player movement.
+            if (Main.netMode == NetmodeID.MultiplayerClient && player.whoAmI != Main.myPlayer)
             {
                 return;
             }
@@ -485,7 +514,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
             if (Main.netMode == NetmodeID.Server && Projectile.timeLeft % 3 == 0)
             {
-                NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI);
+                NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, player.whoAmI);
             }
         }
 
@@ -504,12 +533,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
             if (player.statLife <= 0)
             {
-                player.KillMe(deathReason, damage, player.Center.X < owner.Center.X ? -1 : 1, false);
+                int hitDirection = player.Center.X < owner.Center.X ? -1 : 1;
+                player.KillMe(deathReason, damage, hitDirection, false);
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendPlayerDeath(player.whoAmI, deathReason, damage, hitDirection, false);
+                }
             }
 
             if (Main.netMode == NetmodeID.Server)
             {
-                NetMessage.SendData(MessageID.SyncPlayer, -1, -1, null, player.whoAmI);
+                NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, player.whoAmI);
             }
 
             StartRetract();
@@ -550,7 +584,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             return false;
         }
 
-        private void StartRetract()
+        internal void StartRetract()
         {
             if ((int)Projectile.ai[1] == StateRetracting)
             {
@@ -563,7 +597,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             Projectile.hostile = false;
             Projectile.tileCollide = false;
             Projectile.netUpdate = true;
-            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.35f, Pitch = -0.25f }, Projectile.Center);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(2.5f, 2.5f);
+                Dust.NewDustPerfect(Projectile.Center, DustID.Blood, velocity, 80, Color.DeepPink, 0.8f);
+            }
         }
 
         private void ApplyPendingOwnerHeal()
@@ -591,7 +638,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs)
             {
                 owner = Main.npc[ownerIndex];
-                if (owner.active)
+                if (owner.active && owner.ModNPC is BasiliskPuppet basilisk && basilisk.OwnsTongue((int)Projectile.ai[2]))
                 {
                     return true;
                 }
@@ -603,6 +650,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public static Vector2 GetMouthPosition(NPC npc)
         {
+            if (npc.ModNPC is BasiliskPuppet basilisk)
+            {
+                return basilisk.MouthPosition;
+            }
+
             int direction = npc.spriteDirection == 0 ? npc.direction : npc.spriteDirection;
             return npc.Center + new Vector2(direction * (npc.width * 0.38f - 5f), -npc.height * 0.22f);
         }

@@ -1,281 +1,92 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Config;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Potions;
-using tsorcRevamp.Content.Projectiles.Enemy;
-using tsorcRevamp.Content.Projectiles.Enemy.Basilisk;
+using tsorcRevamp.Content.Items.Materials.Souls;
 
 namespace tsorcRevamp.NPCs.Enemies.Basilisk
 {
-    class BasiliskWalker : ModNPC
+    public class BasiliskWalker : BasiliskPuppet
     {
-        float shotTimer;
-        int chargeDamage = 0;
-        bool chargeDamageFlag = false;
-        int hypnoticDisruptorDamage = 15;
-        int bioSpitDamage = 10;
-        int leechTongueDamage = 10;
-        int leechTongueTimer;
-        private const int PostAttackDowntime = 60;
+        protected override FamilyKind Kind => FamilyKind.Walker;
+
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 12;
+            base.SetStaticDefaults();
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
         }
+
         public override void SetDefaults()
         {
-            NPC.npcSlots = 3;
-            AnimationType = 28;
-            NPC.knockBackResist = 0.3f;
-            NPC.damage = 23;
-            NPC.defense = 8;
-            NPC.height = 46;
+            base.SetDefaults();
             NPC.width = 24;
             NPC.lifeMax = 100;
-            NPC.HitSound = SoundID.NPCHit20;
-            NPC.DeathSound = SoundID.NPCDeath5;
-            NPC.value = 500; // health / 2
-            NPC.lavaImmune = true;
+            NPC.defense = 8;
+            NPC.value = 500;
+            NPC.npcSlots = 3;
+            Banner = Type;
+            BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
 
             if (Main.hardMode)
             {
                 NPC.lifeMax = 250;
                 NPC.defense = 20;
-                NPC.value = 1250; // health / 2 : was 70
-                NPC.damage = 33;
-                hypnoticDisruptorDamage = 23;
-                bioSpitDamage = 18;
-                leechTongueDamage = 10;
+                NPC.value = 1250;
             }
-
-            Banner = NPC.type;
-            BannerItem = ModContent.ItemType<Banners.BasiliskWalkerBanner>();
-            // "Bio Spit" — aimed acid glob. commitFraction 0.5: the flash→fire tell is half cancellable (poise-stagger
-            // can interrupt the windup), half committed (hyperarmor). telegraphTime 40 gives a readable stun window.
-            UsefulFunctions.AddAttack(NPC, 140, ModContent.ProjectileType<BasiliskAcidSpit>(), bioSpitDamage, 8, SoundID.Item20 with { Volume = 0.2f, Pitch = 0.3f }, telegraphColor: Color.GreenYellow, telegraphTime: 40, commitFraction: 0.5f, lockAimAtTelegraph: true);
-            // "Hypnotic Disrupter" — rare heavy lob (longer tell)
-            UsefulFunctions.AddAttack(NPC, 240, ModContent.ProjectileType<BasiliskHypnoticDisrupter>(), hypnoticDisruptorDamage, 3, SoundID.Item24 with { Volume = 0.6f, Pitch = -0.5f }, weight: 0.08f, telegraphColor: Color.Purple, telegraphTime: 50, commitFraction: 0.5f, lockAimAtTelegraph: true);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.MaxJumpPower = 9f;
-            globalNPC.MaxJumpBoost = 5f;
-            globalNPC.NavSearchRadius = 70; // Phase 2: SmartFighter4AI movement
-            globalNPC.CanTeleport = true;        // was WeakTeleport: limited re-acquire blinks
-            globalNPC.TeleportMaxCharges = 2;    // 2 non-recharging charges, Normal style
-            // Evasive on-hit: hop/dash away or blink away (limited charges above); no i-frame dodge.
-            EvasiveProfile.Basilisk(globalNPC);
-            globalNPC.EvasiveTeleportAway = true;
-            globalNPC.EvasiveBasiliskWalkerCloseBackhop = true;
-            globalNPC.EvasiveBasiliskWalkerFarScrambleHop = true;
-            // Smart positioning: medium-range bio-spitter — hold a 7-18 band (backs off below 7, lets you close above 18).
-            globalNPC.KiteRangeMin = 7f;
-            globalNPC.KiteRangeMax = 18f;
-            globalNPC.KiteLooseness = 0.4f;
         }
+
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
         {
             Player player = spawnInfo.Player;
 
-            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type)) return 0f;
+            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type))
+            {
+                return 0f;
+            }
 
             // Basilisks are restricted to evil biomes and the desert. Explicit exclusions keep
             // overlapping biome zones from introducing them into unrelated themed pools.
-            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor) return 0f;
+            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor)
+            {
+                return 0f;
+            }
 
             bool basiliskBiome = player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDesert || player.ZoneUndergroundDesert;
             bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
             bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
 
-            if (!basiliskBiome) return 0f;
+            if (!basiliskBiome)
+            {
+                return 0f;
+            }
 
             if (!Main.hardMode)
             {
-                if (belowSurface) return 0.15f;
-                if (surfaceAtNight) return 0.15f;
+                if (belowSurface)
+                {
+                    return 0.15f;
+                }
+                if (surfaceAtNight)
+                {
+                    return 0.15f;
+                }
             }
             else if (!tsorcRevampWorld.SuperHardMode)
             {
-                if (belowSurface) return 0.05f;
-                if (surfaceAtNight) return 0.05f;
+                if (belowSurface)
+                {
+                    return 0.05f;
+                }
+                if (surfaceAtNight)
+                {
+                    return 0.05f;
+                }
             }
 
             return 0f;
         }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
-            tsorcRevampAIs.EvasiveOnHit(NPC, true);
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            BasiliskLeechTongue.NotifyOwnerHit(NPC, damageDone);
-            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        public override void AI()
-        {
-            if (BasiliskLeechTongueAttack.Update(NPC, ref leechTongueTimer, 300 + PostAttackDowntime, leechTongueDamage))
-            {
-                return;
-            }
-
-            tsorcRevampAIs.FighterAI(NPC, 1, 0.03f, canTeleport: false, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.2f, enrageTopSpeed: 2, canDodgeroll: false);
-
-            //MAKE SOUND WHEN JUMPING/HOVERING
-            if (Main.rand.NextBool(12) && NPC.velocity.Y <= -1f)
-            {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.2f, Pitch = 0.1f }, NPC.Center);
-            }
-
-            // (Removed the old close-range justHit ProjectileTimer reset + jump reactions — superseded by the poise
-            //  stagger windup-cancel and the EvasiveOnHit reactions. The charge below is movement, not a hit-reaction.)
-            Player player = Main.player[NPC.target];
-
-            //Shift toward the player randomly
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                if (Main.rand.NextBool(200) && NPC.Distance(player.Center) > 260)
-                {
-                    chargeDamageFlag = true;
-                    Vector2 vector8 = new Vector2(NPC.position.X + (NPC.width * 0.5f), NPC.position.Y + (NPC.height / 2));
-                    float rotation = (float)Math.Atan2(vector8.Y - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)), vector8.X - (Main.player[NPC.target].position.X + (Main.player[NPC.target].width * 0.5f)));
-                    NPC.velocity.X = (float)(Math.Cos(rotation) * 10) * -1;
-                    NPC.velocity.Y = (float)(Math.Sin(rotation) * 10) * -1;
-                    NPC.netUpdate = true;
-                }
-                if (chargeDamageFlag == true)
-                {
-                    NPC.damage = 26;
-                    chargeDamage++;
-                }
-                if (chargeDamage >= 55)
-                {
-                    chargeDamageFlag = false;
-                    NPC.damage = 23;
-                    chargeDamage = 0;
-                }
-
-            }
-        }
-
-
-
-        #region Find Frame
-        public override void FindFrame(int currentFrame)
-        {
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if (NPC.velocity.Y == 0f)
-            {
-                if (NPC.direction == 1)
-                {
-                    NPC.spriteDirection = 1;
-                }
-                if (NPC.direction == -1)
-                {
-                    NPC.spriteDirection = -1;
-                }
-                if (NPC.velocity.X == 0f)
-                {
-                    NPC.frame.Y = 0;
-                    NPC.frameCounter = 0.0;
-                }
-                else
-                {
-                    NPC.frameCounter += (double)(Math.Abs(NPC.velocity.X) * .2f);
-                    //npc.frameCounter += 1.0;
-                    if (NPC.frameCounter > 10)
-                    {
-                        NPC.frame.Y = NPC.frame.Y + num;
-                        NPC.frameCounter = 0;
-                    }
-                    if (NPC.frame.Y / num >= Main.npcFrameCount[NPC.type])
-                    {
-                        NPC.frame.Y = num * 1;
-                    }
-                }
-            }
-            else
-            {
-                NPC.frameCounter = 0.0;
-                NPC.frame.Y = num;
-                NPC.frame.Y = 0;
-            }
-        }
-
-        #endregion
-
-
-
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.AttackList.Count == 0 || globalNPC.ProjectileTimer < globalNPC.ProjectileTimerCap - 60f)
-            {
-                return;
-            }
-
-            int bioSpitType = ModContent.ProjectileType<BasiliskAcidSpit>();
-            int disruptorType = ModContent.ProjectileType<BasiliskHypnoticDisrupter>();
-            if (globalNPC.CurrentAttack.type == bioSpitType)
-            {
-                BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, bioSpitType, Color.GreenYellow);
-            }
-            else if (globalNPC.CurrentAttack.type == disruptorType)
-            {
-                BasiliskHeldProjectileDraw.Draw(NPC, spriteBatch, drawColor, disruptorType, Color.Purple);
-            }
-        }
-        #region Debuffs
-        // Contact bite: a short poison tick every hit, plus poison buildup (a full 100 meter = 60s of Poisoned, see
-        // PoisonBuildup). Curse comes only from the leech tongue now (BasiliskLeechTongue).
-        private const int ContactPoisonedTicks = 2 * 60;
-        private const int ContactPoisonBuildup = 40;
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
-            target.AddBuff(BuffID.Poisoned, ContactPoisonedTicks, false);
-            PoisonBuildup.Apply(target, ContactPoisonBuildup);
-        }
-        #endregion
-
-        public override void OnKill()
-        {
-
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-            Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
-
-            if (!Main.dedServ)
-            {
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 1").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 2").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 3").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 2").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 1").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 3").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 2").Type, 1.1f);
-                Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Parasite Zombie Gore 3").Type, 1.1f);
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Blood Splat").Type, 1.1f);
-                }
-            }
-        }
-
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
@@ -284,6 +95,18 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             npcLoot.Add(hmCondition);
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodredMossClump>(), 3));
             npcLoot.Add(new CommonDrop(ItemID.ManaRegenerationPotion, 25, 1, 1, 3));
+        }
+
+        public override void OnKill()
+        {
+            base.OnKill();
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);
+                }
+            }
         }
     }
 }

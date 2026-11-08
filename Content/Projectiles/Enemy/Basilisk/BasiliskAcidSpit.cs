@@ -24,7 +24,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override void SetDefaults()
         {
-            Projectile.aiStyle = 1;
+            Projectile.aiStyle = -1;
             Projectile.hostile = true;
             Projectile.height = 24;
             Projectile.width = 24;
@@ -32,12 +32,38 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = 1;
             Projectile.tileCollide = true;
-            Projectile.timeLeft = 80;
+            Projectile.timeLeft = 150;
         }
 
         public override void AI()
         {
-            Projectile.rotation += 1f;
+            // ai[0]: 0 straight spit, 1 solved lob, 2 desperate ballistic spray.
+            // All peers integrate the same gravity; cosmetic randomness never alters the trajectory.
+            if (Projectile.ai[0] != 0f)
+            {
+                Projectile.velocity.Y += 0.25f;
+                if (Projectile.ai[0] == 1f && Projectile.timeLeft > 90)
+                {
+                    Projectile.timeLeft = 90;
+                    // The former Drakin lob was a 10px, piercing projectile. Keep that contact
+                    // geometry and penetration while giving its new acid sprite the same core size.
+                    Projectile.penetrate = -1;
+                    Projectile.Resize(10, 10);
+                    Projectile.scale = 10f / 24f;
+                    Projectile.DamageType = DamageClass.Default;
+                }
+            }
+
+            Projectile.rotation += 0.15f;
+            if (Projectile.timeLeft <= 12)
+            {
+                Projectile.alpha = 255 - Projectile.timeLeft * 255 / 12;
+            }
+
+            if (Main.dedServ)
+            {
+                return;
+            }
 
             if (Main.rand.NextBool(3))
             {
@@ -46,7 +72,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             }
 
             // Curse telegraph: after Skeletron the spit builds curse, so pink motes ride the trail.
-            if (NPC.downedBoss3 && Main.rand.NextBool(3))
+            if (Projectile.ai[0] != 1f && NPC.downedBoss3 && Main.rand.NextBool(3))
             {
                 Dust curseMote = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.PinkTorch, 0, 0, 80, default, 1.4f);
                 curseMote.noGravity = true;
@@ -55,30 +81,43 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
             Lighting.AddLight(Projectile.Center, 0.4f, 0.1f, 0.1f);
 
-            // Accelerates slightly while slow (|v| <= 4 on both axes), so lobbed spits don't hang in the air.
-            bool isSlow = Projectile.velocity.X <= 4 && Projectile.velocity.Y <= 4 && Projectile.velocity.X >= -4 && Projectile.velocity.Y >= -4;
-            if (isSlow)
-            {
-                float acceleration = 1f + (Main.rand.Next(10, 30) * 0.001f);
-                Projectile.velocity *= acceleration;
-            }
         }
 
-        public override bool PreKill(int timeLeft)
+        public override bool? CanDamage()
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.04f }, Projectile.Center);
+            if (Projectile.timeLeft <= 12)
+            {
+                return false;
+            }
 
-            Dust splash = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.CursedTorch, 0, 0, 50, Color.Green, 2.0f);
-            splash.noGravity = false;
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.3f, 0.3f, 200, default, 1f);
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.2f, 0.2f, 200, default, 2f);
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 71, 0.2f, 0.2f, 200, default, 2f);
+            return null;
+        }
 
-            return true;
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.12f }, Projectile.Center);
+            for (int i = 0; i < 28; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(4f, 3f);
+                Dust.NewDustPerfect(Projectile.Center, DustID.CursedTorch, velocity, 80, Color.GreenYellow, Main.rand.NextFloat(0.7f, 1.3f));
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            if (Projectile.ai[0] == 1f)
+            {
+                // Lobs formerly used DrakinShot: retain its basilisk-only Venom,
+                // rather than inheriting the direct spit's blackout/poison/curse package.
+                target.AddBuff(BuffID.Venom, tsorcGlobalProjectile.BasiliskLobAcidVenomTicks, false);
+                return;
+            }
+
             target.AddBuff(BuffID.Blackout, BlackoutTicks, false);
             target.AddBuff(BuffID.Poisoned, PoisonedTicks, false);
 
