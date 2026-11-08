@@ -863,6 +863,7 @@ namespace tsorcRevamp.Systems
 
             Spawn("ArmoredWraith", Zone.Meteor & (Depth.Surface | Depth.Cavern), phm: 0.04f, hm: 0.04f, shm: 0.04f);
             Spawn("ArmoredWraith", Zone.Meteor & Depth.Underground, phm: 0.033f, hm: 0.033f, shm: 0.033f);
+            Spawn("ObsidianGuard", Zone.Meteor & Depth.BelowSurface & Water.Dry, phm: 0.05f, hm: 0.05f, shm: 0.05f, max: 2);
 
             // Old rule: separate one-in-240 and one-in-280 gates stacked in the underground jungle; folded into the weights.
             // Super Hardmode also runs the Hardmode lines (the old tests used Main.hardMode). Blood moon doubled the SHM lines only.

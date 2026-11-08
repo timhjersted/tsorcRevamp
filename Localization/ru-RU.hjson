@@ -1180,6 +1180,10 @@ Mods: {
 				DisplayName: Знамя охотника за людьми
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
+			ObsidianGuardBanner: {
+				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
+			}
 
 			ManOfWarBanner: {
 				DisplayName: Знамя человека войны
@@ -12161,6 +12165,7 @@ Mods: {
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			ObsidianGuardArrow.DisplayName: Обсидиановая стрела
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
 			// AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
@@ -12760,6 +12765,10 @@ Mods: {
 			LothricKnight.DisplayName: Рыцарь Лотрика
 			LothricSpearKnight.DisplayName: Копейщик Лотрика
 			ManHunter.DisplayName: Охотник за людьми
+			ObsidianGuard: {
+				DisplayName: Обсидиановый страж
+				BestiaryDescription: Храмовые стражи в доспехах из вулканического стекла. Их терпеливые тетивы умолкают, лишь когда нарушитель оказывается в пределах досягаемости копья.
+			}
 			MarilithSeeker.DisplayName: Искатель Марилит
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
 			MutantToad.DisplayName: Жаба-мутант

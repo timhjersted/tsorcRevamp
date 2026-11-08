@@ -71,6 +71,17 @@ namespace tsorcRevamp.Banners
             yield return new Item(dropItem);
         }
 
+        public override void SetDrawPositions(int tileX, int tileY, ref int width, ref int offsetY, ref int height,
+            ref short tileFrameX, ref short tileFrameY)
+        {
+            // Obsidian Guard permanently shares the armored-wraith banner art, with its own placement style and buff.
+            // Remap only the draw frame; the stored style 92 still resolves the Guard's item and NPC type.
+            if (tileFrameX / 18 == 92)
+            {
+                tileFrameX = 2 * 18;
+            }
+        }
+
         public override void NearbyEffects(int i, int j, bool closer)
         {
             if (closer)
@@ -676,6 +687,15 @@ namespace tsorcRevamp.Banners
         public override int PlaceStyle => 91;
 
         public override int NPCType => ModContent.NPCType<RingedKnight>();
+    }
+
+    public class ObsidianGuardBanner : EnemyBanner
+    {
+        public override int PlaceStyle => 92;
+
+        public override int NPCType => ModContent.NPCType<ObsidianGuard>();
+
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArmoredWraithBanner));
     }
     #endregion
 }

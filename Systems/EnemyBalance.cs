@@ -481,6 +481,7 @@ namespace tsorcRevamp.Systems
             Enemy("AbandonedStump", phm: 250, hm: 500, shm: 5000); // standard / standard / fodder; authored 120 / 240 / 500
             Enemy("FireLurker", phm: 1000, hm: 2000, shm: 12000); // standard; authored 120 / 250 / 1200
             Enemy("ManHunter", phm: 400, hm: 800, shm: 8000); // standard / fodder / fodder; authored 125 / 250 / 600
+            Enemy("ObsidianGuard", phm: 600, hm: 1200, shm: 10000); // Meteor Temple archer; Expert baselines, shared progress scaling.
             Enemy("GhostOfTheForgottenKnight", phm: 700, hm: 1400, shm: 14000); // standard / fodder / standard; authored 150 / 200 / 1000
             Enemy("BarrowWight", phm: 900, hm: 3500, shm: 18000); // standard / standard / fodder; authored 180 / 180 / 180
             Enemy("AttraidiesIllusion", phm: 500, hm: 5000); // strong; authored 400; caster, contact damage 0; HM HP added when it absorbed the Manifestation; does not spawn in SHM

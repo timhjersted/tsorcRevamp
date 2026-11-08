@@ -1216,6 +1216,10 @@ Mods: {
 				DisplayName: "{$NPCs.ManHunter.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: 我都说了，这几天禁猎期
 			}
+			ObsidianGuardBanner: {
+				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
+			}
 
 			ManOfWarBanner: {
 				DisplayName: "{$NPCs.ManOfWar.DisplayName}{$CommonItemTooltip.Banner}"
@@ -12198,6 +12202,7 @@ Mods: {
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			ObsidianGuardArrow.DisplayName: 黑曜石箭
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
 			// AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
@@ -12797,6 +12802,10 @@ Mods: {
 			LothricKnight.DisplayName: 洛斯里克骑士
 			LothricSpearKnight.DisplayName: 洛斯里克长矛骑士
 			ManHunter.DisplayName: 男猎人
+			ObsidianGuard: {
+				DisplayName: 黑曜石守卫
+				BestiaryDescription: 身披火山玻璃护甲的神殿哨兵。唯有入侵者踏入长矛的攻击范围，他们耐心拉紧的弓弦才会沉寂。
+			}
 			MarilithSeeker.DisplayName: 马瑞丽斯求索者
 			MarilithSpiritTwin.DisplayName: 马瑞里斯双子幽灵
 			MutantToad.DisplayName: 突变蟾蜍

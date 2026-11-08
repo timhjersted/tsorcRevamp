@@ -1213,6 +1213,10 @@ Mods: {
 				DisplayName: "{$NPCs.ManHunter.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
+			ObsidianGuardBanner: {
+				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
+			}
 
 			ManOfWarBanner: {
 				DisplayName: "{$NPCs.ManOfWar.DisplayName}{$CommonItemTooltip.Banner}"
@@ -9391,6 +9395,36 @@ Mods: {
 				Tooltip: ""
 			}
 
+			QuaraHydromancerHeadpiece: {
+				DisplayName: Quara Hydromancer Crest
+				Tooltip: ""
+			}
+
+			QuaraHydromancerBreastplate: {
+				DisplayName: Quara Hydromancer Body
+				Tooltip: ""
+			}
+
+			QuaraHydromancerGreaves: {
+				DisplayName: Quara Hydromancer Legs
+				Tooltip: ""
+			}
+
+			ManhunterHat: {
+				DisplayName: Manhunter Hat
+				Tooltip: ""
+			}
+
+			ManhunterJerkin: {
+				DisplayName: Manhunter Jerkin
+				Tooltip: ""
+			}
+
+			ManhunterBoots: {
+				DisplayName: Manhunter Boots
+				Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				Tooltip: ""
 				DisplayName: Great Black Knight Helm
@@ -9629,6 +9663,11 @@ Mods: {
 			OolacileCultistStaff: {
 				Tooltip: ""
 				DisplayName: Oolacile Cultist Staff
+			}
+
+			QuaraHydromancerStaff: {
+				Tooltip: ""
+				DisplayName: Quara Hydromancer Staff
 			}
 
 			BlackBlade: {
@@ -12185,6 +12224,7 @@ Mods: {
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			UlhanUnholyArrow.DisplayName: Unholy Arrow
+			ObsidianGuardArrow.DisplayName: Obsidian Arrow
 			UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			UlhanFireExplosion.DisplayName: Fire Explosion
 			AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
@@ -12784,6 +12824,10 @@ Mods: {
 			LothricKnight.DisplayName: Lothric Knight
 			LothricSpearKnight.DisplayName: Lothric Spear Knight
 			ManHunter.DisplayName: Man Hunter
+			ObsidianGuard: {
+				DisplayName: Obsidian Guard
+				BestiaryDescription: Temple sentries clad in volcanic glass. Their patient bowstrings fall silent only when an intruder comes within spear's reach.
+			}
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
 			MutantToad.DisplayName: Mutant Toad

@@ -13087,7 +13087,9 @@ namespace tsorcRevamp.NPCs.Puppets
         internal void DrawWeaponToLayer(ref PlayerDrawSet drawInfo, bool behindBodyPass = false)
         {
             if (DrawHeldWeaponBehindBody != behindBodyPass)
+            {
                 return;
+            }
 
             // Healing: draw the estus flask instead of the combat weapon.
             if (Phase == AttackPhase.Healing)
@@ -13097,17 +13099,23 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             if (DrawSpecialHeldWeapon(ref drawInfo))
+            {
                 return;
+            }
 
             if (Phase == AttackPhase.FleeToHeal || !_weaponVisible || _heldItemType <= 0)
+            {
                 return;
+            }
 
             // Flails (and similar) render their own projectile visual (ball + chain), so the held
             // item icon shouldn't be drawn in the hand at all.
             // Read the hide flag off the weapon actually in hand, not the puppet: a hand that swapped
             // to a flail/whip must hide its icon even when the puppet's default weapon is a sword.
             if (FrontHandWeapon.HideHeldSprite && _heldItemType == FrontHandWeaponType && !_forceExportHeldWeapon)
+            {
                 return;
+            }
 
             // Only draw as spear when actually holding the polearm — not the magic staff, secondary ranged,
             // or cursed knives (those are separate weapons that use normal centred draw).
@@ -13234,23 +13242,23 @@ namespace tsorcRevamp.NPCs.Puppets
             }
             if (heldCrossbowLike)
             {
-                float hx = flipHeldRangedHorizontally ? tex.Width * 0.78f : tex.Width * 0.22f;
-                origin = new Vector2(hx, tex.Height * 0.58f);
+                float holdoutX = flipHeldRangedHorizontally ? tex.Width * 0.78f : tex.Width * 0.22f;
+                origin = new Vector2(holdoutX, tex.Height * 0.58f);
             }
             else if (heldBowLike)
             {
                 // Bow is held at its authored grip. Mirror the origin in texture space when the
                 // sprite flips so the same physical grip pixel remains pinned to the hand.
                 Vector2 gripNorm = GetHeldRangedGripNorm(_heldItemType);
-                float hx = flipHeldRangedHorizontally
+                float holdoutX = flipHeldRangedHorizontally
                     ? tex.Width * (1f - gripNorm.X)
                     : tex.Width * gripNorm.X;
-                origin = new Vector2(hx, tex.Height * gripNorm.Y);
+                origin = new Vector2(holdoutX, tex.Height * gripNorm.Y);
 
                 if (bowStringTexels != Rectangle.Empty && bowStringTexels.X == 0)
                 {
-                    // Crop off left-edge string columns. Bows with an inset string use a
-                    // stringless held sprite, so their limb pixels remain intact.
+                    // Crop off left-edge string columns. Inset strings without a replacement texture
+                    // are omitted as four separate limb rectangles below, preserving decorative tips.
                     // Origin is measured inside the source rect, so the unflipped case shifts left by
                     // the cropped width; the flipped case (width − gripX) already comes out the same.
                     int stringWidth = bowStringTexels.Right;
@@ -13282,8 +13290,8 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 // Grip slides along the shaft (head→base) so the spear extends/retracts.
                 Vector2 gripNorm = Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, _spearGrip);
-                float gx = NPC.direction == 1 ? tex.Width * gripNorm.X : tex.Width * (1f - gripNorm.X);
-                origin = new Vector2(gx, tex.Height * gripNorm.Y);
+                float gripX = NPC.direction == 1 ? tex.Width * gripNorm.X : tex.Width * (1f - gripNorm.X);
+                origin = new Vector2(gripX, tex.Height * gripNorm.Y);
             }
             else
             {
@@ -13295,11 +13303,14 @@ namespace tsorcRevamp.NPCs.Puppets
                 origin = new Vector2(handleX, tex.Height * handleNorm.Y);
             }
 
-            SpriteEffects spriteFx = (heldRangedLike
-                    ? flipHeldRangedHorizontally
-                    : NPC.direction == -1)
-                ? SpriteEffects.FlipHorizontally
-                : SpriteEffects.None;
+            bool flipSprite = NPC.direction == -1;
+
+            if (heldRangedLike)
+            {
+                flipSprite = flipHeldRangedHorizontally;
+            }
+
+            SpriteEffects spriteFx = flipSprite ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             // Mirror single-bladed melee weapons (axes) for motions that swing opposite the
             // OverheadArc convention (e.g. UnderhandArc) so the blade edge leads instead of trails.
             // See BladeFlipActive / GetWeaponWorldDirection for the matching hit-detection math.
@@ -13336,13 +13347,21 @@ namespace tsorcRevamp.NPCs.Puppets
             // orientation — MeleeWeaponRotationOffset is a sword-only fine-tune and would double
             // up with (and fight) that correction, so it's excluded here.
             if (!heldRangedLike && !holdingSpearNow)
+            {
                 drawRotation = GetMeleeDrawRotation();
+            }
+
             if (HoldingMagicStaff)
+            {
                 drawRotation = (_weaponRotation + MagicWeaponRotationOffset)
                     * (MirrorMagicWeaponRotationByFacing ? NPC.direction : 1);
+            }
+
             if (holdingSpearNow)
+            {
                 drawRotation = (_weaponRotation + SpearDrawRotationOffset)
                     * (MirrorSpearRotationByFacing ? NPC.direction : 1);
+            }
 
             DrawData heldWeaponDraw = new DrawData(
                 tex,
@@ -13356,7 +13375,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 0);
             _heldWeaponDrawCacheIndex = drawInfo.DrawDataCache.Count;
             _heldWeaponDrawTexture = tex;
-            drawInfo.DrawDataCache.Add(heldWeaponDraw);
+
+            if (bowDrawPose && bowStringTexels.X > 0 && rangedDrawTexturePath == null)
+            {
+                AddBowLimbDraws(drawInfo.DrawDataCache, heldWeaponDraw, tex.Bounds, bowStringTexels);
+            }
+            else
+            {
+                drawInfo.DrawDataCache.Add(heldWeaponDraw);
+            }
 
             if (bowStringTexels != Rectangle.Empty)
             {
@@ -13442,11 +13469,17 @@ namespace tsorcRevamp.NPCs.Puppets
                 float visualReach = MaxCornerDistance(origin, tex.Width, tex.Height) * drawScale;
                 Vector2 visualTip = handWorld + weaponDirection * visualReach;
                 if (holdingSpearNow && MirrorSpearRotationByFacing)
+                {
                     visualTip = PuppetSpearTipPosition;
+                }
+
                 float collisionReach = _bladeArmed ? _activeBladeReach : 0f;
                 Vector2 collisionTip = handWorld + weaponDirection * collisionReach;
                 if (_bladeArmed)
+                {
                     ModifyFrontBladeCapsule(ref handWorld, ref collisionTip);
+                }
+
                 float armWorldDeg = float.NaN;
                 float armWeaponErrorDeg = 0f;
                 if (CompositeArmActive)
@@ -13462,12 +13495,29 @@ namespace tsorcRevamp.NPCs.Puppets
                     // The expected grip separation includes both Terraria's diagonal item texture
                     // convention and this weapon's calibrated draw/arm offsets. Compare against
                     // that pose-specific baseline so a correct non-zero wrist angle is not flagged.
-                    float naturalItemAngle = BladeFlipActive && !PreserveShaftDirectionOnBladeFlip
-                        ? MathHelper.PiOver4 : -MathHelper.PiOver4;
+                    float naturalItemAngle = -MathHelper.PiOver4;
+
+                    if (BladeFlipActive && !PreserveShaftDirectionOnBladeFlip)
+                    {
+                        naturalItemAngle = MathHelper.PiOver4;
+                    }
                     float expectedSeparationDeg = MathHelper.ToDegrees(Math.Abs(MathHelper.WrapAngle(
                         naturalItemAngle + MeleeWeaponRotationOffset - CompositeArmRotationOffset
                         - MeleeCompositeArmRotationOffset)));
                     armWeaponErrorDeg = Math.Abs(armWeaponSeparationDeg - expectedSeparationDeg);
+                }
+
+                float compositeArmDegrees = float.NaN;
+                float backCompositeArmDegrees = float.NaN;
+
+                if (CompositeArmActive)
+                {
+                    compositeArmDegrees = MathHelper.ToDegrees(CompositeArmRotation);
+                }
+
+                if (TwoHandedCompositeArmActive)
+                {
+                    backCompositeArmDegrees = MathHelper.ToDegrees(_twoHandedBackRotation);
                 }
 
                 PuppetAttackTelemetry.RecordRender(new PuppetAttackRenderSample
@@ -13493,12 +13543,8 @@ namespace tsorcRevamp.NPCs.Puppets
                     CollisionReach = collisionReach,
                     RawWeaponRotationDeg = MathHelper.ToDegrees(_weaponRotation),
                     DrawWeaponRotationDeg = MathHelper.ToDegrees(drawRotation),
-                    CompositeArmRotationDeg = CompositeArmActive
-                        ? MathHelper.ToDegrees(CompositeArmRotation)
-                        : float.NaN,
-                    BackCompositeArmRotationDeg = TwoHandedCompositeArmActive
-                        ? MathHelper.ToDegrees(_twoHandedBackRotation)
-                        : float.NaN,
+                    CompositeArmRotationDeg = compositeArmDegrees,
+                    BackCompositeArmRotationDeg = backCompositeArmDegrees,
                     ArmWorldRotationDeg = armWorldDeg,
                     ArmWeaponErrorDeg = armWeaponErrorDeg,
                     CompositeArmActive = CompositeArmActive,
@@ -13515,7 +13561,9 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             if (ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
                 LogWeaponDebug();
+            }
 
             // Lit-fuse: red sparks off the top of an in-hand bomb-like ranged item.
             if (heldRangedLike && HeldRangedFuseSparks(_heldItemType) && !Main.dedServ && Main.rand.NextBool(3))
@@ -13525,6 +13573,38 @@ namespace tsorcRevamp.NPCs.Puppets
                     new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-1.2f, -0.3f)),
                     0, default, Main.rand.NextFloat(0.6f, 1.1f));
                 spark.noGravity = true;
+            }
+        }
+
+        // Preserve a bow's exact vanilla silhouette while replacing an inset baked string. Source-local origins
+        // keep all four pieces in the original position, including horizontally mirrored left-facing draws.
+        private static void AddBowLimbDraws(List<DrawData> cache, DrawData heldDraw, Rectangle bounds, Rectangle stringTexels)
+        {
+            Rectangle[] pieces =
+            {
+                new Rectangle(0, 0, bounds.Width, stringTexels.Top),
+                new Rectangle(0, stringTexels.Bottom, bounds.Width, bounds.Height - stringTexels.Bottom),
+                new Rectangle(0, stringTexels.Top, stringTexels.Left, stringTexels.Height),
+                new Rectangle(stringTexels.Right, stringTexels.Top, bounds.Width - stringTexels.Right, stringTexels.Height)
+            };
+
+            foreach (Rectangle source in pieces)
+            {
+                if (source.Width <= 0 || source.Height <= 0)
+                {
+                    continue;
+                }
+
+                DrawData piece = heldDraw;
+                piece.sourceRect = source;
+                piece.origin = heldDraw.origin - source.TopLeft();
+
+                if ((heldDraw.effect & SpriteEffects.FlipHorizontally) != 0)
+                {
+                    piece.origin.X = heldDraw.origin.X - (bounds.Width - source.Right);
+                }
+
+                cache.Add(piece);
             }
         }
 
@@ -14039,8 +14119,9 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual bool UseBowStringDrawPose => false;
 
         /// <summary>Texel rectangle of a bow sprite's string, in the unflipped (facing-right) texture.
-        /// Must start at column 0. Cut out of the drawn sprite and replaced by two live lines to the
-        /// string hand while <see cref="UseBowStringDrawPose"/> is on. Empty = draw the sprite as-is.</summary>
+        /// Replaced by two live lines to the string hand while <see cref="UseBowStringDrawPose"/> is on.
+        /// Inset strings are omitted with limb-preserving source rectangles unless a stringless texture is supplied.
+        /// Empty = draw the sprite as-is.</summary>
         protected virtual Rectangle GetBowStringTexels(int itemType) => Rectangle.Empty;
 
         protected virtual Color BowStringColor => new Color(46, 26, 17);

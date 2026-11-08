@@ -768,6 +768,7 @@ namespace tsorcRevamp.NPCs
             // Lighter / hunters
             Add<Enemies.Basilisk.BasiliskWalker>(0.5f, 18f);
             Add<Enemies.ManHunter>(0.5f, 18f);
+            Add<Enemies.ObsidianGuard>(0.45f, 18f); // Stage-specific poise/knockback is applied by the Guard's synchronized AI.
             Add<Enemies.RedCloudHunter>(0.5f, 18f);
             // Small
             Add<Enemies.Sandsprog>(0.55f, 15f);
