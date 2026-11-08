@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -46,6 +47,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override float PuppetJumpBoost => 5f;
         protected override bool AllowReactiveDefense => true;
         protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool ShowMeleeWeaponWhileClosingDistance => true;
         protected override bool WeaponSheathed => _axeOut;
         protected override bool HoldAttackSelection => _axeOut;
         protected override bool SuppressGhostWallTeleport => _axeOut || base.SuppressGhostWallTeleport;
@@ -292,12 +294,48 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
+
             if (Phase == AttackPhase.Custom && !_axeOut)
             {
+                // Soft 4-tile (64px) aim cue from the axe head: fades in over 8 ticks, fades out over the final
+                // 10 ticks, and tapers quadratically to zero over 16 short additive-alpha segments so it never looks sharp.
+                const float telegraphLength = 64f;
+                const int segmentCount = 16;
+                float segmentLength = telegraphLength / segmentCount;
+
                 Vector2 origin = AxeHeadPosition;
-                Vector2 aim = (_recallTarget - origin).SafeNormalize(new Vector2(NPC.direction, 0f));
-                float opacity = PhaseTimer <= 10 ? 0.55f : 0.25f;
-                Utils.DrawLine(spriteBatch, origin, origin + aim * 320f, Color.Orange * opacity, Color.Orange * 0f, 2f);
+                Vector2 aimDirection = (_recallTarget - origin).SafeNormalize(new Vector2(NPC.direction, 0f));
+                float aimRotation = aimDirection.ToRotation();
+
+                int elapsedTicks = RecallTellTicks - PhaseTimer;
+                float fadeIn = MathHelper.Clamp(elapsedTicks / 8f, 0f, 1f);
+                float fadeOut = MathHelper.Clamp(PhaseTimer / 10f, 0f, 1f);
+                float timeEnvelope = fadeIn * fadeOut;
+
+                Texture2D pixel = TextureAssets.MagicPixel.Value;
+                Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+                Vector2 drawOrigin = new Vector2(0f, 0.5f);
+                Color softOrange = new Color(255, 155, 40, 0);
+
+                for (int i = 0; i < segmentCount; i++)
+                {
+                    float progress = i / (float)segmentCount;
+                    float remainingFraction = 1f - progress;
+                    float distanceFade = remainingFraction * remainingFraction;
+                    float segmentOpacity = 0.35f * timeEnvelope * distanceFade;
+
+                    Vector2 segmentWorld = origin + aimDirection * (i * segmentLength);
+                    Vector2 segmentScreen = segmentWorld - screenPos;
+                    float taperScale = 1f - progress * 0.5f;
+
+                    Vector2 outerScale = new Vector2(segmentLength, 4f * taperScale);
+                    Color outerColor = softOrange * (segmentOpacity * 0.45f);
+                    spriteBatch.Draw(pixel, segmentScreen, pixelSource, outerColor, aimRotation, drawOrigin, outerScale, SpriteEffects.None, 0f);
+
+                    Vector2 innerScale = new Vector2(segmentLength, 1.75f * taperScale);
+                    Color innerColor = softOrange * segmentOpacity;
+                    spriteBatch.Draw(pixel, segmentScreen, pixelSource, innerColor, aimRotation, drawOrigin, innerScale, SpriteEffects.None, 0f);
+                }
             }
         }
         bool HasRecallAxe() => _axeIndex >= 0 && _axeIndex < Main.maxProjectiles

@@ -39,6 +39,8 @@ namespace tsorcRevamp.NPCs.Puppets
         public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
 
         // ── Invasion banner ───────────────────────────────────────────────────────
+        private static readonly SoundStyle InvasionBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/invader-announcement") with { Volume = 0.7f };
+
         /// <summary>
         /// The name shown in the "INVADED BY ____" banner when this puppet spawns.
         /// Override in each concrete class.  Rendered in uppercase automatically.
@@ -2086,11 +2088,11 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual bool WeaponSheathed => false;
         protected virtual bool ShowWeaponDuringNeutral => false;
 
-        /// <summary>Opt-in with <see cref="ShowWeaponDuringNeutral"/>: hold the neutral carried weapon on the composite
-        /// front arm (at <see cref="MeleeCarryRotation"/>) instead of the legacy 4-row hand table. The weapon then stays
-        /// in the fist through the walk cycle (including the walk frames' 2px body bob) and jumps, and the arm no longer
-        /// plays the walk swing or the jump frame's sudden raise - it eases with the carry angle. Default false.</summary>
-        protected virtual bool HoldNeutralWeaponOnCompositeArm => false;
+        /// <summary>Hold the neutral carried weapon on the composite front arm (at <see cref="MeleeCarryRotation"/>
+        /// on the ground, easing to <see cref="MeleeJumpCarryRotation"/> mid-jump) instead of the legacy 4-row hand
+        /// table. Defaults to <see cref="ShowWeaponDuringNeutral"/> so any weapon-always-out puppet keeps the weapon
+        /// locked in its hand through the walk bob and jumps.</summary>
+        protected virtual bool HoldNeutralWeaponOnCompositeArm => ShowWeaponDuringNeutral;
 
         private bool NeutralWeaponOnCompositeArm => HoldNeutralWeaponOnCompositeArm && ShowWeaponDuringNeutral
             && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll);
@@ -2328,6 +2330,13 @@ namespace tsorcRevamp.NPCs.Puppets
         /// telegraph settles from. Default HoldRotation (-0.30). Positive turns the weapon clockwise when facing
         /// right (mirrored when facing left), e.g. +PiOver4 = 45° lower.</summary>
         protected virtual float MeleeCarryRotation => HoldRotation;
+
+        /// <summary>Weapon-space angle a composite-arm neutral weapon eases toward while jumping/falling, matching
+        /// the raised-arm jump read without snapping on frame one. Eases back to <see cref="MeleeCarryRotation"/> on landing.</summary>
+        protected virtual float MeleeJumpCarryRotation => -1.35f;
+
+        /// <summary>Per-tick lerp factor for easing a composite-arm carried weapon between ground and airborne poses.</summary>
+        protected virtual float NeutralCarryPoseLerp => 0.15f;
 
         /// <summary>Pose (weapon-space radians) the non-swinging hand carries its weapon at.</summary>
         protected virtual float OffHandCarryRotation => HoldRotation;
@@ -3546,6 +3555,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 tsorcRevamp.ShowAnnouncementBanner(
                     Terraria.Localization.Language.GetTextValue("Mods.tsorcRevamp.EncounterPresentation.Banners.InvadedBy", InvaderTitle),
                     Color.White);
+                SoundEngine.PlaySound(InvasionBannerSound);
             }
 
             // ── Lazy estus init ────────────────────────────────────────────────────
@@ -10377,8 +10387,27 @@ namespace tsorcRevamp.NPCs.Puppets
             else
             {
                 // Idle / walking / jumping / recovery:
-                // Ease the weapon back to the natural hold angle so it always looks carried.
-                _weaponRotation = MathHelper.Lerp(_weaponRotation, MeleeCarryRotation, 0.10f);
+                // Ease the weapon to its carried hold angle. For composite-arm neutral carry, jumping/falling
+                // eases the arm and weapon up to MeleeJumpCarryRotation instead of snapping to the jump frame,
+                // then eases back to MeleeCarryRotation on landing.
+                bool onGround = NPC.velocity.Y == 0f || WalkCycleWhileAirborne;
+                bool wingFlight = _flight != null && _flight.IsAirborne;
+                bool compositeCarryActive = NeutralWeaponOnCompositeArm
+                    || (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance);
+
+                float targetCarryRotation = MeleeCarryRotation;
+                if (compositeCarryActive && !onGround && !wingFlight)
+                {
+                    targetCarryRotation = MeleeJumpCarryRotation;
+                }
+
+                float carryLerp = 0.10f;
+                if (compositeCarryActive)
+                {
+                    carryLerp = NeutralCarryPoseLerp;
+                }
+
+                _weaponRotation = MathHelper.Lerp(_weaponRotation, targetCarryRotation, carryLerp);
             }
 
             if (UseCompositeArmForAdditionalPhase)
@@ -14049,6 +14078,7 @@ namespace tsorcRevamp.NPCs.Puppets
             // A weapon shown during the run-in is held on the composite arm too. Otherwise the arm plays the walk
             // cycle while the sprite sits at the static 4-row hand offset, and the two visibly drift apart.
             (Phase == AttackPhase.ClosingDistance && ShowMeleeWeaponWhileClosingDistance) ||
+            (IsWeaponRecoveryPhase && HoldNeutralWeaponOnCompositeArm && ShowWeaponDuringNeutral) ||
             NeutralWeaponOnCompositeArm ||
             UseCompositeArmForAdditionalPhase);
 

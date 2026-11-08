@@ -904,9 +904,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 castDirection = castTarget - NPC.Center;
                 if (input.Attack == KnightSpecialAttack.PoisonArcVolley)
                 {
-                    // Same lob the volley solves at release (4.6 px/t, gravity 1.1, high angle).
-                    castDirection = UsefulFunctions.BallisticTrajectory(NPC.Center, castTarget, 4.6f, 1.1f,
-                        highAngle: true, fallback: true);
+                    // Point the palm along the same distance-solved arc as the middle of the volley.
+                    castDirection = RedKnightAttackController.PoisonArcVelocity(CastHandWorld, castTarget,
+                        NPC.direction, 1);
                 }
                 else if (input.Attack == KnightSpecialAttack.PoisonSpearTether)
                 {

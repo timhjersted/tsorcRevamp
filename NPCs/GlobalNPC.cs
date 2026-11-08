@@ -706,7 +706,7 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
             Add<Bosses.SuperHardMode.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
             Add<Bosses.SuperHardMode.Chaos>(0.15f, 120f); // the one stagger window is the Fireball Storm channel's first 66t
-            Add<Bosses.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
+            Add<Bosses.GreatSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
             Add<Bosses.HeroofLumelia>(0.15f, 120f);
             // Heavy giants / demons

@@ -301,11 +301,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool DespawnsOnPartyWipe => false;
         protected override string InvaderTitle => "Acolyte of Grand Occultist";
 
-        // The Grand Occultist's robe and dyes, with a lesser boss mask in the same Hades flame.
+        // The Grand Occultist's robe and dyes, with a lesser boss mask in reflective copper dye.
         protected override int HeadArmorItemType => ItemID.EaterMask;
         protected override int BodyArmorItemType => ItemID.SpectreRobe;
         protected override int LegsArmorItemType => ItemID.SpectrePants;
-        protected override int HeadArmorDyeItemType => ItemID.BurningHadesDye;
+        protected override int HeadArmorDyeItemType => ItemID.ReflectiveCopperDye;
         protected override int BodyArmorDyeItemType => ItemID.BrownAndBlackDye;
         protected override int LegsArmorDyeItemType => ItemID.BrownAndBlackDye;
         protected override Color PuppetSkinColor => new Color(38, 22, 26);

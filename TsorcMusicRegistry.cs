@@ -211,6 +211,9 @@ namespace tsorcRevamp
             {
                 if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
                     && npc is not NPCs.Enemies.SuperHardMode.DarkrootSentry
+                    && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenWarrior
+                    && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight
+                    && npc is not NPCs.Enemies.GhostFighter.GhostOfTheDarkmoonKnight
                     && npc is not NPCs.Bosses.SuperHardMode.ArtoriasPhantom)
                 {
                     Assignments[npc.Type] = new TrackAssignment(

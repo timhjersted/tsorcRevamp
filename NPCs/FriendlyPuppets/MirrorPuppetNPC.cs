@@ -212,7 +212,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 if (_staminaRegenTimer >= StaminaRegenTickInterval)
                 {
                     _staminaRegenTimer = 0;
-                    StaminaCurrent = Math.Min(ownerStamina.staminaResourceMax2, StaminaCurrent + ownerStamina.staminaResourceGain);
+                    float regenGain = GetStaminaRegenGain(owner);
+                    StaminaCurrent = Math.Min(ownerStamina.staminaResourceMax2, StaminaCurrent + regenGain);
                 }
             }
 
@@ -843,6 +844,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// current), before the owner-state packet is written. The hostile layer's host-side melee hit test.</summary>
         protected virtual void AfterWeaponUse(Player owner, Item weapon)
         {
+        }
+
+        protected virtual float GetStaminaRegenGain(Player owner)
+        {
+            return owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain;
         }
 
         /// <summary>Whether the borrowed ItemCheck may land vanilla melee hits as the owner (on NPCs and PvP players).
@@ -1495,6 +1501,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public int[] BuffType;
             public int[] BuffTime;
             public float StaminaCurrent;
+            public bool IsDodging;
+            public bool IsSwordflipping;
             public int StaminaOldItemAnimation;
             public int[] MeleeNpcHitCooldown;
             public int[] OwnedProjectileCounts;
@@ -1554,6 +1562,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.BuffType = (int[])owner.buffType.Clone();
                 snapshot.BuffTime = (int[])owner.buffTime.Clone();
                 snapshot.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                snapshot.IsDodging = owner.GetModPlayer<tsorcRevampPlayer>().isDodging;
+                snapshot.IsSwordflipping = owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping;
                 snapshot.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
                 snapshot.MeleeNpcHitCooldown = owner.meleeNPCHitCooldown;
                 snapshot.OwnedProjectileCounts = owner.ownedProjectileCounts;
@@ -1614,6 +1624,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Array.Copy(BuffType, owner.buffType, BuffType.Length);
                 Array.Copy(BuffTime, owner.buffTime, BuffTime.Length);
                 owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = StaminaCurrent;
+                owner.GetModPlayer<tsorcRevampPlayer>().isDodging = IsDodging;
+                owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping = IsSwordflipping;
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = StaminaOldItemAnimation;
                 owner.meleeNPCHitCooldown = MeleeNpcHitCooldown;
                 owner.ownedProjectileCounts = OwnedProjectileCounts;
@@ -1758,6 +1770,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 // Stamina and mana: the puppet's own pools, charged by the owner's real per-item cost code.
                 // (Both are restored to the owner's values by the snapshot afterwards.)
                 owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = puppet.StaminaCurrent;
+                bool puppetRolling = puppet is SoulMimic mimic && mimic.State == SoulMimic.MimicState.Rolling;
+                owner.GetModPlayer<tsorcRevampPlayer>().isDodging = puppetRolling;
+                owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping = false;
                 owner.statMana = puppet.ManaCurrent;
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = useState.StaminaOldItemAnimation;
 

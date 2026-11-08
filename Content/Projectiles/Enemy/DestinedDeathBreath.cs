@@ -31,7 +31,28 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
-            Projectile.rotation += 0.24f * (Projectile.velocity.X < 0f ? -1f : 1f);
+            if (Projectile.ai[1] == 1f)
+            {
+                Projectile.tileCollide = true;
+
+                if (Projectile.timeLeft > 48)
+                {
+                    Projectile.timeLeft = 48;
+                }
+
+                float lifeProgress = 1f - (Projectile.timeLeft / 48f);
+                Projectile.scale = MathHelper.Lerp(1.15f, 2.35f, lifeProgress);
+                Projectile.alpha = (int)MathHelper.Lerp(20f, 185f, lifeProgress);
+            }
+
+            int spinDirection = 1;
+
+            if (Projectile.velocity.X < 0f)
+            {
+                spinDirection = -1;
+            }
+
+            Projectile.rotation += 0.24f * spinDirection;
             Lighting.AddLight(Projectile.Center, new Color(232, 30, 86).ToVector3() * 0.55f);
 
             // ai[0] is the fixed world-space expiry height chosen when the attack fires. This keeps

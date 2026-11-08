@@ -62,7 +62,7 @@ public class DarkSoulNPC : GlobalNPC
                             tsorcRevampWorld.isHellkiteDragonDead = true;
                         }
 
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>())
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>())
                         {
                             tsorcRevampWorld.isOolacileSerpentDead = true;
                         }

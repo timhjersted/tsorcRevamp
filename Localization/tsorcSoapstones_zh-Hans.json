@@ -456,6 +456,7 @@
   "text": "突然你注意到你完全在阴影中。 --NEWLINE   --NEWLINE 你抬头一看，看到一团黑暗挡住了太阳…",
   "tileX": 1966,
   "tileY": 846,
+  "skipOnExpanded": true,
   "textWidth": 350,
   "style": 1
 }
@@ -463,6 +464,7 @@
   "text": "回首望向神庙建筑，Miakoda问道： --NEWLINE   --NEWLINE \u0022你认为这些柱子的方向和排列有什么特殊意义吗？\u0022",
   "tileX": 2033,
   "tileY": 860,
+  "skipOnExpanded": true,
   "textWidth": 400,
   "style": 1
 }
@@ -486,9 +488,20 @@
   "text": "- 这扇门守卫着通往火焰恶魔地下陵寝的路 - --NEWLINE   --NEWLINE 你拿出日记，写下一张纸条：\u0022蜥蜴门就在沙漠中一座未知神庙的东边。\u0022",
   "tileX": 2238,
   "tileY": 857,
+  "skipOnExpanded": true,
   "textWidth": 520,
   "style": 1,
   "category": "hint,location"
+}
+{
+  "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You mark the spot on your map.",
+  "tileX": 2238,
+  "tileY": 946,
+  "textWidth": 320,
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "PATH TO THE CATACOMBS",
+  "expandedOnly": true
 }
 {
   "text": "你来到一个很深的神圣尖刺裂缝。 --NEWLINE   --NEWLINE 当你往下走的时候，你可以感觉到重力再次开始变化…（尝试按向上键）",
@@ -894,9 +907,20 @@
   "text": "- 你发现了蘑菇洞窟 -",
   "tileX": 3801,
   "tileY": 1545,
+  "skipOnExpanded": true,
   "textWidth": 220,
   "style": 1,
   "category": "location"
+}
+{
+  "text": "- You've found the Ancient Undergrowth -",
+  "tileX": 3802,
+  "tileY": 1777,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
+  "locationName": "ANCIENT UNDERGROWTH",
+  "expandedOnly": true
 }
 {
   "text": "雕刻在岩石上的华丽野兽迷住了你， --NEWLINE   --NEWLINE 它的红色眼睛渗透到你的潜意识，进入你的想象，播下噩梦的种子，粉碎你的信念。 --NEWLINE   --NEWLINE 你开始怀疑，问自己，你是否真的有能力把这件事做到底……够了！ --NEWLINE   --NEWLINE 你把目光移开，突然醒来。两个小时过去了！天哪，这野兽有什么力量？",
@@ -1785,6 +1809,7 @@
   "text": "这座古老的庙宇是为了纪念被称为骷髅王的守护者而建造的，他是死者之首。 --NEWLINE   --NEWLINE 据说他是一个强大的法师的创造物，被称为拜月教徒，他与这些寺庙的联系仍然未知… --NEWLINE   --NEWLINE 如果你第一次与老人战斗不顺利，用这个箱子里的骨头合成召唤物，直到你获得了它的力量。",
   "tileX": 5059,
   "tileY": 1402,
+  "skipOnExpanded": true,
   "textWidth": 680,
   "style": 1,
   "category": "lore,hint,location"
@@ -1831,6 +1856,7 @@
   "text": "这道门是很久以前搭建并密封关闭的，目的是保护神庙居民免受无名不朽\u0022老人\u0022的伤害。 --NEWLINE   --NEWLINE 他现在被诅咒为一个被称为骷髅王的恶魔的容器，骷髅王是死亡之首 --NEWLINE   --NEWLINE 但不要可怜他，他的罪行远远大于他所赢得的命运…",
   "tileX": 5155,
   "tileY": 1366,
+  "skipOnExpanded": true,
   "textWidth": 640,
   "style": 1
 }

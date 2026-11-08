@@ -1,21 +1,27 @@
 using Microsoft.Xna.Framework;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
-    // The "delayed homing bolt": flies dead straight on its initial heading, then over a short
-    // curve window bends onto a heading toward the player's CURRENT position (not where they were
-    // at launch) and continues on from there - looks like it's going to miss, then bends.
+    // Delayed homing bolt: the initial curve is followed by one distance-triggered return pass.
+    // The return locks its heading within three tiles, then dissipates ten tiles later.
     //
     // ai[0] = ticks of straight travel before the curve begins. ai[1] = duration of the curve
     // window itself. Both are set per-spawn (not fixed constants) so multi-orb patterns can
     // stagger, synchronize, or otherwise control WHEN each individual orb bends.
+    // ai[2] = outbound (0), returning (1), or committed final pass (2).
     class HomingAbyssOrb : ModProjectile
     {
         const float Speed = 8.5f;
-
+        const float ReturnDistance = 50f * 16f;
+        const float TrackingCutoff = 3f * 16f;
+        const float FinalTravelDistance = 10f * 16f;
+        const int ReturnLifetime = 6 * 60;
+        const int FadeTicks = 12;
+        int elapsedTicks;
 
         public override void SetStaticDefaults()
         {
@@ -32,7 +38,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.friendly = false;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
+            Projectile.tileCollide = false; // Deliberately cross terrain during the outbound and return passes.
             Projectile.ignoreWater = true;
             Projectile.light = 0.7f;
             Projectile.timeLeft = 240;
@@ -40,53 +46,121 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
-            Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.1f);
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, Color.White.ToVector3() * 1.1f);
+            }
+
             Animate();
 
             float straightTicks = Projectile.ai[0];
             float curveTicks = Projectile.ai[1] <= 0 ? 16f : Projectile.ai[1];
+            elapsedTicks++;
 
-            Projectile.localAI[0]++;
-            float elapsed = Projectile.localAI[0];
-
-            if (elapsed > straightTicks && elapsed <= straightTicks + curveTicks)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player target = Main.player[Player.FindClosest(Projectile.position, Projectile.width, Projectile.height)];
                 if (target.active && !target.dead)
                 {
-                    Vector2 desired = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY) * Speed;
-                    float curveT = (elapsed - straightTicks) / curveTicks;
-                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, desired, MathHelper.Lerp(0.06f, 0.30f, curveT));
+                    float targetDistance = Vector2.Distance(Projectile.Center, target.Center);
+                    bool initialCurve = elapsedTicks > straightTicks && elapsedTicks <= straightTicks + curveTicks;
+
+                    // Distance is relative to the player, independent of Artorias's arena. The timeout
+                    // fallback also gives shots chased by the player their one final attempt.
+                    if (Projectile.ai[2] == 0f && elapsedTicks > straightTicks + curveTicks
+                        && (targetDistance >= ReturnDistance || Projectile.timeLeft <= 60))
+                    {
+                        Projectile.ai[2] = 1f;
+                        Projectile.timeLeft = ReturnLifetime;
+                        Projectile.netUpdate = true;
+                    }
+
+                    if (Projectile.ai[2] == 1f && targetDistance <= TrackingCutoff)
+                    {
+                        Projectile.ai[2] = 2f;
+                        Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitY) * Speed;
+                        Projectile.timeLeft = (int)System.Math.Ceiling(FinalTravelDistance / Speed);
+                        Projectile.netUpdate = true;
+                    }
+
+                    if (Projectile.ai[2] == 1f)
+                    {
+                        // Rotate at fixed speed so reversing a nearly opposite heading cannot stall
+                        // the orb, as a velocity lerp would. Only this final pass tracks continuously.
+                        float currentAngle = Projectile.velocity.ToRotation();
+                        float targetAngle = (target.Center - Projectile.Center).ToRotation();
+                        float returnAngle = Utils.AngleTowards(currentAngle, targetAngle, 0.065f);
+                        Projectile.velocity = returnAngle.ToRotationVector2() * Speed;
+                    }
+                    else if (Projectile.ai[2] == 0f && initialCurve)
+                    {
+                        Vector2 desired = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY) * Speed;
+                        float curveProgress = (elapsedTicks - straightTicks) / curveTicks;
+                        float steeringStrength = MathHelper.Lerp(0.06f, 0.30f, curveProgress);
+                        Projectile.velocity = Vector2.Lerp(Projectile.velocity, desired, steeringStrength);
+                    }
+
+                    if ((initialCurve || Projectile.ai[2] == 1f) && elapsedTicks % 6 == 0)
+                    {
+                        Projectile.netUpdate = true;
+                    }
                 }
             }
 
             Projectile.rotation += 0.15f;
+            float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+            Projectile.alpha = (int)(255f * (1f - fade));
 
             if (!Main.dedServ)
             {
                 for (int i = 0; i < 3; i++)
                 {
                     bool white = Main.rand.NextBool(5);
-                    Color tint = white ? Color.White : (Main.rand.NextBool() ? new Color(190, 90, 255) : Color.DarkViolet);
-                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
+                    Color tint = Color.DarkViolet;
+                    if (white)
+                    {
+                        tint = Color.White;
+                    }
+                    else if (Main.rand.NextBool())
+                    {
+                        tint = new Color(190, 90, 255);
+                    }
+
+                    Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(9f, 9f),
                         white ? DustID.SilverFlame : DustID.ShadowbeamStaff,
                         -Projectile.velocity * Main.rand.NextFloat(0.06f, 0.18f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
                         90, tint, Main.rand.NextFloat(0.9f, 1.3f));
-                    d.noGravity = true;
+                    dust.noGravity = true;
                 }
             }
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(elapsedTicks);
+            writer.Write(Projectile.timeLeft);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            elapsedTicks = reader.ReadInt32();
+            Projectile.timeLeft = reader.ReadInt32();
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
             float straightTicks = Projectile.ai[0];
             float curveTicks = Projectile.ai[1] <= 0 ? 16f : Projectile.ai[1];
-            float elapsed = Projectile.localAI[0];
-            float warning = straightTicks > 0f
-                ? MathHelper.Clamp((elapsed - (straightTicks - 10f)) / 10f, 0f, 1f)
-                : 1f;
+            float elapsed = elapsedTicks;
+            float warning = 1f;
+            if (straightTicks > 0f)
+            {
+                warning = MathHelper.Clamp((elapsed - (straightTicks - 10f)) / 10f, 0f, 1f);
+            }
+
             float steering = MathHelper.Clamp((elapsed - straightTicks) / curveTicks, 0f, 1f);
             float state = System.Math.Max(warning * (1f - steering), steering);
+            float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             float waveTime = Main.GlobalTimeWrappedHourly * 8.4f + Projectile.identity * 0.63f;
             if (Projectile.oldPos[18] != Vector2.Zero)
@@ -109,7 +183,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         Vector2 wispCenter = oldCenter - oldDirection * (length * 0.25f)
                             + perpendicular * lateralWave;
                         ArtoriasVFX.DrawHomingFlameWisp(wispCenter, oldDirection,
-                            state, opacity, width, length);
+                            state, opacity * fade, width, length);
                     }
                 }
             }
@@ -117,12 +191,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             float currentWave = (float)System.Math.Sin(waveTime) * 3.5f;
             ArtoriasVFX.DrawHomingFlameWisp(
                 Projectile.Center - direction * 34f + currentPerpendicular * currentWave,
-                direction, state, 0.88f, 32f, 104f);
-            ArtoriasVFX.DrawHomingVolleyOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f);
+                direction, state, 0.88f * fade, 32f, 104f);
+            ArtoriasVFX.DrawHomingVolleyOrb(Projectile.Center, new Vector2(48f, 48f), Projectile.rotation, state, 0.94f * fade);
             if (warning > 0f && steering <= 0f)
             {
                 ArtoriasVFX.DrawTransitionFlash(Projectile.Center, Vector2.One * 62f,
-                    warning, 0.72f * warning);
+                    warning, 0.72f * warning * fade);
             }
             return true;
         }
@@ -139,7 +213,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override Color? GetAlpha(Color lightColor)
         {
-            return new Color(200, 140, 255, 220);
+            float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+            return new Color(200, 140, 255, 220) * fade;
         }
 
         public override void OnKill(int timeLeft)

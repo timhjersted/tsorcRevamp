@@ -665,12 +665,12 @@ namespace tsorcRevamp.NPCs.Enemies
             };
 
             // NPC.Center stands in for the hand so the aim does not feed back through the arm pose it sets.
-            Vector2 aimPoint = PredictedAimPoint();
+            Vector2 spearAimVector = SpearLaunchVelocity(NPC.Center);
             if (CurrentAttack == BlackKnightAttack.LeapStrike && NPC.HasValidTarget)
             {
-                aimPoint = player.Center;
+                spearAimVector = player.Center - NPC.Center;
             }
-            input.ThrowAim = RedKnightPuppet.FacingAngleOf(aimPoint - NPC.Center, NPC.direction);
+            input.ThrowAim = RedKnightPuppet.FacingAngleOf(spearAimVector, NPC.direction);
 
             Vector2 bombLaunch = BombLaunchVelocity(NPC.Center);
             input.BombAim = RedKnightPuppet.FacingAngleOf(bombLaunch, NPC.direction);

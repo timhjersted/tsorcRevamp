@@ -16,8 +16,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void SetDefaults()
         {
-            Projectile.aiStyle = 2;
-            AIType = 1;
+            Projectile.aiStyle = 1;
             Projectile.hostile = true;
             Projectile.height = 14;
             Projectile.penetrate = 1;
@@ -30,17 +29,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.light = 1;
         }
 
-        public override bool PreAI()
-        {
-            if (Projectile.ai[2] == ArrowFlightMode)
-                Projectile.aiStyle = 1;
-            return true;
-        }
-
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
             if (Main.rand.NextBool(3))
             {
                 int wraith = Dust.NewDust(Projectile.position, Projectile.width * 2, Projectile.height, DustID.Wraith, Projectile.velocity.X, Projectile.velocity.Y, Scale: 0.5f);
@@ -50,9 +45,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Main.dust[dust].noGravity = true;
             }
 
-            // Curse accent on every spear that builds curse (everything except the Blight arrow-flight mode).
-            bool buildsCurse = Projectile.ai[2] != ArrowFlightMode;
-            if (buildsCurse && Main.rand.NextBool(4))
+            // Curse accent on every spear that builds curse (everything except Great Black Knight's Blight spear).
+            bool blight = BlightBuildup.FromGreatBlackKnight(Projectile) || Projectile.ai[2] == ArrowFlightMode;
+            if (!blight && Main.rand.NextBool(4))
             {
                 CurseBuildup.SpawnAccentDust(Projectile.position, Projectile.width, Projectile.height, Projectile.velocity * 0.1f, 1.2f);
             }
@@ -63,13 +58,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             if (Projectile.ai[2] != 1f && Main.rand.NextBool(20))
             {
                 Vector2 tip = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * (Projectile.height * 0.5f);
-                bool blight = Projectile.ai[2] == ArrowFlightMode;
-                int plagueDust = blight
-                    ? Dust.NewDust(tip, 2, 2, Main.rand.NextBool(6) ? DustID.YellowTorch : DustID.Wraith,
-                        0f, 0f, 150, default, 1.1f)
-                    : Main.rand.NextBool(2)
-                        ? Dust.NewDust(tip, 2, 2, DustID.Smoke, 0f, 0f, 150, new Color(12, 8, 18), 1.4f)
-                        : Dust.NewDust(tip, 2, 2, DustID.PurpleTorch, 0f, 0f, 150, new Color(120, 45, 170), 0.9f);
+                int plagueDust;
+                if (blight)
+                {
+                    int blightDustType = Main.rand.NextBool(6) ? DustID.YellowTorch : DustID.Wraith;
+                    plagueDust = Dust.NewDust(tip, 2, 2, blightDustType, 0f, 0f, 150, default, 1.1f);
+                }
+                else if (Main.rand.NextBool(2))
+                {
+                    plagueDust = Dust.NewDust(tip, 2, 2, DustID.Smoke, 0f, 0f, 150, new Color(12, 8, 18), 1.4f);
+                }
+                else
+                {
+                    plagueDust = Dust.NewDust(tip, 2, 2, DustID.PurpleTorch, 0f, 0f, 150, new Color(120, 45, 170), 0.9f);
+                }
                 Main.dust[plagueDust].noGravity = true;
                 Main.dust[plagueDust].velocity = Projectile.velocity * 0.05f + Main.rand.NextVector2Circular(0.3f, 0.3f);
             }
@@ -99,99 +101,88 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             return true;
         }
 
-        public override bool PreKill(int timeLeft)
-        {
-            Projectile.type = 0;
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            for (int i = 0; i < 10; i++)
-            {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Cloud, 0, 0, 0, default, 0.5f);
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Cloud, 0, 0, 0, default, 0.5f);
-            }
-            return true;
-        }
-
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            if (Projectile.ai[2] == ArrowFlightMode) BlightBuildup.Apply(target);
-            else target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
-            target.AddBuff(33, 300, false); //weak          
+            bool blight = BlightBuildup.FromGreatBlackKnight(Projectile) || Projectile.ai[2] == ArrowFlightMode;
+            if (blight)
+            {
+                BlightBuildup.Apply(target);
+            }
+            else
+            {
+                target.AddBuff(ModContent.BuffType<CurseBuildup>(), 36000, false);
+            }
+            target.AddBuff(BuffID.Weak, 300, false);
+            Projectile.Kill();
         }
 
         #region Kill
         public override void OnKill(int timeLeft)
         {
-            if (!Projectile.active)
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center);
+            for (int i = 0; i < 10; i++)
             {
-                return;
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Cloud, 0f, 0f, 0, default, 0.5f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Cloud, 0f, 0f, 0, default, 0.5f);
             }
-            Projectile.timeLeft = 0;
+
+            if (Projectile.ai[2] == 1f)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit54, Projectile.Center); //death sound
-                if (Projectile.ai[2] == 1f)
+                // Red Knight family only. In hardmode the impact upgrades to the
+                // DestinedDeathExplosion sheet plus red/black dust; pre-hardmode falls through
+                // to the original burst completely unchanged.
+                if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_Death(),
+                        Projectile.Center, 1.15f)
+                    && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    // Red Knight family only. In hardmode the impact upgrades to the
-                    // DestinedDeathExplosion sheet plus red/black dust; pre-hardmode falls through
-                    // to the original burst completely unchanged.
-                    if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_Death(),
-                            Projectile.Center, 1.15f)
-                        && Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                            ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
-                            (float)RedKnightBurstKind.SpearImpact, 1.15f);
-                    }
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
+                        (float)RedKnightBurstKind.SpearImpact, 1.15f);
                 }
-                else
-                {
-                    EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
-
-                    // Black Knight / Great Black Knight only (this is the shared "else" branch;
-                    // RedKnight's ai[2]==1 reuse is above). The Great Black Knight leaves a half-radius
-                    // Blight cloud; the regular Black Knight keeps his half-radius Plague cloud. Fires on
-                    // both a player hit and a tile hit, since OnKill runs for either (penetrate
-                    // reaches 0 after a player hit; the default OnTileCollide kills on tile impact).
-                    // Melee never runs this: the melee jab/spear-hitbox classes are separate and don't
-                    // touch this file at all.
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        bool blight = Projectile.ai[2] == ArrowFlightMode;
-                        float cloudRadius = VFX.PlagueTeleportCloud.MaxCloudRadius * 0.5f;
-                        var cloud = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                            blight ? ModContent.ProjectileType<VFX.BlightTeleportCloud>() : ModContent.ProjectileType<VFX.PlagueTeleportCloud>(),
-                            0, 0f, Main.myPlayer, blight ? 0f : 1f, cloudRadius, blight ? 1f : 0f);
-                        cloud.timeLeft = blight ? VFX.BlightTeleportCloud.LifetimeTicks : VFX.PlagueTeleportCloud.LifetimeTicks;
-
-                        // Six rotating, smoothly fading puffs scattered through the same radius.
-                        // The palette follows the spear's source; neither teleport effect inherits them.
-                        Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
-                            ModContent.ProjectileType<BlackKnightSpearBlightSwarm>(), 0, 0f, Main.myPlayer, cloudRadius, blight ? 1f : 0f);
-                    }
-                }
-                if (Main.netMode != NetmodeID.MultiplayerClient) Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Main.myPlayer);
-                Vector2 arg_1394_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
-                int arg_1394_1 = Projectile.width;
-                int arg_1394_2 = Projectile.height;
-                int arg_1394_3 = 15;
-                float arg_1394_4 = 0f;
-                float arg_1394_5 = 0f;
-                int arg_1394_6 = 100;
-                Color newColor = default(Color);
-                int num41 = Dust.NewDust(arg_1394_0, arg_1394_1, arg_1394_2, arg_1394_3, arg_1394_4, arg_1394_5, arg_1394_6, newColor, 2f);
-                Main.dust[num41].noGravity = true;
-                Dust expr_13B1 = Main.dust[num41];
-                expr_13B1.velocity *= 2f;
-                Vector2 arg_1422_0 = new Vector2(Projectile.position.X - Projectile.velocity.X, Projectile.position.Y - Projectile.velocity.Y);
-                int arg_1422_1 = Projectile.width;
-                int arg_1422_2 = Projectile.height;
-                int arg_1422_3 = 15;
-                float arg_1422_4 = 0f;
-                float arg_1422_5 = 0f;
-                int arg_1422_6 = 100;
-                newColor = default(Color);
-                num41 = Dust.NewDust(arg_1422_0, arg_1422_1, arg_1422_2, arg_1422_3, arg_1422_4, arg_1422_5, arg_1422_6, newColor, 1f);
             }
-            Projectile.active = false;
+            else
+            {
+                EnemyShaderBurst.Spawn(Projectile.GetSource_Death(), Projectile.Center, EnemyVFXBurstKind.BlackKnightSpearImpact);
+
+                // Black Knight / Great Black Knight only (this is the shared "else" branch;
+                // RedKnight's ai[2]==1 reuse is above). The Great Black Knight leaves a half-radius
+                // Blight cloud; the regular Black Knight leaves a 3-tile (24px radius), 60-tick Plague cloud.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    bool blight = BlightBuildup.FromGreatBlackKnight(Projectile) || Projectile.ai[2] == ArrowFlightMode;
+                    float cloudRadius = VFX.PlagueTeleportCloud.SpearImpactCloudRadius;
+                    int cloudLifetime = VFX.PlagueTeleportCloud.SpearImpactLifetimeTicks;
+                    int cloudType = ModContent.ProjectileType<VFX.PlagueTeleportCloud>();
+                    if (blight)
+                    {
+                        cloudRadius = VFX.PlagueTeleportCloud.MaxCloudRadius * 0.5f;
+                        cloudLifetime = VFX.BlightTeleportCloud.LifetimeTicks;
+                        cloudType = ModContent.ProjectileType<VFX.BlightTeleportCloud>();
+                    }
+
+                    Projectile cloud = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        cloudType, 0, 0f, Main.myPlayer, blight ? 0f : 1f, cloudRadius, blight ? 1f : 0f);
+                    cloud.timeLeft = cloudLifetime;
+
+                    // Six rotating, smoothly fading puffs scattered through the same radius.
+                    // The palette follows the spear's source; neither teleport effect inherits them.
+                    Projectile swarm = Projectile.NewProjectileDirect(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                        ModContent.ProjectileType<BlackKnightSpearBlightSwarm>(), 0, 0f, Main.myPlayer, cloudRadius, blight ? 1f : 0f);
+                    swarm.timeLeft = cloudLifetime;
+                }
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position.X + (float)(Projectile.width / 2), Projectile.position.Y + (float)(Projectile.height - 16), 0, 0, ModContent.ProjectileType<Projectiles.Enemy.EnemySpellSuddenDeathStrike>(), Projectile.damage, 3f, Main.myPlayer);
+            }
+
+            Vector2 dustPosition = Projectile.position - Projectile.velocity;
+            int firstDust = Dust.NewDust(dustPosition, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 2f);
+            Main.dust[firstDust].noGravity = true;
+            Main.dust[firstDust].velocity *= 2f;
+            Dust.NewDust(dustPosition, Projectile.width, Projectile.height, 15, 0f, 0f, 100, default, 1f);
         }
         #endregion
     }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
-using tsorcRevamp.NPCs.Bosses.OolacileSerpent;
+using tsorcRevamp.NPCs.Bosses.GreatSerpent;
 
 namespace tsorcRevamp.NPCs
 {
@@ -26,20 +26,20 @@ namespace tsorcRevamp.NPCs
         const int TileSize = 16;
 
         //-- Graph build window --
-        //The span box covers head-position union player-position plus padding, hard-capped so a distant player
-        //can't blow up the build. Single boss instance -> the perf bar is low (no SF4-style tiering needed),
+        //The span box covers head-position union player-position plus padding, sized for NavSearchRadius = 80.
+        //Single boss instance -> the perf bar is low (no SF4-style tiering needed),
         //but the build still only runs on the replan cadence, never every tick.
-        const int EdgePadTiles = 12;
-        const int MaxPlanSpanXTiles = 110;   //give up planning beyond this horizontal separation
-        const int MaxPlanSpanYTiles = 70;
+        const int EdgePadTiles = 24;
+        const int MaxPlanSpanXTiles = 160;   //give up planning beyond this horizontal separation (2 * 80 nav radius)
+        const int MaxPlanSpanYTiles = 100;
 
         //-- Replan cadence / step execution --
-        const int ReplanIntervalTicks = 30;      //min gap between graph rebuilds (SF4's ReplanCooldown pattern)
-        const int FailedPlanRetryTicks = 60;     //back off longer after a no-path result
-        const int StepTimeoutTicks = 300;        //a step that hasn't completed in 5s is marked bad and replanned
+        const int ReplanIntervalTicks = 20;      //min gap between graph rebuilds (SF4's ReplanCooldown pattern)
+        const int FailedPlanRetryTicks = 35;     //back off after a no-path result
+        const int StepTimeoutTicks = 240;        //a step that hasn't completed in 4s is marked bad and replanned
         const int BadEdgeTTLTicks = 600;         //how long a failed step target repels the planner (10s)
-        const int PlanStaleXTiles = 16;          //player drifted this far from the plan's end -> stale, replan
-        const int PlanStaleYTiles = 10;
+        const int PlanStaleXTiles = 12;          //player drifted this far from the plan's end -> stale, replan
+        const int PlanStaleYTiles = 8;
 
         //-- Direct-engagement gate: no plan needed when the player is visibly right there --
         const float DirectEngageXTiles = 30f;

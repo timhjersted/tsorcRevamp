@@ -73,8 +73,14 @@ namespace tsorcRevamp.Tiles
                 float distance = Vector2.Distance(Main.LocalPlayer.Center, worldPosition);
                 float mouseDistance = Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, worldPosition);
 
-                const float readSoapstoneRevealRange = 200f;
-                float targetOpacity = !entity.read || distance <= readSoapstoneRevealRange ? 1f : 0f;
+                // Hide read signs beyond two tiles, measured from the player center to the sign center.
+                const float readSoapstoneRevealRange = 2f * 16f;
+                float targetOpacity = 0f;
+                if (!entity.read || distance <= readSoapstoneRevealRange)
+                {
+                    targetOpacity = 1f;
+                }
+
                 if (!entity.visualOpacityInitialized)
                 {
                     entity.visualOpacity = targetOpacity;
@@ -88,11 +94,6 @@ namespace tsorcRevamp.Tiles
                     {
                         entity.visualOpacity = 0f;
                     }
-                }
-
-                if (entity.visualOpacity <= 0f)
-                {
-                    return;
                 }
 
                 bool selectedSoapstone = false;
@@ -194,10 +195,18 @@ namespace tsorcRevamp.Tiles
                         {
                             Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                         }
-                        if (keepOpen) entity.timer = 25;
+                        if (keepOpen)
+                        {
+                            entity.timer = 25;
+                        }
+
                         // Only auto-mark as read on proximity if the bubble actually opens.
                         // When AutoOpen is off, read is set on click (see Systems display).
-                        if (autoOpen) entity.read = true;
+                        if (autoOpen)
+                        {
+                            entity.read = true;
+                        }
+
                         entity.nearPlayer = true;
                     }
                     // Player proximity is an independent trigger, used only when no soapstone has
@@ -212,8 +221,16 @@ namespace tsorcRevamp.Tiles
                         {
                             Main.LocalPlayer.AddBuff(ModContent.BuffType<Buffs.StoryTime>(), 30);
                         }
-                        if (keepOpen) entity.timer = 25;
-                        if (autoOpen) entity.read = true;
+                        if (keepOpen)
+                        {
+                            entity.timer = 25;
+                        }
+
+                        if (autoOpen)
+                        {
+                            entity.read = true;
+                        }
+
                         entity.nearPlayer = true;
                     }
                 }
@@ -265,7 +282,11 @@ namespace tsorcRevamp.Tiles
                     ShimmerColor.B /= 3;
                 }
 
-                spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor * entity.visualOpacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                // Keep interaction and dismissal active while a read sign's visual is hidden.
+                if (entity.visualOpacity > 0f)
+                {
+                    spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor * entity.visualOpacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
+                }
             }
         }
     }

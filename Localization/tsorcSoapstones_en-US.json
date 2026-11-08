@@ -467,6 +467,7 @@
   "text": "Suddenly you notice you are completely in shadow. You look up and see a dark mass blocking out the sun...",
   "tileX": 1966,
   "tileY": 846,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }
@@ -474,6 +475,7 @@
   "text": "Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
   "tileX": 2033,
   "tileY": 860,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }
@@ -498,10 +500,21 @@
   "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You get out your map and write a note: \u0022Gate just East of an unknown temple in the desert.\u0022",
   "tileX": 2238,
   "tileY": 857,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "hint,location",
   "locationName": "PATH TO THE CATACOMBS"
+}
+{
+  "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You mark the spot on your map.",
+  "tileX": 2238,
+  "tileY": 946,
+  "textWidth": 320,
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "PATH TO THE CATACOMBS",
+  "expandedOnly": true
 }
 {
   "text": "You come upon a deep hallowed cavern. As you make your way down you can feel the gravitational pull start to shift again... --NEWLINE  --NEWLINE (Try pressing the Up key)",
@@ -918,10 +931,21 @@
   "text": "- You\u0027ve found the Mushroom Caverns -",
   "tileX": 3801,
   "tileY": 1545,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "location",
   "locationName": "MUSHROOM CAVERNS"
+}
+{
+  "text": "- You've found the Ancient Undergrowth -",
+  "tileX": 3802,
+  "tileY": 1777,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
+  "locationName": "ANCIENT UNDERGROWTH",
+  "expandedOnly": true
 }
 {
   "text": "The opulent beast carved into the rock mesmerizes you, its red eyes seeping down, down, down into your subliminal conciousness, reaching into your dreams, planting seeds of nightmares and crumbling your faith. You begin to doubt, to ask yourself if you are really capable of taking this to the end.. Enough! You tear your gaze away and suddenly you awake. Two hours have passed! My god. What powers lie within this beast of a god?",
@@ -1810,6 +1834,7 @@
   "text": "This ancient temple was built in honor of the guardian known as Skeletron, The First of the Dead. It is said he was a creation of a powerful mage known as the Lunatic Cultist, whose connection to these temples is still unknown... --NEWLINE  --NEWLINE If your first encounter with the old man does not go well, use the bones in this chest to summon Skeletron until you have stolen its power.",
   "tileX": 5059,
   "tileY": 1402,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "lore,hint,location",
@@ -1858,6 +1883,7 @@
   "text": "This gate was created and sealed shut long ago to protect the temple inhabitants from the nameless and immortal \u0022old man.\u0022 He is now cursed to exist merely as a vessel for the demon known as Skeletron, The First of the Dead. But do not pity him. His crimes were far greater than the fate he earned...",
   "tileX": 5151,
   "tileY": 1366,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "lore"

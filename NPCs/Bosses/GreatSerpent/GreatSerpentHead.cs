@@ -12,14 +12,14 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
 {
     [AutoloadBossHead]
-    class GreatSerpentHead : ModNPC, IStaggerable
+    class GreatSerpentHead : ModNPC, IStaggerable, IDebugAttackLabel
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 3;
+            Main.npcFrameCount[NPC.type] = HeadFrameCount;
             NPCID.Sets.TrailCacheLength[NPC.type] = 5; //How many copies of shadow/trail (Leonhard convention)
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
@@ -31,13 +31,8 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 6;
-            //Head sprite sheet = 76 x (3 frames). Frame height auto-adapts to the PNG (76x303 -> 101/frame now;
-            //a 76x468 sheet -> 156/frame, both slice cleanly). Hitbox is a fair sub-rect of the visible head.
-            //The neck-removed crop leaves ~15-25px of transparent padding below the rounded stub within each
-            //frame. That padding is compensated in PreDraw's rotation ORIGIN (HeadStubInsetFromBottom), not via
-            //DrawOffsetY -- DrawOffsetY is a fixed SCREEN-space nudge that never rotates with the head, so it
-            //produced a visual gap that stayed constant no matter how the neck was bent (the "head always N px
-            //above the body" bug). Leave this at 0; see PreDraw.
+            //Five 76x101 poses share a small rounded rear joint. The neck is a separate visual layer;
+            //PreDraw rotates the skull around that joint without changing the existing contact hitbox.
             NPC.width = 50;
             NPC.height = 64;
             DrawOffsetY = 0;
@@ -55,6 +50,7 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
+            NPC.hide = true;
             NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.rarity = 46;
@@ -62,7 +58,9 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.GreatSerpentHead.DespawnHandler"), textColor, 174);
 
             //3s flop instead of the default 2s -- a boss this size reads as sturdier when it goes down.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerDurationTicks = 180;
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.StaggerDurationTicks = 180;
+            globalNPC.NavSearchRadius = 80;
         }
 
         NPCDespawnHandler despawnHandler;
@@ -74,9 +72,9 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         //Front pieces (head + these many body segments, counted from the head) may lift off the ground while
         //climbing. Rear pieces stay ground-snapped. See SerpentAI.
         public const int FrontFreeSegmentCount = 14;
-        //Only the last TailAttackSegmentCount body pieces (+ tail) rear up for the tail attack; everything ahead
-        //of them stays on the ground. Keeps most of the snake grounded while the tail-end strikes.
-        public const int TailAttackSegmentCount = 16;
+        //The rear 50% of the body (24 body pieces + tail) rears up and curves toward the player for the tail stab
+        //attack; the front 50% stays grounded as the anchor.
+        public const int TailAttackSegmentCount = BodySegmentCount / 2;
 
         //-- Head movement (kiting) --
         //Facing is held with hysteresis (only flips once the player is clearly past a deadzone) so a player
@@ -139,6 +137,11 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
 
         //Diagnostics (Logs/tsorcRevamp-serpent.log)
         public string LastAction = "init";
+        //Client-only diagnostic peaks between log samples; these do not drive AI or need network sync.
+        public float DebugBodyMaxStep;
+        public float DebugBodyMaxTurn;
+        public int DebugBodyMaxStepIndex;
+        public ulong DebugBodyMaxStepTick;
 
         //Repeating slither-movement sound cadence (only plays near top speed).
         public int MoveSoundTimer;
@@ -175,7 +178,9 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         public int SpitVariation;
         public int SpitTick;             //elapsed ticks within the spit combo
 
-        public const int MouthTransitionTicks = 4;
+        public const int HeadFrameCount = 5;
+        public const int MouthFrameTicks = 3;
+        public const int MouthTransitionTicks = MouthFrameTicks * (HeadFrameCount - 1);
         public int MouthTransitionTimer;
 
         public bool IsLunging => Attack == AttackState.BiteLunge || Attack == AttackState.PounceLunge;
@@ -189,14 +194,15 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         public int AcidBodyTimer;      //>0 = actively trailing acid
         public int AcidBodyCooldown;
 
-        //-- TailStab: above-ground tail strike (no burrowing). Two modes chosen by geometry at trigger time:
-        //  OverheadC   -- head faces the player (whole snake to one side): the tail-end curls into a C that arcs
-        //                 OVER the head and stabs down past it at the player.
-        //  HorizontalS -- head faces away / is far (it slithered past the player, tail still near them): the
-        //                 tail-end whips a shallow horizontal S sideways at the player.
-        //The head holds still on the ground during either; posed pieces come from SerpentAI.PoseTailStabArc.
+        //The rear half forms one raised arch while the head holds on the ground. OverheadC has a high
+        //perch; LowArch keeps the needle lower when the player is alongside the rear half. Both use
+        //the same connected socket pose and return to their fixed perch between stings.
         public enum TailStabState { None, Coiling, Aiming, Stabbing, Recover, Retracting }
-        public enum TailStabKind { OverheadC, HorizontalS }
+        public enum TailStabKind
+        {
+            OverheadC,
+            LowArch
+        }
         public TailStabState TailStab = TailStabState.None;
         public TailStabKind TailStabMode = TailStabKind.OverheadC;
         public int TailStabTimer;
@@ -205,6 +211,8 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         public Vector2 TailStabTarget;  //locked player pos at aim time
         public Vector2 TailStabTip;     //current driven tail-tip world pos (lerped toward the phase target)
         public Vector2 TailStabAnchor;  //junction (last grounded segment) world center = the arc's base
+        public Vector2 TailStabPerchOffset; //server-chosen perch relative to the anchor; fixed between stings
+        public Vector2 TailStabRestOffset;  //original tail position relative to the anchor, for a gradual return
         public bool TailStabDamaging;   //true only during the downward stab -> tail contact damage on
 
         //-- Predator-style hunting cloak + scripted HP-threshold ambush --
@@ -226,6 +234,62 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         //before the real kill (loot/OnKill/etc) actually happens.
         public bool IsDying;
         public int DeathFadeTimer;
+
+        /// <summary>DebugMode above-head readout (see IDebugAttackLabel). Reports active attack, tail stab,
+        /// charge, ambush, or locomotion state.</summary>
+        public string DebugAttackLabel
+        {
+            get
+            {
+                if (IsDying)
+                {
+                    return "Dying";
+                }
+
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+
+                if (!Provoked)
+                {
+                    return "Passive: " + Passive;
+                }
+
+                if (Ambush != AmbushState.None)
+                {
+                    return "Ambush: " + Ambush;
+                }
+
+                if (TailStab != TailStabState.None)
+                {
+                    return "Tail Stab (" + TailStabMode + "): " + TailStab + " #" + (TailStabCombo + 1);
+                }
+
+                if (Attack != AttackState.None)
+                {
+                    if (tsorcRevampWorld.SuperHardMode
+                        && (Attack == AttackState.BreathTelegraph || Attack == AttackState.BreathSweep || Attack == AttackState.BreathRecover))
+                    {
+                        return "Destined Death " + DebugLabels.Humanize(Attack.ToString());
+                    }
+
+                    return DebugLabels.Humanize(Attack.ToString());
+                }
+
+                if (ChargeTelegraphTimer > 0)
+                {
+                    return "Charge Telegraph";
+                }
+
+                if (ChargeTimer > 0)
+                {
+                    return "Charging";
+                }
+
+                return DebugLabels.Humanize(LastAction);
+            }
+        }
 
         public override bool CheckActive()
         {
@@ -263,8 +327,22 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
             NPC.boss = Provoked;
 
             int[] bodyTypes = SerpentAI.BuildBodyTypes();
-            //4f pursue speed -- deliberately slow (hardmode pacing); kiting caps it further near the player.
-            SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), TotalSegmentCount, 4f);
+            //Base pursuit speed above 50% HP; SerpentAI boosts closing speed further at range and much more below 50% HP.
+            SerpentAI.Run(NPC, ModContent.NPCType<GreatSerpentHead>(), bodyTypes, ModContent.NPCType<GreatSerpentTail>(), TotalSegmentCount, 5.2f);
+
+            //Advance the synced visual clock in AI so dedicated servers and clients count the same ticks.
+            //FindFrame only reads it; rendering frequency cannot alter the opening sequence.
+            if (IsMouthAttackActive)
+            {
+                if (MouthTransitionTimer > 0)
+                {
+                    MouthTransitionTimer--;
+                }
+            }
+            else
+            {
+                MouthTransitionTimer = 0;
+            }
         }
 
         /// <summary>
@@ -276,7 +354,8 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         /// Timers ride along so a client can keep predicting a committed attack between packets. The three values
         /// locked from the player's position at a transition — LungeVelocity, BreathBaseAngle, TailStabTarget — must
         /// be sent rather than recomputed, or each machine locks a slightly different line. Derived per-tick values
-        /// (TailStabTip/Anchor, the posed chain) are deliberately absent.
+        /// The tail's driven tip and fixed perch/rest offsets also travel with phase snapshots; its anchor and
+        /// posed chain are reconstructed from the synced NPC segments.
         /// </summary>
         public override void SendExtraAI(BinaryWriter writer)
         {
@@ -296,6 +375,9 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
             writer.Write((short)Math.Clamp(TailStabCooldown, 0, short.MaxValue));
             writer.Write((byte)Math.Clamp(TailStabCombo, 0, byte.MaxValue));
             writer.WriteVector2(TailStabTarget);
+            writer.WriteVector2(TailStabTip);
+            writer.WriteVector2(TailStabPerchOffset);
+            writer.WriteVector2(TailStabRestOffset);
             writer.Write(TailStabDamaging);
             writer.Write(TailExtend);
 
@@ -356,6 +438,9 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
             TailStabCooldown = reader.ReadInt16();
             TailStabCombo = reader.ReadByte();
             TailStabTarget = reader.ReadVector2();
+            TailStabTip = reader.ReadVector2();
+            TailStabPerchOffset = reader.ReadVector2();
+            TailStabRestOffset = reader.ReadVector2();
             TailStabDamaging = reader.ReadBoolean();
             TailExtend = reader.ReadSingle();
 
@@ -410,36 +495,74 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         public override void FindFrame(int frameHeight)
         {
             int frame = 0;
+
             if (IsMouthAttackActive)
             {
-                frame = MouthTransitionTimer > 0 ? 1 : 2;
-                if (MouthTransitionTimer > 0)
-                {
-                    MouthTransitionTimer--;
-                }
-            }
-            else
-            {
-                MouthTransitionTimer = 0;
+                int openingFrame = HeadFrameCount - 1 - MouthTransitionTimer / MouthFrameTicks;
+                frame = Math.Clamp(openingFrame, 1, HeadFrameCount - 1);
             }
 
             NPC.frame.Y = frameHeight * frame;
         }
 
-        //The frame's rotation pivot: normally frame-center, but the neck-removed crop leaves transparent padding
-        //BELOW the actual neck stub, so the true joint sits above the frame's bottom edge by this many pixels.
-        //MUST live in the rotation origin (rotates with the sprite), not a translated draw position -- see the
-        //DrawOffsetY comment in SetDefaults for why. Bumped 20 -> 60 (+40px) per in-game feedback: the first
-        //guess still left a visible gap between the head and the neck.
-        const float HeadStubInsetFromBottom = 60f;
+        //The rounded 28px rear cap surrounds this socket in every pose. The former y=41 pivot swung
+        //the wide attached collar across the body; the separate neck now bridges the two NPC centers.
+        static readonly Vector2 HeadDrawOrigin = new Vector2(38f, 64f);
+        const float NeckSocketOverlap = 2f;
+
+        public override void DrawBehind(int index)
+        {
+            Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
+        }
 
         //Full custom draw (returns false): sprite echoes during the bite/pounce lunges, same convention as
         //LeonhardPhase2.PreDraw, then the real head using a pivot that stays correct under rotation.
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            Vector2 origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height - HeadStubInsetFromBottom);
+
+            //Aim changes requested facing before rotation catches up, especially in raised telegraphs.
+            //Use the rendered forward X instead, keeping the eye above the jaw throughout that turn.
+            float renderedForwardX = (float)Math.Sin(NPC.rotation);
+            SpriteEffects effects = SpriteEffects.None;
+            if (renderedForwardX > 0f)
+            {
+                effects = SpriteEffects.FlipHorizontally;
+            }
+            Color headColor = NPC.GetAlpha(drawColor);
+
+            int firstBodyIndex = (int)NPC.ai[0];
+            if (firstBodyIndex >= 0 && firstBodyIndex < Main.maxNPCs)
+            {
+                NPC firstBody = Main.npc[firstBodyIndex];
+                if (firstBody.active && firstBody.type == ModContent.NPCType<GreatSerpentBody>() && (int)firstBody.ai[1] == NPC.whoAmI)
+                {
+                    Vector2 neckDirection = NPC.Center - firstBody.Center;
+                    float neckDistance = neckDirection.Length();
+
+                    if (neckDistance > 0.01f)
+                    {
+                        //This decorative sleeve follows the actual body joint, independently of head aim.
+                        //The short body-width sleeve overlaps both centers by 2px; the skull's rounded cap
+                        //covers the remaining joint without a long collar projecting out behind it.
+                        string neckPath = UsefulFunctions.RefactorableFilepath(typeof(GreatSerpentHead)) + "_Neck";
+                        Texture2D neckTexture = ModContent.Request<Texture2D>(neckPath).Value;
+                        Vector2 neckPosition = (NPC.Center + firstBody.Center) * 0.5f - screenPos;
+                        float neckRotation = neckDirection.ToRotation() + MathHelper.PiOver2;
+                        float neckLength = neckDistance + NeckSocketOverlap * NPC.scale * 2f;
+                        Vector2 neckScale = new Vector2(NPC.scale, neckLength / neckTexture.Height);
+                        Vector2 neckOrigin = new Vector2(neckTexture.Width / 2f, neckTexture.Height / 2f);
+                        float neckForwardX = (float)Math.Sin(neckRotation);
+                        SpriteEffects neckEffects = SpriteEffects.None;
+                        if (neckForwardX > 0f)
+                        {
+                            neckEffects = SpriteEffects.FlipHorizontally;
+                        }
+
+                        spriteBatch.Draw(neckTexture, neckPosition, null, headColor, neckRotation, neckOrigin, neckScale, neckEffects, 0f);
+                    }
+                }
+            }
 
             if (IsLunging)
             {
@@ -447,11 +570,11 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
                 {
                     Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height / 2f) - screenPos;
                     Color color = NPC.GetAlpha(drawColor) * ((float)(NPC.oldPos.Length - k) / NPC.oldPos.Length) * 0.6f;
-                    spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, origin, NPC.scale, effects, 0f);
+                    spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, HeadDrawOrigin, NPC.scale, effects, 0f);
                 }
             }
 
-            spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, NPC.GetAlpha(drawColor), NPC.rotation, origin, NPC.scale, effects, 0f);
+            spriteBatch.Draw(texture, NPC.Center - screenPos, NPC.frame, headColor, NPC.rotation, HeadDrawOrigin, NPC.scale, effects, 0f);
             return false;
         }
 

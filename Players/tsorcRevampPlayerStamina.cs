@@ -110,6 +110,7 @@ namespace tsorcRevamp
         /// </summary>
         public float staminaResourceGainMult = 1;
         public float staminaResourceGain;
+        internal float UnrestrictedStaminaRegenGain { get; private set; }
         internal float staminaResourceRegenTimer = 0f;
         public static readonly Color RestoreStaminaResource = new Color(20, 100, 20); // We can use this for CombatText, if you create an item that replenishes exampleResourceCurrent.
 
@@ -778,6 +779,10 @@ namespace tsorcRevamp
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
         {
+            // Puppets share class/gear recovery, but not the owner's held-weapon suppression, shield penalty,
+            // or stationary bonus. Capture the gain before those per-actor modifiers below.
+            UnrestrictedStaminaRegenGain = staminaResourceGainMult * staminaResourceRegenRate;
+
             var staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
             var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             //Main.NewText("Stamina: " + staminaResourceCurrent + "/" + staminaResourceMax2);

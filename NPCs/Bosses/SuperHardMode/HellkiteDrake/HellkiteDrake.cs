@@ -33,16 +33,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         public const float ArtScale = 1f;
         public const int BiteTell = 30;
-        public const int BiteLive = 12;
+        public const int BiteLive = 16;
+        public const int BiteHoldTicks = 8;
+        public const int BiteRetractTicks = 18;
         public const int BreathTell = 70;
-        public const int BreathLive = 45;
+        public const int BreathLive = 90;
         public const int BreathCloseTicks = 12;
         public const int BreathShotInterval = 3;
-        public const float BreathSweepDegreesPerTick = 1.2f;
+        public const float BreathSweepDegreesPerTick = 0.6f;
         public const int TailTell = 46;
         public const int TailLive = 12;
         public const int AirTell = 44;
-        public const int AirLive = 48;
+        public const int AirLive = 96;
+        public const int HeadDefense = 0;
+        public const int NeckDefense = 150;
+        public const int BodyDefense = 100;
+        public const int TailDefense = 180;
         private const int TurnStretchFactor = 3;
         private const int TurnTicks = 104 * TurnStretchFactor;
         private const int TurnNeckTicks = 70 * TurnStretchFactor;
@@ -60,6 +66,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private static readonly int[] TurnWingRows = { 0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 0 };
         private static readonly int[] NeckParts = { 16, 17, 1, 2, 3, 15 };
         private static readonly float[] NeckTurnAngles = { 0.55f, 0.75f, 0.9f, 1f, 1f };
+        private static readonly float[] TailRaiseAngles = { -0.35f, -0.50f, -0.60f, -0.62f };
+        private static readonly float[] TailSlamAngles = { 0.42f, 0.48f, 0.72f, 0.75f };
         private static readonly Vector2[] TurnFootContacts =
         {
             new Vector2(414f, 473f),
@@ -107,6 +115,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             new Part("ShoulderSkin", 160, 208, new Vector2(400f, 332f), new Vector2(158f, 102f), 1)
         };
 
+        internal readonly int[] partHitboxes = { -1, -1, -1, -1, -1, -1, -1, -1 };
         private readonly Bone[] bones = new Bone[23];
         private readonly Vector2[] tailJoints = new Vector2[5];
         private readonly Vector2[] turnJoints = new Vector2[6];
@@ -119,6 +128,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private Vector2 previousTail;
         private float walkClock;
         private float biteSpeed = 7.5f;
+        private float biteReach = 96f;
+        private float currentBiteExtension;
         private int flightCooldown;
         private int tailCooldown;
         private int groundedTicks;
@@ -126,6 +137,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private int turnFacing = -1;
         private int sequence;
         private int visualSequence = -1;
+        private int previousLegWalkRow = -1;
         private int blockedTicks;
         private bool initialized;
 
@@ -169,7 +181,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             NPC.scale = 1f;
             NPC.aiStyle = -1;
             NPC.lifeMax = 475000;
-            NPC.defense = 100;
+            NPC.defense = BodyDefense;
             NPC.damage = 0;
             NPC.boss = true;
             NPC.knockBackResist = 0f;
@@ -211,6 +223,86 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             return false;
         }
 
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            ShareHitImmunity(player.whoAmI, null);
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            ShareHitImmunity(projectile.owner, projectile);
+        }
+
+        internal void ShareHitImmunity(int playerIndex, Projectile projectile)
+        {
+            int immuneTime = 0;
+            if (playerIndex >= 0 && playerIndex < Main.maxPlayers)
+            {
+                immuneTime = NPC.immune[playerIndex];
+                for (int i = 0; i < partHitboxes.Length; i++)
+                {
+                    int childIndex = partHitboxes[i];
+                    if (childIndex >= 0 && childIndex < Main.maxNPCs && Main.npc[childIndex].active)
+                    {
+                        immuneTime = Math.Max(immuneTime, Main.npc[childIndex].immune[playerIndex]);
+                    }
+                }
+            }
+
+            if (immuneTime > 0 && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+            {
+                NPC.immune[playerIndex] = Math.Max(NPC.immune[playerIndex], immuneTime);
+            }
+
+            if (projectile != null && projectile.usesLocalNPCImmunity)
+            {
+                int localCooldown = projectile.localNPCImmunity[NPC.whoAmI];
+                for (int i = 0; i < partHitboxes.Length; i++)
+                {
+                    int childIndex = partHitboxes[i];
+                    if (childIndex >= 0 && childIndex < Main.maxNPCs)
+                    {
+                        localCooldown = Math.Max(localCooldown, projectile.localNPCImmunity[childIndex]);
+                    }
+                }
+
+                if (localCooldown != 0)
+                {
+                    projectile.localNPCImmunity[NPC.whoAmI] = localCooldown;
+                }
+            }
+
+            for (int i = 0; i < partHitboxes.Length; i++)
+            {
+                int childIndex = partHitboxes[i];
+                if (childIndex < 0 || childIndex >= Main.maxNPCs || !Main.npc[childIndex].active)
+                {
+                    continue;
+                }
+
+                if (immuneTime > 0 && playerIndex >= 0 && playerIndex < Main.maxPlayers)
+                {
+                    Main.npc[childIndex].immune[playerIndex] = Math.Max(Main.npc[childIndex].immune[playerIndex], immuneTime);
+                }
+
+                if (projectile != null && projectile.usesLocalNPCImmunity)
+                {
+                    int localCooldown = projectile.localNPCImmunity[NPC.whoAmI];
+                    if (localCooldown != 0)
+                    {
+                        projectile.localNPCImmunity[childIndex] = localCooldown;
+                    }
+                }
+            }
+        }
+
+        public Vector2 GetPartWorldCenter(int partIndex)
+        {
+            Part part = Parts[partIndex];
+            Vector2 sourceCenter = part.RestPivot + new Vector2(part.Width * 0.5f, part.Height * 0.5f) - part.Origin;
+            return ToWorld(bones[partIndex].Map(sourceCenter));
+        }
+
         public override bool? CanFallThroughPlatforms()
         {
             return false;
@@ -218,6 +310,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         public override void AI()
         {
+            // Enforce exact body defense every tick so global SuperHardMode defense scaling does not alter it.
+            NPC.defense = BodyDefense;
+            NPC.realLife = NPC.whoAmI;
             bool authority = Main.netMode != NetmodeID.MultiplayerClient;
             if (!initialized)
             {
@@ -277,10 +372,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 {
                     groundedTicks++;
                 }
+
+                int hitboxType = ModContent.NPCType<HellkiteDrakeHitbox>();
+                for (int slot = 0; slot < partHitboxes.Length; slot++)
+                {
+                    int currentId = partHitboxes[slot];
+                    bool valid = currentId >= 0 && currentId < Main.maxNPCs
+                        && Main.npc[currentId].active
+                        && Main.npc[currentId].type == hitboxType
+                        && (int)Main.npc[currentId].ai[0] == NPC.whoAmI
+                        && (int)Main.npc[currentId].ai[1] == slot;
+                    if (!valid)
+                    {
+                        for (int i = 0; i < Main.maxNPCs; i++)
+                        {
+                            NPC candidate = Main.npc[i];
+                            if (candidate.active && candidate.type == hitboxType
+                                && (int)candidate.ai[0] == NPC.whoAmI && (int)candidate.ai[1] == slot)
+                            {
+                                partHitboxes[slot] = i;
+                                valid = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!valid)
+                    {
+                        int spawned = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y,
+                            hitboxType, NPC.whoAmI, NPC.whoAmI, slot);
+                        if (spawned >= 0 && spawned < Main.maxNPCs)
+                        {
+                            partHitboxes[slot] = spawned;
+                            Main.npc[spawned].realLife = NPC.whoAmI;
+                            Main.npc[spawned].netUpdate = true;
+                        }
+                    }
+                }
             }
 
             previousMouth = Mouth;
-            previousTail = TailEnd;
+            previousTail = TailJoint;
             UpdatePose();
 
             switch (State)
@@ -313,23 +445,50 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     break;
 
                 case DrakeState.Bite:
-                    NPC.velocity.X *= 0.75f;
-                    if (StateTimer < BiteTell - 8)
+                    NPC.velocity.X *= 0.78f;
+                    if (StateTimer < BiteTell - 6)
                     {
-                        lockedAim = AimAt(target.Center, 0.45f);
+                        Vector2 toTarget = target.Center - Mouth;
+                        float targetDistance = Math.Max(0f, toTarget.Length() - 18f);
+                        lockedAim = AimAt(target.Center, 0.75f);
+                        // Stretch at least 5 tiles (80px) and up to 7 tiles (112px) dynamically toward the player.
+                        biteReach = MathHelper.Clamp(targetDistance * 0.65f, 80f, 112f);
                     }
 
-                    if (authority && StateTimer == BiteTell - 8)
+                    if (authority && StateTimer == BiteTell - 6)
                     {
-                        lockedAim = AimAt(target.Center, 0.45f);
-                        float gap = (target.Center.X - Mouth.X) * Facing;
-                        biteSpeed = MathHelper.Clamp((gap + 22f) / BiteLive, 4f, 12.5f);
+                        Vector2 toTarget = target.Center - Mouth;
+                        float targetDistance = Math.Max(0f, toTarget.Length() - 18f);
+                        lockedAim = AimAt(target.Center, 0.75f);
+                        biteReach = MathHelper.Clamp(targetDistance * 0.65f, 80f, 112f);
+                        float forwardGap = (target.Center.X - Mouth.X) * Facing;
+                        biteSpeed = MathHelper.Clamp((forwardGap - biteReach * 0.45f) / BiteLive, 4.5f, 9.5f);
                         NPC.netUpdate = true;
+                    }
+
+                    // Push in with a small forward hop right as the jaws lunge out.
+                    if (StateTimer == BiteTell - 2 && onGround)
+                    {
+                        Vector2 hopProbe = NPC.Bottom + new Vector2(Facing * (NPC.width * 0.5f + 48f), 2f);
+                        if (Supported(hopProbe) || Supported(hopProbe + Vector2.UnitY * 16f))
+                        {
+                            NPC.velocity.Y = -3.8f;
+                            NPC.velocity.X = Facing * Math.Max(4f, biteSpeed * 0.75f);
+                        }
                     }
 
                     if (StateTimer >= BiteTell && StateTimer < BiteTell + BiteLive)
                     {
-                        NPC.velocity.X = Facing * biteSpeed;
+                        Vector2 lungeProbe = NPC.Bottom + new Vector2(Facing * (NPC.width * 0.5f + 20f), 2f);
+                        bool lungeSupported = !onGround || Supported(lungeProbe) || Supported(lungeProbe + Vector2.UnitY * 16f);
+                        if (lungeSupported && !NPC.collideX)
+                        {
+                            NPC.velocity.X = Facing * biteSpeed;
+                        }
+                        else
+                        {
+                            NPC.velocity.X = 0f;
+                        }
                     }
 
                     if (authority && StateTimer == BiteTell)
@@ -337,9 +496,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                         SpawnAttack(0, 75);
                     }
 
-                    if (authority && StateTimer >= BiteTell + BiteLive + 8)
+                    if (authority && StateTimer >= BiteTell + BiteLive + BiteHoldTicks + BiteRetractTicks)
                     {
-                        BeginRecovery(34);
+                        BeginRecovery(30);
                     }
                     break;
 
@@ -375,10 +534,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                         SpawnAttack(2, 90);
                     }
 
-                    if (authority && StateTimer >= TailTell + TailLive + 10)
+                    if (authority && StateTimer >= TailTell + TailLive + 18)
                     {
                         tailCooldown = 150;
-                        BeginRecovery(42);
+                        BeginRecovery(34);
                     }
                     break;
 
@@ -405,6 +564,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
 
             UpdatePose();
+            for (int slot = 0; slot < partHitboxes.Length; slot++)
+            {
+                int childIndex = partHitboxes[slot];
+                if (childIndex >= 0 && childIndex < Main.maxNPCs && Main.npc[childIndex].active
+                    && Main.npc[childIndex].ModNPC is HellkiteDrakeHitbox hitbox)
+                {
+                    hitbox.SyncToDrake(this, slot);
+                }
+            }
+
             if (!Main.dedServ)
             {
                 TickPresentation();
@@ -475,7 +644,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 if (move == DrakeState.Bite)
                 {
-                    return forward >= -15f && forward <= 90f && Math.Abs(target.Center.Y - Mouth.Y) < 140f
+                    return forward >= -15f && forward <= 220f && Math.Abs(target.Center.Y - Mouth.Y) < 175f
                         && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
                 }
 
@@ -524,7 +693,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     blockedTicks = 0;
                 }
 
-                lockedAim = AimAt(target.Center, 0.55f);
+                if (chosen == DrakeState.Bite)
+                {
+                    Vector2 toTarget = target.Center - Mouth;
+                    float targetDistance = Math.Max(0f, toTarget.Length() - 18f);
+                    lockedAim = AimAt(target.Center, 0.75f);
+                    biteReach = MathHelper.Clamp(targetDistance * 0.65f, 80f, 112f);
+                }
+                else
+                {
+                    lockedAim = AimAt(target.Center, 0.55f);
+                }
+
                 EnterState(chosen);
                 return;
             }
@@ -782,10 +962,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
 
             UpdatePose();
-            Vector2 velocity = BreathDirection * DemonBreath.Speed + Main.rand.NextVector2Circular(0.6f, 0.6f);
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), Mouth, velocity,
-                ModContent.ProjectileType<HellkiteDrakeFlame>(), damage, 0f, Main.myPlayer,
-                (float)DemonTier.Oolacile, NPC.whoAmI);
+            // Emit three lanes across a ~4-tile (64px) mouth span that fan outward by ±9.5° as they travel.
+            Vector2 forward = BreathDirection.SafeNormalize(new Vector2(Facing, 0f));
+            Vector2 sideways = new Vector2(-forward.Y, forward.X);
+            int flameType = ModContent.ProjectileType<HellkiteDrakeFlame>();
+            for (int lane = -1; lane <= 1; lane++)
+            {
+                Vector2 spawnPosition = Mouth + sideways * (lane * 14f);
+                float spreadAngle = lane * MathHelper.ToRadians(9.5f) + Main.rand.NextFloat(-0.045f, 0.045f);
+                float speed = DemonBreath.Speed * Main.rand.NextFloat(0.92f, 1.08f);
+                Vector2 velocity = forward.RotatedBy(spreadAngle) * speed;
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPosition, velocity,
+                    flameType, damage, 0f, Main.myPlayer,
+                    (float)DemonTier.Oolacile, NPC.whoAmI);
+            }
         }
 
         private Vector2 GetBreathAim()
@@ -842,6 +1032,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             writer.Write(recoveryTicks);
             writer.Write(walkClock);
             writer.Write(biteSpeed);
+            writer.Write(biteReach);
             writer.Write(lockedAim.X);
             writer.Write(lockedAim.Y);
             writer.Write(lockedImpact.X);
@@ -860,6 +1051,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             recoveryTicks = reader.ReadInt32();
             walkClock = reader.ReadSingle();
             biteSpeed = reader.ReadSingle();
+            biteReach = reader.ReadSingle();
             lockedAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             lockedImpact = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             waypoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
@@ -925,7 +1117,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             if (State == DrakeState.Bite)
             {
                 mouthRow = 1;
-                if (StateTimer >= BiteTell - 6)
+                if (StateTimer >= BiteTell - 6 && StateTimer < BiteTell + BiteLive + BiteHoldTicks)
                 {
                     mouthRow = 2;
                 }
@@ -1032,19 +1224,61 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             float neckBend = 0.04f * MathF.Sin(phase);
             float secondBend = -0.03f * MathF.Sin(phase - 0.4f);
             float thirdBend = 0.025f * MathF.Sin(phase - 0.8f);
+            currentBiteExtension = 0f;
+            float biteAimWeight = 0f;
             if (State == DrakeState.Bite)
             {
                 float curl = MathHelper.Clamp(StateTimer / (float)BiteTell, 0f, 1f);
                 if (StateTimer >= BiteTell)
                 {
-                    curl = MathHelper.Lerp(1f, -0.3f, MathHelper.Clamp((StateTimer - BiteTell) / 6f, 0f, 1f));
+                    curl = MathHelper.Lerp(1f, -0.2f, MathHelper.Clamp((StateTimer - BiteTell) / 6f, 0f, 1f));
+                }
+
+                if (StateTimer >= BiteTell + BiteLive + BiteHoldTicks)
+                {
+                    int retractTick = StateTimer - (BiteTell + BiteLive + BiteHoldTicks);
+                    float retractT = MathHelper.Clamp(retractTick / (float)BiteRetractTicks, 0f, 1f);
+                    curl *= 1f - MathHelper.SmoothStep(0f, 1f, retractT);
                 }
 
                 neckBend += 0.45f * curl;
                 secondBend -= 0.85f * curl;
                 thirdBend += 0.4f * curl;
                 float drop = MathHelper.Clamp((StateTimer - BiteTell + 2f) / 6f, 0f, 1f);
+                if (StateTimer >= BiteTell + BiteLive + BiteHoldTicks)
+                {
+                    int retractTick = StateTimer - (BiteTell + BiteLive + BiteHoldTicks);
+                    float retractT = MathHelper.Clamp(retractTick / (float)BiteRetractTicks, 0f, 1f);
+                    drop *= 1f - MathHelper.SmoothStep(0f, 1f, retractT);
+                }
+
                 neckBend -= 0.25f * drop;
+
+                if (StateTimer < BiteTell)
+                {
+                    float windupAim = MathHelper.Clamp((StateTimer - (BiteTell - 10f)) / 10f, 0f, 1f);
+                    biteAimWeight = MathHelper.SmoothStep(0f, 0.35f, windupAim);
+                }
+                else if (StateTimer < BiteTell + BiteLive)
+                {
+                    float lungeProgress = MathHelper.Clamp((StateTimer - BiteTell + 1f) / 7f, 0f, 1f);
+                    float easedLunge = 1f - MathF.Pow(1f - lungeProgress, 3f);
+                    currentBiteExtension = biteReach * easedLunge;
+                    biteAimWeight = MathHelper.Lerp(0.35f, 1f, easedLunge);
+                }
+                else if (StateTimer < BiteTell + BiteLive + BiteHoldTicks)
+                {
+                    currentBiteExtension = biteReach;
+                    biteAimWeight = 1f;
+                }
+                else
+                {
+                    int retractElapsed = StateTimer - (BiteTell + BiteLive + BiteHoldTicks);
+                    float retractProgress = MathHelper.Clamp(retractElapsed / (float)BiteRetractTicks, 0f, 1f);
+                    float retractFactor = 0.5f * (1f + MathF.Cos(MathHelper.Pi * retractProgress));
+                    currentBiteExtension = biteReach * retractFactor;
+                    biteAimWeight = retractFactor;
+                }
             }
 
             // Share the bend outside the turn so the overlapping throat links stay aligned while attacking.
@@ -1054,6 +1288,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 // The lowered resting neck needs jaw clearance during the lunge. Raise the chain
                 // 26px over the final eight tell ticks, keeping the drawn jaw and damage sockets together.
                 float jawClearance = MathHelper.Clamp((StateTimer - BiteTell + 8f) / 8f, 0f, 1f);
+                if (StateTimer >= BiteTell + BiteLive + BiteHoldTicks)
+                {
+                    int retractTick = StateTimer - (BiteTell + BiteLive + BiteHoldTicks);
+                    float retractT = MathHelper.Clamp(retractTick / (float)BiteRetractTicks, 0f, 1f);
+                    jawClearance *= 1f - MathHelper.SmoothStep(0f, 1f, retractT);
+                }
+
                 neckRoot.Y -= 26f * MathHelper.SmoothStep(0f, 1f, jawClearance);
             }
             else if (State == DrakeState.Breath)
@@ -1092,6 +1333,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 headAngle = MathHelper.Lerp(headAngle, 0.02f * MathF.Sin(phase - 0.8f), breathClosing);
             }
 
+            if (State == DrakeState.Bite && (currentBiteExtension > 0.01f || biteAimWeight > 0.01f))
+            {
+                // Extend the neck chain 5–7 tiles along the locked aim vector and steer each link toward the bite angle.
+                Vector2 sourceAim = new Vector2(-lockedAim.X * Facing, lockedAim.Y).SafeNormalize(-Vector2.UnitX);
+                bones[16].Position += sourceAim * (currentBiteExtension * 0.12f);
+                bones[17].Position += sourceAim * (currentBiteExtension * 0.25f);
+                bones[1].Position += sourceAim * (currentBiteExtension * 0.42f);
+                bones[2].Position += sourceAim * (currentBiteExtension * 0.65f);
+                bones[3].Position += sourceAim * (currentBiteExtension * 0.88f);
+                headPosition += sourceAim * currentBiteExtension;
+
+                bones[1].Rotation = MathHelper.Lerp(bones[1].Rotation, headAngle * 0.55f, biteAimWeight);
+                bones[2].Rotation = MathHelper.Lerp(bones[2].Rotation, headAngle * 0.75f, biteAimWeight);
+                bones[3].Rotation = MathHelper.Lerp(bones[3].Rotation, headAngle * 0.92f, biteAimWeight);
+            }
+
             bones[15] = new Bone(Parts[15].RestPivot, headPosition, headAngle);
             if (State == DrakeState.Turn)
             {
@@ -1120,21 +1377,39 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             if (State == DrakeState.TailSlam)
             {
-                Vector2 raised = TailRest[0] + new Vector2(170f, -175f);
-                Vector2 end = raised;
-                if (StateTimer < TailTell)
+                // Rotate each tail segment forward-kinematically from TailRest instead of pulling the
+                // upward-curled TailTip with FABRIK IK, which flipped the tip upside down on impact.
+                float floorDeltaAngle = MathHelper.Clamp((ToSource(lockedImpact).Y - SourceFloor.Y) / 260f, -0.22f, 0.22f);
+                for (int i = 0; i < 4; i++)
                 {
-                    float progress = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(StateTimer / 34f, 0f, 1f));
-                    end = Vector2.Lerp(TailRest[4], raised, progress);
-                }
-                else
-                {
-                    float progress = MathHelper.Clamp((StateTimer - TailTell) / 9f, 0f, 1f);
-                    progress *= progress;
-                    end = Vector2.Lerp(raised, ToSource(lockedImpact), progress);
-                }
+                    float raiseAngle = TailRaiseAngles[i];
+                    float slamAngle = TailSlamAngles[i] + floorDeltaAngle;
+                    float segmentAngle;
+                    if (StateTimer < TailTell)
+                    {
+                        float raiseProgress = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(StateTimer / 36f, 0f, 1f));
+                        segmentAngle = raiseAngle * raiseProgress;
+                    }
+                    else if (StateTimer < TailTell + 9)
+                    {
+                        float slamProgress = MathHelper.Clamp((StateTimer - TailTell) / 9f, 0f, 1f);
+                        slamProgress *= slamProgress;
+                        segmentAngle = MathHelper.Lerp(raiseAngle, slamAngle, slamProgress);
+                    }
+                    else if (StateTimer < TailTell + TailLive + 4)
+                    {
+                        segmentAngle = slamAngle;
+                    }
+                    else
+                    {
+                        int recoverElapsed = StateTimer - (TailTell + TailLive + 4);
+                        float recoverProgress = MathHelper.Clamp(recoverElapsed / 14f, 0f, 1f);
+                        segmentAngle = slamAngle * (1f - MathHelper.SmoothStep(0f, 1f, recoverProgress));
+                    }
 
-                SolveTail(end);
+                    Vector2 restSegment = TailRest[i + 1] - TailRest[i];
+                    tailJoints[i + 1] = tailJoints[i] + restSegment.RotatedBy(segmentAngle);
+                }
             }
             else
             {
@@ -1380,40 +1655,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
         }
 
-        private void SolveTail(Vector2 target)
-        {
-            Vector2 root = tailJoints[0];
-            float total = 0f;
-            for (int i = 0; i < 4; i++)
-            {
-                total += Vector2.Distance(TailRest[i], TailRest[i + 1]);
-            }
-
-            if (Vector2.Distance(root, target) > total - 1f)
-            {
-                target = root + (target - root).SafeNormalize(Vector2.UnitX) * (total - 1f);
-            }
-
-            for (int pass = 0; pass < 7; pass++)
-            {
-                tailJoints[4] = target;
-                for (int i = 3; i >= 0; i--)
-                {
-                    float length = Vector2.Distance(TailRest[i], TailRest[i + 1]);
-                    Vector2 direction = (tailJoints[i] - tailJoints[i + 1]).SafeNormalize(-Vector2.UnitX);
-                    tailJoints[i] = tailJoints[i + 1] + direction * length;
-                }
-
-                tailJoints[0] = root;
-                for (int i = 0; i < 4; i++)
-                {
-                    float length = Vector2.Distance(TailRest[i], TailRest[i + 1]);
-                    Vector2 direction = (tailJoints[i + 1] - tailJoints[i]).SafeNormalize(Vector2.UnitX);
-                    tailJoints[i + 1] = tailJoints[i] + direction * length;
-                }
-            }
-        }
-
         public static Vector2 ClipLine(Vector2 start, Vector2 end)
         {
             Vector2 difference = end - start;
@@ -1446,7 +1687,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 start = Jaw;
                 end = ClipLine(Jaw, Mouth);
                 sweptStart = previousMouth;
-                if (Vector2.DistanceSquared(sweptStart, Mouth) > 10000f)
+                if (Vector2.DistanceSquared(sweptStart, Mouth) > 16000f)
                 {
                     sweptStart = Mouth;
                 }
@@ -1457,15 +1698,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             if (kind == 2 && State == DrakeState.TailSlam && StateTimer >= TailTell && StateTimer < TailTell + TailLive)
             {
-                start = TailJoint;
-                end = ClipLine(TailJoint, TailEnd);
+                Vector2 tailMid = ToWorld(tailJoints[1]);
+                start = tailMid;
+                end = ClipLine(tailMid, TailJoint);
                 sweptStart = previousTail;
-                if (Vector2.DistanceSquared(sweptStart, TailEnd) > 40000f)
+                if (Vector2.DistanceSquared(sweptStart, TailJoint) > 40000f)
                 {
-                    sweptStart = TailEnd;
+                    sweptStart = TailJoint;
                 }
 
-                sweptEnd = ClipLine(sweptStart, TailEnd);
+                sweptEnd = ClipLine(sweptStart, TailJoint);
                 return true;
             }
 
@@ -1474,6 +1716,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         private void TickPresentation()
         {
+            // Trigger IceGigas-style footstep sound and screen shake each time the near (row 0) or far (row 4) foot lands.
+            int legWalkRow = bones[13].FrameRow;
+            if (!Airborne && State != DrakeState.Turn && NPC.collideY && Math.Abs(NPC.velocity.X) > 0.1f)
+            {
+                if (legWalkRow != previousLegWalkRow && (legWalkRow == 0 || legWalkRow == 4))
+                {
+                    SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.5f, Pitch = -0.1f }, NPC.Bottom);
+                    UsefulFunctions.ScreenShake(NPC.Bottom, 1.5f, 8, 6f, 350f);
+                }
+            }
+
+            previousLegWalkRow = legWalkRow;
+
             if (visualSequence != sequence)
             {
                 visualSequence = sequence;
@@ -1489,6 +1744,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 {
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.45f, Pitch = -0.6f }, TailBase);
                 }
+            }
+
+            if (State == DrakeState.Bite && StateTimer == BiteTell + 3)
+            {
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.45f, Pitch = -0.2f }, Mouth);
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, Pitch = -0.45f }, Mouth);
+                UsefulFunctions.ScreenShake(Mouth, 2.2f, 8, distanceFalloff: 420f);
             }
 
             int tell = BreathTell;
@@ -1549,11 +1811,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             if (State == DrakeState.TailSlam && StateTimer == TailTell + 9)
             {
-                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.55f, Pitch = -0.55f }, TailEnd);
+                // Owl Father ground slam impact sound, screen shake, and fire/dirt ground burst along the slammed tail.
+                Vector2 slamStart = ToWorld(tailJoints[2]);
+                Vector2 slamEnd = TailJoint;
+                Vector2 impactCenter = Vector2.Lerp(slamStart, slamEnd, 0.5f);
+                SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
+                {
+                    Volume = 0.55f,
+                    Pitch = 0.12f
+                }, impactCenter);
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.5f, Pitch = -0.25f }, impactCenter);
+                UsefulFunctions.ScreenShake(impactCenter, 3.75f, 11, distanceFalloff: 560f);
+
+                for (int i = 0; i < 32; i++)
+                {
+                    Vector2 dustPosition = Vector2.Lerp(slamStart, slamEnd, Main.rand.NextFloat());
+                    dustPosition.Y += Main.rand.NextFloat(-6f, 6f);
+                    float horizontalSpeed = Main.rand.NextFloat(-6.5f, 6.5f);
+                    Vector2 dustVelocity = new Vector2(horizontalSpeed, Main.rand.NextFloat(-4.2f, -0.5f));
+                    int dustType = DustID.Torch;
+                    if (i % 3 == 0)
+                    {
+                        dustType = DustID.GoldFlame;
+                    }
+                    else if (i % 2 == 0)
+                    {
+                        dustType = DustID.OrangeTorch;
+                    }
+
+                    Dust fireDust = Dust.NewDustPerfect(dustPosition, dustType, dustVelocity, 80, default, Main.rand.NextFloat(1.3f, 2f));
+                    fireDust.noGravity = true;
+                }
+
                 for (int i = 0; i < 26; i++)
                 {
-                    Dust.NewDustPerfect(TailEnd, DustID.Dirt,
-                        new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-4f, -1f)), 0, default, 1.1f);
+                    Vector2 dirtPosition = Vector2.Lerp(slamStart, slamEnd, Main.rand.NextFloat());
+                    Vector2 dirtVelocity = new Vector2(Main.rand.NextFloat(-4.5f, 4.5f), Main.rand.NextFloat(-4.5f, -1f));
+                    Dust.NewDustPerfect(dirtPosition, DustID.Dirt, dirtVelocity, 0, default, Main.rand.NextFloat(1.05f, 1.45f));
                 }
             }
 
@@ -1619,10 +1913,35 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             DrawPart(spriteBatch, 16, 0, screenPos, drawColor);
             DrawPart(spriteBatch, 17, 0, screenPos, drawColor);
 
-            for (int i = 3; i >= 1; i--)
+            // When the neck stretches 5–7 tiles during Bite, draw interpolated Neck3/Neck2 links so no gaps open.
+            bool drawExtraNeckLinks = State == DrakeState.Bite && currentBiteExtension > 4f;
+            if (drawExtraNeckLinks)
             {
-                DrawPart(spriteBatch, i, 0, screenPos, drawColor);
+                Bone extraTip = new Bone(Parts[3].RestPivot,
+                    Vector2.Lerp(bones[3].Position, bones[15].Position, 0.5f),
+                    MathHelper.Lerp(bones[3].Rotation, bones[15].Rotation, 0.5f));
+                DrawPartAtBone(spriteBatch, 3, 0, extraTip, screenPos, drawColor);
             }
+
+            DrawPart(spriteBatch, 3, 0, screenPos, drawColor);
+            if (drawExtraNeckLinks)
+            {
+                Bone extraMid = new Bone(Parts[2].RestPivot,
+                    Vector2.Lerp(bones[2].Position, bones[3].Position, 0.5f),
+                    MathHelper.Lerp(bones[2].Rotation, bones[3].Rotation, 0.5f));
+                DrawPartAtBone(spriteBatch, 2, 0, extraMid, screenPos, drawColor);
+            }
+
+            DrawPart(spriteBatch, 2, 0, screenPos, drawColor);
+            if (drawExtraNeckLinks)
+            {
+                Bone extraBase = new Bone(Parts[2].RestPivot,
+                    Vector2.Lerp(bones[1].Position, bones[2].Position, 0.5f),
+                    MathHelper.Lerp(bones[1].Rotation, bones[2].Rotation, 0.5f));
+                DrawPartAtBone(spriteBatch, 2, 0, extraBase, screenPos, drawColor);
+            }
+
+            DrawPart(spriteBatch, 1, 0, screenPos, drawColor);
 
             if (State == DrakeState.Turn)
             {
@@ -1637,24 +1956,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 DrawPart(spriteBatch, 15, mouthRow, screenPos, drawColor);
             }
 
-            if (State == DrakeState.Breath && StateTimer < BreathTell && StateTimer >= BreathTell - 12)
-            {
-                Vector2 end = ClipLine(Mouth, Mouth + lockedAim * DemonBreath.Speed * DemonBreath.LifetimeTicks);
-                DrawLine(spriteBatch, Mouth - screenPos, end - screenPos, Color.Orange * 0.45f, 2f);
-                float halfSweep = MathHelper.ToRadians(BreathLive * BreathSweepDegreesPerTick * 0.5f);
-                for (int i = -1; i <= 1; i += 2)
-                {
-                    Vector2 edgeAim = lockedAim.RotatedBy(halfSweep * i);
-                    Vector2 edge = ClipLine(Mouth, Mouth + edgeAim * DemonBreath.Speed * DemonBreath.LifetimeTicks);
-                    DrawLine(spriteBatch, Mouth - screenPos, edge - screenPos, Color.Orange * 0.25f, 1f);
-                }
-            }
-
-            if (State == DrakeState.AirBreath && StateTimer < AirTell)
-            {
-                DrawLine(spriteBatch, lockedImpact - new Vector2(36f, 0f) - screenPos,
-                    lockedImpact + new Vector2(36f, 0f) - screenPos, Color.Orange * 0.7f, 3f);
-            }
+            // Orange breath telegraph lines are deliberately omitted per user specification; the neck
+            // raise, jaw opening, growl, and mouth smoulder/ember swell serve as the breath tell.
 
             if (ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode)
             {
@@ -1667,6 +1970,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         private void DrawPart(SpriteBatch spriteBatch, int index, int row, Vector2 screenPos, Color color)
         {
+            DrawPartAtBone(spriteBatch, index, row, bones[index], screenPos, color);
+        }
+
+        private void DrawPartAtBone(SpriteBatch spriteBatch, int index, int row, Bone bone, Vector2 screenPos, Color color)
+        {
             Part part = Parts[index];
             part.Asset ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HellkiteDrake)) + "_" + part.Name);
             Texture2D texture = part.Asset.Value;
@@ -1674,15 +1982,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             Vector2 origin = part.Origin;
             float projection = Projection();
             SpriteEffects effects = SpriteEffects.None;
-            float rotation = bones[index].Rotation * projection;
-            if (projection * bones[index].HorizontalSign < 0f)
+            float rotation = bone.Rotation * projection;
+            if (projection * bone.HorizontalSign < 0f)
             {
                 effects = SpriteEffects.FlipHorizontally;
                 origin.X = frame.Width - origin.X;
             }
 
             Vector2 scale = new Vector2(ArtScale);
-            spriteBatch.Draw(texture, ToWorld(bones[index].Position) - screenPos, frame, color, rotation, origin, scale, effects, 0f);
+            spriteBatch.Draw(texture, ToWorld(bone.Position) - screenPos, frame, color, rotation, origin, scale, effects, 0f);
         }
 
         internal static void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, float width)
@@ -1737,6 +2045,162 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 offset.X *= HorizontalSign;
                 return Position + offset.RotatedBy(Rotation);
             }
+        }
+    }
+
+    // Per-part hurtbox NPC bound to HellkiteDrake via NPC.realLife so each anatomical region
+    // (Head = 0 def, Neck = 150 def, Tail = 180 def) applies its own defense to shared boss HP.
+    public class HellkiteDrakeHitbox : ModNPC
+    {
+        private static readonly int[] SlotPartIndices = { 15, 1, 2, 3, 4, 5, 6, 7 };
+        private static readonly int[] SlotWidths = { 96, 76, 74, 68, 78, 86, 82, 72 };
+        private static readonly int[] SlotHeights = { 84, 76, 74, 68, 68, 64, 72, 68 };
+
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Content.Projectiles.InvisibleNothingProj));
+
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.NPCBestiaryDrawModifiers bestiaryModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers()
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, bestiaryModifiers);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire3] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            NPC.width = 72;
+            NPC.height = 72;
+            NPC.aiStyle = -1;
+            NPC.lifeMax = 475000;
+            NPC.defense = HellkiteDrake.NeckDefense;
+            NPC.damage = 0;
+            NPC.knockBackResist = 0f;
+            NPC.value = 0f;
+            NPC.npcSlots = 0f;
+            NPC.noTileCollide = true;
+            NPC.noGravity = true;
+            NPC.netAlways = true;
+            NPC.HitSound = SoundID.NPCHit13;
+            NPC.DeathSound = SoundID.Item119;
+        }
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
+
+        public override bool PreKill()
+        {
+            return false;
+        }
+
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            return false;
+        }
+
+        public override void AI()
+        {
+            int ownerIndex = (int)NPC.ai[0];
+            int slot = (int)NPC.ai[1];
+            if (ownerIndex < 0 || ownerIndex >= Main.maxNPCs || slot < 0 || slot >= SlotPartIndices.Length)
+            {
+                NPC.active = false;
+                return;
+            }
+
+            NPC owner = Main.npc[ownerIndex];
+            if (!owner.active || owner.ModNPC is not HellkiteDrake drake)
+            {
+                NPC.active = false;
+                return;
+            }
+
+            drake.partHitboxes[slot] = NPC.whoAmI;
+            SyncToDrake(drake, slot);
+        }
+
+        internal void SyncToDrake(HellkiteDrake drake, int slot)
+        {
+            NPC owner = drake.NPC;
+            NPC.realLife = owner.whoAmI;
+            NPC.lifeMax = owner.lifeMax;
+            NPC.life = owner.life;
+            NPC.dontTakeDamage = owner.dontTakeDamage;
+            NPC.timeLeft = 750;
+
+            int desiredWidth = SlotWidths[slot];
+            int desiredHeight = SlotHeights[slot];
+            if (NPC.width != desiredWidth || NPC.height != desiredHeight)
+            {
+                NPC.width = desiredWidth;
+                NPC.height = desiredHeight;
+            }
+
+            if (slot == 0)
+            {
+                NPC.defense = HellkiteDrake.HeadDefense;
+            }
+            else if (slot <= 3)
+            {
+                NPC.defense = HellkiteDrake.NeckDefense;
+            }
+            else
+            {
+                NPC.defense = HellkiteDrake.TailDefense;
+            }
+
+            int partIndex = SlotPartIndices[slot];
+            NPC.Center = drake.GetPartWorldCenter(partIndex);
+            NPC.velocity = Vector2.Zero;
+        }
+
+        public override bool? CanBeHitByProjectile(Projectile projectile)
+        {
+            int ownerIndex = (int)NPC.ai[0];
+            int slot = (int)NPC.ai[1];
+            if (slot > 0 && ownerIndex >= 0 && ownerIndex < Main.maxNPCs
+                && Main.npc[ownerIndex].active && Main.npc[ownerIndex].ModNPC is HellkiteDrake drake)
+            {
+                // Yield to the 0-defense head hitbox when a projectile touches both head and neck.
+                int headIndex = drake.partHitboxes[0];
+                if (headIndex >= 0 && headIndex < Main.maxNPCs && Main.npc[headIndex].active
+                    && projectile.Colliding(projectile.Hitbox, Main.npc[headIndex].Hitbox))
+                {
+                    return false;
+                }
+            }
+
+            return null;
+        }
+
+        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            int ownerIndex = (int)NPC.ai[0];
+            if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs && Main.npc[ownerIndex].active
+                && Main.npc[ownerIndex].ModNPC is HellkiteDrake drake)
+            {
+                drake.ShareHitImmunity(player.whoAmI, null);
+            }
+        }
+
+        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
+        {
+            int ownerIndex = (int)NPC.ai[0];
+            if (ownerIndex >= 0 && ownerIndex < Main.maxNPCs && Main.npc[ownerIndex].active
+                && Main.npc[ownerIndex].ModNPC is HellkiteDrake drake)
+            {
+                drake.ShareHitImmunity(projectile.owner, projectile);
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            return false;
         }
     }
 
@@ -1875,6 +2339,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
     // ai[0] is the Oolacile palette; ai[1] is the owning Drake's NPC slot.
     public class HellkiteDrakeFlame : DemonBreath
     {
+        public override void SetDefaults()
+        {
+            base.SetDefaults();
+            Projectile.width = 36;
+            Projectile.height = 36;
+        }
+
         public override void AI()
         {
             int ownerIndex = (int)Projectile.ai[1];

@@ -21,17 +21,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// </remarks>
     public class BlackKnightPlagueColumn : ModProjectile
     {
-        public const int ColumnWidth = 32;      // 2 tiles
+        public const int ColumnWidth = 48;      // 3 tiles
         public const int ColumnHeight = 240;    // 15 tiles
         public const int ActiveTicks = 7 * 60;  // stands for 7s once erupted
         private const int EruptionRampTicks = 14;
-        private const int CurseBuildupPerTick = 2;
+        private const int CurseBuildupPerTick = 1;
         private const int BuffRefreshTicks = 120;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
         private int TelegraphTicks => (int)Projectile.ai[0];
-        private int CarriedDamage => (int)Projectile.ai[1];
         private bool Erupted => Projectile.localAI[0] >= TelegraphTicks;
         private float EruptProgress => MathHelper.Clamp(
             (Projectile.localAI[0] - TelegraphTicks) / (float)EruptionRampTicks, 0f, 1f);
@@ -40,7 +39,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             Projectile.width = ColumnWidth;
             Projectile.height = ColumnHeight;
-            Projectile.hostile = true;
+            Projectile.hostile = false;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
             Projectile.tileCollide = false;
@@ -68,14 +67,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            if (Projectile.damage == 0)
+            if (Projectile.localAI[0] == TelegraphTicks)
             {
-                Projectile.damage = CarriedDamage;
-                if (Projectile.localAI[0] == TelegraphTicks)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(
-                        SoundID.Item68 with { Volume = 0.7f, Pitch = -0.5f }, Projectile.Center);
-                }
+                Terraria.Audio.SoundEngine.PlaySound(
+                    SoundID.Item68 with { Volume = 0.7f, Pitch = -0.5f }, Projectile.Center);
             }
 
             if (!Main.dedServ)
@@ -108,7 +103,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             float fade = MathHelper.Clamp(Projectile.timeLeft / 45f, 0f, 1f);
             float ramp = EruptProgress;
-            int count = (int)MathHelper.Lerp(6f, 14f, ramp) ;
+            int count = (int)MathHelper.Lerp(6f, 14f, ramp);
             for (int i = 0; i < count; i++)
             {
                 float height = Main.rand.NextFloat(0f, ColumnHeight * ramp);
@@ -148,7 +143,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 int buffIndex = player.FindBuffIndex(curseBuff);
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                if (buffIndex == -1 && modPlayer.CurseLevel == 1) modPlayer.CurseLevel = 0;
+                if (buffIndex == -1 && modPlayer.CurseLevel == 1)
+                {
+                    modPlayer.CurseLevel = 0;
+                }
                 modPlayer.CurseLevel += CurseBuildupPerTick;
                 if (buffIndex == -1)
                 {
@@ -158,10 +156,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 {
                     player.buffTime[buffIndex] = BuffRefreshTicks;
                 }
+
+                if (modPlayer.CurseLevel >= 100)
+                {
+                    CurseBuildup.TriggerCurse(player);
+                }
             }
         }
 
-        public override bool? CanDamage() => Erupted;
+        public override bool? CanDamage() => false;
 
         public override bool PreDraw(ref Color lightColor) => false;
     }

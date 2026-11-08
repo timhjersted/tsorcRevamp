@@ -103,13 +103,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const int SummonPoolTicks = 24;
         /// <summary>Pool half-width at full spread (px).</summary>
         private const float SummonPoolRadius = 22f;
-        /// <summary>Winded below 15% of max stamina; recovered (fights again) at 60%. Hysteresis so it doesn't flicker.</summary>
-        private const float WindedEnterFraction = 0.15f;
-        private const float WindedExitFraction = 0.6f;
-        /// <summary>While winded with a target: closer than 3 tiles → step back to 4.5; at 3 tiles or more it just
-        /// holds and catches its breath. A short breather, not a retreat.</summary>
-        private const float WindedNearDistance = 3f * 16f;
-        private const float WindedSettleDistance = 4.5f * 16f;
+        /// <summary>Spend down to empty like the player, then recover a 30% reserve before committing again.</summary>
+        private const float WindedEnterFraction = 0f;
+        private const float WindedExitFraction = 0.3f;
+        /// <summary>Recover at least 5 tiles from enemy hitbox edges. Aim for 6 to cover navigation braking/slack.</summary>
+        private const float WindedNearDistance = 5f * 16f;
+        private const float WindedSettleDistance = 6f * 16f;
         /// <summary><see cref="MirrorPuppetNPC.OwnerFlags"/> bit: the owner-side stamina pool says "winded".</summary>
         private const byte OwnerFlagWinded = 1;
         /// <summary><see cref="MirrorPuppetNPC.OwnerFlags"/> bit: the owner-side pool has stamina for a roll. Same rule
@@ -208,6 +207,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private MimicState _ownerLastState = MimicState.Summoning;
         private readonly Item[] _ownerLoadout = new Item[LoadoutSize];
         private bool _ownerLoadoutInitialized;
+        private bool _ownerGreatswordSwingActive;
+        private int _ownerStationaryTicks;
         private bool _ceruleanInitialized;
         private int _ceruleanCharges;
         private int _ceruleanChargesMax;
@@ -931,7 +932,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // ── Weapon choice: prefer the held weapon (slot 0) whenever it reaches, else any slot that does ──
             _weaponChoiceTimer--;
 
-            if (target != null && state == MimicState.Fight && _weaponChoiceTimer <= 0)
+            bool weaponUseInProgress = (OwnerFlags & OwnerFlagAttacking) != 0;
+
+            if (target != null && state == MimicState.Fight && !weaponUseInProgress && _weaponChoiceTimer <= 0)
             {
                 _weaponChoiceTimer = WeaponChoiceIntervalTicks;
                 float targetDistance = Vector2.Distance(NPC.Center, target.Center);
@@ -1091,7 +1094,35 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     NPC.netUpdate = true;
                 }
 
-                int sideOfTarget = Math.Sign(NPC.Center.X - target.Center.X);
+                NPC spacingTarget = target;
+
+                if (winded)
+                {
+                    float nearestGap = float.MaxValue;
+
+                    // Make room from the closest nearby threat, even when combat selection is locked onto a boss.
+                    // Ignore enemies already more than 5 tiles clear vertically; horizontal spacing cannot help there.
+                    for (int i = 0; i < Main.maxNPCs; i++)
+                    {
+                        NPC enemy = Main.npc[i];
+
+                        if (!UsefulFunctions.IsHostileThreat(enemy))
+                        {
+                            continue;
+                        }
+
+                        float verticalGap = Math.Abs(NPC.Center.Y - enemy.Center.Y) - (NPC.height + enemy.height) * 0.5f;
+                        float horizontalEnemyGap = Math.Abs(NPC.Center.X - enemy.Center.X) - (NPC.width + enemy.width) * 0.5f;
+
+                        if (verticalGap <= WindedNearDistance && horizontalEnemyGap < nearestGap)
+                        {
+                            nearestGap = horizontalEnemyGap;
+                            spacingTarget = enemy;
+                        }
+                    }
+                }
+
+                int sideOfTarget = Math.Sign(NPC.Center.X - spacingTarget.Center.X);
 
                 if (sideOfTarget == 0)
                 {
@@ -1100,9 +1131,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 if (winded)
                 {
-                    // Catching its breath: only give ground if the target is right on top of it (< 3 tiles), and
-                    // then just to 4.5 tiles. Otherwise hold where it is, facing the target.
-                    float gapToTarget = Math.Abs(NPC.Center.X - target.Center.X);
+                    float halfWidths = (NPC.width + spacingTarget.width) * 0.5f;
+                    float gapToTarget = Math.Abs(NPC.Center.X - spacingTarget.Center.X) - halfWidths;
 
                     if (gapToTarget >= WindedNearDistance)
                     {
@@ -1111,10 +1141,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         return;
                     }
 
-                    preferredDistance = WindedSettleDistance;
+                    preferredDistance = WindedSettleDistance + halfWidths;
                 }
 
-                waypoint = target.Center + new Vector2(sideOfTarget * preferredDistance, 0f);
+                waypoint = spacingTarget.Center + new Vector2(sideOfTarget * preferredDistance, 0f);
                 stopDistance = EngagementSlack;
             }
             else
@@ -1262,7 +1292,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // SF4 discards its path and replans whenever the waypoint moves > 2px (RunWaypointMovement: newWaypoint),
             // so a waypoint that tracks a walking owner/enemy would run A* every tick. Hold it until the desired
             // spot drifts WaypointRefreshDistance away.
-            bool waypointDrifted = !_hasHeldWaypoint || Vector2.Distance(waypoint, _heldWaypoint) > WaypointRefreshDistance;
+            float refreshDistance = WaypointRefreshDistance;
+
+            if (winded)
+            {
+                refreshDistance = EngagementSlack;
+            }
+
+            bool waypointDrifted = !_hasHeldWaypoint || Vector2.Distance(waypoint, _heldWaypoint) > refreshDistance;
 
             if (waypointDrifted)
             {
@@ -1277,6 +1314,36 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         protected override void UpdateOwnerSide(Player owner)
         {
+            if (NPC.velocity == Vector2.Zero)
+            {
+                _ownerStationaryTicks++;
+            }
+            else
+            {
+                _ownerStationaryTicks = 0;
+            }
+
+            _ownerGreatswordSwingActive = false;
+            int greatswordSwingType = ModContent.ProjectileType<GreatswordSwing>();
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.owner != OwnerIndex || projectile.type != greatswordSwingType)
+                {
+                    continue;
+                }
+
+                MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+                if (tag.FromMirrorPuppet && tag.PuppetNpcIndex == NPC.whoAmI)
+                {
+                    _ownerGreatswordSwingActive = true;
+                    break;
+                }
+            }
+
             // Hotbar slots 1 and 2 are cloned once; slot 0 follows the held weapon (last valid one kept, so holding
             // a pickaxe or a potion doesn't disarm the mimic).
             if (!_ownerLoadoutInitialized)
@@ -1295,21 +1362,23 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             // ── Winded: its own stamina pool (owner-side) ran low → stop attacking, and tell the server (OwnerFlags) so
-            // its movement backs off. Hysteresis: winded at 15%, fighting again at 60%. Only for classes that pay
+            // its movement backs off. Hysteresis: winded at empty, fighting again at 30%. Only for classes that pay
             // weapon stamina — a Classic player's mimic never tires, same as the player.
             bool usesWeaponStamina = owner.GetModPlayer<tsorcRevampPlayer>().UsesWeaponStamina;
             float staminaMax = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2;
+            staminaMax = Math.Max(1f, staminaMax);
+            float staminaFraction = StaminaCurrent / staminaMax;
             bool winded = (OwnerFlags & OwnerFlagWinded) != 0;
 
             if (!usesWeaponStamina)
             {
                 winded = false;
             }
-            else if (!winded && StaminaCurrent <= staminaMax * WindedEnterFraction)
+            else if (!winded && staminaFraction <= WindedEnterFraction)
             {
                 winded = true;
             }
-            else if (winded && StaminaCurrent >= staminaMax * WindedExitFraction)
+            else if (winded && staminaFraction >= WindedExitFraction)
             {
                 winded = false;
             }
@@ -1347,7 +1416,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             // A use in progress (as of last tick's ItemCheck): the server holds off on Estus until it's over.
-            if (UseState.ItemAnimation > 0)
+            bool attacking = UseState.ItemAnimation > 0 || _ownerGreatswordSwingActive;
+
+            if (attacking)
             {
                 OwnerFlags = (byte)(OwnerFlags | OwnerFlagAttacking);
             }
@@ -1359,7 +1430,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             Item heldItem = owner.HeldItem;
             bool heldIsNew = _ownerLoadout[0] == null || _ownerLoadout[0].type != heldItem.type;
 
-            if (IsUsableWeapon(heldItem, owner) && heldIsNew)
+            if (!attacking && IsUsableWeapon(heldItem, owner) && heldIsNew)
             {
                 _ownerLoadout[0] = heldItem.Clone();
             }
@@ -1488,13 +1559,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 aimWorld += target.velocity * travelTicks;
             }
 
-            // Click like a player instead of holding the button forever. A held button only re-arms autoReuse
-            // weapons (vanilla TryAllowingItemReuse), and the greatsword engine reads a HELD button as a different
-            // move: Sword of Lord Gwyn swings only on a release inside its tap window, so a held mimic just stood
-            // with the sunlight spear raised. Greatswords tap (press one tick, release the next); other
-            // non-autoReuse weapons release for one tick between uses; channelled held projectiles keep holding.
-            // aimWorld stays on the target through a release tick: the Gwyn controller aims its tap at the cursor.
             bool tapInputWeapon = weapon.ModItem is Greatsword;
+
+            // Gwyn accepts paid taps during an active cut to queue ONE follow-up. Repeated taps were charging
+            // several uses for that same queued cut. Finish the actual swing before paying for another tap.
+            if (tapInputWeapon && _ownerGreatswordSwingActive)
+            {
+                return false;
+            }
+
+            // Greatswords press for one tick, then release to choose a cut instead of the charged hold action.
             bool pressedLastTick = UseState.PreviousControlUseItem;
             bool tapRelease = tapInputWeapon && pressedLastTick;
             bool useIdle = UseState.ItemAnimation == 0;
@@ -1506,6 +1580,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             return true;
+        }
+
+        protected override float GetStaminaRegenGain(Player owner)
+        {
+            float gain = owner.GetModPlayer<tsorcRevampStaminaPlayer>().UnrestrictedStaminaRegenGain;
+
+            if (_ownerStationaryTicks >= tsorcRevampStaminaPlayer.StationaryRegenDelayTicks)
+            {
+                gain *= tsorcRevampStaminaPlayer.StationaryRegenMult;
+            }
+
+            return gain;
         }
 
         // ── Aggro, network extras, display ──────────────────────────────────────────────────────

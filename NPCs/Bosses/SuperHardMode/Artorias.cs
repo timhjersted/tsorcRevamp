@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
+using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
@@ -3763,10 +3764,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         readonly bool[] _novaStageDone = new bool[NovaStages.Length];
         int _novaStageIndex = -1;
 
-        // Space-distortion telegraph (reuses the TriadShockwave refraction shader the boss-despawn
-        // shockwave uses - see UsefulFunctions.DespawnFlash). Grows linearly from the boss out to the
-        // FINAL blast radius, arriving NovaDistortionFullRadiusLeadTicks before the blast, then holds
-        // there - so for the last second its boundary is an honest, stationary preview of the edge.
+        // Arena distortion reuses TriadShockwave, anchored to the spawn-based boundary center.
+        // Grows to the live arena's inner edge, arriving 60 ticks before the blast; this decorative
+        // refraction follows ring contractions independently of the boss-centered nova damage.
         const string NovaDistortionFilter = "tsorcRevamp:ArtoriasNovaDistortion";
         const int NovaDistortionFullRadiusLeadTicks = 60;
         const float NovaDistortionMaxOpacity = 0.55f;
@@ -3782,16 +3782,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override bool ShouldTriggerNova()
         {
-            float hp = (float)NPC.life / NPC.lifeMax;
+            float healthFraction = (float)NPC.life / NPC.lifeMax;
+
             for (int i = 0; i < NovaStages.Length; i++)
             {
-                if (!_novaStageDone[i] && hp <= NovaStages[i].hpFrac)
+                if (!_novaStageDone[i] && healthFraction <= NovaStages[i].hpFrac)
                 {
                     _novaStageDone[i] = true;
                     _novaStageIndex = i;
+                    NPC.netUpdate = true;
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -3802,8 +3805,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            // Wraith build-up, 4.0s to match NovaChargeTicks; it hard-stops where the blast sound takes over. Played ahead
-            // of the _novaStageIndex check because that index is picked on the server and never synced to clients.
+            // Match the 4-second charge; the release sound takes over when the blast begins.
             if (elapsed == 0)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_NovaCharge") with { Volume = 0.7f },
@@ -3815,48 +3817,61 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float innerT = elapsed / (float)total;                     // 0 -> 1 over the full charge
+            float chargeProgress = elapsed / (float)total;
             float radius = NovaStages[_novaStageIndex].radius;
 
             if (Main.netMode != NetmodeID.Server)
             {
                 if (!Filters.Scene[NovaDistortionFilter].IsActive())
                 {
-                    Filters.Scene.Activate(NovaDistortionFilter, NPC.Center);
+                    Filters.Scene.Activate(NovaDistortionFilter, _ringCenter);
                 }
+
                 // 0 -> 1 over the charge minus the lead, then pinned at 1 (full radius) until the blast.
                 int growTicks = Math.Max(1, total - NovaDistortionFullRadiusLeadTicks);
-                float growT = MathHelper.Clamp(elapsed / (float)growTicks, 0f, 1f);
-                float ringRadius = radius * growT;
-                float ringOpacity = MathHelper.Lerp(0f, NovaDistortionMaxOpacity, growT);
+                float growthProgress = MathHelper.Clamp(elapsed / (float)growTicks, 0f, 1f);
+                float arenaEdgeRadius = _currentRingRadius - RingBandHalfWidth;
+                float ringRadius = arenaEdgeRadius * growthProgress;
+                float ringOpacity = MathHelper.Lerp(0f, NovaDistortionMaxOpacity, growthProgress);
 
-                // TriadShockwave.fx puts its ring at uProgress * uScreenResolution.x / 2, and ScreenShaderData passes
-                // uScreenResolution as the VISIBLE WORLD size (screen / zoom). So a ring of ringRadius world px needs
-                // uProgress = 2 * ringRadius * zoom / screenWidth. A fixed radius/800 only matched a 1600px-wide
-                // screen at zoom 1, and drew the ring 1.2x the blast at 1920 and 1.6x at 2560.
+                // Match world-pixel radius at any screen width or zoom: TriadShockwave places the ring
+                // at uProgress * visibleWorldWidth / 2, where visibleWorldWidth is screenWidth / zoom.
                 float zoom = Main.GameViewMatrix.Zoom.X;
                 float ringProgress = 2f * ringRadius * zoom / Main.screenWidth;
-                Filters.Scene[NovaDistortionFilter].GetShader().UseTargetPosition(NPC.Center)
-                    .UseProgress(ringProgress).UseOpacity(ringOpacity).UseIntensity(1f);
+                ScreenShaderData distortionShader = Filters.Scene[NovaDistortionFilter].GetShader();
+                distortionShader.UseTargetPosition(_ringCenter);
+                distortionShader.UseProgress(ringProgress);
+                distortionShader.UseOpacity(ringOpacity);
+                distortionShader.UseIntensity(1f);
             }
 
-            // Sparse physical motes complement the shader without obscuring its exact disc.
+            // Keep charge motes on Artorias; the arena refraction is decorative, not the nova hitbox.
             int count = elapsed % 5 == 0 ? 2 : 0;
+
             for (int i = 0; i < count; i++)
             {
-                float r = MathHelper.Lerp(20f, radius * 0.24f, innerT);
-                Vector2 pos = NPC.Center + Main.rand.NextVector2Circular(r, r);
-                Color tint = Main.rand.NextBool(3) ? (Main.rand.NextBool() ? Color.Black : Color.White) : default;
-                Dust d = Dust.NewDustPerfect(pos, DustID.PurpleTorch, Vector2.Zero, 60, tint, Main.rand.NextFloat(1.3f, 2f));
-                d.noGravity = true;
-            }
+                float moteRadius = MathHelper.Lerp(20f, radius * 0.24f, chargeProgress);
+                Vector2 position = NPC.Center + Main.rand.NextVector2Circular(moteRadius, moteRadius);
+                Color tint = default;
 
+                if (Main.rand.NextBool(3))
+                {
+                    tint = Color.White;
+
+                    if (Main.rand.NextBool())
+                    {
+                        tint = Color.Black;
+                    }
+                }
+
+                Dust mote = Dust.NewDustPerfect(position, DustID.PurpleTorch, Vector2.Zero, 60, tint, Main.rand.NextFloat(1.3f, 2f));
+                mote.noGravity = true;
+            }
         }
 
         protected override void DoNovaBlast()
         {
-            // Wraith release. Ahead of the _novaStageIndex check for the same reason as the charge cue: clients never
-            // receive the index. Its six baked-in pulses line up with ArtoriasChargeNova's 9-tick burst train.
+            // Wraith release: its six baked-in pulses match ArtoriasChargeNova's 9-tick burst train.
             if (!Main.dedServ)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Custom/Artorias/Artorias_NovaBlast_release") with { Volume = 0.7f },
@@ -4349,6 +4364,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write(_ringCollapseTo);
             writer.Write(_ringCollapseDone50);
             writer.Write(_ringCollapseDone30);
+            writer.Write(_novaStageIndex);
 
             // Aerial attack (Rising Uppercut / Skyward Lunge): the stage machine runs on every machine, started and branched
             // by the server; every stage change flushes a snapshot (EnterAerialStage). _aerialBladeHit and the cooldown stay
@@ -4388,6 +4404,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _ringCollapseTo = reader.ReadSingle();
             _ringCollapseDone50 = reader.ReadBoolean();
             _ringCollapseDone30 = reader.ReadBoolean();
+            _novaStageIndex = reader.ReadInt32();
 
             int aerialStageSequence = reader.ReadInt32();
             AerialStage aerialStage = (AerialStage)reader.ReadByte();

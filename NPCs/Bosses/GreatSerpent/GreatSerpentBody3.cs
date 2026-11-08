@@ -4,9 +4,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 
-namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
+namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
 {
-    class GreatSerpentBody : ModNPC
+    class GreatSerpentBody3 : ModNPC
     {
         public override void SetStaticDefaults()
         {
@@ -21,28 +21,31 @@ namespace tsorcRevamp.NPCs.Bosses.OolacileSerpent
         {
             NPC.netAlways = true;
             NPC.npcSlots = 2;
-            //Tight-cropped sprite (GreatSerpentBody.png = 26x28). Height is the along-chain link length.
-            NPC.width = 26;
-            NPC.height = 28;
+            //Tight-cropped sprite (GreatSerpentBody3.png = 18x44). Height is the along-chain link length.
+            NPC.width = 18;
+            NPC.height = 44;
             DrawOffsetY = 0;
-            NPC.scale = 1f;
             NPC.aiStyle = -1; // fully custom AI (SerpentAI); -1 stops vanilla worm AI + its dig sound
             NPC.knockBackResist = 0;
+            NPC.scale = 1f;
             NPC.timeLeft = 22750;
             NPC.damage = 0; //Only the head does contact damage
-            NPC.defense = 40;
+            NPC.defense = 50;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 20000;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
+            NPC.hide = true;
+            NPC.canDisplayBuffs = false;
             NPC.value = 0;
         }
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        public override void DrawBehind(int index)
         {
-            target.AddBuff(ModContent.BuffType<FracturingArmor>(), 300 * 60, false);
+            Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
         }
+
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

@@ -1149,7 +1149,7 @@ namespace tsorcRevamp.NPCs
         void TickPoisonArcVolley(NPC npc, Player target, KnightAttackStats stats)
         {
             ApproachHorizontalSpeed(npc, Direction, Timer < 60 ? 1.15f : 2f, 0.08f);
-            if (Timer == 30)
+            if (Timer == 45 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
@@ -1158,24 +1158,34 @@ namespace tsorcRevamp.NPCs
             if (Timer == 60 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 const int projectileCount = 4;
-                const float spread = MathHelper.Pi / 6f;
                 Vector2 castSource = PalmSource(npc, Vector2.Zero);
-                Vector2 baseVelocity = UsefulFunctions.BallisticTrajectory(castSource, LockedTarget,
-                    4.6f, 1.1f, highAngle: true, fallback: true);
                 for (int i = 0; i < projectileCount; i++)
                 {
-                    float angle = i * spread - spread * (projectileCount - 1) * 0.5f;
-                    Vector2 velocity = baseVelocity.RotatedBy(angle);
+                    Vector2 velocity = PoisonArcVelocity(castSource, LockedTarget, Direction, i);
                     if (Math.Sign(velocity.X) == Direction)
                     {
                         Projectile.NewProjectile(npc.GetSource_FromThis(), castSource, velocity,
                             ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>(), EnemyDamage.Projectile(stats.MagicDamage),
-                            0f, Main.myPlayer, ai2: 1f);
+                            0f, Main.myPlayer, ai0: 15f, ai2: 1f);
                     }
                 }
                 tsorcRevampAIs.RegisterFighterAttack(npc);
                 PlaySound(SoundID.Item20 with { Volume = 0.62f, Pitch = 0.08f }, npc.Center);
             }
+        }
+
+        // Keep all four pools at or beyond the locked target. aiStyle 1 applies 0.1px/t² from
+        // ai[0] = 15; solve its discrete gravity sum instead of rotating an unreachable fixed-speed lob.
+        internal static Vector2 PoisonArcVelocity(Vector2 source, Vector2 target, int direction, int projectileIndex)
+        {
+            const float gravity = 0.1f;
+            float overshoot = 16f + projectileIndex * 48f;
+            Vector2 landingPoint = target + new Vector2(direction * overshoot, 0f);
+            Vector2 delta = landingPoint - source;
+            float flightTicks = (float)Math.Ceiling(45f + Math.Abs(delta.X) / 12f);
+            flightTicks = MathHelper.Clamp(flightTicks, 50f, 110f);
+            float gravityDrop = gravity * flightTicks * (flightTicks + 1f) * 0.5f;
+            return new Vector2(delta.X / flightTicks, (delta.Y - gravityDrop) / flightTicks);
         }
 
         void TickFirebombThrow(NPC npc, Player target, KnightAttackStats stats)
@@ -2246,20 +2256,28 @@ namespace tsorcRevamp.NPCs
             npc.ai[1] = 60f;
             npc.ai[2] = -100f;
             npc.velocity.X *= 0.35f;
-            bool greatKnight = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
-            attackCooldown = greatKnight || IsGreatAttack(completed) ? Main.rand.Next(260, 401) : Main.rand.Next(320, 481);
-            if (completed == KnightSpecialAttack.CrimsonDominion)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                // PHASE 1 -> PHASE 2. The hold is over: the knight retracts its spear and goes back
-                // to its narrow Dominion pool. GreatRedKnight gates the full special set and permits
-                // only Crimson Advance, Firebomb Reversal and its ordinary spear throw.
-                attackCooldown = 90;
-            }
-            else if (DominionEngaged)
-            {
-                // Dominion is an aggressive closing phase. Keep its narrow authored pool cycling
-                // without inheriting the much longer phase-one special cooldowns.
-                attackCooldown = Main.rand.Next(90, 151);
+                bool greatKnight = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
+                if (completed == KnightSpecialAttack.CrimsonDominion)
+                {
+                    // The plant already supplies its long punish window; resume Dominion's narrow pool.
+                    attackCooldown = 90;
+                }
+                else if (npc.ModNPC is Enemies.RedKnight || DominionEngaged)
+                {
+                    // The attack includes its release/settle tail. Leave 1.5–2.5s for melee between
+                    // specials instead of another 5–8s with the whole ranged pool unavailable.
+                    attackCooldown = Main.rand.Next(90, 151);
+                }
+                else if (greatKnight || IsGreatAttack(completed))
+                {
+                    attackCooldown = Main.rand.Next(260, 401);
+                }
+                else
+                {
+                    attackCooldown = Main.rand.Next(320, 481);
+                }
             }
             npc.netUpdate = true;
         }

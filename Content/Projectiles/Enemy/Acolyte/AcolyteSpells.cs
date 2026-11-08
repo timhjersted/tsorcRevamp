@@ -570,7 +570,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Acolyte
                 lookalike.skinColor = new Color(38, 22, 26);
 
                 int[] armorTypes = { ItemID.EaterMask, ItemID.SpectreRobe, ItemID.SpectrePants };
-                int[] dyeTypes = { ItemID.BurningHadesDye, ItemID.BrownAndBlackDye, ItemID.BrownAndBlackDye };
+                int[] dyeTypes = { ItemID.ReflectiveCopperDye, ItemID.BrownAndBlackDye, ItemID.BrownAndBlackDye };
                 for (int slot = 0; slot < 3; slot++)
                 {
                     lookalike.armor[slot] = new Item();

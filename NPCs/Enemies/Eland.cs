@@ -59,10 +59,9 @@ namespace tsorcRevamp.NPCs.Enemies
             elandGlobalNPC.PounceTelegraphColor = Color.LimeGreen;
             elandGlobalNPC.PatrolMode = PatrolMode.Wander;
             elandGlobalNPC.PatrolRange = 75;
-            elandGlobalNPC.PatrolCanTerrainJump = true;
+            elandGlobalNPC.PatrolUsesNavigation = true;
             elandGlobalNPC.PatrolWanderMinTiles = 5;
             elandGlobalNPC.PatrolWanderMaxTiles = 50;
-            elandGlobalNPC.PatrolTargetDirectionBias = 0.60f;
         }
 
         // Underground jungle in both tiers; hardmode also allows surface jungle on rainy nights.
@@ -488,7 +487,7 @@ namespace tsorcRevamp.NPCs.Enemies
         enum PassiveNovaState { CoolingDown, Telegraph }
 
         const float PassiveWanderSpeed = 1.25f;
-        const float PatrolSpeedMultiplier = 0.6f; // NavBehavior's shared patrol amble multiplier.
+        const float PatrolSpeedMultiplier = 0.6f; // SF4's shared patrol amble multiplier.
         const int PassiveNovaTelegraphTicks = 60;
         const int PassiveNovaCooldownTicks = 16 * 60;
         PassiveNovaState passiveNovaState;
@@ -525,63 +524,36 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void UpdatePassiveWander()
         {
-            // Selecting a target only lets passive abilities find a nearby player; the shared
-            // NavBehavior patrol below never uses it as a pursuit target.
-            NPC.TargetClosest(false);
+            // Passive abilities still need a player target. The server owns selection; clients
+            // receive NPC.target with the patrol destination in the normal NPC snapshot.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int previousTarget = NPC.target;
+                NPC.TargetClosest(false);
+                if (NPC.target != previousTarget)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
+
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            if (!globalNPC.PatrolAnchorSet)
+            if (!globalNPC.PatrolAnchorSet || globalNPC.PursuitState != PursuitState.Patrol)
             {
                 if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
                     return;
+                }
 
                 NavBehavior.EnterPatrol(NPC, globalNPC);
                 NPC.netUpdate = true;
             }
 
-            int patrolDirection = globalNPC.PatrolDirection;
-            NavBehavior.RunPatrol(NPC, globalNPC, PassiveWanderSpeed / PatrolSpeedMultiplier, npcAcSPD);
-            bool turned = patrolDirection != globalNPC.PatrolDirection;
-            if (Main.netMode != NetmodeID.MultiplayerClient && turned)
-                NPC.netUpdate = true;
-
-            LogPassiveWanderDebug(globalNPC, turned);
-        }
-
-        // Separate from the generic fighter stream because passive Eland does not run FighterAI. Its
-        // terrain decision, probe, leash distance, and committed leg are all present on each line.
-        void LogPassiveWanderDebug(tsorcRevampGlobalNPC globalNPC, bool turned)
-        {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || Main.netMode == NetmodeID.MultiplayerClient
-                || !NPC.HasValidTarget)
-            {
-                return;
-            }
-
-            int now = (int)Main.GameUpdateCount;
-            bool terrainEvent = globalNPC.PatrolTerrainAction != "walk-level";
-            int interval = (turned || terrainEvent) ? 6 : 30;
-            if (now - globalNPC.LastNavDebugLogTick < interval)
-                return;
-
-            globalNPC.LastNavDebugLogTick = now;
-            try
-            {
-                string directory = Main.SavePath + Path.DirectorySeparatorChar + "Logs";
-                Directory.CreateDirectory(directory);
-                string path = directory + Path.DirectorySeparatorChar + "tsorcRevamp-smartfighter4.log";
-                SmartFighter4AI.WriteNavLogHeader(path);
-                Player player = Main.player[NPC.target];
-                string line = $"[{DateTime.Now:HH:mm:ss}] {NPC.TypeName}#{NPC.whoAmI} [eland-wander]"
-                    + $" pos=({NPC.Center.X / 16f:F1},{NPC.Center.Y / 16f:F1})"
-                    + $" player=({player.Center.X / 16f:F1},{player.Center.Y / 16f:F1})"
-                    + $" vel=({NPC.velocity.X:F2},{NPC.velocity.Y:F2})"
-                    + $" dir={NPC.direction}/{globalNPC.PatrolDirection} turn={turned}"
-                    + $" leg={globalNPC.PatrolIdleTimer}"
-                    + NavBehavior.DescribeTerrainWander(NPC, globalNPC);
-                File.AppendAllText(path, line + Environment.NewLine);
-            }
-            catch { }
+            // Use SF4's reachable patrol waypoints and failed-route recovery instead of local jump
+            // probes. Movement-only skips sight aggro; zero range also disables route-based re-aggro.
+            float navigationSpeed = PassiveWanderSpeed / PatrolSpeedMultiplier;
+            SmartFighter4AI.Run(NPC, topSpeed: navigationSpeed, acceleration: npcAcSPD,
+                doorBreakingDamage: 0, attackRange: 0f, movementOnly: true);
         }
 
         void UpdatePassiveGasNova()

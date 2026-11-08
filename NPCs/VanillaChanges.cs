@@ -1832,7 +1832,7 @@ namespace tsorcRevamp.NPCs
 
                 case (NPCID.Tim):
                     {
-                        npc.GivenName = "Tim Hjersted";
+                        npc.GivenName = "Krill";
                         npc.damage = 200;
                         npc.lifeMax = 2000;
                         npc.defense = 30;

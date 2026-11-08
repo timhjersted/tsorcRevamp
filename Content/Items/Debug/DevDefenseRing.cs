@@ -6,7 +6,7 @@ namespace tsorcRevamp.Content.Items.Debug
 {
     public class DevDefenseRing : ModItem
     {
-        public const int DefenseBonus = 500;
+        public const int DefenseBonus = 1000;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SilverRing));
 

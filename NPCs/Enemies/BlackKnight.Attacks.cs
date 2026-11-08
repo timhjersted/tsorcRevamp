@@ -853,7 +853,11 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        /// <summary>Aim point: the ~25-tick-old predicted position, AimOvershootPixels past the player so arcs land on
+        private const float SpearThrowSpeed = 12.5f;
+        private const float BombThrowSpeed = 15f;
+        private const float BombGravity = 0.2f;
+
+        /// <summary>Aim point: the locked target position, AimOvershootPixels past the player so bomb arcs land on
         /// and beyond them rather than short.</summary>
         private Vector2 PredictedAimPoint()
         {
@@ -865,27 +869,19 @@ namespace tsorcRevamp.NPCs.Enemies
             return new Vector2(storedPlayerPosition.X + AimOvershootPixels * direction, storedPlayerPosition.Y);
         }
 
-        /// <summary>The bomb's launch velocity from <paramref name="source"/>: a 5 px/t lob with extra loft up close,
-        /// 8 px/t plus lead far out. The loft is fixed (no random) so the pose's aim and the throw agree.</summary>
-        private Vector2 BombLaunchVelocity(Vector2 source)
+        /// <summary>The spear's ballistic launch velocity from <paramref name="source"/> to the locked target,
+        /// matching RedKnightAttackController.TickSpearThrow.</summary>
+        internal Vector2 SpearLaunchVelocity(Vector2 source)
         {
-            bool far = NPC.Distance(storedPlayerPosition) > 400f;
-            float speed = 5f;
-            if (far)
-            {
-                speed = 8f;
-            }
+            return UsefulFunctions.BallisticTrajectory(source, storedPlayerPosition, SpearThrowSpeed, fallback: true);
+        }
 
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(source, PredictedAimPoint(), speed, fallback: true);
-            if (far && NPC.HasValidTarget)
-            {
-                velocity += player.velocity;
-            }
-            else
-            {
-                velocity.Y -= 1.5f; // a little extra loft on the short lob
-            }
-            return velocity;
+        /// <summary>The bomb's launch velocity from <paramref name="source"/> against EnemyMoonfuryBomb's 0.2f gravity,
+        /// matching RedKnightAttackController.TickFirebombThrow.</summary>
+        internal Vector2 BombLaunchVelocity(Vector2 source)
+        {
+            return UsefulFunctions.BallisticTrajectory(source, PredictedAimPoint(), BombThrowSpeed, BombGravity,
+                highAngle: false, fallback: true);
         }
 
         private void SpawnAttackFlash(Color color)
@@ -904,20 +900,27 @@ namespace tsorcRevamp.NPCs.Enemies
                 UsefulFunctions.ColorToFloat(color));
         }
 
-        /// <summary>Server: refreshes the predicted aim point mid-windup, on a 25-tick cadence. Clients draw against
-        /// this, so it marks a sync.</summary>
+        /// <summary>Server: locks the target position at the commit tick and faces it. Clients draw against this,
+        /// so it marks a sync.</summary>
         private void RefreshStoredPosition()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }
-            if (framesSinceStoredPosition < 25 || !player.active || player.dead)
+            if (!player.active || player.dead)
             {
                 return;
             }
             framesSinceStoredPosition = 0;
             storedPlayerPosition = player.Center;
+            int facing = 1;
+            if (storedPlayerPosition.X < NPC.Center.X)
+            {
+                facing = -1;
+            }
+            NPC.direction = facing;
+            NPC.spriteDirection = facing;
             NPC.netUpdate = true;
         }
 
@@ -963,15 +966,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            // Close throws are slower so they arc more visibly; far throws are flatter and faster.
-            NPC.TargetClosest(true);
-            float speed = Main.rand.NextFloat(12f, 14f);
-            if (NPC.Distance(player.Center) > 400f)
-            {
-                speed = Main.rand.NextFloat(16f, 18f);
-            }
-            Vector2 velocity = UsefulFunctions.BallisticTrajectory(AttackHandWorld, PredictedAimPoint(), speed, fallback: true)
-                + player.velocity;
+            Vector2 velocity = SpearLaunchVelocity(AttackHandWorld);
             SpawnSpearProjectile(AttackHandWorld, velocity, globalNPC);
         }
 
@@ -1697,7 +1692,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
             Projectile column = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(),
                 new Vector2(surface.X, surface.Y - BlackKnightPlagueColumn.ColumnHeight * 0.5f),
-                Vector2.Zero, columnType, 0, 0f, Main.myPlayer, telegraphTicks, EnemyDamage.Projectile(redMagicDamage));
+                Vector2.Zero, columnType, 0, 0f, Main.myPlayer, telegraphTicks, 0f);
             column.timeLeft = BlackKnightPlagueColumn.ActiveTicks;
         }
 

@@ -115,6 +115,30 @@
       "newY": 2186,
       "type": "move",
       "note": "\"- You have found the Lost Ruins of Artorias -\" location soapstone. Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 2374,
+      "legacyY": 843,
+      "newX": 2374,
+      "newY": 932,
+      "type": "move",
+      "note": "Miakoda \"The puzzle on the water crest... ashen fog, illuminated by a violet glow...\" soapstone. Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 2354,
+      "legacyY": 843,
+      "newX": 2354,
+      "newY": 932,
+      "type": "move",
+      "note": "Miakoda \"Serris technology was used by the people here to block one of the paths to the Shadow Temple...\" soapstone. Relocated on the expanded map only."
+    },
+    {
+      "legacyX": 2108,
+      "legacyY": 968,
+      "newX": 2808,
+      "newY": 1168,
+      "type": "move",
+      "note": "\"You've found the Temple of The Destroyer\" and Miakoda \"Stay nimble... Evasion will be key...\" soapstone. Relocated on the expanded map only."
     }
   ]
 }

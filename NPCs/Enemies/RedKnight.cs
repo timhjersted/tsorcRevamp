@@ -7,6 +7,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -25,6 +26,141 @@ namespace tsorcRevamp.NPCs.Enemies
         NPCDespawnHandler despawnHandler;
 
         protected override string InvaderTitle => "Red Knight";
+
+        const string SpearLeapName = "Leaping Spear Thrust";
+        const int SpearLeapStrikeTicks = 16;
+        const float SpearLeapMinimumRange = 180f;
+        const float SpearLeapMaximumRange = 360f;
+        static readonly MeleeCombo[] BossSpearCombos = BuildBossSpearCombos();
+
+        protected override MeleeCombo[] MeleeComboPoolOverride => BossSpearCombos;
+        protected override int RangedStartMeleeComboChance => 10;
+        protected override float RangedStartComboMaxRange => SpearLeapMaximumRange;
+        protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool UseLandingTimedLeapSlam => true;
+        protected override int LeapSlamDownswingTicks => SpearLeapStrikeTicks;
+        protected override float LeapAttackUpSpeed => 8.4f;
+        protected override float LeapAttackForwardSpeed => 6f;
+        protected override float LeapLandingStandoff => 32f;
+        protected override float LeapSlamCarryRotation => MathHelper.PiOver4;
+        protected override float LeapSlamImpactRotation => MathHelper.PiOver4;
+
+        static MeleeCombo[] BuildBossSpearCombos()
+        {
+            MeleeCombo[] combos = BuildKnightCombos(Color.OrangeRed);
+            combos[0].RecoveryTicks = 24;
+            combos[0].CooldownAfterUse = 30;
+            combos[1].RecoveryTicks = 24;
+            combos[1].CooldownAfterUse = 55;
+            combos[2].RecoveryTicks = 30;
+            combos[2].CooldownAfterUse = 70;
+
+            // Stronger push-in, with the original live windows and roll-safe pauses intact:
+            // double thrust 86px/step (3.6px/t); skewer 73px thrust + 48px rise (3.06/2.16px/t).
+            for (int i = 0; i < combos[0].Steps.Length; i++)
+            {
+                combos[0].Steps[i].ForwardPushMult = 2f;
+            }
+            combos[1].Steps[0].ForwardPushMult = 1.7f;
+            combos[1].Steps[1].ForwardPushMult = 1.2f;
+
+            // Level spear thrust: 40t tell, ~56t flight at 2.6–5.9px/t over 180/270/360px;
+            // a 16t landing punch extends the grip in 6t, live 6..15 (<22t roll), then 40t recovery.
+            // The narrow arc is deliberate: reach comes from the shaft extension, not a sword sweep.
+            MeleeCombo leap = new MeleeCombo
+            {
+                Name = SpearLeapName,
+                BaseWeight = 100,
+                Preferred = ComboRangeBand.Mid,
+                RangedStartOnly = true,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 120,
+                RecoveryTicks = 40,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.LeapSlam,
+                        TelegraphTicks = 40,
+                        AttackTicks = 90,
+                        DamageMult = 1.25f,
+                        ReachMult = 1f,
+                        SwingSpeedMult = 1f,
+                        LeapStrikeRange = 110f,
+                    }
+                }
+            };
+
+            return new[] { combos[0], combos[1], combos[2], leap };
+        }
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (combo.Name == SpearLeapName)
+            {
+                return NPC.HasValidTarget && CanSpearLeapTo(Main.player[NPC.target]);
+            }
+
+            return base.CanSelectMeleeCombo(combo, distance, healthFraction);
+        }
+
+        bool CanSpearLeapTo(Player target)
+        {
+            float distance = NPC.Distance(target.Center);
+            float heightDifference = System.Math.Abs(target.Bottom.Y - NPC.Bottom.Y);
+            if (distance < SpearLeapMinimumRange || distance > SpearLeapMaximumRange
+                || heightDifference > 32f || NPC.velocity.Y != 0f)
+            {
+                return false;
+            }
+
+            float horizontalGap = target.Center.X - NPC.Center.X;
+            int direction = horizontalGap >= 0f ? 1 : -1;
+            float travel = System.Math.Max(0f, System.Math.Abs(horizontalGap) - LeapLandingStandoff);
+            float airtime = 2f * LeapAttackUpSpeed / 0.3f;
+            float speed = travel / airtime;
+
+            // Check the whole body parabola and its landing before committing to a slow jump.
+            return KnightHopPlanner.HasSafeHop(NPC, target.Center, direction, direction, speed,
+                advancing: true, hopSpeedY: LeapAttackUpSpeed, gravity: 0.3f, minimumForwardClearance: 24f);
+        }
+
+        protected override void ModifyOpeningMeleeComboStep(string comboName, Player target, ref MeleeComboStep step)
+        {
+            if (comboName == SpearLeapName && !CanSpearLeapTo(target))
+            {
+                // A player or terrain change invalidated the launch during the tell. Settle harmlessly
+                // into the authored recovery rather than jumping into a wall or starting an unreachable thrust.
+                step.Motion = ComboMotion.Feint;
+                step.AttackTicks = 12;
+            }
+        }
+
+        protected override bool CanDamageWithMeleeStep(MeleeComboStep step, float progress)
+        {
+            if (ActiveMeleeComboName == SpearLeapName)
+            {
+                return false;
+            }
+
+            return base.CanDamageWithMeleeStep(step, progress);
+        }
+
+        protected override bool CanDamageWithLeapSlamStep(MeleeComboStep step, float progress)
+        {
+            return progress >= 6f / SpearLeapStrikeTicks && progress < 1f;
+        }
+
+        protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+            if (combo.Name == SpearLeapName && !Main.dedServ && elapsed >= total - 30 && elapsed % 2 == 0)
+            {
+                Dust glint = Dust.NewDustPerfect(AttackSpearTipWorld, DustID.Torch,
+                    Main.rand.NextVector2Circular(0.6f, 0.6f), 80, default, 1.2f);
+                glint.noGravity = true;
+            }
+        }
 
         public override void SetStaticDefaults()
         {

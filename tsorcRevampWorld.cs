@@ -2856,7 +2856,7 @@ namespace tsorcRevamp
         {
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
-            { ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
+            { ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>(), new Vector2(1814, 1711) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },

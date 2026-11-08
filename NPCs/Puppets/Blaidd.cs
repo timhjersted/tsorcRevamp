@@ -1867,7 +1867,10 @@ namespace tsorcRevamp.NPCs.Puppets
                 }
 
                 UsefulFunctions.ScreenShake(NPC.Bottom, shake, 10, distanceFalloff: 560f);
-                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.45f, Pitch = 0.1f }, NPC.Bottom);
+                SoundEngine.PlaySound(
+                    new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
+                        with { Volume = 0.42f, Pitch = 0.18f },
+                    NPC.Bottom);
 
                 for (int i = 0; i < 16; i++)
                 {

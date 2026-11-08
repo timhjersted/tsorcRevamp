@@ -14048,6 +14048,7 @@ Mods: {
 			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 			// HellkiteDrake.DisplayName: Hellkite Drake
+			// HellkiteDrakeHitbox.DisplayName: Hellkite Drake
 		}
 
 		Prefixes: {
