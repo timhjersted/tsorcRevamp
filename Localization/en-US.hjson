@@ -9361,6 +9361,36 @@ Mods: {
 				Tooltip: ""
 			}
 
+			DworcShamanHeadpiece: {
+				DisplayName: Dworc Shaman Headpiece
+				Tooltip: ""
+			}
+
+			DworcShamanBreastplate: {
+				DisplayName: Dworc Shaman Breastplate
+				Tooltip: ""
+			}
+
+			DworcShamanGreaves: {
+				DisplayName: Dworc Shaman Greaves
+				Tooltip: ""
+			}
+
+			NecromancerHood: {
+				DisplayName: Necromancer Hood
+				Tooltip: ""
+			}
+
+			NecromancerRobe: {
+				DisplayName: Necromancer Robe
+				Tooltip: ""
+			}
+
+			NecromancerBoots: {
+				DisplayName: Necromancer Boots
+				Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				Tooltip: ""
 				DisplayName: Great Black Knight Helm
