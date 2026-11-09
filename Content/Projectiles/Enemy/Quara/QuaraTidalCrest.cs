@@ -201,19 +201,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Quara
                 droplet.noGravity = true;
             }
 
-            // The visual burst is 132px across, while this true gameplay circle remains radius 52. Apply its debuffs
-            // only on the server, once, and without additional damage; the travelling crest remains
-            // the attack's sole damaging band.
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            // The visual burst is 132px across, while this true gameplay circle remains radius 52. Its debuffs carry
+            // no damage; the travelling crest remains the attack's sole damaging band. Every peer runs this kill,
+            // and each applies the debuffs only to its own player: a server-side Player.AddBuff never reaches clients.
+            if (!Main.dedServ)
             {
-                for (int i = 0; i < Main.maxPlayers; i++)
+                Player player = Main.LocalPlayer;
+                if (player.active && !player.dead)
                 {
-                    Player player = Main.player[i];
-                    if (!player.active || player.dead)
-                    {
-                        continue;
-                    }
-
                     Vector2 closest = Vector2.Clamp(splashCenter,
                         new Vector2(player.Hitbox.Left, player.Hitbox.Top),
                         new Vector2(player.Hitbox.Right, player.Hitbox.Bottom));

@@ -9395,19 +9395,43 @@ Mods: {
 				Tooltip: ""
 			}
 
+			HydromancerSoul: {
+				DisplayName: Hydromancer Soul
+				Tooltip: "'The essence of a Quara tide-caller, still damp to the touch'"
+			}
+
 			QuaraHydromancerHeadpiece: {
 				DisplayName: Quara Hydromancer Crest
-				Tooltip: ""
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					'''
+				TooltipSetBonus:
+					'''
+					Tidecaller: melee hits soak enemies, making them Wet for {0} seconds
+					Magic hits on Wet enemies deal {1}% more damage and restore {2} mana
+					Magic hits make your next melee swing {3}% faster for up to {4} seconds
+					'''
 			}
 
 			QuaraHydromancerBreastplate: {
 				DisplayName: Quara Hydromancer Body
-				Tooltip: ""
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					'''
 			}
 
 			QuaraHydromancerGreaves: {
 				DisplayName: Quara Hydromancer Legs
-				Tooltip: ""
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants the ability to swim
+					'''
 			}
 
 			ManhunterHat: {

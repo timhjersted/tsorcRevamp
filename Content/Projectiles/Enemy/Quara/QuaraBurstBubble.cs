@@ -31,7 +31,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Quara
 
         public override void AI()
         {
-            Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+            // ai[0] = the player index the caster locked at release, so every peer drifts after the same
+            // player. Only when that player is gone does it fall back to the closest one.
+            int lockedIndex = (int)Projectile.ai[0];
+            Player target = null;
+            if (lockedIndex >= 0 && lockedIndex < Main.maxPlayers)
+            {
+                target = Main.player[lockedIndex];
+            }
+            if (target == null || !target.active || target.dead)
+            {
+                target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+            }
             if (target != null && !target.dead)
             {
                 UsefulFunctions.SmoothHoming(Projectile, target.Center, 0.05f, DriftSpeed, target.velocity, false);

@@ -713,6 +713,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// swap changes the pool mid-fight.</summary>
         public int maxManaAtEnd;
 
+        /// <summary>Dark Souls in the soul slot when the fight ended. On a kill this is read before the boss's own soul
+        /// drop is picked up, so it shows the hoard the player brought, not the reward.</summary>
+        public int darkSoulsInSlotAtEnd;
+
         // --- Mana Burn (Arcane Sorcery): with stamina under 33%, a Bearer of the Curse holding a magic weapon gets
         // +25% magic damage and +20% magic attack speed for 5 s, at double mana cost and -40% damage resistance.
         // The gear snapshot only says whether the buff was up when the fight began; these say how much of the fight

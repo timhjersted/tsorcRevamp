@@ -1,5 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
@@ -7,36 +9,44 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using tsorcRevamp.Content.Items.Armor.Enemy.QuaraHydromancerSet;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.IceGigas;
 using tsorcRevamp.Content.Projectiles.Enemy.Quara;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
+using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    // Rebuilt with the Gigas Method (tsorcDocs/EnemyRedesignSkillGuide.md): a kiting water-mage
-    // displaced into the Hallow, with an actual gameplan — SOAK the target (bubbles / wave / droplets
-    // all apply Wet), because ink sticks to a wet target: the Ink Geyser's Blackout and Broken Armor
-    // last TWICE as long against a soaked player. Respect the "harmless" bubbles or eat a long blind.
+    // A kiting water-mage displaced into the Hallow, with an actual gameplan: SOAK the target (bubbles /
+    // wave / droplets / the Tide Rush puddle all apply Wet), because ink sticks to a wet target: the Ink
+    // Geyser's Blackout and Broken Armor last TWICE as long against a soaked player.
     //
-    // Kit: Bubble Barrage (Wet), Tidal Crest (jumpable ground wave, Wet + Chilled), Burst Bubble
-    // (its long staggerable cast → drifting bubble that pops into droplets), Ink Geyser (now lands at
-    // the PLAYER's position; gated on the Water Fiend Kraken kill, always available in SHM), and
-    // Tide Rush — its fish-man repositioning: it collapses into a rushing puddle-surge and re-forms
-    // at kiting distance, either retreating or flanking to the player's far side.
+    // Kit: Bubble Barrage (Wet), Tidal Crest (jumpable ground wave, Wet + Chilled), Burst Bubble (its long
+    // staggerable cast -> drifting bubble that pops into droplets), Ink Geyser (lands at the PLAYER's
+    // position; gated on the Water Fiend Kraken kill, always available in SHM), three frost casts, and
+    // Tide Rush: it collapses into a rushing puddle-surge, re-forms at kiting distance, then freezes the
+    // water trail it left behind.
     //
-    // Poise contract (0.35/30 in PoiseProfiles): short casts hyper-armored; Burst Bubble's long cast
-    // is staggerable for its first two thirds. The old justHit hop spaghetti is replaced by the
-    // shared evasion system (retreat-jump / quick-step), gated to neutral.
-    class QuaraHydromancer : ModNPC, IStaggerable, IDebugAttackLabel
+    // Puppet body: wears the Quara Hydromancer armor and holds its 86px coral staff upright in the REAR
+    // hand (the Dworc caster rig). Every spell forms at the staff's measured orb. All selection, spawns and
+    // payouts are server-side; clients follow the synced State + AttackTimer clock, and every pose is
+    // derived from that clock so peers agree without extra sync.
+    //
+    // Poise contract (0.35/30 in PoiseProfiles): casts are hyper-armored; Burst Bubble's long cast is
+    // staggerable for its first two thirds. Shared evasion (retreat-jump / quick-step) only from neutral.
+    class QuaraHydromancer : PuppetNPC
     {
         enum AttackState : byte
         {
             None = 0,
             BubbleBarrage, // three soaking bubbles, each bobbing on its own phase
-            TidalCrest,    // the breaking wave — jump it or roll through
-            BurstBubble,   // long staggerable cast → big drifting bubble, pops into droplets
+            TidalCrest,    // the breaking wave: jump it or roll through
+            BurstBubble,   // long staggerable cast -> big drifting bubble, pops into droplets
             InkGeyser,     // the payoff: ink cloud at the player's position (Wet doubles its stick)
             TideRush,      // repositioning surge: retreat, or flank to the player's far side
             IceArcVolley,  // half-ring gather -> six upward arcing, briefly guided frost shards
@@ -45,23 +55,39 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         //Timings (ticks)
-        const int BarrageTelegraphTicks = 25;
+        const int BarrageTelegraphTicks = 32;
         const int CrestTelegraphTicks = 30;
+        const int CrestSlamStartTick = 22; //the staff comes down over the last 8 tell ticks, landing on the release
         const int BurstCastTicks = 60;
         const int BurstStaggerableTicks = 40; //first two thirds: a poise break pops the cast
         const int InkTelegraphTicks = 35;
+        const int InkThrustStartTick = 25;
         const int RushDissolveTicks = 15;
         const int RushMaxSurgeTicks = 60;
         const int RushReformTicks = 10;
         const int IceTelegraphTicks = 40;
         const int IceRecoveryTicks = 20;
+        const int PoseRaiseTicks = 18;
+        const int PoseLowerTicks = 20;
         const float IceGuidedThirty = 1f;
         const float IceOverflightThirty = 2f;
         const float IceGuidedSixty = 3f;
         const float IceWaterIgniter = 4f;
 
+        // Staff pose angles. Arm: 0 = level forward, negative = raised, positive = lowered (Dworc convention).
+        // Tilt: staff texture rotation in facing space, 0 = upright, positive = orb tips toward the target.
+        const float RestArmAngle = 0.2f;
+        const float RestStaffTilt = 0.04f;
+        const float RaisedArmAngle = -1.15f;
+        const float RaisedStaffTilt = -0.12f;
+        const float AimedArmAngle = -0.65f;
+
+        // QuaraHydromancerStaff.png (22x86, upright, 2x2 pixel art): shaft x 6-12, butt edge y 86, orb
+        // centre (10, 14). Grip 20px above the butt so it rests near the feet in idle; tip = orb centre - grip.
+        static readonly Vector2 StaffGrip = new Vector2(9f / 22f, 66f / 86f);
+        static readonly Vector2 StaffTipOffset = new Vector2(1f, -52f);
+
         AttackState State = AttackState.None;
-        AttackState LastAttack = AttackState.None;
         int AttackTimer;
         int AttackCooldown = 90;
         int rushDir = 1;          //surge direction, locked at dissolve end
@@ -70,160 +96,310 @@ namespace tsorcRevamp.NPCs.Enemies
         int lastRushWaterTileX = int.MinValue;
         bool rushIceVolleyFired;
         bool statsInitialized;
+        bool staffEquipped;
         bool HM;
         bool SHM;
         float savedKnockBackResist = -1f; //restored after the surge's brief knockback immunity
+        AttackBag<AttackState> attacks;
 
-        //Damage tiers preserved from the old SetDefaults blocks (now applied on the first AI tick —
-        //world flags aren't reliable in SetDefaults). In Expert Mode, one hostile projectile hit
-        //is about 4x these raw spawn values.
-        int BubbleDamage => SHM ? 55 : HM ? 45 : 33;
-        int CrestDamage => SHM ? 50 : HM ? 40 : 30;
-        int BurstDamage => SHM ? 55 : HM ? 45 : 35;
-        int InkDamage => SHM ? 55 : HM ? 45 : 33;
-        int IceDamage => SHM ? 38 : HM ? 30 : 22;
+        bool Authority => Main.netMode != NetmodeID.MultiplayerClient;
+        bool Neutral => State == AttackState.None;
+        int RushReformStartTick => RushDissolveTicks + RushMaxSurgeTicks;
+        int RushIceTelegraphStartTick => RushReformStartTick + RushReformTicks;
+        bool RushSurging => State == AttackState.TideRush && AttackTimer > RushDissolveTicks && AttackTimer <= RushReformStartTick;
+
+        bool InkUnlocked => tsorcRevampWorld.SuperHardMode
+            || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>()));
+
+        //Damage tiers preserved from the pre-puppet version: declared here in Expert units (raw x4) and
+        //converted once at each root spawn by EnemyDamage.Projectile, so in-game hits are unchanged.
+        int BubbleExpertDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 220;
+                }
+                if (HM)
+                {
+                    return 180;
+                }
+                return 132;
+            }
+        }
+
+        int CrestExpertDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 200;
+                }
+                if (HM)
+                {
+                    return 160;
+                }
+                return 120;
+            }
+        }
+
+        int BurstExpertDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 220;
+                }
+                if (HM)
+                {
+                    return 180;
+                }
+                return 140;
+            }
+        }
+
+        int InkExpertDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 220;
+                }
+                if (HM)
+                {
+                    return 180;
+                }
+                return 132;
+            }
+        }
+
+        int IceExpertDamage
+        {
+            get
+            {
+                if (SHM)
+                {
+                    return 152;
+                }
+                if (HM)
+                {
+                    return 120;
+                }
+                return 88;
+            }
+        }
+
+        #region Puppet configuration
+        public override bool UsesPuppetDifficultyScaling => false;
+        protected override bool AnnounceInvasion => false;
+        protected override bool AnnounceInvaderDefeat => false;
+        protected override bool DespawnsOnPartyWipe => false;
+        protected override string InvaderTitle => "Quara Hydromancer";
+        protected override int HeadArmorItemType => ModContent.ItemType<QuaraHydromancerHeadpiece>();
+        protected override int BodyArmorItemType => ModContent.ItemType<QuaraHydromancerBreastplate>();
+        protected override int LegsArmorItemType => ModContent.ItemType<QuaraHydromancerGreaves>();
+        protected override int MeleeWeaponItemType => -1;
+        protected override int RangedWeaponItemType => -1;
+        protected override int MagicWeaponItemType => ModContent.ItemType<QuaraHydromancerStaff>();
+        protected override int MeleeDamage => 0;
+        protected override int RangedDamage => 0;
+        protected override int EstusChargesMax => 0;
+        protected override int CasualStrollChance => 0;
+        protected override int UnblockableFinisherBlocks => 0;
+        protected override bool HoldAttackSelection => true;
+        protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool IndependentBackHandWeapon => true;
+        protected override float IndependentBackHandFacingAngle => StaffArmAngle;
+        protected override float IndependentBackHandDrawRotation => StaffTilt;
+        // Each cast brakes with its own pre-puppet damping, and the Tide Rush surge drives velocity itself.
+        protected override bool SlowDownDuringCustom => false;
+        protected override bool CustomAttackCommitted => IsCommitted();
+        // Tide Rush writes NPC.alpha during the surge; the puppet body, armor and staff all fade with it.
+        internal override float BodyOpacity => 1f - NPC.alpha / 255f;
+        protected override float PuppetJumpPower => 9f;
+        protected override float PuppetJumpBoost => 4f;
+        protected override float RunSpeedMult => 1f;
+        protected override float TopSpeed => 2f;
+        protected override float Acceleration => 0.05f;
+        protected override Color PuppetSkinColor => new Color(92, 156, 92);
+        // The OnKill water spray below is the death burst; the base blood burst is switched off.
+        protected override int OnKillDustCount => 0;
+        #endregion
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 15;
+            // Kept so the bestiary and other resource consumers still slice the old 15-frame sheet.
+            Main.npcFrameCount[Type] = 15;
         }
 
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            AnimationType = 21;
+            AnimationType = -1;
             NPC.aiStyle = -1;
             NPC.damage = 0;
             NPC.defense = 22;
-            NPC.height = 45;
+            NPC.width = 18;
+            NPC.height = 42; //puppet standard (was 45); bottom-aligned, so the feet don't move
             NPC.lifeMax = 250;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 1500;
-            NPC.width = 18;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0.25f; //overridden by the PoiseProfiles entry
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.QuaraHydromancerBanner>();
 
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            g.NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
+            tsorcRevampGlobalNPC global = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            global.NavSearchRadius = 60;
+            global.CanWalkBackwards = true;
+            global.PoiseStaggerResetsAI = true;
             //A caster keeps its distance and backpedals while it works
-            g.KiteRangeMin = 8f;
-            g.KiteRangeMax = 16f;
-            g.KiteLooseness = 0.25f;
-            //Slippery: the shared on-hit evasion replaces the old justHit hop spaghetti
-            g.EvasiveRetreatJump = true;
-            g.EvasiveQuickStep = true;
+            global.KiteRangeMin = 8f;
+            global.KiteRangeMax = 16f;
+            global.KiteLooseness = 0.25f;
+            //Slippery: shared on-hit evasion, gated to neutral in OnHitBy*
+            global.EvasiveRetreatJump = true;
+            global.EvasiveQuickStep = true;
         }
 
-        public override void SendExtraAI(BinaryWriter writer)
+        protected override void DoMeleeAttack()
         {
-            writer.Write((byte)State);
-            writer.Write(AttackTimer);
-            writer.Write(AttackCooldown);
-            writer.Write((sbyte)rushDir);
-            writer.Write(rushDestX);
-            writer.Write(HM);
-            writer.Write(SHM);
+            // The held staff is a prop; the cast clock owns all outgoing damage.
         }
 
-        public override void ReceiveExtraAI(BinaryReader reader)
+        protected override void DoRangedAttack()
         {
-            State = (AttackState)reader.ReadByte();
-            AttackTimer = reader.ReadInt32();
-            AttackCooldown = reader.ReadInt32();
-            rushDir = reader.ReadSByte();
-            rushDestX = reader.ReadSingle();
-            HM = reader.ReadBoolean();
-            SHM = reader.ReadBoolean();
+            // No parallel ranged selector: every projectile is released by the cast clock.
         }
 
-        ///<summary>Its coral staff's tip — every cast's color language originates here at top crescent head.</summary>
-        Vector2 StaffTip => NPC.Center + new Vector2(NPC.direction * 14f, -32f);
-
-        bool InkUnlocked => tsorcRevampWorld.SuperHardMode
-            || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<WaterFiendKraken>()));
-
-        public string DebugAttackLabel => State switch
+        protected override void RunMovementAI(float speedMult)
         {
-            AttackState.BubbleBarrage => "Bubble Barrage",
-            AttackState.TidalCrest => "Tidal Crest",
-            AttackState.BurstBubble => "Burst Bubble",
-            AttackState.InkGeyser => "Ink Geyser",
-            AttackState.TideRush => "Tide Rush",
-            AttackState.IceArcVolley => "Ice Arc Volley",
-            AttackState.IceOverflight => "Ice Overflight",
-            AttackState.FrostSprites => "Frost Sprite Barrage",
-            _ => "Neutral"
-        };
-
-        ///<summary>Poise break (neutral or the Burst Bubble's staggerable window): the cast pops early
-        ///and harmlessly in its hands.</summary>
-        public void OnStagger(NPC npc)
-        {
-            if (State != AttackState.None && Main.netMode != NetmodeID.Server)
+            if (!Neutral)
             {
-                SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.7f, Pitch = 0.3f }, NPC.Center);
-                for (int i = 0; i < 14; i++)
-                {
-                    Vector2 vel = Main.rand.NextVector2Circular(3.5f, 3.5f);
-                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, vel.X, vel.Y, 60, default, 1.3f);
-                    Main.dust[dust].noGravity = true;
-                }
+                return;
             }
-            State = AttackState.None;
-            AttackTimer = 0;
-            RestoreKnockback();
-            AttackCooldown = Math.Max(AttackCooldown, 70);
+
+            SmartFighter4AI.Run(NPC, TopSpeed * speedMult, Acceleration, doorBreakingDamage: 0, attackRange: 700f);
         }
 
         public override void AI()
         {
-            tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            Player player = Main.player[NPC.target];
+            tsorcRevampGlobalNPC global = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            if (!staffEquipped)
+            {
+                staffEquipped = true;
+                EquipWeapon(PuppetHandSlot.Back, new PuppetWeapon(MagicWeaponItemType, damage: 0,
+                    handleNorm: StaffGrip, rotationOffset: MathHelper.PiOver2));
+            }
             InitializeStats();
 
-            g.AttackTelegraphing = false;
-            g.AttackCommitted = false;
-
-            if (g.StaggerTimer > 0)
-            {
-                NPC.rotation = MathHelper.Lerp(NPC.rotation, -NPC.direction * 0.2f, 0.1f);
-                return;
-            }
-            NPC.rotation *= 0.85f;
-
             //Idle identity: dripping wet, faint blue staff glow, the occasional gurgle
-            if (Main.rand.NextBool(8))
+            if (!Main.dedServ)
             {
-                Vector2 pos = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height * 0.6f));
-                int drip = Dust.NewDust(pos, 4, 4, DustID.Water, 0f, 1f, 100, default, 0.8f);
-                Main.dust[drip].velocity *= 0.3f;
-            }
-            Lighting.AddLight(StaffTip, 0.1f, 0.18f, 0.3f);
-            if (Main.rand.NextBool(1000))
-            {
-                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.3f, Pitch = -0.3f }, NPC.Center); // water sound
+                if (Main.rand.NextBool(8))
+                {
+                    Vector2 dripPosition = NPC.position + new Vector2(Main.rand.NextFloat(NPC.width), Main.rand.NextFloat(NPC.height * 0.6f));
+                    int drip = Dust.NewDust(dripPosition, 4, 4, DustID.Water, 0f, 1f, 100, default, 0.8f);
+                    Main.dust[drip].velocity *= 0.3f;
+                }
+                Lighting.AddLight(StaffTip, 0.1f, 0.18f, 0.3f);
+                if (Main.rand.NextBool(1000))
+                {
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.3f, Pitch = -0.3f }, NPC.Center); // water sound
+                }
             }
 
-            if (State == AttackState.None)
+            if (Authority && Neutral && global.StaggerTimer <= 0)
             {
-                tsorcRevampAIs.FighterAI(NPC, 2, 0.05f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false, canWalkBackwards: true);
-
                 if (AttackCooldown > 0)
                 {
                     AttackCooldown--;
                 }
-                if (Main.netMode != NetmodeID.MultiplayerClient && AttackCooldown <= 0 && NPC.velocity.Y == 0f
-                    && !player.dead && player.active && NPC.Distance(player.Center) < 1000f)
+
+                bool canPick = AttackCooldown <= 0 && NPC.velocity.Y == 0f && !global.InEvasion;
+                if (canPick)
                 {
-                    PickAttack(player);
+                    NPC.TargetClosest(false);
+                    Player candidate = Main.player[NPC.target];
+                    bool targetValid = NPC.HasValidTarget && NPC.Distance(candidate.Center) < 1000f;
+                    if (targetValid)
+                    {
+                        PickAttack(candidate);
+                    }
                 }
+            }
+
+            if (!Neutral)
+            {
+                // Keep the Custom phase alive for as long as the cast clock runs (DoCustomTick ends it).
+                PhaseTimer = 2;
+                FaceForCast();
+            }
+
+            base.AI();
+
+            if (!Neutral)
+            {
+                FaceForCast();
+                global.AttackCommitted = CustomAttackCommitted;
+                global.AttackTelegraphing = State == AttackState.BurstBubble && AttackTimer < BurstStaggerableTicks && !global.AttackCommitted;
+            }
+
+            // 85% transparent while racing along as a puddle.
+            NPC.alpha = 0;
+            if (RushSurging)
+            {
+                NPC.alpha = 217;
+            }
+
+            DebugAttackLabel = DescribeState() + "/" + AttackTimer;
+        }
+
+        //Face the target while casting, except mid-surge, where the locked rush direction leads.
+        void FaceForCast()
+        {
+            int facing = NPC.direction;
+            if (RushSurging)
+            {
+                facing = rushDir;
             }
             else
             {
-                RunAttack(g, player);
+                Player target = Main.player[NPC.target];
+                facing = target.Center.X > NPC.Center.X ? 1 : -1;
+            }
+
+            NPC.direction = facing;
+            NPC.spriteDirection = facing;
+        }
+
+        string DescribeState()
+        {
+            switch (State)
+            {
+                case AttackState.BubbleBarrage:
+                    return "Bubble Barrage";
+                case AttackState.TidalCrest:
+                    return "Tidal Crest";
+                case AttackState.BurstBubble:
+                    return "Burst Bubble";
+                case AttackState.InkGeyser:
+                    return "Ink Geyser";
+                case AttackState.TideRush:
+                    return "Tide Rush";
+                case AttackState.IceArcVolley:
+                    return "Ice Arc Volley";
+                case AttackState.IceOverflight:
+                    return "Ice Overflight";
+                case AttackState.FrostSprites:
+                    return "Frost Sprite Barrage";
+                default:
+                    return "Neutral";
             }
         }
 
@@ -234,11 +410,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             statsInitialized = true;
-            if (Main.netMode == NetmodeID.MultiplayerClient)
+            if (!Authority)
             {
                 return; //clients receive the tier flags via sync
             }
-            //The old SetDefaults world-flag blocks, moved where the flags are actually reliable
+            //World flags aren't reliable in SetDefaults, so the tier stats are applied on the first AI tick
             if (tsorcRevampWorld.SuperHardMode)
             {
                 SHM = true;
@@ -257,54 +433,88 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.netUpdate = true;
         }
 
+        #region Selection
+        // Tide Rush is a distance reaction rolled before the bag (35% under 10 tiles, else 15%: today's
+        // effective share of the old weighted pool). Everything else is dealt from a 17-card bag whose
+        // counts follow the old weights, so low-weight casts can no longer starve.
         void PickAttack(Player player)
         {
-            float distTiles = NPC.Distance(player.Center) / 16f;
-            bool sameLevel = Math.Abs(player.Bottom.Y - NPC.Bottom.Y) < 4 * 16f;
+            float distanceTiles = NPC.Distance(player.Center) / 16f;
+            float rushChance = 0.15f;
+            if (distanceTiles < 10f)
+            {
+                rushChance = 0.35f;
+            }
 
-            Span<(AttackState state, float weight)> pool = stackalloc (AttackState, float)[]
+            AttackState chosen = AttackState.TideRush;
+            float rushRoll = Main.rand.NextFloat();
+            if (rushRoll >= rushChance)
             {
-                (AttackState.BubbleBarrage, 1f),
-                (AttackState.TidalCrest,    distTiles < 18f && sameLevel ? 0.9f : 0f),
-                (AttackState.BurstBubble,   0.6f),
-                (AttackState.InkGeyser,     InkUnlocked ? 0.7f : 0f),
-                (AttackState.TideRush,      distTiles < 10f ? 2.5f : 1.2f),
-                (AttackState.IceArcVolley,  distTiles < 34f ? 0.9f : 0.35f),
-                (AttackState.IceOverflight, distTiles < 38f ? 0.7f : 0.25f),
-                (AttackState.FrostSprites,  distTiles < 32f ? 0.45f : 0f),
-            };
-            float total = 0f;
-            for (int i = 0; i < pool.Length; i++)
-            {
-                if (pool[i].state == LastAttack && pool[i].state != AttackState.TideRush)
+                attacks ??= new AttackBag<AttackState>(RefillAttacks);
+                bool drew = attacks.TryDraw(IsEligible, out chosen);
+                if (!drew)
                 {
-                    pool[i].weight *= 0.5f;
-                }
-                total += pool[i].weight;
-            }
-            float roll = Main.rand.NextFloat(total);
-            AttackState chosen = AttackState.BubbleBarrage;
-            for (int i = 0; i < pool.Length; i++)
-            {
-                roll -= pool[i].weight;
-                if (roll <= 0f)
-                {
-                    chosen = pool[i].state;
-                    break;
+                    chosen = AttackState.BubbleBarrage;
                 }
             }
+
             State = chosen;
             AttackTimer = 0;
+            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().EvasiveOnHitRequested = false;
+            StartCustomAttack(2);
             NPC.netUpdate = true;
         }
 
+        static void RefillAttacks(List<AttackState> cards)
+        {
+            AddCards(cards, AttackState.BubbleBarrage, 3);
+            AddCards(cards, AttackState.TidalCrest, 3);
+            AddCards(cards, AttackState.BurstBubble, 2);
+            AddCards(cards, AttackState.InkGeyser, 2);
+            AddCards(cards, AttackState.IceArcVolley, 3);
+            AddCards(cards, AttackState.IceOverflight, 2);
+            AddCards(cards, AttackState.FrostSprites, 2);
+        }
+
+        static void AddCards(List<AttackState> cards, AttackState card, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                cards.Add(card);
+            }
+        }
+
+        bool IsEligible(AttackState candidate)
+        {
+            Player target = Main.player[NPC.target];
+            float distanceTiles = NPC.Distance(target.Center) / 16f;
+            bool sameLevel = Math.Abs(target.Bottom.Y - NPC.Bottom.Y) < 4 * 16f;
+
+            switch (candidate)
+            {
+                case AttackState.TidalCrest:
+                    return distanceTiles < 18f && sameLevel;
+                case AttackState.InkGeyser:
+                    return InkUnlocked;
+                case AttackState.IceArcVolley:
+                    return distanceTiles < 34f;
+                case AttackState.IceOverflight:
+                    return distanceTiles < 38f;
+                case AttackState.FrostSprites:
+                    return distanceTiles < 32f;
+                default:
+                    return true;
+            }
+        }
+        #endregion
+
         void EndAttack(int cooldown)
         {
-            LastAttack = State;
             State = AttackState.None;
             AttackTimer = 0;
             RestoreKnockback();
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            EnterPhase(AttackPhase.Idle, 0);
+            if (Authority)
             {
                 AttackCooldown = cooldown + Main.rand.Next(40);
                 NPC.netUpdate = true;
@@ -320,40 +530,104 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunAttack(tsorcRevampGlobalNPC g, Player player)
+        // Hyper-armored windows, unchanged from the pre-puppet commit flags. Recoveries stay open.
+        bool IsCommitted()
         {
+            switch (State)
+            {
+                case AttackState.BubbleBarrage:
+                    return AttackTimer <= BarrageTelegraphTicks + 12;
+                case AttackState.TidalCrest:
+                    return AttackTimer <= CrestTelegraphTicks;
+                case AttackState.BurstBubble:
+                    return AttackTimer >= BurstStaggerableTicks && AttackTimer <= BurstCastTicks;
+                case AttackState.InkGeyser:
+                    return AttackTimer <= InkTelegraphTicks;
+                case AttackState.IceArcVolley:
+                case AttackState.IceOverflight:
+                case AttackState.FrostSprites:
+                    return AttackTimer <= IceTelegraphTicks;
+                case AttackState.TideRush:
+                    bool dissolvingOrSurging = AttackTimer <= RushReformStartTick;
+                    bool iceTell = AttackTimer > RushIceTelegraphStartTick && AttackTimer <= RushIceTelegraphStartTick + IceTelegraphTicks;
+                    return dissolvingOrSurging || iceTell;
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>Poise break (neutral or the Burst Bubble's staggerable window): the cast pops early
+        /// and harmlessly in its hands. Already-released projectiles live on.</summary>
+        public override void OnStagger(NPC npc)
+        {
+            base.OnStagger(npc);
+            if (State != AttackState.None && !Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.7f, Pitch = 0.3f }, NPC.Center);
+                for (int i = 0; i < 14; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2Circular(3.5f, 3.5f);
+                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, velocity.X, velocity.Y, 60, default, 1.3f);
+                    Main.dust[dust].noGravity = true;
+                }
+            }
+            State = AttackState.None;
+            AttackTimer = 0;
+            RestoreKnockback();
+            AttackCooldown = Math.Max(AttackCooldown, 70);
+        }
+
+        // Runs every tick of the Custom phase on every machine; spawns and rolls stay behind Authority.
+        protected override void DoCustomTick(int ticksRemaining)
+        {
+            if (Neutral)
+            {
+                return;
+            }
+
+            Player player = Main.player[NPC.target];
             if (player.dead || !player.active)
             {
                 EndAttack(60);
                 return;
             }
-            //Face the player, except mid-surge (locked at dissolve end)
-            if (!(State == AttackState.TideRush && AttackTimer > RushDissolveTicks))
-            {
-                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
-            }
-            NPC.spriteDirection = NPC.direction;
 
             AttackTimer++;
             switch (State)
             {
-                case AttackState.BubbleBarrage: RunBubbleBarrage(g, player); break;
-                case AttackState.TidalCrest: RunTidalCrest(g); break;
-                case AttackState.BurstBubble: RunBurstBubble(g); break;
-                case AttackState.InkGeyser: RunInkGeyser(g, player); break;
-                case AttackState.TideRush: RunTideRush(g, player); break;
-                case AttackState.IceArcVolley: RunIceArcVolley(g, player); break;
-                case AttackState.IceOverflight: RunIceOverflight(g, player); break;
-                case AttackState.FrostSprites: RunFrostSprites(g, player); break;
+                case AttackState.BubbleBarrage:
+                    RunBubbleBarrage(player);
+                    break;
+                case AttackState.TidalCrest:
+                    RunTidalCrest();
+                    break;
+                case AttackState.BurstBubble:
+                    RunBurstBubble();
+                    break;
+                case AttackState.InkGeyser:
+                    RunInkGeyser(player);
+                    break;
+                case AttackState.TideRush:
+                    RunTideRush(player);
+                    break;
+                case AttackState.IceArcVolley:
+                    RunIceArcVolley(player);
+                    break;
+                case AttackState.IceOverflight:
+                    RunIceOverflight(player);
+                    break;
+                case AttackState.FrostSprites:
+                    RunFrostSprites(player);
+                    break;
             }
         }
 
-        void RunBubbleBarrage(tsorcRevampGlobalNPC g, Player player)
+        #region Attacks
+        void RunBubbleBarrage(Player player)
         {
-            g.AttackCommitted = AttackTimer <= BarrageTelegraphTicks + 12;
             NPC.velocity.X *= 0.85f;
 
-            if (AttackTimer <= BarrageTelegraphTicks)
+            if (AttackTimer <= BarrageTelegraphTicks && !Main.dedServ)
             {
                 if (AttackTimer == 1)
                 {
@@ -364,55 +638,69 @@ namespace tsorcRevamp.NPCs.Enemies
                 for (int i = 0; i < 1 + (int)progress; i++)
                 {
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    Vector2 pos = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(8f, 24f);
-                    int dust = Dust.NewDust(pos, 4, 4, DustID.Water, 0f, 0f, 80, default, 1f);
+                    Vector2 position = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(8f, 24f);
+                    int dust = Dust.NewDust(position, 4, 4, DustID.Water, 0f, 0f, 80, default, 1f);
                     Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity = (StaffTip - pos) * 0.15f;
+                    Main.dust[dust].velocity = (StaffTip - position) * 0.15f;
                 }
                 Lighting.AddLight(StaffTip, 0.15f * progress, 0.3f * progress, 0.5f * progress);
             }
+
             //Three soaking bubbles in a loose spread, re-aimed per shot
-            if ((AttackTimer == BarrageTelegraphTicks || AttackTimer == BarrageTelegraphTicks + 6 || AttackTimer == BarrageTelegraphTicks + 12)
-                && Main.netMode != NetmodeID.MultiplayerClient)
+            bool shotTick = AttackTimer == BarrageTelegraphTicks || AttackTimer == BarrageTelegraphTicks + 6 || AttackTimer == BarrageTelegraphTicks + 12;
+            if (shotTick)
             {
-                Vector2 vel = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f)).RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * 6f;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, vel,
-                    ModContent.ProjectileType<Bubble>(), BubbleDamage, 1f, Main.myPlayer, 0f, 1f); //ai[1]=1: soaking mode
-                SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
+                if (Authority)
+                {
+                    Vector2 aim = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f));
+                    Vector2 velocity = aim.RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f)) * 6f;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
+                        ModContent.ProjectileType<Bubble>(), EnemyDamage.Projectile(BubbleExpertDamage), 1f, Main.myPlayer, 0f, 1f); //ai[1]=1: soaking mode
+                }
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
+                }
             }
+
             if (AttackTimer >= BarrageTelegraphTicks + 12 + 20)
             {
                 EndAttack(140);
             }
         }
 
-        void RunTidalCrest(tsorcRevampGlobalNPC g)
+        void RunTidalCrest()
         {
-            g.AttackCommitted = AttackTimer <= CrestTelegraphTicks;
             NPC.velocity.X *= 0.8f;
 
             if (AttackTimer <= CrestTelegraphTicks)
             {
-                if (AttackTimer == 1)
+                if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
-                }
-                //CYAN at the staff while water visibly mounds at its feet — the wave forming
-                if (Main.rand.NextBool(3))
-                {
-                    int staff = Dust.NewDust(StaffTip, 4, 4, DustID.Water, 0f, -1f, 60, default, 1.2f);
-                    Main.dust[staff].noGravity = true;
-                    Vector2 pos = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width) + NPC.direction * 12f, NPC.Bottom.Y - 6f);
-                    int mound = Dust.NewDust(pos, 4, 4, DustID.Water, 0f, -2f, 80, default, 1.2f);
-                    Main.dust[mound].noGravity = true;
+                    if (AttackTimer == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item21 with { Volume = 0.6f, Pitch = -0.4f }, NPC.Center);
+                    }
+                    //CYAN at the staff while water visibly mounds at its feet: the wave forming
+                    if (Main.rand.NextBool(3))
+                    {
+                        int staffDust = Dust.NewDust(StaffTip, 4, 4, DustID.Water, 0f, -1f, 60, default, 1.2f);
+                        Main.dust[staffDust].noGravity = true;
+                        Vector2 moundPosition = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width) + NPC.direction * 12f, NPC.Bottom.Y - 6f);
+                        int mound = Dust.NewDust(moundPosition, 4, 4, DustID.Water, 0f, -2f, 80, default, 1.2f);
+                        Main.dust[mound].noGravity = true;
+                    }
                 }
                 if (AttackTimer == CrestTelegraphTicks)
                 {
-                    SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f, Pitch = -0.3f }, NPC.Bottom);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    if (!Main.dedServ)
+                    {
+                        SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f, Pitch = -0.3f }, NPC.Bottom);
+                    }
+                    if (Authority)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Bottom + new Vector2(NPC.direction * 20f, -22f), Vector2.Zero,
-                            ModContent.ProjectileType<QuaraTidalCrest>(), CrestDamage, 6f, Main.myPlayer, NPC.direction);
+                            ModContent.ProjectileType<QuaraTidalCrest>(), EnemyDamage.Projectile(CrestExpertDamage), 6f, Main.myPlayer, NPC.direction);
                     }
                 }
             }
@@ -422,42 +710,34 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunBurstBubble(tsorcRevampGlobalNPC g)
+        void RunBurstBubble()
         {
             if (AttackTimer <= BurstCastTicks)
             {
                 NPC.velocity.X *= 0.8f;
-                //The long cast: staggerable for the first two thirds — pop it before it pops you
-                if (AttackTimer < BurstStaggerableTicks)
+                if (!Main.dedServ)
                 {
-                    g.AttackTelegraphing = true;
-                }
-                else
-                {
-                    g.AttackCommitted = true;
-                }
-                if (AttackTimer == 1)
-                {
-                    SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
-                }
-                if (AttackTimer == BurstStaggerableTicks)
-                {
-                    SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center); //commit cue
-                }
-                //The bubble visibly inflating at the staff
-                float progress = AttackTimer / (float)BurstCastTicks;
-                for (int i = 0; i < 1; i++)
-                {
+                    if (AttackTimer == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
+                    }
+                    if (AttackTimer == BurstStaggerableTicks)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Center); //commit cue
+                    }
+                    //The bubble visibly inflating at the staff
+                    float progress = AttackTimer / (float)BurstCastTicks;
                     float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    Vector2 pos = StaffTip + angle.ToRotationVector2() * (6f + progress * 14f);
-                    int dust = Dust.NewDust(pos, 2, 2, DustID.Water, 0f, 0f, 70, default, 1f);
+                    Vector2 position = StaffTip + angle.ToRotationVector2() * (6f + progress * 14f);
+                    int dust = Dust.NewDust(position, 2, 2, DustID.Water, 0f, 0f, 70, default, 1f);
                     Main.dust[dust].noGravity = true;
                     Main.dust[dust].velocity *= 0.15f;
                 }
-                if (AttackTimer == BurstCastTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer == BurstCastTicks && Authority)
                 {
+                    // ai[0] = the target this bubble drifts toward, locked here so every peer homes on the same player.
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, new Vector2(NPC.direction * 2f, -0.5f),
-                        ModContent.ProjectileType<QuaraBurstBubble>(), BurstDamage, 2f, Main.myPlayer);
+                        ModContent.ProjectileType<QuaraBurstBubble>(), EnemyDamage.Projectile(BurstExpertDamage), 2f, Main.myPlayer, NPC.target);
                 }
             }
             else if (AttackTimer >= BurstCastTicks + 20)
@@ -466,28 +746,30 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunInkGeyser(tsorcRevampGlobalNPC g, Player player)
+        void RunInkGeyser(Player player)
         {
-            g.AttackCommitted = AttackTimer <= InkTelegraphTicks;
             NPC.velocity.X *= 0.8f;
 
             if (AttackTimer <= InkTelegraphTicks)
             {
-                if (AttackTimer == 1)
+                if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
+                    if (AttackTimer == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item87 with { Volume = 0.7f, Pitch = -0.7f }, NPC.Center);
+                    }
+                    //BLACK: ink gathering at the staff, the dark spell in the color language
+                    if (Main.rand.NextBool(2))
+                    {
+                        int ink = Dust.NewDust(StaffTip - new Vector2(8f, 8f), 16, 16, DustID.Asphalt, 0f, -1f, 60, default, 1.4f);
+                        Main.dust[ink].noGravity = true;
+                    }
                 }
-                //BLACK: ink gathering at the staff — the dark spell in the color language
-                if (Main.rand.NextBool(2))
+                if (AttackTimer == InkTelegraphTicks && Authority)
                 {
-                    int ink = Dust.NewDust(StaffTip - new Vector2(8f, 8f), 16, 16, DustID.Asphalt, 0f, -1f, 60, default, 1.4f);
-                    Main.dust[ink].noGravity = true;
-                }
-                if (AttackTimer == InkTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    //The cloud forms ON the player's position now (its own 120t build-up is the escape window)
+                    //The cloud forms ON the player's position (its own 120t build-up is the escape window)
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), player.Center, Vector2.Zero,
-                        ModContent.ProjectileType<InkGeyser>(), InkDamage, 1f, Main.myPlayer, NPC.target);
+                        ModContent.ProjectileType<InkGeyser>(), EnemyDamage.Projectile(InkExpertDamage), 1f, Main.myPlayer, NPC.target);
                 }
             }
             else if (AttackTimer >= InkTelegraphTicks + 25)
@@ -496,14 +778,13 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunIceArcVolley(tsorcRevampGlobalNPC g, Player player)
+        void RunIceArcVolley(Player player)
         {
-            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer <= IceTelegraphTicks)
             {
                 EmitIceTelegraph(halfRing: true, spiral: false, AttackTimer);
-                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer == IceTelegraphTicks && Authority)
                 {
                     Vector2 aim = (player.Center - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f));
                     for (int i = 0; i < 6; i++)
@@ -511,12 +792,14 @@ namespace tsorcRevamp.NPCs.Enemies
                         float spread = i - 2.5f;
                         // Middle shards climb the highest; the six trajectories read as an upside-down U
                         // before their short 30-tick course correction begins.
-                        Vector2 velocity = new Vector2(aim.X * 6f + spread * 1.15f,
-                            -8.2f + Math.Abs(spread) * 1.25f);
+                        Vector2 velocity = new Vector2(aim.X * 6f + spread * 1.15f, -8.2f + Math.Abs(spread) * 1.25f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
-                            ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                            ModContent.ProjectileType<GigasIceShard>(), EnemyDamage.Projectile(IceExpertDamage), 1f, Main.myPlayer,
                             0.10f, IceGuidedThirty, NPC.target);
                     }
+                }
+                if (AttackTimer == IceTelegraphTicks && !Main.dedServ)
+                {
                     SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.65f, Pitch = 0.15f }, StaffTip);
                 }
             }
@@ -526,14 +809,13 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunIceOverflight(tsorcRevampGlobalNPC g, Player player)
+        void RunIceOverflight(Player player)
         {
-            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
             NPC.velocity.X *= 0.8f;
             if (AttackTimer <= IceTelegraphTicks)
             {
                 EmitIceTelegraph(halfRing: false, spiral: true, AttackTimer);
-                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer == IceTelegraphTicks && Authority)
                 {
                     int towardPlayer = Math.Sign(player.Center.X - StaffTip.X);
                     for (int i = 0; i < 4; i++)
@@ -541,9 +823,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         float spread = i - 1.5f;
                         Vector2 velocity = new Vector2(towardPlayer * (6.2f + spread * 0.45f), -9f + Math.Abs(spread));
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
-                            ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                            ModContent.ProjectileType<GigasIceShard>(), EnemyDamage.Projectile(IceExpertDamage), 1f, Main.myPlayer,
                             0f, IceOverflightThirty, NPC.target);
                     }
+                }
+                if (AttackTimer == IceTelegraphTicks && !Main.dedServ)
+                {
                     SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.65f, Pitch = -0.05f }, StaffTip);
                 }
             }
@@ -553,14 +838,13 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        void RunFrostSprites(tsorcRevampGlobalNPC g, Player player)
+        void RunFrostSprites(Player player)
         {
-            g.AttackCommitted = AttackTimer <= IceTelegraphTicks;
             NPC.velocity.X *= 0.82f;
             if (AttackTimer <= IceTelegraphTicks)
             {
                 EmitIceTelegraph(halfRing: false, spiral: false, AttackTimer);
-                if (AttackTimer == IceTelegraphTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer == IceTelegraphTicks && Authority)
                 {
                     int spawned = 0;
                     for (int attempt = 0; attempt < 32 && spawned < 8; attempt++)
@@ -570,15 +854,18 @@ namespace tsorcRevamp.NPCs.Enemies
                             continue;
                         }
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                            ModContent.ProjectileType<QuaraFrostSprite>(), IceDamage, 1f, Main.myPlayer,
+                            ModContent.ProjectileType<QuaraFrostSprite>(), EnemyDamage.Projectile(IceExpertDamage), 1f, Main.myPlayer,
                             spawned * 15f, NPC.target);
                         spawned++;
                     }
+                }
+                if (AttackTimer == IceTelegraphTicks && !Main.dedServ)
+                {
                     SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = -0.35f }, StaffTip);
                 }
             }
-            // The seeded frost sprites own their own 3-second warning and delayed shots, so Quara
-            // may return to its normal move pool after this short recovery.
+            // The seeded frost sprites own their own 3-second warning and delayed shots, so it may return
+            // to its normal move pool after this short recovery.
             else if (AttackTimer >= IceTelegraphTicks + IceRecoveryTicks)
             {
                 EndAttack(260);
@@ -587,6 +874,10 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void EmitIceTelegraph(bool halfRing, bool spiral, int timer)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
             if (timer == 1)
             {
                 SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.5f, Pitch = -0.55f }, StaffTip);
@@ -595,11 +886,19 @@ namespace tsorcRevamp.NPCs.Enemies
             int count = 1 + (int)(progress * 3f);
             for (int i = 0; i < count; i++)
             {
-                float angle = spiral
-                    ? progress * MathHelper.TwoPi * 2.5f + Main.rand.NextFloat(-0.55f, 0.55f)
-                    : halfRing
-                        ? Main.rand.NextFloat(MathHelper.Pi, MathHelper.TwoPi)
-                        : Main.rand.NextFloat(MathHelper.TwoPi);
+                float angle;
+                if (spiral)
+                {
+                    angle = progress * MathHelper.TwoPi * 2.5f + Main.rand.NextFloat(-0.55f, 0.55f);
+                }
+                else if (halfRing)
+                {
+                    angle = Main.rand.NextFloat(MathHelper.Pi, MathHelper.TwoPi);
+                }
+                else
+                {
+                    angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                }
                 Vector2 position = StaffTip + angle.ToRotationVector2() * Main.rand.NextFloat(10f, 34f);
                 Dust dust = Dust.NewDustPerfect(position, DustID.Frost, (StaffTip - position) * (0.10f + progress * 0.10f), 80, default,
                     Main.rand.NextFloat(0.65f, 1.05f));
@@ -646,69 +945,80 @@ namespace tsorcRevamp.NPCs.Enemies
             return true;
         }
 
-        void RunTideRush(tsorcRevampGlobalNPC g, Player player)
+        void RunTideRush(Player player)
         {
             if (AttackTimer <= RushDissolveTicks)
             {
-                g.AttackCommitted = true;
                 NPC.velocity.X *= 0.7f;
                 if (AttackTimer == 1)
                 {
                     rushStartGround = NPC.Bottom;
                     lastRushWaterTileX = int.MinValue;
                     rushIceVolleyFired = false;
-                    SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f }, NPC.Center);
-                    for (int i = 0; i < 15; i++)
+                    if (!Main.dedServ)
                     {
-                        Vector2 vel = Main.rand.NextVector2Circular(3f, 3f);
-                        int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, vel.X, vel.Y - 1f, 60, default, 1.3f);
-                        Main.dust[dust].noGravity = true;
+                        SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.7f }, NPC.Center);
+                        for (int i = 0; i < 15; i++)
+                        {
+                            Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f);
+                            int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, velocity.X, velocity.Y - 1f, 60, default, 1.3f);
+                            Main.dust[dust].noGravity = true;
+                        }
                     }
                 }
-                if (AttackTimer == RushDissolveTicks && Main.netMode != NetmodeID.MultiplayerClient)
+                if (AttackTimer == RushDissolveTicks && Authority)
                 {
                     //Retreat, or flank to the player's far side with 6 tiles space
                     int towardPlayer = player.Center.X > NPC.Center.X ? 1 : -1;
                     bool flank = Main.rand.NextBool();
-                    rushDestX = flank
-                        ? player.Center.X + towardPlayer * 6 * 16f  //flanking past player with 6 tiles space
-                        : NPC.Center.X - towardPlayer * 8 * 16f;    //retreat away 8 tiles
+                    if (flank)
+                    {
+                        rushDestX = player.Center.X + towardPlayer * 6 * 16f;
+                    }
+                    else
+                    {
+                        rushDestX = NPC.Center.X - towardPlayer * 8 * 16f;
+                    }
                     rushDir = Math.Sign(rushDestX - NPC.Center.X);
                     savedKnockBackResist = NPC.knockBackResist;
                     NPC.knockBackResist = 0f; //a rushing puddle can't be shoved off course
                     NPC.netUpdate = true;
                 }
             }
-            else if (AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
+            else if (AttackTimer <= RushReformStartTick)
             {
-                //The surge: a low racing puddle — damageable but unshovable
-                g.AttackCommitted = true;
+                //The surge: a low racing puddle, damageable but unshovable
                 NPC.velocity.X = rushDir * 9f;
-                //Splash trail - increased water dust density
-                for (int i = 0; i < 4; i++)
+                if (!Main.dedServ)
                 {
-                    Vector2 pos = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width), NPC.Bottom.Y - Main.rand.NextFloat(14f));
-                    int splash = Dust.NewDust(pos, 4, 4, DustID.Water, -rushDir * 2.5f, -2f, 60, default, 1.4f);
-                    Main.dust[splash].noGravity = true;
-                }
-                //Soaks anyone it flows through (no contact damage — NPC.damage is 0)
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    SpawnRushWaterMarker();
-                    for (int i = 0; i < Main.maxPlayers; i++)
+                    for (int i = 0; i < 4; i++)
                     {
-                        Player soakedPlayer = Main.player[i];
-                        if (soakedPlayer.active && !soakedPlayer.dead && NPC.Hitbox.Intersects(soakedPlayer.Hitbox))
-                        {
-                            soakedPlayer.AddBuff(BuffID.Wet, 5 * 60);
-                        }
+                        Vector2 position = new Vector2(NPC.position.X + Main.rand.NextFloat(NPC.width), NPC.Bottom.Y - Main.rand.NextFloat(14f));
+                        int splash = Dust.NewDust(position, 4, 4, DustID.Water, -rushDir * 2.5f, -2f, 60, default, 1.4f);
+                        Main.dust[splash].noGravity = true;
+                    }
+
+                    // Soaks anyone it flows through (no contact damage: NPC.damage is 0). Applied on the
+                    // soaked player's own machine, because a server-side Player.AddBuff never reaches clients.
+                    Player local = Main.LocalPlayer;
+                    if (local.active && !local.dead && NPC.Hitbox.Intersects(local.Hitbox))
+                    {
+                        local.AddBuff(BuffID.Wet, 5 * 60);
                     }
                 }
-                bool arrived = (rushDir > 0 && NPC.Center.X >= rushDestX) || (rushDir < 0 && NPC.Center.X <= rushDestX);
-                if (arrived || (NPC.collideX && AttackTimer > RushDissolveTicks + 8))
+                if (Authority)
                 {
-                    AttackTimer = RushDissolveTicks + RushMaxSurgeTicks; //skip to reform
-                    NPC.netUpdate = true;
+                    SpawnRushWaterMarker();
+                }
+                bool arrived = (rushDir > 0 && NPC.Center.X >= rushDestX) || (rushDir < 0 && NPC.Center.X <= rushDestX);
+                bool blocked = NPC.collideX && AttackTimer > RushDissolveTicks + 8;
+                if (arrived || blocked)
+                {
+                    AttackTimer = RushReformStartTick; //skip to reform
+                    if (Authority)
+                    {
+                        NPC.netUpdate = true;
+                    }
                 }
             }
             else
@@ -716,7 +1026,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 //Re-forming: vulnerable
                 NPC.velocity.X *= 0.6f;
                 RestoreKnockback();
-                if (AttackTimer == RushDissolveTicks + RushMaxSurgeTicks + 1)
+                if (AttackTimer == RushReformStartTick + 1 && !Main.dedServ)
                 {
                     SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.6f, Pitch = 0.3f }, NPC.Center);
                     for (int i = 0; i < 12; i++)
@@ -725,13 +1035,12 @@ namespace tsorcRevamp.NPCs.Enemies
                         Main.dust[dust].noGravity = true;
                     }
                 }
-                int iceTelegraphStart = RushDissolveTicks + RushMaxSurgeTicks + RushReformTicks;
+                int iceTelegraphStart = RushIceTelegraphStartTick;
                 if (AttackTimer > iceTelegraphStart && AttackTimer <= iceTelegraphStart + IceTelegraphTicks)
                 {
-                    g.AttackCommitted = true;
                     EmitIceTelegraph(halfRing: false, spiral: false, AttackTimer - iceTelegraphStart);
-                    if (AttackTimer == iceTelegraphStart + IceTelegraphTicks && !rushIceVolleyFired
-                        && Main.netMode != NetmodeID.MultiplayerClient)
+                    bool volleyTick = AttackTimer == iceTelegraphStart + IceTelegraphTicks;
+                    if (volleyTick && !rushIceVolleyFired && Authority)
                     {
                         rushIceVolleyFired = true;
                         Vector2 target = FindGroundPoint(rushStartGround, 8);
@@ -741,12 +1050,15 @@ namespace tsorcRevamp.NPCs.Enemies
                         }
                         for (int i = 0; i < 4; i++)
                         {
-                            Vector2 velocity = (target - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f))
-                                .RotatedBy((i - 1.5f) * 0.10f) * Main.rand.NextFloat(8.5f, 10.5f);
+                            Vector2 direction = (target - StaffTip).SafeNormalize(new Vector2(NPC.direction, 0f));
+                            Vector2 velocity = direction.RotatedBy((i - 1.5f) * 0.10f) * Main.rand.NextFloat(8.5f, 10.5f);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), StaffTip, velocity,
-                                ModContent.ProjectileType<GigasIceShard>(), IceDamage, 1f, Main.myPlayer,
+                                ModContent.ProjectileType<GigasIceShard>(), EnemyDamage.Projectile(IceExpertDamage), 1f, Main.myPlayer,
                                 0.12f, IceWaterIgniter, -1f);
                         }
+                    }
+                    if (volleyTick && !Main.dedServ)
+                    {
                         SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.72f, Pitch = -0.15f }, StaffTip);
                     }
                 }
@@ -771,7 +1083,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromAI(), ground - new Vector2(0f, 8f), Vector2.Zero,
-                ModContent.ProjectileType<QuaraWaterResidue>(), IceDamage, 0f, Main.myPlayer);
+                ModContent.ProjectileType<QuaraWaterResidue>(), EnemyDamage.Projectile(IceExpertDamage), 0f, Main.myPlayer);
         }
 
         static Vector2 FindGroundPoint(Vector2 worldPosition, int maxTilesDown)
@@ -787,39 +1099,195 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             return Vector2.Zero;
         }
+        #endregion
 
-        //On-hit evasion only from true neutral — recovery frames stay punishable
+        #region Staff pose
+        ///<summary>The coral staff's orb, every cast's origin: the rear hand plus the measured grip-to-orb
+        ///vector, mirrored by facing and rotated by the same tilt the staff is drawn with.</summary>
+        Vector2 StaffTip
+        {
+            get
+            {
+                Vector2 offset = StaffTipOffset;
+                offset.X *= NPC.direction;
+                float rotation = StaffTilt * NPC.direction;
+                return PuppetBackHandPosition + offset.RotatedBy(rotation) * NPC.scale;
+            }
+        }
+
+        float StaffArmAngle
+        {
+            get
+            {
+                GetStaffPose(out float armAngle, out _);
+                return armAngle;
+            }
+        }
+
+        float StaffTilt
+        {
+            get
+            {
+                GetStaffPose(out _, out float tilt);
+                return tilt;
+            }
+        }
+
+        // The last tick of each cast's active part; the staff lowers back to rest over PoseLowerTicks after it.
+        int PoseReleaseTick
+        {
+            get
+            {
+                switch (State)
+                {
+                    case AttackState.BubbleBarrage:
+                        return BarrageTelegraphTicks + 12;
+                    case AttackState.TidalCrest:
+                        return CrestTelegraphTicks;
+                    case AttackState.BurstBubble:
+                        return BurstCastTicks;
+                    case AttackState.InkGeyser:
+                        return InkTelegraphTicks;
+                    case AttackState.TideRush:
+                        return RushIceTelegraphStartTick + IceTelegraphTicks;
+                    default:
+                        return IceTelegraphTicks;
+                }
+            }
+        }
+
+        // One pose per cast, derived purely from the synced State + AttackTimer so every peer draws the same
+        // thing. Targets blend in from rest over PoseRaiseTicks and back to rest over PoseLowerTicks.
+        void GetStaffPose(out float armAngle, out float tilt)
+        {
+            armAngle = RestArmAngle;
+            tilt = RestStaffTilt;
+            if (Neutral)
+            {
+                return;
+            }
+
+            float targetArm = RaisedArmAngle;
+            float targetTilt = RaisedStaffTilt;
+            int poseStart = 0;
+
+            switch (State)
+            {
+                case AttackState.BubbleBarrage:
+                    targetArm = AimedArmAngle;
+                    targetTilt = 0.1f;
+                    // A small upward kick for 4 ticks after each of the three shots.
+                    int sinceFirstShot = AttackTimer - BarrageTelegraphTicks;
+                    bool kicking = sinceFirstShot >= 0 && sinceFirstShot <= 16 && sinceFirstShot % 6 < 4;
+                    if (kicking)
+                    {
+                        targetArm -= 0.1f;
+                    }
+                    break;
+
+                case AttackState.TidalCrest:
+                    // Lifted, then driven butt-first into the ground over the last 8 tell ticks so the strike
+                    // lands on the release and the wave rises at its feet. The staff stays near upright.
+                    if (AttackTimer > CrestSlamStartTick)
+                    {
+                        float slam = MathHelper.Clamp((AttackTimer - CrestSlamStartTick) / (float)(CrestTelegraphTicks - CrestSlamStartTick), 0f, 1f);
+                        targetArm = MathHelper.Lerp(RaisedArmAngle, 0.5f, slam);
+                        targetTilt = MathHelper.Lerp(RaisedStaffTilt, 0.15f, slam);
+                    }
+                    break;
+
+                case AttackState.InkGeyser:
+                    // Raised while the ink gathers, then thrust toward the target as the cloud is sent.
+                    if (AttackTimer > InkThrustStartTick)
+                    {
+                        float thrust = MathHelper.Clamp((AttackTimer - InkThrustStartTick) / (float)(InkTelegraphTicks - InkThrustStartTick), 0f, 1f);
+                        targetArm = MathHelper.Lerp(RaisedArmAngle, AimedArmAngle, thrust);
+                        targetTilt = MathHelper.Lerp(RaisedStaffTilt, 0.5f, thrust);
+                    }
+                    break;
+
+                case AttackState.IceOverflight:
+                    // A slow circling wobble that matches the spiral gather dust (20-tick period).
+                    float wobble = (float)Math.Sin(AttackTimer * MathHelper.TwoPi / 20f);
+                    targetTilt += wobble * 0.18f;
+                    break;
+
+                case AttackState.TideRush:
+                    if (AttackTimer <= RushReformStartTick)
+                    {
+                        // Dissolving into the puddle: staff lowered with the sinking body (hidden mid-surge).
+                        targetArm = 0.3f;
+                        targetTilt = 0.3f;
+                    }
+                    else
+                    {
+                        // Re-formed: the staff rises for the trail-freezing volley.
+                        poseStart = RushReformStartTick;
+                    }
+                    break;
+            }
+
+            float blend = MathHelper.Clamp((AttackTimer - poseStart) / (float)PoseRaiseTicks, 0f, 1f);
+            int releaseTick = PoseReleaseTick;
+            if (AttackTimer > releaseTick)
+            {
+                blend = 1f - MathHelper.Clamp((AttackTimer - releaseTick) / (float)PoseLowerTicks, 0f, 1f);
+            }
+
+            armAngle = MathHelper.SmoothStep(RestArmAngle, targetArm, blend);
+            tilt = MathHelper.SmoothStep(RestStaffTilt, targetTilt, blend);
+        }
+
+        // The near hand gestures at the target during casts; it cups upward for the overhead bubble and the
+        // frost sprites, which form above.
+        protected override float? FreeFrontArmFacingAngle
+        {
+            get
+            {
+                if (Neutral)
+                {
+                    return null;
+                }
+
+                float gestureTarget = 1.35f;
+                if (State == AttackState.BurstBubble || State == AttackState.FrostSprites)
+                {
+                    gestureTarget = -1.2f;
+                }
+
+                float gesture = MathHelper.Clamp(AttackTimer / (float)PoseRaiseTicks, 0f, 1f);
+                int releaseTick = PoseReleaseTick;
+                if (AttackTimer > releaseTick)
+                {
+                    gesture = 1f - MathHelper.Clamp((AttackTimer - releaseTick) / (float)PoseLowerTicks, 0f, 1f);
+                }
+
+                return MathHelper.SmoothStep(MathHelper.PiOver2, gestureTarget, gesture);
+            }
+        }
+        #endregion
+
+        //On-hit evasion only from true neutral: recovery frames stay punishable
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
-            if (State == AttackState.None)
+            if (Neutral)
             {
                 tsorcRevampAIs.EvasiveOnHit(NPC, true);
             }
         }
+
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-            if (State == AttackState.None)
+            if (Neutral)
             {
                 tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
             }
         }
 
-        public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (State == AttackState.TideRush && AttackTimer > RushDissolveTicks && AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
-            {
-                NPC.alpha = 217; // 85% transparent during water surge dash
-            }
-            else
-            {
-                NPC.alpha = 0; // 100% opaque
-            }
-            return true;
-        }
-
-        public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            if (State == AttackState.None)
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+            if (Neutral)
             {
                 return;
             }
@@ -828,19 +1296,16 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 if (AttackTimer <= RushDissolveTicks)
                 {
-                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
-                        new Vector2(NPC.width, NPC.height), AttackTimer / (float)RushDissolveTicks, false, NPC.direction);
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center, new Vector2(NPC.width, NPC.height), AttackTimer / (float)RushDissolveTicks, false, NPC.direction);
                 }
-                else if (AttackTimer <= RushDissolveTicks + RushMaxSurgeTicks)
+                else if (AttackTimer <= RushReformStartTick)
                 {
-                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
-                        new Vector2(NPC.width, NPC.height), 1f, false, rushDir);
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center, new Vector2(NPC.width, NPC.height), 1f, false, rushDir);
                 }
                 else
                 {
-                    float reform = MathHelper.Clamp((AttackTimer - RushDissolveTicks - RushMaxSurgeTicks) / (float)RushReformTicks, 0f, 1f);
-                    EnemyVFX.DrawQuaraTideRush(NPC.Center,
-                        new Vector2(NPC.width, NPC.height), reform, true, rushDir);
+                    float reform = MathHelper.Clamp((AttackTimer - RushReformStartTick) / (float)RushReformTicks, 0f, 1f);
+                    EnemyVFX.DrawQuaraTideRush(NPC.Center, new Vector2(NPC.width, NPC.height), reform, true, rushDir);
                 }
                 return;
             }
@@ -851,25 +1316,33 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 case AttackState.BubbleBarrage:
                     if (AttackTimer > BarrageTelegraphTicks + 12)
+                    {
                         return;
+                    }
                     progress = MathHelper.Clamp(AttackTimer / (float)BarrageTelegraphTicks, 0f, 1f);
                     pattern = 0;
                     break;
                 case AttackState.TidalCrest:
                     if (AttackTimer > CrestTelegraphTicks)
+                    {
                         return;
+                    }
                     progress = MathHelper.Clamp(AttackTimer / (float)CrestTelegraphTicks, 0f, 1f);
                     pattern = 1;
                     break;
                 case AttackState.BurstBubble:
                     if (AttackTimer > BurstCastTicks)
+                    {
                         return;
+                    }
                     progress = MathHelper.Clamp(AttackTimer / (float)BurstCastTicks, 0f, 1f);
                     pattern = 2;
                     break;
                 case AttackState.InkGeyser:
                     if (AttackTimer > InkTelegraphTicks)
+                    {
                         return;
+                    }
                     progress = MathHelper.Clamp(AttackTimer / (float)InkTelegraphTicks, 0f, 1f);
                     pattern = 3;
                     break;
@@ -877,6 +1350,30 @@ namespace tsorcRevamp.NPCs.Enemies
                     return;
             }
             EnemyVFX.DrawQuaraCast(StaffTip, progress, pattern);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write((byte)State);
+            writer.Write(AttackTimer);
+            writer.Write(AttackCooldown);
+            writer.Write((sbyte)rushDir);
+            writer.Write(rushDestX);
+            writer.Write(HM);
+            writer.Write(SHM);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            State = (AttackState)reader.ReadByte();
+            AttackTimer = reader.ReadInt32();
+            AttackCooldown = reader.ReadInt32();
+            rushDir = reader.ReadSByte();
+            rushDestX = reader.ReadSingle();
+            HM = reader.ReadBoolean();
+            SHM = reader.ReadBoolean();
         }
 
         #region Gore
@@ -888,8 +1385,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 SoundEngine.PlaySound(SoundID.SplashWeak with { Volume = 0.8f, Pitch = -0.2f }, NPC.Center);
                 for (int i = 0; i < 20; i++)
                 {
-                    Vector2 vel = Main.rand.NextVector2Circular(4f, 4f);
-                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, vel.X, vel.Y - 2f, 50, default, 1.4f);
+                    Vector2 velocity = Main.rand.NextVector2Circular(4f, 4f);
+                    int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, velocity.X, velocity.Y - 2f, 50, default, 1.4f);
                     Main.dust[dust].noGravity = true;
                 }
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Quara Hydromancer Gore 1").Type, 1.2f);
@@ -907,6 +1404,8 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.IronskinPotion, 50));
             npcLoot.Add(ItemDropRule.Common(ItemID.SoulofLight, 2));
             npcLoot.Add(new CommonDrop(ItemID.GreaterHealingPotion, 100, 1, 1, 8));
+            // Unique, guaranteed crafting soul for the Quara Hydromancer armor (3 per piece).
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<HydromancerSoul>()));
         }
     }
 }

@@ -2094,6 +2094,7 @@ namespace tsorcRevamp
                 {ModContent.ItemType<SupremeDragoonHelmet>(), SupremeDragoonHelmet.MaxMana},
                 {ModContent.ItemType<AnkorWatHelmet>(), AnkorWatHelmet.MaxMana},
                 {ModContent.ItemType<DragonScaleHelmet>(), DragonScaleHelmet.MaxMana},
+                {ModContent.ItemType<Content.Items.Armor.Enemy.QuaraHydromancerSet.QuaraHydromancerHeadpiece>(), Content.Items.Armor.Enemy.QuaraHydromancerSet.QuaraHydromancerHeadpiece.MaxMana},
                 {ModContent.ItemType<GenjiGreaves>(), GenjiGreaves.MaxMana},
                 {ModContent.ItemType<MimeticHat>(), MimeticHat.MaxMana},
                 {ModContent.ItemType<ArtoriasOfTheAbyssHelm>(), ArtoriasOfTheAbyssHelm.MaxMana},

@@ -1286,6 +1286,15 @@ namespace tsorcRevamp.Utilities.Balance
                 encounter.ceruleanManaRestored = _ceruleanManaRestored;
                 encounter.maxManaAtEnd = Main.LocalPlayer.statManaMax2;
 
+                // Soul slot only (not inventory or Soul Coins). An empty slot holds an air item, whose stack isn't reliably 0.
+                Item soulSlotItem = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item;
+                encounter.darkSoulsInSlotAtEnd = 0;
+
+                if (!soulSlotItem.IsAir)
+                {
+                    encounter.darkSoulsInSlotAtEnd = soulSlotItem.stack;
+                }
+
                 // An ending found late (the grace window) leaves a few seconds of samples after the fight really
                 // stopped. Trim them so the timelines and the engagement numbers describe the fight only.
                 int maxSamples = ticks / SampleIntervalTicks + 1;
