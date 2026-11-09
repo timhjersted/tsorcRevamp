@@ -55,6 +55,18 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool CanUseItem(Item item, Player player)
         {
+            // Hardmode curses the Magic Mirror for both Souls classes; use the player attempting the teleport.
+            if (item.type == ItemID.MagicMirror && Main.hardMode && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    string curseMessage = Language.GetTextValue("Mods.tsorcRevamp.Items.GreatMagicMirror.BotCDisabled");
+                    Main.NewText(curseMessage, Color.OrangeRed);
+                }
+
+                return false;
+            }
+
             if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
             {
                 if (tsorcRevampWorld.BossAlive)
@@ -246,6 +258,12 @@ namespace tsorcRevamp.Content.Items
         public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.type == ItemID.MagicMirror && Main.hardMode && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                string curseMessage = Language.GetTextValue("Mods.tsorcRevamp.Items.GreatMagicMirror.BotCDisabled");
+                tooltips.Add(new TooltipLine(Mod, "HardmodeMirrorCurse", curseMessage));
+            }
+
             if (item.ModItem != null && item.ModItem.Mod == Mod)
             {
                 try
@@ -304,9 +322,22 @@ namespace tsorcRevamp.Content.Items
                 int activePlayers = 0;
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Main.player[i].active) activePlayers++;
+                    if (Main.player[i].active)
+                    {
+                        activePlayers++;
+                    }
                 }
-                int gain = activePlayers >= 4 ? 20 : (activePlayers >= 2 ? 15 : 10);
+
+                int gain = 10;
+                if (activePlayers >= 4)
+                {
+                    gain = 20;
+                }
+                else if (activePlayers >= 2)
+                {
+                    gain = 15;
+                }
+
 
                 // Find the vanilla "permanently increases maximum life" line and rewrite the number.
                 // Falls back to appending a new line if the vanilla one isn't found (other mods etc.).

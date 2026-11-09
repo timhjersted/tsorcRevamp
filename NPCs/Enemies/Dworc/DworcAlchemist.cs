@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -14,61 +14,37 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
-    public class DworcAlchemist : ModNPC
+    public class DworcAlchemist : DworcCasterPuppet
     {
+        protected override CasterKind Kind => CasterKind.Alchemist;
+
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 15;
+            base.SetStaticDefaults();
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath29;
             NPC.npcSlots = 5;
-            NPC.damage = 0;
             NPC.lifeMax = 250;
             NPC.defense = 7;
-            NPC.value = 1250; // life / 2 
-            NPC.width = 18;
-            NPC.aiStyle = -1;
-            NPC.height = 40;
+            NPC.value = 1250;
             NPC.knockBackResist = 0.3f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodoomasterBanner>();
-
-            AnimationType = NPCID.Skeleton;
 
             if (Main.hardMode)
             {
                 NPC.lifeMax = 500;
                 NPC.defense = 14;
                 NPC.value = 2500;
-                NPC.damage = 42;
                 NPC.knockBackResist = 0.1f;
             }
 
-            // "Poison Strike" — fast aimed poison bolt
-            UsefulFunctions.AddAttack(NPC, 150, ModContent.ProjectileType<EnemySpellGreatPoisonStrikeBall>(), 7, 8, SoundID.Item20);
-            // "Poison Storm" — heavy lobbed storm ball (long cooldown)  [magic-ring candidate: set commitFraction: 0.5f if this is the shrinking ring]
-            UsefulFunctions.AddAttack(NPC, 700, ModContent.ProjectileType<EnemySpellPoisonStormBall>(), 9, 0, SoundID.Item100);
-
-            // Step 6 caster lever: remember last-known position before patrolling.
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RemembersLastKnownPos = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanUseRopes = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanGoInvisible = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().InvisibleAlpha = 220;
-            EvasiveProfile.EvasiveCloak(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>(), cloakChance: 0.45f, threatRange: 220);
-            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
-            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
-            EvasiveProfile.DworcShaman(NPC.GetGlobalNPC<tsorcRevampGlobalNPC>());
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanSelfHeal = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().SelfHealAmount = 30;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().CanHealAllies = true;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesChance = 500;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesRange = 40;
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().HealAlliesPercent = 8;
+            // Poise/knockback are resolved last by GlobalNPC.PopulatePoiseProfiles.
         }
         //excuse me while i drop Every Potion Known To Mankind holy hell
         //these dudes oughtta be called alchemists or something
@@ -150,57 +126,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         }
 
         #endregion
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, true);
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        public override void AI()
-        {
-            tsorcRevampAIs.FighterAI(NPC, 0.8f, 0.02f, 0.2f, true, enragePercent: 0.5f, enrageTopSpeed: 1.6f, canPounce: false);
-
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<EnemySpellPoisonStormBall>();
-            float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 180f;
-            if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)//SHRINKING CIRCLE DUST
-            {
-                float telegraphRadius = MathHelper.Clamp(globalNPC.CurrentAttack.timerCap - globalNPC.ProjectileTimer, 0f, 180f);
-                UsefulFunctions.DustRing(NPC.Center, telegraphRadius, DustID.CursedTorch, 12, 4);
-                Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
-                if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-                {
-                    NPC.velocity = Vector2.Zero;
-                }
-            }
-
-            //IF HIT BEFORE PINK DUST TELEGRAPH, RESET TIMER, BUT CHANCE TO BREAK STUN LOCK
-            //(WORKS WITH 2 TELEGRAPH DUSTS, AT 60 AND 110)
-            if (NPC.justHit && NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer < NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTelegraphStart)
-            {
-                if (Main.rand.NextBool(3))
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 110;
-                    NPC.netUpdate = true;
-                }
-                else
-                {
-                    NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 0;
-                    NPC.netUpdate = true;
-                }
-            }
-            if (NPC.justHit && Main.rand.NextBool(24))
-            {
-                tsorcRevampAIs.QueueTeleport(NPC, 20, true, 50);
-                NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().ProjectileTimer = 70f;
-                NPC.netUpdate = true;
-            }
-
-        }
 
         #region Gore
         public override void HitEffect(NPC.HitInfo hit)

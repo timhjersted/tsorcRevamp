@@ -2131,6 +2131,7 @@
   "text": "You can feel the heat of magma boiling above you. Before you pull the lever, you make sure you\u0027re ready, because you know you\u0027re going to have to make a mad dash to survive this.",
   "tileX": 6035,
   "tileY": 1053,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }

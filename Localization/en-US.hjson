@@ -9430,6 +9430,21 @@ Mods: {
 				DisplayName: Great Black Knight Helm
 			}
 
+			RoyalKnightHelmet: {
+				DisplayName: Royal Knight Helmet
+				Tooltip: ""
+			}
+
+			RoyalKnightBreastplate: {
+				DisplayName: Royal Knight Breastplate
+				Tooltip: ""
+			}
+
+			RoyalKnightGreaves: {
+				DisplayName: Royal Knight Greaves
+				Tooltip: ""
+			}
+
 			GreatBlackKnightArmor: {
 				Tooltip: ""
 				DisplayName: Great Black Knight Armor
@@ -9527,6 +9542,11 @@ Mods: {
 
 			EnemyFireFlask: {
 				DisplayName: Enemy Fire Flask
+				Tooltip: ""
+			}
+
+			EnemyDworcStaff: {
+				DisplayName: Dworc Staff
 				Tooltip: ""
 			}
 
@@ -9673,6 +9693,11 @@ Mods: {
 			BlackBlade: {
 				Tooltip: ""
 				DisplayName: Black Blade
+			}
+
+			RoyalKnightHalberd: {
+				Tooltip: ""
+				DisplayName: Royal Knight Halberd
 			}
 
 			EnemyBeastClaw: {
@@ -11188,6 +11213,15 @@ Mods: {
 		}
 
 		Projectiles: {
+			DworcFlask.DisplayName: Dworc Flask
+			DworcFireFlame.DisplayName: Lingering Fire
+			DworcStormRing.DisplayName: Abyss Storm
+			DworcPoisonBolt.DisplayName: Poison Strike
+			DworcPoisonImpact.DisplayName: Poison Strike
+			DworcAbyssBolt.DisplayName: Abyss Poison Strike
+			DworcAbyssImpact.DisplayName: Abyss Poison Strike
+			DworcSpiritExplosion.DisplayName: Spirit Rupture
+			DworcSuppressionBurst.DisplayName: Azure Suppression
 			DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
 			DarkmoonCrescent.DisplayName: Moonlight Crescent
 			DarkmoonVigilController.DisplayName: Darkmoon Vigil
@@ -12791,6 +12825,7 @@ Mods: {
 			DworcVenomsniper.DisplayName: Dworc Venomsniper
 			DworcAlchemist.DisplayName: Dworc Alchemist
 			DworcVoodooShaman.DisplayName: Dworc Shaman
+			ShamanSpirit.DisplayName: Shaman Spirit
 			FirebombHollow.DisplayName: Firebomb Hollow
 			FireLurker.DisplayName: Fire Lurker
 			GaibonFireball.DisplayName: Gaibon Fireball

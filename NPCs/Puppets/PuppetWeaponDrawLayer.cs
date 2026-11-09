@@ -21,7 +21,24 @@ namespace tsorcRevamp.NPCs.Puppets
 
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
-            PuppetNPC.DrawingPuppetFor?.TransformSpectralDrawData(ref drawInfo);
+            PuppetNPC puppet = PuppetNPC.DrawingPuppetFor;
+            if (puppet == null)
+            {
+                return;
+            }
+
+            float opacity = MathHelper.Clamp(puppet.BodyOpacity, 0f, 1f);
+            if (opacity < 1f)
+            {
+                for (int i = 0; i < drawInfo.DrawDataCache.Count; i++)
+                {
+                    DrawData draw = drawInfo.DrawDataCache[i];
+                    draw.color *= opacity;
+                    drawInfo.DrawDataCache[i] = draw;
+                }
+            }
+
+            puppet.TransformSpectralDrawData(ref drawInfo);
         }
     }
 
@@ -210,6 +227,7 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
+            puppet.ApplyBackArmPresentation(ref drawInfo);
             puppet.DrawBackHandWeaponToLayer(ref drawInfo);
         }
     }

@@ -150,6 +150,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             }
         }
 
+        // Small spirit deaths reuse the clap's violet material layers, with their own one-hit
+        // collision clock. No grave-hand damage rings or pyre/status payloads are spawned.
+        internal static void DrawSpiritNova(Vector2 center, int age, float radius)
+        {
+            LoadAssets();
+            float progress = MathHelper.Clamp(age / 36f, 0f, 1f);
+            DrawDeathBlastLayer(center, radius * 2.2f, progress, 0f, 0.85f, 1f, 0.19f, false, 0.8f);
+            DrawDeathBlastLayer(center, radius * 2.2f, progress, 0.12f, 0.75f, 0.86f, 0.56f, false, 0.55f, 1.1f);
+            DrawDeathBlastLayer(center, radius * 2.2f, progress, 0.24f, 0.7f, 0.72f, 0.93f, false, 0.4f, 2.2f);
+        }
+
         static void DrawDeathBlastLayer(Vector2 center, float diameter, float globalProgress,
             float delay, float duration, float scale, float phase, bool pyre, float opacity, float rotation = 0f)
         {

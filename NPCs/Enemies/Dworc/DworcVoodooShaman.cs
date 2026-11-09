@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -12,62 +12,29 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.Dworc
 {
-    public class DworcVoodooShaman : ModNPC
+    public class DworcVoodooShaman : DworcCasterPuppet
     {
+        protected override CasterKind Kind => CasterKind.Shaman;
+
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 15;
+            base.SetStaticDefaults();
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
         }
         public override void SetDefaults()
         {
+            base.SetDefaults();
             NPC.npcSlots = 3;
             NPC.HitSound = SoundID.NPCHit29;
             NPC.DeathSound = SoundID.NPCDeath31;
-            NPC.damage = 0;
             NPC.lifeMax = 750;
             NPC.defense = 28;
             NPC.value = 7500;
-            NPC.width = 18;
-            NPC.aiStyle = -1;
-            NPC.height = 40;
             NPC.knockBackResist = 0.2f;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.DworcVoodooShamanBanner>();
-            AnimationType = NPCID.Skeleton;
-            // "Poison Strike" — fast aimed poison bolt
-            int poisonStrikeType = ModContent.ProjectileType<EnemySpellGreatPoisonStrikeBall>();
-            UsefulFunctions.AddAttack(NPC, 150, poisonStrikeType, 18, 8, SoundID.Item20, 0);
-            // "Poison Storm" — heavy lobbed ball that bursts into a poison storm (no LOS needed). The shrinking-ring
-            // telegraph runs 90t (see AI()), so telegraphTime: 90 makes the poise telegraph/commit window match the
-            // visible ring; commitFraction: 0.5f = first half of the shrink is cancellable, second half committed.
-            int poisonStormType = ModContent.ProjectileType<EnemySpellPoisonStormBall>();
-            UsefulFunctions.AddAttack(NPC, 480, poisonStormType, 25, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.2f, telegraphTime: 90, commitFraction: 0.5f, endsCombo: true);
-            // "Demon Spirit" — summons a homing spirit (rare; no LOS needed)
-            int demonSpiritType = ModContent.ProjectileType<Content.Projectiles.Enemy.DemonSpirit>();
-            UsefulFunctions.AddAttack(NPC, 200, demonSpiritType, 20, 0, SoundID.Item20, needsLineOfSight: false, weight: 0.05f, endsCombo: true);
-
-            // Step 6 caster lever: remember last-known position before patrolling.
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.RemembersLastKnownPos = true;
-            globalNPC.NavSearchRadius = 50; // Phase 2: SmartFighter4AI movement
-            globalNPC.CanUseRopes = true;
-            globalNPC.CanGoInvisible = true;
-            globalNPC.InvisibleAlpha = 205;
-            EvasiveProfile.EvasiveCloak(globalNPC, cloakChance: 0.30f, threatRange: 220);
-            // Poise (a stagger guarantees a cloak reveal) + knockback flinch are tuned centrally in
-            // tsorcRevampGlobalNPC.PopulatePoiseProfiles() (GlobalNPC.cs) — not here.
-            EvasiveProfile.DworcShaman(globalNPC);
-            globalNPC.CanSelfHeal = true;
-            globalNPC.SelfHealAmount = 20;
-
-            // Only offensive casts participate. Self-healing remains an independent utility action.
-            // Preserve authored rarity in follow-ups; the storm and summon always finish a chain.
-            CombatTempoProfile.Standard(globalNPC,
-                new CombatComboMove(poisonStrikeType, 0f, float.MaxValue, canRepeat: true, weight: 1f),
-                new CombatComboMove(poisonStormType, 0f, float.MaxValue, canRepeat: false, weight: 0.2f),
-                new CombatComboMove(demonSpiritType, 0f, float.MaxValue, canRepeat: false, weight: 0.05f));
+            // Poise/knockback are resolved last by GlobalNPC.PopulatePoiseProfiles.
         }
         //yes i tweaked the drop rates. Fight Me
         public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -131,40 +98,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
 
             return chance;
-        }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, true);
-        }
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        public override void AI()
-        {
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.04f, canTeleport: true, enragePercent: 0.3f, enrageTopSpeed: 3f, canPounce: false);
-
-            // (Removed the old justHit cast-timer reset + 1/22 hit-teleport — superseded by the universal poise
-            //  stagger windup-cancel and the EvasiveOnHit reactions, incl. the evasive teleport in the DworcShaman profile.)
-
-            //Big poison storm telegraph
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool telegraphingPoisonStorm = globalNPC.CurrentAttack.type == ModContent.ProjectileType<EnemySpellPoisonStormBall>();
-            float stormTelegraphStart = globalNPC.CurrentAttack.timerCap - 90f;
-            if (telegraphingPoisonStorm && globalNPC.ProjectileTimer >= stormTelegraphStart)
-            {
-                float telegraphRadius = MathHelper.Clamp(globalNPC.CurrentAttack.timerCap - globalNPC.ProjectileTimer, 0f, 90f);
-                UsefulFunctions.DustRing(NPC.Center, telegraphRadius, DustID.CursedTorch, 12, 4);
-
-                Lighting.AddLight(NPC.Center, Color.Orange.ToVector3() * 5);
-                if (Collision.CanHit(NPC.position, NPC.width, NPC.height, Main.player[NPC.target].position, Main.player[NPC.target].width, Main.player[NPC.target].height))
-                {
-                    NPC.velocity *= 0.3f;
-                }
-            }
-
         }
 
         public override void HitEffect(NPC.HitInfo hit)

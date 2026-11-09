@@ -2410,6 +2410,17 @@ namespace tsorcRevamp.NPCs.Puppets
         /// <see cref="CustomWeaponRotation"/>), e.g. arms spread to both sides. Null = the back hand carries.</summary>
         protected virtual float? CustomBackWeaponRotation => null;
 
+        // Caster families keep a rear prop while the front hand switches bottles. Default false
+        // preserves melee dual-wield visibility and pose blending for existing puppets.
+        protected virtual bool IndependentBackHandWeapon => false;
+        protected virtual float IndependentBackHandFacingAngle => -0.3f;
+        protected virtual float IndependentBackHandDrawRotation => IndependentBackHandFacingAngle + BackHandWeapon.RotationOffset;
+        // Optional composite rear-arm presentation, in unscaled player-template pixels.
+        // False/zero retain vanilla art and geometry for every existing puppet.
+        protected virtual bool UseFrontArmSpriteForBack => false;
+        protected virtual float BackArmPivotOffsetX => 0f;
+        internal virtual float BodyOpacity => 1f;
+
         private float BackHandPoseRotation
         {
             get
@@ -2427,13 +2438,14 @@ namespace tsorcRevamp.NPCs.Puppets
 
         /// <summary>The back weapon is drawn exactly when the front melee weapon is.</summary>
         private bool BackHandWeaponVisible =>
-            DualWieldActive
+            (IndependentBackHandWeapon && !BackHandWeapon.IsEmpty)
+            || (DualWieldActive
             && _weaponVisible
             && !WeaponSheathed
             && _heldItemType > 0
             && _heldItemType == FrontHandWeaponType
             && Phase != AttackPhase.Healing
-            && Phase != AttackPhase.FleeToHeal;
+            && Phase != AttackPhase.FleeToHeal);
 
         // Runs once per tick after the swing clock updates. Moves each hand's blend toward "swinging" or
         // "carrying" at 1/DualWieldHandBlendTicks per tick. A hand that is live in an attack phase is forced
@@ -10741,6 +10753,18 @@ namespace tsorcRevamp.NPCs.Puppets
         protected Vector2 PuppetBackHandPosition => GetBackHandPosition();
         protected Vector2 PuppetBackWeaponDirection => GetBackWeaponWorldDirection();
 
+        /// <summary>Full-stretch empty front-hand anchor at an authored facing angle, usable on a
+        /// dedicated server and before a throwing arm reaches its release pose.</summary>
+        protected Vector2 PuppetFrontHandPositionAt(float facingAngle)
+        {
+            float angle = FacingAngleToCompositeArm(facingAngle) + MathHelper.PiOver2;
+            Vector2 center = PuppetVisualPosition + new Vector2(PuppetVisualWidth, PuppetVisualHeight) * 0.5f;
+            Vector2 wrist = angle.ToRotationVector2() * 10f;
+            wrist += new Vector2(-4f * NPC.direction, -2f);
+            wrist += new Vector2(0f, 3f * NPC.direction).RotatedBy(angle);
+            return center + new Vector2(0f, NPC.gfxOffY) + wrist;
+        }
+
         /// <summary>
         /// Where the free back hand WOULD be with the arm fully stretched at a facing-space angle (0 = ahead,
         /// negative = up), whatever pose is drawn this tick. For locking a cast's origin before the arm gets there.
@@ -10755,6 +10779,7 @@ namespace tsorcRevamp.NPCs.Puppets
 
             float rotation = FacingAngleToCompositeArm(facingAngle);
             Vector2 hand = _puppet.GetBackHandPosition(Player.CompositeArmStretchAmount.Full, rotation) + CompositeBodyBob;
+            hand += BackArmHandOffset(Player.CompositeArmStretchAmount.Full, rotation);
 
             float visualScale = Math.Max(1, ArmorTemplateScale) * (HasSpectralOverlay ? SpectralOverlayScale : 1f);
             if (visualScale != 1f)
@@ -10792,7 +10817,8 @@ namespace tsorcRevamp.NPCs.Puppets
             float angle = BowHoldArmRotation + MathHelper.PiOver2;
             Vector2 arm = new Vector2((float)Math.Cos(angle) * 10f, (float)Math.Sin(angle) * 12f);
             Vector2 center = PuppetVisualPosition + new Vector2(PuppetVisualWidth * 0.5f, PuppetVisualHeight * 0.5f);
-            return center + new Vector2(6f * NPC.direction, -2f) + arm;
+            Vector2 hand = center + new Vector2(6f * NPC.direction, -2f) + arm;
+            return hand + BackArmHandOffset(Player.CompositeArmStretchAmount.Full, BowHoldArmRotation);
         }
 
         private Vector2 GetBackHandPosition()
@@ -10809,6 +10835,17 @@ namespace tsorcRevamp.NPCs.Puppets
         // puppet player isn't built yet or vanilla reports nothing.
         private Vector2 GetUnscaledBackHandPosition()
         {
+            if (IndependentBackHandWeapon)
+            {
+                // Vanilla's full-stretch back-hand ellipse, evaluated without the draw-only Player.
+                // This keeps dedicated-server cast origins identical to the visible rear grip.
+                float angle = FacingAngleToCompositeArm(IndependentBackHandFacingAngle) + MathHelper.PiOver2;
+                Vector2 arm = new Vector2((float)Math.Cos(angle) * 10f, (float)Math.Sin(angle) * 12f);
+                Vector2 hand = PuppetVisualCenter + new Vector2(6f * NPC.direction, -2f) + arm + CompositeBodyBob;
+                float independentRotation = FacingAngleToCompositeArm(IndependentBackHandFacingAngle);
+                return hand + BackArmHandOffset(Player.CompositeArmStretchAmount.Full, independentRotation);
+            }
+
             if (_puppet == null)
             {
                 return PuppetVisualCenter;
@@ -10825,12 +10862,36 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             Vector2 composite = _puppet.GetBackHandPosition(stretch, rotation) + CompositeBodyBob;
+            composite += BackArmHandOffset(stretch, rotation);
             if (composite != Vector2.Zero)
             {
                 return composite;
             }
 
             return GetUnscaledHandPosition() + new Vector2(-6f * NPC.direction, 0f);
+        }
+
+        // Keep weapon grips and server-side spell origins on the presented fist. A copied
+        // front arm uses its own wrist/radius at the rear socket; pivot-only changes use delta-R(delta).
+        private Vector2 BackArmHandOffset(Player.CompositeArmStretchAmount stretch, float rotation)
+        {
+            float pivotOffset = BackArmPivotOffsetX;
+            Vector2 pivotShift = new Vector2(pivotOffset * NPC.direction, 0f);
+            if (!UseFrontArmSpriteForBack)
+            {
+                return pivotShift - pivotShift.RotatedBy(rotation);
+            }
+
+            GetBackArmEllipse(stretch, out float radiusX, out float radiusY);
+            float facingRotation = rotation * NPC.direction;
+            float angle = facingRotation + MathHelper.PiOver2;
+            float cosine = (float)Math.Cos(angle);
+            float sine = (float)Math.Sin(angle);
+            Vector2 offset = new Vector2(
+                1f + pivotOffset - 3f * sine,
+                2f + (radiusX - radiusY) * sine + 3f * cosine);
+            offset.X *= NPC.direction;
+            return offset;
         }
 
         /// <summary>World-space point along the currently drawn melee weapon's blade.</summary>
@@ -11369,6 +11430,11 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 ResolveTwoHandedBackArmPose();
                 _puppet.SetCompositeArmBack(true, _twoHandedBackStretch, _twoHandedBackRotation);
+            }
+            else if (IndependentBackHandWeapon && BackHandWeaponVisible)
+            {
+                float rearRotation = FacingAngleToCompositeArm(IndependentBackHandFacingAngle);
+                _puppet.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, rearRotation);
             }
             else if (BackHandWeaponVisible)
             {
@@ -13024,11 +13090,72 @@ namespace tsorcRevamp.NPCs.Puppets
                 _slashVFXTex, position - Main.screenPosition, sourceRectangle, color, rotation, origin, scale, spriteFx, 0));
         }
 
+        // Adjust only rotating rear-arm draw entries after Skin emits them. Source-frame
+        // selection preserves the rear animation's stretch while optionally reusing front-arm art.
+        internal void ApplyBackArmPresentation(ref PlayerDrawSet drawInfo)
+        {
+            bool copyFrontArm = UseFrontArmSpriteForBack;
+            float pivotOffset = BackArmPivotOffsetX;
+            if (!copyFrontArm && pivotOffset == 0f)
+            {
+                return;
+            }
+
+            Rectangle armFrame = drawInfo.compBackArmFrame;
+            if (armFrame.Width <= 0 || armFrame.X != armFrame.Width * 8)
+            {
+                return;
+            }
+
+            // Skin has already emitted the composite rear arm. Match only its exact source
+            // cell (and vanilla glow row), so neither static shoulder cap nor torso is moved.
+            for (int i = 0; i < drawInfo.DrawDataCache.Count; i++)
+            {
+                DrawData draw = drawInfo.DrawDataCache[i];
+                if (draw.sourceRect is not Rectangle source || source.X != armFrame.X
+                    || source.Width != armFrame.Width || source.Height != armFrame.Height)
+                {
+                    continue;
+                }
+
+                bool glowFrame = source.Y == armFrame.Y + armFrame.Height * 4;
+                if (source.Y != armFrame.Y && !glowFrame)
+                {
+                    continue;
+                }
+
+                float horizontalSign = 1f;
+                if ((draw.effect & SpriteEffects.FlipHorizontally) != 0)
+                {
+                    horizontalSign = -1f;
+                }
+
+                float verticalSign = 1f;
+                if ((draw.effect & SpriteEffects.FlipVertically) != 0)
+                {
+                    verticalSign = -1f;
+                }
+
+                Vector2 shift = new Vector2(pivotOffset * horizontalSign, 0f);
+                draw.position += shift * draw.scale;
+                if (copyFrontArm)
+                {
+                    source.X -= source.Width;
+                    draw.sourceRect = source;
+                    draw.origin += new Vector2(-11f * horizontalSign, -2f * verticalSign);
+                }
+                else
+                {
+                    draw.origin += shift;
+                }
+
+                drawInfo.DrawDataCache[i] = draw;
+            }
+        }
+
         /// <summary>
-        /// Dual wield: draws the back-hand weapon, called from <see cref="PuppetBackWeaponDrawLayer"/> so it
-        /// renders over the back arm but under the torso. Handle-anchored at the back composite hand with the
-        /// same grip-mirroring and blade-flip rules as the front melee branch of <see cref="DrawWeaponToLayer"/>,
-        /// reading everything off the back hand's own <see cref="PuppetWeapon"/>.
+        /// Dual wield: draws the back-hand weapon after Skin, behind the torso, with its
+        /// mirrored grip anchored to the presented rear hand.
         /// </summary>
         internal void DrawBackHandWeaponToLayer(ref PlayerDrawSet drawInfo)
         {
@@ -13070,6 +13197,10 @@ namespace tsorcRevamp.NPCs.Puppets
             }
 
             float drawRotation = GetMeleeDrawRotation(BackHandPoseRotation, weapon);
+            if (IndependentBackHandWeapon)
+            {
+                drawRotation = IndependentBackHandDrawRotation * NPC.direction;
+            }
             Vector2 drawPosition = GetUnscaledBackHandPosition() - Main.screenPosition;
 
             drawInfo.DrawDataCache.Add(new DrawData(
@@ -14283,12 +14414,31 @@ namespace tsorcRevamp.NPCs.Puppets
             float endpointAngle = (float)Math.Atan2(
                 targetFromShoulder.Y / radiusY,
                 targetFromShoulder.X / radiusX);
+            if (UseFrontArmSpriteForBack || BackArmPivotOffsetX != 0f)
+            {
+                float crossRadius = BackArmPivotOffsetX * NPC.direction;
+                shoulder += new Vector2(crossRadius, 0f);
+                if (UseFrontArmSpriteForBack)
+                {
+                    shoulder = _puppet.MountedCenter + new Vector2((7f + BackArmPivotOffsetX) * NPC.direction, 0f);
+                    radiusY = radiusX;
+                    crossRadius = 3f * NPC.direction;
+                }
+
+                targetFromShoulder = _twoHandedBackGripTargetWorld - shoulder;
+                float determinant = radiusX * radiusY + crossRadius * crossRadius;
+                float cosine = (radiusY * targetFromShoulder.X + crossRadius * targetFromShoulder.Y) / determinant;
+                float sine = (-crossRadius * targetFromShoulder.X + radiusX * targetFromShoulder.Y) / determinant;
+                endpointAngle = (float)Math.Atan2(sine, cosine);
+            }
+
             float candidateRotation = endpointAngle - MathHelper.PiOver2;
             float separation = MathHelper.WrapAngle(candidateRotation - CompositeArmRotation);
             candidateRotation = CompositeArmRotation
                 + MathHelper.Clamp(separation, -maxSeparation, maxSeparation);
 
             Vector2 candidateHand = _puppet.GetBackHandPosition(stretch, candidateRotation);
+            candidateHand += BackArmHandOffset(stretch, candidateRotation);
             float errorSq = Vector2.DistanceSquared(candidateHand, _twoHandedBackGripTargetWorld);
             float score = errorSq + (stretch == _twoHandedBackStretch ? 0f : switchPenaltySq);
             if (score < bestScore)

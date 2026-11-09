@@ -162,6 +162,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     localPlayer.AddBuff(ModContent.BuffType<Suppressed>(), DebuffTicks);
                     localPlayer.AddBuff(ModContent.BuffType<GrappleMalfunction>(), DebuffTicks);
                     localPlayer.GetModPlayer<BlaiddSuppressionPlayer>().SuppressedByBlaidd = true;
+                    localPlayer.GetModPlayer<BlaiddSuppressionPlayer>().SuppressionExpiresAt = Main.GameUpdateCount + (ulong)DebuffTicks;
                     SpawnPlayerHaze(localPlayer);
                 }
             }
@@ -247,6 +248,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     public class BlaiddSuppressionPlayer : ModPlayer
     {
         public bool SuppressedByBlaidd;
+        public ulong SuppressionExpiresAt;
 
         public override void PostUpdateBuffs()
         {
@@ -265,8 +267,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            if (NPC.AnyNPCs(ModContent.NPCType<Blaidd>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<Blaidd>()) && Main.GameUpdateCount < SuppressionExpiresAt)
             {
+                return;
+            }
+
+            if (Player.GetModPlayer<Dworc.DworcSuppressionPlayer>().HasActiveSuppression)
+            {
+                SuppressedByBlaidd = false;
                 return;
             }
 

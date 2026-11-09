@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using System.IO;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
@@ -26,6 +27,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.DamageType = DamageClass.Magic;
             Projectile.scale = 2f;
             Projectile.tileCollide = true;
+            Projectile.netImportant = true;
             DrawOriginOffsetY = 95;
             DrawOriginOffsetX = -95;
         }
@@ -66,6 +68,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private void DrawStormEdge(float outwardSpeed)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             int count = dustCount < 1 ? 1 : dustCount;
             float phase = Projectile.localAI[0] * 0.08f;
 
@@ -106,6 +113,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             return false;
         }
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(size);
+            writer.Write(dustCount);
+            writer.Write(Projectile.localAI[0]);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            size = reader.ReadSingle();
+            dustCount = reader.ReadInt32();
+            Projectile.localAI[0] = reader.ReadSingle();
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Poisoned, 900, false);

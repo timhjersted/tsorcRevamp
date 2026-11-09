@@ -2099,6 +2099,7 @@
   "text": "你可以感觉到岩浆在你上方沸腾的热量。 --NEWLINE   --NEWLINE 在你拉动拉杆之前，你要确保你已经准备好了， --NEWLINE   --NEWLINE 因为你知道你必须疯狂地冲刺才能活下来。",
   "tileX": 6035,
   "tileY": 1053,
+  "skipOnExpanded": true,
   "textWidth": 360,
   "style": 1
 }

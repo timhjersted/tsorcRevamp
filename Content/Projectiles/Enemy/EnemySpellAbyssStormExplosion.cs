@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
+using System.IO;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
@@ -36,6 +37,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.penetrate = -1;
             Projectile.timeLeft = Main.projFrames[Type] * FrameTicks;
+            Projectile.netImportant = true;
             // Native frames are 98x98; this places the visible cloud just outside the 100px radius.
             Projectile.scale = 2.1f;
         }
@@ -106,6 +108,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.Frostburn, Main.expertMode ? 225 : 450, false);
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.timeLeft);
+            writer.Write(Projectile.frame);
+            writer.Write(Projectile.frameCounter);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.timeLeft = reader.ReadInt32();
+            Projectile.frame = reader.ReadInt32();
+            Projectile.frameCounter = reader.ReadInt32();
         }
 
         public override bool PreDraw(ref Color lightColor)

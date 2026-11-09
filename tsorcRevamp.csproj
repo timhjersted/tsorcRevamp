@@ -21,6 +21,7 @@
 		<Compile Remove="Projectiles\Enemy\UnusedAssets\**" />
 		<!-- Standalone developer-data tools have their own projects and are not mod content. -->
 		<Compile Remove="Scripts\GenerateDevData\**\*.cs" />
+		<Compile Remove="tsorcDocs\**" />
 	</ItemGroup>
 
 </Project>
