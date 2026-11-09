@@ -45,28 +45,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-
-            if (tsorcRevampWorld.SuperHardMode) return 0;
-
-            if (Main.hardMode && !Main.dayTime && P.ZoneJungle && P.ZoneOverworldHeight && Main.rand.NextBool(20005)) return 1;
-
-            if (Main.hardMode && Main.bloodMoon && P.ZoneJungle && Main.rand.NextBool(12525)) return 1;
-
-            if (Main.hardMode && P.ZoneUnderworldHeight && Main.rand.NextBool(7030)) return 1;
-
-            if (Main.hardMode && Main.bloodMoon && P.ZoneBeach && Main.rand.NextBool(8020)) return 1;
-
-            if (Main.hardMode && Main.bloodMoon && P.ZoneSkyHeight && Main.rand.NextBool(8020)) return 1;
-
-
-            return 0;
-        }
-        #endregion
-
         #region AI
         public override void AI()
         {

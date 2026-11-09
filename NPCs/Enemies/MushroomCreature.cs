@@ -49,24 +49,6 @@ namespace tsorcRevamp.NPCs.Enemies
             return false;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (!tsorcRevampWorld.OnlyAdventureMap || tsorcRevampWorld.RemixMap)
-            {
-                return 0f;
-            }
-
-            //Legacy-space spawn box; ExpandedWorldTransform shifts it to match the current world (identity
-            //on the non-expanded adventure map, +200 Y on the expanded one - both coords are above the fold).
-            Point spawnAreaMin = ExpandedWorldTransform.MapTile(2550, 1300);
-            Point spawnAreaMax = ExpandedWorldTransform.MapTile(2850, 1650);
-
-            bool insideSpawnArea = spawnInfo.SpawnTileX >= spawnAreaMin.X && spawnInfo.SpawnTileX <= spawnAreaMax.X
-                && spawnInfo.SpawnTileY >= spawnAreaMin.Y && spawnInfo.SpawnTileY <= spawnAreaMax.Y;
-
-            return insideSpawnArea ? 0.5f : 0f;
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>()));

@@ -481,26 +481,6 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.CanUseRopes = true;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            if (player.townNPCs > 0f || !player.ZoneCrimson)
-            {
-                return 0f;
-            }
-
-            bool underground = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
-            bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
-
-            if (underground || surfaceAtNight)
-            {
-                return 0.05f;
-            }
-
-            return 0f;
-        }
-
         protected override void RunMovementAI(float speedMult)
         {
             // Caster keeps a 8–20 tile band (backpedalling while facing the player); the frenzy drops the band

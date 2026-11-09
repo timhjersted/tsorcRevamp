@@ -64,22 +64,6 @@ namespace tsorcRevamp.NPCs.Enemies
             elandGlobalNPC.PatrolWanderMaxTiles = 50;
         }
 
-        // Underground jungle in both tiers; hardmode also allows surface jungle on rainy nights.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-            if (!p.ZoneJungle || p.ZoneCorrupt || p.ZoneCrimson)
-                return 0f;
-
-            if (p.ZoneDirtLayerHeight || p.ZoneRockLayerHeight)
-                return Main.hardMode ? 0.25f : 0.01f;
-
-            if (Main.hardMode && p.ZoneOverworldHeight && Main.raining && !Main.dayTime)
-                return 0.15f;
-
-            return 0f;
-        }
-
         // Spritesheet layout: frame 0 = idle, frame 1 = jump, frames 2..(count-1) = walk cycle.
         public override void FindFrame(int frameHeight)
         {

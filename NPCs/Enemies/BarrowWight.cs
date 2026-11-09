@@ -10,7 +10,6 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Summon;
-using static tsorcRevamp.oSpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -25,24 +24,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = 900;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.BarrowWightBanner>();
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-
-            Player p = spawnInfo.Player;
-            int playerXTile = (int)(p.Bottom.X + 8f) / 16;
-            if (p.townNPCs > 0f || p.ZoneMeteor) return 0;
-            if (NPC.downedBoss3 && (oSurface(p) || oUnderSurface(p) || oUnderground(p) || oCavern(p)) && (playerXTile > Main.maxTilesX * 0.2f && playerXTile < Main.maxTilesX * 0.35f || playerXTile > Main.maxTilesX * 0.65f && playerXTile < Main.maxTilesX * 0.8f)) return 0.005f;
-            if (!Main.hardMode && p.ZoneDungeon) return .00833f;
-            if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && oSky(p)) return 0.0567f;
-            if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneDungeon) return 0.033f;
-             if (!tsorcRevampWorld.SuperHardMode && Main.hardMode && p.ZoneSnow) return 0.033f;
-            if (tsorcRevampWorld.SuperHardMode && oSky(p)) return 0.025f;
-            if (tsorcRevampWorld.SuperHardMode && p.ZoneDungeon) return 0.008f;
-            if (tsorcRevampWorld.SuperHardMode && p.ZoneSnow) return 0.008f;
-
-            return 0;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

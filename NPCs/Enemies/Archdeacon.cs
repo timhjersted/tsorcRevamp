@@ -320,45 +320,6 @@ namespace tsorcRevamp.NPCs.Enemies
             global.TeleportArrivalMistTime = 20;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Tile spawnTile = Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY];
-            bool fortressWall = spawnTile.WallType == WallID.MeteoriteBrick || spawnTile.WallType == WallID.Glass;
-            bool inFortress = spawnInfo.Player.ZoneSkyHeight && fortressWall;
-
-            if (!inFortress)
-            {
-                return 0f;
-            }
-
-            bool wyvernMageSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.WyvernMage.WyvernMage>()));
-            bool wyvernMageShadowSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>()));
-
-            // Super Hardmode: common until the Wyvern Mage Shadow falls (the old check was inverted: AFTER it fell).
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (!wyvernMageShadowSlain)
-                {
-                    return 0.2f;
-                }
-
-                return 0f;
-            }
-
-            if (!Main.hardMode)
-            {
-                return 0f;
-            }
-
-            // Hardmode: common before the Wyvern Mage falls, rare after.
-            if (!wyvernMageSlain)
-            {
-                return 0.3f;
-            }
-
-            return 0.01f;
-        }
-
         protected override void RunMovementAI(float speedMult)
         {
             // Plant for the blink telegraph, the release, and the locked end of an aimed tell.

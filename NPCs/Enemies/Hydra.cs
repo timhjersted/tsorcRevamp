@@ -204,35 +204,6 @@ namespace tsorcRevamp.NPCs.Enemies
         {
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
-        public float CanSpawnLegacy(NPCSpawnInfo s)
-        {
-            int x = s.SpawnTileX;
-            int y = s.SpawnTileY;
-            bool oSurface = (y >= (Main.maxTilesY * 0.1f) && y < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (y >= (Main.maxTilesY * 0.2f) && y < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (y >= (Main.maxTilesY * 0.3f) && y < (Main.maxTilesY * 0.4f));
-            bool oCavern = (y >= (Main.maxTilesY * 0.4f) && y < (Main.maxTilesY * 0.6f));
-            bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
-            bool oBorders = (y < (Main.maxTilesY * 0.03f) || x < (Main.maxTilesX * 0.03f) || y > (Main.maxTilesY * 0.97f) || x > (Main.maxTilesX * 0.97f));
-            Player p = s.Player;
-            if ((p.townNPCs > 2f && !Main.bloodMoon) || Main.pumpkinMoon || Main.snowMoon || !p.ZoneJungle || oUnderworld || oBorders)
-            {
-                return 0f;
-            }
-            if (oSurface || oUnderSurface || oUnderground || oCavern)
-            {
-                if (Main.rand.Next(12000) == 1) return 1f;
-                else if (Main.hardMode && Main.rand.Next(50) == 1) return 1f;
-                else if ((oUnderground || oCavern) && Main.rand.Next(800) == 1) return 1f;
-                else if (Main.hardMode && (oUnderground || oCavern) && Main.rand.Next(30) == 1) return 1f;
-                else if (Main.bloodMoon && Main.rand.Next(120) == 1) return 1f;
-                return 0f;
-            }
-            return 0f;
-        }
-
         void TryStartAttack(Player player)
         {
             if (attackCooldown > 0 || Main.netMode == NetmodeID.MultiplayerClient)

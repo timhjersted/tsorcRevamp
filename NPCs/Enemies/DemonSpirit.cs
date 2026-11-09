@@ -52,42 +52,6 @@ namespace tsorcRevamp.NPCs.Enemies
         int lastAttackPattern = -1;
         int plannedAttackPattern = -1;
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-
-            //Ensuring it can't spawn if two already exist.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 1)
-                    {
-                        return 0;
-                    }
-                }
-            }
-
-            bool nospecialbiome = !p.ZoneJungle && !p.ZoneCorrupt && !p.ZoneCrimson && !p.ZoneHallow && !p.ZoneMeteor && !p.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-            bool sky = nospecialbiome && ((double)spawnInfo.SpawnTileY < Main.worldSurface * 0.44999998807907104);
-            bool surface = nospecialbiome && !sky && (spawnInfo.SpawnTileY <= Main.worldSurface);
-            bool underground = nospecialbiome && !surface && (spawnInfo.SpawnTileY <= Main.rockLayer);
-            bool underworld = (p.ZoneUnderworldHeight);
-
-            bool cavern = nospecialbiome && (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25);
-            bool undergroundJungle = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneJungle;
-            bool undergroundEvil = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && (p.ZoneCorrupt || p.ZoneCrimson);
-            bool undergroundHoly = (spawnInfo.SpawnTileY >= Main.rockLayer) && (spawnInfo.SpawnTileY <= Main.rockLayer * 25) && p.ZoneHallow;
-
-            if (underworld && Main.rand.NextBool(45)) return 1;
-            else if (underworld && Main.hardMode && Main.rand.NextBool(1000)) return 1;
-            return 0;
-        }
-        #endregion
-
         #region AI
         public override void AI()
         {

@@ -142,18 +142,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.CorruptedHornetBanner>();
         }
 
-        // Legacy spawn rule, used only while the "New Enemy Spawns" config is off (Systems/EnemySpawns.cs replaces it).
-        // The old "NextBool(2) ? 1 : 0" averaged 0.5; returning 0.5 gives the same rate without a roll inside SpawnChance.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight)
-            {
-                return 0.5f;
-            }
-
-            return 0;
-        }
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);

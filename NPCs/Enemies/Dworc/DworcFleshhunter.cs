@@ -73,37 +73,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
 
         //Spawns in the Jungle, mostly Underground and in the Cavern.
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0f;
-            if (spawnInfo.SpawnTileY < 1000) return 0f;
-            if (spawnInfo.Water) return 0f;
-
-            // Jungle enemies stay out of the snow biome, even where it borders the jungle.
-            if (spawnInfo.Player.ZoneSnow)
-            {
-                return 0f;
-            }
-
-            if (spawnInfo.Player.ZoneDungeon)
-            {
-                return 0f;
-            }
-            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && spawnInfo.Player.ZoneOverworldHeight)
-            {
-                return 0.265f;
-            }
-            else if (!Main.hardMode && spawnInfo.Player.ZoneJungle && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight))
-            {
-                return 0.31f;
-            }
-
-            return chance;
-        }
-
-        #endregion
-
         public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             tsorcRevampAIs.EvasiveOnHit(NPC, true);

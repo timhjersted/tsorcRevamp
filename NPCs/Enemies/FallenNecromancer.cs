@@ -44,34 +44,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         //Spawns in the Underground and Cavern before 4.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            bool oSky = (spawnInfo.SpawnTileY < (Main.maxTilesY * 0.1f));
-            bool oSurface = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.1f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.2f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.3f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.4f));
-            bool oCavern = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.4f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.6f));
-            bool oMagmaCavern = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.6f) && spawnInfo.SpawnTileY < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (spawnInfo.SpawnTileY >= (Main.maxTilesY * 0.8f));
-
-            if (spawnInfo.Player.townNPCs > 0f || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor) return 0;
-
-
-            if (Main.hardMode && (oUnderground || oCavern))
-            {
-                if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.45f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.75f) && Main.rand.NextBool(350)) return 1;
-            }
-
-            else if (Main.hardMode && oUnderworld)
-            {
-                if (Main.rand.NextBool(150)) return 1;
-            }
-
-            return 0;
-        }
-        #endregion
-
         int chaosElementalTimer;
         int chaosElementalsSpawned = 0;
         public override void AI()

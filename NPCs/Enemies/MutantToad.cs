@@ -56,60 +56,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            // Spawns in the Western Sea
-            if (Main.hardMode && spawnInfo.Water && spawnInfo.SpawnTileX < 900 && Main.rand.NextBool(15))
-            {
-                return 1;
-            }
-
-            for (int i = 0; i < 200; i++)
-            {
-                if (Main.npc[i].active && Main.npc[i].type == NPC.type)
-                {
-                    return 0;
-                }
-            }
-            bool nospecialbiome = !spawnInfo.Player.ZoneJungle && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon; // Not necessary at all to use but needed to make all this work.
-
-            bool sky = nospecialbiome && ((double)spawnInfo.Player.position.Y < Main.worldSurface * 0.44999998807907104);
-            bool surface = nospecialbiome && !sky && (spawnInfo.Player.position.Y <= Main.worldSurface);
-            bool underground = nospecialbiome && !surface && (spawnInfo.Player.position.Y <= Main.rockLayer);
-            bool underworld = (spawnInfo.Player.position.Y > Main.maxTilesY - 190);
-            bool cavern = nospecialbiome && (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25);
-            bool undergroundJungle = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneJungle;
-            bool undergroundEvil = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson);
-            bool undergroundHoly = (spawnInfo.Player.position.Y >= Main.rockLayer) && (spawnInfo.Player.position.Y <= Main.rockLayer * 25) && spawnInfo.Player.ZoneHallow;
-            if (undergroundJungle)
-            {
-                if (Main.rand.NextBool(15))
-                {
-                    return 1;
-                }
-            }
-
-            int closeTownNPCs = 0;
-            if (!Main.bloodMoon)
-            {
-                Vector2 playerPosition = spawnInfo.Player.position + new Vector2(spawnInfo.Player.width / 2, spawnInfo.Player.height / 2);
-                for (int i = 0; i < 200; i++)
-                {
-                    Vector2 npcPosition = Main.npc[i].position + new Vector2(Main.npc[i].width / 2, Main.npc[i].height / 2);
-                    if (Main.npc[i].active && Main.npc[i].townNPC && Vector2.Distance(playerPosition, npcPosition) < 1500)
-                    {
-                        closeTownNPCs++;
-                    }
-                }
-            }
-            if (closeTownNPCs == 1 && Main.rand.NextBool(3)) return 0;
-            if (closeTownNPCs == 2 && Main.rand.NextBool(2)) return 0;
-            if (closeTownNPCs == 3 && Main.rand.Next(3) <= 1) return 0;
-            if (closeTownNPCs >= 4) return 0;
-
-            return 0;
-        }
-
 
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo) //hook works!

@@ -74,22 +74,6 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.ParaspriteBanner>();
         }
 
-        ///<summary>Now exclusively a Hallow pest: hallowed surface + hallowed underground, no sky,
-        ///and it keeps spawning into SHM (with escalated stats) instead of vanishing.</summary>
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (spawnInfo.Water || !spawnInfo.Player.ZoneHallow || !NPC.downedBoss3)
-            {
-                return 0f;
-            }
-            //Surface down through the cavern — no sky, no underworld
-            if (spawnInfo.SpawnTileY < Main.maxTilesY * 0.1f || spawnInfo.SpawnTileY > Main.maxTilesY * 0.6f)
-            {
-                return 0f;
-            }
-            return 0.15f;
-        }
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)mode);

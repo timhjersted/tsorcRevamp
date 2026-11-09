@@ -94,22 +94,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0f;
-            if (spawnInfo.SpawnTileY < 1000) return 0f;
-
-            if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
-            {
-                if (spawnInfo.Player.ZoneOverworldHeight) return 0.1f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.03f;
-                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.04f;
-            }
-            if (Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneBeach && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) return 0.02f;
-
-            return chance;
-        }
-
         public override void AI()
         {
             tsorcRevampAIs.ArcherAI(NPC, ProjectileID.FlamingArrow, 14, 11, 120, 1.3f, 0.08f, canTeleport: false);

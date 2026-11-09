@@ -358,31 +358,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 attackRange: MeleeEngageRange);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            bool frozenOcean = spawnInfo.SpawnTileX > Main.maxTilesX - 800;
-            bool ocean = spawnInfo.SpawnTileX < 800 || frozenOcean;
-
-            if (NPC.AnyNPCs(Type))
-                return 0f;
-
-            float chance = 0f;
-            if (tsorcRevampWorld.SuperHardMode
-                && !player.ZoneDungeon
-                && (player.ZoneUnderworldHeight || player.ZoneCrimson)
-                && !ocean)
-            {
-                chance = player.ZoneOverworldHeight ? 0.25f : 0.3f;
-            }
-
-            if (!Main.dayTime)
-                chance *= 2f;
-            if (Main.bloodMoon)
-                chance *= 2f;
-            return chance;
-        }
-
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
             if (combo.Name == DarkHarvestLashName)

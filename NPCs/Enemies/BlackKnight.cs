@@ -167,20 +167,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && NPC.downedBoss3 && !Main.dayTime && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
-            if (Main.hardMode && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && Main.rand.NextBool(250)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneUnderworldHeight && Main.rand.NextBool(160)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(100)) return 1;
-
-            return 0;
-        }
-        #endregion
-
         #region Melee combos
         const string GraveCutName = "Grave Cut";
         const string PlagueReaperName = "Plague Reaper";

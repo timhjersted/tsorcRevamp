@@ -48,17 +48,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.AttraidiesIllusion>()) < 1
-               && NPC.CountNPCS(ModContent.NPCType<NPCs.Enemies.JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1)
-            {
-                chance += 0.05f;
-            }
-            return chance;
-        }
-
         public override void AI()
         {
 

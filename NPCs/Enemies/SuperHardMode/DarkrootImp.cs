@@ -191,26 +191,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             BannerItem = ModContent.ItemType<Banners.DarkrootImpBanner>();
         }
 
-        // Legacy spawn rules, used only while the "New Enemy Spawns" config is off (Systems/EnemySpawns.cs replaces them).
-        // Same rule as the registry: Super Hardmode, dry, plain underground or plain caverns (no other biome), 5%, at most two alive.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (NPC.CountNPCS(ModContent.NPCType<DarkrootImp>()) >= 2)
-            {
-                return 0;
-            }
-
-            Player player = spawnInfo.Player;
-            bool plainBelowGround = player.ZoneNormalUnderground || player.ZoneNormalCaverns;
-
-            if (tsorcRevampWorld.SuperHardMode && !spawnInfo.Water && plainBelowGround && Main.rand.NextFloat() < 0.05f)
-            {
-                return 1;
-            }
-
-            return 0;
-        }
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);

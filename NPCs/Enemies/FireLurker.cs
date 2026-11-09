@@ -95,41 +95,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
-            bool AboveEarth = P.ZoneOverworldHeight;
-            bool InBrownLayer = P.ZoneDirtLayerHeight;
-            bool InGrayLayer = P.ZoneRockLayerHeight;
-            bool InHell = P.ZoneUnderworldHeight;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
-            // P.townNPCs > 0f // is no town NPCs nearby
-
-            if (spawnInfo.Invasion)
-            {
-                return 0;
-            }
-
-            if (spawnInfo.Water) return 0f;
-
-            //ONLY SPAWNS IN HELL PRE-HM, THEN CAN SPAWN IN CORRUPTION IN HM
-            if (!Main.hardMode && InHell && Main.rand.NextBool(6)) return 1;
-
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(5)) return 1;
-
-            if (Main.hardMode && !tsorcRevampWorld.SuperHardMode && Corruption && Main.rand.NextBool(20)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && InHell && Main.rand.NextBool(20)) return 1; //8 is 3%, 5 is 5, 3 IS 3%???
-            return 0;
-        }
-        #endregion
-
         public override void AI()
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)

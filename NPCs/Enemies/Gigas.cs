@@ -173,7 +173,6 @@ namespace tsorcRevamp.NPCs.Enemies{
 				tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 			}
 		}
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
 
         ///<summary>Unique weapon: the Wrath of Gold tome — guaranteed on the first kill, 25% on repeat
         ///kills, never in SHM (those pay out in Dark Souls via NPC.value). OnKill registers NewSlain.</summary>

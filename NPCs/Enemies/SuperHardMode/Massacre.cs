@@ -105,19 +105,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 		{
 			tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
 		}
-        //Spawns in the Underworld on hardmode.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if ((spawnInfo.Player.ZoneUnderworldHeight || (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime)) && Main.rand.NextBool(45))
-                {
-                    return 1;
-                }
-                else return 0;
-            }
-            else return 0;
-        }
         public void teleport(bool pre)
 		{
 			if (Main.netMode != 2)

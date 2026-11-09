@@ -179,29 +179,6 @@ namespace tsorcRevamp.NPCs.Puppets
             _lastRitesDone = reader.ReadBoolean();
         }
 
-        #region Spawn (unchanged — Hallow + its true home, the Frozen Ocean)
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
-            bool InBrownLayer = P.ZoneDirtLayerHeight;
-            bool InGrayLayer = P.ZoneRockLayerHeight;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-
-            if (spawnInfo.Player.townNPCs > 0f) return 0;
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(40)) return 1;
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InBrownLayer && Main.rand.NextBool(35)) return 1;
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InGrayLayer && Main.rand.NextBool(25)) return 1;
-            if (Main.hardMode && FrozenOcean && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && Main.rand.NextBool(15)) return 1;
-            if (Main.hardMode && FrozenOcean && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && Main.rand.NextBool(25)) return 1;
-            return 0;
-        }
-        #endregion
-
         public override void AI()
         {
             // Targeting normally rides on the base's default RunMovementAI (SmartFighter4 → TargetClosest).

@@ -60,46 +60,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
 
         //Spawns in the Jungle and in the Cavern in HM.
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            var player = spawnInfo.Player;
-            bool TropicalOcean = player.position.X < 3600;
-            float chance = 0f;
-
-            //Ensuring it can't spawn if one already exists.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 0)
-                    {
-                        return 0;
-                    }
-                }
-            }
-
-            if (spawnInfo.Water) return 0f;
-
-            // Jungle enemies stay out of the snow biome, even where it borders the jungle.
-            if (spawnInfo.Player.ZoneSnow)
-            {
-                return 0f;
-            }
-
-            if (Main.hardMode && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneJungle) && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
-            {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.01f;
-                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.035f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight) return 0.025f;
-                if (spawnInfo.Player.ZoneRockLayerHeight) return 0.03f;
-            }
-            if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
-
-            return chance;
-        }
-
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)

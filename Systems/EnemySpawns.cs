@@ -69,7 +69,7 @@ namespace tsorcRevamp.Systems
     }
 
     /// <summary>
-    /// Central registry of natural spawns for modded enemies, switched by the "New Enemy Spawns" gameplay config.
+    /// Central registry of natural spawns for modded enemies. Registered enemies have no SpawnChance of their own.
     ///
     /// The vanilla spawn pool always contains key 0 = "let vanilla pick" with weight 1.0, so every weight here is relative to
     /// that: 0.1 is roughly one attempt in eleven when nothing else is valid. Weights of all valid enemies are normalized,
@@ -87,15 +87,6 @@ namespace tsorcRevamp.Systems
     /// </summary>
     public class EnemySpawns : ModSystem
     {
-        public static bool Enabled
-        {
-            get
-            {
-                tsorcRevampGameplayConfig config = ModContent.GetInstance<tsorcRevampGameplayConfig>();
-                return config != null && config.NewSpawnBalance;
-            }
-        }
-
         private sealed class SpawnRule
         {
             public SpawnCondition Condition;
@@ -671,11 +662,12 @@ namespace tsorcRevamp.Systems
 
         /// <summary>
         /// Called from the top of tsorcRevampGlobalNPC.EditSpawnPool, before that method's own clears and removals, so those
-        /// still win over anything added here. Replaces each registered enemy's own pool entry with the registry's.
+        /// still win over anything added here. Puts each registered enemy in the pool at the registry's weight; the Remove
+        /// first drops any entry a registered enemy's own SpawnChance would add, so the registry stays the only spawn rule.
         /// </summary>
         public static void Apply(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            if (!Enabled || Rules.Count == 0)
+            if (Rules.Count == 0)
             {
                 return;
             }
@@ -702,7 +694,7 @@ namespace tsorcRevamp.Systems
         /// </summary>
         public static void ApplyExclusiveZones(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            if (!Enabled || ExclusiveZones.Count == 0)
+            if (ExclusiveZones.Count == 0)
             {
                 return;
             }
@@ -925,7 +917,7 @@ namespace tsorcRevamp.Systems
             Spawn("CorruptedHornet", Zone.Jungle & !Depth.Surface, shm: 0.5f);
 
             // CosmicCrystalLizard: deliberately NOT registered. Its own SpawnChance scales with the player's luck (0.02 x (1 + luck)),
-            // which a registry weight cannot do, and an unregistered enemy keeps its own SpawnChance with New Enemy Spawns on.
+            // which a registry weight cannot do, so it is the one mod enemy that keeps its own SpawnChance.
 
             // The old rules capped these at two alive. Their random gates (one in 15 to 1000) are folded into the weights.
             Spawn("CrazedDemonSpirit", Zone.Meteor, hm: 0.04f, shm: 0.04f, max: 2);
@@ -1452,12 +1444,6 @@ namespace tsorcRevamp.Systems
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (!EnemySpawns.Enabled)
-            {
-                caller.Reply("New Enemy Spawns is off in the gameplay config; the registry is not in use.", Color.Orange);
-                return;
-            }
-
             Player player = caller.Player;
             NPCSpawnInfo spawnInfo = new NPCSpawnInfo();
             spawnInfo.Player = player;
@@ -1484,7 +1470,7 @@ namespace tsorcRevamp.Systems
                 caller.Reply($"  {entry.Name}: weight {entry.Weight:0.###}, {entry.Weight / total * 100f:0.#}% of attempts", Color.White);
             }
 
-            caller.Reply($"  vanilla pick: weight 1, {1f / total * 100f:0.#}% (legacy mod enemies not in the registry are not counted)", Color.Gray);
+            caller.Reply($"  vanilla pick: weight 1, {1f / total * 100f:0.#}% (the Cosmic Crystal Lizard's own SpawnChance is not counted)", Color.Gray);
         }
     }
 }

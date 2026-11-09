@@ -234,37 +234,6 @@ namespace tsorcRevamp.NPCs.Enemies
             g.TeleportAppearanceDelay = 0; g.TeleportArrivalMistTime = 20;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-
-            // Pre-Hardmode and Hardmode only; it does not spawn in Super Hardmode.
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                return 0f;
-            }
-
-            if (spawnInfo.Player.ZoneDungeon && NPC.CountNPCS(ModContent.NPCType<AttraidiesIllusion>()) < 1
-                && NPC.CountNPCS(ModContent.NPCType<JungleWyvernJuvenile.JungleWyvernJuvenileHead>()) < 1 && NPC.CountNPCS(ModContent.NPCType<DungeonMage>()) < 1)
-            {
-                if (!Main.hardMode) { chance = .02f; }
-                else chance = .0125f;
-
-            }
-
-            if (spawnInfo.Player.ZoneUnderworldHeight && !Main.hardMode && !NPC.AnyNPCs(ModContent.NPCType<AttraidiesIllusion>()))
-            {
-                chance = .033f;
-            }
-
-            if (spawnInfo.Player.ZoneRockLayerHeight && Main.hardMode && !tsorcRevampWorld.SuperHardMode) // was jungle only
-            {
-                chance = .00525f;
-            }
-
-            return chance;
-        }
-
 
 
 

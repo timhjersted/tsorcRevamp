@@ -70,8 +70,6 @@ namespace tsorcRevamp.NPCs.Enemies
             g.KiteLooseness = 0.2f;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0f;
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)mode);

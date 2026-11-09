@@ -724,32 +724,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (spawnInfo.Water) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
-
-            if (spawnInfo.Player.ZoneDungeon) return chance = 0.02f;
-
-            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return 0.02f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon) return 0.05f;
-
-            if (Main.bloodMoon && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneSkyHeight && NPC.downedBoss3) return chance = 0.02f;
-
-            if (Main.bloodMoon && NPC.downedBoss3 && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.02f;
-
-            if (NPC.downedBoss3 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneSkyHeight && Main.dayTime && !spawnInfo.Player.ZoneJungle) return chance = 0.005f;
-            if (NPC.downedBoss3 && spawnInfo.Player.ZoneOverworldHeight && !spawnInfo.Player.ZoneSkyHeight && !Main.dayTime && !spawnInfo.Player.ZoneJungle) return chance = 0.015f;
-            if (NPC.downedBoss3 && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.003f;
-
-            return chance;
-        }
-
         public override void OnKill()
         {
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart);

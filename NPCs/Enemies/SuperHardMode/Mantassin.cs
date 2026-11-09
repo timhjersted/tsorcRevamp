@@ -177,9 +177,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             g.StalkerGlintColor = EnemyVFX.MantassinCore;
         }
 
-        // Spawning lives in Systems/EnemySpawns.cs (underground ice, SHM only).
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0f;
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);

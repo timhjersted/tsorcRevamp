@@ -65,8 +65,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.aiStyle = -1;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
         public override void AI()
         {
             NPC.velocity.X = 0f; //rooted; gravity may settle it onto the ground

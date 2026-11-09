@@ -52,40 +52,6 @@ namespace tsorcRevamp.NPCs.Enemies
             });
         }
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player; //this shortens our code up from writing this line over and over.
-
-            bool Sky = spawnInfo.SpawnTileY <= (Main.rockLayer * 4);
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
-            bool AboveEarth = P.ZoneOverworldHeight;
-            bool InBrownLayer = P.ZoneDirtLayerHeight;
-            bool InGrayLayer = P.ZoneRockLayerHeight;
-            bool InHell = P.ZoneUnderworldHeight;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800;
-
-            // these are all the regular stuff you get , now lets see......
-            if (spawnInfo.Player.townNPCs > 0f) return 0;
-
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && Main.rand.NextBool(85)) return 1;
-
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InBrownLayer && Main.rand.NextBool(55)) return 1;
-
-            if (Main.hardMode && !Meteor && !Jungle && !Dungeon && !Corruption && Hallow && InGrayLayer && Main.rand.NextBool(30)) return 1;
-
-            if (Main.hardMode && Ocean && Main.rand.NextBool(15)) return 1;
-
-
-            return 0;
-        }
-        #endregion
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
 

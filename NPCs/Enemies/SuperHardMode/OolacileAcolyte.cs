@@ -396,53 +396,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             global.CanTeleport = false;
         }
 
-        // Used only while New Enemy Spawns is off; the EnemySpawns registry replaces it otherwise. One alive at a time, SHM only.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (!tsorcRevampWorld.SuperHardMode || NPC.AnyNPCs(Type))
-            {
-                return 0f;
-            }
-
-            Player player = spawnInfo.Player;
-            bool corruption = player.ZoneCorrupt || player.ZoneCrimson;
-            bool aboveEarth = spawnInfo.SpawnTileY < Main.worldSurface;
-            bool caverns = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < Main.maxTilesY - 200;
-            bool ocean = spawnInfo.SpawnTileX < 250 || spawnInfo.SpawnTileX > Main.maxTilesX - 250;
-
-            if (player.ZoneJungle && !player.ZoneDungeon && !corruption && aboveEarth && !ocean)
-            {
-                return 1f / 70f;
-            }
-
-            if (ocean && !aboveEarth)
-            {
-                return 1f / 25f;
-            }
-
-            if (Main.bloodMoon && player.ZoneJungle && !player.ZoneDungeon && !corruption && !aboveEarth && !ocean)
-            {
-                return 1f / 30f;
-            }
-
-            if (player.ZoneCrimson)
-            {
-                return 1f / 20f;
-            }
-
-            if (caverns)
-            {
-                return 1f / 50f;
-            }
-
-            if (Main.bloodMoon && player.ZoneDungeon)
-            {
-                return 1f / 8f;
-            }
-
-            return 0f;
-        }
-
         protected override void RunMovementAI(float speedMult)
         {
             // Plant for set-pieces, the release, and the locked end of an aimed tell; walk slower through the rest of a cast.

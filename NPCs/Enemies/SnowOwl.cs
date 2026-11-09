@@ -39,29 +39,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 150; 
             }
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            if (Main.SceneMetrics.SnowTileCount > 5)
-            {
-                chance = 0.2f;
-            }
-
-            //Otherwise it spawns in the frozen ocean and gets stuck in the ceiling
-            if (spawnInfo.Water || tsorcRevampWorld.SuperHardMode)
-            {
-                chance = 0;
-            }
-
-            // Surface and sky only: never underground.
-            bool belowSurface = spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneUnderworldHeight;
-            if (belowSurface)
-            {
-                chance = 0;
-            }
-
-            return chance;
-        }
 
         public override void HitEffect(NPC.HitInfo hit)
         {

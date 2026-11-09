@@ -52,21 +52,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //Spawns in the Underground and Cavern before 3.5/10ths and after 7.5/10ths (Width). Does not Spawn in the Jungle, Meteor, or if there are Town NPCs.
 
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (spawnInfo.Water) return 0f;
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if ((spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.position.Y > Main.rockLayer && spawnInfo.Player.position.Y < Main.maxTilesY - 200 && !spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(1500))
-                {
-                    return 1;
-                }
-                else return 0;
-            }
-            else return 0;
-        }
-
 
 
 

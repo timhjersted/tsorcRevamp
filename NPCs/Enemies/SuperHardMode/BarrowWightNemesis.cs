@@ -51,35 +51,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            float chance = 0;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (player.ZoneSkyHeight || spawnInfo.Player.ZoneDungeon || spawnInfo.Player.ZoneSnow)
-                {
-                    chance = 0.17f;
-                }
-                else if (player.ZoneOverworldHeight && !Main.dayTime)
-                {
-                    chance = 0.02f;
-                }
-            }
-
-            if (!Main.dayTime)
-            {
-                chance *= 2;
-            }
-            if (Main.bloodMoon)
-            {
-                chance *= 2;
-            }
-
-            return chance;
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CursedSoul>(), 1, 3, 3));

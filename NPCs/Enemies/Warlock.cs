@@ -74,60 +74,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         //Spawn in the Cavern, mostly before 3/10th and after 7/10th (Width). Does not spawn in the Dungeon, Jungle, Meteor, or if there are Town NPCs
-        #region Spawn
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (!NPC.downedBoss1)
-            {
-                return 0;
-            }
-
-            Player P = spawnInfo.Player; //These are mostly redundant with the new zone definitions, but it still works.
-            bool Meteor = P.ZoneMeteor;
-            bool Jungle = P.ZoneJungle;
-            bool Dungeon = P.ZoneDungeon;
-            bool Corruption = (P.ZoneCorrupt || P.ZoneCrimson);
-            bool Hallow = P.ZoneHallow;
-            bool AboveEarth = P.ZoneOverworldHeight;
-            bool oUnderground = P.ZoneDirtLayerHeight;
-            bool oCavern = P.ZoneRockLayerHeight;
-            bool InHell = P.ZoneUnderworldHeight;
-            bool Ocean = spawnInfo.SpawnTileX < 3600 || spawnInfo.SpawnTileX > (Main.maxTilesX - 100) * 16;
-
-            //Ensuring it can't spawn if one already exists.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 0)
-                    {
-                        return 0;
-                    }
-                }
-            }
-            if (!Main.hardMode && oCavern)
-            {
-                if (Main.rand.NextBool(1200)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(430))
-                {
-                    return 1;
-                }
-
-            }
-            if (Main.hardMode && (oCavern || oUnderground || Jungle))
-            {
-                if (Main.rand.NextBool(600)) return 1;
-                else if ((spawnInfo.SpawnTileX < Main.maxTilesX * 0.3f || spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f) && Main.rand.NextBool(300))
-                {
-                    return 1;
-                }
-            }
-            return 0;
-        }
-        #endregion
 
         bool saidIntro = false;
         public override void AI()

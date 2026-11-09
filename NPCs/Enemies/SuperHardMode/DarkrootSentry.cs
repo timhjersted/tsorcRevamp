@@ -2190,32 +2190,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.PatrolUsesNavigation = true;
         }
 
-        // Legacy fallback for when New Enemy Spawns is off; with it on, the registry (Systems/EnemySpawns.cs) decides
-        // spawning, so this returns 0.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (EnemySpawns.Enabled)
-            {
-                return 0f;
-            }
-
-            // Same rule as the registry: Super Hardmode, dry, plain underground or plain caverns (no other biome), 5%, at most two alive.
-            Player player = spawnInfo.Player;
-            bool plainBelowGround = player.ZoneNormalUnderground || player.ZoneNormalCaverns;
-
-            if (spawnInfo.Water || NPC.CountNPCS(ModContent.NPCType<DarkrootSentry>()) >= 2)
-            {
-                return 0f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && plainBelowGround && Main.rand.NextBool(20))
-            {
-                return 1;
-            }
-
-            return 0;
-        }
-
         public override void OnKill()
         {
             // Loot resolves before OnKill; retain this ordinary enemy's first kill using the shared world history.

@@ -30,54 +30,6 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             BannerItem = ModContent.ItemType<Banners.BasiliskShifterBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type))
-            {
-                return 0f;
-            }
-            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor)
-            {
-                return 0f;
-            }
-
-            bool basiliskBiome = player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDesert || player.ZoneUndergroundDesert;
-            bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
-            bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
-
-            if (!basiliskBiome)
-            {
-                return 0f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (belowSurface)
-                {
-                    return 0.075f;
-                }
-                if (surfaceAtNight)
-                {
-                    return 0.075f;
-                }
-            }
-            else if (Main.hardMode)
-            {
-                if (belowSurface)
-                {
-                    return 0.15f;
-                }
-                if (surfaceAtNight)
-                {
-                    return 0.15f;
-                }
-            }
-
-            return 0f;
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.GreaterHealingPotion, 25));

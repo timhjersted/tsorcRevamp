@@ -42,54 +42,6 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             // Poise/knockback are resolved last by GlobalNPC.PopulatePoiseProfiles.
         }
         //Spawns in the Jungle Underground and in the Cavern.
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            // Jungle enemies stay out of the snow biome, even where it borders the jungle.
-            if (player.ZoneSnow)
-            {
-                return 0f;
-            }
-
-            // these are all the regular stuff you get , now lets see......
-            float chance = 0;
-
-            //Ensuring it can't spawn if one already exists.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 0)
-                    {
-                        return 0;
-                    }
-                }
-            }
-
-            if ((player.ZoneMeteor || player.ZoneJungle) && tsorcRevampWorld.SuperHardMode && !player.ZoneDungeon && !(player.ZoneCorrupt || player.ZoneCrimson))
-            {
-                chance = 0.1f; // reduced from .15
-            }
-            if (player.ZoneDirtLayerHeight)
-            {
-                chance *= 1.3f;
-            }
-            if (player.ZoneRockLayerHeight)
-            {
-                chance *= 1.5f;
-            }
-            if (Main.bloodMoon)
-            {
-                chance *= 2;
-            }
-
-            return chance;
-        }
-        #endregion
 
         #region Gore
         public override void OnKill()

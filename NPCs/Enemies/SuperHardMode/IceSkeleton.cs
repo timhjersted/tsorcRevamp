@@ -1893,30 +1893,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.KiteRangeMax = 0f;
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            // Legacy fallback, unchanged rules. With New Enemy Spawns on, the registry (Systems/EnemySpawns.cs) replaces it.
-            Player player = spawnInfo.Player;
-            if (tsorcRevampWorld.SuperHardMode && player.ZoneSnow)
-            {
-                return 0.1f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.SpawnTileX > Main.maxTilesX * 0.7f)
-            {
-                if (player.ZoneDirtLayerHeight)
-                {
-                    return 0.134f;
-                }
-                else if (player.ZoneRockLayerHeight)
-                {
-                    return 0.2f;
-                }
-            }
-
-            return 0f;
-        }
-
         public override void HitEffect(NPC.HitInfo hit)
         {
             base.HitEffect(hit);

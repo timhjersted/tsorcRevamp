@@ -4,7 +4,6 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static tsorcRevamp.SpawnHelper;
 
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -44,24 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 0;
             }
         }
-
-        #region Spawning
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            Player p = spawnInfo.Player;
-
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert) return 0.05f;
-
-            return chance;
-        }
-        #endregion
 
         int boostTimer;
         public override void AI()

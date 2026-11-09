@@ -229,20 +229,6 @@ namespace tsorcRevamp.NPCs.Enemies
             bestiaryEntry.Info.Add(new FlavorTextBestiaryInfoElement("Mods.tsorcRevamp.NPCs.ObsidianGuard.BestiaryDescription"));
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
-
-            if (!player.ZoneMeteor || !belowSurface || player.ZoneUnderworldHeight || spawnInfo.Water
-                || NPC.CountNPCS(Type) >= 2)
-            {
-                return 0f;
-            }
-
-            return 0.05f;
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ItemID.Obsidian, 2, 3, 6));

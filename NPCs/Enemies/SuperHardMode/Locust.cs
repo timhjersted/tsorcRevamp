@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Enemies
         // impossible to clear). Each locust rolls its own timer, so the colony still grows, just slowly.
         const int BreedMinTicks = 300;
         const int BreedMaxTicks = 450;
-        // Natural-spawn weight; also used by the EnemySpawns registry entry.
+        // Natural-spawn weight, read by the Locust line in the EnemySpawns registry.
         public const float NaturalSpawnChance = 0.1f;
         const int ArrivalTicks = 30;
         const int ReproductionTellTicks = 30;
@@ -92,18 +92,6 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.noTileCollide = true;
             NPC.alpha = 255;
             NPC.scale = 0.6f;
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            // One natural swarm at a time: a fresh group of 25 must not arrive while the last one is still being fought.
-            if (!tsorcRevampWorld.SuperHardMode || !spawnInfo.Player.ZoneCrimson || spawnInfo.Water
-                || CountActive() > 0)
-            {
-                return 0f;
-            }
-
-            return NaturalSpawnChance;
         }
 
         public override void OnKill()

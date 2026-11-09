@@ -467,35 +467,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 attackRange: MeleeEngageRange);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            bool frozenOcean = spawnInfo.SpawnTileX > Main.maxTilesX - 800;
-            bool ocean = spawnInfo.SpawnTileX < 800 || frozenOcean;
-
-            if (NPC.AnyNPCs(Type))
-                return 0f;
-
-            float chance = 0f;
-            if (tsorcRevampWorld.SuperHardMode
-                && player.townNPCs < 1f
-                && (player.ZoneCorrupt || player.ZoneDungeon)
-                && !player.ZoneMeteor
-                && !player.ZoneJungle
-                && !player.ZoneUnderworldHeight
-                && !player.ZoneHallow
-                && !ocean)
-            {
-                chance = 0.2f;
-            }
-
-            if (!Main.dayTime)
-                chance *= 2f;
-            if (Main.bloodMoon)
-                chance *= 2f;
-            return chance;
-        }
-
         public override void AI()
         {
             // Preserve the final authored dash velocity through the transition tick, then clear it

@@ -97,8 +97,6 @@ namespace tsorcRevamp.NPCs.Enemies{
 			AnimationType = 21;
 		}
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);

@@ -12,7 +12,6 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Projectiles.Enemy;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {

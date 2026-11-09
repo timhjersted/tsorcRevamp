@@ -100,29 +100,6 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ArcherSpiritBell>(), 10));
         }
 
-        #region Spawn
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0f;
-
-
-            if (!Main.hardMode && spawnInfo.Player.ZoneDungeon) return 0.01f;
-
-            if (Main.hardMode && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && !spawnInfo.Player.ZoneBeach && spawnInfo.Player.ZoneJungle) return 0.02f;
-            if (Main.hardMode && spawnInfo.Player.ZoneHallow && !spawnInfo.Player.ZoneDungeon) return 0.01f;
-            if (Main.hardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneJungle)) return 0.0125f;
-
-            if (Main.hardMode && spawnInfo.Lihzahrd) return 0.15f;
-
-            if (tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.13f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneOverworldHeight && (spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) return 0.1f;
-            if (tsorcRevampWorld.SuperHardMode && (spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneUndergroundDesert)) return 0.13f;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneDungeon) return 0.01f; //.08% is 4.28%
-            return chance;
-        }
-        #endregion
-
         public override void AI()
         {
             // tML resets this multiplier each tick. Apply it before navigation so the planner

@@ -405,8 +405,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
         ///<summary>Unique weapon: the Heart of Winter tome — guaranteed on the first kill, 25% on
         ///repeat HM kills. SHM rare-event respawns pay out purely in Dark Souls (via NPC.value)
         ///instead. OnKill registers the type in NewSlain (loot rules resolve first, so the

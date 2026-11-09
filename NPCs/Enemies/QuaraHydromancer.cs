@@ -117,27 +117,6 @@ namespace tsorcRevamp.NPCs.Enemies
             g.EvasiveQuickStep = true;
         }
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-
-            if (spawnInfo.Water) return 0f;
-
-            //now spawns in hallow, since jungle was getting crowded
-            //spawns more before the rage is defeated
-
-            if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && !Main.dayTime && P.ZoneHallow && P.ZoneOverworldHeight && Main.rand.NextBool(30)) return 1;
-            if (Main.hardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(30)) return 1;
-            if (Main.hardMode && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())) && P.ZoneHallow && (P.ZoneRockLayerHeight || P.ZoneDirtLayerHeight) && Main.rand.NextBool(10)) return 1;
-            if (Main.hardMode && spawnInfo.Lihzahrd && Main.rand.NextBool(45)) return 1;
-            if (Main.hardMode && spawnInfo.Player.ZoneDesert && Main.rand.NextBool(45)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneHallow && Main.rand.NextBool(10)) return 1;
-            if (tsorcRevampWorld.SuperHardMode && spawnInfo.Player.ZoneGlowshroom && Main.rand.NextBool(5)) return 1;
-            return 0;
-        }
-        #endregion
-
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);

@@ -948,15 +948,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (IsCasting || Phase == AttackPhase.MagicRecovery)
                 DebugAttackLabel = SpellName;
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            if (NPC.AnyNPCs(Type) || !tsorcRevampWorld.SuperHardMode || !(player.ZoneSnow || player.ZoneHallow)) return 0f;
-            float chance = player.ZoneOverworldHeight ? 0.2f : 0.36f;
-            if (player.ZoneSnow && player.ZoneHallow) chance *= 2f;
-            if (Main.bloodMoon) chance *= 2f;
-            return chance;
-        }
         public override void OnKill()
         {
             if (!Main.dedServ) CrystalKnightShard.Shatter(NPC.Center, 70);

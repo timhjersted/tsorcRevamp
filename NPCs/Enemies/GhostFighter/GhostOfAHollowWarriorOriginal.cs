@@ -13,7 +13,6 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -825,29 +824,6 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
         }
 
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
-
-            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
-                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 3f;
-
-            return chance;
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

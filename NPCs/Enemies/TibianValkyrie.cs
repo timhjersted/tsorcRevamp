@@ -19,7 +19,6 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Puppets;
 using tsorcRevamp.Utilities;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -2236,43 +2235,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ItemID.Heart, 1);
         }
-
-        #region Spawn
-
-        // Legacy fallback for when New Enemy Spawns is off; with it on, the registry (Systems/EnemySpawns.cs) decides.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.townNPCs > 0f) return 0f;
-
-            // ── Pre-Hardmode spawns ───────────────────────────────────────────────
-            if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && !Main.dayTime) return 0.0427f;
-            if (spawnInfo.Player.ZoneOverworldHeight && !Main.hardMode && !spawnInfo.Player.ZoneCrimson && Main.dayTime) return 0.038f;
-
-            if (!Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle)
-            {
-                if (!spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.0494f;
-                if (spawnInfo.Player.ZoneDungeon && (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight)) return 0.03857f;
-            }
-
-            // ── Hardmode spawns ───────────────────────────────────────────────────
-            if (Main.hardMode && !spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneJungle
-                && !spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson)
-            {
-                if (spawnInfo.Player.ZoneOverworldHeight) return !Main.dayTime ? 0.025f : 0.018f;
-                if (spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneRockLayerHeight) return 0.027f;
-            }
-
-            return chance;
-        }
-        #endregion
 
         #region Gore
         public override void HitEffect(NPC.HitInfo hit)

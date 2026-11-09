@@ -66,39 +66,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.AncientDemon.DespawnHandler"), Color.Red, DustID.RedTorch);
         }
 
-        // Lower Cavern into the Underworld, SHM only; doubled in the outer 30% of the world's width and on a Blood Moon.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            bool magmaCavern = spawnInfo.Player.position.Y >= Main.maxTilesY * 0.6f && !spawnInfo.Player.ZoneUnderworldHeight;
-            bool outerWidth = spawnInfo.Player.position.X < Main.maxTilesX * 0.3f || spawnInfo.Player.position.X > Main.maxTilesX * 0.7f;
-
-            float chance = 0;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (spawnInfo.Player.ZoneUnderworldHeight)
-                {
-                    chance = 0.001f;
-
-                    if (outerWidth)
-                    {
-                        chance *= 2;
-                    }
-                }
-
-                if (magmaCavern)
-                {
-                    chance = 0.0005f;
-                }
-            }
-
-            if (Main.bloodMoon)
-            {
-                chance *= 2;
-            }
-
-            return chance;
-        }
-
         protected override void InitializeStats()
         {
             breathDamage = 70;

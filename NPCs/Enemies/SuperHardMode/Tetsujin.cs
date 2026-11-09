@@ -47,37 +47,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         //int previous = 0;
         bool breath = false;
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            float chance = 0;
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (player.ZoneSkyHeight)
-                {
-                    chance = 0.5f;
-                }
-                if (player.ZoneMeteor)
-                {
-                    chance = .75f;
-                }
-                if (!Main.dayTime)
-                {
-                    chance *= 2;
-                }
-                if (Main.bloodMoon)
-                {
-                    chance *= 2;
-                }
-            }
-
-            return chance;
-        }
-        #endregion
-
 
         public override void AI()
         {

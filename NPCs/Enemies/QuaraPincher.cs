@@ -178,49 +178,6 @@ namespace tsorcRevamp.NPCs.Enemies
             //On-hit evasion is bespoke: it burrows and re-emerges at the player's flank (see OnHitByX -> TryBurrowEvade).
         }
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            if (Main.pumpkinMoon || Main.snowMoon || player.townNPCs > 0f || player.ZoneDungeon)
-            {
-                return 0f;
-            }
-
-            //Ocean (Beach zone) — its home. Also displaced into the Underground Desert.
-            bool ocean = player.ZoneBeach;
-            bool undergroundDesert = player.ZoneUndergroundDesert;
-
-            if (ocean)
-            {
-                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(18))
-                {
-                    return 1f;
-                }
-                if (Main.hardMode && Main.rand.NextBool(30))
-                {
-                    return 1f;
-                }
-                if (Main.rand.NextBool(140))
-                {
-                    return 1f;
-                }
-            }
-            if (undergroundDesert)
-            {
-                if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(22))
-                {
-                    return 1f;
-                }
-                if (Main.hardMode && Main.rand.NextBool(45))
-                {
-                    return 1f;
-                }
-            }
-            return 0f;
-        }
-        #endregion
-
         #region Netcode
         public override void SendExtraAI(BinaryWriter writer)
         {

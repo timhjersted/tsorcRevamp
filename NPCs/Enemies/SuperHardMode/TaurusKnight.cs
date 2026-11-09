@@ -539,45 +539,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         #region Spawn, death, loot
 
-        // Legacy spawn rolls, used only with New Enemy Spawns off; otherwise the registry (Systems/EnemySpawns.cs) decides.
-        // No spawn announcement: the old "A Taurus Knight is close..." chat line was removed on 2026-10-21.
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (EnemySpawns.Enabled)
-            {
-                return 0f;
-            }
-
-            Player player = spawnInfo.Player;
-            bool desert = player.ZoneDesert || player.ZoneUndergroundDesert;
-            bool dungeon = player.ZoneDungeon;
-            // SpawnTileY is a tile row, so the underworld starts 200 rows above the bottom (not 200*16).
-            bool inHell = spawnInfo.SpawnTileY >= Main.maxTilesY - 200;
-
-            // Only one at a time. AnyNPCs checks active slots; despawned slots keep their old type.
-            if (NPC.AnyNPCs(NPC.type))
-            {
-                return 0f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && desert && Main.rand.NextBool(45))
-            {
-                return 1f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && dungeon && Main.rand.NextBool(50))
-            {
-                return 1f;
-            }
-
-            if (tsorcRevampWorld.SuperHardMode && inHell && Main.rand.NextBool(30))
-            {
-                return 1f;
-            }
-
-            return 0f;
-        }
-
         public override void OnKill()
         {
             if (Main.dedServ)

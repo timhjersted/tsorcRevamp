@@ -37,57 +37,6 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            if (!BasiliskSpawnRules.MeetsSharedRequirements(spawnInfo, Type))
-            {
-                return 0f;
-            }
-
-            // Basilisks are restricted to evil biomes and the desert. Explicit exclusions keep
-            // overlapping biome zones from introducing them into unrelated themed pools.
-            if (player.ZoneDungeon || player.ZoneJungle || player.ZoneHallow || player.ZoneMeteor)
-            {
-                return 0f;
-            }
-
-            bool basiliskBiome = player.ZoneCorrupt || player.ZoneCrimson || player.ZoneDesert || player.ZoneUndergroundDesert;
-            bool belowSurface = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
-            bool surfaceAtNight = player.ZoneOverworldHeight && !Main.dayTime;
-
-            if (!basiliskBiome)
-            {
-                return 0f;
-            }
-
-            if (!Main.hardMode)
-            {
-                if (belowSurface)
-                {
-                    return 0.15f;
-                }
-                if (surfaceAtNight)
-                {
-                    return 0.15f;
-                }
-            }
-            else if (!tsorcRevampWorld.SuperHardMode)
-            {
-                if (belowSurface)
-                {
-                    return 0.05f;
-                }
-                if (surfaceAtNight)
-                {
-                    return 0.05f;
-                }
-            }
-
-            return 0f;
-        }
-
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             IItemDropRule hmCondition = new LeadingConditionRule(new Conditions.IsHardmode());

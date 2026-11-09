@@ -2824,11 +2824,9 @@ namespace tsorcRevamp.NPCs
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            // New Enemy Spawns: the central registry replaces the pool entry of every enemy it lists. First, so the clears and removals below still win.
+            // The central spawn registry (Systems/EnemySpawns.cs) sets the pool entry of every mod enemy. First, so the clears and removals below still win.
             EnemySpawns.Apply(pool, spawnInfo);
 
-            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
-            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             Player player = spawnInfo.Player;
 
             //Human enemies can't swim — never let them spawn in water, regardless of their own SpawnChance.
@@ -2889,12 +2887,6 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.BoneThrowingSkeleton2, 0.03f);
             }
 
-            // The Catacombs use the Cursed Pink Tiled Wall rather than a vanilla biome flag.
-            if (!EnemySpawns.Enabled && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonTileUnsafe)
-            {
-                pool.Add(ModContent.NPCType<Puppets.OolacileCultist>(), 0.2f);
-            }
-
             //HARD MODE SECTION
 
             //golem temple
@@ -2902,14 +2894,6 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
-
-                // With New Enemy Spawns on, the registry holds these two (and Add would throw on the key it already put in the pool).
-                if (!EnemySpawns.Enabled)
-                {
-                    pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
-                    pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
-                }
-
             }
 
             //desert or underground desert and dungeon(shadow temple)
@@ -2918,32 +2902,6 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.DiabolistRed, 0.01f);
             }
 
-            //machine temple (in water)
-            //(depth gate is legacy 2000-space tile-Y; MapTileY shifts it on the expanded world, identity elsewhere)
-            //(with New Enemy Spawns on, the registry's exclusive zones do this instead)
-            if (!EnemySpawns.Enabled && spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
-            {            
-                // 98 = WallID.GreenDungeonSlabUnsafe
-                
-                    // Clear the existing pool to ensure no other NPCs can spawn
-                    pool.Clear();
-
-                    // Add specific NPCs back into the pool with their spawn weights
-                    pool.Add(NPCID.GreenJellyfish, 10f);                  
-                    pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
-                    pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 2f);
-
-
-
-            }
-            //machine temple (not in water)
-            if (!EnemySpawns.Enabled && !spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
-
-            }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
             {
@@ -2995,12 +2953,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarCorite, 0.01f);
                 pool.Add(NPCID.SolarSpearman, 0.4f);
                 pool.Add(NPCID.SolarDrakomire, 0.4f);
-                pool.Add(NPCID.SolarSolenian, 0.6f); 
-            }
-            //dungeon (rare)
-            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.KnightOfGwyn>(), 0.01f);
+                pool.Add(NPCID.SolarSolenian, 0.6f);
             }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
@@ -3013,15 +2966,6 @@ namespace tsorcRevamp.NPCs
             if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
-            }
-            // sunken sky temple
-            // (with New Enemy Spawns on, the registry's Sunken Sky Temple exclusive zone does this instead)
-            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneUnderworldHeight &&(spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(NPCID.VortexRifleman, 0.1f); //.1 is 3%
-                pool.Add(NPCID.VortexHornet, 0.02f); //.5 is 16%
-                pool.Add(NPCID.VortexSoldier, 0.3f);
-                pool.Add(NPCID.Paladin, 0.6f);
             }
             if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {
@@ -3076,20 +3020,8 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // New Enemy Spawns: the registry's exclusive zones (Machine Temple, Humanity Phantom rooms) clear the pool here, after the invasion block above.
+            // The registry's exclusive zones (Machine Temple, Humanity Phantom rooms, Sunken Sky Temple, Wyvern Fortress) clear the pool here, after the invasion block above.
             EnemySpawns.ApplyExclusiveZones(pool, spawnInfo);
-
-            if (!EnemySpawns.Enabled && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
-            }
-
-            if (!EnemySpawns.Enabled && (playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.ObsidianBrickUnsafe && tsorcRevampWorld.RemixMap)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
-            }
 
             if (tsorcRevampWorld.TheEnd)
             {

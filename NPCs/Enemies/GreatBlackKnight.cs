@@ -149,21 +149,6 @@ namespace tsorcRevamp.NPCs.Enemies
         }
         #endregion
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode) return 0f;
-            if (!tsorcRevampWorld.SuperHardMode) return 0f;
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (!spawnInfo.Player.ZoneMeteor && !spawnInfo.Player.ZoneDungeon && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime && Main.rand.NextBool(650)) return 1;
-            if (spawnInfo.Player.ZoneDungeon && Main.rand.NextBool(450)) return 1;
-            if (!(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) && !spawnInfo.Player.ZoneBeach && Main.rand.NextBool(600)) return 1;
-            if (spawnInfo.Player.ZoneUnderworldHeight && Main.rand.NextBool(500)) return 1;
-
-            return 0;
-        }
-        #endregion
-
         #region Flail combos
         // ── Close range: the shared puppet flail patterns on GBK's own head ──────────────────────────────
         // GreatBlackKnightFlail derives from EnemyFlailProjectileBase and falls through to it for every authored

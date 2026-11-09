@@ -33,17 +33,6 @@ namespace tsorcRevamp.NPCs.Enemies
             BannerItem = ModContent.ItemType<Banners.LivingShroomThiefBanner>();
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-
-            if (Main.dayTime && NPC.CountNPCS(ModContent.NPCType<LivingShroomThief>()) < 1 && TileID.Sets.Conversion.Grass[spawnInfo.SpawnTileType] && !spawnInfo.Water && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 5].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 8].WallType == WallID.None || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY - 12].WallType == WallID.None) && !(spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDesert || spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneMeteor))
-            {
-                return 0.17f;
-            }
-            return chance;
-        }
-
         private const int AI_State_Slot = 0;
         private const int AI_Timer_Slot = 1;
 

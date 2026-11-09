@@ -114,17 +114,6 @@ namespace tsorcRevamp.NPCs.Enemies{
             dashCooldown = DashCooldownTicks;
         }
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (!Main.hardMode) return 0f;
-            if (!spawnInfo.Player.ZoneHallow || !spawnInfo.Player.ZoneOverworldHeight) return 0f;
-            if (NPC.AnyNPCs(ModContent.NPCType<EvilEye>())) return 0f;
-            if (!Main.rand.NextBool(150)) return 0f;
-            return 0.3f;
-        }
-        #endregion
-
         void TeleportEffect(Vector2 position)
         {
             // Prismatic space-distortion burst + a brief damaging blast - both networked (real

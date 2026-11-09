@@ -974,29 +974,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            // Legacy variant: natural spawning disabled, the non-Original Lothric knight replaces it. Rest of the rules kept for reference.
-            return 0f;
-
-            float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
-            if (spawnInfo.Water) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
-
-            if (tsorcRevampWorld.SuperHardMode && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return 0.002f;
-
-            if (spawnInfo.Player.ZoneDungeon) return chance = 0.001f;
-
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon) return chance = 0.005f;
-
-            if (NPC.downedBoss3 && !(spawnInfo.Player.ZoneJungle || spawnInfo.Player.ZoneHallow || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneSnow || spawnInfo.Player.ZoneBeach || spawnInfo.Player.ZoneSkyHeight || spawnInfo.Player.ZoneUnderworldHeight)) return chance = 0.00003f;
-
-            return chance;
-        }
-
         public override void OnKill()
         {
             if (!tsorcRevampWorld.SuperHardMode)
