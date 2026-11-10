@@ -1531,19 +1531,96 @@ namespace tsorcRevamp.NPCs.Puppets
         protected virtual float ShieldDamageReduction => 0.5f;
         /// <summary>Path to the held-shield draw sprite — a 20-frame vertical strip sharing the
         /// player body's frame layout (frame N overlays body frame N), like vanilla equip shields.
-        /// Defaults to the shield item's texture + "_Shield"; override to point elsewhere.</summary>
-        protected virtual string ShieldDrawTexturePath =>
-            HasShield ? TextureAssets.Item[ShieldItemType].Name + "_Shield" : null;
+        /// Defaults to the shield item's texture + "_Shield" for a mod shield, and to vanilla's own equip strip
+        /// (Images/Acc_Shield_N, N = the item's shieldSlot) for a vanilla shield such as the Cobalt Shield.</summary>
+        protected virtual string ShieldDrawTexturePath
+        {
+            get
+            {
+                if (!HasShield)
+                {
+                    return null;
+                }
+
+                if (ShieldItemType < ItemID.Count)
+                {
+                    int vanillaShieldSlot = ContentSamples.ItemsByType[ShieldItemType].shieldSlot;
+                    return "Terraria/Images/Acc_Shield_" + vanillaShieldSlot;
+                }
+
+                return TextureAssets.Item[ShieldItemType].Name + "_Shield";
+            }
+        }
         /// <summary>Presentation-only opt-out for shields that appear only during an authored guard.</summary>
         protected virtual bool ShieldVisible => HasShield;
         /// <summary>Additional guard poses, including mobile guards and custom shield charges.</summary>
         protected virtual bool ShieldRaisedForPose => _shielding || _advancingGuard;
 
-        /// <summary>Extra offset for the raised (guarding) shield on top of the equip strip's carry position: X is
-        /// toward the facing direction, Y is screen-down. Default lifts it 5px and pushes it 5px toward the attacker.</summary>
+        /// <summary>Fallback only (the back arm is busy with a weapon or bow): extra offset for the raised strip frame,
+        /// X toward the facing direction, Y screen-down. The normal draw holds the shield in the back fist instead.</summary>
         protected virtual Vector2 ShieldRaisedOffset => new Vector2(5f, -5f);
+        /// <summary>Back-arm facing angles (0 = straight ahead, + = down) for the hand-held shield: carried at the hip,
+        /// raised in front of the chest, and tucked low while the sword arm attacks. 1.4 puts the fist where the equip
+        /// strip's own carry frame drew the shield, so carried shields keep their old look.</summary>
+        protected virtual float ShieldCarryArmAngle => 1.4f;
+        protected virtual float ShieldRaisedArmAngle => 0.2f;
+        protected virtual float ShieldTuckArmAngle => 0.9f;
+        /// <summary>Texel of the shield cut-out pinned to the back fist, measured from the cut-out's top-left. The
+        /// cut-out is the opaque bounds of strip frame 0 (the side-profile shield). Null = 2px in from the body-side
+        /// edge, at mid-height (the strap).</summary>
+        protected virtual Vector2? ShieldHandGrip => null;
         private Texture2D _shieldDrawTex;
         private bool _shieldDrawTexLoaded;
+        // Opaque bounds of strip frame 0, found once when the strip loads (client only).
+        private Rectangle _shieldHandSource;
+        // Facing angle the shield arm is easing toward its carry / raised / tuck target. NaN = not posed yet, so the
+        // first visible tick starts at the target instead of sweeping up from straight ahead.
+        private float _shieldArmAngle = float.NaN;
+
+        /// <summary>True while the shield is drawn and the back arm is free to hold it. A back arm busy with a weapon,
+        /// a two-handed grip or a bow falls back to the equip-strip draw.</summary>
+        private bool ShieldHeldInBackHand =>
+            HasShield && ShieldVisible
+            && Phase != AttackPhase.Healing && Phase != AttackPhase.FleeToHeal
+            && !TwoHandedCompositeArmActive && !BackHandWeaponVisible && !BowStringDrawPoseActive;
+
+        /// <summary>The free back arm's facing angle this tick: the subclass's own gesture first, else the shield arm.</summary>
+        private float? ResolvedFreeBackArmFacingAngle
+        {
+            get
+            {
+                if (FreeBackArmFacingAngle is float authored)
+                {
+                    return authored;
+                }
+
+                if (ShieldHeldInBackHand && !float.IsNaN(_shieldArmAngle))
+                {
+                    return _shieldArmAngle;
+                }
+
+                return null;
+            }
+        }
+
+        /// <summary>Stretch for the free back arm. Once the shield is past halfway to raised, the elbow bends to three-quarter
+        /// stretch (vanilla's hand ellipse 10x12 -> 8x10), holding the guard 2px closer to the chest at the same height.
+        /// Authored gestures and the carried shield stay fully stretched.</summary>
+        private Player.CompositeArmStretchAmount ResolvedFreeBackArmStretch
+        {
+            get
+            {
+                bool shieldDrivesArm = FreeBackArmFacingAngle == null && ShieldHeldInBackHand && !float.IsNaN(_shieldArmAngle);
+                float halfwayToRaised = (ShieldCarryArmAngle + ShieldRaisedArmAngle) * 0.5f;
+
+                if (shieldDrivesArm && _shieldArmAngle < halfwayToRaised)
+                {
+                    return Player.CompositeArmStretchAmount.ThreeQuarters;
+                }
+
+                return Player.CompositeArmStretchAmount.Full;
+            }
+        }
         /// <summary>Minimum guard hold (ticks) when a block is raised away from melee range — long
         /// enough to catch a ranged shot, short enough to stay mobile.  90 ticks = 1.5 s.</summary>
         protected virtual int ShieldGuardTicksRanged => 90;
@@ -3925,6 +4002,34 @@ namespace tsorcRevamp.NPCs.Puppets
 
             // Reactive shield: raise/plant the guard after movement so it overrides pursuit velocity.
             UpdateShield();
+
+            // Hand-held shield: ease the back arm toward carry (neutral), raised (guard) or tuck (attacking), 0.15 of
+            // the remaining angle per tick (~12t to raise), starting from carry so a shield that appears visibly rises.
+            // Cosmetic, recomputed on every machine from the synced phase and guard flags.
+            if (ShieldHeldInBackHand)
+            {
+                float shieldArmTarget = ShieldCarryArmAngle;
+
+                if (ShieldRaisedForPose)
+                {
+                    shieldArmTarget = ShieldRaisedArmAngle;
+                }
+                else if (IsTelemetryAttackPhase)
+                {
+                    shieldArmTarget = ShieldTuckArmAngle;
+                }
+
+                if (float.IsNaN(_shieldArmAngle))
+                {
+                    _shieldArmAngle = ShieldCarryArmAngle;
+                }
+
+                _shieldArmAngle += (shieldArmTarget - _shieldArmAngle) * 0.15f;
+            }
+            else
+            {
+                _shieldArmAngle = float.NaN;
+            }
 
             // While the guard is up the puppet commits to it — no attack starts until it drops
             // (the minimum hold), so the player gets a real block/backstab window.
@@ -10855,9 +10960,9 @@ namespace tsorcRevamp.NPCs.Puppets
             Player.CompositeArmStretchAmount stretch = CompositeArmStretch;
             float rotation = BackCompositeArmRotation;
             bool backArmHoldsWeapon = TwoHandedCompositeArmActive || BackHandWeaponVisible;
-            if (!backArmHoldsWeapon && FreeBackArmFacingAngle is float freeBackFacing)
+            if (!backArmHoldsWeapon && ResolvedFreeBackArmFacingAngle is float freeBackFacing)
             {
-                stretch = Player.CompositeArmStretchAmount.Full;
+                stretch = ResolvedFreeBackArmStretch;
                 rotation = FacingAngleToCompositeArm(freeBackFacing);
             }
 
@@ -11441,9 +11546,9 @@ namespace tsorcRevamp.NPCs.Puppets
                 // Dual wield: the back arm holds its own weapon, posed from its own blended rotation.
                 _puppet.SetCompositeArmBack(true, CompositeArmStretch, BackCompositeArmRotation);
             }
-            else if (FreeBackArmFacingAngle is float freeBackFacing)
+            else if (ResolvedFreeBackArmFacingAngle is float freeBackFacing)
             {
-                _puppet.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full,
+                _puppet.SetCompositeArmBack(true, ResolvedFreeBackArmStretch,
                     FacingAngleToCompositeArm(freeBackFacing));
             }
             else
@@ -11947,8 +12052,9 @@ namespace tsorcRevamp.NPCs.Puppets
         /// layer depth — after body/legs but before the front arm — so the hand appears to grip it.
         /// </summary>
         /// <summary>
-        /// Draws the off-hand shield sprite on the puppet (no-op without a shield).  Held lowered at
-        /// the back hip in neutral, raised in front of the chest while guarding.  Called by
+        /// Draws the off-hand shield sprite on the puppet (no-op without a shield).  Held in the back
+        /// fist: carried at the hip in neutral, raised in front of the chest while guarding, tucked low
+        /// while attacking (the arm pose is set from ResolvedFreeBackArmFacingAngle).  Called by
         /// <see cref="PuppetWeaponDrawLayer"/> just before the weapon so the front arm/weapon layer
         /// over it.  Override <see cref="ShieldItemType"/> to pick the shield sprite.
         /// </summary>
@@ -11962,14 +12068,71 @@ namespace tsorcRevamp.NPCs.Puppets
             {
                 _shieldDrawTexLoaded = true;
                 string path = ShieldDrawTexturePath;
-                if (!string.IsNullOrEmpty(path) && ModContent.HasAsset(path))
+                // ModContent.HasAsset only answers for mod assets; vanilla strips (Terraria/Images/...) always exist.
+                bool shieldAssetExists = !string.IsNullOrEmpty(path)
+                    && (path.StartsWith("Terraria/") || ModContent.HasAsset(path));
+
+                if (shieldAssetExists)
+                {
                     _shieldDrawTex = ModContent.Request<Texture2D>(path,
                         ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+
+                    // The hand-held cut-out: opaque bounds of strip frame 0, the edge-on shield of the carry pose.
+                    int stripFrameHeight = _shieldDrawTex.Height / 20;
+                    Color[] pixels = new Color[_shieldDrawTex.Width * stripFrameHeight];
+                    _shieldDrawTex.GetData(0, new Rectangle(0, 0, _shieldDrawTex.Width, stripFrameHeight), pixels, 0, pixels.Length);
+                    int left = int.MaxValue;
+                    int top = int.MaxValue;
+                    int right = -1;
+                    int bottom = -1;
+
+                    for (int y = 0; y < stripFrameHeight; y++)
+                    {
+                        for (int x = 0; x < _shieldDrawTex.Width; x++)
+                        {
+                            if (pixels[y * _shieldDrawTex.Width + x].A == 0)
+                            {
+                                continue;
+                            }
+
+                            left = Math.Min(left, x);
+                            top = Math.Min(top, y);
+                            right = Math.Max(right, x + 1);
+                            bottom = Math.Max(bottom, y + 1);
+                        }
+                    }
+
+                    if (right > left)
+                    {
+                        _shieldHandSource = new Rectangle(left, top, right - left, bottom - top);
+                    }
+                }
             }
             if (_shieldDrawTex == null)
                 return;
 
-            // The strip shares the player body's 20-frame layout: index it by the current puppet
+            // Held in the back fist: pin the cut-out's grip texel to the hand vanilla drew for the posed back arm.
+            // Unscaled hand, like the front weapon: the spectral transform scales the whole draw cache afterwards.
+            if (ShieldHeldInBackHand && _shieldHandSource.Width > 0)
+            {
+                Vector2 grip = ShieldHandGrip ?? new Vector2(2f, _shieldHandSource.Height / 2f);
+                Vector2 handOrigin = grip;
+                SpriteEffects handFx = SpriteEffects.None;
+
+                // Mirroring flips the source about its own centre, so the grip moves to the mirrored column.
+                if (NPC.direction == -1)
+                {
+                    handOrigin.X = _shieldHandSource.Width - grip.X;
+                    handFx = SpriteEffects.FlipHorizontally;
+                }
+
+                Vector2 handPosition = GetUnscaledBackHandPosition() - Main.screenPosition;
+                drawInfo.DrawDataCache.Add(new DrawData(
+                    _shieldDrawTex, handPosition, _shieldHandSource, _layerDrawColor, 0f, handOrigin, NPC.scale, handFx, 0));
+                return;
+            }
+
+            // Fallback (back arm busy with a weapon): the strip shares the player body's 20-frame layout: index it by the current puppet
             // body row so the shield pose tracks the animation, and draw it body-aligned so it
             // overlays the body 1:1 (each frame already positions the shield for that pose).
             const int shieldFrames = 20;

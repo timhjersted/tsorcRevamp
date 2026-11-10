@@ -28,9 +28,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.timeLeft = 60 * 60;
         }
 
+        // A crown orb (ai1 = slot >= 0) forms over FormingTicks instead of popping in: harmless, growing .25 -> 1,
+        // embers converging on it. localAI[1] is its age; every machine counts it, so it needs no sync.
+        const int FormingTicks = 20;
+        // Released orbs fade over their last FadeTicks before timing out, then play their kill dust.
+        const int FadeTicks = 12;
+
+        bool Forming => Projectile.ai[1] >= 0 && Projectile.localAI[1] < FormingTicks;
+
+        public override bool? CanDamage() => Forming ? false : null;
+
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            SpawnFlameDust(12, 3.5f, 1.5f);
+            if (Projectile.ai[1] < 0)
+            {
+                SpawnFlameDust(12, 3.5f, 1.5f);
+            }
         }
 
         public override void AI()
@@ -75,6 +88,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 10;
 
+            if (Projectile.localAI[1] < FormingTicks)
+            {
+                Projectile.localAI[1]++;
+                float growth = Projectile.localAI[1] / FormingTicks;
+                Projectile.scale = MathHelper.Lerp(0.25f, 1f, growth);
+                if (!Main.dedServ)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(22f, 22f);
+                    Dust converge = Dust.NewDustPerfect(Projectile.Center + offset, DustID.Torch, -offset * 0.09f, 90, new Color(255, 135, 35), 1.2f);
+                    converge.noGravity = true;
+                }
+            }
+
             if (Main.rand.NextBool(4))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0, 0, 120, default, 1.2f);
@@ -107,7 +133,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             FaceVelocity();
 
-            Projectile.alpha = 0;
+            // ai1 counts up from -180 to 0; fade out across the last FadeTicks of that.
+            float fade = MathHelper.Clamp(-Projectile.ai[1] / FadeTicks, 0f, 1f);
+            Projectile.alpha = (int)((1f - fade) * 255f);
             if (Main.rand.NextBool(2))
             {
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 100, default, 1.5f);

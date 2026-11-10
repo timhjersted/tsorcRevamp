@@ -661,6 +661,7 @@ Mods: {
 			FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
 			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
+			DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
 			IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
@@ -1182,6 +1183,11 @@ Mods: {
 			IceSkeletonBanner: {
 				DisplayName: "{$NPCs.IceSkeleton.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
+			}
+
+			SkeletonWarriorBanner: {
+				DisplayName: "{$NPCs.SkeletonWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SkeletonWarrior.DisplayName}"
 			}
 
 			JungleSentreeBanner: {
@@ -9744,6 +9750,11 @@ Mods: {
 				DisplayName: Rime Spear
 			}
 
+			EnemySkeletonCutlass: {
+				Tooltip: ""
+				DisplayName: Skeleton Cutlass
+			}
+
 			EnemyOccultistStaff: {
 				Tooltip: ""
 				DisplayName: Grand Oolacile Staff
@@ -12939,6 +12950,7 @@ Mods: {
 			HydrisElemental.DisplayName: Hydris Elemental
 			HydrisNecromancer.DisplayName: Hydris Necromancer
 			IceSkeleton.DisplayName: Adept of Seath
+			SkeletonWarrior.DisplayName: Skeleton Warrior
 
 			KnightOfGwyn: {
 				DisplayName: Knight of Gwyn

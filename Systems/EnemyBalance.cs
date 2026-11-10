@@ -474,6 +474,7 @@ namespace tsorcRevamp.Systems
             Enemy("BasiliskWalker", phm: 400, hm: 800); // fodder / standard; authored 100 / 250
             Enemy("GhostOfAHollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("GhostOfTheForgottenWarrior", phm: 600, hm: 800, shm: 8000); // standard / fodder / standard; authored 100 / 200 / 1000
+            Enemy("SkeletonWarrior", phm: 450, hm: 1000); // standard / standard; puppet; reassembles once (pile 15%, reform 30%)
             Enemy("HollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("OolacileCultist", phm: 600, hm: 5000, shm: 12000); // strong; authored 200 / 450 / 3000; caster, contact damage 0; puppet
             Enemy("TibianAmazon", phm: 500, hm: 1000, shm: 10000); // strong; authored 100 / 250

@@ -194,6 +194,25 @@ namespace tsorcRevamp
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletron");
     }
 
+    public class DownedSkeletronOrNitoRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        // Gravelord Nito stands in Skeletron's progression slot; his kill is recorded in tsorcRevampWorld.NewSlain.
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            if (NPC.downedBoss3)
+            {
+                return true;
+            }
+
+            int nitoType = ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>();
+            return tsorcRevampWorld.BossDefeated(nitoType);
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletronOrNito");
+    }
+
     public class RemixWorldDropCondition : IItemDropRuleCondition
     {
         public virtual bool CanDrop(DropAttemptInfo info)

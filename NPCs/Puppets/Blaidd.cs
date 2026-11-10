@@ -277,6 +277,21 @@ namespace tsorcRevamp.NPCs.Puppets
         // Raised shield = the advancing guard, or the Shield Charge's tell + sprint.
         protected override bool ShieldRaisedForPose => ShieldRaised;
 
+        // Shield Bash shoves with the shield arm straight out (facing angle 0) instead of tucking it like a sword
+        // attack. Presentation only: the bash's block rules are unchanged.
+        protected override float ShieldTuckArmAngle
+        {
+            get
+            {
+                if (Phase == AttackPhase.Custom && _customKind == BlaiddCustomKind.ShieldBash)
+                {
+                    return 0f;
+                }
+
+                return base.ShieldTuckArmAngle;
+            }
+        }
+
         private bool ShieldRaised
         {
             get

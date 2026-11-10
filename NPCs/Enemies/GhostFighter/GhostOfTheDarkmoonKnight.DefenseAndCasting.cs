@@ -16,11 +16,14 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
     {
         protected override int ShieldItemType => ModContent.ItemType<IceboundMythrilAegis>();
         protected override string ShieldDrawTexturePath => "tsorcRevamp/Content/Items/Accessories/Defensive/Shields/IceboundMythrilAegis_Shield";
-        // Carried like a player's equipped shield: always on the off hand, drawn from the strip frame that matches the
-        // body row (so it bobs with the walk cycle), and on guard lifted 4px exactly as vanilla's shieldRaised does -
-        // no sideways push and no posed back arm. Check with SwingPreview --guard-pose --puppet GhostOfTheDarkmoonKnight.
+        // Held in the back fist like every puppet shield (PuppetNPC.DrawShieldToLayer): shown only while guarding, it
+        // appears at the carry pose and rises with the arm. Check with SwingPreview --guard-pose --puppet GhostOfTheDarkmoonKnight.
         protected override bool ShieldRaisedForPose => _guardUp && Neutral;
-        protected override Vector2 ShieldRaisedOffset => new Vector2(0f, -4f);
+        // The Aegis is a 14x36 tower: gripped 2px above its middle and carried further forward (1.15 rad), its top clears
+        // the face and its foot rests on the ground line; raised slightly lower (0.3 rad) so it covers chest to knee.
+        protected override Vector2? ShieldHandGrip => new Vector2(2f, 16f);
+        protected override float ShieldCarryArmAngle => 1.15f;
+        protected override float ShieldRaisedArmAngle => 0.3f;
         protected override float? FreeFrontArmFacingAngle => BarragePose ? BarrageArmAngle : null;
         protected override int EstusChargesMax => 1;
         protected override float EstusHealFraction => 0.35f;

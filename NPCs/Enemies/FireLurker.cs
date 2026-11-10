@@ -1,12 +1,8 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.Materials;
@@ -18,29 +14,48 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    class FireLurker : ModNPC, IHitReactor
+    class FireLurker : LurkerPuppet
     {
-        const int MaxFlameOrbs = 3;
-        const int FlameOrbSpawnRate = 3 * 60;
-        const int FlameTrapRate = 10 * 60;
-        const int ReleasedFlameOrbTime = 3 * 60;
-        const int HeldFlameOrbLeadTime = 60;
-        const float CombatRange = 50 * 16f;
-
+        // Written by the Path of Pain scripted event (FireLurkerPainCustomAction), so it stays a public field.
         public int lostSoulDamage = 8;
-        int flameOrbTimer;
-        int flameTrapTimer;
+
+        // Ember Rake / Leap Swipe hit for the old contact damage: 20 / 30 / 65 raw contact -> 40 / 60 / 130 Expert.
+        private int meleeExpertDamage = 40;
+
+        // Fire Burst keeps double the old contact: 20 / 30 / 65 raw projectile -> 80 / 120 / 260 Expert.
+        private int fireBurstExpertDamage = 80;
+
+        // Old contact debuffs, all guaranteed, now applied by the melee moves. Vanilla doubles each in Expert/Master.
+        private const int MeleeDebuffTicks = 2 * 60;
+
+        protected override int OrbType => ModContent.ProjectileType<FireLurkerFlameOrb>();
+        protected override int MeteorType => ModContent.ProjectileType<FireLurkerMeteor>();
+        protected override int LostSoulDamage => lostSoulDamage;
+        protected override int HurlPeriod => 6 * 60;
+        protected override float HurlSpeed => 2.1f;
+        protected override int HurlTellTicks => 25;
+        protected override bool CrownAutoLaunch => true;
+        protected override bool HasFireBurst => true;
+        protected override float BaseTopSpeed => 1.5f;
+        protected override float BaseAcceleration => 0.07f;
+        protected override float EnrageFraction => 0.36f;
+        protected override float EnrageTopSpeed => 3f;
+        protected override int MeleeExpertDamage => meleeExpertDamage;
+        protected override int FireBurstExpertDamage => fireBurstExpertDamage;
+        protected override int EmberDust => DustID.Torch;
+        protected override Color EmberColor => new Color(255, 135, 35);
+        protected override int GroanFrequency => 1000;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 3;
-            AnimationType = 28;
             NPC.knockBackResist = 0.4f;
-            NPC.aiStyle = -1;//was 3
             NPC.damage = 20;
             NPC.defense = 10;
             NPC.height = 40;
@@ -49,15 +64,13 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 600; // was 43 for 100 life
-            NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
+            ApplyLurkerDefaults();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
             globalNPC.KiteRangeMin = 5f;
             globalNPC.KiteRangeMax = 25f;
             globalNPC.KiteLooseness = 0.9f;
-            globalNPC.TeleportReacquireMaxRange = CombatRange;
 
             if (Main.hardMode)
             {
@@ -66,6 +79,8 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 1250; // was 65
                 NPC.damage = 30;
                 lostSoulDamage = 22;
+                meleeExpertDamage = 60;
+                fireBurstExpertDamage = 120;
                 NPC.knockBackResist = 0.2f;
             }
 
@@ -76,298 +91,18 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 5000; // was 365 with 1330 life
                 NPC.damage = 65;
                 lostSoulDamage = 35;
+                meleeExpertDamage = 130;
+                fireBurstExpertDamage = 260;
                 NPC.knockBackResist = 0.05f;
             }
-
-            // AddAttack calls placed after hardmode blocks so lostSoulDamage and NPC.damage are final values.
-            UsefulFunctions.AddAttack(NPC, 6 * 60, ModContent.ProjectileType<FireLurkerFlameOrb>(), lostSoulDamage, 2.1f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Orange, telegraphTime: 25, condition: HasCombatTarget, fireCondition: HasCombatTarget);
-
-            // Close-range melee fire burst: only fires when the player is within ~6 tiles.
-            int npcIndex = NPC.whoAmI;
-            UsefulFunctions.AddAttack(NPC, 5 * 60,
-                ModContent.ProjectileType<FireLurkerFireBurst>(),
-                NPC.damage, 0f,
-                ai0: npcIndex,
-                stopBeforeFiring: true,
-                condition: HasCloseCombatTarget,
-                fireCondition: HasCloseCombatTarget);
         }
 
-
-
-        public override void AI()
+        public override void ApplyMeleeDebuffs(Player target)
         {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                int previousTarget = NPC.target;
-                NPC.TargetClosest(true);
-                if (NPC.target != previousTarget)
-                {
-                    NPC.netUpdate = true;
-                }
-            }
-            tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.07f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 1000, enragePercent: 0.36f, enrageTopSpeed: 3f, lavaJumping: true); //sound type was 26
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            if (!HasCombatTarget(NPC))
-            {
-                flameOrbTimer = 0;
-                flameTrapTimer = 0;
-                return;
-            }
-
-            SpawnFlameOrbs();
-            SpawnFlameTrap();
+            target.AddBuff(BuffID.OnFire, MeleeDebuffTicks, false);
+            target.AddBuff(BuffID.BrokenArmor, MeleeDebuffTicks, false);
+            target.AddBuff(BuffID.Darkness, MeleeDebuffTicks, false);
         }
-
-        static bool HasCombatTarget(NPC npc)
-        {
-            if (npc.target < 0 || npc.target >= Main.maxPlayers)
-            {
-                return false;
-            }
-
-            Player target = Main.player[npc.target];
-            return target.active && !target.dead && npc.Distance(target.Center) <= CombatRange;
-        }
-
-        static bool HasCloseCombatTarget(NPC npc)
-        {
-            return HasCombatTarget(npc) && npc.Distance(Main.player[npc.target].Center) < 6 * 16f;
-        }
-
-        void SpawnFlameOrbs()
-        {
-            flameOrbTimer++;
-            if (flameOrbTimer < FlameOrbSpawnRate)
-            {
-                return;
-            }
-            flameOrbTimer = 0;
-
-            int slot = GetOpenFlameOrbSlot();
-            if (slot == -1)
-            {
-                // All slots charged — launch every held orb at the player.
-                ReleaseFlameOrbs();
-                return;
-            }
-
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<FireLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
-        }
-
-        int GetOpenFlameOrbSlot()
-        {
-            bool[] occupiedSlots = new bool[MaxFlameOrbs];
-            int activeOrbs = 0;
-            int orbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI)
-                {
-                    continue;
-                }
-
-                activeOrbs++;
-                if (projectile.ai[1] >= 0)
-                {
-                    int slot = (int)projectile.ai[1];
-                    if (slot >= 0 && slot < MaxFlameOrbs)
-                    {
-                        occupiedSlots[slot] = true;
-                    }
-                }
-            }
-
-            if (activeOrbs >= MaxFlameOrbs)
-            {
-                return -1;
-            }
-
-            for (int i = 0; i < MaxFlameOrbs; i++)
-            {
-                if (!occupiedSlots[i])
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        void SpawnFlameTrap()
-        {
-            flameTrapTimer++;
-            if (flameTrapTimer < FlameTrapRate)
-            {
-                return;
-            }
-            flameTrapTimer = 0;
-
-            if (!HasCombatTarget(NPC))
-            {
-                return;
-            }
-
-            Player target = Main.player[NPC.target];
-            Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<FireLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
-        }
-
-        void ReleaseFlameOrbs()
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            NPC.TargetClosest(true);
-            if (!HasCombatTarget(NPC))
-            {
-                return;
-            }
-
-            Player target = Main.player[NPC.target];
-            int orbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI || projectile.ai[1] < 0)
-                {
-                    continue;
-                }
-
-                projectile.ai[1] = -3 * 60;
-                projectile.velocity = UsefulFunctions.Aim(projectile.Center, target.Center, 1.4f);
-                projectile.timeLeft = 3 * 60;
-                projectile.netUpdate = true;
-            }
-        }
-
-        #region Find Frame
-        public override void FindFrame(int currentFrame)
-        {
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if (NPC.velocity.Y == 0f)
-            {
-                if (NPC.direction == 1)
-                {
-                    NPC.spriteDirection = 1;
-                }
-                if (NPC.direction == -1)
-                {
-                    NPC.spriteDirection = -1;
-                }
-                if (NPC.velocity.X == 0f)
-                {
-                    NPC.frame.Y = 0;
-                    NPC.frameCounter = 0.0;
-                }
-                else
-                {
-                    NPC.frameCounter += (double)(Math.Abs(NPC.velocity.X) * 2f);
-                    NPC.frameCounter += 1.0;
-                    if (NPC.frameCounter > 6.0)
-                    {
-                        NPC.frame.Y = NPC.frame.Y + num;
-                        NPC.frameCounter = 0.0;
-                    }
-                    if (NPC.frame.Y / num >= Main.npcFrameCount[NPC.type])
-                    {
-                        NPC.frame.Y = num * 2;
-                    }
-                }
-            }
-            else
-            {
-                NPC.frameCounter = 0.0;
-                NPC.frame.Y = num;
-                NPC.frame.Y = 0;
-            }
-        }
-
-        #endregion
-
-        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-        {
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            int flameOrbType = ModContent.ProjectileType<FireLurkerFlameOrb>();
-            if (globalNPC.AttackList.Count == 0 || globalNPC.CurrentAttack.type != flameOrbType || globalNPC.ProjectileTimer < globalNPC.ProjectileTimerCap - HeldFlameOrbLeadTime)
-            {
-                return;
-            }
-
-            DrawHeldFlameOrb(spriteBatch, drawColor, flameOrbType);
-        }
-
-        void DrawHeldFlameOrb(SpriteBatch spriteBatch, Color drawColor, int flameOrbType)
-        {
-            Texture2D texture = TextureAssets.Projectile[flameOrbType].Value;
-            int frameCount = Main.projFrames[flameOrbType] > 0 ? Main.projFrames[flameOrbType] : 1;
-            int frameHeight = texture.Height / frameCount;
-            int frame = frameCount == 1 ? 0 : (int)((Main.GameUpdateCount / 4) % (ulong)frameCount);
-            Rectangle sourceRectangle = new Rectangle(0, frame * frameHeight, texture.Width, frameHeight);
-            Vector2 handWorld = CurrentHandWorld();
-
-            Lighting.AddLight(handWorld, Color.OrangeRed.ToVector3() * 0.45f);
-            if (Main.rand.NextBool(3))
-            {
-                Dust dust = Dust.NewDustPerfect(handWorld + Main.rand.NextVector2Circular(6f, 6f), DustID.Torch, Main.rand.NextVector2Circular(0.3f, 0.3f), 100, new Color(255, 135, 35), 1.2f);
-                dust.noGravity = true;
-            }
-
-            spriteBatch.Draw(texture, handWorld - Main.screenPosition, sourceRectangle, drawColor, 0f, sourceRectangle.Size() / 2f, NPC.scale, SpriteEffects.None, 0f);
-        }
-
-        Vector2 CurrentHandWorld()
-        {
-            const float frameW = 40f;
-            const float frameH = 56f;
-            int frame = NPC.frame.Height > 0 ? NPC.frame.Y / NPC.frame.Height : 0;
-            Vector2 fp = frame switch
-            {
-                1 => new Vector2(30f, 29f),
-                >= 2 and <= 6 => new Vector2(31f, 33f),
-                >= 7 and <= 10 => new Vector2(29f, 34f),
-                _ => new Vector2(30f, 32f)
-            };
-
-            float x = NPC.Center.X + (fp.X - frameW / 2f) * NPC.scale * -NPC.spriteDirection;
-            float y = NPC.Center.Y + 24f + NPC.gfxOffY + (fp.Y - frameH) * NPC.scale;
-            return new Vector2(x, y);
-        }
-        #region Debuffs
-        // Contact debuffs, all guaranteed. Vanilla doubles each of these in Expert/Master (LongerExpertDebuff).
-        private const int ContactDebuffTicks = 2 * 60;
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
-        {
-            target.AddBuff(BuffID.OnFire, ContactDebuffTicks, false);
-            target.AddBuff(BuffID.BrokenArmor, ContactDebuffTicks, false);
-            target.AddBuff(BuffID.Darkness, ContactDebuffTicks, false);
-        }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
-        }
-
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        void IHitReactor.OnServerHit(NPC npc, bool melee) => ReleaseFlameOrbs();
-        #endregion
 
         public override void OnKill()
         {

@@ -80,6 +80,12 @@ namespace tsorcRevamp.Banners
             {
                 tileFrameX = 2 * 18;
             }
+
+            // PLACEHOLDER: the Skeleton Warrior (style 93) has no column in the sheet yet; draw the Ice Skeleton's (75).
+            if (tileFrameX / 18 == 93)
+            {
+                tileFrameX = 75 * 18;
+            }
         }
 
         public override void NearbyEffects(int i, int j, bool closer)
@@ -696,6 +702,15 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<ObsidianGuard>();
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArmoredWraithBanner));
+    }
+
+    // PLACEHOLDER sprite (copy of IceSkeletonBanner) - replace with bespoke art, and give style 93 its own column in
+    // EnemyBannerTile.png (until then the placed banner borrows the Ice Skeleton's; see SetDrawPositions).
+    public class SkeletonWarriorBanner : EnemyBanner
+    {
+        public override int PlaceStyle => 93;
+
+        public override int NPCType => ModContent.NPCType<SkeletonWarrior>();
     }
     #endregion
 }

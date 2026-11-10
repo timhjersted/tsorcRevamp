@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,29 +13,61 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
-    class AbyssLurker : ModNPC, IHitReactor
+    // The SHM Lurker: the Fire Lurker's body in Pink Dye, purple flame, Abyss debuffs on every hit and no Fire Burst.
+    // Its full crown never launches on its own; only a hit launches it.
+    class AbyssLurker : LurkerPuppet
     {
-        const int MaxFlameOrbs = 3;
-        const int FlameOrbSpawnRate = 3 * 60;
-        const int FlameTrapRate = 10 * 60;
-        const int ReleasedFlameOrbTime = 3 * 60;
-        const float CombatRange = 50 * 16f;
-
         public int lostSoulDamage = 40;
-        int flameOrbTimer;
-        int flameTrapTimer;
+
+        // Every Abyss Lurker hit drags the player into the Abyss (the Abyss debuff sets EnterTheAbyss) for this long.
+        // Shared by the melee moves, AbyssLurkerFlameOrb, AbyssLurkerMeteor and the death Lost Soul (tsorcGlobalProjectile).
+        public const int AbyssDebuffTicks = 30 * 60;
+        // Abyssal Inferno on every hit, same set as above. 3s; it's a LongerExpertDebuff, so Expert/Master make it 6s.
+        public const int AbyssInfernoTicks = 3 * 60;
+        // Old contact-only extras, now applied by the melee moves. Vanilla doubles both in Expert/Master (LongerExpertDebuff).
+        private const int MeleeBrokenArmorTicks = 3 * 60;
+        private const int MeleeDarknessTicks = 3 * 60;
+
+        // Old contact damage 70 raw -> 140 Expert, now dealt by Ember Rake / Leap Swipe.
+        private const int MeleeExpert = 140;
+
+        protected override int OrbType => ModContent.ProjectileType<AbyssLurkerFlameOrb>();
+        protected override int MeteorType => ModContent.ProjectileType<AbyssLurkerMeteor>();
+        protected override int LostSoulDamage => lostSoulDamage;
+        protected override int HurlPeriod => 4 * 60;
+        protected override float HurlSpeed => 2.4f;
+        protected override int HurlTellTicks => 22;
+        protected override bool CrownAutoLaunch => false;
+        protected override bool HasFireBurst => false;
+        protected override float BaseTopSpeed => 1.9f;
+        protected override float BaseAcceleration => 0.08f;
+        protected override float EnrageFraction => 0.4f;
+        protected override float EnrageTopSpeed => 4f;
+        protected override int MeleeExpertDamage => MeleeExpert;
+        protected override int EmberDust => DustID.PinkTorch;
+        protected override Color EmberColor => new Color(200, 90, 255);
+        protected override int GroanFrequency => 900;
+
+        // FighterAI scaled every SuperHardMode-namespace enemy's speed by SHMScale (and acceleration by the subtle
+        // scale). SF4 puppets don't do that namespace check, so it is applied here explicitly.
+        protected override float SpeedScale => tsorcRevampWorld.SHMScale;
+        protected override float AccelScale => tsorcRevampWorld.SubtleSHMScale;
+        protected override float PuppetDrawScale => 1.1f;
+        protected override int HeadArmorDyeItemType => ItemID.PinkDye;
+        protected override int BodyArmorDyeItemType => ItemID.PinkDye;
+        protected override int LegsArmorDyeItemType => ItemID.PinkDye;
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 15;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][ModContent.BuffType<AbyssInferno>()] = true;
         }
+
         public override void SetDefaults()
         {
             NPC.npcSlots = 5;
-            AnimationType = 28;
             NPC.knockBackResist = 0f;
-            NPC.aiStyle = -1;//was 3
             NPC.damage = 70;
             NPC.defense = 90;
             NPC.height = 40;
@@ -47,245 +77,22 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath5;
             NPC.value = 6000; // was 43 for 100 life
-            NPC.lavaImmune = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.FireLurkerBanner>();
+            ApplyLurkerDefaults();
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavSearchRadius = 60; // Phase 2: SmartFighter4AI movement
             globalNPC.KiteRangeMin = 10f;
             globalNPC.KiteRangeMax = 25f;
             globalNPC.KiteLooseness = 0.5f;
-            globalNPC.TeleportReacquireMaxRange = CombatRange;
-            UsefulFunctions.AddAttack(NPC, 4 * 60, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 2.4f, SoundID.Item20 with { Volume = 0.35f, Pitch = -0.2f }, 0, -1, -ReleasedFlameOrbTime, telegraphColor: Color.Purple, telegraphTime: 22, condition: HasCombatTarget, fireCondition: HasCombatTarget);
         }
 
-
-
-        public override void AI()
-        {
-            if (Main.netMode != NetmodeID.MultiplayerClient)
-            {
-                int previousTarget = NPC.target;
-                NPC.TargetClosest(true);
-                if (NPC.target != previousTarget)
-                {
-                    NPC.netUpdate = true;
-                }
-            }
-            tsorcRevampAIs.FighterAI(NPC, 1.9f, 0.08f, canTeleport: true, randomSound: SoundID.Mummy, soundFrequency: 900, enragePercent: 0.4f, enrageTopSpeed: 4f, lavaJumping: true); //sound type was 26
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            if (!HasCombatTarget(NPC))
-            {
-                flameOrbTimer = 0;
-                flameTrapTimer = 0;
-                return;
-            }
-
-            SpawnFlameOrbs();
-            SpawnFlameTrap();
-        }
-
-        static bool HasCombatTarget(NPC npc)
-        {
-            if (npc.target < 0 || npc.target >= Main.maxPlayers)
-            {
-                return false;
-            }
-
-            Player target = Main.player[npc.target];
-            return target.active && !target.dead && npc.Distance(target.Center) <= CombatRange;
-        }
-
-        void SpawnFlameOrbs()
-        {
-            flameOrbTimer++;
-            if (flameOrbTimer < FlameOrbSpawnRate)
-            {
-                return;
-            }
-            flameOrbTimer = 0;
-
-            int slot = GetOpenFlameOrbSlot();
-            if (slot == -1)
-            {
-                return;
-            }
-
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(0, -56), Vector2.Zero, ModContent.ProjectileType<AbyssLurkerFlameOrb>(), lostSoulDamage, 0, Main.myPlayer, NPC.whoAmI, slot);
-        }
-
-        int GetOpenFlameOrbSlot()
-        {
-            bool[] occupiedSlots = new bool[MaxFlameOrbs];
-            int activeOrbs = 0;
-            int orbType = ModContent.ProjectileType<AbyssLurkerFlameOrb>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI)
-                {
-                    continue;
-                }
-
-                activeOrbs++;
-                if (projectile.ai[1] >= 0)
-                {
-                    int slot = (int)projectile.ai[1];
-                    if (slot >= 0 && slot < MaxFlameOrbs)
-                    {
-                        occupiedSlots[slot] = true;
-                    }
-                }
-            }
-
-            if (activeOrbs >= MaxFlameOrbs)
-            {
-                return -1;
-            }
-
-            for (int i = 0; i < MaxFlameOrbs; i++)
-            {
-                if (!occupiedSlots[i])
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        void SpawnFlameTrap()
-        {
-            flameTrapTimer++;
-            if (flameTrapTimer < FlameTrapRate)
-            {
-                return;
-            }
-            flameTrapTimer = 0;
-
-            if (!HasCombatTarget(NPC))
-            {
-                return;
-            }
-
-            Player target = Main.player[NPC.target];
-            Vector2 flameTrapPosition = target.Center - new Vector2(target.direction * 62f, 0);
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), flameTrapPosition, Vector2.Zero, ModContent.ProjectileType<AbyssLurkerMeteor>(), NPC.damage / 2, 0, Main.myPlayer, lostSoulDamage);
-        }
-
-        void ReleaseFlameOrbs()
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            NPC.TargetClosest(true);
-            if (!HasCombatTarget(NPC))
-            {
-                return;
-            }
-
-            Player target = Main.player[NPC.target];
-            int orbType = ModContent.ProjectileType<AbyssLurkerFlameOrb>();
-            for (int i = 0; i < Main.maxProjectiles; i++)
-            {
-                Projectile projectile = Main.projectile[i];
-                if (!projectile.active || projectile.type != orbType || (int)projectile.ai[0] != NPC.whoAmI || projectile.ai[1] < 0)
-                {
-                    continue;
-                }
-
-                projectile.ai[1] = -3 * 60;
-                projectile.velocity = UsefulFunctions.Aim(projectile.Center, target.Center, 1.4f);
-                projectile.timeLeft = 3 * 60;
-                projectile.netUpdate = true;
-            }
-        }
-
-        #region Find Frame
-        public override void FindFrame(int currentFrame)
-        {
-            int num = 1;
-            if (!Main.dedServ)
-            {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
-            }
-            if (NPC.velocity.Y == 0f)
-            {
-                if (NPC.direction == 1)
-                {
-                    NPC.spriteDirection = 1;
-                }
-                if (NPC.direction == -1)
-                {
-                    NPC.spriteDirection = -1;
-                }
-                if (NPC.velocity.X == 0f)
-                {
-                    NPC.frame.Y = 0;
-                    NPC.frameCounter = 0.0;
-                }
-                else
-                {
-                    NPC.frameCounter += (double)(Math.Abs(NPC.velocity.X) * 2f);
-                    NPC.frameCounter += 1.0;
-                    if (NPC.frameCounter > 6.0)
-                    {
-                        NPC.frame.Y = NPC.frame.Y + num;
-                        NPC.frameCounter = 0.0;
-                    }
-                    if (NPC.frame.Y / num >= Main.npcFrameCount[NPC.type])
-                    {
-                        NPC.frame.Y = num * 2;
-                    }
-                }
-            }
-            else
-            {
-                NPC.frameCounter = 0.0;
-                NPC.frame.Y = num;
-                NPC.frame.Y = 0;
-            }
-        }
-
-        #endregion
-
-        #region Debuffs
-        // Every Abyss Lurker hit drags the player into the Abyss (the Abyss debuff sets EnterTheAbyss) for this long.
-        // Shared by contact, AbyssLurkerFlameOrb, AbyssLurkerMeteor and the death Lost Soul (tsorcGlobalProjectile).
-        public const int AbyssDebuffTicks = 30 * 60;
-        // Abyssal Inferno on every hit, same set as above. 3s; it's a LongerExpertDebuff, so Expert/Master make it 6s.
-        public const int AbyssInfernoTicks = 3 * 60;
-        // Contact only, guaranteed. Vanilla doubles both in Expert/Master (LongerExpertDebuff).
-        private const int ContactBrokenArmorTicks = 3 * 60;
-        private const int ContactDarknessTicks = 3 * 60;
-
-        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        public override void ApplyMeleeDebuffs(Player target)
         {
             target.AddBuff(ModContent.BuffType<AbyssInferno>(), AbyssInfernoTicks, false);
             target.AddBuff(ModContent.BuffType<Abyss>(), AbyssDebuffTicks, false);
-            target.AddBuff(BuffID.BrokenArmor, ContactBrokenArmorTicks, false);
-            target.AddBuff(BuffID.Darkness, ContactDarknessTicks, false);
+            target.AddBuff(BuffID.BrokenArmor, MeleeBrokenArmorTicks, false);
+            target.AddBuff(BuffID.Darkness, MeleeDarknessTicks, false);
         }
-
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, true);
-        }
-
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestHitReaction(NPC, projectile.DamageType == DamageClass.Melee);
-        }
-
-        void IHitReactor.OnServerHit(NPC npc, bool melee) => ReleaseFlameOrbs();
-        #endregion
 
         public override void OnKill()
         {

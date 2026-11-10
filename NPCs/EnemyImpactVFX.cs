@@ -178,6 +178,8 @@ namespace tsorcRevamp.NPCs
             // Technical NPCs, projectiles implemented as NPCs, and Eland's bespoke blood effects.
             [ModContent.NPCType<DestroyerLaserProbe>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<Eland>()] = EnemyImpactMaterial.None,
+            // Bone chips from its own HitEffect instead of blood.
+            [ModContent.NPCType<SkeletonWarrior>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<FrozenGigasStatue>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<GaibonFireball>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<KhaiosTransitionOrb>()] = EnemyImpactMaterial.None,

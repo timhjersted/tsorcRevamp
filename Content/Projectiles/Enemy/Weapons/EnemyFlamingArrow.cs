@@ -45,8 +45,25 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             }
         }
 
+        /// <summary>ai[2] value for the vanilla hostile Flaming Arrow burn (1-in-3 chance, 7s), used by the Man Hunter.
+        /// The default 0 keeps Owl Father's guaranteed 4s burn. ai[0] is not free: the vanilla arrow AI (aiStyle 1)
+        /// counts its gravity delay in it.</summary>
+        public const float VanillaBurnMode = 1f;
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            // Vanilla Projectile.StatusPlayer: a hostile type-82 arrow sets On Fire 420t on a 1-in-3 roll.
+            // OnHitPlayer runs on the hit player's machine, so the roll is local to the victim, as in vanilla.
+            if (Projectile.ai[2] == VanillaBurnMode)
+            {
+                if (Main.rand.NextBool(3))
+                {
+                    target.AddBuff(BuffID.OnFire, 420);
+                }
+
+                return;
+            }
+
             target.AddBuff(BuffID.OnFire, 4 * 60);
         }
 

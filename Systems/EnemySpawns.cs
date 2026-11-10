@@ -1345,6 +1345,15 @@ namespace tsorcRevamp.Systems
             // Gate of one in 40 folded in as 0.025. Hardmode and later.
             Spawn("ShadowMage", Zone.Dungeon | Depth.Underworld, hm: 0.025f, shm: 0.025f);
 
+            // Pre-Hardmode and Hardmode, never Super Hardmode or the dungeon. Plain underground (no special biome) once the
+            // Eye of Cthulhu or Vessel of Souls is down: Vessel of Souls sets NPC.downedBoss1, so Downed.Eye covers both.
+            Spawn("SkeletonWarrior", QuietArea & Neutral & !Zone.Snow & !Zone.Dungeon & !Zone.Glowshroom & !Zone.Graveyard
+                & Depth.BelowSurface & Water.Dry & Downed.Eye, phm: 0.02f, hm: 0.02f, max: 2);
+            // Underground jungle, never inside a meteor or the desert. No boss gate.
+            Spawn("SkeletonWarrior", QuietArea & Zone.Jungle & !Zone.Meteor & !AnyDesert & !Zone.Dungeon & !Evil
+                & Depth.BelowSurface & Water.Dry, phm: 0.01f, hm: 0.01f, max: 2);
+            Spawn("SkeletonWarrior", QuietArea & Zone.Graveyard, phm: 0.01f, hm: 0.01f, max: 2);
+
             // Was any spot with more than five snow tiles, read from the local client's scene. Snow zone is the server-safe equivalent.
             // Surface and sky only: never underground.
             Spawn("SnowOwl", Zone.Snow & Water.Dry & !Depth.BelowSurface, phm: 0.2f, hm: 0.2f);

@@ -149,6 +149,7 @@ namespace tsorcRevamp
             public static IItemDropRuleCondition NonAdventureModeRule;
             public static IItemDropRuleCondition NonExpertFirstKillRule;
             public static IItemDropRuleCondition DownedSkeletronRule;
+            public static IItemDropRuleCondition DownedSkeletronOrNitoRule;
             public static IItemDropRuleCondition RemixWorldDropCondition;
             public static IItemDropRuleCondition NonRemixWorldDropCondition;
         }
@@ -528,6 +529,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = new NonExpertFirstKillRule();
             tsorcItemDropRuleConditions.DownedSkeletronRule = new DownedSkeletronRule();
+            tsorcItemDropRuleConditions.DownedSkeletronOrNitoRule = new DownedSkeletronOrNitoRule();
             #endregion
             //--------
             #region Active Shields Revamp registry
@@ -1941,6 +1943,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<UndeadCaster>(),
                 ModContent.NPCType<FallenNecromancer>(),
                 ModContent.NPCType<IceSkeleton>(),
+                ModContent.NPCType<SkeletonWarrior>(),
                 ModContent.NPCType<ParasyticWormHead>(),
                 ModContent.NPCType<ParasyticWormBody>(),
                 ModContent.NPCType<ParasyticWormTail>()
@@ -2140,6 +2143,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = null;
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = null;
             tsorcItemDropRuleConditions.DownedSkeletronRule = null;
+            tsorcItemDropRuleConditions.DownedSkeletronOrNitoRule = null;
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
             specialAbility = null;

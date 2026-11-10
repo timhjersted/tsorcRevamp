@@ -227,9 +227,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             get
             {
+                // Guarding: the base poses this arm to hold the shield (carry through the lift, then raised).
                 if (ShieldVisible)
                 {
-                    return 0f;
+                    return null;
                 }
 
                 // A held Briar Lash victim: the casting hand keeps pointing toward the earth-bound victim while the

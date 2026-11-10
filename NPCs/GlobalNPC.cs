@@ -632,7 +632,8 @@ namespace tsorcRevamp.NPCs
         private bool IsPhysicalGhost(NPC npc)
             => HasGhostAfterimages && npc.knockBackResist <= 0f;
 
-        private static bool HasMagicWeaponBuff(Player player)
+        // Shared with SkeletonPuppet's magic killing blow, so the two rules stay one rule.
+        internal static bool HasMagicWeaponBuff(Player player)
             => player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
             || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
             || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>());
@@ -642,9 +643,29 @@ namespace tsorcRevamp.NPCs
             && (item.CountsAsClass(DamageClass.Magic)
                 || (item.CountsAsClass(DamageClass.Melee) && HasMagicWeaponBuff(player)));
 
+        // Melee projectiles (flails, thrown or shot blades) count while their owner has a Magic Weapon buff, the same
+        // rule as a melee swing. Owner 255 is the server/world, which never carries the buff.
         private bool ShouldMagicKnockbackGhost(NPC npc, Projectile projectile)
-            => IsMagicKnockbackGhost(npc)
-            && projectile.DamageType == DamageClass.Magic;
+        {
+            if (!IsMagicKnockbackGhost(npc))
+            {
+                return false;
+            }
+
+            if (projectile.DamageType == DamageClass.Magic)
+            {
+                return true;
+            }
+
+            bool ownedByPlayer = projectile.friendly && projectile.owner >= 0 && projectile.owner < Main.maxPlayers;
+            if (!ownedByPlayer || !projectile.CountsAsClass(DamageClass.Melee))
+            {
+                return false;
+            }
+
+            Player owner = Main.player[projectile.owner];
+            return owner.active && HasMagicWeaponBuff(owner);
+        }
 
         private void EnableMagicGhostPoise(NPC npc)
         {
@@ -727,6 +748,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
             // Standard fighters
             Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
+            Add<Enemies.SkeletonWarrior>(0.3f, 30f); // shield advance halves frontal poise; a stagger strips the shield for good
             Add<Enemies.GhostFighter.GhostOfTheForgottenKnight>(0.3f, 35f);
             Add<Enemies.GhostFighter.GhostOfTheDarkmoonKnight>(0.3f, 55f);
             Add<AttraidiesIllusion>(0.3f, 30f);

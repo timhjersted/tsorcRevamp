@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     /// reassembly (latch, pile HP, timer, reform) are server decisions, synced in Send/ReceiveExtraAI after the base
     /// payload. Shards spawn on the server; dust, mist, glints and the pile draw run on clients.
     /// </summary>
-    public class IceSkeleton : PuppetNPC, IHumanoidMeleeHitEffects
+    public class IceSkeleton : SkeletonPuppet, IHumanoidMeleeHitEffects
     {
         // ── Damage: declared Expert damage before defense, converted once by EnemyDamage ──────────────────────
         public const int GuardThrustExpertDamage = 200;
@@ -88,7 +88,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         static readonly Color Frost = new Color(150, 205, 255);
 
         public enum Move : byte { None, GuardThrust, TwinThrust, HaftSweep, Lunge, Lance }
-        enum Reassembly : byte { None, Pile, Reform }
 
         // ── Pike Guard -> Guard Thrust (reaction, outside the bag; ticks from the action's start) ─────────────────
         //   Trigger: target 64-128px in front, |dy| < 48, 6 consecutive server ticks, off its 180t cooldown.
@@ -153,18 +152,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const int LanceLock = 28;
         public const int LanceTotal = 40 + 6 + 10 + 30;
 
-        // ── Frozen Reassembly ─────────────────────────────────────────────────────────────────────────────────
-        //   First lethal hit: CheckDead refuses (server latch), life -> 600 (the pile's HP), puppet hidden, gores fall
-        //   into a pile over 12t. Pile 240t: AI frozen, contact 0, poise and knockback immune; mist rises; from t180 the
-        //   eyes flicker and the bones twitch toward the centre (the reform tell). Pile HP 0 = the real death (loot).
-        //   Timer out: 30t reform (invulnerable, bones fly together) -> stands at 30% max HP -> 60t before it attacks.
-        const int CollapseTicks = 12;
-        const int PileTicks = 240;
-        const int TwitchStart = 180;
-        const int ReformTicks = 30;
-        const int PostReformHold = 60;
-        const int PileLife = 600;
-        const float ReformLifeFraction = 0.3f;
+        // ── Frozen Reassembly (the shared SkeletonPuppet pile) ────────────────────────────────────────────────
+        //   First lethal hit: the pile with 600 HP, frost mist rising; it stands at 30% max HP after 240t + a 30t
+        //   reform, then holds 60t before it attacks. A magic killing blow skips the pile.
+        const int FrozenPileLife = 600;
         const float KnockbackResist = 0.05f;
 
         const int SpearFormTicks = 8;
@@ -184,10 +175,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         Vector2 _lanceDirection = Vector2.UnitX;
         bool _shardReleased;
         int _restTicks;
-        bool _reassemblyUsed;
-        Reassembly _reassembly;
-        int _reassemblyTimer;
-        int _pileFacing = 1;
 
         // ── Server-only selection state (never synced; clients follow the chosen action) ───────────────────────
         AttackBag<Move> _bag;
@@ -197,7 +184,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         int _neutralTicks;
         int _guardZoneTicks;
         int _finisherWaitTicks;
-        int _postReformTicks;
         int _crossCheckTicks;
         int _lastActionFacing = 1;
 
@@ -210,7 +196,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         float _dissolveRotation = GuardDropRotation;
         float _dissolveGrip = CarryGrip;
         bool _drawingSpearFade;
-        Reassembly _seenReassembly;
 
         bool Server => Main.netMode != NetmodeID.MultiplayerClient;
         bool Neutral => Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll || Phase == AttackPhase.ClosingDistance;
@@ -245,9 +230,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool DespawnsOnPartyWipe => false;
         protected override int CasualStrollChance => 0;
         protected override int EstusChargesMax => 0;
-        protected override int HeadArmorItemType => ModContent.ItemType<SkeletonHeadpiece>();
-        protected override int BodyArmorItemType => ModContent.ItemType<SkeletonRibcage>();
-        protected override int LegsArmorItemType => ModContent.ItemType<SkeletonLegBones>();
         // Bright Sky Blue: pale ice-blue bones (picked from the side-by-side dye render), and blue eye glow through the
         // shared skeleton eye-glow layer, which tints with the head dye.
         protected override int HeadArmorDyeItemType => ItemID.BrightSkyBlueDye;
@@ -605,7 +587,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // ── Per-tick AI ──────────────────────────────────────────────────────────────────────────────────────
-        public override void AI()
+        // Skipped while collapsed (SkeletonPuppet.AI), so _age and _restTicks pause in the pile.
+        protected override void SkeletonAI()
         {
             _age++;
 
@@ -616,55 +599,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
 
-            // Reassembly phase changes arrive from the server (or from CheckDead here); every machine plays the cues
-            // and resets the flags it owns on the transition it sees.
-            if (_reassembly != _seenReassembly)
-            {
-                Reassembly previous = _seenReassembly;
-                _seenReassembly = _reassembly;
-
-                if (_reassembly == Reassembly.Pile && !Main.dedServ)
-                {
-                    SoundEngine.PlaySound(SoundID.NPCDeath2 with { Pitch = -0.2f }, NPC.Center);
-                    SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.8f }, NPC.Center);
-                }
-
-                if (_reassembly == Reassembly.Reform && !Main.dedServ)
-                {
-                    SoundEngine.PlaySound(SoundID.Item30 with { Pitch = -0.4f }, NPC.Center);
-                }
-
-                if (_reassembly == Reassembly.None && previous == Reassembly.Reform)
-                {
-                    NPC.dontTakeDamage = false;
-                    NPC.knockBackResist = KnockbackResist;
-
-                    if (!Main.dedServ)
-                    {
-                        // Eyes flare and the frame snaps together in a ring of ice.
-                        SoundEngine.PlaySound(SoundID.Item28 with { Pitch = -0.3f }, NPC.Center);
-                        for (int i = 0; i < 30; i++)
-                        {
-                            Vector2 velocity = Main.rand.NextVector2CircularEdge(3.5f, 3.5f);
-                            Dust ring = Dust.NewDustPerfect(NPC.Center, DustID.IceTorch, velocity, 60, default, 1.4f);
-                            ring.noGravity = true;
-                        }
-                    }
-                }
-            }
-
-            if (_reassembly != Reassembly.None)
-            {
-                TickReassembly(globalNPC);
-                return;
-            }
-
             if (Server)
             {
                 ServerPreTick(globalNPC);
             }
 
-            base.AI();
+            RunPuppetAI();
 
             // Spear hits sample AFTER base.AI, so the capsule uses this tick's visible pose. Each live window arms
             // the tracked blade afresh (one hit per player per window).
@@ -792,84 +732,102 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             DebugAttackLabel = label;
         }
 
-        /// <summary>
-        /// Every machine, while collapsed or reforming: AI frozen (base.AI is skipped), velocity braked, knockback,
-        /// poise and contact off, invulnerable only while reforming. Clients count the synced timer forward for the
-        /// draw; the server owns the Pile -> Reform -> None transitions and the reform health.
-        /// </summary>
-        void TickReassembly(tsorcRevampGlobalNPC globalNPC)
+        // ── Frozen Reassembly: the Ice Skeleton's values and cues for the shared pile ─────────────────────────
+        protected override int PileLife => FrozenPileLife;
+        protected override float StandingKnockbackResist => KnockbackResist;
+        protected override string ReassemblyName => "Frozen Reassembly";
+        protected override Color PileEyeColor => Frost;
+
+        protected override Color TintPile(Color drawColor)
         {
-            _reassemblyTimer++;
-            NPC.velocity.X *= 0.8f;
-            // The spear went down with it (drawn in the pile); no dissolve plays after it stands again.
+            return Color.Lerp(drawColor, Frost, 0.25f);
+        }
+
+        /// <summary>Every machine while collapsed: the spear went down with it (drawn in the pile), so no dissolve plays
+        /// after it stands again. Clients add the frost light, rising mist, the crystal burst and the reform pull.</summary>
+        protected override void TickCollapsed()
+        {
             _wasSpearOut = false;
             _dissolveTicks = 0;
-            NPC.knockBackResist = 0f;
-            NPC.dontTakeDamage = _reassembly == Reassembly.Reform;
-            globalNPC.AttackCommitted = true;
-            globalNPC.AttackTelegraphing = false;
-            DebugAttackLabel = "Frozen Reassembly (" + _reassembly + " t" + _reassemblyTimer + ")";
 
-            if (!Main.dedServ)
-            {
-                Vector2 pileCenter = NPC.Bottom + new Vector2(0f, -6f);
-                Lighting.AddLight(pileCenter, new Vector3(0.15f, 0.3f, 0.45f));
-
-                // Mist rises off the pile; thicker once the reform tell starts.
-                int mistInterval = 6;
-                if (_reassemblyTimer >= TwitchStart)
-                {
-                    mistInterval = 3;
-                }
-
-                if (_reassembly == Reassembly.Pile && _reassemblyTimer % mistInterval == 0)
-                {
-                    Vector2 spot = pileCenter + new Vector2(Main.rand.NextFloat(-18f, 18f), 0f);
-                    Dust mist = Dust.NewDustPerfect(spot, DustID.IceTorch, new Vector2(0f, -0.8f), 150, default, 1f);
-                    mist.noGravity = true;
-                }
-
-                // Collapse burst: blue crystal shards for the first 4t.
-                if (_reassembly == Reassembly.Pile && _reassemblyTimer <= 4)
-                {
-                    for (int i = 0; i < 6; i++)
-                    {
-                        Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f) + new Vector2(0f, -1.5f);
-                        Dust.NewDustPerfect(NPC.Center, DustID.BlueCrystalShard, velocity, 40, default, 1.2f);
-                    }
-                }
-
-                // Reform: ice drawn inward from around the pile into the standing frame.
-                if (_reassembly == Reassembly.Reform)
-                {
-                    Vector2 from = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
-                    Dust pull = Dust.NewDustPerfect(from, DustID.IceTorch, (NPC.Center - from) * 0.08f, 60, default, 1.2f);
-                    pull.noGravity = true;
-                }
-            }
-
-            if (!Server)
+            if (Main.dedServ)
             {
                 return;
             }
 
-            if (_reassembly == Reassembly.Pile && _reassemblyTimer >= PileTicks)
+            Reassembly phase = ReassemblyPhase;
+            int timer = ReassemblyTimer;
+            Vector2 pileCenter = NPC.Bottom + new Vector2(0f, -6f);
+            Lighting.AddLight(pileCenter, new Vector3(0.15f, 0.3f, 0.45f));
+
+            // Mist rises off the pile; thicker once the reform tell starts.
+            int mistInterval = 6;
+            if (timer >= TwitchStart)
             {
-                _reassembly = Reassembly.Reform;
-                _reassemblyTimer = 0;
-                NPC.life = Math.Max(1, (int)(NPC.lifeMax * ReformLifeFraction));
-                Trace("reassembly=reform");
-                Snapshot();
-                return;
+                mistInterval = 3;
             }
 
-            if (_reassembly == Reassembly.Reform && _reassemblyTimer >= ReformTicks)
+            if (phase == Reassembly.Pile && timer % mistInterval == 0)
             {
-                _reassembly = Reassembly.None;
-                _reassemblyTimer = 0;
-                _postReformTicks = PostReformHold;
-                Trace("reassembly=stand");
-                Snapshot();
+                Vector2 spot = pileCenter + new Vector2(Main.rand.NextFloat(-18f, 18f), 0f);
+                Dust mist = Dust.NewDustPerfect(spot, DustID.IceTorch, new Vector2(0f, -0.8f), 150, default, 1f);
+                mist.noGravity = true;
+            }
+
+            // Collapse burst: blue crystal shards for the first 4t.
+            if (phase == Reassembly.Pile && timer <= 4)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f) + new Vector2(0f, -1.5f);
+                    Dust.NewDustPerfect(NPC.Center, DustID.BlueCrystalShard, velocity, 40, default, 1.2f);
+                }
+            }
+
+            // Reform: ice drawn inward from around the pile into the standing frame.
+            if (phase == Reassembly.Reform)
+            {
+                Vector2 from = NPC.Center + Main.rand.NextVector2CircularEdge(40f, 40f);
+                Dust pull = Dust.NewDustPerfect(from, DustID.IceTorch, (NPC.Center - from) * 0.08f, 60, default, 1.2f);
+                pull.noGravity = true;
+            }
+        }
+
+        protected override void PlayReassemblyCue(Reassembly from, Reassembly to)
+        {
+            if (to == Reassembly.Pile)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath2 with { Pitch = -0.2f }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.8f }, NPC.Center);
+            }
+
+            if (to == Reassembly.Reform)
+            {
+                SoundEngine.PlaySound(SoundID.Item30 with { Pitch = -0.4f }, NPC.Center);
+            }
+
+            if (to == Reassembly.None && from == Reassembly.Reform)
+            {
+                // Eyes flare and the frame snaps together in a ring of ice.
+                SoundEngine.PlaySound(SoundID.Item28 with { Pitch = -0.3f }, NPC.Center);
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2CircularEdge(3.5f, 3.5f);
+                    Dust ring = Dust.NewDustPerfect(NPC.Center, DustID.IceTorch, velocity, 60, default, 1.4f);
+                    ring.noGravity = true;
+                }
+            }
+        }
+
+        // Server, on the first death: the spear goes down with it, mid-action or not.
+        protected override void OnCollapse()
+        {
+            _customArmed = false;
+            _customLive = false;
+
+            if (_move != Move.None)
+            {
+                CompleteAction();
             }
         }
 
@@ -882,11 +840,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     _cooldowns[move] = remaining - 1;
                 }
-            }
-
-            if (_postReformTicks > 0)
-            {
-                _postReformTicks--;
             }
 
             if (_crossCheckTicks > 0)
@@ -910,7 +863,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             bool grounded = NPC.velocity.Y == 0f;
-            bool ready = Neutral && NPC.HasValidTarget && grounded && _restTicks == 0 && _postReformTicks == 0
+            bool ready = Neutral && NPC.HasValidTarget && grounded && _restTicks == 0 && PostReformTicks == 0
                 && globalNPC.StaggerTimer == 0 && _age >= 30 && !InFinisherPunishWindow
                 && !Collision.SolidCollision(NPC.position, NPC.width, NPC.height);
 
@@ -1136,7 +1089,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             RequestNetworkSnapshot();
         }
 
-        void Trace(string kind)
+        protected override void Trace(string kind)
         {
             if (!Server || !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
@@ -1151,8 +1104,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 move = _move.ToString(),
                 phase = Phase.ToString(),
                 remaining = PhaseTimer,
-                reassembly = _reassembly.ToString(),
-                used = _reassemblyUsed,
+                reassembly = ReassemblyPhase.ToString(),
+                used = ReassemblyUsed,
                 life = NPC.life,
                 lane = (int)_lungeDistance,
             });
@@ -1629,7 +1582,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         // ── Telegraph drawing (client) ───────────────────────────────────────────────────────────────────────
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (_reassembly != Reassembly.None)
+            if (Collapsed)
             {
                 return;
             }
@@ -1683,169 +1636,61 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        // ── Frozen Reassembly: the death hook and the bone-pile draw ──────────────────────────────────────────
-        public override bool CheckDead()
-        {
-            if (_reassemblyUsed)
-            {
-                return base.CheckDead();
-            }
-
-            if (!Server)
-            {
-                // A client's local strike reached 0 before the server's collapse arrived. Hold at 1 HP so vanilla
-                // does not deactivate it here; the server's sync sets the pile's real life.
-                NPC.life = 1;
-                return false;
-            }
-
-            // Server latch: refuse the first death. NPC.life is set to the pile's pool here rather than left at 0 -
-            // an NPC at life 0 before a strike is removed silently, with no OnKill and no loot.
-            _reassemblyUsed = true;
-            _reassembly = Reassembly.Pile;
-            _reassemblyTimer = 0;
-            _pileFacing = NPC.direction;
-            NPC.life = PileLife;
-            NPC.velocity.X = 0f;
-            StopMeleeHit();
-            _customArmed = false;
-            _customLive = false;
-
-            if (_move != Move.None)
-            {
-                CompleteAction();
-            }
-
-            EnterPhase(AttackPhase.Idle, 0);
-            Trace("reassembly=pile");
-            Snapshot();
-            return false;
-        }
-
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
-        {
-            return _reassembly == Reassembly.None;
-        }
-
+        // ── Frozen Reassembly: the pile bones and the spear lying with them ───────────────────────────────────
         // Bone pile rest layout at its feet (facing right; mirrored for left): gore, offset from NPC.Bottom, rotation,
-        // and the standing offset each bone flies from (collapse) and back to (reform).
-        static readonly (string Gore, Vector2 RestOffset, float Rotation, Vector2 StandingOffset)[] PileBones =
+        // and the standing offset each bone flies from (collapse) and back to (reform). Built on first use, once the
+        // mod's gore types exist.
+        PileBone[] _pileBones;
+
+        protected override PileBone[] PileBones
         {
-            ("Ice Skelly Vert", new Vector2(-12f, -4f), -0.4f, new Vector2(0f, -30f)),
-            ("Ice Skelly Vert", new Vector2(9f, -4f), 1.2f, new Vector2(0f, -22f)),
-            ("Ice Skelly Piece", new Vector2(14f, -7f), -1.0f, new Vector2(4f, -14f)),
-            ("Ice Skelly Piece", new Vector2(-2f, -7f), 0.8f, new Vector2(-4f, -26f)),
-            ("Ice Skelly Head", new Vector2(-5f, -10f), 0.3f, new Vector2(0f, -46f)),
-        };
+            get
+            {
+                if (_pileBones == null)
+                {
+                    int vert = Mod.Find<ModGore>("Ice Skelly Vert").Type;
+                    int piece = Mod.Find<ModGore>("Ice Skelly Piece").Type;
+                    int head = Mod.Find<ModGore>("Ice Skelly Head").Type;
+                    _pileBones = new[]
+                    {
+                        new PileBone { GoreType = vert, RestOffset = new Vector2(-12f, -4f), Rotation = -0.4f, StandingOffset = new Vector2(0f, -30f) },
+                        new PileBone { GoreType = vert, RestOffset = new Vector2(9f, -4f), Rotation = 1.2f, StandingOffset = new Vector2(0f, -22f) },
+                        new PileBone { GoreType = piece, RestOffset = new Vector2(14f, -7f), Rotation = -1.0f, StandingOffset = new Vector2(4f, -14f) },
+                        new PileBone { GoreType = piece, RestOffset = new Vector2(-2f, -7f), Rotation = 0.8f, StandingOffset = new Vector2(-4f, -26f) },
+                        new PileBone { GoreType = head, RestOffset = new Vector2(-5f, -10f), Rotation = 0.3f, StandingOffset = new Vector2(0f, -46f), IsSkull = true },
+                    };
+                }
 
-        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+                return _pileBones;
+            }
+        }
+
+        // The spear lies flat at its feet, point forward; it dissolves over the first 10t of the reform.
+        protected override void DrawPileProps(SpriteBatch spriteBatch, Vector2 screenPos, Vector2 anchor, int facing, Color light)
         {
-            if (_reassembly == Reassembly.None)
-            {
-                return base.PreDraw(spriteBatch, screenPos, drawColor);
-            }
-
-            int facing = _pileFacing;
-            int timer = _reassemblyTimer;
-            Vector2 anchor = NPC.Bottom + new Vector2(0f, NPC.gfxOffY);
-            Color light = Color.Lerp(drawColor, Frost, 0.25f);
-            SpriteEffects flip = SpriteEffects.None;
-            if (facing == 1)
-            {
-                flip = SpriteEffects.FlipHorizontally;
-            }
-
-            // The spear lies flat at its feet, point forward; it dissolves over the first 10t of the reform.
+            int timer = ReassemblyTimer;
             float spearAlpha = MathHelper.Clamp(timer / 6f, 0f, 1f) * 0.9f;
-            if (_reassembly == Reassembly.Reform)
+            if (ReassemblyPhase == Reassembly.Reform)
             {
                 spearAlpha = MathHelper.Clamp(1f - timer / 10f, 0f, 1f) * 0.9f;
             }
 
-            if (spearAlpha > 0f)
+            if (spearAlpha <= 0f)
             {
-                Texture2D spear = ModContent.Request<Texture2D>(EnemyIceSkeletonSpear.ArtPath).Value;
-                float headingAngle = 0f;
-                if (facing == -1)
-                {
-                    headingAngle = MathHelper.Pi;
-                }
-
-                float nativeAngle = (float)Math.Atan2(SpearHeadTexel.Y - SpearButtTexel.Y, SpearHeadTexel.X - SpearButtTexel.X);
-                Vector2 spearCenter = anchor + new Vector2(facing * 10f, -3f);
-                spriteBatch.Draw(spear, spearCenter - screenPos, null, light * spearAlpha, headingAngle - nativeAngle,
-                    spear.Size() * 0.5f, 0.8f, SpriteEffects.None, 0f);
+                return;
             }
 
-            // Reform tell: from t180 the bones twitch and creep toward the centre, growing stronger to the reform.
-            float twitch = 0f;
-            if (_reassembly == Reassembly.Pile && timer >= TwitchStart)
+            Texture2D spear = ModContent.Request<Texture2D>(EnemyIceSkeletonSpear.ArtPath).Value;
+            float headingAngle = 0f;
+            if (facing == -1)
             {
-                twitch = (timer - TwitchStart) / (float)(PileTicks - TwitchStart);
+                headingAngle = MathHelper.Pi;
             }
 
-            Vector2 headPosition = anchor;
-            for (int i = 0; i < PileBones.Length; i++)
-            {
-                var bone = PileBones[i];
-                Vector2 rest = new Vector2(bone.RestOffset.X * facing, bone.RestOffset.Y);
-                Vector2 standing = new Vector2(bone.StandingOffset.X * facing, bone.StandingOffset.Y);
-                Vector2 offset = rest;
-                float rotation = bone.Rotation * facing;
-
-                if (_reassembly == Reassembly.Pile && timer < CollapseTicks)
-                {
-                    // Falling into the pile: accelerating like a drop.
-                    float fall = timer / (float)CollapseTicks;
-                    offset = Vector2.Lerp(standing, rest, fall * fall);
-                    rotation *= fall;
-                }
-                else if (_reassembly == Reassembly.Pile && twitch > 0f)
-                {
-                    float jitter = (float)Math.Sin(timer * 1.7f + i * 2.1f) * 1.5f * twitch;
-                    offset = Vector2.Lerp(rest, new Vector2(0f, rest.Y), 0.25f * twitch) + new Vector2(jitter, -Math.Abs(jitter));
-                    rotation += jitter * 0.08f;
-                }
-                else if (_reassembly == Reassembly.Reform)
-                {
-                    // Flying back together into the standing frame.
-                    float gather = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(timer / (float)ReformTicks, 0f, 1f));
-                    offset = Vector2.Lerp(rest, standing, gather);
-                    rotation = MathHelper.Lerp(rotation, 0f, gather);
-                }
-
-                Texture2D texture = TextureAssets.Gore[Mod.Find<ModGore>(bone.Gore).Type].Value;
-                Vector2 position = anchor + offset;
-                spriteBatch.Draw(texture, position - screenPos, null, light, rotation, texture.Size() * 0.5f, 1.1f, flip, 0f);
-
-                if (bone.Gore == "Ice Skelly Head")
-                {
-                    headPosition = position;
-                }
-            }
-
-            // Eye glow on the skull: steady and dim in the pile, flickering through the reform tell, flaring on reform.
-            float eye = 0.35f;
-            if (twitch > 0f)
-            {
-                eye = 0.35f + 0.65f * twitch * (0.5f + 0.5f * (float)Math.Sin(timer * 0.9f));
-            }
-
-            if (_reassembly == Reassembly.Reform)
-            {
-                eye = 1f;
-            }
-
-            Vector2 eyeOffset = new Vector2(-4.5f * 1.1f, -1f * 1.1f);
-            if (facing == 1)
-            {
-                eyeOffset.X = -eyeOffset.X;
-            }
-
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Color eyeColor = Frost * eye;
-            spriteBatch.Draw(pixel, headPosition + eyeOffset - screenPos, new Rectangle(0, 0, 1, 1), eyeColor, 0f, new Vector2(0.5f), 2.5f, SpriteEffects.None, 0f);
-            return false;
+            float nativeAngle = (float)Math.Atan2(SpearHeadTexel.Y - SpearButtTexel.Y, SpearHeadTexel.X - SpearButtTexel.X);
+            Vector2 spearCenter = anchor + new Vector2(facing * 10f, -3f);
+            spriteBatch.Draw(spear, spearCenter - screenPos, null, light * spearAlpha, headingAngle - nativeAngle,
+                spear.Size() * 0.5f, 0.8f, SpriteEffects.None, 0f);
         }
 
         // ── Spawn, loot and death (carried over from the legacy enemy) ─────────────────────────────────────
@@ -1893,38 +1738,32 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.KiteRangeMax = 0f;
         }
 
-        public override void HitEffect(NPC.HitInfo hit)
+        // Client, on the real death: the frost bones scatter, and a shattered pile bursts into ice with breaking glass.
+        protected override void ScatterRealDeath(bool fromPile)
         {
-            base.HitEffect(hit);
-
-            // Only the real death scatters bones and shatters; the first "death" leaves a pile instead (CheckDead).
-            if (NPC.life > 0 || !_reassemblyUsed || Main.dedServ)
-            {
-                return;
-            }
-
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Ice Skelly Head").Type, 1.1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Ice Skelly Vert").Type, 1.1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Ice Skelly Vert").Type, 1.1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Ice Skelly Piece").Type, 1.1f);
             Gore.NewGore(NPC.GetSource_Death(), NPC.position, NPC.velocity, Mod.Find<ModGore>("Ice Skelly Piece").Type, 1.1f);
 
-            // Shattering the pile: a big ice burst from its feet and breaking glass.
-            if (_reassembly == Reassembly.Pile)
+            if (!fromPile)
             {
-                SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
-                for (int i = 0; i < 60; i++)
-                {
-                    Vector2 velocity = Main.rand.NextVector2Circular(6f, 6f) + new Vector2(0f, -2f);
-                    int dustType = DustID.IceTorch;
-                    if (i % 2 == 0)
-                    {
-                        dustType = DustID.BlueCrystalShard;
-                    }
+                return;
+            }
 
-                    Dust shard = Dust.NewDustPerfect(NPC.Bottom + new Vector2(0f, -8f), dustType, velocity, 40, default, 1.4f);
-                    shard.noGravity = dustType == DustID.IceTorch;
+            SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
+            for (int i = 0; i < 60; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(6f, 6f) + new Vector2(0f, -2f);
+                int dustType = DustID.IceTorch;
+                if (i % 2 == 0)
+                {
+                    dustType = DustID.BlueCrystalShard;
                 }
+
+                Dust shard = Dust.NewDustPerfect(NPC.Bottom + new Vector2(0f, -8f), dustType, velocity, 40, default, 1.4f);
+                shard.noGravity = dustType == DustID.IceTorch;
             }
         }
 
@@ -1933,7 +1772,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BlueTitanite>(), 1, 1, 2));
         }
 
-        // ── Multiplayer payload: base first, then the subclass fields in a fixed order ───────────────────────
+        // ── Multiplayer payload: base first (PuppetNPC, then the SkeletonPuppet reassembly), then these fields ───────────────────────
         public override void SendExtraAI(BinaryWriter writer)
         {
             base.SendExtraAI(writer);
@@ -1950,10 +1789,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             writer.WriteVector2(_lanceDirection);
             writer.Write(_shardReleased);
             writer.Write(_restTicks);
-            writer.Write(_reassemblyUsed);
-            writer.Write((byte)_reassembly);
-            writer.Write(_reassemblyTimer);
-            writer.Write(_pileFacing);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1972,10 +1807,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _lanceDirection = reader.ReadVector2();
             _shardReleased = reader.ReadBoolean();
             _restTicks = reader.ReadInt32();
-            _reassemblyUsed = reader.ReadBoolean();
-            _reassembly = (Reassembly)reader.ReadByte();
-            _reassemblyTimer = reader.ReadInt32();
-            _pileFacing = reader.ReadInt32();
         }
     }
 }
