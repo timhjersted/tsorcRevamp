@@ -35,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(400);
             recipe.AddIngredient(ItemID.WoodenArrow, 400);
             recipe.AddIngredient(ModContent.ItemType<FlameOfTheAbyss>(), 1);  
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

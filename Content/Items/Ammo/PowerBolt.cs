@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(100);
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 100);
             recipe.AddIngredient(ItemID.MeteoriteBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 200);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

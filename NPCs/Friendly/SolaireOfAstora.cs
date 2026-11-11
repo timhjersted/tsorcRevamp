@@ -136,15 +136,9 @@ namespace tsorcRevamp.NPCs.Friendly
 
 
 
-            shop.Add(new Item(ItemID.LuckyHorseshoe)
-            {
-                shopCustomPrice = 1150,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, Condition.DownedSkeletron);
-
             shop.Add(new Item(ItemID.BladedGlove)
             {
-                shopCustomPrice = 1500,
+                shopCustomPrice = 3000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedSkeletron);
 

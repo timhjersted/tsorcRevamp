@@ -112,19 +112,19 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<HealingElixir>())
             {
-                shopCustomPrice = 150,
+                shopCustomPrice = 300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<GreenBlossom>())
             {
-                shopCustomPrice = 50,
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.BattlePotion)
             {
-                shopCustomPrice = 150,
+                shopCustomPrice = 300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -200,7 +200,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.QueenSlimeMountSaddle)
             {
-                shopCustomPrice = 10000,
+                shopCustomPrice = 50000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedSkeletronPrime);
 

@@ -91,13 +91,13 @@ namespace tsorcRevamp.NPCs.Friendly
             NPCShop shop = new(NPC.type);
             shop.Add(new Item(ModContent.ItemType<BoltCrate>())
             {
-                shopCustomPrice = 40,
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<WoodenArrowCrate>())
             {
-                shopCustomPrice = 30,
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -121,13 +121,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.LesserHealingPotion)
             {
-                shopCustomPrice = 20,
+                shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.Safe)
             {
-                shopCustomPrice = 1250,
+                shopCustomPrice = 5000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -139,14 +139,14 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<FrostburnArrowCrate>())
             {
-                shopCustomPrice = 60,
+                shopCustomPrice = 150,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             },
             Condition.DownedEyeOfCthulhu);
 
             shop.Add(new Item(ModContent.ItemType<UnholyArrowCrate>())
             {
-                shopCustomPrice = 125,
+                shopCustomPrice = 200,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             },
             Condition.DownedEyeOfCthulhu);
@@ -162,7 +162,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<MeteorShotCrate>())
             {
-                shopCustomPrice = 150,
+                shopCustomPrice = 250,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>()))));
 

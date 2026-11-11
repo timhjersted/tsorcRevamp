@@ -35,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(200);
             recipe.AddIngredient(ItemID.CrystalBullet, 200);
             recipe.AddIngredient(ItemID.SoulofNight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 150);  
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 800);  
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

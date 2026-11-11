@@ -130,7 +130,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<GelCrate>())
             {
-                shopCustomPrice = 40,
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -178,7 +178,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.PiggyBank)
             {
-                shopCustomPrice = 500,
+                shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEyeOfCthulhu);
 
@@ -202,13 +202,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<GreatEnergyBeamScroll>())
             {
-                shopCustomPrice = 50000,
+                shopCustomPrice = 100000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
             shop.Add(new Item(ItemID.SuperManaPotion)
             {
-                shopCustomPrice = 125,
+                shopCustomPrice = 250,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 

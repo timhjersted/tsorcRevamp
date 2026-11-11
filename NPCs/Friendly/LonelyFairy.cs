@@ -174,13 +174,13 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.SoulofLight)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 600,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.SoulofNight)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 600,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -195,31 +195,31 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.SoulofFlight)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 600,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.WyvernMageDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()))));
 
             shop.Add(new Item(ItemID.SoulofMight)
             {
-                shopCustomPrice = 300,
+                shopCustomPrice = 900,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Condition.DownedDestroyer"), () => NPC.downedMechBoss1));
 
             shop.Add(new Item(ItemID.SoulofFright)
             {
-                shopCustomPrice = 300,
+                shopCustomPrice = 900,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Condition.DownedSkeletronPrime"), () => NPC.downedMechBoss3));
 
             shop.Add(new Item(ItemID.SoulofSight)
             {
-                shopCustomPrice = 300,
+                shopCustomPrice = 900,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Condition.DownedTwins"), () => NPC.downedMechBoss2));
             
             shop.Add(new Item(ModContent.ItemType<CursedSoul>())
             {
-                shopCustomPrice = 500,
+                shopCustomPrice = 1500,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.AbysmalOolacileSorcererDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>()))));
 

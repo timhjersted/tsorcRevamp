@@ -279,7 +279,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.FairyBell)
             {
-                shopCustomPrice = 500,
+                shopCustomPrice = 1500,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
@@ -317,7 +317,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.DivingHelmet)
             {
-                shopCustomPrice = 500,
+                shopCustomPrice = 2000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEowOrBoc);
 
@@ -329,85 +329,85 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ItemID.TungstenBar)
             {
-                shopCustomPrice = 25,
+                shopCustomPrice = 40,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedEowOrBoc);     
 
             shop.Add(new Item(ItemID.MeteoriteBar)
             {
-                shopCustomPrice = 40,
+                shopCustomPrice = 50,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SlograGaibonDowned"), () => (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gaibon>())) || tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Slogra>())))));
 
             shop.Add(new Item(ItemID.HellstoneBar)
             {
-                shopCustomPrice = 50,
+                shopCustomPrice = 100,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.Hardmode);
 
             shop.Add(new Item(ItemID.CobaltBar)
             {
-                shopCustomPrice = 75,
+                shopCustomPrice = 300,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.RageDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))));
 
             shop.Add(new Item(ItemID.PalladiumBar)
             {
-                shopCustomPrice = 80,
+                shopCustomPrice = 350,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.RageDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()))));
             
             shop.Add(new Item(ItemID.MythrilBar)
             {
-                shopCustomPrice = 100,
+                shopCustomPrice = 400,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
             shop.Add(new Item(ItemID.OrichalcumBar)
             {
-                shopCustomPrice = 105,
+                shopCustomPrice = 450,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.SorrowDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))));
 
             shop.Add(new Item(ItemID.AdamantiteBar)
             {
-                shopCustomPrice = 125,
+                shopCustomPrice = 500,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.HunterDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()))));
 
             shop.Add(new Item(ItemID.TitaniumBar)
             {
-                shopCustomPrice = 130,
+                shopCustomPrice = 550,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition(Language.GetTextValue("Mods.tsorcRevamp.Conditions.HunterDowned"), () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()))));
 
             shop.Add(new Item(ItemID.HallowedBar)
             {
-                shopCustomPrice = 175,
+                shopCustomPrice = 600,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
             shop.Add(new Item(ItemID.ChlorophyteBar)
             {
-                shopCustomPrice = 200,
+                shopCustomPrice = 650,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMechBossAny);
 
             shop.Add(new Item(ItemID.ShroomiteBar)
             {
-                shopCustomPrice = 300,
+                shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedGolem);
 
             shop.Add(new Item(ItemID.SpectreBar)
             {
-                shopCustomPrice = 300,
+                shopCustomPrice = 1000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedGolem);
 
             shop.Add(new Item(ItemID.LunarBar)
             {
-                shopCustomPrice = 400,
+                shopCustomPrice = 5000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedMoonLord);
 

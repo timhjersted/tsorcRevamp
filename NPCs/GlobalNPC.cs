@@ -4660,8 +4660,46 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Vanilla ammo that vanilla shopkeepers sell for coins, repriced in Dark Souls per single round (one shop click = one round).
+        // Makes ammo a soul cost like the mod's own ammo recipes: ~1 DS/shot early, 2 for better rounds, 3-6 for rockets/cannonballs.
+        // Bombs and Dynamite are left on coins because they double as mining tools.
+        private static readonly Dictionary<int, int> VanillaAmmoDarkSoulPrices = new Dictionary<int, int>()
+        {
+            { ItemID.WoodenArrow, 1 },
+            { ItemID.Shuriken, 1 },
+            { ItemID.ThrowingKnife, 1 },
+            { ItemID.MusketBall, 1 },
+            { ItemID.EmptyBullet, 1 },
+            { ItemID.SilverBullet, 2 },
+            { ItemID.TungstenBullet, 2 },
+            { ItemID.UnholyArrow, 2 },
+            { ItemID.HellfireArrow, 2 },
+            { ItemID.Grenade, 20 },
+            { ItemID.Nail, 3 },
+            { ItemID.RocketI, 3 },
+            { ItemID.RocketII, 4 },
+            { ItemID.RocketIII, 4 },
+            { ItemID.RocketIV, 5 },
+            { ItemID.ClusterRocketI, 5 },
+            { ItemID.ClusterRocketII, 6 },
+            { ItemID.Cannonball, 5 },
+        };
+
         public override void ModifyShop(NPCShop shop)
         {
+            // Every vanilla shopkeeper (Merchant, Arms Dealer, Demolitionist, Cyborg, Pirate, Skeleton Merchant...) gets
+            // the Dark Soul ammo prices. Entry.Item is the template each opened shop clones, so editing it reprices every visit.
+            if (shop.NpcType < NPCID.Count)
+            {
+                foreach (NPCShop.Entry entry in shop.ActiveEntries)
+                {
+                    if (VanillaAmmoDarkSoulPrices.TryGetValue(entry.Item.type, out int darkSoulPrice))
+                    {
+                        entry.Item.shopCustomPrice = darkSoulPrice;
+                        entry.Item.shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                    }
+                }
+            }
 
             switch (shop.NpcType)
             {
@@ -4892,7 +4930,7 @@ namespace tsorcRevamp.NPCs
 
                         shop.Add(new Item(ModContent.ItemType<LoveRing>())
                         {
-                            shopCustomPrice = 25000, 
+                            shopCustomPrice = 100000, 
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
