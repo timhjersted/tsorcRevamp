@@ -6219,5 +6219,59 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "c06f7cf2-5a32-4c15-b05b-2aea3232e203",
+    "CenterX": 5804.0,
+    "CenterY": 1286.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/CosmicCrystalLizard",
+        "SpawnX": 5805.0,
+        "SpawnY": 1295.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "6f122a45-b3a9-4a73-b74a-99f1b9dc1706",
+    "CenterX": 5857.0,
+    "CenterY": 1285.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SkeletonWarrior",
+        "SpawnX": 5880.0,
+        "SpawnY": 1295.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

@@ -4673,7 +4673,7 @@ namespace tsorcRevamp.NPCs
                 case NPCID.DyeTrader:
                     {
                         //Basic dyes (most others can be crafted from a combination of these)
-                        int price = 5;
+                        int price = 25;
                         shop.Add(new Item(ItemID.RedDye)
                         {
                             shopCustomPrice = price,
@@ -4740,7 +4740,7 @@ namespace tsorcRevamp.NPCs
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
-                        price = 25;
+                        price = 125;
 
                         //Special Dyes (Aka the cool ones)
                         shop.Add(new Item(ItemID.FogboundDye)
@@ -4846,13 +4846,13 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<Firebomb>())
                         {
-                            shopCustomPrice = 5,
+                            shopCustomPrice = 25,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
                         shop.Add(new Item(ModContent.ItemType<EternalCrystal>())
                         {
-                            shopCustomPrice = 2000,
+                            shopCustomPrice = 10000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
@@ -4861,14 +4861,14 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<Pulsar>())
                         {
-                            shopCustomPrice = 800,
+                            shopCustomPrice = 4000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
 
                         shop.Add(new Item(ModContent.ItemType<ToxicCatalyzer>())
                         {
-                            shopCustomPrice = 800,
+                            shopCustomPrice = 4000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
@@ -4877,7 +4877,7 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<SeedBag>())
                         {
-                            shopCustomPrice = 5,
+                            shopCustomPrice = 25,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         },
                         new Condition("", () => Main.LocalPlayer.HasItem(ItemID.Blowpipe) || Main.LocalPlayer.HasItem(ItemID.Blowgun) || Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienGun>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())));
@@ -4892,7 +4892,7 @@ namespace tsorcRevamp.NPCs
 
                         shop.Add(new Item(ModContent.ItemType<LoveRing>())
                         {
-                            shopCustomPrice = 5000, 
+                            shopCustomPrice = 25000, 
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;

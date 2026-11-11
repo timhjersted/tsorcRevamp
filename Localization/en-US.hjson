@@ -544,6 +544,9 @@ Mods: {
 				'''
 			PerSecond: / second
 			DarkSouls: Dark Souls
+			ShopDarkSoulPrice: "[c/00FF50:{0} {1} {2}][i:{3}]"
+			ShopDarkSoulOwned: "[c/9A9A9A:(you have {0})]"
+			SoulCoinsConverted: Soul Coins are no longer used: your {0} Soul Coins became {1} Dark Souls
 			Soapstone: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			BonfireLit: Bonfire lit, spawn point set!
 			BonfireTP: Open your minimap to instantly teleport to any bonfire in the world
@@ -993,11 +996,6 @@ Mods: {
 				CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Mana Star pickups restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana
 				MagicCuffsBotC: Restores {0}% of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
-				CoinGun:
-					'''
-					[c/ffbf00:Can also use soul coins as ammo]
-					[c/ffbf00:Soul coins pierce once]
-					'''
 			}
 
 			AbandonedStumpBanner: {
@@ -1219,6 +1217,7 @@ Mods: {
 				DisplayName: "{$NPCs.ManHunter.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
+
 			ObsidianGuardBanner: {
 				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
@@ -5082,7 +5081,7 @@ Mods: {
 				DisplayName: Soul Coin Crate
 				Tooltip:
 					'''
-					A crate containing 1000 soul coins
+					A crate containing {0} Dark Souls
 					Given as weregild for an item that no longer exists
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -5855,9 +5854,8 @@ Mods: {
 				Tooltip:
 					'''
 					A mysterious coin formed out of dark souls
-					Used as a currency among certain merchants
+					Turns into {0} Dark Souls when picked up
 					'''
-				Plural: Soul Coins
 			}
 
 			SoulOfArtorias: {
@@ -9864,6 +9862,11 @@ Mods: {
 				DisplayName: Enemy Tibian Amazon Knife
 				Tooltip: ""
 			}
+
+			EnemyManhunterBow: {
+				DisplayName: Enemy Manhunter Bow
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -12049,7 +12052,6 @@ Mods: {
 			SanguinisProj.DisplayName: Sanguinis Proj
 			DragoonRocket.DisplayName: Dragoon Rocket
 			Ichorthrower.DisplayName: Ichorthrower
-			SoulCoinProj.DisplayName: Soul Coin Proj
 			ChaosBlackFire.DisplayName: Chaos Black Fire
 			ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			ChaosFireball.DisplayName: Chaos Fireball
@@ -12379,6 +12381,8 @@ Mods: {
 			TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
 			WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
 			KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
+			BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
+			LurkerClawStrike.DisplayName: Lurker Claw Strike
 		}
 
 		NPCs: {
@@ -12894,10 +12898,12 @@ Mods: {
 			LothricKnight.DisplayName: Lothric Knight
 			LothricSpearKnight.DisplayName: Lothric Spear Knight
 			ManHunter.DisplayName: Man Hunter
+
 			ObsidianGuard: {
 				DisplayName: Obsidian Guard
 				BestiaryDescription: Temple sentries clad in volcanic glass. Their patient bowstrings fall silent only when an intruder comes within spear's reach.
 			}
+
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
 			MutantToad.DisplayName: Mutant Toad

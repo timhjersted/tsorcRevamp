@@ -1,6 +1,8 @@
 ﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Localization;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
 namespace tsorcRevamp.Content.Items.ItemCrates
 {
@@ -122,14 +124,19 @@ namespace tsorcRevamp.Content.Items.ItemCrates
         }
     }
 
+    // Weregild for a removed item. Held 1,000 Soul Coins; now pays the same value straight in Dark Souls.
     public class SoulCoinCrate : ItemCrates
     {
+        public const int DarkSoulsInside = 1000 * Items.SoulCoin.SoulsPerCoin;
+
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(DarkSoulsInside);
+
         public override void SetStaticDefaults()
         {
         }
         public override void RightClick(Player player)
         {
-            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<Items.SoulCoin>(), 1000);
+            player.QuickSpawnItem(player.GetSource_ItemUse(Item), ModContent.ItemType<DarkSoulItem>(), DarkSoulsInside);
         }
     }
 

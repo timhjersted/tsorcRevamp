@@ -543,6 +543,9 @@ Mods: {
 				'''
 			PerSecond: /秒
 			DarkSouls: 黑暗之魂
+			ShopDarkSoulPrice: "[c/00FF50:{0} {1} {2}][i:{3}]"
+			ShopDarkSoulOwned: "[c/9A9A9A:(你有 {0})]"
+			SoulCoinsConverted: 魂币已不再使用：你的 {0} 枚魂币变成了 {1} 个黑暗之魂
 			Soapstone: 如果你感到迷茫，就探索在地图上未显示出来的地方，几乎每个方向都有秘密和路径。
 			BonfireLit: 篝火已点燃，重生点设置！
 			BonfireTP: 打开你的小地图来快捷传送到世界上的每一处篝火
@@ -660,6 +663,7 @@ Mods: {
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: 只在专家模式之外的第一次击杀时掉落]"
 			DownedSkeletron: "[c/ff9999: 击败骷髅王之后掉落]"
+			// DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
 			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
@@ -995,11 +999,6 @@ Mods: {
 				// CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: 魔力星只固定恢复[c/6d8827:被诅咒者]最大魔力值的 {0}%
 				MagicCuffsBotC: 只恢复[c/6d8827:被诅咒者]受到伤害 {0}% 的魔力
-				/* CoinGun:
-					'''
-					[c/ffbf00:Can also use soul coins as ammo]
-					[c/ffbf00:Soul coins pierce once]
-					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -1187,6 +1186,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
 			}
 
+			SkeletonWarriorBanner: {
+				// DisplayName: "{$NPCs.SkeletonWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				// Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SkeletonWarrior.DisplayName}"
+			}
+
 			JungleSentreeBanner: {
 				DisplayName: "{$NPCs.JungleSentree.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: 今天没有越共探头（原初含义）
@@ -1216,6 +1220,7 @@ Mods: {
 				DisplayName: "{$NPCs.ManHunter.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: 我都说了，这几天禁猎期
 			}
+
 			ObsidianGuardBanner: {
 				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
@@ -5123,7 +5128,7 @@ Mods: {
 				DisplayName: 魂币箱
 				Tooltip:
 					'''
-					一个装有 1000 魂币的箱子
+					一个装有 {0} 个黑暗之魂的箱子
 					作为对一个当前版本内不存在物品的补偿
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -5895,9 +5900,8 @@ Mods: {
 				Tooltip:
 					'''
 					用黑暗之魂铸造的神秘货币
-					在有些商家之间当作货币
+					拾取时变为 {0} 个黑暗之魂
 					'''
-				Plural: 魂币
 			}
 
 			SoulOfArtorias: {
@@ -9404,9 +9408,108 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			DworcShamanHeadpiece: {
+				// DisplayName: Dworc Shaman Headpiece
+				// Tooltip: ""
+			}
+
+			DworcShamanBreastplate: {
+				// DisplayName: Dworc Shaman Breastplate
+				// Tooltip: ""
+			}
+
+			DworcShamanGreaves: {
+				// DisplayName: Dworc Shaman Greaves
+				// Tooltip: ""
+			}
+
+			NecromancerHood: {
+				// DisplayName: Necromancer Hood
+				// Tooltip: ""
+			}
+
+			NecromancerRobe: {
+				// DisplayName: Necromancer Robe
+				// Tooltip: ""
+			}
+
+			NecromancerBoots: {
+				// DisplayName: Necromancer Boots
+				// Tooltip: ""
+			}
+
+			HydromancerSoul: {
+				// DisplayName: Hydromancer Soul
+				// Tooltip: "'The essence of a Quara tide-caller, still damp to the touch'"
+			}
+
+			QuaraHydromancerHeadpiece: {
+				// DisplayName: Quara Hydromancer Crest
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					''' */
+				/* TooltipSetBonus:
+					'''
+					Tidecaller: melee hits soak enemies, making them Wet for {0} seconds
+					Magic hits on Wet enemies deal {1}% more damage and restore {2} mana
+					Magic hits make your next melee swing {3}% faster for up to {4} seconds
+					''' */
+			}
+
+			QuaraHydromancerBreastplate: {
+				// DisplayName: Quara Hydromancer Body
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					''' */
+			}
+
+			QuaraHydromancerGreaves: {
+				// DisplayName: Quara Hydromancer Legs
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants the ability to swim
+					''' */
+			}
+
+			ManhunterHat: {
+				// DisplayName: Manhunter Hat
+				// Tooltip: ""
+			}
+
+			ManhunterJerkin: {
+				// DisplayName: Manhunter Jerkin
+				// Tooltip: ""
+			}
+
+			ManhunterBoots: {
+				// DisplayName: Manhunter Boots
+				// Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				// Tooltip: ""
 				// DisplayName: Great Black Knight Helm
+			}
+
+			RoyalKnightHelmet: {
+				// DisplayName: Royal Knight Helmet
+				// Tooltip: ""
+			}
+
+			RoyalKnightBreastplate: {
+				// DisplayName: Royal Knight Breastplate
+				// Tooltip: ""
+			}
+
+			RoyalKnightGreaves: {
+				// DisplayName: Royal Knight Greaves
+				// Tooltip: ""
 			}
 
 			GreatBlackKnightArmor: {
@@ -9506,6 +9609,11 @@ Mods: {
 
 			EnemyFireFlask: {
 				// DisplayName: Enemy Fire Flask
+				// Tooltip: ""
+			}
+
+			EnemyDworcStaff: {
+				// DisplayName: Dworc Staff
 				// Tooltip: ""
 			}
 
@@ -9644,9 +9752,19 @@ Mods: {
 				// DisplayName: Oolacile Cultist Staff
 			}
 
+			QuaraHydromancerStaff: {
+				// Tooltip: ""
+				// DisplayName: Quara Hydromancer Staff
+			}
+
 			BlackBlade: {
 				// Tooltip: ""
 				// DisplayName: Black Blade
+			}
+
+			RoyalKnightHalberd: {
+				// Tooltip: ""
+				// DisplayName: Royal Knight Halberd
 			}
 
 			EnemyBeastClaw: {
@@ -9667,6 +9785,11 @@ Mods: {
 			EnemyIceSkeletonSpear: {
 				// Tooltip: ""
 				// DisplayName: Rime Spear
+			}
+
+			EnemySkeletonCutlass: {
+				// Tooltip: ""
+				// DisplayName: Skeleton Cutlass
 			}
 
 			EnemyOccultistStaff: {
@@ -9776,6 +9899,11 @@ Mods: {
 
 			EnemyTibianAmazonKnife: {
 				// DisplayName: Enemy Tibian Amazon Knife
+				// Tooltip: ""
+			}
+
+			EnemyManhunterBow: {
+				// DisplayName: Enemy Manhunter Bow
 				// Tooltip: ""
 			}
 		}
@@ -11166,6 +11294,15 @@ Mods: {
 		}
 
 		Projectiles: {
+			// DworcFlask.DisplayName: Dworc Flask
+			// DworcFireFlame.DisplayName: Lingering Fire
+			// DworcStormRing.DisplayName: Abyss Storm
+			// DworcPoisonBolt.DisplayName: Poison Strike
+			// DworcPoisonImpact.DisplayName: Poison Strike
+			// DworcAbyssBolt.DisplayName: Abyss Poison Strike
+			// DworcAbyssImpact.DisplayName: Abyss Poison Strike
+			// DworcSpiritExplosion.DisplayName: Spirit Rupture
+			// DworcSuppressionBurst.DisplayName: Azure Suppression
 			// DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
 			// DarkmoonCrescent.DisplayName: Moonlight Crescent
 			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
@@ -11958,7 +12095,6 @@ Mods: {
 			// SanguinisProj.DisplayName: Sanguinis Proj
 			// DragoonRocket.DisplayName: Dragoon Rocket
 			// Ichorthrower.DisplayName: Ichorthrower
-			// SoulCoinProj.DisplayName: Soul Coin Proj
 			// ChaosBlackFire.DisplayName: Chaos Black Fire
 			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			// ChaosFireball.DisplayName: Chaos Fireball
@@ -12288,6 +12424,8 @@ Mods: {
 			// TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
 			// WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
 			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
+			// BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
+			// LurkerClawStrike.DisplayName: Lurker Claw Strike
 		}
 
 		NPCs: {
@@ -12769,6 +12907,7 @@ Mods: {
 			DworcVenomsniper.DisplayName: 德沃克猛毒狙击者
 			DworcAlchemist.DisplayName: 德沃克炼金术士
 			DworcVoodooShaman.DisplayName: 德沃克萨满
+			// ShamanSpirit.DisplayName: Shaman Spirit
 			FirebombHollow.DisplayName: 游魂投掷手
 			FireLurker.DisplayName: 火炎潜伏者
 			GaibonFireball.DisplayName: 盖波的火球
@@ -12802,10 +12941,12 @@ Mods: {
 			LothricKnight.DisplayName: 洛斯里克骑士
 			LothricSpearKnight.DisplayName: 洛斯里克长矛骑士
 			ManHunter.DisplayName: 男猎人
+
 			ObsidianGuard: {
 				DisplayName: 黑曜石守卫
 				BestiaryDescription: 身披火山玻璃护甲的神殿哨兵。唯有入侵者踏入长矛的攻击范围，他们耐心拉紧的弓弦才会沉寂。
 			}
+
 			MarilithSeeker.DisplayName: 马瑞丽斯求索者
 			MarilithSpiritTwin.DisplayName: 马瑞里斯双子幽灵
 			MutantToad.DisplayName: 突变蟾蜍
@@ -12858,6 +12999,7 @@ Mods: {
 			HydrisElemental.DisplayName: 海德里斯元素
 			HydrisNecromancer.DisplayName: 海德里斯死灵法师
 			IceSkeleton.DisplayName: 希斯门徒
+			// SkeletonWarrior.DisplayName: Skeleton Warrior
 
 			KnightOfGwyn: {
 				DisplayName: 葛温的骑士

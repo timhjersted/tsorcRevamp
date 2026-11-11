@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
 {
     public class ForgottenPoisonAxe : ModItem
     {
-        public const int CoinPrice = 2500;
+        public const int ShopPrice = 15000;
         public override void SetStaticDefaults()
         {
             // Tooltip.SetDefault("The blade has been dipped in poison.");

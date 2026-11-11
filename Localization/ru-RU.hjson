@@ -543,6 +543,9 @@ Mods: {
 				'''
 			PerSecond: /в секунду
 			DarkSouls: Тёмные души
+			ShopDarkSoulPrice: "[c/00FF50:{0} {1} {2}][i:{3}]"
+			ShopDarkSoulOwned: "[c/9A9A9A:(у вас {0})]"
+			SoulCoinsConverted: Монеты души больше не используются: ваши монеты души ({0}) превратились в тёмные души ({1})
 			Soapstone: Если вы чувствуете, что заблудились, ищите тёмные места на своей карте. Секреты и проходы есть почти в каждом направлении
 			BonfireLit: Костер зажжён, точка возрождения установлена!
 			BonfireTP: Откройте мини-карту, чтобы мгновенно телепортироваться к любому костру в мире.
@@ -660,6 +663,7 @@ Mods: {
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Выпадает только при первом убийстве вне режима эксперта]"
 			DownedSkeletron: "[c/ff9999:Выпадает после победы над Скелетроном]"
+			// DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
 			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
@@ -959,11 +963,6 @@ Mods: {
 				// CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Подбор звёзд маны восстанавливает только {0}% от максимального количества маны [c/6d8827:носителя проклятия]
 				MagicCuffsBotC: Восстанавливает только {0}% урона, полученного [c/6d8827:носителем проклятия] до смягчения, в виде маны
-				/* CoinGun:
-					'''
-					[c/ffbf00:Can also use soul coins as ammo]
-					[c/ffbf00:Soul coins pierce once]
-					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -1151,6 +1150,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
 			}
 
+			SkeletonWarriorBanner: {
+				// DisplayName: "{$NPCs.SkeletonWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				// Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SkeletonWarrior.DisplayName}"
+			}
+
 			JungleSentreeBanner: {
 				DisplayName: Знамя часового джунглей
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.JungleSentree.DisplayName}"
@@ -1180,6 +1184,7 @@ Mods: {
 				DisplayName: Знамя охотника за людьми
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
+
 			ObsidianGuardBanner: {
 				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
@@ -5081,7 +5086,7 @@ Mods: {
 				DisplayName: Ящик с монетами души
 				Tooltip:
 					'''
-					Ящик, содержащий 1000 монет души
+					Ящик, содержащий тёмные души: {0}
 					Выдается как возмещение за предмет, которого больше не существует
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -5854,9 +5859,8 @@ Mods: {
 				Tooltip:
 					'''
 					Таинственная монета, созданная из тёмных душ
-					Используется в качестве валюты у некоторых торговцев
+					При подборе превращается в тёмные души: {0}
 					'''
-				Plural: Монеты души
 			}
 
 			SoulOfArtorias: {
@@ -9367,9 +9371,108 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			DworcShamanHeadpiece: {
+				// DisplayName: Dworc Shaman Headpiece
+				// Tooltip: ""
+			}
+
+			DworcShamanBreastplate: {
+				// DisplayName: Dworc Shaman Breastplate
+				// Tooltip: ""
+			}
+
+			DworcShamanGreaves: {
+				// DisplayName: Dworc Shaman Greaves
+				// Tooltip: ""
+			}
+
+			NecromancerHood: {
+				// DisplayName: Necromancer Hood
+				// Tooltip: ""
+			}
+
+			NecromancerRobe: {
+				// DisplayName: Necromancer Robe
+				// Tooltip: ""
+			}
+
+			NecromancerBoots: {
+				// DisplayName: Necromancer Boots
+				// Tooltip: ""
+			}
+
+			HydromancerSoul: {
+				// DisplayName: Hydromancer Soul
+				// Tooltip: "'The essence of a Quara tide-caller, still damp to the touch'"
+			}
+
+			QuaraHydromancerHeadpiece: {
+				// DisplayName: Quara Hydromancer Crest
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					''' */
+				/* TooltipSetBonus:
+					'''
+					Tidecaller: melee hits soak enemies, making them Wet for {0} seconds
+					Magic hits on Wet enemies deal {1}% more damage and restore {2} mana
+					Magic hits make your next melee swing {3}% faster for up to {4} seconds
+					''' */
+			}
+
+			QuaraHydromancerBreastplate: {
+				// DisplayName: Quara Hydromancer Body
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					''' */
+			}
+
+			QuaraHydromancerGreaves: {
+				// DisplayName: Quara Hydromancer Legs
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants the ability to swim
+					''' */
+			}
+
+			ManhunterHat: {
+				// DisplayName: Manhunter Hat
+				// Tooltip: ""
+			}
+
+			ManhunterJerkin: {
+				// DisplayName: Manhunter Jerkin
+				// Tooltip: ""
+			}
+
+			ManhunterBoots: {
+				// DisplayName: Manhunter Boots
+				// Tooltip: ""
+			}
+
 			GreatBlackKnightHelm: {
 				// Tooltip: ""
 				// DisplayName: Great Black Knight Helm
+			}
+
+			RoyalKnightHelmet: {
+				// DisplayName: Royal Knight Helmet
+				// Tooltip: ""
+			}
+
+			RoyalKnightBreastplate: {
+				// DisplayName: Royal Knight Breastplate
+				// Tooltip: ""
+			}
+
+			RoyalKnightGreaves: {
+				// DisplayName: Royal Knight Greaves
+				// Tooltip: ""
 			}
 
 			GreatBlackKnightArmor: {
@@ -9469,6 +9572,11 @@ Mods: {
 
 			EnemyFireFlask: {
 				// DisplayName: Enemy Fire Flask
+				// Tooltip: ""
+			}
+
+			EnemyDworcStaff: {
+				// DisplayName: Dworc Staff
 				// Tooltip: ""
 			}
 
@@ -9607,9 +9715,19 @@ Mods: {
 				// DisplayName: Oolacile Cultist Staff
 			}
 
+			QuaraHydromancerStaff: {
+				// Tooltip: ""
+				// DisplayName: Quara Hydromancer Staff
+			}
+
 			BlackBlade: {
 				// Tooltip: ""
 				// DisplayName: Black Blade
+			}
+
+			RoyalKnightHalberd: {
+				// Tooltip: ""
+				// DisplayName: Royal Knight Halberd
 			}
 
 			EnemyBeastClaw: {
@@ -9630,6 +9748,11 @@ Mods: {
 			EnemyIceSkeletonSpear: {
 				// Tooltip: ""
 				// DisplayName: Rime Spear
+			}
+
+			EnemySkeletonCutlass: {
+				// Tooltip: ""
+				// DisplayName: Skeleton Cutlass
 			}
 
 			EnemyOccultistStaff: {
@@ -9739,6 +9862,11 @@ Mods: {
 
 			EnemyTibianAmazonKnife: {
 				// DisplayName: Enemy Tibian Amazon Knife
+				// Tooltip: ""
+			}
+
+			EnemyManhunterBow: {
+				// DisplayName: Enemy Manhunter Bow
 				// Tooltip: ""
 			}
 		}
@@ -11129,6 +11257,15 @@ Mods: {
 		}
 
 		Projectiles: {
+			// DworcFlask.DisplayName: Dworc Flask
+			// DworcFireFlame.DisplayName: Lingering Fire
+			// DworcStormRing.DisplayName: Abyss Storm
+			// DworcPoisonBolt.DisplayName: Poison Strike
+			// DworcPoisonImpact.DisplayName: Poison Strike
+			// DworcAbyssBolt.DisplayName: Abyss Poison Strike
+			// DworcAbyssImpact.DisplayName: Abyss Poison Strike
+			// DworcSpiritExplosion.DisplayName: Spirit Rupture
+			// DworcSuppressionBurst.DisplayName: Azure Suppression
 			// DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
 			// DarkmoonCrescent.DisplayName: Moonlight Crescent
 			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
@@ -11921,7 +12058,6 @@ Mods: {
 			// SanguinisProj.DisplayName: Sanguinis Proj
 			// DragoonRocket.DisplayName: Dragoon Rocket
 			// Ichorthrower.DisplayName: Ichorthrower
-			// SoulCoinProj.DisplayName: Soul Coin Proj
 			// ChaosBlackFire.DisplayName: Chaos Black Fire
 			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			// ChaosFireball.DisplayName: Chaos Fireball
@@ -12251,6 +12387,8 @@ Mods: {
 			// TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
 			// WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
 			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
+			// BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
+			// LurkerClawStrike.DisplayName: Lurker Claw Strike
 		}
 
 		NPCs: {
@@ -12732,6 +12870,7 @@ Mods: {
 			DworcVenomsniper.DisplayName: Дворк ядовитый снайпер
 			DworcAlchemist.DisplayName: Дворк алхимик
 			DworcVoodooShaman.DisplayName: Дворк шаман
+			// ShamanSpirit.DisplayName: Shaman Spirit
 			FirebombHollow.DisplayName: Пустой подрывник
 			FireLurker.DisplayName: Огненный луркер
 			GaibonFireball.DisplayName: Огненный шар Гайбона
@@ -12765,10 +12904,12 @@ Mods: {
 			LothricKnight.DisplayName: Рыцарь Лотрика
 			LothricSpearKnight.DisplayName: Копейщик Лотрика
 			ManHunter.DisplayName: Охотник за людьми
+
 			ObsidianGuard: {
 				DisplayName: Обсидиановый страж
 				BestiaryDescription: Храмовые стражи в доспехах из вулканического стекла. Их терпеливые тетивы умолкают, лишь когда нарушитель оказывается в пределах досягаемости копья.
 			}
+
 			MarilithSeeker.DisplayName: Искатель Марилит
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
 			MutantToad.DisplayName: Жаба-мутант
@@ -12821,6 +12962,7 @@ Mods: {
 			HydrisElemental.DisplayName: Элементаль Гидриса
 			HydrisNecromancer.DisplayName: Некромант Гидрис
 			IceSkeleton.DisplayName: Ледяной скелет
+			// SkeletonWarrior.DisplayName: Skeleton Warrior
 
 			KnightOfGwyn: {
 				DisplayName: Рыцарь Гвина

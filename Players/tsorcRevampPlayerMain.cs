@@ -2007,6 +2007,33 @@ namespace tsorcRevamp
 
                 MoveStartingPickaxeToFirstSlot();
             }
+
+            // Soul Coins are retired: shops take Dark Souls now. Move any coins in the inventory, cursor and the
+            // four banks into the soul slot at SoulCoin.SoulsPerCoin each. Nothing left means nothing happens,
+            // so this is safe to run on every world entry. Runs on the owning client; the slot syncs via SyncSoulSlot.
+            int coinType = ModContent.ItemType<SoulCoin>();
+            int coinsConverted = 0;
+            int soulsFromCoins = 0;
+            Item[][] coinContainers = { Player.inventory, Player.bank.item, Player.bank2.item, Player.bank3.item, Player.bank4.item, new[] { Main.mouseItem } };
+
+            foreach (Item[] container in coinContainers)
+            {
+                foreach (Item containerItem in container)
+                {
+                    if (containerItem.type != coinType)
+                    {
+                        continue;
+                    }
+
+                    coinsConverted += containerItem.stack;
+                    soulsFromCoins += SoulCoin.ConvertToSoulSlot(Player, containerItem);
+                }
+            }
+
+            if (coinsConverted > 0)
+            {
+                Main.NewText(LangUtils.GetTextValue("UI.SoulCoinsConverted", coinsConverted.ToString("N0"), soulsFromCoins.ToString("N0")), Color.LightGreen);
+            }
         }
 
 

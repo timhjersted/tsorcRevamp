@@ -387,7 +387,7 @@ namespace tsorcRevamp
             // its own alt-fire can no longer steal the guard (see tsorcRevampActiveShieldPlayer.ComputeBlocking).
             ActiveShieldKey = KeybindLoader.RegisterKeybind(this, "Raise Shield", "None");
 
-            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
+            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoulItem>(), 999_999L));
 
             BonfireUIState = new BonfireUIState();
             _bonfireUIState = new UserInterface();
