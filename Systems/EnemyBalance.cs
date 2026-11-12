@@ -474,7 +474,7 @@ namespace tsorcRevamp.Systems
             Enemy("BasiliskWalker", phm: 400, hm: 800); // fodder / standard; authored 100 / 250
             Enemy("GhostOfAHollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("GhostOfTheForgottenWarrior", phm: 600, hm: 800, shm: 8000); // standard / fodder / standard; authored 100 / 200 / 1000
-            Enemy("SkeletonWarrior", phm: 450, hm: 1000); // standard / standard; puppet; reassembles once (pile 15%, reform 30%)
+            Enemy("SkeletonWarrior", phm: 450, hm: 1000, shm: 6000); // standard / standard; puppet; reassembles once (pile 15%, reform 30%)
             Enemy("HollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("OolacileCultist", phm: 600, hm: 5000, shm: 12000); // strong; authored 200 / 450 / 3000; caster, contact damage 0; puppet
             Enemy("TibianAmazon", phm: 500, hm: 1000, shm: 10000); // strong; authored 100 / 250
@@ -520,7 +520,7 @@ namespace tsorcRevamp.Systems
             Enemy("DworcAlchemist", phm: 500, hm: 1000); // ? / strong; authored 250 / 500; caster, contact damage 0
             Enemy("Tonberry", hm: 3000, shm: 18000); // strong; authored 1500 / 3500; caster, contact damage 0
             Enemy("ParasyticWormHead", hm: 3000); // elite; authored 1500
-            Enemy("FallenNecromancer", hm: 8000); // elite; authored 4000
+            Enemy("BoneChaplain", hm: 8000); // elite; authored 4000; ex-Fallen Necromancer; support caster, contact damage 0
             Enemy("MarilithSpiritTwin", hm: 20000); // mini-boss; authored 10000
 
             // ---- Enemies that first appear in Super Hardmode (HP shown before the x1.0-1.5 SHM progress scaling, which still applies) ----
@@ -532,9 +532,9 @@ namespace tsorcRevamp.Systems
             Enemy("DarkKnight", shm: 40000); // elite; authored 3000; caster, contact damage 0
             Enemy("AbyssLurker", shm: 20000); // strong; authored 1600
             Enemy("DarkBloodKnight", shm: 40000); // elite; authored 3200; caster, contact damage 0
-            Enemy("HydrisElemental", shm: 10000); // standard; authored 1600
+            Enemy("Elemental", shm: 6000); // authored 1600; also every Elemental Necromancer summon
             Enemy("DworcAbysswalker", shm: 15000); // strong; authored 3500; caster, contact damage 0
-            Enemy("HydrisNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
+            Enemy("ElementalNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
             Enemy("CorruptedElemental", shm: 12000); // standard; authored 2000
             Enemy("CorruptedHornet", shm: 9000); // standard; authored 2000
             Enemy("IceSkeleton", shm: 7000); // standard; authored 2200

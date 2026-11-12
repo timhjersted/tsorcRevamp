@@ -1001,8 +1001,8 @@ namespace tsorcRevamp.Systems
 
             // Caves are 30-60% of the map height; the underworld lines are the bottom fifth. Both were by-tile helpers. The random
             // gates (one in 350 and one in 150) are folded into the weights.
-            Spawn("FallenNecromancer", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.3f, 0.6f) & Region.OutsideSpan(0.45f, 0.75f), hm: 0.0029f, shm: 0.0029f);
-            Spawn("FallenNecromancer", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.8f, 1f), hm: 0.0067f, shm: 0.0067f);
+            Spawn("BoneChaplain", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.3f, 0.6f) & Region.OutsideSpan(0.45f, 0.75f), hm: 0.0029f, shm: 0.0029f);
+            Spawn("BoneChaplain", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.8f, 1f), hm: 0.0067f, shm: 0.0067f);
 
             // Lines are in the old order and each one decides (stop). Three old lines were hidden behind broader ones and never
             // fired; they are made live: the post-boss underground (0.09) and the Super Hardmode overworld (0.13) now sit before the
@@ -1131,19 +1131,19 @@ namespace tsorcRevamp.Systems
 
             // Super Hardmode only; the gate of one in 1500 is folded in. The old test compared the player's pixel position with tile
             // rows, which put it in the sky; the cavern, between the rock layer and the underworld, is what it was written for.
-            Spawn("HydrisElemental", Water.Dry & Evil & !Zone.Dungeon & Depth.Cavern, shm: 0.00067f);
+            Spawn("Elemental", Water.Dry & Evil & !Zone.Dungeon & Depth.Cavern, shm: 0.00067f);
 
             // Super Hardmode only; gates (one in 6 to one in 60) are folded in as 1/N. Underground and caverns, or the bottom fifth of
             // the map. The old Bone Block dungeon line returned 0 by mistake (its gate is the same one in 20 as its neighbours), so it
             // never spawned anything; it now spawns like them.
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Hallow, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Glowshroom, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.UndergroundDesert, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Hallow & Time.BloodMoon, shm: 0.167f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Region.OutsideSpan(0.35f, 0.75f), shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Dungeon & SpawnTile.Is(TileID.BoneBlock), shm: 0.05f);
-            Spawn("HydrisNecromancer", !Depth.BelowSurface & Depth.BottomFifth, shm: 0.0167f);
-            Spawn("HydrisNecromancer", !Depth.BelowSurface & Depth.BottomFifth & Region.OutsideSpan(0.35f, 0.75f), shm: 0.033f);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Hallow, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Glowshroom, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.UndergroundDesert, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Hallow & Time.BloodMoon, shm: 0.167f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Region.OutsideSpan(0.35f, 0.75f), shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Dungeon & SpawnTile.Is(TileID.BoneBlock), shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", !Depth.BelowSurface & Depth.BottomFifth, shm: 0.0167f, max: 1);
+            Spawn("ElementalNecromancer", !Depth.BelowSurface & Depth.BottomFifth & Region.OutsideSpan(0.35f, 0.75f), shm: 0.033f, max: 1);
 
             // IceGigas
 
@@ -1240,11 +1240,11 @@ namespace tsorcRevamp.Systems
 
             // The old gates (one in 44 to one in 3000) are folded in as 1/N. Underworld is the old by-tile bottom fifth and Caves the
             // old Underground and Cavern bands (30-60% of map height). Hardmode lines also apply in Super Hardmode.
-            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, phm: 0.00033f, hm: 0.01f, shm: 0.01f);
-            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, phm: 0.0045f, hm: 0.0227f, shm: 0.0227f);
-            Spawn("Necromancer", NecromancerLand & Region.OutsideSpan(0.35f, 0.75f) & Depth.Caves, phm: 0.0005f);
-            Spawn("Necromancer", NecromancerLand & Zone.Hallow & Depth.Caves, hm: 0.0111f, shm: 0.0111f);
-            Spawn("Necromancer", NecromancerLand & (Evil | Zone.UndergroundDesert) & Depth.Caves, hm: 0.01f, shm: 0.01f);
+            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, phm: 0.00033f, hm: 0.01f, shm: 0.01f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, phm: 0.0045f, hm: 0.0227f, shm: 0.0227f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Region.OutsideSpan(0.35f, 0.75f) & Depth.Caves, phm: 0.0005f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Zone.Hallow & Depth.Caves, hm: 0.0111f, shm: 0.0111f, max: 2);
+            Spawn("Necromancer", NecromancerLand & (Evil | Zone.UndergroundDesert) & Depth.Caves, hm: 0.01f, shm: 0.01f, max: 2);
 
             // The tropical-ocean line comes first in the old rule, so it stops. Water on the ground bands (dirt layer included, as the
             // old comment explains, because the adventure map has little cavern water).

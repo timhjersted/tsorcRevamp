@@ -398,7 +398,9 @@ namespace tsorcRevamp
             ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false);
 
             //HERO OF LUMELIA FIGHT
-            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2108, 849), 60, ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
+            // The copy that actually runs is in Content/DynamicEvents.json (a dynamic event within 2 tiles replaces this
+            // hardcoded one); keep the two in step. Legacy coords (expanded world: 2120, 930). No spawn condition - previously gated on The Sorrow being slain.
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2120, 730), 60, ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false);//location previously was 2108, 849, and before that 4413, 717, near village
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.FireLurker"), Color.Purple, false, default, FireLurkerPainCustomAction);
@@ -931,19 +933,6 @@ namespace tsorcRevamp
         public static bool ExampleCondition()
         {
             if ((Main.dayTime) && (Main.time < 24000))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-
-        public static bool LumeliaCustomCondition()
-        {
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.HeroofLumelia>())))
             {
                 return true;
             }

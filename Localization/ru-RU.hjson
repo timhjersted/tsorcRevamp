@@ -1135,14 +1135,14 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			HydrisElementalBanner: {
+			ElementalBanner: {
 				DisplayName: Знамя элементаля Гидриса
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Elemental.DisplayName}"
 			}
 
-			HydrisNecromancerBanner: {
+			ElementalNecromancerBanner: {
 				DisplayName: Знамя некроманта Гидрис
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ElementalNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
@@ -1210,9 +1210,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			FallenNecromancerBanner: {
+			BoneChaplainBanner: {
 				DisplayName: Знамя падшего некроманта
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BoneChaplain.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -9311,17 +9311,17 @@ Mods: {
 				// Tooltip: ""
 			}
 
-			HydrisNecromancerHeadpiece: {
+			ElementalNecromancerHeadpiece: {
 				// DisplayName: Hydris Necromancer Crown
 				// Tooltip: ""
 			}
 
-			HydrisNecromancerRobe: {
+			ElementalNecromancerRobe: {
 				// DisplayName: Hydris Necromancer Robe
 				// Tooltip: ""
 			}
 
-			HydrisNecromancerBoots: {
+			ElementalNecromancerBoots: {
 				// DisplayName: Hydris Necromancer Boots
 				// Tooltip: ""
 			}
@@ -12914,7 +12914,7 @@ Mods: {
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
 			MutantToad.DisplayName: Жаба-мутант
 			Necromancer.DisplayName: Некромант
-			FallenNecromancer.DisplayName: Падший некромант
+			BoneChaplain.DisplayName: Падший некромант
 			ObsidianJellyfish.DisplayName: Обсидиановая медуза
 			Parasprite.DisplayName: Параспрайт
 			// Locust.DisplayName: Locust
@@ -12959,8 +12959,8 @@ Mods: {
 				// DespawnHandler: The Great Red Knight stands victorious...
 			}
 
-			HydrisElemental.DisplayName: Элементаль Гидриса
-			HydrisNecromancer.DisplayName: Некромант Гидрис
+			Elemental.DisplayName: Элементаль Гидриса
+			ElementalNecromancer.DisplayName: Некромант Гидрис
 			IceSkeleton.DisplayName: Ледяной скелет
 			// SkeletonWarrior.DisplayName: Skeleton Warrior
 

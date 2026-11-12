@@ -761,7 +761,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.DarkrootSentry>(0.3f, 50f);
             Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
             Add<Enemies.Dworc.DworcAbysswalker>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.Elemental>(0.3f, 35f);
             Add<Enemies.SuperHardMode.CorruptedElemental>(0.3f, 35f);
             // Standard+
             Add<Enemies.SuperHardMode.DarkKnight>(0.35f, 30f);
@@ -775,9 +775,9 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.SuperHardMode.Mantassin>(0.3f, 20f); // finger sorcerer: 3-4 hits break any cast; every tell is interruptible
             Add<Enemies.SuperHardMode.DarkrootImp>(0.25f, 40f); // flying curse-caster: breaking a windup (ember / orb charge / swoop rear) cancels it
             // Human / skilled
-            Add<Enemies.FallenNecromancer>(0.4f, 26f);
+            Add<Enemies.BoneChaplain>(0.4f, 26f);
             Add<Enemies.Necromancer>(0.4f, 26f);
-            Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.ElementalNecromancer>(0.4f, 26f);
             Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
             Add<Enemies.Hollow.FirebombHollow>(0.4f, 26f);
             Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);

@@ -8,6 +8,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Enemy.SkeletonSet;
+using tsorcRevamp.Content.Projectiles.VFX;
+using tsorcRevamp.NPCs.Enemies.Dworc;
 using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.NPCs.Enemies
@@ -21,6 +23,11 @@ namespace tsorcRevamp.NPCs.Enemies
     /// Subclasses put their per-tick AI in SkeletonAI (skipped while collapsed) and supply the pile values and cues.
     /// Multiplayer: the latch, pile HP, timer, the Pile -> Reform -> stand transitions and the magic-kill flag are
     /// server decisions, written right after the PuppetNPC payload; subclasses write their own fields after base.
+    ///
+    /// Bone Chaplain's Vigil: while a Bone Chaplain lives within VigilRange, every non-magic death drops the skeleton
+    /// into a HELD pile, even after its own one reassembly is spent. A held pile never reforms by itself: it waits up to
+    /// 20s for the chaplain's Resurrection, then crumbles for good (real death, loot now, the bones linger and fade as a
+    /// BoneRemains projectile). A skeleton the chaplain raised crumbles the same way, standing or piled, once its chaplain dies.
     /// </summary>
     public abstract class SkeletonPuppet : PuppetNPC
     {
@@ -59,9 +66,25 @@ namespace tsorcRevamp.NPCs.Enemies
         // Server: set by HitEffect on a magic killing blow and read by CheckDead in the same StrikeNPC call. It is
         // also written into the death packet, so every client plays the magic-kill burst instead of a pile.
         bool _blessedKillingBlow;
+        // A Bone Chaplain holds this pile: no self-reform at PileTicks; it waits HeldPileTicks for a Resurrection.
+        bool _heldPile;
+        // Server sets it right before the crumble kill and syncs it first, so clients skip the bone scatter (the
+        // BoneRemains projectile draws the lingering pile instead).
+        bool _crumbling;
 
         // ── Server-only ────────────────────────────────────────────────────────────────────────────────────
         int _postReformTicks;
+        // The Bone Chaplain that raised this skeleton: its slot and DworcSpawnIdentity token. -1 = a natural skeleton.
+        int _ownerSlot = -1;
+        int _ownerToken;
+
+        // ── Bone Chaplain's Vigil ──────────────────────────────────────────────────────────────────────────
+        /// <summary>Px from a living Bone Chaplain inside which this skeleton's deaths are held (150 tiles).</summary>
+        public const float VigilRange = 2400f;
+        // A held pile waits 20s for a Resurrection before it crumbles for good.
+        public const int HeldPileTicks = 1200;
+        // Server: how often a held pile / bound skeleton re-checks its chaplain (the scan walks every NPC slot).
+        const int ChaplainCheckInterval = 30;
 
         // ── Per machine: transition tracking ───────────────────────────────────────────────────────────────
         Reassembly _seenReassembly;
@@ -73,6 +96,8 @@ namespace tsorcRevamp.NPCs.Enemies
         protected int ReassemblyTimer => _reassemblyTimer;
         /// <summary>Server: ticks left of the post-reform hold. Subclasses gate their next attack on it.</summary>
         protected int PostReformTicks => _postReformTicks;
+        /// <summary>Every machine (synced): lying in a pile a Bone Chaplain is holding for Resurrection.</summary>
+        public bool IsHeldPile => _reassembly == Reassembly.Pile && _heldPile;
 
         // ── Armor (dyes stay per subclass) ─────────────────────────────────────────────────────────────────
         protected override int HeadArmorItemType => ModContent.ItemType<SkeletonHeadpiece>();
@@ -225,6 +250,15 @@ namespace tsorcRevamp.NPCs.Enemies
                 _postReformTicks--;
             }
 
+            // A skeleton a Bone Chaplain raised is bound to it: once that chaplain is gone, it falls and stays down.
+            bool server = Main.netMode != NetmodeID.MultiplayerClient;
+            bool checkTick = NPC.whoAmI % ChaplainCheckInterval == Main.GameUpdateCount % ChaplainCheckInterval;
+            if (server && checkTick && _ownerSlot >= 0 && !OwnerChaplainAlive())
+            {
+                Crumble();
+                return;
+            }
+
             SkeletonAI();
         }
 
@@ -246,8 +280,40 @@ namespace tsorcRevamp.NPCs.Enemies
 
             TickCollapsed();
 
+            // Held pile: a slow green ember rises off it every 20t, so a player can tell the bones are waiting.
+            if (!Main.dedServ && IsHeldPile && _reassemblyTimer % 20 == 0)
+            {
+                Vector2 spot = NPC.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f), -8f);
+                Dust ember = Dust.NewDustPerfect(spot, DustID.GreenFairy, new Vector2(0f, -0.7f), 120, default, 0.8f);
+                ember.noGravity = true;
+            }
+
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                return;
+            }
+
+            // Held pile (server): it never reforms on its own. It crumbles for good when its 20s run out, when no
+            // chaplain is within VigilRange any more, or when the chaplain that raised it is gone.
+            if (IsHeldPile)
+            {
+                bool timedOut = _reassemblyTimer >= HeldPileTicks;
+                bool checkTick = _reassemblyTimer % ChaplainCheckInterval == 0;
+                bool holderGone = false;
+
+                if (checkTick)
+                {
+                    bool ownerGone = _ownerSlot >= 0 && !OwnerChaplainAlive();
+                    bool noChaplainNear = !ChaplainHoldsAt(NPC.Center);
+                    holderGone = ownerGone || noChaplainNear;
+                }
+
+                if (timedOut || holderGone)
+                {
+                    Trace("reassembly=crumble");
+                    Crumble();
+                }
+
                 return;
             }
 
@@ -286,8 +352,12 @@ namespace tsorcRevamp.NPCs.Enemies
             // Magic killing blow (server / singleplayer, the first death only). Vanilla's StrikeNPC runs HitEffect
             // before checkDead, the strike packet carries the damage class, and the server records the hitter in
             // lastInteraction (PlayerInteraction) before striking; buffs are synced player state.
+            // Under a Bone Chaplain every standing death would pile, so the magic check applies again after the
+            // skeleton's own reassembly is spent. Without a chaplain this is the original first-death-only check.
             bool server = Main.netMode != NetmodeID.MultiplayerClient;
-            if (server && !_reassemblyUsed && !_blessedKillingBlow)
+            bool standing = _reassembly == Reassembly.None;
+            bool deathWouldPile = !_reassemblyUsed || (standing && ChaplainHoldsAt(NPC.Center));
+            if (server && deathWouldPile && !_blessedKillingBlow && !_crumbling)
             {
                 bool magicHit = hit.DamageType != null && hit.DamageType.CountsAsClass(DamageClass.Magic);
                 bool blessedMeleeHit = false;
@@ -318,8 +388,23 @@ namespace tsorcRevamp.NPCs.Enemies
                 return;
             }
 
-            // Only the real death scatters bones; the first "death" leaves a pile instead (CheckDead).
-            if (_reassemblyUsed)
+            // A crumble leaves its bones lying (BoneRemains); only a puff of bone dust and a dry clatter here.
+            if (_crumbling)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath2 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
+                for (int i = 0; i < 16; i++)
+                {
+                    Vector2 velocity = Main.rand.NextVector2Circular(2f, 1.2f) + new Vector2(0f, -0.8f);
+                    Dust.NewDustPerfect(NPC.Bottom + new Vector2(0f, -8f), DustID.Bone, velocity, 60, default, 1f);
+                }
+
+                return;
+            }
+
+            // Only the real death scatters bones; the first "death" leaves a pile instead (CheckDead). A standing
+            // death a Bone Chaplain will hold also leaves a pile, so it does not scatter either.
+            bool chaplainWillHold = standing && ChaplainHoldsAt(NPC.Center);
+            if (_reassemblyUsed && !chaplainWillHold)
             {
                 ScatterRealDeath(_reassembly == Reassembly.Pile);
             }
@@ -354,7 +439,16 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override bool CheckDead()
         {
-            if (_reassemblyUsed || _blessedKillingBlow)
+            // Always a real death: a magic killing blow, a crumble, or the pile itself broken.
+            bool pileBroken = _reassembly == Reassembly.Pile;
+            if (_blessedKillingBlow || _crumbling || pileBroken)
+            {
+                return base.CheckDead();
+            }
+
+            // A Bone Chaplain within VigilRange holds every standing death, even after the one reassembly is spent.
+            bool chaplainHolds = ChaplainHoldsAt(NPC.Center);
+            if (_reassemblyUsed && !chaplainHolds)
             {
                 return base.CheckDead();
             }
@@ -367,9 +461,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 return false;
             }
 
-            // Server latch: refuse the first death. NPC.life is set to the pile's pool rather than left at 0 - an NPC
-            // at life 0 before a strike is removed silently, with no OnKill and no loot.
+            // Server latch: refuse the death. NPC.life is set to the pile's pool rather than left at 0 - an NPC at
+            // life 0 before a strike is removed silently, with no OnKill and no loot.
             _reassemblyUsed = true;
+            _heldPile = chaplainHolds;
             _reassembly = Reassembly.Pile;
             _reassemblyTimer = 0;
             _pileFacing = NPC.direction;
@@ -378,10 +473,117 @@ namespace tsorcRevamp.NPCs.Enemies
             StopMeleeHit();
             OnCollapse();
             EnterPhase(AttackPhase.Idle, 0);
-            Trace("reassembly=pile");
+            Trace("reassembly=pile held=" + chaplainHolds);
             NPC.netUpdate = true;
             RequestNetworkSnapshot();
             return false;
+        }
+
+        // ── Bone Chaplain's Vigil: binding, resurrection and the crumble ──────────────────────────────────────
+        /// <summary>Every machine: a living Bone Chaplain within VigilRange of the point. The server decides with it;
+        /// clients only use it to predict whether a death will pile (and so skip the bone scatter).</summary>
+        static bool ChaplainHoldsAt(Vector2 position)
+        {
+            int chaplainType = ModContent.NPCType<BoneChaplain>();
+            float rangeSquared = VigilRange * VigilRange;
+
+            for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                NPC chaplain = Main.npc[i];
+                bool living = chaplain.active && chaplain.type == chaplainType && chaplain.life > 0;
+                if (living && Vector2.DistanceSquared(chaplain.Center, position) <= rangeSquared)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>Server: the Bone Chaplain that raised this skeleton is still the same living NPC (slot + spawn token,
+        /// so a reused slot is never mistaken for it).</summary>
+        bool OwnerChaplainAlive()
+        {
+            if (_ownerSlot < 0 || _ownerSlot >= Main.maxNPCs)
+            {
+                return false;
+            }
+
+            NPC owner = Main.npc[_ownerSlot];
+            bool isChaplain = owner.active && owner.life > 0 && owner.type == ModContent.NPCType<BoneChaplain>();
+            if (!isChaplain)
+            {
+                return false;
+            }
+
+            int ownerToken = owner.GetGlobalNPC<DworcSpawnIdentity>().Token;
+            return ownerToken == _ownerToken;
+        }
+
+        /// <summary>Server, right after a Bone Chaplain raises this skeleton. A raised skeleton pays no Dark Souls (or coins):
+        /// both come from NPC.value at the kill (DarkSoulNPC.OnKill reads it server-side), so zeroing it here is enough.
+        /// Its item drops are untouched.</summary>
+        public void BindToChaplain(int chaplainSlot, int chaplainToken)
+        {
+            _ownerSlot = chaplainSlot;
+            _ownerToken = chaplainToken;
+            NPC.value = 0f;
+        }
+
+        /// <summary>Server: raised by this chaplain (counts toward its cap, standing or piled).</summary>
+        public bool IsBoundTo(int chaplainSlot, int chaplainToken)
+        {
+            return _ownerSlot == chaplainSlot && _ownerToken == chaplainToken && !_crumbling;
+        }
+
+        /// <summary>Server, from the Bone Chaplain's Resurrection payout: a held pile starts the ordinary 30t reform
+        /// (invulnerable, bones fly together) and stands with lifeFraction of its max HP, then the 60t post-reform hold.</summary>
+        public void Resurrect(float lifeFraction)
+        {
+            if (!IsHeldPile)
+            {
+                return;
+            }
+
+            _heldPile = false;
+            _reassembly = Reassembly.Reform;
+            _reassemblyTimer = 0;
+            NPC.life = Math.Max(1, (int)(NPC.lifeMax * lifeFraction));
+            Trace("reassembly=resurrect");
+            NPC.netUpdate = true;
+            RequestNetworkSnapshot();
+        }
+
+        /// <summary>
+        /// Server: the skeleton falls for good, standing or piled. A real kill (never life = 0 by hand - that skips
+        /// OnKill and loot), so souls and drops appear now; the bones stay behind as a BoneRemains projectile that
+        /// fades over 10s. The crumble flag is synced before the kill so clients draw no bone scatter.
+        /// </summary>
+        void Crumble()
+        {
+            bool fromStanding = _reassembly == Reassembly.None;
+            int facing = _pileFacing;
+            int remainsAge = CollapseTicks;
+            if (fromStanding)
+            {
+                facing = NPC.direction;
+                remainsAge = 0;
+            }
+
+            _crumbling = true;
+            _heldPile = false;
+            NPC.dontTakeDamage = false;
+
+            // ai0 = skeleton type (its bones are drawn), ai1 = facing, ai2 = starting age (0 plays the fall into the pile).
+            Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Bottom, Vector2.Zero, ModContent.ProjectileType<BoneRemains>(),
+                0, 0f, Main.myPlayer, NPC.type, facing, remainsAge);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, NPC.whoAmI);
+            }
+
+            NPC.StrikeInstantKill();
         }
 
         public override bool CanHitPlayer(Player target, ref int cooldownSlot)
@@ -401,22 +603,57 @@ namespace tsorcRevamp.NPCs.Enemies
             int timer = _reassemblyTimer;
             Vector2 anchor = NPC.Bottom + new Vector2(0f, NPC.gfxOffY);
             Color light = TintPile(drawColor);
+            DrawPileProps(spriteBatch, screenPos, anchor, facing, light);
+
+            // Reform tell: from t180 the bones twitch and creep toward the centre, growing stronger to the reform.
+            // A held pile never reforms on its own, so it shows no tell (its green ember comes from TickReassembly).
+            float twitch = 0f;
+            if (_reassembly == Reassembly.Pile && timer >= TwitchStart && !_heldPile)
+            {
+                twitch = (timer - TwitchStart) / (float)(PileTicks - TwitchStart);
+            }
+
+            Vector2 skullPosition = DrawBones(spriteBatch, screenPos, anchor, facing, light, _reassembly, timer, twitch);
+
+            // Eye glow on the skull: steady and dim in the pile, flickering through the reform tell, flaring on reform.
+            float eye = 0.35f;
+            if (twitch > 0f)
+            {
+                eye = 0.35f + 0.65f * twitch * (0.5f + 0.5f * (float)Math.Sin(timer * 0.9f));
+            }
+
+            if (_reassembly == Reassembly.Reform)
+            {
+                eye = 1f;
+            }
+
+            Vector2 eyeOffset = PileEyeOffset * PileBoneScale;
+            if (facing == 1)
+            {
+                eyeOffset.X = -eyeOffset.X;
+            }
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Color eyeColor = PileEyeColor * eye;
+            spriteBatch.Draw(pixel, skullPosition + eyeOffset - screenPos, new Rectangle(0, 0, 1, 1), eyeColor, 0f, new Vector2(0.5f), 2.5f, SpriteEffects.None, 0f);
+            return false;
+        }
+
+        const float PileBoneScale = 1.1f;
+
+        /// <summary>
+        /// Client: draws the pile's bones at anchor (NPC.Bottom) for the given phase and timer, and returns the skull's
+        /// position for the eye glow. Pile timer under CollapseTicks plays the fall from the standing frame; twitch > 0
+        /// is the reform tell; Reform gathers the bones back up. Shared by PreDraw and the BoneRemains projectile.
+        /// </summary>
+        Vector2 DrawBones(SpriteBatch spriteBatch, Vector2 screenPos, Vector2 anchor, int facing, Color light, Reassembly phase, int timer, float twitch)
+        {
             SpriteEffects flip = SpriteEffects.None;
             if (facing == 1)
             {
                 flip = SpriteEffects.FlipHorizontally;
             }
 
-            DrawPileProps(spriteBatch, screenPos, anchor, facing, light);
-
-            // Reform tell: from t180 the bones twitch and creep toward the centre, growing stronger to the reform.
-            float twitch = 0f;
-            if (_reassembly == Reassembly.Pile && timer >= TwitchStart)
-            {
-                twitch = (timer - TwitchStart) / (float)(PileTicks - TwitchStart);
-            }
-
-            const float BoneScale = 1.1f;
             Vector2 skullPosition = anchor;
             PileBone[] bones = PileBones;
 
@@ -428,20 +665,20 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 offset = rest;
                 float rotation = bone.Rotation * facing;
 
-                if (_reassembly == Reassembly.Pile && timer < CollapseTicks)
+                if (phase == Reassembly.Pile && timer < CollapseTicks)
                 {
                     // Falling into the pile: accelerating like a drop.
                     float fall = timer / (float)CollapseTicks;
                     offset = Vector2.Lerp(standing, rest, fall * fall);
                     rotation *= fall;
                 }
-                else if (_reassembly == Reassembly.Pile && twitch > 0f)
+                else if (phase == Reassembly.Pile && twitch > 0f)
                 {
                     float jitter = (float)Math.Sin(timer * 1.7f + i * 2.1f) * 1.5f * twitch;
                     offset = Vector2.Lerp(rest, new Vector2(0f, rest.Y), 0.25f * twitch) + new Vector2(jitter, -Math.Abs(jitter));
                     rotation += jitter * 0.08f;
                 }
-                else if (_reassembly == Reassembly.Reform)
+                else if (phase == Reassembly.Reform)
                 {
                     // Flying back together into the standing frame.
                     float gather = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(timer / (float)ReformTicks, 0f, 1f));
@@ -457,7 +694,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 Texture2D texture = TextureAssets.Gore[bone.GoreType].Value;
                 Vector2 position = anchor + offset;
-                spriteBatch.Draw(texture, position - screenPos, null, light, rotation, texture.Size() * 0.5f, BoneScale, flip, 0f);
+                spriteBatch.Draw(texture, position - screenPos, null, light, rotation, texture.Size() * 0.5f, PileBoneScale, flip, 0f);
 
                 if (bone.IsSkull)
                 {
@@ -465,28 +702,17 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
             }
 
-            // Eye glow on the skull: steady and dim in the pile, flickering through the reform tell, flaring on reform.
-            float eye = 0.35f;
-            if (twitch > 0f)
-            {
-                eye = 0.35f + 0.65f * twitch * (0.5f + 0.5f * (float)Math.Sin(timer * 0.9f));
-            }
+            return skullPosition;
+        }
 
-            if (_reassembly == Reassembly.Reform)
-            {
-                eye = 1f;
-            }
-
-            Vector2 eyeOffset = PileEyeOffset * BoneScale;
-            if (facing == 1)
-            {
-                eyeOffset.X = -eyeOffset.X;
-            }
-
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Color eyeColor = PileEyeColor * eye;
-            spriteBatch.Draw(pixel, skullPosition + eyeOffset - screenPos, new Rectangle(0, 0, 1, 1), eyeColor, 0f, new Vector2(0.5f), 2.5f, SpriteEffects.None, 0f);
-            return false;
+        /// <summary>Client, from BoneRemains on this type's ContentSamples template: the crumbled skeleton's bones and
+        /// props lying where it fell, eyes dark, faded by opacity. Age under CollapseTicks plays the fall.</summary>
+        public void DrawRemains(SpriteBatch spriteBatch, Vector2 screenPos, Vector2 anchor, int facing, int age, float opacity)
+        {
+            Point tile = anchor.ToTileCoordinates();
+            Color light = TintPile(Lighting.GetColor(tile.X, tile.Y - 1)) * opacity;
+            DrawPileProps(spriteBatch, screenPos, anchor, facing, light);
+            DrawBones(spriteBatch, screenPos, anchor, facing, light, Reassembly.Pile, age, 0f);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -508,6 +734,8 @@ namespace tsorcRevamp.NPCs.Enemies
             writer.Write(_reassemblyTimer);
             writer.Write(_pileFacing);
             writer.Write(_blessedKillingBlow);
+            writer.Write(_heldPile);
+            writer.Write(_crumbling);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -518,6 +746,8 @@ namespace tsorcRevamp.NPCs.Enemies
             _reassemblyTimer = reader.ReadInt32();
             _pileFacing = reader.ReadInt32();
             _blessedKillingBlow = reader.ReadBoolean();
+            _heldPile = reader.ReadBoolean();
+            _crumbling = reader.ReadBoolean();
 
             // The death packet (SyncNPC with life 0) carries the server's magic-kill flag; the client's own strike
             // only held the NPC at 1 HP, so this is where a client learns it died outright.

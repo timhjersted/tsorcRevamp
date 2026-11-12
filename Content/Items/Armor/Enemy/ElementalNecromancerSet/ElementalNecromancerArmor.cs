@@ -1,14 +1,12 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Items.Armor.Enemy.HydrisNecromancerSet
+namespace tsorcRevamp.Content.Items.Armor.Enemy.ElementalNecromancerSet
 {
     // NPC outfit converted to player equipment. Vanity only; no recipe or drop.
     [AutoloadEquip(EquipType.Head)]
-    public class HydrisNecromancerHeadpiece : ModItem
+    public class ElementalNecromancerHeadpiece : ModItem
     {
-        public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/HydrisNecromancerSet/HydrisNecromancerHeadpiece";
-
         public override void SetStaticDefaults()
         {
             int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
@@ -24,10 +22,8 @@ namespace tsorcRevamp.Content.Items.Armor.Enemy.HydrisNecromancerSet
     }
 
     [AutoloadEquip(EquipType.Body)]
-    public class HydrisNecromancerRobe : ModItem
+    public class ElementalNecromancerRobe : ModItem
     {
-        public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/HydrisNecromancerSet/HydrisNecromancerRobe";
-
         public override void SetStaticDefaults()
         {
             int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
@@ -46,10 +42,8 @@ namespace tsorcRevamp.Content.Items.Armor.Enemy.HydrisNecromancerSet
     }
 
     [AutoloadEquip(EquipType.Legs)]
-    public class HydrisNecromancerBoots : ModItem
+    public class ElementalNecromancerBoots : ModItem
     {
-        public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/HydrisNecromancerSet/HydrisNecromancerBoots";
-
         public override void SetStaticDefaults()
         {
             int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);

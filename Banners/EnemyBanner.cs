@@ -389,11 +389,12 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<Necromancer>();
     }
 
-    public class FallenNecromancerBanner : EnemyBanner
+    [LegacyName("FallenNecromancerBanner")]
+    public class BoneChaplainBanner : EnemyBanner
     {
         public override int PlaceStyle => 46;
 
-        public override int NPCType => ModContent.NPCType<FallenNecromancer>();
+        public override int NPCType => ModContent.NPCType<BoneChaplain>();
     }
 
     public class ParaspriteBanner : EnemyBanner
@@ -571,18 +572,18 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<HollowWarrior>();
     }
 
-    public class HydrisElementalBanner : EnemyBanner
+    public class ElementalBanner : EnemyBanner
     {
         public override int PlaceStyle => 73;
 
-        public override int NPCType => ModContent.NPCType<HydrisElemental>();
+        public override int NPCType => ModContent.NPCType<Elemental>();
     }
 
-    public class HydrisNecromancerBanner : EnemyBanner
+    public class ElementalNecromancerBanner : EnemyBanner
     {
         public override int PlaceStyle => 74;
 
-        public override int NPCType => ModContent.NPCType<HydrisNecromancer>();
+        public override int NPCType => ModContent.NPCType<ElementalNecromancer>();
     }
 
     public class IceSkeletonBanner : EnemyBanner

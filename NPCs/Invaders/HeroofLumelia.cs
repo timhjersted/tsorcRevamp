@@ -29,7 +29,7 @@ namespace tsorcRevamp.NPCs.Invaders
     // AncientFireSword through the shared melee-combo framework.
     //
     // Class name / namespace deliberately unchanged so every external reference keeps working:
-    // the scripted-event fight (LumeliaCustomCondition), PoiseProfiles, loot, NewSlain gating,
+    // the scripted-event fight (HeroofLumeliaFight), PoiseProfiles, loot, NewSlain gating,
     // BossChecklist, gores, localization keys.
     //
     // KIT

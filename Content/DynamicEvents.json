@@ -815,6 +815,33 @@
     ]
   },
   {
+    "EventID": "0c9bcf7d-cb40-4562-9dd5-abdb2affeb80",
+    "CenterX": 2120.0,
+    "CenterY": 730.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 158,
+    "VisibleRing": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ",
+    "TextColorHex": "FAFAD2FF",
+    "WorldCondition": null,
+    "MapCondition": null,
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HeroofLumelia",
+        "SpawnX": 2120.0,
+        "SpawnY": 730.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
     "EventID": "d57005d5-7996-4368-b602-3c53044f12b3",
     "CenterX": 3245.0,
     "CenterY": 1252.0,

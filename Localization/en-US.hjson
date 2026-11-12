@@ -1168,14 +1168,14 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			HydrisElementalBanner: {
-				DisplayName: "{$NPCs.HydrisElemental.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
+			ElementalBanner: {
+				DisplayName: "{$NPCs.Elemental.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Elemental.DisplayName}"
 			}
 
-			HydrisNecromancerBanner: {
-				DisplayName: "{$NPCs.HydrisNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
+			ElementalNecromancerBanner: {
+				DisplayName: "{$NPCs.ElementalNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ElementalNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
@@ -1243,9 +1243,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			FallenNecromancerBanner: {
-				DisplayName: "{$NPCs.FallenNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
+			BoneChaplainBanner: {
+				DisplayName: "{$NPCs.BoneChaplain.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BoneChaplain.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -9309,18 +9309,33 @@ Mods: {
 				Tooltip: ""
 			}
 
-			HydrisNecromancerHeadpiece: {
-				DisplayName: Hydris Necromancer Crown
+			ElementalNecromancerHeadpiece: {
+				DisplayName: Elemental Necromancer Crown
 				Tooltip: ""
 			}
 
-			HydrisNecromancerRobe: {
-				DisplayName: Hydris Necromancer Robe
+			ElementalNecromancerRobe: {
+				DisplayName: Elemental Necromancer Robe
 				Tooltip: ""
 			}
 
-			HydrisNecromancerBoots: {
-				DisplayName: Hydris Necromancer Boots
+			ElementalNecromancerBoots: {
+				DisplayName: Elemental Necromancer Boots
+				Tooltip: ""
+			}
+
+			ElementalHeadpiece: {
+				DisplayName: Elemental Head
+				Tooltip: ""
+			}
+
+			ElementalBreastplate: {
+				DisplayName: Elemental Breastplate
+				Tooltip: ""
+			}
+
+			ElementalGreaves: {
+				DisplayName: Elemental Greaves
 				Tooltip: ""
 			}
 
@@ -12909,7 +12924,7 @@ Mods: {
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
 			MutantToad.DisplayName: Mutant Toad
 			Necromancer.DisplayName: Necromancer
-			FallenNecromancer.DisplayName: Fallen Necromancer
+			BoneChaplain.DisplayName: Bone Chaplain
 			ObsidianJellyfish.DisplayName: Obsidian Jellyfish
 			Parasprite.DisplayName: Parasprite
 			Locust.DisplayName: Locust
@@ -12954,8 +12969,8 @@ Mods: {
 				DespawnHandler: The Great Red Knight stands victorious...
 			}
 
-			HydrisElemental.DisplayName: Hydris Elemental
-			HydrisNecromancer.DisplayName: Hydris Necromancer
+			Elemental.DisplayName: Elemental
+			ElementalNecromancer.DisplayName: Elemental Necromancer
 			IceSkeleton.DisplayName: Adept of Seath
 			SkeletonWarrior.DisplayName: Skeleton Warrior
 
