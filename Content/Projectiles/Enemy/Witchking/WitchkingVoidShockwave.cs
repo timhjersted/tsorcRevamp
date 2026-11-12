@@ -41,6 +41,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
 
         public override bool ShouldUpdatePosition() => false;
 
+        // Dust-only visual. Without this, vanilla draws the MagicPixel placeholder texture (1x1000) as a white line.
+        public override bool PreDraw(ref Color lightColor) => false;
+
         public override void AI()
         {
             Projectile.localAI[0]++;

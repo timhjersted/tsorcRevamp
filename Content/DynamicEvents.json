@@ -296,43 +296,6 @@
     ]
   },
   {
-    "EventID": "64089f74-0c62-4bcd-a4f6-c9a5d9267523",
-    "CenterX": 2229.0,
-    "CenterY": 856.0,
-    "Radius": 2560000.0,
-    "Square": false,
-    "TriggerDust": 27,
-    "VisibleRing": false,
-    "SaveOnCompletion": true,
-    "TextToDisplay": "A Great Red Knight has invaded your world!",
-    "TextColorHex": "FF0000FF",
-    "WorldCondition": null,
-    "MapCondition": "SuperHardModeCustomCondition",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "tsorcRevamp/GreatRedKnight",
-        "SpawnX": 2229.0,
-        "SpawnY": 856.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": 20000
-      }
-    ],
-    "ExtraLootItemNames": [
-      "RagePotion",
-      "WrathPotion",
-      "tsorcRevamp/Humanity"
-    ],
-    "ExtraLootAmounts": [
-      2,
-      2,
-      2
-    ]
-  },
-  {
     "EventID": "0b96a256-de7e-408d-a869-8e986664612b",
     "CenterX": 4043.0,
     "CenterY": 143.0,
@@ -848,33 +811,6 @@
         "CustomDamage": null,
         "CustomDefense": null,
         "CustomSouls": 2500
-      }
-    ]
-  },
-  {
-    "EventID": "0c9bcf7d-cb40-4562-9dd5-abdb2affeb80",
-    "CenterX": 2108.0,
-    "CenterY": 849.0,
-    "Radius": 921600.0,
-    "Square": false,
-    "TriggerDust": 158,
-    "VisibleRing": true,
-    "SaveOnCompletion": true,
-    "TextToDisplay": "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ",
-    "TextColorHex": "FAFAD2FF",
-    "WorldCondition": null,
-    "MapCondition": "LumeliaCustomCondition",
-    "CustomAction": null,
-    "SingleNpcMarker": false,
-    "Npcs": [
-      {
-        "NpcName": "tsorcRevamp/HeroofLumelia",
-        "SpawnX": 2108.0,
-        "SpawnY": 849.0,
-        "CustomHealth": null,
-        "CustomDamage": null,
-        "CustomDefense": null,
-        "CustomSouls": null
       }
     ]
   },
@@ -2257,6 +2193,7 @@
     "Square": false,
     "TriggerDust": 158,
     "VisibleRing": true,
+    "SpawnBurst": true,
     "SaveOnCompletion": true,
     "TextToDisplay": "The village is under attack! A Hellkite Dragon has come to feed...",
     "TextColorHex": "AF4BFFFF",
@@ -6267,6 +6204,62 @@
         "NpcName": "tsorcRevamp/SkeletonWarrior",
         "SpawnX": 5880.0,
         "SpawnY": 1295.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "663b5803-3207-4ee3-818c-81fbe68b5a22",
+    "CenterX": 4169.0,
+    "CenterY": 2126.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ExpandedNativeCoords": true,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/DreadWraith",
+        "SpawnX": 4000.0,
+        "SpawnY": 2141.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "196c9ae7-09f4-4473-aef2-abff36aa0b1e",
+    "CenterX": 3676.0,
+    "CenterY": 1463.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 61,
+    "VisibleRing": true,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Hydra",
+        "SpawnX": 3728.0,
+        "SpawnY": 1482.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

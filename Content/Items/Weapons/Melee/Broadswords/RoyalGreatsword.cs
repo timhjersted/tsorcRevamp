@@ -12,7 +12,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         public static readonly Vector2 GripPosition = new(16f, 80f);
 
         // At base speed the cuts last 48/48/57 ticks. Each starts from rest, accelerates, then decelerates
-        // into the next windup's entry pose; GreatswordMotion.Live gates damage to the moving part.
+        // into the next windup's entry pose; GreatswordMotion.Live gates damage to the moving part. The overhead sweeps
+        // the shared 170 deg; the slam is authored to the same low finish but stops where its tip meets the ground.
         private static readonly GreatswordStep[] RoyalSteps =
         {
             new GreatswordStep
@@ -40,7 +41,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             new GreatswordStep
             {
                 LoadedAngle = GreatswordMotion.High,
-                FinishAngle = GreatswordMotion.Carry,
+                FinishAngle = GreatswordMotion.Low,
                 WindupFraction = 0.38f,
                 AccelFraction = 0.20f,
                 StartSpeed = 0f,

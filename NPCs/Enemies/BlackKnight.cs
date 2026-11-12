@@ -70,13 +70,10 @@ namespace tsorcRevamp.NPCs.Enemies
         // Pure black under the armour, so any skin pixel the armour sheets leave uncovered reads as shadow.
         protected override Color PuppetSkinColor => Color.Black;
 
-        // Black Knight set, tinted to polished steel with Reflective Metal Dye.
+        // Black Knight set, undyed (the armor sheets' own colours).
         protected override int HeadArmorItemType => ModContent.ItemType<BlackKnightHelmet>();
         protected override int BodyArmorItemType => ModContent.ItemType<BlackKnightBreastplate>();
         protected override int LegsArmorItemType => ModContent.ItemType<BlackKnightGreaves>();
-        protected override int HeadArmorDyeItemType => ItemID.ReflectiveMetalDye;
-        protected override int BodyArmorDyeItemType => ItemID.ReflectiveMetalDye;
-        protected override int LegsArmorDyeItemType => ItemID.ReflectiveMetalDye;
 
         protected override int MeleeWeaponItemType => ModContent.ItemType<BlackBlade>();
         protected override int RangedWeaponItemType => -1;

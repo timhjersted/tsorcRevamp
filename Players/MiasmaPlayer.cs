@@ -290,7 +290,7 @@ namespace tsorcRevamp
 
         private static void PlayTriggerEffects(Player player)
         {
-            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Volume = 0.8f, Pitch = -0.3f }, player.Center);
+            SoundEngine.PlaySound(SoundID.Item151, player.Center);
 
             for (int i = 0; i < 30; i++)
             {

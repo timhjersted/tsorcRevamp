@@ -42,7 +42,7 @@ namespace tsorcRevamp.Utilities
             {
                 float angle = MathHelper.TwoPi * i / segments + rotationOffset;
                 Vector2 position = center + angle.ToRotationVector2() * radius - Main.screenPosition;
-                spriteBatch.Draw(pixel, position, null, color, 0f, origin, size, SpriteEffects.None, 0f);
+                spriteBatch.Draw(pixel, position, new Rectangle(0, 0, 1, 1), color, 0f, origin, size, SpriteEffects.None, 0f);
             }
         }
 
@@ -78,7 +78,7 @@ namespace tsorcRevamp.Utilities
         {
             Texture2D pixel = TextureAssets.MagicPixel.Value;
             Vector2 segment = end - start;
-            spriteBatch.Draw(pixel, start - Main.screenPosition, null, color, segment.ToRotation(), new Vector2(0f, 0.5f), new Vector2(segment.Length(), thickness), SpriteEffects.None, 0f);
+            spriteBatch.Draw(pixel, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), color, segment.ToRotation(), new Vector2(0f, 0.5f), new Vector2(segment.Length(), thickness), SpriteEffects.None, 0f);
         }
     }
 }

@@ -758,14 +758,21 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             else if (move == Move.Tongue)
             {
                 Vector2 mouth = MouthPosition;
-                Vector2 offset = lockedTarget - mouth;
-                Vector2 destination = lockedTarget + offset.SafeNormalize(new Vector2(lockedFacing, 0f)) * BasiliskLeechTongue.LaunchOvershoot;
+                // Lob arc whose FALLING half passes through the player, then keeps going (the overshoot is just
+                // the tongue's own follow-through). Solving for a point 7.5 tiles past the player instead put the
+                // tip ~80-100px above a standing player's head as it crossed them: only the drawn tendril touched
+                // them, and the tendril can't grab. Aims at the player's live position at launch, not lockedTarget
+                // (locked ~16 ticks earlier), matching the pre-puppet tongue.
+                Vector2 offset = target.Center - mouth;
                 float distanceFactor = MathHelper.Clamp(offset.Length() / BasiliskLeechTongue.MaxLaunchRange, 0f, 1f);
                 float rise = -MathHelper.Lerp(10f, 14f, distanceFactor);
+
+                // Gravity is added before the move each tick, so after t ticks y = (rise + g/2) * t + g/2 * t^2.
+                // The later root of y = offset.Y is the descending pass.
                 float adjustedRise = rise + BasiliskLeechTongue.Gravity * 0.5f;
-                float discriminant = adjustedRise * adjustedRise + 2f * BasiliskLeechTongue.Gravity * (destination.Y - mouth.Y);
+                float discriminant = adjustedRise * adjustedRise + 2f * BasiliskLeechTongue.Gravity * offset.Y;
                 float flightTicks = Math.Max(1f, (-adjustedRise + MathF.Sqrt(Math.Max(0f, discriminant))) / BasiliskLeechTongue.Gravity);
-                Vector2 velocity = new Vector2((destination.X - mouth.X) / flightTicks, rise);
+                Vector2 velocity = new Vector2(offset.X / flightTicks, rise);
                 // The spawn value is also the tongue's direct drain: 10 / 20 / 30 life,
                 // independent of the normal projectile hit's Expert scaling.
                 int damage = EnemyDamage.Projectile(40 + (int)Kind * 40);
@@ -1431,7 +1438,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
                 Vector2 offset = aim - MouthPosition;
                 float length = Math.Min(offset.Length(), 640f);
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, mouth, null, color * 0.2f, offset.ToRotation(), Vector2.Zero, new Vector2(length, 1f), SpriteEffects.None, 0f);
+                // MagicPixel is 1x1000: a null source rect drew this as a length x 1000px block. Sample one texel.
+                Rectangle onePixel = new Rectangle(0, 0, 1, 1);
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, mouth, onePixel, color * 0.2f, offset.ToRotation(), Vector2.Zero, new Vector2(length, 1f), SpriteEffects.None, 0f);
             }
         }
 

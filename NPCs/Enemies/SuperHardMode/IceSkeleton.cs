@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     /// for a tell and attack (frosts in over 8t, dissolves 10t after the recovery). It taxes spacing with a reactive
     /// Guard Thrust, and fights with Twin Thrust, Haft Sweep, Hoarfrost Lunge and Lance of Rime.
     /// Frozen Reassembly: the first lethal hit collapses it into a frozen bone pile with its own small HP pool.
-    /// Shatter the pile for the real death and loot, or it reforms at 30% HP after 4s.
+    /// Shatter the pile for the real death and loot, or it reforms at 75% HP after 4s.
     ///
     /// Every action is one Custom phase on one clock (ResolvePose is the single pose source). Spear hits arm the base
     /// tracked blade per live window. Multiplayer: picks, locks, the lunge lane, the shard aim and the whole
@@ -129,8 +129,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const float SweepPushIn = 12f;
 
         // ── Hoarfrost Lunge (1 bag card, ranged start 140-280px with a ground lane; cooldown 300t) ─────────────
-        //   Tell 36: spear levelled low, drawn back over 20t; lane locks t24 and a frost streak draws itself along the
-        //   floor to its end over t24-36; ice glint at the point for the last 12t.
+        //   Tell 36: spear levelled low, drawn back over 20t; lane locks t24 and faint blue motes rise along the
+        //   floor lane over t24-36 (one per 3t); ice glint at the point for the last 12t.
         //   Dash t36: lane re-solved at release (to 48px past the target, cut short at walls and at drops deeper than 3
         //   tiles). ShapedSpeed 4/6/10 k3 over 20t (304px -> peak 29px/t). The spear is live the whole dash: [36, 56).
         //   Hyper-armor during the dash only. Recovery 44: slides to a stop with the spear out 20t, then retracts.
@@ -145,7 +145,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // ── Lance of Rime (1 bag card, 200-520px with line of sight) ──────────────────────────────────────────
         //   Tell 40: spear drawn back to the shoulder (grip slides to 72px); an ice shard forms AT the point and grows
-        //   1/4 -> full over t20-40; motes converge on it; aim tracks until t28, then locks; aim line t28-40.
+        //   1/4 -> full over t20-40; motes converge on it; aim tracks until t28, then locks; a dust core grows at the point.
         //   Release t40: a 6t thrust (grip to extended) frees the shard from the drawn point. 12px/t, straight.
         //   Reach 200 / 360 / 520px = 17 / 30 / 43t of flight. Retract 10 | recovery 30 (point sinks). Total 86.
         public const int LanceTell = 40;
@@ -153,9 +153,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public const int LanceTotal = 40 + 6 + 10 + 30;
 
         // ── Frozen Reassembly (the shared SkeletonPuppet pile) ────────────────────────────────────────────────
-        //   First lethal hit: the pile with 600 HP, frost mist rising; it stands at 30% max HP after 240t + a 30t
+        //   First lethal hit: the pile with 600 HP, frost mist rising; it stands at 75% max HP after 240t + a 30t
         //   reform, then holds 60t before it attacks. A magic killing blow skips the pile.
         const int FrozenPileLife = 600;
+        const float FrozenReformLifeFraction = 0.75f;
         const float KnockbackResist = 0.05f;
 
         const int SpearFormTicks = 8;
@@ -734,6 +735,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // ── Frozen Reassembly: the Ice Skeleton's values and cues for the shared pile ─────────────────────────
         protected override int PileLife => FrozenPileLife;
+        protected override float ReformLifeFraction => FrozenReformLifeFraction;
         protected override float StandingKnockbackResist => KnockbackResist;
         protected override string ReassemblyName => "Frozen Reassembly";
         protected override Color PileEyeColor => Frost;
@@ -1327,6 +1329,19 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                             Vector2 from = point + Main.rand.NextVector2CircularEdge(22f, 22f);
                             Dust gather = Dust.NewDustPerfect(from, DustID.IceTorch, (point - from) * 0.12f, 80, default, 1f);
                             gather.noGravity = true;
+
+                            // Growing core at the point: the aim tell. Scale 0.6 -> 2.0 over t12-40, with a second
+                            // white-hot mote once the aim locks (t28), so the read is "it is about to fire" without a lane line.
+                            float charge = (elapsed - 12) / (float)(LanceTell - 12);
+                            float coreScale = MathHelper.Lerp(0.6f, 2f, charge);
+                            Dust core = Dust.NewDustPerfect(point, DustID.IceTorch, Vector2.Zero, 40, default, coreScale);
+                            core.noGravity = true;
+
+                            if (elapsed >= LanceLock)
+                            {
+                                Dust hotCore = Dust.NewDustPerfect(point, DustID.IceTorch, Vector2.Zero, 0, Color.White, coreScale * 0.6f);
+                                hotCore.noGravity = true;
+                            }
                         }
 
                         if (elapsed == LanceTell)
@@ -1340,7 +1355,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        /// <summary>Hoarfrost Lunge: lane locked at t24 (the floor streak draws itself to its end), re-solved at the
+        /// <summary>Hoarfrost Lunge: lane locked at t24 (faint motes rise along the floor lane), re-solved at the
         /// t36 release, then a 20t distance-solved dash with the spear live the whole way. A wall the lane check missed
         /// ends the dash where it is.</summary>
         void TickLunge(int elapsed, Player target)
@@ -1351,6 +1366,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 if (glint)
                 {
                     Glint(PuppetSpearTipPosition);
+                }
+
+                // Lane tell, kept minimal: every 3rd tick from the t24 lock, one faint blue mote rises from a random point
+                // on the floor along the locked dash lane (its feet -> _lungeDistance ahead, synced).
+                bool laneTell = elapsed >= LungeLock && elapsed < LungeTell && _lungeDistance > 0f && elapsed % 3 == 0;
+                if (laneTell)
+                {
+                    float along = Main.rand.NextFloat(_lungeDistance);
+                    Vector2 floorPoint = NPC.Bottom + new Vector2(_lockFacing * along, -2f);
+                    Dust mote = Dust.NewDustPerfect(floorPoint, DustID.IceTorch, new Vector2(0f, -0.4f), 120, default, 0.8f);
+                    mote.noGravity = true;
                 }
 
                 if (elapsed == LungeTell)
@@ -1400,7 +1426,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (!Main.dedServ)
             {
-                // The floor streak glitters behind it; the motes linger ~30t and fade on their own.
+                // Frost glitters along the floor behind it; the motes linger ~30t and fade on their own.
                 Vector2 feet = NPC.Bottom + new Vector2(0f, -2f);
                 for (int i = 0; i < 2; i++)
                 {
@@ -1596,16 +1622,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             int elapsed = CustomElapsed;
 
-            if (_move == Move.Lunge && elapsed >= LungeLock && elapsed < LungeTell && _lungeDistance > 0f)
-            {
-                // The frost streak draws itself along the locked lane from its feet to the lane's end.
-                float drawn = (elapsed - LungeLock + 1) / (float)(LungeTell - LungeLock);
-                Vector2 feet = NPC.Bottom + new Vector2(0f, -2f);
-                Vector2 end = feet + new Vector2(_lockFacing * _lungeDistance * drawn, 0f);
-                Color streak = Frost * 0.55f;
-                Utils.DrawLine(spriteBatch, feet, end, streak, streak * 0.4f, 3f);
-            }
-
             if (_move == Move.Lance && elapsed < LanceTell)
             {
                 // The shard forms at the point: 1/4 -> full size over t20-40, point leading along the spear.
@@ -1619,19 +1635,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     float rotation = PuppetWeaponDirection.ToRotation() + MathHelper.Pi * 0.75f;
                     Color light = Color.Lerp(drawColor, Color.White, 0.5f) * alpha;
                     spriteBatch.Draw(shard, point - screenPos, null, light, rotation, shard.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-                }
-
-                // Thin dashed aim line for the 12t lock.
-                if (elapsed >= LanceLock)
-                {
-                    Vector2 start = PuppetSpearTipPosition;
-                    Color lane = Frost * 0.5f;
-                    for (int dash = 0; dash < 26; dash++)
-                    {
-                        Vector2 from = start + _lanceDirection * (dash * 20f);
-                        Vector2 to = from + _lanceDirection * 10f;
-                        Utils.DrawLine(spriteBatch, from, to, lane, lane, 1.5f);
-                    }
                 }
             }
         }

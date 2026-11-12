@@ -283,7 +283,9 @@ namespace tsorcRevamp.Tiles
                 }
 
                 // Keep interaction and dismissal active while a read sign's visual is hidden.
-                if (entity.visualOpacity > 0f)
+                // A sign whose every category is disabled in config can't be selected above, so it is
+                // not drawn either; otherwise it shows as a sign that ignores clicks.
+                if (entity.visualOpacity > 0f && !categoryDisabled)
                 {
                     spriteBatch.Draw(texture, position + zero, new Rectangle(0, 0, (int)textureSize.X, (int)textureSize.Y), ShimmerColor * entity.visualOpacity, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0);
                 }

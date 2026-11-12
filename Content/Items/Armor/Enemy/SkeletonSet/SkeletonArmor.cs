@@ -28,6 +28,10 @@ namespace tsorcRevamp.Content.Items.Armor.Enemy.SkeletonSet
             Item.width = 20;
             Item.height = 22;
             Item.vanity = true;
+
+            // AddEquipTexture runs in Load(), before this item has a Type, so tModLoader files the slot under item 0 and
+            // never applies it on SetDefaults. Look the slot up by name instead (-1 on a dedicated server: no textures).
+            Item.headSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
         }
     }
 
@@ -53,6 +57,10 @@ namespace tsorcRevamp.Content.Items.Armor.Enemy.SkeletonSet
             Item.width = 18;
             Item.height = 18;
             Item.vanity = true;
+
+            // AddEquipTexture runs in Load(), before this item has a Type, so tModLoader files the slot under item 0 and
+            // never applies it on SetDefaults. Look the slot up by name instead (-1 on a dedicated server: no textures).
+            Item.bodySlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
         }
     }
 
@@ -77,6 +85,10 @@ namespace tsorcRevamp.Content.Items.Armor.Enemy.SkeletonSet
             Item.width = 16;
             Item.height = 16;
             Item.vanity = true;
+
+            // AddEquipTexture runs in Load(), before this item has a Type, so tModLoader files the slot under item 0 and
+            // never applies it on SetDefaults. Look the slot up by name instead (-1 on a dedicated server: no textures).
+            Item.legSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
         }
     }
 }

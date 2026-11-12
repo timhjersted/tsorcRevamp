@@ -1132,7 +1132,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                 return;
             }
 
+            // MagicPixel is 1x1000: every draw below samples one texel, or a null source rect paints 1000px-tall blocks.
             Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle onePixel = new Rectangle(0, 0, 1, 1);
             Vector2 origin = StaffTip;
             if (Throwing && launchVelocity.LengthSquared() > 0f)
             {
@@ -1146,7 +1148,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                     point += velocity;
                     if (i % 3 == 0)
                     {
-                        spriteBatch.Draw(pixel, point - screenPos, null, ActionColor * 0.35f, 0f, Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0f);
+                        spriteBatch.Draw(pixel, point - screenPos, onePixel, ActionColor * 0.35f, 0f, Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0f);
                     }
 
                     if (Collision.SolidCollision(point - Vector2.One * 3f, 6, 6))
@@ -1157,7 +1159,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             }
             else if (move == CasterMove.Strike)
             {
-                spriteBatch.Draw(pixel, origin - screenPos, null, ActionColor * 0.35f, aim.ToRotation(), Vector2.Zero, new Vector2(480f, 1f), SpriteEffects.None, 0f);
+                spriteBatch.Draw(pixel, origin - screenPos, onePixel, ActionColor * 0.35f, aim.ToRotation(), Vector2.Zero, new Vector2(480f, 1f), SpriteEffects.None, 0f);
             }
 
             float scale = MathHelper.Lerp(0.25f, 1f, MathHelper.Clamp((elapsed - tellTicks + 20) / 20f, 0f, 1f));

@@ -202,9 +202,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Vector2 origin = new(0f, 0.5f);
             Color shadow = new Color(8, 18, 1) * (0.45f + charge * 0.35f);
             Color body = (active ? new Color(190, 245, 45) : new Color(88, 142, 12)) * (0.35f + charge * 0.55f);
-            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, shadow, rotation, origin,
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), shadow, rotation, origin,
                 new Vector2(length, active ? 13f : 8f), SpriteEffects.None, 0f);
-            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, body, rotation, origin,
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), body, rotation, origin,
                 new Vector2(length, active ? 4f : 2f), SpriteEffects.None, 0f);
         }
     }

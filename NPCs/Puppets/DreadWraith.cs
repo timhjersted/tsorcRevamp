@@ -204,11 +204,6 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int MagicPreferenceChance => IsMounted ? 45 : 25;
         protected override Color MagicTelegraphFlashColor => new Color(150, 60, 210); // matches its glowing eyes
 
-        protected override int TeleportTelegraphTicks => 130;
-        protected override int TeleportDustCount => 24;
-        protected override int TeleportDustTypeId => DustID.PurpleTorch;
-        protected override Color TeleportDustTint => new Color(120, 40, 160);
-
         // ── Despawn on party wipe ────────────────────────────────────────────────
         // Tracking/timing/messaging is PuppetNPC's shared PartyWipeDespawnHandler — only the flavor line
         // and the two dust bursts (kill vs. despawn) are Dread-Wraith-specific here.
@@ -421,9 +416,6 @@ namespace tsorcRevamp.NPCs.Puppets
             globalNPC.PoiseStaggerResetsAI = true;
             globalNPC.NavGiveUpTicks = 160;
             globalNPC.CanUseRopes = true;
-            globalNPC.CanTeleport = true;
-            globalNPC.TeleportStyle = TeleportStyle.Aggressive;
-            globalNPC.TeleportVisualStyle = TeleportVisualStyle.Plague; // black/purple lingering cloud fits the "dread" theme
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

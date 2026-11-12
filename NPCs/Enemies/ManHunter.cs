@@ -17,54 +17,33 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Enemies
 {
     /// <summary>
-    /// Jungle kiting archer. Holds a wooden bow low in the far hand, raises it into the shared puppet string-draw
-    /// pose to shoot single flaming arrows (chained shots as he loses health), and answers a player who closes in
-    /// with a knife: a swipe at arm's length or a dash-stab from a little farther out.
+    /// Jungle kiting archer. Holds a wooden bow low in the far hand, raises it into the shared hunter string-draw
+    /// pose (HunterArcherPuppet) to shoot single flaming arrows (chained shots as he loses health), and answers a
+    /// player who closes in with a knife: a swipe at arm's length or a dash-stab from a little farther out.
     /// </summary>
-    public class ManHunter : PuppetNPC
+    public class ManHunter : HunterArcherPuppet
     {
         // ── Bow shot ─────────────────────────────────────────────────────────────────────────────────────────
         // Legacy ArcherAI values: raw 14 arrow damage in every tier (x4 = Expert), 11 px/t, 60t aim, aim locked 15t
         // before the release, then 60t more before the next aim. Progression scaling handles HM/SHM globally.
         private const int ArrowExpertDamage = 56;
-        private const float ArrowSpeed = 11f;
+        private const float ArrowSpeedPixels = 11f;
         private const int DrawTicks = 60;
-        private const int AimLockTicks = 15;
+        private const int AimLockTickCount = 15;
         private const int ReleaseTicks = 6;
         // Release 6 + recovery 36 + cooldown 18 = the legacy 60t between the shot and the next aim.
         private const int ShotRecoveryTicks = 36;
         private const int ShotCooldownTicks = 18;
         // Legacy CombatTempoProfile.Standard: each chained shot added 18t to the post-chain recovery.
-        private const int ChainRecoveryPerExtraShot = 18;
-        private const int CancelledShotRecoveryTicks = 24;
+        private const int ChainRecoveryTicksPerExtraShot = 18;
         private const float MinShotRange = 128f;
         private const float MaxShotRange = 700f;
-        // Aim limits in facing space (negative = up). The legacy archer shot straight up and steeply down.
-        private const float MaxUpAim = -MathHelper.PiOver2;
-        private const float MaxDownAim = MathHelper.PiOver2;
-        // EnemyFlamingArrow runs vanilla arrow AI: straight for 15t, then +0.1 px/t² gravity.
-        private const float ArrowGravityDelayTicks = 15f;
-        private const float ArrowGravity = 0.1f;
-        // Half the target's vertical speed: a jump arc bends back down within the flight time.
-        private const float ArrowVerticalLeadFraction = 0.5f;
-        private const int ArrowInterceptPasses = 4;
         private static readonly Color FlameOrange = new Color(255, 150, 50);
-
-        // ── Bow carry and raise ──────────────────────────────────────────────────────────────────────────────
-        // Facing-space angles (0 = level forward, +PiOver2 = hanging straight down). At 1.2 rad the far forearm
-        // points down-forward and the bow, kept perpendicular to it, lies almost flat with its string on top,
-        // matching the legacy sheet's idle/walk frames. The near hand rests on the bow.
-        private const float RestCarryAngle = 1.20f;
-        private const float RestFrontHandAngle = 1.00f;
-        private const int RaiseTicks = 12;
-        private const int LowerTicks = 12;
-        // Composite-arm string hand at release, relative to the bow axis: base BowPulledAngle 2.2 + flick 0.25.
-        private const float ReleasedStringHandOffset = 2.45f;
 
         // ── Wooden Bow geometry (16x32, facing right) ────────────────────────────────────────────────────────
         // Riser centre (13, 16); string inset at x2..3 / y6..25, limb tips at x0..5 above and below it.
-        private static readonly Vector2 BowGripNorm = new Vector2(13f / 16f, 0.5f);
-        private static readonly Rectangle BowStringTexels = new Rectangle(2, 6, 2, 20);
+        private static readonly Vector2 WoodenBowGripNorm = new Vector2(13f / 16f, 0.5f);
+        private static readonly Rectangle WoodenBowStringTexels = new Rectangle(2, 6, 2, 20);
 
         // ── Chained shots ────────────────────────────────────────────────────────────────────────────────────
         // One static table so every peer rebuilds the same pause row from the synced pattern index. Each entry is
@@ -140,11 +119,12 @@ namespace tsorcRevamp.NPCs.Enemies
             reachBase: KnifeReach / 0.7f,
             rotationOffset: MathHelper.PiOver4);
 
+
         // Damage 0 and no swing hand ever selects the back slot, so the carried bow never tests a blade capsule.
-        private static readonly PuppetWeapon CarriedBow = new PuppetWeapon(
+        private static readonly PuppetWeapon CarriedWoodenBow = new PuppetWeapon(
             ModContent.ItemType<EnemyManhunterBow>(),
             damage: 0,
-            handleNorm: BowGripNorm,
+            handleNorm: WoodenBowGripNorm,
             drawScale: 1f,
             bladeWidth: 1f);
 
@@ -213,15 +193,6 @@ namespace tsorcRevamp.NPCs.Enemies
             },
         };
 
-        // Synced: the locked shot direction, and the shots fired this volley (sizes the chained recovery).
-        private Vector2 _shotAim = Vector2.UnitX;
-        private int _shotsThisVolley;
-        // Visual only, re-derived on every peer: the last drawn bow angle, so the lower starts where the bow is.
-        private float _lowerFromAngle = RestCarryAngle;
-        private int _recoveryTicksElapsed;
-        private AttackPhase _lastPhase = AttackPhase.Idle;
-        // Server: the phase at the start of the previous tick, to spot the first tick of each chained re-draw.
-        private AttackPhase _phaseBeforeLastAI = AttackPhase.Idle;
 
         // ── Puppet configuration ─────────────────────────────────────────────────────────────────────────────
         public override bool UsesPuppetDifficultyScaling => false;
@@ -237,6 +208,9 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override int LegsArmorItemType => ModContent.ItemType<ManhunterBoots>();
         protected override float TopSpeed => 1.3f;
         protected override float Acceleration => 0.08f;
+        // Cross-through landing room past the target. PuppetNPC writes this onto the GlobalNPC every tick, so a
+        // SetDefaults value is overwritten with the base 16px.
+        protected override float QuickStepForwardRoom => 48f;
 
         // Knife (front hand, only out for its attacks).
         protected override int MeleeWeaponItemType => ModContent.ItemType<EnemyTibianAmazonKnife>();
@@ -269,18 +243,23 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override Color SlashVFXColor => new Color(200, 205, 215);
         protected override float SlashVFXOpacity => 0.25f;
 
-        // Bow (far hand at rest, shared string-draw pose to shoot).
+        // Bow (far hand at rest, shared string-draw pose to shoot; see HunterArcherPuppet).
+        protected override PuppetWeapon CarriedBow => CarriedWoodenBow;
+        protected override Vector2 BowGripNorm => WoodenBowGripNorm;
+        protected override Rectangle BowStringTexels => WoodenBowStringTexels;
+        protected override int ArrowProjectileType => ModContent.ProjectileType<EnemyFlamingArrow>();
+        protected override float ArrowAi2 => EnemyFlamingArrow.VanillaBurnMode;
+        protected override float ArrowSpeed => ArrowSpeedPixels;
+        protected override int AimLockTicks => AimLockTickCount;
+        protected override int ChainRecoveryPerExtraShot => ChainRecoveryTicksPerExtraShot;
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyManhunterBow>();
         protected override int RangedDamage => EnemyDamage.Projectile(ArrowExpertDamage);
-        protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
         protected override float RangedRange => MaxShotRange;
         protected override float MinRangedRange => MinShotRange;
         protected override int RangedTelegraphTicks => DrawTicks;
         protected override int RangedAttackTicks => ReleaseTicks;
         protected override int RangedRecoveryTicks => ShotRecoveryTicks;
         protected override int RangedCooldownAfterUse => ShotCooldownTicks;
-        // Always plants to shoot: the legacy archer stopped to fire.
-        protected override int StandingRangedChance => 100;
         protected override Color RangedTelegraphFlashColor => FlameOrange;
         protected override int[][] PrimaryRangedBurstPatterns => ChainPatterns;
         protected override int[] PrimaryRangedBurstChances
@@ -307,98 +286,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 return SingleShotChances;
             }
         }
-        protected override bool UseCompositeArmSwing => true;
-        protected override bool UseCompositeArmForAdditionalPhase => InShotPose;
-        protected override bool UseBowStringDrawPose => true;
         protected override string NockedBowArrowTexture => "Terraria/Images/Projectile_" + ProjectileID.FlamingArrow;
-        protected override Vector2 GetHeldRangedGripNorm(int itemType) => BowGripNorm;
-        protected override float GetHeldRangedDrawScale(int itemType) => 1f;
-        protected override Rectangle GetBowStringTexels(int itemType) => BowStringTexels;
-
-        // The bow is never in the near hand outside a shot: the far-hand prop below carries it.
-        protected override bool ShowWeaponDuringNeutral => false;
-        protected override bool ShowRangedWeaponDuringRecovery => false;
-        // Far-hand bow outside the three shot phases. Inside them the shared string-draw pose draws the bow at the
-        // same back-hand grip (PuppetBowGripPosition), so the bow never changes hands.
-        protected override bool IndependentBackHandWeapon => !InShotPose;
-        protected override float IndependentBackHandFacingAngle => CarryAngle;
-        // Bow kept perpendicular to the forearm, as in the draw pose, so carry and draw are one geometry.
-        protected override float IndependentBackHandDrawRotation => CarryAngle;
-
-        private bool InShotPose => Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack
-            || Phase == AttackPhase.CrossbowBurstPause;
-
-        private bool IsNeutral => Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll
-            || Phase == AttackPhase.ClosingDistance;
-
-        // Facing-space aim of the synced shot, clamped to the archer's articulation.
-        private float LockedAimAngle
-        {
-            get
-            {
-                float facingAngle = (float)Math.Atan2(_shotAim.Y, _shotAim.X * NPC.direction);
-                return MathHelper.Clamp(facingAngle, MaxUpAim, MaxDownAim);
-            }
-        }
-
-        // Shared string-draw aim. The opening draw lifts the bow from the carry angle over RaiseTicks; the bow arm,
-        // bow tilt, string hand and arrow origin all follow this one angle. Pure function of synced state.
-        protected override float BowAimAngle
-        {
-            get
-            {
-                float aim = LockedAimAngle;
-
-                if (Phase != AttackPhase.RangedTelegraph)
-                {
-                    return aim;
-                }
-
-                int elapsed = DrawTicks - PhaseTimer;
-                float raise = MathHelper.Clamp(elapsed / (float)RaiseTicks, 0f, 1f);
-                float blend = MathHelper.SmoothStep(0f, 1f, raise);
-                return MathHelper.Lerp(RestCarryAngle, aim, blend);
-            }
-        }
-
-        // Far-hand carry angle. Recovery lowers the bow from wherever it was drawn over LowerTicks.
-        private float CarryAngle
-        {
-            get
-            {
-                if (Phase != AttackPhase.RangedRecovery)
-                {
-                    return RestCarryAngle;
-                }
-
-                float lower = MathHelper.Clamp(_recoveryTicksElapsed / (float)LowerTicks, 0f, 1f);
-                float blend = MathHelper.SmoothStep(0f, 1f, lower);
-                return MathHelper.Lerp(_lowerFromAngle, RestCarryAngle, blend);
-            }
-        }
-
-        // Near hand: rests on the bow in neutral. After a shot it drops from the cheek, back and down behind the
-        // body (the -2π target keeps the lerp on that side), to the bow over LowerTicks.
-        protected override float? FreeFrontArmFacingAngle
-        {
-            get
-            {
-                if (IsNeutral)
-                {
-                    return RestFrontHandAngle;
-                }
-
-                if (Phase != AttackPhase.RangedRecovery)
-                {
-                    return null;
-                }
-
-                float releasedHand = _lowerFromAngle - ReleasedStringHandOffset;
-                float lower = MathHelper.Clamp(_recoveryTicksElapsed / (float)LowerTicks, 0f, 1f);
-                float blend = MathHelper.SmoothStep(0f, 1f, lower);
-                return MathHelper.Lerp(releasedHand, RestFrontHandAngle - MathHelper.TwoPi, blend);
-            }
-        }
 
         public override void SetDefaults()
         {
@@ -448,8 +336,8 @@ namespace tsorcRevamp.NPCs.Enemies
             // The forward branch of QuickStep is the shared flank move: cross completely through the target and
             // leave a three-tile gap, while retaining the ordinary backstep when a safe cross is out of reach.
             archerGlobalNPC.EvasiveQuickStep = true;
+            // (QuickStepForwardRoom is the QuickStepForwardRoom override above: PuppetNPC rewrites it every tick.)
             archerGlobalNPC.QuickStepSpeed = 6f;
-            archerGlobalNPC.QuickStepForwardRoom = 48f;
             archerGlobalNPC.QuickStepForwardChance = 0.8f;
             archerGlobalNPC.QuickStepMaxForwardTicks = 36;
         }
@@ -468,64 +356,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            bool authority = Main.netMode != NetmodeID.MultiplayerClient;
-
             EquipWeapon(PuppetHandSlot.Front, Knife);
-            EquipWeapon(PuppetHandSlot.Back, CarriedBow);
-
-            if (authority && NPC.HasValidTarget)
-            {
-                // Legacy flinch: a hit while drawing cancels the shot, but the last AimLockTicks before a release
-                // are committed. NPC.justHit is set on the server by every strike, including clients' hits.
-                bool drawing = Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.CrossbowBurstPause;
-
-                if (drawing && NPC.justHit && PhaseTimer > AimLockTicks)
-                {
-                    EnterPhase(AttackPhase.RangedRecovery, CancelledShotRecoveryTicks);
-                    NPC.netUpdate = true;
-                }
-                else if (drawing)
-                {
-                    bool newPause = Phase == AttackPhase.CrossbowBurstPause && _phaseBeforeLastAI != AttackPhase.CrossbowBurstPause;
-                    TrackShotAim(Main.player[NPC.target], newPause);
-                }
-            }
-
-            _phaseBeforeLastAI = Phase;
 
             base.AI();
 
-            // Every peer sees the same synced phase changes, so these visual and timing edits agree everywhere.
-            if (Phase == AttackPhase.RangedTelegraph && _lastPhase != AttackPhase.RangedTelegraph)
-            {
-                _shotsThisVolley = 0;
-            }
-
-            if (InShotPose)
-            {
-                _lowerFromAngle = BowAimAngle;
-            }
-
-            // Lower clock: a local counter, so a late PhaseTimer snapshot can't rewind the bow back up.
-            _recoveryTicksElapsed++;
-
-            if (Phase == AttackPhase.RangedRecovery && _lastPhase != AttackPhase.RangedRecovery)
-            {
-                _recoveryTicksElapsed = 0;
-
-                // Legacy chained recovery: +18t per extra shot after the first. Server only; the snapshot carries
-                // the longer timer to clients, so a client that saw the transition first can't add it twice.
-                if (authority)
-                {
-                    int extraShots = Math.Max(0, _shotsThisVolley - 1);
-                    PhaseTimer += ChainRecoveryPerExtraShot * extraShots;
-                    NPC.netUpdate = true;
-                }
-            }
-
             // The puppet body never deals contact damage; the knife and arrows are the only hits.
             NPC.damage = 0;
-            _lastPhase = Phase;
 
             DebugAttackLabel = null;
 
@@ -540,109 +376,13 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        // Server: tracks the target until AimLockTicks before each release, then holds. The first tick of every
-        // chained re-draw re-solves once, since those pauses (10-22t) are mostly inside the lock window.
-        private void TrackShotAim(Player target, bool newPause)
-        {
-            bool tracking = PhaseTimer > AimLockTicks;
-
-            if (!tracking && !newPause)
-            {
-                return;
-            }
-
-            _shotAim = SolveArrowAim(target);
-
-            bool lockTick = PhaseTimer == AimLockTicks + 1;
-
-            if (newPause || lockTick || PhaseTimer % 6 == 0)
-            {
-                NPC.netUpdate = true;
-            }
-        }
-
-        // Intercept aim for a vanilla-AI arrow: lead the target by the flight time and raise the aim point by the
-        // arrow's drop after its 15t straight phase. Four passes converge well under a pixel.
-        private Vector2 SolveArrowAim(Player target)
-        {
-            Vector2 origin = PuppetBowGripPosition;
-            Vector2 aimAt = target.Center;
-
-            for (int i = 0; i < ArrowInterceptPasses; i++)
-            {
-                float flightTicks = Vector2.Distance(origin, aimAt) / ArrowSpeed;
-                Vector2 lead = new Vector2(target.velocity.X, target.velocity.Y * ArrowVerticalLeadFraction) * flightTicks;
-                float fallingTicks = Math.Max(0f, flightTicks - ArrowGravityDelayTicks);
-                // Discrete fall: sum of 0.1 * k for k = 1..n.
-                float gravityDrop = ArrowGravity * fallingTicks * (fallingTicks + 1f) * 0.5f;
-                aimAt = target.Center + lead - new Vector2(0f, gravityDrop);
-            }
-
-            Vector2 fallback = new Vector2(NPC.direction, 0f);
-            return (aimAt - origin).SafeNormalize(fallback);
-        }
-
-        // Shots face the synced aim once it locks, so a roll behind him can't flip the committed release.
-        protected override void FaceTargetForRangedShot(Player target)
-        {
-            bool committed = Phase == AttackPhase.RangedAttack || PhaseTimer <= AimLockTicks;
-
-            if (!committed || Math.Abs(_shotAim.X) < 0.05f)
-            {
-                base.FaceTargetForRangedShot(target);
-                return;
-            }
-
-            int facing = 1;
-
-            if (_shotAim.X < 0f)
-            {
-                facing = -1;
-            }
-
-            NPC.direction = facing;
-            NPC.spriteDirection = facing;
-        }
-
         protected override void DoMeleeAttack()
         {
         }
 
-        protected override void DoRangedAttack()
+        // Full draw: embers and a little light at the nocked flaming arrowhead.
+        protected override void DoArrowheadVFX(Vector2 arrowhead)
         {
-            _shotsThisVolley++;
-            Vector2 origin = PuppetBowGripPosition;
-
-            if (!Main.dedServ)
-            {
-                SoundEngine.PlaySound(SoundID.Item5 with { Volume = 0.7f, PitchVariance = 0.15f }, origin);
-            }
-
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            // The arrow leaves along the drawn bow's axis, so a clamped aim fires where the bow points.
-            float aim = LockedAimAngle;
-            Vector2 direction = new Vector2((float)Math.Cos(aim) * NPC.direction, (float)Math.Sin(aim));
-
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), origin, direction * ArrowSpeed,
-                ModContent.ProjectileType<EnemyFlamingArrow>(), RangedDamage, 0f, Main.myPlayer,
-                0f, 0f, EnemyFlamingArrow.VanillaBurnMode);
-        }
-
-        // Full draw: embers and a little light at the nocked flaming arrowhead, just ahead of the grip.
-        protected override void DoRangedTelegraphVFX(bool secondary, float progress)
-        {
-            if (Main.dedServ || PhaseTimer > DrawTicks * 0.35f)
-            {
-                return;
-            }
-
-            float aim = BowAimAngle;
-            Vector2 aimDirection = new Vector2((float)Math.Cos(aim) * NPC.direction, (float)Math.Sin(aim));
-            Vector2 arrowhead = PuppetBowGripPosition + aimDirection * 6f;
             Lighting.AddLight(arrowhead, 0.5f, 0.26f, 0.06f);
 
             if (Main.GameUpdateCount % 4 == 0)
@@ -687,23 +427,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        // Evasion only fires in neutral, so it never cuts a draw, a knife attack or a recovery short.
-        public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
-        {
-            if (IsNeutral)
-            {
-                tsorcRevampAIs.EvasiveOnHit(NPC, true);
-            }
-        }
-
-        public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
-        {
-            if (IsNeutral)
-            {
-                tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
-            }
-        }
-
         public override void HitEffect(NPC.HitInfo hit)
         {
             for (int i = 0; i < 5; i++)
@@ -739,22 +462,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 int goreType = Mod.Find<ModGore>("Man Hunter Gore " + goreNumber).Type;
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, goreVelocity, goreType, 1f);
             }
-        }
-
-        // Subclass state first, then base, read back in the same order.
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(_shotAim.X);
-            writer.Write(_shotAim.Y);
-            writer.Write((byte)_shotsThisVolley);
-            base.SendExtraAI(writer);
-        }
-
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            _shotAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
-            _shotsThisVolley = reader.ReadByte();
-            base.ReceiveExtraAI(reader);
         }
     }
 }

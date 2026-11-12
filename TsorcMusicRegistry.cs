@@ -207,9 +207,15 @@ namespace tsorcRevamp
             // is still alive and active, so if it had its own (generic) entry here, the fight's music
             // would flip to this default every time the phantom was out and only return to Artorias's
             // Boss6 track (registered below) once it faded, instead of playing Boss6 the whole fight.
+            //
+            // Only BOSS-flagged puppets (the invaders) get it. Puppets reused as regular enemies (Skeleton
+            // Warrior, Adept of Seath, Dworc casters...) leave NPC.boss false and keep the area's music.
+            // ContentSamples holds each NPC's SetDefaults result by PostSetupContent, where this runs.
             foreach (ModNPC npc in ModContent.GetContent<ModNPC>())
             {
-                if (npc is NPCs.Puppets.PuppetNPC && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
+                bool isBossPuppet = ContentSamples.NpcsByNetId.TryGetValue(npc.Type, out NPC sample) && sample.boss;
+
+                if (npc is NPCs.Puppets.PuppetNPC && isBossPuppet && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
                     && npc is not NPCs.Enemies.SuperHardMode.DarkrootSentry
                     && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenWarrior
                     && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight
@@ -246,6 +252,7 @@ namespace tsorcRevamp
             RegisterGroup(new[] { "OolacileDemon", "AncientDemon", "DefiledDemon" }, "Boss15", "Boss15", MusicID.Boss2);
             Register("HeroofLumelia", "Boss2", "Boss2", MusicID.Boss2);
             Register("OwlFather", "Boss19", "Boss19", MusicID.Boss2);
+            Register("DreadWraith", "Boss17", null, MusicID.Boss2);
             Register("JungleWyvernHead", "Boss10", "Boss10", MusicID.Boss2);
             Register("TheRage", "Boss7", "Boss7", MusicID.Boss2);
             Register("TheSorrow", "Boss12", "Boss12", MusicID.Boss2);

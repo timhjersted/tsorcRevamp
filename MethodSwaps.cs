@@ -515,7 +515,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            Main.spriteBatch.Draw(pixel, position + trail, null, color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(pixel, position + trail, new Rectangle(0, 0, 1, 1), color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
         }
 
         private static float Hash01(int x, int y, int seed)
@@ -2742,46 +2742,60 @@ namespace tsorcRevamp
                 }
             }
 
-            // Crimson only counts while the player is actually near crimson tiles. Vanilla sets ZoneCrimson at 300 crimson
-            // tiles anywhere in a ~169x124 window around the player (Main.buffScanAreaWidth/Height), so the red water,
-            // background and music reach ~80 tiles past the biome edge. Here we also require MinTiles crimson tiles inside
-            // a small box (RadiusX/Y tiles each side). Clearing the flag before orig() also keeps ZonePurity honest.
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && self.ZoneCrimson)
+            // Crimson and snow only count while the player is actually near their tiles. Vanilla sets these zones from
+            // tile counts anywhere in a ~169x124 window around the player (Main.buffScanAreaWidth/Height), so the music,
+            // background and red water reach ~80 tiles past the biome edge. Here we also require
+            // BiomeNearbyMinTiles of them inside a small box around the player. Clearing the flags before orig() also
+            // keeps ZonePurity honest. Vanilla assigns both zones earlier in UpdateBiomes, so the clear sticks.
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                const int RadiusX = 12;
-                const int RadiusY = 10;
-                const int MinTiles = 20;
-
-                int centerTileX = (int)self.Center.X / 16;
-                int centerTileY = (int)self.Center.Y / 16;
-                int nearbyCrimsonTiles = 0;
-
-                // Stops counting as soon as MinTiles is reached; the common case (standing in crimson) exits within a few columns.
-                for (int tileX = centerTileX - RadiusX; tileX <= centerTileX + RadiusX && nearbyCrimsonTiles < MinTiles; tileX++)
-                {
-                    for (int tileY = centerTileY - RadiusY; tileY <= centerTileY + RadiusY && nearbyCrimsonTiles < MinTiles; tileY++)
-                    {
-                        if (!WorldGen.InWorld(tileX, tileY))
-                        {
-                            continue;
-                        }
-
-                        Tile tile = Main.tile[tileX, tileY];
-
-                        if (tile.HasTile && TileID.Sets.Crimson[tile.TileType])
-                        {
-                            nearbyCrimsonTiles++;
-                        }
-                    }
-                }
-
-                if (nearbyCrimsonTiles < MinTiles)
+                if (self.ZoneCrimson && !HasNearbyBiomeTiles(self, tileType => TileID.Sets.Crimson[tileType]))
                 {
                     self.ZoneCrimson = false;
+                }
+
+                // Snow, snow brick and every ice variant: vanilla's own snow-biome tile weights.
+                if (self.ZoneSnow && !HasNearbyBiomeTiles(self, tileType => TileID.Sets.SnowBiome[tileType] > 0))
+                {
+                    self.ZoneSnow = false;
                 }
             }
 
             return orig(self);
+        }
+
+        // Box half-size in tiles (12 wide, 10 tall each side of the player's center) and the tile count it must hold.
+        private const int BiomeNearbyRadiusX = 12;
+        private const int BiomeNearbyRadiusY = 10;
+        private const int BiomeNearbyMinTiles = 20;
+
+        // True when at least BiomeNearbyMinTiles tiles matching isBiomeTile sit in the box around the player.
+        // Stops counting once the minimum is reached, so standing inside the biome exits within a few columns.
+        private static bool HasNearbyBiomeTiles(Player player, Func<ushort, bool> isBiomeTile)
+        {
+            int centerTileX = (int)player.Center.X / 16;
+            int centerTileY = (int)player.Center.Y / 16;
+            int nearbyBiomeTiles = 0;
+
+            for (int tileX = centerTileX - BiomeNearbyRadiusX; tileX <= centerTileX + BiomeNearbyRadiusX && nearbyBiomeTiles < BiomeNearbyMinTiles; tileX++)
+            {
+                for (int tileY = centerTileY - BiomeNearbyRadiusY; tileY <= centerTileY + BiomeNearbyRadiusY && nearbyBiomeTiles < BiomeNearbyMinTiles; tileY++)
+                {
+                    if (!WorldGen.InWorld(tileX, tileY))
+                    {
+                        continue;
+                    }
+
+                    Tile tile = Main.tile[tileX, tileY];
+
+                    if (tile.HasTile && isBiomeTile(tile.TileType))
+                    {
+                        nearbyBiomeTiles++;
+                    }
+                }
+            }
+
+            return nearbyBiomeTiles >= BiomeNearbyMinTiles;
         }
 
         static int deathTextTimer = 0;

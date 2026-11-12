@@ -66,6 +66,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             // you, not a tumbling rock. Animate through the 3-frame strip instead of rotating the sprite.
             Projectile.rotation = 0f;
 
+            // Face the way it flies. The vanilla skull sprite faces right; vanilla draw flips it when
+            // spriteDirection is -1. Nothing set it before, so left-flying skulls flew backwards.
+            if (Projectile.velocity.X < 0f)
+            {
+                Projectile.spriteDirection = -1;
+            }
+            else if (Projectile.velocity.X > 0f)
+            {
+                Projectile.spriteDirection = 1;
+            }
+
             Projectile.frameCounter++;
 
             if (Projectile.frameCounter >= FrameHoldTicks)

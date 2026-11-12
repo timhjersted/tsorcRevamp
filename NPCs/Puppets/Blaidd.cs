@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.VFX;
@@ -21,13 +22,14 @@ namespace tsorcRevamp.NPCs.Puppets
 {
     /// <summary>
     /// Invader puppet — Blaidd (Wolf Mask + Plaguebringer's Cloak + Jim's Leggings + Yoraiz0r's Scowl).
-    /// Pure melee duelist. Phase 1: one-handed Royal Greatsword + Spiked Iron Shield, advancing behind the raised shield
+    /// Melee duelist. Phase 1: one-handed Royal Greatsword + Spiked Iron Shield, advancing behind the raised shield
     /// at full speed, Shield Bash opener. Phase 2 (below 50%): tears the shield off, goes two-handed and faster.
-    /// The Azure Suppression Flask (Suppressed + Grapple Malfunction, 100-tile ring) is his only ranged act.
+    /// Ranged: the Azure Suppression Flask (Suppressed + Grapple Malfunction, 100-tile ring), a Heavy Crossbow (shield
+    /// stowed while it is out) whose net shot snares for the Moonfang Lance, a long-range blade-first dash.
     /// Stock swings borrow OwlFather / StuddedLeatherWarrior timings. Design: tsorcDocs/Blaidd_Rework_Proposal.md.
     /// </summary>
     [AutoloadBossHead]
-    public class Blaidd : PuppetNPC, IHumanoidMeleeHitEffects
+    public class Blaidd : PuppetNPC, IHumanoidMeleeHitEffects, IPuppetSnareSource
     {
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Puppets/Blaidd_Head_Boss";
 
@@ -115,7 +117,7 @@ namespace tsorcRevamp.NPCs.Puppets
         // ── Wolf's Howl (phase 2 self-buff) ───────────────────────────────────────
         // 40t howl (punishable), then 8s of +20% move speed and telegraphs x0.85.
         private const int WolfHowlTicks = 40;
-        private const int WolfHowlCooldownTicks = 1200;
+        private const int WolfHowlCooldownTicks = 900;
         private const int WolfHowlBuffTicks = 480;
         private const float WolfHowlSpeedMult = 1.2f;
         private const float WolfHowlTelegraphMult = 0.85f;
@@ -169,6 +171,41 @@ namespace tsorcRevamp.NPCs.Puppets
         private const float FlaskThrowSpeed = 11f;
         private const float FlaskOvershoot = 80f;
 
+        // ── Heavy Crossbow (both phases; Studded Leather Warrior's crossbow + net) ─
+        // The shield is stowed while the crossbow is out (no frontal block, no deflect): shooting him back works.
+        // Every SnareCooldownTicks the next bolt is the net shot: a darker, 12t longer draw.
+        private const int CrossbowDamage = 52;
+        private const float CrossbowMinRange = 200f;
+        private const float CrossbowMaxRange = 560f;
+        private const int CrossbowTelegraphTicks = 36;
+        private const int CrossbowCooldownTicks = 300;
+        private const float CrossbowBoltSpeed = 14f;
+        private const float CrossbowMuzzleReach = 18f;
+        private const int SnareCooldownTicks = 10 * 60;
+        private const int SnareExtraTellTicks = 12;
+        private const int SnareExtraRecoveryTicks = 8;
+
+        // ── Moonfang Lance (both phases; the base Piercing Dash) ──────────────────
+        // Tell 44t planted, blade couched low and back, moonlight gathering on the tip. Dash 14px/t (6t ramp), solved to
+        // run LanceOvershoot past the target, capped at LanceDashMaxTicks (~600px). The blade is live the whole dash
+        // (one contact); a roll's i-frames pass through it. 60t planted recovery is the punish.
+        // A netted target opens LanceSnareWindowTicks in which the lance is the guaranteed next pick, from point blank.
+        private const float LanceMinRange = 200f;
+        private const float LanceMaxRange = 520f;
+        private const float LanceSnaredMinRange = 64f;
+        private const int LanceChancePercent = 2;
+        private const int LanceTellTicks = 44;
+        private const float LanceDashSpeed = 14f;
+        private const int LanceDashAccelTicks = 6;
+        private const float LanceOvershoot = 96f;
+        private const int LanceDashMaxTicks = 46;
+        private const int LanceRecoveryTicks = 60;
+        private const int LanceCooldownTicks = 420;
+        private const float LanceDamageMult = 1.3f;
+        private const int LanceSnareWindowTicks = 150;
+        // Visible grip-to-tip span of the Royal Greatsword at MeleeWeaponDrawScale (see the swing polish block).
+        private const float LanceTipReach = 67f;
+
         // Follow-up swings in the conditional combos only play if the last one hit, or the target is still inside
         // the next swing's reach plus the ground its push covers (~ComboReachBase*0.7*1.2 + 40px).
         private const float FollowUpPushAllowance = 40f;
@@ -208,6 +245,11 @@ namespace tsorcRevamp.NPCs.Puppets
         private float _bashLungeSpeed;
         private int _bashFollowUpWindow;
         private int _fightTicks;
+        private bool _currentCrossbowShotIsSnare;
+        private int _snareCooldown;
+        private int _lanceSnareWindow;
+        // Server-only mirror of the base pierce cooldown (private there): reset each dash tick, counts down after.
+        private int _lanceRecharge;
 
         // ── Armor loadout ─────────────────────────────────────────────────────────
         protected override int HeadArmorItemType => ItemID.WolfMask;
@@ -277,6 +319,22 @@ namespace tsorcRevamp.NPCs.Puppets
         // Raised shield = the advancing guard, or the Shield Charge's tell + sprint.
         protected override bool ShieldRaisedForPose => ShieldRaised;
 
+        // The crossbow is out from its telegraph to the end of its recovery. Base state, synced to clients.
+        private bool CrossbowOut
+        {
+            get
+            {
+                bool rangedPhase = Phase == AttackPhase.RangedTelegraph
+                    || Phase == AttackPhase.RangedAttack
+                    || Phase == AttackPhase.RangedRecovery
+                    || Phase == AttackPhase.CrossbowBurstPause;
+                return rangedPhase && IsSecondaryRangedActive;
+            }
+        }
+
+        // Shield stowed while the crossbow is out.
+        protected override bool ShieldVisible => HasShield && !CrossbowOut;
+
         // Shield Bash shoves with the shield arm straight out (facing angle 0) instead of tucking it like a sword
         // attack. Presentation only: the bash's block rules are unchanged.
         protected override float ShieldTuckArmAngle
@@ -296,7 +354,7 @@ namespace tsorcRevamp.NPCs.Puppets
         {
             get
             {
-                if (_shieldDiscarded)
+                if (_shieldDiscarded || CrossbowOut)
                 {
                     return false;
                 }
@@ -669,6 +727,8 @@ namespace tsorcRevamp.NPCs.Puppets
             },
 
             // ── Phase 2 only (two-handed, no shield) ──
+        // The specials (Wolf Whirl, Moonrise Slam, Howling Lunge, Moonlight Crescent) carry raised weights and shorter
+        // cooldowns than their borrowed originals so they show up often below 50%.
             // Feral Flurry: 4 alternating cuts that share endpoints. Tell 30 x 1.2 = 36t. Each live for its first 60%
             // (~14t), steps 2-4 conditional on a hit or the target still in reach — at most 4 rolls standing still,
             // and backing off ends it. Ends in a 70t exhausted recovery: the punish window for the whole string.
@@ -699,10 +759,10 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo
             {
                 Name = WolfWhirlName,
-                BaseWeight = 50,
+                BaseWeight = 75,
                 Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Aquamarine,
-                CooldownAfterUse = 240,
+                CooldownAfterUse = 190,
                 HeavyCommit = true,
                 HyperArmor = true,
                 MoveBrake = 0.40f,
@@ -713,10 +773,10 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo
             {
                 Name = MoonriseSlamName,
-                BaseWeight = 45,
+                BaseWeight = 75,
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.MediumSlateBlue,
-                CooldownAfterUse = 360,
+                CooldownAfterUse = 260,
                 HeavyCommit = true,
                 HyperArmor = true,
                 RangedStartOnly = true,
@@ -733,10 +793,10 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo
             {
                 Name = HowlingLungeName,
-                BaseWeight = 70,
+                BaseWeight = 90,
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.LightSkyBlue,
-                CooldownAfterUse = 240,
+                CooldownAfterUse = 200,
                 HeavyCommit = true,
                 RangedStartOnly = true,
                 MoveBrake = 0f,
@@ -756,10 +816,10 @@ namespace tsorcRevamp.NPCs.Puppets
             new MeleeCombo
             {
                 Name = MoonlightCrescentName,
-                BaseWeight = 75,
+                BaseWeight = 110,
                 Preferred = ComboRangeBand.Far,
                 InitialFlashColor = Color.Turquoise,
-                CooldownAfterUse = 170,
+                CooldownAfterUse = 130,
                 RangedStartOnly = true,
                 MoveBrake = 0.36f,
                 Steps = new[] { WolfSwing(ComboMotion.OverheadArc, 42, 30,
@@ -814,6 +874,147 @@ namespace tsorcRevamp.NPCs.Puppets
         protected override int SingleRangedBurstChance => 100;
         protected override int StandingRangedChance => 100;
         protected override Color RangedTelegraphFlashColor => new Color(90, 160, 255);
+
+        // ── Heavy Crossbow (the shared secondary ranged phase) ────────────────────
+        protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<HeavyCrossbow>();
+        protected override int SecondaryRangedDamage => CrossbowDamage;
+        protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
+        protected override float SecondaryRangedRange => CrossbowMaxRange;
+        protected override float SecondaryRangedMinRange => CrossbowMinRange;
+        protected override int SecondaryRangedTelegraphTicks => CrossbowTelegraphTicks;
+        protected override int SecondaryRangedCooldownAfterUse => CrossbowCooldownTicks;
+        protected override int SecondaryMaxRangedBurst => 1;
+        // The flask is rare and gated; when both are ready it usually wins.
+        protected override int SecondaryRangedChance => 30;
+        protected override int SecondaryStandingRangedChance => 70;
+        protected override Color SecondaryRangedFlashColor => Color.White;
+
+        // Server: decides at burst start whether this bolt is the net (synced for the draw-length tell).
+        protected override void ModifyRangedBurst(
+            bool secondary,
+            ref int itemType,
+            ref RangedStyle style,
+            ref Color flashColor,
+            ref int telegraphTicks,
+            ref int attackTicks,
+            ref int recoveryTicks)
+        {
+            _currentCrossbowShotIsSnare = secondary && _snareCooldown <= 0;
+
+            if (_currentCrossbowShotIsSnare)
+            {
+                // A dark, longer draw distinguishes the net from an ordinary bolt (Studded's tell).
+                flashColor = new Color(45, 42, 52);
+                telegraphTicks += SnareExtraTellTicks;
+                recoveryTicks += SnareExtraRecoveryTicks;
+            }
+
+            NPC.netUpdate = true;
+        }
+
+        // Server: a net caught someone. The Moonfang Lance answers from any range while it is ready; otherwise a bolt
+        // into the netted target (QueueRangedFollowUp).
+        public void NotifySnareCaught(int playerIndex)
+        {
+            if (playerIndex < 0 || playerIndex >= Main.maxPlayers)
+            {
+                return;
+            }
+
+            NPC.target = playerIndex;
+
+            if (_lanceRecharge <= 0 && _stalkTicks <= 0)
+            {
+                _lanceSnareWindow = LanceSnareWindowTicks;
+            }
+            else
+            {
+                QueueRangedFollowUp(useSecondary: true, targetPlayer: playerIndex, lifetimeTicks: 240);
+            }
+
+            NPC.netUpdate = true;
+        }
+
+        // ── Moonfang Lance (the base Piercing Dash) ───────────────────────────────
+        // Never while stalking (a deliberate wait). The snare window makes it the next pick, from point blank.
+        protected override bool CanPierce => _stalkTicks <= 0;
+        protected override float PierceRange => LanceMaxRange;
+        protected override float MinPierceRange => _lanceSnareWindow > 0 ? LanceSnaredMinRange : LanceMinRange;
+        protected override int PierceChance => _lanceSnareWindow > 0 ? 100 : LanceChancePercent;
+        protected override int PierceTelegraphTicks => LanceTellTicks;
+        protected override float PierceDashSpeed => LanceDashSpeed;
+        protected override int PierceDashAccelTicks => LanceDashAccelTicks;
+        protected override float PierceOvershootPastTarget => LanceOvershoot;
+        protected override int PierceDashMaxTicks => LanceDashMaxTicks;
+        protected override int PierceRecoveryTicks => LanceRecoveryTicks;
+        protected override int PierceCooldownAfterUse => LanceCooldownTicks;
+        protected override int PierceStabChance => 0;
+
+        // Tell: moonlight converging on the blade tip, a growing glint on the point, a ring of the sword's sound at the
+        // start and a sharp draw at launch.
+        protected override void DoPierceWindup(int elapsed)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            if (elapsed == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center);
+            }
+
+            Vector2 tip = PuppetWeaponTipPosition(LanceTipReach);
+            float charge = elapsed / (float)LanceTellTicks;
+
+            if (elapsed % 2 == 0)
+            {
+                Vector2 from = tip + Main.rand.NextVector2CircularEdge(30f, 30f);
+                Dust gather = Dust.NewDustPerfect(from, DustID.IceTorch, (tip - from) * 0.1f, 80, default, 1.1f);
+                gather.noGravity = true;
+            }
+
+            float glintScale = MathHelper.Lerp(0.5f, 1.6f, charge);
+            Dust glint = Dust.NewDustPerfect(tip, DustID.IceTorch, Vector2.Zero, 30, Color.White, glintScale);
+            glint.noGravity = true;
+
+            if (elapsed == LanceTellTicks - 1)
+            {
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.95f, Pitch = -0.45f }, NPC.Center);
+            }
+        }
+
+        // Dash: blue afterimage dust off the body and a frost streak behind the tip.
+        protected override void DoPierceDashTick()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Lighting.AddLight(NPC.Center, 0.25f, 0.45f, 0.9f);
+            Dust trail = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.BlueTorch,
+                -NPC.velocity.X * 0.3f, 0f, 100, default, 1.3f);
+            trail.noGravity = true;
+
+            Vector2 tip = PuppetWeaponTipPosition(LanceTipReach);
+            Dust streak = Dust.NewDustPerfect(tip, DustID.IceTorch, -NPC.velocity * 0.15f, 60, default, 1.2f);
+            streak.noGravity = true;
+        }
+
+        // Server: one hit on contact (Marik's pattern). The hitbox carries Withered Armor via OnHumanoidMeleeHit.
+        protected override void OnPierceContact(Player target, bool isStab)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            int lanceDamage = (int)(MeleeDamage * LanceDamageMult);
+            Projectile.NewProjectile(NPC.GetSource_FromThis(), target.Center, new Vector2(NPC.direction * 0.01f, 0f),
+                ModContent.ProjectileType<PuppetMeleeHitbox>(), lanceDamage, 6f, Main.myPlayer,
+                target.width + 12f, target.height + 8f);
+        }
 
         // ── Movement / stats ──────────────────────────────────────────────────────
         protected override float TopSpeed
@@ -979,6 +1180,27 @@ namespace tsorcRevamp.NPCs.Puppets
             if (_stalkFinisherWindow > 0)
             {
                 _stalkFinisherWindow--;
+            }
+
+            if (_snareCooldown > 0)
+            {
+                _snareCooldown--;
+            }
+
+            // The snare window closes once the lance it opened has launched.
+            if (_lanceSnareWindow > 0)
+            {
+                _lanceSnareWindow--;
+            }
+
+            if (Phase == AttackPhase.PierceDash)
+            {
+                _lanceSnareWindow = 0;
+                _lanceRecharge = LanceRecoveryTicks + LanceCooldownTicks;
+            }
+            else if (_lanceRecharge > 0)
+            {
+                _lanceRecharge--;
             }
 
             // A stalk ending opens the gap-closer window (both synced, so every peer flips together).
@@ -1328,13 +1550,15 @@ namespace tsorcRevamp.NPCs.Puppets
                 return;
             }
 
+            // No roar on any set-piece. Wolf's Howl uses the wolf hurt cry (NPCHit6) instead; Moon's Pull stays silent
+            // and reads from its converging moonlight.
             if (_customKind == BlaiddCustomKind.Unleash)
             {
                 SoundEngine.PlaySound(SoundID.Item119 with { Volume = 0.8f, Pitch = -0.4f }, NPC.Center);
             }
-            else if (_customKind == BlaiddCustomKind.MoonsPull || _customKind == BlaiddCustomKind.WolfHowl)
+            else if (_customKind == BlaiddCustomKind.WolfHowl)
             {
-                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.85f, Pitch = -0.2f }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.NPCHit6, NPC.Center);
             }
         }
 
@@ -1478,7 +1702,7 @@ namespace tsorcRevamp.NPCs.Puppets
         }
 
         // Unleash beats: sword raised from frame 0, shield torn off and hurled at UnleashShieldThrowTick (the visual
-        // swap to two-handed happens then), howl + shake at UnleashHowlTick, moonlight swirl throughout.
+        // swap to two-handed happens then), screen shake at UnleashHowlTick, moonlight swirl throughout.
         private void TickUnleash(int elapsed)
         {
             if (elapsed == 0 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -1506,7 +1730,6 @@ namespace tsorcRevamp.NPCs.Puppets
 
             if (elapsed == UnleashHowlTick && !Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.9f, Pitch = -0.3f }, NPC.Center);
                 UsefulFunctions.ScreenShake(NPC.Center, 4f, 18, distanceFalloff: 700f);
             }
 
@@ -1937,6 +2160,9 @@ namespace tsorcRevamp.NPCs.Puppets
             writer.Write((short)_wolfHowlBuffTicks);
             writer.Write((short)_stalkTicks);
             writer.Write((short)_stalkFinisherWindow);
+            writer.Write(_currentCrossbowShotIsSnare);
+            writer.Write((short)_snareCooldown);
+            writer.Write((short)_lanceSnareWindow);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1956,6 +2182,9 @@ namespace tsorcRevamp.NPCs.Puppets
             _wolfHowlBuffTicks = reader.ReadInt16();
             _stalkTicks = reader.ReadInt16();
             _stalkFinisherWindow = reader.ReadInt16();
+            _currentCrossbowShotIsSnare = reader.ReadBoolean();
+            _snareCooldown = reader.ReadInt16();
+            _lanceSnareWindow = reader.ReadInt16();
 
             // A set-piece the server started that this client hasn't: start it here too. BeginCustom bumps the local
             // serial, so set it to the received value afterwards.
@@ -2065,9 +2294,47 @@ namespace tsorcRevamp.NPCs.Puppets
             // CanStab is false; Fang Thrust replaced the legacy stab.
         }
 
-        // Azure Suppression Flask: a lob solved to land FlaskOvershoot past where the target is heading.
+        // Secondary: a Heavy Crossbow bolt (or the net) from the crossbow's tip, aimed at the target's chest with
+        // +-3 degrees of spread. Primary: the Azure Suppression Flask, a lob solved to land FlaskOvershoot past where
+        // the target is heading.
         protected override void DoRangedAttack()
         {
+            if (IsSecondaryRangedActive)
+            {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item98 with { Volume = 0.75f, PitchVariance = 0.1f }, NPC.Center);
+                }
+
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    return;
+                }
+
+                Player boltTarget = Main.player[NPC.target];
+                Vector2 hand = PuppetHandPosition;
+                Vector2 boltAimPoint = boltTarget.Center + new Vector2(0f, -boltTarget.height * 0.25f);
+                Vector2 aimDirection = (boltAimPoint - hand).SafeNormalize(new Vector2(NPC.direction, 0f));
+                Vector2 muzzle = hand + aimDirection * CrossbowMuzzleReach;
+                float spread = MathHelper.ToRadians(Main.rand.NextFloat(-3f, 3f));
+                Vector2 boltVelocity = aimDirection.RotatedBy(spread) * CrossbowBoltSpeed;
+
+                if (_currentCrossbowShotIsSnare)
+                {
+                    // ai[0] = this NPC, so the net reports a catch back through NotifySnareCaught.
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, boltVelocity * 0.9f,
+                        ModContent.ProjectileType<PuppetSnareBolt>(), CrossbowDamage, 3f, Main.myPlayer, NPC.whoAmI);
+                    _currentCrossbowShotIsSnare = false;
+                    _snareCooldown = SnareCooldownTicks;
+                    NPC.netUpdate = true;
+                    return;
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, boltVelocity,
+                    ModContent.ProjectileType<PuppetCrossbowBolt>(), CrossbowDamage, 4f, Main.myPlayer);
+                return;
+            }
+
             PlayThrowSound();
 
             if (Main.netMode == NetmodeID.MultiplayerClient)

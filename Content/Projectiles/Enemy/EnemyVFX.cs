@@ -297,9 +297,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal static void DrawWitchkingVoidCrescent(Vector2 center, Vector2 size, float rotation, float midHalfThickness, float opacity, float phase)
         {
             LoadAssets();
-            float activeHalfThickness = midHalfThickness / MathHelper.Max(size.X, 1f);
+            float crescentWidth = MathHelper.Max(size.X, 1f);
+            float activeHalfThickness = midHalfThickness / crescentWidth;
+
+            // Pad the drawn quad by one mid half-thickness front and back: the flame licking off the band reaches past
+            // the crescent's own box, and at launch size (46px) the quad edge sliced it flat. CrescentBox maps the
+            // padded quad's uv back onto the crescent box (crescent u = u * paddedWidth / width - pad / width).
+            float padding = midHalfThickness;
+            float paddedWidth = crescentWidth + padding * 2f;
+            Vector2 paddedSize = new Vector2(paddedWidth, size.Y);
+            Vector4 crescentBox = new Vector4(-padding / crescentWidth, 0f, paddedWidth / crescentWidth, 1f);
+            witchkingVoidCrescent.Value.Parameters["CrescentBox"]?.SetValue(crescentBox);
+
             Draw(witchkingVoidCrescent, "WitchkingVoidCrescent", cloudNoise, perlinTiled,
-                center, size, rotation, VoidFireDark, VoidFireMid, VoidFireCore,
+                center, paddedSize, rotation, VoidFireDark, VoidFireMid, VoidFireCore,
                 opacity, 0f, activeHalfThickness, phase, BlendState.AlphaBlend);
         }
 

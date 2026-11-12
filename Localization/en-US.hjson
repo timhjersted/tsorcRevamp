@@ -12836,6 +12836,7 @@ Mods: {
 				Draw: You hear a bow draw...
 				Steps: You hear foot steps...
 				Hunt: You are being hunted...
+				Vanished: The assassin has vanished...
 			}
 
 			AttraidiesIllusion: {
@@ -12914,7 +12915,7 @@ Mods: {
 			Locust.DisplayName: Locust
 			PrimeLaserProbe.DisplayName: Laser Probe
 			QuaraHydromancer.DisplayName: Quara Hydromancer
-			RedCloudHunter.DisplayName: Red Cloud Hunter
+			RedCloudHunter.DisplayName: Cloud Hunter
 
 			RedKnight: {
 				DisplayName: Red Knight

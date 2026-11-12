@@ -12,6 +12,8 @@
 //   Active    = the band's half-thickness at its middle, in quad-width UV (C# divides, so no per-pixel maths here).
 //   Direction = a per-projectile noise phase, so several crescents in a fan don't burn identically.
 //   PixelGrid = the 2px pixel filter (pre-divided in C#).
+//   CrescentBox = maps the drawn quad's uv onto the crescent's own box (crescent uv = uv * zw + xy). The quad is padded
+//                 front and back so the flame licking off the band is never cut by the quad edge.
 
 #include "PixelShaderCommon.fxh"
 
@@ -26,10 +28,11 @@ float Time;
 float Active;
 float Direction;
 float4 PixelGrid;
+float4 CrescentBox;
 
 float4 VoidCrescentPixel(float2 coords : TEXCOORD0) : COLOR0
 {
-    float2 uv = PixelateShaderUV(coords, PixelGrid);
+    float2 uv = PixelateShaderUV(coords, PixelGrid) * CrescentBox.zw + CrescentBox.xy;
 
     // The half oval: its centre line runs from the tips (back edge) out to the front at the middle height,
     // following sqrt(1 - y^2). The band is thickest at the middle and thins to 60% at the tips.
@@ -52,8 +55,9 @@ float4 VoidCrescentPixel(float2 coords : TEXCOORD0) : COLOR0
     float band = abs(offset) / (halfThickness + 0.002) * (1.0 - trailing * 0.45);
     float body = saturate(1.3 - band + (flame - 0.55) * 1.4);
 
-    // Fade the very tips so the ends burn out instead of being cut.
-    body *= saturate(arc * 4.0);
+    // Burn the tips out over the last ~15% of the height (arc 0.05 -> 0.55) instead of cutting them at the box's top and
+    // bottom: at launch size the old arc * 4 fade only spanned ~2px, so the tips read as square cuts.
+    body *= saturate(arc * 2.0 - 0.1);
 
     // Dark purple through the outer half of the band, bright purple toward the spine, white accents where both noises
     // peak inside the body.

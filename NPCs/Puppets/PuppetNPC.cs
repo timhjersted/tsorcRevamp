@@ -1548,7 +1548,9 @@ namespace tsorcRevamp.NPCs.Puppets
                     return "Terraria/Images/Acc_Shield_" + vanillaShieldSlot;
                 }
 
-                return TextureAssets.Item[ShieldItemType].Name + "_Shield";
+                // ModItem.Texture is mod-qualified ("tsorcRevamp/..."). TextureAssets.Item[].Name is not (a mod asset's
+                // Name drops the mod prefix), so building from it failed ModContent.HasAsset and drew no shield.
+                return ItemLoader.GetItem(ShieldItemType).Texture + "_Shield";
             }
         }
         /// <summary>Presentation-only opt-out for shields that appear only during an authored guard.</summary>
@@ -13872,7 +13874,8 @@ namespace tsorcRevamp.NPCs.Puppets
 
         // Preserve a bow's exact vanilla silhouette while replacing an inset baked string. Source-local origins
         // keep all four pieces in the original position, including horizontally mirrored left-facing draws.
-        private static void AddBowLimbDraws(List<DrawData> cache, DrawData heldDraw, Rectangle bounds, Rectangle stringTexels)
+        // Also used by the Archer Spirit minion's player-rig bow (ArcherSpiritBowLayer).
+        internal static void AddBowLimbDraws(List<DrawData> cache, DrawData heldDraw, Rectangle bounds, Rectangle stringTexels)
         {
             Rectangle[] pieces =
             {

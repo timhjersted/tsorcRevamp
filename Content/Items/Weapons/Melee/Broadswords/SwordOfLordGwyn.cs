@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         public override void SetDefaults()
         {
             base.SetDefaults();
-            Item.damage = 315;
+            Item.damage = 600;
             Item.width = 96;
             Item.height = 96;
             Item.useTime = 24;

@@ -72,7 +72,7 @@ namespace tsorcRevamp.NPCs.Puppets
             for (int i = 0; i < count; i++)
             {
                 Vector2 p = Vector2.Lerp(from, to, i / (float)count);
-                batch.Draw(TextureAssets.MagicPixel.Value, p - screen, null, color, d.ToRotation(),
+                batch.Draw(TextureAssets.MagicPixel.Value, p - screen, new Rectangle(0, 0, 1, 1), color, d.ToRotation(),
                     new Vector2(0, 0.5f), new Vector2(Math.Min(8, d.Length()), width), SpriteEffects.None, 0);
             }
         }

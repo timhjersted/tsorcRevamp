@@ -108,8 +108,14 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             return trailWidth;
         }
 
-        // Bound the complete shader strip to the real blade's radial span. Radius +/- halfWidth
-        // gives heel..tip exactly, including the player's current item scale and facing/gravity.
+        // Slash.fx fades in the inner InnerFadeEnd share of the strip's width (^5 falloff). Legacy slashes keep 0.4, which
+        // on a heel..tip strip left only the outer ~half of a blade glowing; measured blades pass this shorter fade.
+        public const float LegacyInnerFade = 0.4f;
+        public const float BladeBandInnerFade = 0.12f;
+
+        // Bound the shader strip to the real blade's radial span, including the player's current item scale and
+        // facing/gravity: the outer edge sits on the tip, and the inner edge is pushed toward the hand so the shader's
+        // faded inner band lies below the heel and the visible glow covers heel..tip. Never past the hand (radius 0).
         public static void GetBladeBand(Vector2 hand, Vector2 bladeHeel, Vector2 bladeTip,
             out Vector2 direction, out float radius, out float halfWidth)
         {
@@ -117,7 +123,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             float outerRadius = handToTip.Length();
             direction = handToTip.SafeNormalize(Vector2.UnitX);
             float heelProjection = Vector2.Dot(bladeHeel - hand, direction);
-            float innerRadius = MathHelper.Clamp(heelProjection, 0f, outerRadius);
+            float heelRadius = MathHelper.Clamp(heelProjection, 0f, outerRadius);
+            float visibleSpan = outerRadius - heelRadius;
+            float fullSpan = visibleSpan / (1f - BladeBandInnerFade);
+            float innerRadius = Math.Max(0f, outerRadius - fullSpan);
             radius = (innerRadius + outerRadius) * 0.5f;
             halfWidth = (outerRadius - innerRadius) * 0.5f;
         }
@@ -475,6 +484,15 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             }
 
             effect.Parameters["HeadFadeStart"].SetValue(headFadeStart);
+
+            float innerFade = LegacyInnerFade;
+
+            if (bladeSourceDriven)
+            {
+                innerFade = BladeBandInnerFade;
+            }
+
+            effect.Parameters["InnerFadeEnd"]?.SetValue(innerFade);
 
             visualizeTrail = false;
             float fadeTicks = 15f;

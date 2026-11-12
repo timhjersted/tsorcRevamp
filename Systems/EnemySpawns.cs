@@ -888,9 +888,9 @@ namespace tsorcRevamp.Systems
             Spawn("BasiliskWalker", BasiliskGround, phm: 0.15f, hm: 0.05f, max: 2);
 
             // Every line was weight 1 behind a random gate (one in 100 to 250), folded into the weights.
-            Spawn("BlackKnight", Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.004f, hm: 0.004f, shm: 0.004f);
-            Spawn("BlackKnight", Town.AtMostOne & Zone.Dungeon, hm: 0.01f, shm: 0.01f);
-            Spawn("BlackKnight", Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.004f, shm: 0.004f);
+            Spawn("BlackKnight", Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.0001f, hm: 0.002f, shm: 0.003f);
+            Spawn("BlackKnight", Town.AtMostOne & Zone.Dungeon, hm: 0.001f, shm: 0.001f);
+            Spawn("BlackKnight", Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.0004f, shm: 0.0004f);
             Spawn("BlackKnight", Town.AtMostOne & Depth.Underworld, hm: 0.0063f, shm: 0.0063f);
 
             Spawn("Byakhee", QuietArea & Zone.Desert & Depth.Surface & Time.Night, hm: 0.0627f, shm: 0.0627f);

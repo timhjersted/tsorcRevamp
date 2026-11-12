@@ -600,7 +600,7 @@ namespace tsorcRevamp.NPCs.Enemies
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC other = Main.npc[i];
-                if (other.active && other.type == type && (int)other.ai[0] == NPC.whoAmI)
+                if (other.active && other.type == type && other.ModNPC is QuaraClutchCrab crab && crab.ParentIndex == NPC.whoAmI)
                 {
                     count++;
                 }

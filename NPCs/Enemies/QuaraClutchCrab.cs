@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
     // its parent Pincher dies or vanishes, it burrows back under and despawns — no gore, no souls. Killing
     // one denies the parent that ranged pressure until the parent spends another (interruptible) Brood Call.
     //
-    // Never spawns naturally (SpawnChance 0); only Brood Call creates it. Parent index is carried in ai[0].
+    // Never spawns naturally (SpawnChance 0); only Brood Call creates it. Parent index is carried in ParentIndex (synced).
     public class QuaraClutchCrab : ModNPC, IStaggerable
     {
         public override string Texture => "tsorcRevamp/NPCs/Enemies/QuaraPincher";
@@ -37,7 +37,10 @@ namespace tsorcRevamp.NPCs.Enemies
         const int DespawnTicks = 18;
         const int SpitTelegraphTicks = 22;
 
-        int ParentIndex => (int)NPC.ai[0];
+        // whoAmI of the Pincher that summoned this crab; -1 until ConfigureSpawn runs. Kept out of NPC.ai[0]
+        // because AnimationType 21's vanilla FindFrame reads ai[0] as a town-NPC state (5 = sit, 7 = talk...)
+        // and froze the walk cycle whenever the parent's slot number matched one of those states.
+        public int ParentIndex { get; private set; } = -1;
 
         public override void SetStaticDefaults()
         {
@@ -75,6 +78,7 @@ namespace tsorcRevamp.NPCs.Enemies
             writer.Write((byte)mode);
             writer.Write(modeTimer);
             writer.Write(emergeInWater);
+            writer.Write(ParentIndex);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -82,12 +86,13 @@ namespace tsorcRevamp.NPCs.Enemies
             mode = (Mode)reader.ReadByte();
             modeTimer = reader.ReadInt32();
             emergeInWater = reader.ReadBoolean();
+            ParentIndex = reader.ReadInt32();
         }
 
         ///<summary>Set by Brood Call right after NPC.NewNPC so the emerge dust reads correctly.</summary>
         public void ConfigureSpawn(int parentIndex, bool inWater)
         {
-            NPC.ai[0] = parentIndex;
+            ParentIndex = parentIndex;
             emergeInWater = inWater;
             NPC.netUpdate = true;
         }

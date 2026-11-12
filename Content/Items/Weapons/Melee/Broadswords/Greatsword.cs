@@ -62,12 +62,15 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         public const float SlamGroundCheckFromAngle = -0.35f;
 
         public const float Carry = 0.25f;
-        public const float Low = 0.18f;
         public const float High = -2.10f;
+        // The overhead cut sweeps 170 deg (2.967 rad) down from High, finishing ~50 deg below level. Only the slam stops
+        // early, at the ground; an overhead carries on through its full arc.
+        public const float OverheadArc = 2.967f;
+        public const float Low = High + OverheadArc;
 
         // [0] overhead cut, [1] rising cut, [2] heavy slam (indexed by GreatswordCut). [0] and [1] give their cut's
         // ANGLES; their TIMING belongs to the combo position instead (see BuildSwing). The slam has the longest windup
-        // and the softest start.
+        // and the softest start, and is authored to finish below the floor: it stops where the tip meets the ground.
         public static readonly GreatswordStep[] DefaultSteps =
         {
             new GreatswordStep
@@ -95,7 +98,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             new GreatswordStep
             {
                 LoadedAngle = -2.88f,
-                FinishAngle = Carry,
+                FinishAngle = Low,
                 WindupFraction = 0.36f,
                 AccelFraction = 0.30f,
                 StartSpeed = 0.05f,
@@ -352,6 +355,16 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             int position = combo.NextPosition;
             GreatswordCut entryCut = combo.LastCut;
             GreatswordCut cut = GreatswordMotion.NextCut(entryCut, position);
+
+            // No slam in the air: an airborne player swings a plain overhead in its place, and the slam comes on the
+            // next overhead slot once grounded (CompleteSwing holds the combo at its last position meanwhile).
+            // velocity.Y is 0 only while standing on something.
+            bool airborne = player.velocity.Y != 0f;
+            if (cut == GreatswordCut.Slam && airborne)
+            {
+                cut = GreatswordCut.Overhead;
+            }
+
             GreatswordStep swing = GreatswordMotion.BuildSwing(ComboSteps, cut, position);
 
             float scaledTicks = BaseSwingTicks * swing.DurationScale;
@@ -440,6 +453,13 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             weaponType = Player.HeldItem.type;
             weaponSlot = Player.selectedItem;
             nextPosition = position + 1;
+
+            // An airborne overhead standing in for the slam can run past the last position: hold the combo on its last
+            // slot (the swing code packs only MaxComboSwings positions), so the slam is still next once grounded.
+            if (nextPosition >= GreatswordMotion.MaxComboSwings)
+            {
+                nextPosition = GreatswordMotion.MaxComboSwings - 1;
+            }
 
             if (cut == GreatswordCut.Slam)
             {
@@ -685,8 +705,13 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             }
 
             poseReady = true;
-            bool wasActive = strikeActive;
-            strikeActive = GreatswordMotion.Live(step, progress);
+
+            // A slam stays live past LiveEndTravel until it lands (or the swing ends), so its damage, slash and impact
+            // all meet at the ground. A slam is only ever started grounded (StartSwing). Before this, its live window closed while the tip was still ~20px above the
+            // floor, so the slam always resolved in the air with no impact.
+            bool cutLive = GreatswordMotion.Live(step, progress);
+            bool slamStillFalling = step.Slam && strikeStarted && !slamResolved;
+            strikeActive = cutLive || slamStillFalling;
 
             if (strikeActive && !strikeStarted)
             {
@@ -718,16 +743,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                 weapon.SwingVisuals(Projectile, player, hand, tip, strikeActive);
             }
 
-            // The slam lands on the first tick its tip touches the ground. If it is still airborne when the strike
-            // window closes, the finisher resolves at the tip instead so the payoff never silently goes missing.
+            // The slam lands on the first tick its tip touches the ground. One that never does (the player left the
+            // ground mid-swing) has no impact and no payoff: a slam only ever fires on the ground.
             bool bladeForwardAndDown = angle >= GreatswordMotion.SlamGroundCheckFromAngle;
             if (step.Slam && strikeActive && !slamResolved && bladeForwardAndDown)
             {
                 TryResolveSlam(player, weapon, isOwner, true, angle);
-            }
-            else if (step.Slam && wasActive && !strikeActive && !slamResolved)
-            {
-                TryResolveSlam(player, weapon, isOwner, false, angle);
             }
 
             Projectile.ai[1]++;
@@ -786,7 +807,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             bladeHand = hand;
             bladeHeel = heel;
             bladeTip = tip;
-            return poseReady && strikeActive && !holdResolved && float.IsNaN(slamStopAngle);
+            // No holdResolved check: it is set the moment a hold-action weapon (Artorias) is released for a plain
+            // swing, which hid that weapon's slash on every cut. A swing traded for the hold action is killed anyway.
+            return poseReady && strikeActive && float.IsNaN(slamStopAngle);
         }
 
         private void TryResolveSlam(Player player, Greatsword weapon, bool isOwner, bool requireGround, float currentAngle)

@@ -83,7 +83,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         {
             base.SetDefaults();
             Item.rare = ModContent.RarityType<DarkBlue>();
-            Item.damage = 260;
+            Item.damage = 330;
             Item.width = 96;
             Item.height = 96;
             Item.knockBack = 7f;

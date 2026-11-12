@@ -141,7 +141,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         private static void DrawBand(Vector2 a, Vector2 b, Color color, float width)
         {
             Vector2 d = b - a;
-            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, a - Main.screenPosition, null, color,
+            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, a - Main.screenPosition, new Rectangle(0, 0, 1, 1), color,
                 d.ToRotation(), new Vector2(0, 0.5f), new Vector2(d.Length() + 1, width), SpriteEffects.None, 0);
         }
     }

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -381,10 +382,73 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     }
 
     /// <summary>
+    /// Draws one BlaiddMoonflame.fx quad additively, standing on the floor: the Moonlight Crescent's flame wall and the
+    /// Moonrise Slam's crest. floorCenter is the bottom-centre of the quad, size = (width, height) px, direction the
+    /// travel direction (tongues lean back against it), seed a per-projectile noise offset. Call from PreDraw; the
+    /// default projectile batch is restored afterwards.
+    /// </summary>
+    public static class BlaiddMoonflameVisuals
+    {
+        // Tongue lean: uv.x shift per unit of flame height, signed against the travel direction.
+        private const float TongueLean = 0.25f;
+
+        private static Asset<Effect> _effect;
+        private static Asset<Texture2D> _noise;
+
+        public static void Draw(Vector2 floorCenter, Vector2 size, float direction, float opacity, float seed,
+            Color core, Color body, Color rim)
+        {
+            if (Main.dedServ || opacity <= 0.01f)
+            {
+                return;
+            }
+
+            _effect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/BlaiddMoonflame", AssetRequestMode.ImmediateLoad);
+            _noise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/T_PerlinNoise_Tiled", AssetRequestMode.ImmediateLoad);
+            Effect effect = _effect.Value;
+            Texture2D noise = _noise.Value;
+
+            Main.spriteBatch.End();
+
+            try
+            {
+                effect.CurrentTechnique = effect.Techniques["BlaiddMoonflame"];
+                effect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["Opacity"]?.SetValue(opacity);
+                effect.Parameters["Lean"]?.SetValue(-direction * TongueLean);
+                effect.Parameters["Seed"]?.SetValue(seed);
+                effect.Parameters["CoreColor"]?.SetValue(core.ToVector3());
+                effect.Parameters["BodyColor"]?.SetValue(body.ToVector3());
+                effect.Parameters["RimColor"]?.SetValue(rim.ToVector3());
+
+                // 2px blocks across the on-screen quad, pre-divided here (ps_2_0 has no preshader).
+                float blocksX = Math.Max(2f, size.X / 2f);
+                float blocksY = Math.Max(2f, size.Y / 2f);
+                effect.Parameters["PixelGrid"]?.SetValue(new Vector4(blocksX, blocksY, 1f / blocksX, 1f / blocksY));
+
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap,
+                    DepthStencilState.None, RasterizerState.CullNone, effect, Main.GameViewMatrix.TransformationMatrix);
+
+                // The noise texture is the quad; origin at its bottom-centre so the flame stands on floorCenter.
+                Vector2 scale = size / noise.Size();
+                Vector2 origin = new Vector2(noise.Width * 0.5f, noise.Height);
+                Main.spriteBatch.Draw(noise, floorCenter - Main.screenPosition, null, Color.White, 0f, origin, scale, SpriteEffects.None, 0);
+                Main.spriteBatch.End();
+            }
+            finally
+            {
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                    DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+        }
+    }
+
+    /// <summary>
     /// Moonlight Crescent: a wall of bright turquoise moonflame released along the floor by Blaidd's phase-2 overhead.
     /// Travels TravelSpeed px/t for TravelLimit px (covers his 460px trigger range), rides stairs and slopes, and ends on
-    /// a wall or pit with a flame puff. Hitbox is 3 tiles tall (jumpable); the flames are drawn up to ~5 tiles, so the
-    /// visual always covers the hitbox. ai[0] = travel direction (-1 / +1).
+    /// a wall or pit with a flame puff. Hitbox is 3 tiles tall (jumpable). Drawn with the BlaiddMoonflame shader: a 56x96
+    /// lead wall plus a 40x64 trailing wall 20px behind (the visual covers the 28x48 hitbox), with sparse embers.
+    /// ai[0] = travel direction (-1 / +1).
     /// </summary>
     public class BlaiddMoonlightCrescent : ModProjectile
     {
@@ -396,6 +460,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const int HitboxHeight = 48;
         private const float FlameHeight = 80f;
         private const int FadeTicks = 10;
+        private const int FadeInTicks = 4;
+        private static readonly Vector2 LeadWallSize = new Vector2(56f, 96f);
+        private static readonly Vector2 TrailWallSize = new Vector2(40f, 64f);
+        private const float TrailWallOffset = 20f;
         // Bright turquoise flame palette: core, body, rim.
         private static readonly Color FlameCore = new Color(200, 255, 250);
         private static readonly Color FlameBody = new Color(40, 230, 220);
@@ -453,9 +521,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            // Flame licks: rising, leaning back from the travel direction, shrinking with height.
+            // Sparse flame licks over the shader wall: rising, leaning back from the travel direction, shrinking with
+            // height. The shader carries the body of the flame; these only break up its silhouette.
             float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
-            int lickCount = (int)MathHelper.Lerp(3f, 9f, fade);
+            int lickCount = 1;
+
+            if (Main.rand.NextBool(2))
+            {
+                lickCount = 2;
+            }
 
             for (int i = 0; i < lickCount; i++)
             {
@@ -500,12 +574,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
+        // Fades in over FadeInTicks and out over the last FadeTicks. The trailing wall is dimmer and uses its own noise
+        // seed so the two never flicker in step.
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float fadeIn = MathHelper.Clamp(Projectile.localAI[0] / FadeInTicks, 0f, 1f);
+            float fadeOut = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+            float opacity = fadeIn * fadeOut;
+            float seed = Projectile.identity * 0.137f % 1f;
+
+            Vector2 trailFloor = Projectile.Bottom + new Vector2(-Direction * TrailWallOffset, 0f);
+            BlaiddMoonflameVisuals.Draw(trailFloor, TrailWallSize, Direction, opacity * 0.7f, seed + 0.5f, FlameCore, FlameBody, FlameRim);
+            BlaiddMoonflameVisuals.Draw(Projectile.Bottom, LeadWallSize, Direction, opacity, seed, FlameCore, FlameBody, FlameRim);
+            return false;
+        }
     }
 
     /// <summary>
     /// Moonrise Slam's ground shockwave: a thin blue front riding the floor away from the landing. Spawned as a
-    /// mirrored pair, 8 px/t x 40t = 320px to each side. Low enough to jump; a roll goes through it.
+    /// mirrored pair, 8 px/t x 40t = 320px to each side. Low enough to jump; a roll goes through it. Drawn as a 44x44
+    /// blue BlaiddMoonflame crest (covers the 22x34 hitbox) with a few spray dusts.
     /// Same floor-riding rules as <see cref="TaurusQuakeShockwave"/>. ai[0] = travel direction (-1 / +1).
     /// </summary>
     public class BlaiddMoonWave : ModProjectile
@@ -518,6 +606,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const float MaxDropPixels = 80f;
         private const int WaveHeight = 34;
         private const int FadeTicks = 12;
+        private static readonly Vector2 CrestSize = new Vector2(44f, 44f);
+        private static readonly Color CrestCore = new Color(215, 235, 255);
+        private static readonly Color CrestBody = new Color(90, 150, 255);
+        private static readonly Color CrestRim = new Color(40, 80, 210);
         // Seconds x 60. Not specified in the design ask; matched to the sword's 6s Withered Armor.
         private const int WeakTicks = 6 * 60;
         private const int ManaSicknessTicks = 6 * 60;
@@ -581,8 +673,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
+            // Spray off the crest; the shader draws the crest itself.
             float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
-            int dustCount = (int)MathHelper.Lerp(1f, 4f, fade);
+            int dustCount = 1;
 
             for (int i = 0; i < dustCount; i++)
             {
@@ -609,6 +702,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
         }
 
-        public override bool PreDraw(ref Color lightColor) => false;
+        // Fades in over the harmless ArmDelayTicks and out over the last FadeTicks.
+        public override bool PreDraw(ref Color lightColor)
+        {
+            float fadeIn = MathHelper.Clamp(Projectile.localAI[0] / ArmDelayTicks, 0f, 1f);
+            float fadeOut = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
+            float seed = Projectile.identity * 0.137f % 1f;
+            BlaiddMoonflameVisuals.Draw(Projectile.Bottom, CrestSize, Direction, fadeIn * fadeOut, seed, CrestCore, CrestBody, CrestRim);
+            return false;
+        }
     }
 }

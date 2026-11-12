@@ -15,7 +15,7 @@ namespace tsorcRevamp.NPCs.Enemies
     /// <summary>
     /// Shared base for the bone-pile skeletons (Ice Skeleton, Skeleton Warrior): the Skeleton armor set and the
     /// collapse-and-reassemble death. The first lethal hit drops it into a bone pile with its own small HP pool;
-    /// shatter the pile for the real death and loot, or it stands again at 30% HP after 4s. A magic killing blow
+    /// shatter the pile for the real death and loot, or it stands again at 50% HP (subclass-tunable) after 4s. A magic killing blow
     /// (magic damage, or melee under a Magic Weapon buff) skips the pile and kills it outright.
     ///
     /// Subclasses put their per-tick AI in SkeletonAI (skipped while collapsed) and supply the pile values and cues.
@@ -83,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies
         /// <summary>The pile's HP pool: CheckDead sets life to this instead of letting it die.</summary>
         protected abstract int PileLife { get; }
         /// <summary>Fraction of lifeMax it stands back up with.</summary>
-        protected virtual float ReformLifeFraction => 0.3f;
+        protected virtual float ReformLifeFraction => 0.5f;
         /// <summary>knockBackResist while standing; the pile and reform force 0.</summary>
         protected abstract float StandingKnockbackResist { get; }
         protected virtual string ReassemblyName => "Reassembly";

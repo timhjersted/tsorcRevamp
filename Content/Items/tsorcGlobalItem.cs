@@ -38,6 +38,35 @@ namespace tsorcRevamp.Content.Items
         public static List<int> torchList;
         public static List<int> hasSoulRecipe;
 
+        // Vanilla teleporters the Curse blocks in Souls Mode from the start of the game (the Magic Mirror only from
+        // Hardmode, below). Only USE is blocked: the Cell Phone / Shellphone info displays still work from the inventory.
+        // Every Shellphone mode is its own item type, so all four are listed.
+        static readonly HashSet<int> SoulsModeCursedTeleporters = new HashSet<int>
+        {
+            ItemID.IceMirror,
+            ItemID.CellPhone,
+            ItemID.Shellphone,
+            ItemID.ShellphoneSpawn,
+            ItemID.ShellphoneOcean,
+            ItemID.ShellphoneHell,
+        };
+
+        /// <summary>The Curse blocks this teleport item for this player: the always-cursed set in Souls Mode, plus the
+        /// Magic Mirror once the world is in Hardmode (Superhardmode included).</summary>
+        static bool IsCursedTeleporter(Item item, Player player)
+        {
+            bool soulsMode = player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
+
+            if (!soulsMode)
+            {
+                return false;
+            }
+
+            bool alwaysCursed = SoulsModeCursedTeleporters.Contains(item.type);
+            bool hardmodeMirror = item.type == ItemID.MagicMirror && Main.hardMode;
+            return alwaysCursed || hardmodeMirror;
+        }
+
         public override void OnSpawn(Item item, IEntitySource source)
         {
             // Vanilla converts Hearts into Candy Apples after checking NPCLoader.blockLoot.
@@ -55,8 +84,8 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool CanUseItem(Item item, Player player)
         {
-            // Hardmode curses the Magic Mirror for both Souls classes; use the player attempting the teleport.
-            if (item.type == ItemID.MagicMirror && Main.hardMode && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            // The Curse blocks vanilla teleporters in Souls Mode (see IsCursedTeleporter); use the player attempting it.
+            if (IsCursedTeleporter(item, player))
             {
                 if (player.whoAmI == Main.myPlayer)
                 {
@@ -258,7 +287,7 @@ namespace tsorcRevamp.Content.Items
         public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
-            if (item.type == ItemID.MagicMirror && Main.hardMode && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            if (IsCursedTeleporter(item, Main.LocalPlayer))
             {
                 string curseMessage = Language.GetTextValue("Mods.tsorcRevamp.Items.GreatMagicMirror.BotCDisabled");
                 tooltips.Add(new TooltipLine(Mod, "HardmodeMirrorCurse", curseMessage));

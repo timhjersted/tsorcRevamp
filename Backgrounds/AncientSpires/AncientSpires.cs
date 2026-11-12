@@ -5,7 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.Graphics;
 using Terraria.Graphics.Effects;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Backgrounds.AncientSpires
@@ -16,6 +18,10 @@ namespace tsorcRevamp.Backgrounds.AncientSpires
         private const int DrawScale = 2;
         private const int WaterlineRow = 346;
         private const int RippleBandHeight = 6;
+        // Abyss vista shade: tiles of open air over which the vista fades from black at a dark wall/block edge up
+        // to full art, and the light multiplier that lets real light (0.4 of 1 = full) override that fade.
+        private const float EdgeFadeTiles = 4f;
+        private const float VistaLightGain = 2.5f;
         private static readonly Color MistColor = new Color(55, 122, 121);
         private static readonly Color FogColor = new Color(111, 180, 167);
 
@@ -45,6 +51,7 @@ namespace tsorcRevamp.Backgrounds.AncientSpires
 
         private (Asset<Texture2D> Texture, float Parallax, bool HasWater)[] layers;
         private readonly List<Rectangle> openRegions = new List<Rectangle>();
+        private float[] vistaLitGrid = Array.Empty<float>();
 
         public override void Load()
         {
@@ -161,6 +168,15 @@ namespace tsorcRevamp.Backgrounds.AncientSpires
             }
 
             spriteBatch.End();
+
+            // Under the abyss, fade the vista into dark walls and blocks instead of cutting off full-bright at their
+            // edge, and cover unlit fences (vanilla skips both the wall draw and DrawBlack on a dark light-passing wall).
+            float abyssOpacity = MethodSwaps.AbyssVisualOpacity;
+            if (abyssOpacity > 0f)
+            {
+                DrawVistaEdgeShade(abyssOpacity);
+            }
+
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
                 DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
 
@@ -235,6 +251,196 @@ namespace tsorcRevamp.Backgrounds.AncientSpires
                     }
                 }
             }
+        }
+
+        private void DrawVistaEdgeShade(float abyssOpacity)
+        {
+            // One black quad per on-screen tile below the surface line, its alpha set per corner from the lit grid,
+            // so the GPU blends a gradient instead of a tile-edge step. Blocked cells get covered by the walls and
+            // tiles drawn after this.
+            int surfaceRow = (int)Math.Ceiling(Main.worldSurface);
+            int firstTileX = Math.Max(1, (int)(Main.screenPosition.X / 16f) - 1);
+            int firstTileY = Math.Max(surfaceRow, (int)(Main.screenPosition.Y / 16f) - 1);
+            int endTileX = Math.Min(Main.maxTilesX - 2, (int)((Main.screenPosition.X + Main.screenWidth) / 16f) + 2);
+            int endTileY = Math.Min(Main.maxTilesY - 2, (int)((Main.screenPosition.Y + Main.screenHeight) / 16f) + 2);
+            if (endTileX <= firstTileX || endTileY <= firstTileY)
+            {
+                return;
+            }
+
+            // The grid adds one fade-width of margin so walls just off screen still fade the vista on screen.
+            int margin = (int)Math.Ceiling(EdgeFadeTiles) + 1;
+            int gridLeft = Math.Max(0, firstTileX - margin);
+            int gridTop = Math.Max(0, firstTileY - margin);
+            int gridRight = Math.Min(Main.maxTilesX, endTileX + margin);
+            int gridBottom = Math.Min(Main.maxTilesY, endTileY + margin);
+            int gridWidth = gridRight - gridLeft;
+            int gridHeight = gridBottom - gridTop;
+            BuildVistaLitGrid(gridLeft, gridTop, gridWidth, gridHeight);
+
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+            Main.tileBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+            for (int y = firstTileY; y < endTileY; y++)
+            {
+                for (int x = firstTileX; x < endTileX; x++)
+                {
+                    int gridX = x - gridLeft;
+                    int gridY = y - gridTop;
+
+                    VertexColors shade = new VertexColors();
+                    shade.TopLeftColor = VistaShadeCorner(gridX, gridY, gridWidth, abyssOpacity);
+                    shade.TopRightColor = VistaShadeCorner(gridX + 1, gridY, gridWidth, abyssOpacity);
+                    shade.BottomLeftColor = VistaShadeCorner(gridX, gridY + 1, gridWidth, abyssOpacity);
+                    shade.BottomRightColor = VistaShadeCorner(gridX + 1, gridY + 1, gridWidth, abyssOpacity);
+
+                    // Fully lit tile: nothing to darken.
+                    bool anyShade = shade.TopLeftColor.A > 0 || shade.TopRightColor.A > 0
+                        || shade.BottomLeftColor.A > 0 || shade.BottomRightColor.A > 0;
+                    if (!anyShade)
+                    {
+                        continue;
+                    }
+
+                    Vector2 tileScreenPosition = new Vector2(x * 16f, y * 16f) - Main.screenPosition;
+                    Vector4 destination = new Vector4(tileScreenPosition.X, tileScreenPosition.Y, 16f, 16f);
+                    Main.tileBatch.Draw(pixel, destination, pixelSource, shade);
+                }
+            }
+
+            Main.tileBatch.End();
+        }
+
+        // Fills vistaLitGrid with how visible the vista is per tile: 0 = black, 1 = full art. Open air one fade-width
+        // from any wall or block is always 1; it ramps down to 0 at the blocked cell. Real light also counts (max of
+        // the two), so a wall lit by a lantern doesn't darken the vista beside it.
+        private void BuildVistaLitGrid(int gridLeft, int gridTop, int gridWidth, int gridHeight)
+        {
+            int cellCount = gridWidth * gridHeight;
+            if (vistaLitGrid.Length < cellCount)
+            {
+                vistaLitGrid = new float[cellCount];
+            }
+
+            // Seed distances: 0 on cells that hide the vista - a light-blocking solid tile or any wall, fences
+            // included, because an unlit fence is skipped by vanilla and would leak the vista. "Far" elsewhere.
+            bool showInvisible = Main.ShouldShowInvisibleWalls();
+            float farDistance = EdgeFadeTiles + 1f;
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    Tile tile = Main.tile[gridLeft + x, gridTop + y];
+                    bool blocksTile = WorldGen.SolidTile(tile) && Main.tileBlockLight[tile.TileType]
+                        && (!tile.IsTileInvisible || showInvisible);
+                    bool hasWall = tile.WallType != WallID.None && (!tile.IsWallInvisible || showInvisible);
+
+                    float distance = farDistance;
+                    if (blocksTile || hasWall)
+                    {
+                        distance = 0f;
+                    }
+
+                    vistaLitGrid[y * gridWidth + x] = distance;
+                }
+            }
+
+            // Two-pass chamfer distance transform, in tiles (1 per straight step, 1.41 per diagonal).
+            // Forward pass pulls from the left and the row above, backward pass from the right and the row below.
+            const float DiagonalStep = 1.41f;
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    int index = y * gridWidth + x;
+                    float best = vistaLitGrid[index];
+
+                    if (x > 0)
+                    {
+                        best = Math.Min(best, vistaLitGrid[index - 1] + 1f);
+                    }
+
+                    if (y > 0)
+                    {
+                        best = Math.Min(best, vistaLitGrid[index - gridWidth] + 1f);
+
+                        if (x > 0)
+                        {
+                            best = Math.Min(best, vistaLitGrid[index - gridWidth - 1] + DiagonalStep);
+                        }
+
+                        if (x < gridWidth - 1)
+                        {
+                            best = Math.Min(best, vistaLitGrid[index - gridWidth + 1] + DiagonalStep);
+                        }
+                    }
+
+                    vistaLitGrid[index] = best;
+                }
+            }
+
+            for (int y = gridHeight - 1; y >= 0; y--)
+            {
+                for (int x = gridWidth - 1; x >= 0; x--)
+                {
+                    int index = y * gridWidth + x;
+                    float best = vistaLitGrid[index];
+
+                    if (x < gridWidth - 1)
+                    {
+                        best = Math.Min(best, vistaLitGrid[index + 1] + 1f);
+                    }
+
+                    if (y < gridHeight - 1)
+                    {
+                        best = Math.Min(best, vistaLitGrid[index + gridWidth] + 1f);
+
+                        if (x < gridWidth - 1)
+                        {
+                            best = Math.Min(best, vistaLitGrid[index + gridWidth + 1] + DiagonalStep);
+                        }
+
+                        if (x > 0)
+                        {
+                            best = Math.Min(best, vistaLitGrid[index + gridWidth - 1] + DiagonalStep);
+                        }
+                    }
+
+                    vistaLitGrid[index] = best;
+                }
+            }
+
+            // Distance -> visibility. SmoothStep eases both ends of the ramp so neither end shows a crease.
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    int index = y * gridWidth + x;
+                    float edgeRamp = MathHelper.Clamp(vistaLitGrid[index] / EdgeFadeTiles, 0f, 1f);
+                    float edgeLit = MathHelper.SmoothStep(0f, 1f, edgeRamp);
+
+                    Color light = Lighting.GetColor(gridLeft + x, gridTop + y);
+                    float brightness = Math.Max(light.R, Math.Max(light.G, light.B)) / 255f;
+                    float lightLit = MathHelper.Clamp(brightness * VistaLightGain, 0f, 1f);
+
+                    vistaLitGrid[index] = Math.Max(edgeLit, lightLit);
+                }
+            }
+        }
+
+        // Darkness at one tile corner: the average visibility of the four cells sharing it (corner = top-left of
+        // cell cornerX/cornerY). Scaled by the abyss fade so the shade eases in on entry. Returns premultiplied black.
+        private Color VistaShadeCorner(int cornerX, int cornerY, int gridWidth, float abyssOpacity)
+        {
+            int belowRight = cornerY * gridWidth + cornerX;
+            int aboveRight = belowRight - gridWidth;
+            float lit = (vistaLitGrid[aboveRight - 1] + vistaLitGrid[aboveRight]
+                + vistaLitGrid[belowRight - 1] + vistaLitGrid[belowRight]) * 0.25f;
+
+            float darkness = (1f - lit) * abyssOpacity;
+            return Color.Black * darkness;
         }
 
         private void FindOpenRegions(Rectangle visibleArea, Matrix zoomMatrix)
