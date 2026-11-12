@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.GravelordNito;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Bosses.Gigas;
 
 namespace tsorcRevamp
 {
@@ -130,7 +131,7 @@ namespace tsorcRevamp
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>());
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
-            AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Cataluminance>(), ModContent.NPCType<NPCs.Bosses.RetinazerV2>(), ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+            AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>(), ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>(), ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
             AddCompletionTypes(NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail);
         }
 
@@ -186,7 +187,7 @@ namespace tsorcRevamp
                 || npcType == ModContent.NPCType<RedKnight>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>())
             {
                 return BossClassification.OptionalField;
             }

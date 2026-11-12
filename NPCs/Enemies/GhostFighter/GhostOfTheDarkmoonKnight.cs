@@ -10,7 +10,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Projectiles.Enemy.Darkmoon;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter

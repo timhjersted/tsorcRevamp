@@ -45,7 +45,7 @@ public class DarkSoulNPC : GlobalNPC
                     {
                         bool isRequiredShmBoss = Systems.AbyssWorldSystem.IsRequiredBoss(npc.type);
                         bool isOptionalShmBoss = npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>()
+                            || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.DarkCloud>()
@@ -72,7 +72,7 @@ public class DarkSoulNPC : GlobalNPC
                             Main.StartInvasion();
                         }
 
-                        if ((npc.type == ModContent.NPCType<NPCs.Bosses.TheSorrow>()) && Main.invasionType == 0)
+                        if ((npc.type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>()) && Main.invasionType == 0)
                         {
                             Main.StartInvasion(3);
                         }

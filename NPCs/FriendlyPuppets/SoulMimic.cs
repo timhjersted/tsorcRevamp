@@ -848,7 +848,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     }
 
                     bool fighterSwinging = enemy.GetGlobalNPC<tsorcRevampGlobalNPC>().AttackCommitted;
-                    bool puppetSwinging = enemy.ModNPC is Puppets.PuppetNPC puppetEnemy && puppetEnemy.IsMeleeSwingThreatening;
+                    bool puppetSwinging = enemy.ModNPC is Invaders.PuppetNPC puppetEnemy && puppetEnemy.IsMeleeSwingThreatening;
 
                     if (!fighterSwinging && !puppetSwinging)
                     {

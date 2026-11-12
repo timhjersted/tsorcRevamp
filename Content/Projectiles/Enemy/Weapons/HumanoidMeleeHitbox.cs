@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     {
         private const float SourceOverlap = 22f; // original 6px overlap + 16px so visible fighters reach the shield before rebounding
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

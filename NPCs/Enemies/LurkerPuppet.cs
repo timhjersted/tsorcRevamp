@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Enemy.FireLurkerSet;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Lurker;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies

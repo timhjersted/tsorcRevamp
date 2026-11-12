@@ -65,7 +65,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class ShadowNinjaPoisonCloud : ModProjectile
     {
         // Dust + shader only; the shared transparent placeholder, same as ToxicGasNovaFog.
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public const int Diameter = 128;
         public const int BuildupPerTick = 1;

@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Melee.Flails;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {

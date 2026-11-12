@@ -148,19 +148,19 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shopCustomPrice = ForgottenPoisonAxe.ShopPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheRage>()))));
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheRage>()))));
 
             shop.Add(new Item(ModContent.ItemType<ForgottenIceBrand>())
             {
                 shopCustomPrice = ForgottenIceBrand.ShopPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheSorrow>()))));
 
             shop.Add(new Item(ModContent.ItemType<ForgottenSwordbreaker>())
             {
                 shopCustomPrice = ForgottenSwordbreaker.ShopPrice,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheHunter>()))));
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheHunter>()))));
 
             shop.Add(new Item(ModContent.ItemType<HiRyuuSpear>())
             {

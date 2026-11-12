@@ -25,7 +25,7 @@ namespace tsorcRevamp.Utilities.Balance
     /// Boss-encounter balance telemetry: one self-contained JSON record per boss fight, appended to one long-lived file
     /// per character (tsorcRevamp-balance-TAG.jsonl) so a player can hand over one attachment per run after weeks of play.
     ///
-    /// Deliberately NOT the same thing as <see cref="NPCs.Puppets.PuppetAttackTelemetry"/> — that one is
+    /// Deliberately NOT the same thing as <see cref="NPCs.Invaders.PuppetAttackTelemetry"/> — that one is
     /// per-frame AI debugging that rolls a new file per session. This one is low-volume balance data
     /// (~2-4 KB per boss kill) meant to survive across sessions and be shared.
     ///

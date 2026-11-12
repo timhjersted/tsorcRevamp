@@ -14,7 +14,7 @@ using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter

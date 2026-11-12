@@ -133,6 +133,12 @@ using tsorcRevamp.Systems.CeruleanFlask;
 using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.OverCrit;
 using tsorcRevamp.Textures;
+using tsorcRevamp.NPCs.Bosses.Birds;
+using tsorcRevamp.NPCs.Bosses.Demons;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
+using tsorcRevamp.NPCs.Bosses.Triad;
+using tsorcRevamp.NPCs.Enemies.Archer;
+using tsorcRevamp.NPCs.Invaders;
 using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
 
 namespace tsorcRevamp
@@ -460,9 +466,9 @@ namespace tsorcRevamp
 
             tsorcRevamp Instance = this;
 
-            SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/SpazmatismV2_Head_Boss_2", -1);
-            RetinazerV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/RetinazerV2_Head_Boss_2", -1);
-            Cataluminance.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/Cataluminance_Head_Boss_2", -1);
+            SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(SpazmatismV2)) + "_Head_Boss_2", -1);
+            RetinazerV2.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(RetinazerV2)) + "_Head_Boss_2", -1);
+            Cataluminance.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(Cataluminance)) + "_Head_Boss_2", -1);
 
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
@@ -588,12 +594,12 @@ namespace tsorcRevamp
             //(True bosses not in this set push straight through, as intended.)
             BodyBlockableNPCs = new HashSet<int>
             {
-                ModContent.NPCType<NPCs.Enemies.RedKnight>(),
-                ModContent.NPCType<NPCs.Enemies.BlackKnight>(),
-                ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(),
+                ModContent.NPCType<NPCs.Invaders.RedKnight>(),
+                ModContent.NPCType<NPCs.Invaders.BlackKnight>(),
+                ModContent.NPCType<NPCs.Invaders.GreatRedKnight>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
-                ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(),
+                ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(),
             };
             #endregion
             //--------
@@ -1285,7 +1291,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
                 {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
-                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Puppets.Marik>()                      },
+                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Invaders.Marik>()                      },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
                 #endregion
             };
@@ -1867,7 +1873,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<Okiku>(),
                 ModContent.NPCType<BrokenOkiku>(),
                 ModContent.NPCType<Attraidies>(),
-                ModContent.NPCType<NPCs.Puppets.Kahlrun>(),
+                ModContent.NPCType<NPCs.Invaders.Kahlrun>(),
             };
             #endregion
 
@@ -2765,7 +2771,7 @@ namespace tsorcRevamp
                         bool validTarget = Main.netMode == NetmodeID.Server
                             && npcIndex >= 0 && npcIndex < Main.maxNPCs
                             && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
-                        if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC puppet)
+                        if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Invaders.PuppetNPC puppet)
                         {
                             puppet.ReportAttackHit();
                         }
@@ -2779,7 +2785,7 @@ namespace tsorcRevamp
                         bool validNpc = Main.netMode == NetmodeID.Server
                             && npcIndex >= 0 && npcIndex < Main.maxNPCs
                             && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
-                        if (validNpc && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC pierceDasher)
+                        if (validNpc && Main.npc[npcIndex].ModNPC is NPCs.Invaders.PuppetNPC pierceDasher)
                         {
                             pierceDasher.HandlePierceGrabRequest(whoAmI);
                         }
@@ -3189,7 +3195,7 @@ namespace tsorcRevamp
         {
             for (int npcType = NPCID.Count; npcType < NPCLoader.NPCCount; npcType++)
             {
-                if (NPCLoader.GetNPC(npcType) is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
+                if (NPCLoader.GetNPC(npcType) is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
                 {
                     NPCID.Sets.NeedsExpertScaling[npcType] = true;
                 }
@@ -3449,13 +3455,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.RedKnight),
+                    nameof(NPCs.Invaders.RedKnight),
                     2.02f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.RedKnight>())),
-                    ModContent.NPCType<NPCs.Enemies.RedKnight>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.RedKnight>())),
+                    ModContent.NPCType<NPCs.Invaders.RedKnight>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.RedKnight>(), Language.GetText("Mods.tsorcRevamp.NPCs.RedKnight.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Invaders.RedKnight>(), Language.GetText("Mods.tsorcRevamp.NPCs.RedKnight.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.Items.BossRematchTome.2")
                     }
                     );
@@ -3502,7 +3508,7 @@ namespace tsorcRevamp
                     {
                         ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<OolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.OolacileDemon.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OolacileDemonDesc"),
-                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/OolacileDemon_Head_Boss"
+                        ["overrideHeadTextures"] = UsefulFunctions.RefactorableFilepath(typeof(OolacileDemon)) + "_Head_Boss"
                     }
                     );
 
@@ -3586,13 +3592,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.IceGigas),
+                    nameof(NPCs.Bosses.Gigas.IceGigas),
                     8.05f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.IceGigas>())),
-                    ModContent.NPCType<NPCs.Enemies.IceGigas>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>())),
+                    ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<HeartOfWinter>()
                     }
@@ -3601,13 +3607,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.Gigas),
+                    nameof(NPCs.Bosses.Gigas.Gigas),
                     11.8f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.Gigas>())),
-                    ModContent.NPCType<NPCs.Enemies.Gigas>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>())),
+                    ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<WrathOfGold>()
                     }
@@ -3964,13 +3970,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
                     this,
-                    nameof(NPCs.Puppets.Marik),
+                    nameof(NPCs.Invaders.Marik),
                     21.5f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Puppets.Marik>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.NPCType<NPCs.Puppets.Marik>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.Marik>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<NPCs.Invaders.Marik>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Puppets.Marik>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.MarikName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Invaders.Marik>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.MarikName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["spawnItems"] = ModContent.ItemType<SoulOfCinderSpawner>()
                     }

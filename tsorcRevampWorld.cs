@@ -30,6 +30,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Runeterra;
+using tsorcRevamp.NPCs.Bosses.Birds;
 
 namespace tsorcRevamp
 {
@@ -455,7 +456,7 @@ namespace tsorcRevamp
             {
                 NewSlain.Remove(oldOccultistKey);
 
-                NPCDefinition newOccultistKey = new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>());
+                NPCDefinition newOccultistKey = new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>());
 
                 if (!NewSlain.ContainsKey(newOccultistKey))
                 {
@@ -2516,14 +2517,14 @@ namespace tsorcRevamp
                 }
             }
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()))
             {
                 if (Filters.Scene[TheRage.FilterID] != null && Filters.Scene[TheRage.FilterID].Active)
                 {
                     Filters.Scene[TheRage.FilterID].Deactivate();
                 }
             }
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>()))
             {
                 if (Filters.Scene[TheSorrow.FilterID] != null && Filters.Scene[TheSorrow.FilterID].Active)
                 {
@@ -2817,38 +2818,38 @@ namespace tsorcRevamp
         public static Dictionary<int, Vector2> PreHardmodeBossIDs = new Dictionary<int, Vector2>
         {
             { ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), new Vector2(3366, 356) },
-            { ModContent.NPCType<NPCs.Enemies.RedKnight>(), new Vector2(3304, 500) },
+            { ModContent.NPCType<NPCs.Invaders.RedKnight>(), new Vector2(3304, 500) },
             { ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(), new Vector2(3900, 1140) },
             { ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), new Vector2(4139f, 933) },
             { NPCID.EyeofCthulhu, new Vector2(3900, 1140) },
             { NPCID.BrainofCthulhu, new Vector2(3044, 904) },
             { NPCID.EaterofWorldsHead, new Vector2(3633, 1010) },
-            { ModContent.NPCType<NPCs.Bosses.OolacileDemon>(), new Vector2(5634, 990) },
+            { ModContent.NPCType<NPCs.Bosses.Demons.OolacileDemon>(), new Vector2(5634, 990) },
             { NPCID.KingSlime, new Vector2(6011, 1128) },
             { ModContent.NPCType<NPCs.Bosses.Slogra>(), new Vector2(6227, 1281) },
             { NPCID.QueenBee, new Vector2(5084, 1479) },
             { NPCID.SkeletronHead, new Vector2(4979, 1404) },
             { NPCID.Deerclops, new Vector2(4049, 166) },
             { ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), new Vector2(4330, 1740) },
-            { ModContent.NPCType<NPCs.Bosses.DefiledDemon>(), new Vector2(5313, 1819) },
+            { ModContent.NPCType<NPCs.Bosses.Demons.DefiledDemon>(), new Vector2(5313, 1819) },
             { NPCID.WallofFlesh, new Vector2(3398, 1827) },
         };
 
         public static Dictionary<int, Vector2> HardmodeBossIDs = new Dictionary<int, Vector2>
         {
             { NPCID.QueenSlimeBoss, new Vector2(7114, 1386) },
-            { ModContent.NPCType<NPCs.Bosses.TheRage>(), new Vector2(7000, 1850) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheRage>(), new Vector2(7000, 1850) },
             { ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), new Vector2(7192, 347) },
-            { ModContent.NPCType<NPCs.Bosses.TheSorrow>(), new Vector2(8236, 1650) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>(), new Vector2(8236, 1650) },
             { ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), new Vector2(1098, 962) },
             { ModContent.NPCType<NPCs.Bosses.Death.Death>(), new Vector2(1076, 545) },
-            { ModContent.NPCType<NPCs.Bosses.TheHunter>(), new Vector2(295, 1515) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>(), new Vector2(295, 1515) },
             { NPCID.TheDestroyer, new Vector2(2109, 856) },
             { ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>(), new Vector2(5066, 1056) },
             { NPCID.Plantera, new Vector2(5828, 1746) },
             { NPCID.Golem, new Vector2(6792, 1628) },
             { NPCID.HallowBoss, new Vector2(4468, 351) },
-            { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
+            { ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>(), new Vector2(2884, 240) },
             { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>(), new Vector2(1401, 307) },
         };
 
@@ -2862,7 +2863,7 @@ namespace tsorcRevamp
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(3233, 1741) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), new Vector2(8174, 867) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(6722, 1906) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), new Vector2(6722, 1906) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), new Vector2(5342, 1694) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), new Vector2(7745, 1583) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), new Vector2(6432, 247) },
@@ -2885,7 +2886,7 @@ namespace tsorcRevamp
         
         public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(8234, 1875) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), new Vector2(8234, 1875) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2490, 1804) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(305, 1923) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(3152, 1696) },

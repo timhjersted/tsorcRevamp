@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Banners;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 

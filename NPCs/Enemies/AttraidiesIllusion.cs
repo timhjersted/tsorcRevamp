@@ -18,7 +18,7 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Projectiles.Enemy.Attraidies;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies

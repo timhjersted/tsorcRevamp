@@ -20,7 +20,7 @@ using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Content.Projectiles.Enemy.Witchking;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode

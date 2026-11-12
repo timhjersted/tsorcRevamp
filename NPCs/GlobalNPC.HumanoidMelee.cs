@@ -359,8 +359,8 @@ namespace tsorcRevamp.NPCs
 
         static bool UsesKnightThirtyTickCommit(NPC npc)
         {
-            return npc.ModNPC is Enemies.RedKnight
-                || npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
+            return npc.ModNPC is Invaders.RedKnight
+                || npc.ModNPC is Invaders.GreatRedKnight;
         }
 
         private void RunHumanoidMeleeTelegraph(NPC npc, Player target, HumanoidMeleeMove move, int activeStart)

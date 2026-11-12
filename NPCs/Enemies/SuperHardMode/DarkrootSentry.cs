@@ -17,7 +17,7 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Halberds;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 

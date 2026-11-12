@@ -295,7 +295,7 @@ namespace tsorcRevamp
             ScriptedEvent Pinwheel = new ScriptedEvent(new Vector2(4139f, 923), 15, ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), DustID.Asphalt, true, true, true, LangUtils.GetTextValue("Events.Pinwheel"), Color.Firebrick, false);
 
             //LOTHRIC BLACK KNIGHT IN CATACOMBS OF THE DROWNED
-            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, LothricBlackKnightCustomAction);
+            ScriptedEvent LothricKnightCatacombs = new ScriptedEvent(new Vector2(4137, 895), 10, ModContent.NPCType<NPCs.Enemies.Lothric.LothricBlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, LothricBlackKnightCustomAction);
             LothricKnightCatacombs.SetCustomStats(1100, 8, 40, 1500);
 
             //FIRELURKER AMBUSH 1 - Path of Ambition main room
@@ -311,17 +311,17 @@ namespace tsorcRevamp
             ScriptedEvent DeathRemix = new ScriptedEvent(new Vector2(8091, 557), 30, ModContent.NPCType<NPCs.Bosses.Death.Death>(), DustID.BoneTorch, true, true, true, LangUtils.GetTextValue("Events.Death"), Color.Black, false, RemixMapCondition);
 
             //BLACK KNIGHT IN BLUE SHM DUNGEON
-            ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            ScriptedEvent BlackKnightSHMDungeon = new ScriptedEvent(new Vector2(2282, 1650), 30, ModContent.NPCType<NPCs.Invaders.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             BlackKnightSHMDungeon.SetCustomStats(25000, 30, 140, 16000);
             BlackKnightSHMDungeon.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
             //RED KNIGHT IN OOLICILE FOREST
-            ScriptedEvent RedKnightOolicileForest = new ScriptedEvent(new Vector2(5596, 926), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
+            ScriptedEvent RedKnightOolicileForest = new ScriptedEvent(new Vector2(5596, 926), 10, ModContent.NPCType<NPCs.Invaders.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
             RedKnightOolicileForest.SetCustomDrops(new List<int>() { ItemID.GreaterHealingPotion, ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<SoulCoin>() }, new List<int>() { 4, 3, 2, 50 });
             RedKnightOolicileForest.SetCustomStats(1000, 9, 55, 1250);
 
             //BLACK KNIGHT IN HALLOWED CAVES
-            ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            ScriptedEvent BlackKnightHallowed = new ScriptedEvent(new Vector2(7454, 1413), 40, ModContent.NPCType<NPCs.Invaders.BlackKnight>(), DustID.ShadowbeamStaff, true, false, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             BlackKnightHallowed.SetCustomStats(6000, 20, 80, 5000);
             BlackKnightHallowed.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
@@ -329,7 +329,7 @@ namespace tsorcRevamp
             ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.HallowedTorch, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Pink, false);
 
             //GREAT RED KNIGHT IN DESERT
-            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
+            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Invaders.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
             GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
             GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
@@ -365,17 +365,17 @@ namespace tsorcRevamp
             ScriptedEvent LichKingRemix = new ScriptedEvent(new Vector2(3152, 1685), 40, ModContent.NPCType<EarthFiendLich>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.LichKing"), Color.Gold, false, RemixMapCondition);
 
             //THE HUNTER
-            ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.TheHunter>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Hunter"), Color.DarkGreen, false);
+            ScriptedEvent TheHunter = new ScriptedEvent(new Vector2(296, 1560), 36, ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.Hunter"), Color.DarkGreen, false);
 
             //THE RAGE
-            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.TheRage>(), DustID.Torch, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
+            ScriptedEvent TheRage = new ScriptedEvent(new Vector2(7000, 1845), 30, ModContent.NPCType<NPCs.Bosses.Birds.TheRage>(), DustID.Torch, true, true, true, LangUtils.GetTextValue("Events.Rage"), Color.Red, false);
 
             //DEFILED DEMON (FORGOTTEN CITY, CLOSE TO FIRE TEMPLE)
-            ScriptedEvent DefiledDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.DefiledDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.DefiledDemon"), Color.MediumPurple, false);
+            ScriptedEvent DefiledDemon = new ScriptedEvent(new Vector2(5317, 1800), 25, ModContent.NPCType<NPCs.Bosses.Demons.DefiledDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.DefiledDemon"), Color.MediumPurple, false);
             DefiledDemon.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 5000 });
 
             //ANCIENT OOLACILE DEMON (EARLY-GAME)
-            ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.OolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.OolacileDemon"), Color.MediumPurple, false);
+            ScriptedEvent AODE = new ScriptedEvent(new Vector2(5652, 971), 27, ModContent.NPCType<NPCs.Bosses.Demons.OolacileDemon>(), DustID.GoldFlame, true, true, true, LangUtils.GetTextValue("Events.OolacileDemon"), Color.MediumPurple, false);
             AODE.SetCustomDrops(new List<int>() { ModContent.ItemType<Humanity>(), ModContent.ItemType<DarkSoulItem>() }, new List<int>() { 1, 1500 });
 
             //GOBLIN SUMMONER IN WMF
@@ -398,7 +398,7 @@ namespace tsorcRevamp
             ScriptedEvent KingSlimeEvent = new ScriptedEvent(new Vector2(5995, 1117), 20, NPCID.KingSlime, DustID.MagicMirror, true, true, true, LangUtils.GetTextValue("Events.KingSlime"), Color.Blue, false);
 
             //HERO OF LUMELIA FIGHT
-            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2108, 849), 60, ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
+            ScriptedEvent HeroofLumeliaFight = new ScriptedEvent(new Vector2(2108, 849), 60, ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HeroOfLumelia"), Color.LightGoldenrodYellow, false, LumeliaCustomCondition);//location previously was 4413, 717, near village
 
             //FIRE LURKER PATH OF PAIN
             ScriptedEvent FireLurkerPain = new ScriptedEvent(new Vector2(3245, 1252), 9, ModContent.NPCType<NPCs.Enemies.FireLurker>(), DustID.CursedTorch, true, true, true, LangUtils.GetTextValue("Events.FireLurker"), Color.Purple, false, default, FireLurkerPainCustomAction);
@@ -409,7 +409,7 @@ namespace tsorcRevamp
             ScriptedEvent RuneMage = new ScriptedEvent(new Vector2(3897, 1219), 100, ModContent.NPCType<RuneMage>(), 27, true, false, true);
 
             //RED KNIGHT IN TWIN PEAKS MOUNTAIN
-            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Enemies.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
+            ScriptedEvent RedKnightTwinMountain = new ScriptedEvent(new Vector2(3287, 495), 10, ModContent.NPCType<NPCs.Invaders.RedKnight>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.RedKnight2"), Color.Purple, false, default, RedKnightMountainCustomAction);
             RedKnightTwinMountain.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ItemID.AmmoReservationPotion }, new List<int>() { 3, 4, 5 });
             RedKnightTwinMountain.SetCustomStats(4000, 10, 55, 2500);
 
@@ -458,9 +458,9 @@ namespace tsorcRevamp
             ScriptedEvent RemixGwynEvent = new ScriptedEvent(new Vector2(822, 1241), 16, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Gwyn"), Color.Red, false, RemixMapCondition);
 
             //ABYSMAL OOLACILE SORCERER
-            ScriptedEvent GrandOccultistEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, OnlyAdventureMapCondition);
+            ScriptedEvent GrandOccultistEvent = new ScriptedEvent(new Vector2(6721, 1905), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, OnlyAdventureMapCondition);
 
-            ScriptedEvent RemixGrandOccultistEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, RemixMapCondition);
+            ScriptedEvent RemixGrandOccultistEvent = new ScriptedEvent(new Vector2(8239, 1870), 40, ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.GrandOccultist"), Color.Red, false, RemixMapCondition);
 
             //WITCHKING
             ScriptedEvent WitchkingEvent = new ScriptedEvent(new Vector2(2484, 1795), 30, ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.Witchking"), Color.Red, false, OnlyAdventureMapCondition);
@@ -490,7 +490,7 @@ namespace tsorcRevamp
             //ArtoriasEvent.SetCustomDrops(new List<int>() { ItemID.RodofDiscord, ModContent.ItemType<Items.DestructionElement>() }, new List<int>() { 1, 4 });
 
             //BLACK KNIGHT IN FORGOTTEN CITY
-            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Enemies.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
+            ScriptedEvent BlackKnightCity = new ScriptedEvent(new Vector2(4508, 1745), 20, ModContent.NPCType<NPCs.Invaders.BlackKnight>(), DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.BlackKnight"), Color.Purple, false, default, BlackKnightCustomAction);
             BlackKnightCity.SetCustomStats(3000, 10, 60, 3500);
             BlackKnightCity.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
@@ -565,7 +565,7 @@ namespace tsorcRevamp
             ScriptedEvent BoulderfallEvent3 = new ScriptedEvent(new Vector2(3665, 360), 6, default, default, true, false, false, "", default, false, default, BoulderfallEvent3Action);
 
             //FIREBOMB HOLLOW AMBUSH - ON BRIDGE AT TWIN PEAKS - ONLY ONCE
-            List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSpearman>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
+            List<int> FirebombHollowAmbushEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Hollow.HollowSpearman>(), ModContent.NPCType<NPCs.Enemies.Hollow.FirebombHollow>() };
             List<Vector2> FirebombHollowAmbushEnemyLocations = new List<Vector2>() { new Vector2(3386, 367), new Vector2(3451, 367) };
             ScriptedEvent FirebombHollowAmbush = new ScriptedEvent(new Vector2(3418, 364), 10, FirebombHollowAmbushEnemyTypeList, FirebombHollowAmbushEnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.FirebombHollowAmbush"), Color.Red, false, default, FirebombHollowAmbushAction);
 
@@ -575,7 +575,7 @@ namespace tsorcRevamp
             //ScriptedEvent LeonhardRemixEvent = new ScriptedEvent(new Vector2(3418, 362), 35, ModContent.NPCType<NPCs.Special.LeonhardRemix>(), 60, true, true, true, LangUtils.GetTextValue("Events.Leonhard1"), Color.Red, false, LeonhardRemixSecretCondition);
 
             //HOLLOW AMBUSH 1 - BOTTOM RIGHT OF EARTH TEMPLE
-            List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.FirebombHollow>() };
+            List<int> HollowAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Hollow.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.Hollow.FirebombHollow>() };
             List<Vector2> HollowAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4446, 1211), new Vector2(4456, 1211) };
             ScriptedEvent HollowAmbush1 = new ScriptedEvent(new Vector2(4422, 1210), 10, HollowAmbush1EnemyTypeList, HollowAmbush1EnemyLocations, default, true, false, false, LangUtils.GetTextValue("Events.HollowAmbush1"), Color.Red, false, PreEoCCustomCondition, null);
 
@@ -594,25 +594,25 @@ namespace tsorcRevamp
             DualSandsprogAmbush1.SetCustomDrops(new List<int>() { ItemID.SandBoots }, new List<int>() { 1 }, true);
 
             //SHADOW MAGE AMBUSH - IN TUNNEL AFTER TWIN EOW FIGHT
-            List<int> ShadowMageAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ShadowMage>() };
+            List<int> ShadowMageAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Hollow.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ShadowMage>() };
             List<Vector2> ShadowMageAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4029, 1429), new Vector2(4074, 1399) };
             ScriptedEvent ShadowMageAmbush1 = new ScriptedEvent(new Vector2(4060, 1418), 10, ShadowMageAmbush1EnemyTypeList, ShadowMageAmbush1EnemyLocations, DustID.CursedTorch, true, false, false, LangUtils.GetTextValue("Events.ShadowMageAmbush"), Color.Red, false, PreSkeletronCustomCondition, null);
             ShadowMageAmbush1.SetCustomStats(700, 18, null); // Lowers the mage's HP, and raises the soldiers
 
             //BRIDGE AMBUSH 1 - ON BRIDGE POST EOW
-            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.ManHunter>(), ModContent.NPCType<NPCs.Enemies.HollowSpearman>() };
+            List<int> BridgeAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Hollow.HollowWarrior>(), ModContent.NPCType<NPCs.Enemies.Hollow.HollowSoldier>(), ModContent.NPCType<NPCs.Enemies.Archer.ManHunter>(), ModContent.NPCType<NPCs.Enemies.Hollow.HollowSpearman>() };
             List<Vector2> BridgeAmbush1EnemyLocations = new List<Vector2>() { new Vector2(4593, 858), new Vector2(4640, 858), new Vector2(4643f, 841), new Vector2(4588f, 858) };
             ScriptedEvent BridgeAmbush1 = new ScriptedEvent(new Vector2(4615, 852), 6, BridgeAmbush1EnemyTypeList, BridgeAmbush1EnemyLocations, DustID.Cloud, true, false, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red, false, PostEoWCustomCondition, null);
 
             //LOTHRIC AMBUSH 1 - IN ROOM BELOW ARTORIAS BOSS FIGHT ROOM, APPROACHING JUNGLE PYRAMID FROM FORGOTTEN CITY
-            List<int> LothricAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>(), ModContent.NPCType<NPCs.Enemies.LothricSpearKnight>() };
+            List<int> LothricAmbush1EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Lothric.LothricKnight>(), ModContent.NPCType<NPCs.Enemies.Lothric.LothricSpearKnight>() };
             List<Vector2> LothricAmbush1EnemyLocations = new List<Vector2>() { new Vector2(5148, 1757), new Vector2(5197, 1757) };
             ScriptedEvent LothricAmbush1 = new ScriptedEvent(new Vector2(5173, 1750), 6, LothricAmbush1EnemyTypeList, LothricAmbush1EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.LothricAmbush1"), Color.Red, false, PreMechCustomCondition, null);
             LothricAmbush1.SetCustomStats(null, null, null, 500);
             LothricAmbush1.SetCustomDrops(new List<int>() { ModContent.ItemType<GreenBlossom>() }, new List<int>() { 5 }, true);
 
             //LOTHRIC AMBUSH 2 - IN ROOM BEFORE TRIPLE ENCHANTED SWORDS, UNDER EARTH TEMPLE ENTRANCE
-            List<int> LothricAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.LothricKnight>() };
+            List<int> LothricAmbush2EnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.Lothric.LothricKnight>() };
             List<Vector2> LothricAmbush2EnemyLocations = new List<Vector2>() { new Vector2(4596, 946) };
             ScriptedEvent LothricAmbush2 = new ScriptedEvent(new Vector2(4574, 945), 12, LothricAmbush2EnemyTypeList, LothricAmbush2EnemyLocations, DustID.DungeonWater, true, false, false, LangUtils.GetTextValue("Events.LothricAmbush2"), Color.Red, false, PreMechCustomCondition, null);
             LothricAmbush2.SetCustomStats(null, null, 70, 600); // Lower damage than normal, slightly more souls than normal
@@ -645,7 +645,7 @@ namespace tsorcRevamp
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
             //Ashen Cavern Leftside - Great Demon Of The Abyss
-            ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
+            ScriptedEvent AshCavernLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Bosses.Demons.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
 
             //Ashen Cavern Rightside - Darkroot Sentry
             ScriptedEvent AshCavernRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, OnlyAdventureMapConditionSHM);
@@ -654,10 +654,10 @@ namespace tsorcRevamp
             ScriptedEvent MorgulFelegLeftside = new ScriptedEvent(new Vector2(1578, 1895), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Morgul Feleg Rightside - Great Demon Of The Abyss
-            ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent MorgulFelegRightside = new ScriptedEvent(new Vector2(2382, 1882), 25, ModContent.NPCType<NPCs.Bosses.Demons.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Great Demon Of The Abyss on the Abandonned Hallowed Village (Remix Map)
-            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Enemies.SuperHardMode.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
+            ScriptedEvent HallowDemonEvent = new ScriptedEvent(new Vector2(6761, 1081), 30, ModContent.NPCType<NPCs.Bosses.Demons.AncientDemon>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Red, false, RemixMapConditionSHM);
 
             //Sunken Sky Temple
             ScriptedEvent MoltenSkyTempleEvent = new ScriptedEvent(new Vector2(1040, 1865), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss.SerpentOfTheAbyssHead>(), 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange);
@@ -714,7 +714,7 @@ namespace tsorcRevamp
             List<Vector2> FrozenCathedralEvent2EnemyLocations = new List<Vector2>() { new Vector2(7189, 1650), new Vector2(7164, 1650) };
             ScriptedEvent FrozenCathedralEvent2 = new ScriptedEvent(new Vector2(7177, 1650), 35, FrozenCathedralEvent2EnemyTypeList, FrozenCathedralEvent2EnemyLocations, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction); 
             
-            List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.TheRage>(), ModContent.NPCType<NPCs.Bosses.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.TheHunter>() };
+            List<int> WingTrioEventEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Bosses.Birds.TheRage>(), ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>(), ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>() };
             List<Vector2> WingTrioEventEnemyLocations = new List<Vector2>() { new Vector2(3838, 1425), new Vector2(3879, 1425), new Vector2(3858, 1410) };
             ScriptedEvent WingTrioEvent = new ScriptedEvent(new Vector2(3858, 1420), 40, WingTrioEventEnemyTypeList, WingTrioEventEnemyLocations, 292, true, true, true, LangUtils.GetTextValue("Events.WingTrio"), Color.Yellow, false, RemixMapCondition);
             WingTrioEvent.SetCustomDrops(new List<int>() { ModContent.ItemType<EternalCrystal>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>(), ModContent.ItemType<TrinityItem>()}, new List<int>() { 3, 1, 1, 1, 1 });
@@ -943,7 +943,7 @@ namespace tsorcRevamp
 
         public static bool LumeliaCustomCondition()
         {
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.HeroofLumelia>())))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.HeroofLumelia>())))
             {
                 return true;
             }
@@ -1325,7 +1325,7 @@ namespace tsorcRevamp
 
         public static bool AttraidiesTheSorrowCondition()
         {
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>()))
             {
                 return true;
             }
@@ -1472,10 +1472,10 @@ namespace tsorcRevamp
         {
             //Changing projectile damage:
             //First, we make sure the NPC is the one we're talking about. This isn't strictly necessary since we know it should be that one, but it's good practice.
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Invaders.BlackKnight>())
             {
                 //Then, we cast the NPC to our custom modded npc type. This lets us alter unique properties defined within the code of that modded NPC, such as its projectile damage values.
-                NPCs.Enemies.BlackKnight ourKnight = (NPCs.Enemies.BlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
+                NPCs.Invaders.BlackKnight ourKnight = (NPCs.Invaders.BlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
 
                 //Now we can change the damages!!
                 //Note: If you can't find the damages for a NPC, the variable that controls the damage for its projectile might not be public (read: probably isn't).
@@ -1489,9 +1489,9 @@ namespace tsorcRevamp
         //LOTHRIC BLACK KNIGHT CUSTOM ACTION
         public static EventActionStatus LothricBlackKnightCustomAction(ScriptedEvent thisEvent)
         {
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.LothricBlackKnight>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.Lothric.LothricBlackKnight>())
             {
-                NPCs.Enemies.LothricBlackKnight ourKnight = (NPCs.Enemies.LothricBlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
+                NPCs.Enemies.Lothric.LothricBlackKnight ourKnight = (NPCs.Enemies.Lothric.LothricBlackKnight)thisEvent.eventNPCs[0].npc.ModNPC;
                 ourKnight.lothricDamage = 14;
             }
             return EventActionStatus.EndAction;
@@ -1512,9 +1512,9 @@ namespace tsorcRevamp
         //RED KNIGHT MOUNTAIN CUSTOM ACTION
         public static EventActionStatus RedKnightMountainCustomAction(ScriptedEvent thisEvent)
         {
-            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Enemies.RedKnight>())
+            if (thisEvent.eventNPCs[0].npc.type == ModContent.NPCType<NPCs.Invaders.RedKnight>())
             {
-                NPCs.Enemies.RedKnight ourRedKnight = (NPCs.Enemies.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
+                NPCs.Invaders.RedKnight ourRedKnight = (NPCs.Invaders.RedKnight)thisEvent.eventNPCs[0].npc.ModNPC;
                 // Real expert damage (the Red Knight wraps its spawns in EnemyDamage.Projectile).
                 ourRedKnight.redKnightsSpearDamage = 60;
                 ourRedKnight.redMagicDamage = 44;

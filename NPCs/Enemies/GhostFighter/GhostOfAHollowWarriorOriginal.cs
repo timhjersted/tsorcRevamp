@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Enemies.Hollow;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -596,7 +597,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         {
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
 
-            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior");
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)));
             if (NPC.spriteDirection == 1)
             {
                 spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 64, 54), Color.White * 0.75f, NPC.rotation, new Vector2(32, 30), NPC.scale, effects, 0f);
@@ -610,7 +611,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
+            Texture2D shieldTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)) + "_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
             if (shielding && NPC.velocity.X == 0 && !jumpSlashing && !slashing)

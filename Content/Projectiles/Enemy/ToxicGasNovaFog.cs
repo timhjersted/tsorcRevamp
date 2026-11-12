@@ -16,7 +16,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     {
         // Dust-only (hide = true below) - reuse the shared invisible placeholder rather than new art,
         // same convention as PoisonTrailCloud.cs/ArtoriasAbyssBlast.cs/BlindingPulse.cs.
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public const int Diameter = 800; // 2x Eland's 400px nova radius
         const float MaxRadius = Diameter / 2f;

@@ -20,7 +20,7 @@ using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
 using tsorcRevamp.Content.Items;
@@ -725,17 +725,17 @@ namespace tsorcRevamp.NPCs
             Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
-            Add<Bosses.SuperHardMode.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
+            Add<Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
             Add<Bosses.SuperHardMode.Chaos>(0.15f, 120f); // the one stagger window is the Fireball Storm channel's first 66t
             Add<Bosses.GreatSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
-            Add<Bosses.HeroofLumelia>(0.15f, 120f);
+            Add<Invaders.HeroofLumelia>(0.15f, 120f);
             // Heavy giants / demons
-            Add<Bosses.DefiledDemon>(0.15f, 80f);
-            Add<Bosses.OolacileDemon>(0.15f, 80f);
-            Add<Enemies.SuperHardMode.AncientDemon>(0.15f, 80f);
-            Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
-            Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
+            Add<Bosses.Demons.DefiledDemon>(0.15f, 80f);
+            Add<Bosses.Demons.OolacileDemon>(0.15f, 80f);
+            Add<Bosses.Demons.AncientDemon>(0.15f, 80f);
+            Add<Bosses.Gigas.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
+            Add<Bosses.Gigas.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
             Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window
             Add<Bosses.VesselOfSouls.VesselOfSouls>(0.15f, 120f); // EoC-slot flying eye boss: boss-tier poise; its gravity-well channel (phase 2) will be the stagger window
             Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
@@ -745,7 +745,7 @@ namespace tsorcRevamp.NPCs
             // Elite / heavy knight
             Add<Enemies.SuperHardMode.TaurusKnight>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
-            Add<Enemies.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
+            Add<Invaders.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
             // Standard fighters
             Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
             Add<Enemies.SkeletonWarrior>(0.3f, 30f); // shield advance halves frontal poise; a stagger strips the shield for good
@@ -779,19 +779,19 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Necromancer>(0.4f, 26f);
             Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
             Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
-            Add<Enemies.FirebombHollow>(0.4f, 26f);
+            Add<Enemies.Hollow.FirebombHollow>(0.4f, 26f);
             Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
             // Light / agile
-            Add<Puppets.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
-            Add<Puppets.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
-            Add<Enemies.Assassin>(0.45f, 20f);
+            Add<Enemies.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
+            Add<Enemies.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
+            Add<Enemies.Archer.Assassin>(0.45f, 20f);
             Add<Enemies.TibianAmazon>(0.45f, 20f);
             Add<Enemies.TibianValkyrie>(0.45f, 20f);
             // Lighter / hunters
             Add<Enemies.Basilisk.BasiliskWalker>(0.5f, 18f);
-            Add<Enemies.ManHunter>(0.5f, 18f);
+            Add<Enemies.Archer.ManHunter>(0.5f, 18f);
             Add<Enemies.ObsidianGuard>(0.45f, 18f); // Stage-specific poise/knockback is applied by the Guard's synchronized AI.
-            Add<Enemies.RedCloudHunter>(0.5f, 18f);
+            Add<Enemies.Archer.RedCloudHunter>(0.5f, 18f);
             // Small
             Add<Enemies.Sandsprog>(0.55f, 15f);
             Add<Enemies.SandsprogMage>(0.55f, 15f);
@@ -1049,7 +1049,7 @@ namespace tsorcRevamp.NPCs
             {
                 HandlePoiseOnHit(npc, report.PoiseDamage, report.SourceCenter);
             }
-            if (npc.ModNPC is Puppets.PuppetNPC puppet)
+            if (npc.ModNPC is Invaders.PuppetNPC puppet)
             {
                 puppet.RegisterHit(report.SourceCenter, report.DamageDone, report.MeleeHit);
             }
@@ -5087,7 +5087,7 @@ namespace tsorcRevamp.NPCs
                 npc.knockBackResist = poiseProfile.knockBackResist;
                 PoiseMax = poiseProfile.poiseMax;
             }
-            else if (npc.ModNPC is Puppets.PuppetNPC)
+            else if (npc.ModNPC is Invaders.PuppetNPC)
             {
                 // Every puppet-style invader can channel Estus and must therefore have a poise
                 // meter so the player can interrupt that channel. Per-NPC tuning set in the
@@ -5116,7 +5116,7 @@ namespace tsorcRevamp.NPCs
             // EnablePuppetDifficultyScaling), and without the halving below vanilla's 2x expert
             // life multiplier would silently double every puppet's authored lifeMax.
             bool isModNPC = npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp");
-            bool scalesLikeBoss = npc.boss || (npc.ModNPC is Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling);
+            bool scalesLikeBoss = npc.boss || (npc.ModNPC is Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling);
 
             if (isModNPC && scalesLikeBoss)
             {

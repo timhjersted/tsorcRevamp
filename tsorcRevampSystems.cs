@@ -16,7 +16,7 @@ using tsorcRevamp.Content.Items.Debug;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems.CeruleanFlask;
 using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Textures;

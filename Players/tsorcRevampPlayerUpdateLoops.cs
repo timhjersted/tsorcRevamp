@@ -55,6 +55,7 @@ using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Bosses.Demons;
 using Shockwave = tsorcRevamp.Content.Projectiles.Shockwave;
 
 namespace tsorcRevamp
@@ -763,14 +764,14 @@ namespace tsorcRevamp
             {
                 Player.ClearBuff(BuffID.SlimeMount);
             }
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 Player.ClearBuff(BuffID.QueenSlimeMount);
             }
 
             // The Black Knight is a regular enemy (npc.boss is false, so BossAlive ignores it) but gets boss-zen anyway:
             // the buff stops other spawns for as long as one is alive. Runs on the server too, which is what reads the flag.
-            bool blackKnightAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Enemies.BlackKnight>());
+            bool blackKnightAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Invaders.BlackKnight>());
 
             if ((tsorcRevampWorld.BossAlive || blackKnightAlive) && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
@@ -2519,8 +2520,8 @@ namespace tsorcRevamp
                     text = LangUtils.GetTextValue("DeathText.BossDeath1");
                     deathTextOverridden = true;
                 }
-                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() ||
-                    Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
+                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>() ||
+                    Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()
                     || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death.Death>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
@@ -2535,7 +2536,7 @@ namespace tsorcRevamp
                     deathTextOverridden = true;
                 }
 
-                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Puppets.OwlFather>())
+                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Invaders.OwlFather>())
                 {
                     text = LangUtils.GetTextValue("DeathText.OwlFather");
                     deathTextOverridden = true;
@@ -2544,7 +2545,7 @@ namespace tsorcRevamp
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
             }
 
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(NPCID.TheDestroyer))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(NPCID.TheDestroyer))
             {
                 //Don't tell them rolling is mandatory if they died trying (and failing) to roll out of the way lol
                 if (Main.rand.NextBool() && !wasJustRolling && !tsorcRevamp.DodgerollKey.Current)

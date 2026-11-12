@@ -2289,7 +2289,7 @@ namespace tsorcRevamp
                         }
 
                         NPCs.FriendlyPuppets.MirrorPuppetNPC buriedMirrorPuppet = npc.ModNPC as NPCs.FriendlyPuppets.MirrorPuppetNPC;
-                        NPCs.Puppets.PuppetNPC buriedEnemyPuppet = npc.ModNPC as NPCs.Puppets.PuppetNPC;
+                        NPCs.Invaders.PuppetNPC buriedEnemyPuppet = npc.ModNPC as NPCs.Invaders.PuppetNPC;
                         bool mirrorBuried = buriedMirrorPuppet != null && buriedMirrorPuppet.StaysBehindSolidTiles;
                         bool enemyBuried = buriedEnemyPuppet != null && buriedEnemyPuppet.StaysBehindSolidTiles;
 
@@ -2630,7 +2630,7 @@ namespace tsorcRevamp
                 {
                     restrictedHook = true;
                 }
-                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     restrictedHook = true;
                 }
@@ -2653,7 +2653,7 @@ namespace tsorcRevamp
                         {
                             restrictedHook = true;
                         }
-                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                         {
                             restrictedHook = true;
                         }

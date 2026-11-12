@@ -12,6 +12,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Enemies.Lothric;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.NPCs
 {

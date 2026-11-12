@@ -1,0 +1,1221 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Utilities;
+
+namespace tsorcRevamp.NPCs.Invaders
+{
+    /// <summary>
+    /// Weapon archetypes that map an item's playstyle to a set of attack combos.
+    /// Detected automatically from item useStyle/damage class, or overridden per puppet.
+    /// </summary>
+    public enum WeaponArchetype
+    {
+        None,
+        // Melee
+        Broadsword,
+        Greatsword,
+        Hammer,
+        Axe,
+        Dagger,
+        Whip,
+        Flail,
+        Katana,
+        Rapier,
+        Halberd,
+        TwinDaggers,
+        // Ranged
+        Throwables,
+        Bow,
+        Crossbow,
+        Boomerang,
+    }
+
+    /// <summary>
+    /// How the weapon moves through a single combo step.  Drives both the weapon-rotation
+    /// lerp and the puppet body-row selection in PuppetNPC.
+    /// </summary>
+    public enum ComboMotion
+    {
+        OverheadArc,      // raised behind head -> swung down-forward
+        UnderhandArc,     // dipped low -> swung up-forward
+        HorizontalSweep,  // flat side-to-side sweep
+        VerticalChop,     // straight overhead -> straight down (hammer)
+        Thrust,           // dip -> snap horizontal (stab/spear)
+        JoustDash,        // thrust + forward velocity push (lunge)
+        Spin,             // looped 0->2pi rotation (flail/whirlwind)
+        IaidoDraw,        // held low + behind -> fast snap forward
+        GroundSlam,       // overhead -> past vertical with shockwave
+        LeapSlam,         // jump toward player with the axe raised, slam down + hit on landing
+        LeapThrust,       // jump toward player with spear leveled forward, thrust on landing
+        ChargeChop,       // run at the player; ends on contact or a timeout, next step is the chop
+        Feint,            // raise + flash as a bait, hold without swinging; the next step is the real (delayed) chop
+        DoubleSpinSlam,   // two complete overhead circles, then a final downward ground strike
+        ThrownWeaponRetrieve, // circular throw telegraph, wait for embed, leap to retrieve the weapon
+        LowAxeRun,        // sprint with the arm and axe carried low and behind
+        RisingUppercutLeap, // rising axe cut that launches the puppet, then holds overhead while falling
+        BackstepRaise,    // hop away while visibly raising the weapon; next step is the re-entry strike
+        ApexDiveCleave,   // high jump, limited tracking on ascent, then an active descending blade sweep
+        FlailBrace,       // stable forward hand/anchor; a ball-and-chain projectile owns the visible motion
+        // Ranged motions reuse RangedStyle on PuppetNPC; ranged combos pick at burst level
+    }
+
+    public enum ComboRangeBand
+    {
+        Close, // melee reach
+        Mid,   // stab / dash range
+        Far,   // ranged / spear
+        Any
+    }
+
+    /// <summary>Which hand swings a combo step on a dual-wielding puppet (one with a back-hand weapon
+    /// equipped). Front is the default, so every existing combo table is unchanged. The other hand eases
+    /// to its carry pose while it isn't swinging; Both sweeps the two weapons through the same arc.</summary>
+    public enum ComboHand : byte
+    {
+        Front,
+        Back,
+        Both,
+    }
+
+    /// <summary>How the back blade moves on a <see cref="ComboHand.Both"/> step. Both hands still read the
+    /// one swing clock; this only picks the back hand's curve on it. Arc motions only (Overhead, Underhand,
+    /// HorizontalSweep, VerticalChop) - any other motion always mirrors.</summary>
+    public enum ComboBackArc : byte
+    {
+        Mirror,  // the back blade sweeps the identical arc (the original Both behaviour)
+        Reverse, // the back blade sweeps the arc end -> start while the front sweeps start -> end (a scissor)
+        Delayed, // the back blade sweeps the identical arc, BackDelayTicks behind the front
+    }
+
+    public struct MeleeComboStep
+    {
+        public ComboMotion Motion;
+        /// <summary>Dual-wield only: the hand(s) this step swings with. Ignored without a back-hand weapon.
+        /// Legacy MeleeCombo steps only — a RuntimeV2Clip combo always swings the front hand.</summary>
+        public ComboHand Hand;
+        /// <summary>Dual-wield Both steps only: the back blade's curve. Mirror (the default) is unchanged behaviour.</summary>
+        public ComboBackArc BackArc;
+        /// <summary>BackArc.Delayed only: ticks (of AttackTicks) the back blade trails the front. Its hit window
+        /// shifts by the same amount, so the trailing blade is live for its own strike.</summary>
+        public int BackDelayTicks;
+        public int   TelegraphTicks;   // only step 0's telegraph is "real"; later steps use PostStepPause as their telegraph
+        public int   AttackTicks;
+        public int   PostStepPause;    // pause AFTER this step before the next step's attack
+        public float DamageMult;
+        public float ReachMult;
+        public float ForwardPushMult;  // 0 = stationary; >0 = hop/dash scaled by TopSpeed
+        /// <summary>Weighted swings only: px the wielder steps forward across the step, shaped like the blade -
+        /// speed ramps up through the ease-in, peaks on the strike, and decays with the follow-through - instead of
+        /// the engine's planted brake. Solved against the step's real length, so a faster tempo covers the same
+        /// ground. 0 = off (constant ForwardPushMult, or the brake). Takes precedence over ForwardPushMult.</summary>
+        public float StepInDistance;
+        /// <summary>How fast the visual arc sweeps, for aim-swing pilot puppets only. >1 = faster
+        /// (shorter swing window), &lt;1 = slower. The swing then plays over AttackTicks / SwingSpeedMult
+        /// instead of being floored to the weapon's useAnimation. 1 = play over AttackTicks as-is.</summary>
+        public float SwingSpeedMult;
+        /// <summary>Easing shape of the arc, for aim-swing pilot puppets only. Lets different steps
+        /// feel different (snappy flick vs heavy settle vs delayed whip) at the same duration.</summary>
+        public SwingEaseStyle Ease;
+        /// <summary>Ticks of acceleration at the start / deceleration at the end of the swing, read
+        /// only when Ease is <see cref="SwingEaseStyle.Weighted"/> (see SwingEase.ApplyWeighted).</summary>
+        public int EaseInTicks;
+        public int EaseOutTicks;
+        /// <summary>Weighted only: how sharply speed decays over EaseOutTicks (1/e-foldings). Higher =
+        /// faster strike, longer near-still settle. 0 = SwingEase.DefaultWeightedDecay (6).</summary>
+        public float EaseOutDecay;
+        /// <summary>Landing-timed LeapSlam only: once past the apex with the target this close (px,
+        /// centre to centre), the downswing starts in the air instead of waiting for the landing,
+        /// and the blade sweeps for real. 0 (default) = strike on the landing only.</summary>
+        public float LeapStrikeRange;
+        /// <summary>Fraction of the attack phase after which the blade stops dealing damage and is
+        /// only following through. 0 (the default) keeps it armed for the whole phase. Pairs with a
+        /// long Weighted ease-out, so a slowly settling blade is not a live hitbox.</summary>
+        public float HitWindowEnd;
+        /// <summary>Per-step launch shaping for leap motions. Values at or below zero are treated as
+        /// 1 so existing combo tables retain their current movement without migration.</summary>
+        public float LeapHeightMult;
+        public float LeapForwardSpeedMult;
+        /// <summary>LeapSlam only: once past the apex, gravity is scaled by this factor for the rest
+        /// of the descent (the rise to the apex is unaffected, so jump height/telegraph stay as
+        /// authored — only the drop speeds up). At or below 0, or 1, is vanilla gravity (unchanged).</summary>
+        public float LeapDescentGravityMult;
+        /// <summary>LeapSlam only: the tick the apex is reached, re-aim the locked horizontal launch
+        /// velocity at the target's position AT THAT MOMENT (not the lead-predicted launch-time
+        /// position), blended in by this fraction (0-1). 0 (the default) keeps the committed
+        /// launch-time aim for the whole descent, same as every other leap attack.</summary>
+        public float LeapApexRetargetStrength;
+    }
+
+    public struct MeleeCombo
+    {
+        public string         Name;
+        public MeleeComboStep[] Steps;
+        /// <summary>Optional single-clock V2 clip. When present, PuppetNPC bypasses the legacy
+        /// combo phase choreography for this attack while preserving the shared picker and renderer.</summary>
+        public PuppetAttackClip RuntimeV2Clip;
+        public int            BaseWeight;
+        public ComboRangeBand Preferred;
+        public Color          InitialFlashColor;
+        public int            CooldownAfterUse;
+        /// <summary>Recovery ticks after this combo's final step, i.e. how long the puppet is
+        /// committed and punishable before it can act again. 0 = use the puppet's flat
+        /// <c>MeleeRecoveryTicks</c>. This is the main lever for attack RHYTHM: a light swing that
+        /// recovers in 14 ticks and re-threatens feels nothing like a heavy that leaves a 48-tick
+        /// opening, and a moveset where every attack recovers identically reads as flat no matter
+        /// how varied the swings themselves are.</summary>
+        public int            RecoveryTicks;
+        public bool           HeavyCommit;   // HP-escalation multiplier applies to these
+        public bool           HyperArmor;    // commit (no stagger) holds through inter-step pauses, not just active frames
+        /// <summary>Only eligible outside normal melee engagement range. Used for committed
+        /// gap-closing or physical thrown-weapon openers that begin at range.</summary>
+        public bool           RangedStartOnly;
+        /// <summary>Only eligible while in wing flight, and ground combos are never eligible there.
+        /// Replaces the flight controller's generic dive: a LeapSlam step started airborne dives
+        /// straight at the target (see PuppetNPC.BeginLeapAttack) instead of jumping.</summary>
+        public bool           AirborneStartOnly;
+        /// <summary>Per-tick horizontal velocity brake while this combo winds up / swings, for
+        /// aim-swing pilot puppets only. 0 = keep full momentum (no slowdown), 0.4 = plant the feet
+        /// for a heavy commit. Replaces the old blanket SlowDown() so light attacks stay mobile.</summary>
+        public float          MoveBrake;
+    }
+
+    public struct RangedComboShot
+    {
+        public int   PauseBefore;    // pause before this shot fires (0 for first shot)
+        public float SpreadDegrees;
+        public float SpeedMult;      // multiplier on base shoot speed
+        public int   ProjectileCount; // shots fired this step (fan)
+    }
+
+    public struct RangedCombo
+    {
+        public string         Name;
+        public RangedComboShot[] Shots;
+        public int            BaseWeight;
+        public ComboRangeBand Preferred;
+        public Color          InitialFlashColor;
+        public int            TelegraphExtra; // added to base telegraph
+        public int            CooldownAfterUse;
+        public bool           HeavyCommit;
+    }
+
+    public static class WeaponArchetypeTables
+    {
+        // ─────────────────────────────────────────────────────────────────────
+        // Item -> archetype detection
+        // ─────────────────────────────────────────────────────────────────────
+
+        public static WeaponArchetype DetectMelee(Item item)
+        {
+            if (item == null || item.IsAir) return WeaponArchetype.None;
+
+            // Whips
+            if (item.DamageType == DamageClass.SummonMeleeSpeed) return WeaponArchetype.Whip;
+
+            // Thrown / throwable melee (Swing + noMelee + shoots projectile)
+            if (item.useStyle == ItemUseStyleID.Swing && item.noMelee && item.shoot > ProjectileID.None)
+                return WeaponArchetype.None; // ranged path will pick this up as Throwables
+
+            if (item.useStyle == ItemUseStyleID.Swing)
+            {
+                if (item.hammer > 0) return WeaponArchetype.Hammer;
+                if (item.damage >= 70 && item.useTime >= 28) return WeaponArchetype.Greatsword;
+                if (item.useTime <= 14 && item.damage <= 30)  return WeaponArchetype.Dagger;
+                return WeaponArchetype.Broadsword;
+            }
+
+            if (item.useStyle == ItemUseStyleID.Thrust)
+            {
+                // Vanilla "Rapier" useStyle is a forward thrust pose; long polearms also use this.
+                if (item.useTime <= 18) return WeaponArchetype.Rapier;
+                return WeaponArchetype.Halberd;
+            }
+
+            return WeaponArchetype.None;
+        }
+
+        public static WeaponArchetype DetectRanged(Item item)
+        {
+            if (item == null || item.IsAir) return WeaponArchetype.None;
+
+            // Throwable melee (e.g. AbyssalStar): Swing + noMelee + shoots
+            if (item.useStyle == ItemUseStyleID.Swing && item.noMelee && item.shoot > ProjectileID.None)
+                return WeaponArchetype.Throwables;
+
+            if (item.useStyle == ItemUseStyleID.Shoot)
+            {
+                if (item.useAmmo == AmmoID.Arrow)  return WeaponArchetype.Bow;
+                if (item.useAmmo == AmmoID.Bullet) return WeaponArchetype.Crossbow;
+                if (item.useAmmo > 0)              return WeaponArchetype.Crossbow;
+                // No ammo: probably a magic staff or boomerang-style item.
+                return WeaponArchetype.Throwables;
+            }
+
+            return WeaponArchetype.None;
+        }
+
+        public static bool IsMeleeArchetype(WeaponArchetype a) =>
+            a >= WeaponArchetype.Broadsword && a <= WeaponArchetype.TwinDaggers;
+
+        public static bool IsRangedArchetype(WeaponArchetype a) =>
+            a >= WeaponArchetype.Throwables && a <= WeaponArchetype.Boomerang;
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Combo lookup
+        // ─────────────────────────────────────────────────────────────────────
+
+        public static MeleeCombo[] GetMeleeCombos(WeaponArchetype a) => a switch
+        {
+            WeaponArchetype.Broadsword   => Broadsword,
+            WeaponArchetype.Greatsword   => Greatsword,
+            WeaponArchetype.Hammer       => Hammer,
+            WeaponArchetype.Axe          => Axe,
+            WeaponArchetype.Dagger       => Dagger,
+            WeaponArchetype.Whip         => Whip,
+            WeaponArchetype.Flail        => Flail,
+            WeaponArchetype.Katana       => Katana,
+            WeaponArchetype.Rapier       => Rapier,
+            WeaponArchetype.Halberd      => Halberd,
+            WeaponArchetype.TwinDaggers  => TwinDaggers,
+            _ => null
+        };
+
+        public static RangedCombo[] GetRangedCombos(WeaponArchetype a) => a switch
+        {
+            WeaponArchetype.Throwables => ThrowablesCombos,
+            WeaponArchetype.Bow        => BowCombos,
+            WeaponArchetype.Crossbow   => CrossbowCombos,
+            WeaponArchetype.Boomerang  => BoomerangCombos,
+            _ => null
+        };
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Range/HP-aware combo picker
+        // ─────────────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Returns the index of a melee combo from the archetype's pool, weighted by:
+        ///   - Base weight
+        ///   - Range band match (combos preferring the current band get x2.0, mismatched bands x0.4)
+        ///   - HP escalation: hpFrac <= 0.66 -> HeavyCommit x1.5; <= 0.33 -> HeavyCommit x2.5
+        /// Returns -1 if no combo is eligible (all weights zero).
+        /// </summary>
+        public static int PickCombo(MeleeCombo[] pool, float dist, float hpFrac, float closeMax, float midMax)
+        {
+            if (pool == null || pool.Length == 0) return -1;
+
+            ComboRangeBand band = dist <= closeMax ? ComboRangeBand.Close
+                               : dist <= midMax   ? ComboRangeBand.Mid
+                               : ComboRangeBand.Far;
+
+            float heavyMult = hpFrac <= 0.33f ? 2.5f
+                            : hpFrac <= 0.66f ? 1.5f
+                            : 1.0f;
+
+            int total = 0;
+            int[] weights = new int[pool.Length];
+            for (int i = 0; i < pool.Length; i++)
+            {
+                float w = pool[i].BaseWeight;
+                if (pool[i].Preferred == band || pool[i].Preferred == ComboRangeBand.Any)
+                    w *= 2.0f;
+                else
+                    w *= 0.4f;
+                if (pool[i].HeavyCommit)
+                    w *= heavyMult;
+                weights[i] = (int)w;
+                total += weights[i];
+            }
+            if (total <= 0) return -1;
+
+            int roll = Main.rand.Next(total);
+            int cumulative = 0;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                cumulative += weights[i];
+                if (roll < cumulative) return i;
+            }
+            return pool.Length - 1;
+        }
+
+        public static int PickRangedCombo(RangedCombo[] pool, float dist, float hpFrac, float closeMax, float midMax)
+        {
+            if (pool == null || pool.Length == 0) return -1;
+
+            ComboRangeBand band = dist <= closeMax ? ComboRangeBand.Close
+                               : dist <= midMax   ? ComboRangeBand.Mid
+                               : ComboRangeBand.Far;
+
+            float heavyMult = hpFrac <= 0.33f ? 2.5f
+                            : hpFrac <= 0.66f ? 1.5f
+                            : 1.0f;
+
+            int total = 0;
+            int[] weights = new int[pool.Length];
+            for (int i = 0; i < pool.Length; i++)
+            {
+                float w = pool[i].BaseWeight;
+                if (pool[i].Preferred == band || pool[i].Preferred == ComboRangeBand.Any)
+                    w *= 2.0f;
+                else
+                    w *= 0.4f;
+                if (pool[i].HeavyCommit)
+                    w *= heavyMult;
+                weights[i] = (int)w;
+                total += weights[i];
+            }
+            if (total <= 0) return -1;
+
+            int roll = Main.rand.Next(total);
+            int cumulative = 0;
+            for (int i = 0; i < pool.Length; i++)
+            {
+                cumulative += weights[i];
+                if (roll < cumulative) return i;
+            }
+            return pool.Length - 1;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Step shorthand builders
+        // ─────────────────────────────────────────────────────────────────────
+
+        private static MeleeComboStep S(ComboMotion m, int tel, int atk, int pause,
+                                        float dmg = 1f, float reach = 1f, float push = 0f,
+                                        float swingMult = 1f, SwingEaseStyle ease = SwingEaseStyle.Smooth)
+            => new MeleeComboStep
+            {
+                Motion = m, TelegraphTicks = tel, AttackTicks = atk,
+                PostStepPause = pause, DamageMult = dmg, ReachMult = reach,
+                ForwardPushMult = push, SwingSpeedMult = swingMult, Ease = ease
+            };
+
+        // Broadsword cuts use the whole authored swing clock. The blade stays live only while
+        // its weighted speed is at least 30% of peak; the long decaying tail is follow-through.
+        private static MeleeComboStep BroadswordCut(ComboMotion motion, int tell, int easeIn,
+            int easeOut, float decay, int pause, float damage = 1f, float push = 0f)
+            => new MeleeComboStep
+            {
+                Motion = motion, TelegraphTicks = tell, AttackTicks = easeIn + easeOut,
+                PostStepPause = pause, DamageMult = damage, ReachMult = 1f,
+                ForwardPushMult = push, SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Weighted, EaseInTicks = easeIn,
+                EaseOutTicks = easeOut, EaseOutDecay = decay,
+                HitWindowEnd = (easeIn + easeOut * 1.204f / decay) / (easeIn + easeOut),
+            };
+
+        private static MeleeComboStep BroadswordPoke(int tell, int attack, float damage,
+            float reach, float push)
+        {
+            MeleeComboStep step = S(ComboMotion.JoustDash, tell, attack, 0,
+                damage, reach, push, ease: SwingEaseStyle.Whip);
+            step.HitWindowEnd = 0.75f; // An 18-tick live thrust, then a harmless extension.
+            return step;
+        }
+
+        /// <summary>Full broadsword poses for the shared pool. Kept per-combo so quick cuts,
+        /// reversals and the finisher do not all trace the same arc; bespoke Broadsword pools
+        /// continue to use their own endpoints.</summary>
+        public static void SetBroadswordComboArc(string comboName, ComboMotion motion,
+            ref float start, ref float end)
+        {
+            float high;
+            float low;
+            switch (comboName)
+            {
+                case "Quickslash":       high = -1.55f; low = 2.32f; break; // 222 degrees
+                case "Under-Over":       high = -1.50f; low = 2.28f; break; // 217 degrees
+                case "3-Hit Standard":   high = -1.55f; low = 2.36f; break; // 224 degrees
+                case "5-Hit Finisher":   high = -1.48f; low = 2.24f; break; // 213 degrees
+                default: return;
+            }
+
+            if (motion == ComboMotion.OverheadArc)
+            {
+                start = high;
+                end = low;
+            }
+            else if (motion == ComboMotion.UnderhandArc)
+            {
+                start = low;
+                end = high;
+            }
+        }
+
+        private static RangedComboShot R(int pause, float spread = 0f, float speed = 1f, int count = 1)
+            => new RangedComboShot { PauseBefore = pause, SpreadDegrees = spread, SpeedMult = speed, ProjectileCount = count };
+
+        /// <summary>
+        /// Base start/end rotation of each motion's visible swing arc, before any per-puppet transform
+        /// (ModifyMeleeArcEndpoints, alternate-flip, aim bias) — those stay with the caller.
+        ///
+        /// Lives here rather than inline in PuppetNPC.TickWeaponAnim so the offline preview harness
+        /// (.agents/tools/SwingPreview) swings the SAME numbers the game does. A hand-copied
+        /// table is the failure mode the VFX preview harness documents: it drifts within about three
+        /// tweaks and then quietly previews a swing nobody ships.
+        ///
+        /// NOT the same table as PuppetNPC.ComboStepStartRotation, and do not merge them. That one
+        /// answers "where does the NEXT step's arc begin" for the inter-step pause handoff, and
+        /// deliberately differs — Feint parks at its wind-up because a feint never completes the
+        /// swing, and JoustDash has no entry there at all.
+        /// </summary>
+        public static (float Start, float End) SwingArcEndpoints(ComboMotion motion, float overheadWindupOvershoot)
+        {
+            switch (motion)
+            {
+                case ComboMotion.OverheadArc:    return (-1.3f - overheadWindupOvershoot, 1.0f);
+                case ComboMotion.UnderhandArc:   return (1.0f, -1.0f);
+                case ComboMotion.HorizontalSweep: return (-0.4f, 0.6f);
+                case ComboMotion.VerticalChop:   return (-1.55f - overheadWindupOvershoot, 1.4f);
+                case ComboMotion.GroundSlam:     return (-1.55f - overheadWindupOvershoot, 1.5f);
+                case ComboMotion.JoustDash:      return (MathHelper.PiOver2, MathHelper.PiOver4);
+                case ComboMotion.IaidoDraw:      return (1.2f, -0.5f);
+                case ComboMotion.LeapSlam:       return (-1.45f - overheadWindupOvershoot, 1.4f);
+                case ComboMotion.LeapThrust:     return (MathHelper.PiOver2 * 0.8f, MathHelper.PiOver4);
+                case ComboMotion.Feint:          return (-1.3f - overheadWindupOvershoot, 1.0f);
+                case ComboMotion.DoubleSpinSlam: return (-1.3f - overheadWindupOvershoot, 1.4f);
+                default:                         return (0f, 0f);
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // MELEE ARCHETYPE TABLES (5 combos each)
+        // Colors: white=quick, cyan=combo, yellow=committed, orange=dash, red=heavy
+        // ─────────────────────────────────────────────────────────────────────
+
+        // Shared sword kit. Artorias supplies the full-arc / weighted-curve model; Studded Leather
+        // Warrior supplies the differing combo cadence and planted pause/recovery beats. Each
+        // ordinary cut has a 213-224 degree envelope and about 170-184 live degrees. All cut live
+        // windows are under the player's 22-tick roll. The 19-30 harmless tail ticks plus the
+        // pauses put the next live cut at least 30 ticks after the previous live window ends.
+        // Joust Poke is a deliberate point-first thrust, not a cut.
+        public static readonly MeleeCombo[] Broadsword = new[]
+        {
+            new MeleeCombo {
+                Name = "Quickslash", BaseWeight = 100, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 55,
+                RecoveryTicks = 20, MoveBrake = 0.08f,
+                // Poses -1.55 -> 2.32; 22t tell, 7t accelerate, 28t settle, ~12t live.
+                Steps = new[] { BroadswordCut(ComboMotion.OverheadArc, 22, 7, 28, 7f, 0) }
+            },
+            new MeleeCombo {
+                Name = "Under-Over", BaseWeight = 80, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 90,
+                RecoveryTicks = 26, MoveBrake = 0.12f,
+                Steps = new[] {
+                    // 217-degree rising cut -> shared high endpoint -> heavier downward answer.
+                    BroadswordCut(ComboMotion.UnderhandArc, 24, 8, 30, 6f, 15, push: 0.35f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 9, 30, 7f, 0, 1.1f, 0.45f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Joust Poke", BaseWeight = 80, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 110,
+                RecoveryTicks = 30, MoveBrake = 0.06f,
+                // Aimed thrust: 28t raised tell, 24t full extension, then a punishable hold.
+                Steps = new[] { BroadswordPoke(28, 24, 1.2f, 1.4f, 1.8f) }
+            },
+            new MeleeCombo {
+                Name = "3-Hit Standard", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 140,
+                RecoveryTicks = 30, MoveBrake = 0.14f,
+                Steps = new[] {
+                    // Generic 1-2-3 figure eight. Shadow Ninja authors his separate 1,1-2 variant.
+                    BroadswordCut(ComboMotion.OverheadArc, 26, 8, 30, 7f, 17, 0.9f, 0.3f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 7, 30, 6.5f, 18, 0.9f, 0.35f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 10, 32, 7f, 0, 1.1f, 0.5f),
+                }
+            },
+            new MeleeCombo {
+                Name = "5-Hit Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                RecoveryTicks = 42, MoveBrake = 0.18f,
+                Steps = new[] {
+                    // Four full reversals. Their harmless tails and pauses give distinct dodge beats.
+                    BroadswordCut(ComboMotion.OverheadArc, 40, 8, 30, 7f, 14, 0.7f, 0.4f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 7, 28, 7f, 15, 0.7f, 0.4f),
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 7, 28, 6.5f, 15, 0.7f, 0.45f),
+                    BroadswordCut(ComboMotion.UnderhandArc, 0, 8, 30, 7f, 25, 0.7f, 0.45f),
+                    // The longer planted beat exposes the final advancing overhead.
+                    BroadswordCut(ComboMotion.OverheadArc, 0, 10, 34, 8f, 0, 1.5f, 1.2f),
+                }
+            },
+        };
+
+        // Authored easing pass: this table predates SwingEaseStyle and every step was inheriting the
+        // Smooth default, so all five combos swung with the same shape regardless of weight or intent.
+        // Only the CURVE is authored here - no SwingSpeedMult, so every step keeps its existing tick
+        // budget and nothing rebalances. Ease is read via PuppetNPC.ApplySwingEase, which only honors
+        // it when UseAuthoredComboSwingClock is on (Artorias, Gwyn, axe pilots; SoulOfCinder needs the
+        // one-line opt-in). Every arc motion plus JoustDash/LeapSlam/LeapThrust reads it; Spin does not.
+        public static readonly MeleeCombo[] Greatsword = new[]
+        {
+            new MeleeCombo {
+                Name = "Heavy Chop", BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 160, HeavyCommit = true,
+                // Whip: hangs at the apex a beat longer, then drives through. The 45-tick telegraph
+                // already sells the commitment; this keeps the blade heavy instead of coasting down.
+                Steps = new[] { S(ComboMotion.OverheadArc, 45, 26, 0, 1.8f, 1.2f, ease: SwingEaseStyle.Whip) }
+            },
+            new MeleeCombo {
+                Name = "Rising Slash", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 140,
+                Steps = new[] { S(ComboMotion.UnderhandArc, 35, 24, 0, 1.4f, 1.1f, 0.6f) }
+            },
+            new MeleeCombo {
+                Name = "Spin-Dash", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 160,
+                Steps = new[] {
+                    S(ComboMotion.Spin,      30, 22, 10, 1.0f, 1.0f, 1.4f),
+                    S(ComboMotion.JoustDash,  0, 16, 0,  1.3f, 1.3f, 1.6f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Ground Pound", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                // Whip again for the heaviest move in the pool. Note Artorias retargets this step
+                // onto LeapSlam, which is not an arc motion, so this curve applies to SoulOfCinder.
+                Steps = new[] { S(ComboMotion.GroundSlam, 50, 24, 0, 2.0f, 1.3f, ease: SwingEaseStyle.Whip) }
+            },
+            new MeleeCombo {
+                Name = "Running Cleave", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
+                Steps = new[] {
+                    S(ComboMotion.JoustDash,   22, 14, 10, 0.9f, 1.1f, 1.4f),
+                    // Snap: the cleave lands early in the arc so it connects at the end of the dash
+                    // rather than trailing a beat behind it.
+                    S(ComboMotion.OverheadArc,  0, 22, 0,  1.4f, 1.2f, ease: SwingEaseStyle.Snap),
+                }
+            },
+        };
+
+        public static readonly MeleeCombo[] Hammer = new[]
+        {
+            new MeleeCombo {
+                Name = "Overhead Smash", BaseWeight = 80, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 90,
+                Steps = new[] { S(ComboMotion.VerticalChop, 30, 22, 0, 1.5f, 1.0f) }
+            },
+            new MeleeCombo {
+                Name = "Side-to-Side", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 120,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 18, 18, 14),
+                    S(ComboMotion.HorizontalSweep,  0, 18, 0, 1.1f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Step-In Smash", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 130,
+                Steps = new[] { S(ComboMotion.VerticalChop, 25, 22, 0, 1.4f, 1.1f, 1.2f) }
+            },
+            new MeleeCombo {
+                Name = "3-Bash Combo", BaseWeight = 50, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 22, 16, 12, 0.9f),
+                    S(ComboMotion.HorizontalSweep,  0, 16, 12, 0.9f),
+                    S(ComboMotion.VerticalChop,     0, 22, 0,  1.3f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Charged Slam", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 260, HeavyCommit = true,
+                Steps = new[] { S(ComboMotion.GroundSlam, 55, 26, 0, 2.2f, 1.5f) }
+            },
+        };
+
+        // Axes deliberately use ONLY OverheadArc (downward chop) and UnderhandArc (rising cut) —
+        // the two swings a player actually has with an axe.  No spins / sweeps / thrusts; variety
+        // comes from damage, reach, step-in push, and commitment instead of exotic motions.
+        public static readonly MeleeCombo[] Axe = new[]
+        {
+            // Bread-and-butter overhead: fast, snappy, barely slows the feet.
+            new MeleeCombo {
+                Name = "Chop", BaseWeight = 100, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 70, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 30, 22, 0, 1.2f, 1.1f, swingMult: 1.4f, ease: SwingEaseStyle.Snap) }
+            },
+            // Rising slash: a touch more deliberate than the chop so the up-swing reads clearly.
+            new MeleeCombo {
+                Name = "Rising Cut", BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 80, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.UnderhandArc, 32, 22, 0, 1.2f, 1.1f, swingMult: 1.2f) }
+            },
+            // Lunging chop: keeps its forward momentum (no brake), quick committed strike.
+            new MeleeCombo {
+                Name = "Step-In Chop", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 110, MoveBrake = 0f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 30, 22, 0, 1.3f, 1.1f, 1.2f, swingMult: 1.35f, ease: SwingEaseStyle.Snap) }
+            },
+            // Chop down, then rip straight back up. The handoff eases into the rising cut (no snap).
+            new MeleeCombo {
+                Name = "Down-Up", BaseWeight = 55, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 150, MoveBrake = 0.12f,
+                Steps = new[] {
+                    S(ComboMotion.OverheadArc,  28, 22, 12, 1.0f, 1f, 0f, swingMult: 1.35f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.UnderhandArc,  0, 22, 0,  1.2f, 1f, 0f, swingMult: 1.2f),
+                }
+            },
+            // Big menacing swing: holds the apex, then whips down slow and heavy; plants the feet.
+            new MeleeCombo {
+                Name = "Heavy Cleave", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true, MoveBrake = 0.40f,
+                Steps = new[] { S(ComboMotion.OverheadArc, 48, 28, 0, 2.0f, 1.25f, 0f, swingMult: 0.85f, ease: SwingEaseStyle.Whip) }
+            },
+            // Triple step-in chop: three fast advancing chops with hyper-armor, the eased re-raise
+            // between each chop serving as the (uninterruptible) wind-up for the next.
+            new MeleeCombo {
+                Name = "Triple Chop Advance", BaseWeight = 45, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 220, HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
+                Steps = new[] {
+                    S(ComboMotion.OverheadArc, 36, 20, 14, 1.1f, 1.1f, 1.0f, swingMult: 1.5f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.OverheadArc,  0, 20, 14, 1.1f, 1.1f, 1.0f, swingMult: 1.5f, ease: SwingEaseStyle.Snap),
+                    S(ComboMotion.OverheadArc,  0, 22,  0, 1.3f, 1.1f, 1.0f, swingMult: 1.4f, ease: SwingEaseStyle.Snap),
+                }
+            },
+            // Leaping slam: wind up, jump toward the player with the axe held high, slam down +
+            // hit on landing (single deferred-hit step; AttackTicks is the airtime cap).
+            new MeleeCombo {
+                Name = "Leaping Slam", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
+                Steps = new[] { S(ComboMotion.LeapSlam, 34, 90, 0, 1.7f, 1.25f) }
+            },
+            // Charge chop: run at the player (step 0, no hit) until in reach OR a 3 s timeout,
+            // then the OverheadArc chop (step 1) lands.  The timeout lets it complete + reset to
+            // idle even if the player keeps evading.
+            new MeleeCombo {
+                Name = "Charge Chop", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Orange, CooldownAfterUse = 180, HyperArmor = true, MoveBrake = 0f,
+                Steps = new[] {
+                    S(ComboMotion.ChargeChop,  30, 180, 2),
+                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.3f, 1.1f, 0f, swingMult: 1.35f, ease: SwingEaseStyle.Snap),
+                }
+            },
+            // Feint chop: raise the axe + fire the warning flash (the bait), hold WITHOUT swinging
+            // so a panic-roll whiffs, then drop the real chop fast a beat later (the delayed swing).
+            new MeleeCombo {
+                Name = "Feint Chop", BaseWeight = 35, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 160, MoveBrake = 0.15f,
+                Steps = new[] {
+                    S(ComboMotion.Feint,       30, 26, 6),
+                    S(ComboMotion.OverheadArc,  0, 22, 0, 1.2f, 1.1f, 0f, swingMult: 1.45f, ease: SwingEaseStyle.Snap),
+                }
+            },
+        };
+
+        public static readonly MeleeCombo[] Dagger = new[]
+        {
+            new MeleeCombo {
+                Name = "Quick Stab", BaseWeight = 110, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 30,
+                Steps = new[] { S(ComboMotion.Thrust, 8, 12, 0, 0.8f) }
+            },
+            new MeleeCombo {
+                Name = "Double Slash", BaseWeight = 80, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 70,
+                Steps = new[] {
+                    S(ComboMotion.UnderhandArc, 10, 14, 8, 0.7f),
+                    S(ComboMotion.OverheadArc,   0, 14, 0, 0.8f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Backstab Roll-In", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 130,
+                Steps = new[] { S(ComboMotion.JoustDash, 14, 12, 0, 1.3f, 1.2f, 2.0f) }
+            },
+            new MeleeCombo {
+                Name = "5-Jab Flurry", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 18, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 14, 0, 1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Lunge Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 220, HeavyCommit = true,
+                Steps = new[] { S(ComboMotion.JoustDash, 30, 16, 0, 1.8f, 1.6f, 2.5f) }
+            },
+        };
+
+        public static readonly MeleeCombo[] Whip = new[]
+        {
+            new MeleeCombo {
+                Name = "Single Lash", BaseWeight = 90, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 60,
+                Steps = new[] { S(ComboMotion.HorizontalSweep, 22, 18, 0, 1.0f, 1.6f) }
+            },
+            new MeleeCombo {
+                Name = "Crack-Back", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 130,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 20, 16, 14, 0.9f, 1.5f),
+                    S(ComboMotion.HorizontalSweep,  0, 16, 0,  0.9f, 1.5f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Vertical Wrap", BaseWeight = 50, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 120,
+                Steps = new[] { S(ComboMotion.OverheadArc, 25, 20, 0, 1.2f, 1.4f) }
+            },
+            new MeleeCombo {
+                Name = "Triple Snap", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 170,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 18, 12, 10, 0.7f, 1.5f),
+                    S(ComboMotion.HorizontalSweep,  0, 12, 10, 0.7f, 1.5f),
+                    S(ComboMotion.HorizontalSweep,  0, 14, 0,  1.0f, 1.6f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Spin-Build", BaseWeight = 30, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 260, HeavyCommit = true,
+                Steps = new[] {
+                    S(ComboMotion.Spin,            50, 28, 8, 0.0f, 1.0f),
+                    S(ComboMotion.HorizontalSweep,  0, 20, 0, 1.8f, 1.8f),
+                }
+            },
+        };
+
+        public static readonly MeleeCombo[] Flail = new[]
+        {
+            new MeleeCombo {
+                Name = "Single Arc", BaseWeight = 90, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 80,
+                Steps = new[] { S(ComboMotion.OverheadArc, 26, 22, 0, 1.1f, 1.2f) }
+            },
+            new MeleeCombo {
+                Name = "Step-In Slam", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 130,
+                Steps = new[] { S(ComboMotion.VerticalChop, 24, 22, 0, 1.3f, 1.2f, 1.2f) }
+            },
+            new MeleeCombo {
+                Name = "Long Spin Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 280, HeavyCommit = true,
+                Steps = new[] {
+                    S(ComboMotion.Spin, 60, 30, 0, 1.6f, 1.5f),
+                }
+            },
+
+            // Authored ball-and-chain attacks. One projectile owns every beat; these are deliberately
+            // single-step instead of asking each combo step to spawn another mace head.
+            //
+            // Chainfall / Chainrise timing sheet:
+            // Tell: 40t on screen, one harmless revolution at 60px. Strike: 18t expanding quarter-arc
+            //       from 60px to 240px (15 tiles), fully rollable inside the base 22t roll.
+            // Tail: 18t harmless retract. Open: tail 18t + recovery 60t = 78t punish window.
+            // Counter: roll through the head; crossing behind the owner also beats the locked facing.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.OverheadName, BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 160, RecoveryTicks = 60,
+                Steps = new[] { S(ComboMotion.OverheadArc, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 0, 1.15f, 1f) }
+            },
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.UnderhandName, BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160, RecoveryTicks = 60,
+                Steps = new[] { S(ComboMotion.UnderhandArc, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ArcAttackTicks, 0, 1.10f, 1f) }
+            },
+
+            // Advancing Chainstorm timing sheet:
+            // Tell: 40t, one harmless 60px revolution. Live: one 36t expanding revolution followed by
+            //       three 36t revolutions at 240px; a point is crossed every 36t, after the 30t roll
+            //       cooldown has reopened. Four rolls maximum if the player stays in its path; spacing
+            //       outside 240px or crossing through the committed owner also escapes.
+            // Tail: 18t harmless retract. Move: ~1.6px/t in the committed direction. Recovery: 120t.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.CycloneName, BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 360, RecoveryTicks = 120,
+                HeavyCommit = true, HyperArmor = true, MoveBrake = 0f,
+                // FlailBrace keeps the hand still while the projectile owns the real spin.
+                // Using ComboMotion.Spin would make the hidden held-item clock rewind ~325° in recovery.
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.CycloneAttackTicks, 0, 0.75f, 1f, 0.56f) }
+            },
+        };
+
+        /// <summary>Optional projectile-owned level lashes for mace users with a real chain/head
+        /// implementation. They are kept outside the automatic Flail table so an NPC must opt in and
+        /// provide the level-target selection gate rather than inheriting them accidentally.</summary>
+        public static readonly MeleeCombo[] FlailLevelLashes = new[]
+        {
+            // Reverse Halo spec card:
+            // Tell 40t: harmless backward 3->6->9->12->3 orbit, 60->96px, bounded shoulder.
+            // Strike 16t: locked-facing level lash to 208px; frames 3-16 are live. Tail 18t retract.
+            // Selection: target centre within +/-48px vertically. Counter: jump, roll through, or
+            // cross behind after facing locks. Recovery: 60t. One existing projectile owns all beats.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.ReverseHaloName, BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = new Color(255, 170, 75),
+                CooldownAfterUse = 190, RecoveryTicks = 60, MoveBrake = 0.05f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.LevelLashAttackTicks, 0, 1.05f, 1f) }
+            },
+
+            // Ankle Reaper spec card:
+            // Tell 40t: harmless 3->12->9->6->3 counter-clockwise loop, 60->96px; the arm follows
+            // the exact unwrapped 360 degrees. Eight ticks accelerate, then cruise into an immediate
+            // 16t ease-out extension to 208px (live frames 3-16), followed by 18t harmless retract.
+            // Same +/-48px level gate and jump/roll/cross-behind counters; 60t punish recovery.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.AnkleReaperName, BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 190, RecoveryTicks = 60, MoveBrake = 0.05f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.LevelLashAttackTicks, 0, 1.10f, 1f) }
+            },
+        };
+
+        /// <summary>Optional aimed two-hit chains. The projectile owns both strikes and captures
+        /// each target point server-side; owners must provide the front-lane selection gate.</summary>
+        public static readonly MeleeCombo[] FlailCrosses = new[]
+        {
+            // Chain Cross spec card:
+            // Tell 40t: harmless counter-clockwise 1.25-turn 60px orbit, full chain-aligned arm.
+            // Lash 1: 16t weighted arc to a server-locked front target; frames 3-16 live (14t).
+            // Carry: 30t harmless far-side reacquire. Lash 2: another 16t 14-frame window only if
+            // the player remains in front at the second server lock. The live starts are 46t apart,
+            // so both hits clear 40t post-hit immunity and a late roller has its 30t re-roll back.
+            // Tail: 18t retract, then 90t recovery. Counter: roll either lash or cross behind during
+            // the carry to cancel the second branch. Visual reach is capped at 200px (12.5 tiles).
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.ChainCrossName, BaseWeight = 45,
+                Preferred = ComboRangeBand.Mid, InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 300, RecoveryTicks = 90, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.ChainCrossAttackTicks, 0, 1.05f, 1f) }
+            },
+        };
+
+        /// <summary>Optional mace reactions that require an owning NPC to establish their live
+        /// branch condition. These must never enter an ordinary weighted pool without that gate.</summary>
+        public static readonly MeleeCombo[] FlailReactiveFollowups = new[]
+        {
+            // Backlash Reversal spec card:
+            // Branch only after another authored mace move finishes with the target behind the
+            // attacker's still-locked facing. Tell 40t: harmless ground load from (60,0) to (76,42).
+            // Strike: 6t planted reversal load, then an 18t Weighted cubic whip to 192px behind;
+            // whip frames 3-17 are live (15t, fully rollable). Tail 18t retract; recovery 60t.
+            // Counter: stay in front, leave the 12-tile rear lane, or roll the reverse whip.
+            new MeleeCombo {
+                Name = EnemyFlailAttackPatterns.BacklashName, BaseWeight = 1,
+                Preferred = ComboRangeBand.Any, InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 240, RecoveryTicks = 60, MoveBrake = 0.10f,
+                Steps = new[] { S(ComboMotion.FlailBrace, EnemyFlailAttackPatterns.TelegraphTicks,
+                    EnemyFlailAttackPatterns.BacklashAttackTicks, 0, 1.15f, 1f) }
+            },
+        };
+
+        public static readonly MeleeCombo[] Katana = new[]
+        {
+            new MeleeCombo {
+                Name = "Iaido Draw", BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 140,
+                Steps = new[] { S(ComboMotion.IaidoDraw, 35, 14, 0, 1.4f, 1.4f, 1.8f) }
+            },
+            new MeleeCombo {
+                Name = "Wide Sweep", BaseWeight = 90, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 60,
+                Steps = new[] { S(ComboMotion.HorizontalSweep, 16, 20, 0, 1.0f, 1.2f) }
+            },
+            new MeleeCombo {
+                Name = "Cross-Cut", BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 100,
+                Steps = new[] {
+                    S(ComboMotion.OverheadArc,  14, 16, 10, 0.9f),
+                    S(ComboMotion.UnderhandArc,  0, 18, 0,  1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "4-Strike Dance", BaseWeight = 50, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 180,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 18, 14, 8, 0.8f),
+                    S(ComboMotion.OverheadArc,      0, 14, 8, 0.8f),
+                    S(ComboMotion.HorizontalSweep,  0, 14, 8, 0.8f),
+                    S(ComboMotion.UnderhandArc,     0, 16, 0, 1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Unsheathe Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 260, HeavyCommit = true,
+                Steps = new[] { S(ComboMotion.IaidoDraw, 70, 16, 0, 2.2f, 1.8f, 3.0f) }
+            },
+        };
+
+        public static readonly MeleeCombo[] Rapier = new[]
+        {
+            new MeleeCombo {
+                Name = "Single Jab", BaseWeight = 110, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White, CooldownAfterUse = 30,
+                Steps = new[] { S(ComboMotion.Thrust, 10, 10, 0, 0.8f, 1.0f) }
+            },
+            new MeleeCombo {
+                Name = "Double Thrust", BaseWeight = 80, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 80,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 12, 10, 8, 0.8f),
+                    S(ComboMotion.Thrust,  0, 12, 0, 1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Riposte Stance", BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 160,
+                Steps = new[] { S(ComboMotion.Thrust, 20, 14, 0, 1.6f, 1.1f) }
+            },
+            new MeleeCombo {
+                Name = "Triple Flurry", BaseWeight = 60, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 140,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 16, 10, 8, 0.7f),
+                    S(ComboMotion.Thrust,  0, 10, 8, 0.7f),
+                    S(ComboMotion.Thrust,  0, 12, 0, 1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Lunging Finisher", BaseWeight = 30, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                Steps = new[] {
+                    S(ComboMotion.Thrust,    32, 10, 8, 0.7f),
+                    S(ComboMotion.Thrust,     0, 10, 8, 0.7f),
+                    S(ComboMotion.Thrust,     0, 10, 8, 0.7f),
+                    S(ComboMotion.JoustDash,  0, 14, 0, 1.6f, 1.5f, 2.2f),
+                }
+            },
+        };
+
+        public static readonly MeleeCombo[] Halberd = new[]
+        {
+            new MeleeCombo {
+                // Jump toward player with spear leveled; thrust lands on contact/touchdown.
+                Name = "Leaping Lunge", BaseWeight = 90, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200, HeavyCommit = true, HyperArmor = true,
+                Steps = new[] { S(ComboMotion.LeapThrust, 32, 90, 0, 1.4f, 1.5f) }
+            },
+            new MeleeCombo {
+                Name = "Forward Thrust", BaseWeight = 90, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 70,
+                Steps = new[] { S(ComboMotion.Thrust, 20, 14, 0, 1.1f, 1.4f) }
+            },
+            new MeleeCombo {
+                Name = "Sweep-Thrust", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 140,
+                Steps = new[] {
+                    S(ComboMotion.HorizontalSweep, 22, 18, 14, 0.9f, 1.3f),
+                    S(ComboMotion.Thrust,           0, 14, 0,  1.1f, 1.4f),
+                }
+            },
+            new MeleeCombo {
+                // Two forward pokes in a row (each extends + retracts via the spear-grip animation).
+                Name = "Double Thrust", BaseWeight = 75, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 110,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 18, 14, 12, 1.0f, 1.4f),
+                    S(ComboMotion.Thrust,  0, 14, 0,  1.1f, 1.4f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Spinning Windmill", BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 180,
+                Steps = new[] { S(ComboMotion.Spin, 30, 32, 0, 1.4f, 1.3f) }
+            },
+            new MeleeCombo {
+                // OverheadArc (not GroundSlam): GroundSlam's swing ends near-vertical (a hammer/axe
+                // ground-pound read), which looked like the spear was stabbing straight down instead
+                // of at the player. OverheadArc ends much closer to horizontal/forward.
+                Name = "Charged Chop", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 260, HeavyCommit = true,
+                Steps = new[] { S(ComboMotion.OverheadArc, 55, 26, 0, 2.0f, 1.4f) }
+            },
+        };
+
+        public static readonly MeleeCombo[] TwinDaggers = new[]
+        {
+            new MeleeCombo {
+                Name = "Cross Slash", BaseWeight = 90, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 50,
+                Steps = new[] {
+                    S(ComboMotion.OverheadArc,  12, 12, 4, 0.8f),
+                    S(ComboMotion.UnderhandArc,  0, 12, 0, 0.8f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Alternating Jabs", BaseWeight = 80, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 120,
+                Steps = new[] {
+                    S(ComboMotion.Thrust, 14, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 10, 6, 0.6f),
+                    S(ComboMotion.Thrust,  0, 12, 0, 0.8f),
+                }
+            },
+            new MeleeCombo {
+                Name = "Spinning Dance", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 150,
+                Steps = new[] { S(ComboMotion.Spin, 22, 28, 0, 1.2f, 1.2f, 1.6f) }
+            },
+            new MeleeCombo {
+                Name = "Pounce Slash", BaseWeight = 50, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 140,
+                Steps = new[] {
+                    S(ComboMotion.JoustDash,   18, 10, 6, 0.8f, 1.2f, 1.8f),
+                    S(ComboMotion.OverheadArc,  0, 14, 0, 1.0f),
+                }
+            },
+            new MeleeCombo {
+                Name = "6-Hit Fury", BaseWeight = 30, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 240, HeavyCommit = true,
+                Steps = new[] {
+                    S(ComboMotion.OverheadArc,     25, 10, 5, 0.6f),
+                    S(ComboMotion.UnderhandArc,     0, 10, 5, 0.6f),
+                    S(ComboMotion.HorizontalSweep,  0, 10, 5, 0.6f),
+                    S(ComboMotion.OverheadArc,      0, 10, 5, 0.6f),
+                    S(ComboMotion.UnderhandArc,     0, 10, 5, 0.6f),
+                    S(ComboMotion.Thrust,           0, 14, 0, 1.2f),
+                }
+            },
+        };
+
+        // ─────────────────────────────────────────────────────────────────────
+        // RANGED ARCHETYPE TABLES (5 combos each)
+        // ─────────────────────────────────────────────────────────────────────
+
+        public static readonly RangedCombo[] ThrowablesCombos = new[]
+        {
+            new RangedCombo {
+                Name = "Single Toss", BaseWeight = 100, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 90,
+                Shots = new[] { R(0, 4f) }
+            },
+            new RangedCombo {
+                Name = "Burst of 3", BaseWeight = 80, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 150,
+                Shots = new[] { R(0, 8f), R(8, 8f), R(8, 8f) },
+                TelegraphExtra = 4
+            },
+            new RangedCombo {
+                Name = "Fan Spread", BaseWeight = 60, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 180,
+                Shots = new[] { R(0, 12f, 1f, 3) },
+                TelegraphExtra = 10
+            },
+            new RangedCombo {
+                Name = "Double Tap", BaseWeight = 70, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
+                Shots = new[] { R(0, 2f, 1.2f), R(18, 2f, 1.2f) }
+            },
+            new RangedCombo {
+                Name = "Barrage", BaseWeight = 30, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 280, HeavyCommit = true,
+                Shots = new[] { R(0, 6f), R(6, 6f), R(6, 6f), R(6, 6f), R(6, 6f) },
+                TelegraphExtra = 20
+            },
+        };
+
+        public static readonly RangedCombo[] BowCombos = new[]
+        {
+            new RangedCombo {
+                Name = "Aimed Shot", BaseWeight = 100, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.White, CooldownAfterUse = 120,
+                Shots = new[] { R(0, 2f, 1.1f) }
+            },
+            new RangedCombo {
+                Name = "Quick Draw", BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 100,
+                Shots = new[] { R(0, 6f, 0.9f) },
+                TelegraphExtra = -10
+            },
+            new RangedCombo {
+                Name = "Twin Arrows", BaseWeight = 60, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 180,
+                Shots = new[] { R(0, 6f, 1f, 2) },
+                TelegraphExtra = 8
+            },
+            new RangedCombo {
+                Name = "Triple Volley", BaseWeight = 40, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 220,
+                Shots = new[] { R(0, 4f), R(22, 4f), R(22, 4f) },
+                TelegraphExtra = 10
+            },
+            new RangedCombo {
+                Name = "Power Shot", BaseWeight = 25, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 280, HeavyCommit = true,
+                Shots = new[] { R(0, 1f, 1.6f) },
+                TelegraphExtra = 30
+            },
+        };
+
+        public static readonly RangedCombo[] CrossbowCombos = new[]
+        {
+            new RangedCombo {
+                Name = "Single Bolt", BaseWeight = 110, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.White, CooldownAfterUse = 100,
+                Shots = new[] { R(0, 3f) }
+            },
+            new RangedCombo {
+                Name = "Controlled Burst", BaseWeight = 70, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 200,
+                Shots = new[] { R(0, 3f), R(30, 3f), R(60, 3f) },
+                TelegraphExtra = 10
+            },
+            new RangedCombo {
+                Name = "Quick Reload Pair", BaseWeight = 50, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 160,
+                Shots = new[] { R(0, 3f), R(20, 3f) }
+            },
+            new RangedCombo {
+                Name = "Spread Volley", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 200,
+                Shots = new[] { R(0, 10f, 1f, 3) },
+                TelegraphExtra = 12
+            },
+            new RangedCombo {
+                Name = "Full Barrage", BaseWeight = 20, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 300, HeavyCommit = true,
+                Shots = new[] { R(0, 3f), R(30, 3f), R(30, 3f), R(30, 3f), R(5, 3f), R(5, 3f) },
+                TelegraphExtra = 30
+            },
+        };
+
+        public static readonly RangedCombo[] BoomerangCombos = new[]
+        {
+            new RangedCombo {
+                Name = "Straight Throw", BaseWeight = 100, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.White, CooldownAfterUse = 120,
+                Shots = new[] { R(0, 0f) }
+            },
+            new RangedCombo {
+                Name = "Double Fan", BaseWeight = 70, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Cyan, CooldownAfterUse = 180,
+                Shots = new[] { R(0, 15f, 1f, 2) },
+                TelegraphExtra = 6
+            },
+            new RangedCombo {
+                Name = "High Arc Lob", BaseWeight = 50, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.LightYellow, CooldownAfterUse = 200,
+                Shots = new[] { R(0, 0f, 0.7f) },
+                TelegraphExtra = 10
+            },
+            new RangedCombo {
+                Name = "Orbit Throw", BaseWeight = 40, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Yellow, CooldownAfterUse = 220,
+                Shots = new[] { R(0, 0f, 0.6f) },
+                TelegraphExtra = 18
+            },
+            new RangedCombo {
+                Name = "Spread Barrage", BaseWeight = 25, Preferred = ComboRangeBand.Far,
+                InitialFlashColor = Color.Red, CooldownAfterUse = 280, HeavyCommit = true,
+                Shots = new[] { R(0, 20f, 1f, 4) },
+                TelegraphExtra = 22
+            },
+        };
+    }
+}

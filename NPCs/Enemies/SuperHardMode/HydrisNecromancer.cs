@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.NPCs.Enemies.Hollow;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {

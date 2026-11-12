@@ -13,7 +13,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Projectiles.Enemy.GravelordNito;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Enemies.Dworc;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using Move = tsorcRevamp.NPCs.Enemies.Dworc.DworcCasterPuppet.CasterMove;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Dworc

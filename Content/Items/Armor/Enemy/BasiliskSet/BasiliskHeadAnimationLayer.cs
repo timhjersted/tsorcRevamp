@@ -5,7 +5,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.NPCs.Enemies.Basilisk;
 
 namespace tsorcRevamp.Content.Items.Armor.Enemy.BasiliskSet

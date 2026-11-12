@@ -126,7 +126,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             float range = Projectile.ai[2] > 0f ? Projectile.ai[2] : 32f;
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer,
-                range, NPCs.Enemies.IceGigas.FrostBuildupPerHit, HeightScale);
+                range, NPCs.Bosses.Gigas.IceGigas.FrostBuildupPerHit, HeightScale);
 
             //Harmless breath cloud (0 damage): the burst above already applies the frost buildup.
             if (BreathCloud)

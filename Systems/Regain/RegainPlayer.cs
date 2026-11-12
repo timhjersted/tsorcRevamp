@@ -331,7 +331,7 @@ namespace tsorcRevamp.Systems.Regain
             //
             // ⚠ Do NOT use `npc.damage <= 0` as the "is this real" test, however tempting. This mod's
             // puppet/invader enemies (DreadWraith, Hero of Lumelia, Gwyn, Witchking and the rest of
-            // NPCs/Puppets) deliberately set NPC.damage = 0 and deliver everything through weapon
+            // NPCs/Invaders) deliberately set NPC.damage = 0 and deliver everything through weapon
             // hitboxes and projectiles instead - so a damage-based filter silently excludes some of the
             // hardest fights in the game. That is exactly what it did on first playtest.
             //

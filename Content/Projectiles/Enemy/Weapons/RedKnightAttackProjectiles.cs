@@ -40,7 +40,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     {
         const float SourceOverlap = 22f;
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {
@@ -1134,7 +1134,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 return true;
             }
-            return hostNPC.ModNPC is NPCs.Bosses.SuperHardMode.GreatRedKnight knight
+            return hostNPC.ModNPC is NPCs.Invaders.GreatRedKnight knight
                 && knight.InDominionDeathSequence;
         }
 

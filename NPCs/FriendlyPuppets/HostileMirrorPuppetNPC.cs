@@ -1008,7 +1008,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
-            bool bladeTouches = Puppets.MeleeBladeCollision.SweptSegmentIntersectsRect(
+            bool bladeTouches = Invaders.MeleeBladeCollision.SweptSegmentIntersectsRect(
                 startHilt, startTip, endHilt, endTip, BladeHitThickness, victim.Hitbox, out _, out _);
 
             if (!bladeTouches)

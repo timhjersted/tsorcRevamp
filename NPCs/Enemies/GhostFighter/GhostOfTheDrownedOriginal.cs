@@ -16,6 +16,7 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Enemies.Hollow;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -887,7 +888,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
+            Texture2D shieldTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)) + "_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
             if ((AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Shooting) && NPC.velocity.X == 0)

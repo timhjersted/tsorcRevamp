@@ -934,12 +934,12 @@ internal static class Program
                 ownSpawnChance.Add(ListEntry(npcClass.Name, note));
             }
 
-            // Concrete enemies under NPCs/Enemies or NPCs/Puppets that the registry never mentions. Skipped: worm segments
+            // Concrete enemies under NPCs/Enemies or NPCs/Invaders that the registry never mentions. Skipped: worm segments
             // (their head spawns them) and the *Original copies, which exist only for side-by-side comparison testing.
             JsonArray unlisted = [];
             List<NpcClass> candidates = npcClasses.Values
                 .Where(npc => modNpcs.Contains(npc.Name) && !npc.IsAbstract)
-                .Where(npc => npc.RelativePath.StartsWith("NPCs/Enemies/", StringComparison.Ordinal) || npc.RelativePath.StartsWith("NPCs/Puppets/", StringComparison.Ordinal))
+                .Where(npc => npc.RelativePath.StartsWith("NPCs/Enemies/", StringComparison.Ordinal) || npc.RelativePath.StartsWith("NPCs/Invaders/", StringComparison.Ordinal))
                 .Where(npc => !Regex.IsMatch(npc.Name, @"(Body\d*|Legs|Tail\d*|Segment|Original)$"))
                 .Where(npc => !enemies.ContainsKey(npc.Name) && !noSpawnNames.Contains(npc.Name) && !npc.OwnsSpawnChance)
                 .OrderBy(npc => DisplayName(npc.Name), StringComparer.OrdinalIgnoreCase)

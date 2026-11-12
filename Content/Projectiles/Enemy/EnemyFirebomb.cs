@@ -60,7 +60,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
-            if (sourceNPCType == ModContent.NPCType<NPCs.Enemies.FirebombHollow>())
+            if (sourceNPCType == ModContent.NPCType<NPCs.Enemies.Hollow.FirebombHollow>())
             {
                 target.AddBuff(BuffID.OnFire, FirebombHollowOnFireTicks);
             }

@@ -71,7 +71,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.ClericOfSorrow
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
             target.AddBuff(BuffID.CursedInferno, 5 * 60);
-            Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Puppets.ClericOfSorrow.FrostBuildupPerHit);
+            Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Enemies.ClericOfSorrow.FrostBuildupPerHit);
         }
     }
 }

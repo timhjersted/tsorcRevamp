@@ -108,7 +108,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.TheSorrow.FrostBuildupPerHit);
+            Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.Birds.TheSorrow.FrostBuildupPerHit);
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

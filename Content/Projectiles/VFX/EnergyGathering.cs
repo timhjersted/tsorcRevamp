@@ -72,20 +72,20 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             {
                 float minVelocity = 15;
                 float maxVelocity = 30;
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                 {
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
                     trailWidth = 35;
                     Projectile.timeLeft = 130;
                     speed = 1.2f;
                 }
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                 {
                     trailWidth = 35;
                     Projectile.timeLeft = 130;
                     speed = 1f;
                 }
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                 {
                     Projectile.timeLeft = 130;
                     speed = 1.15f;

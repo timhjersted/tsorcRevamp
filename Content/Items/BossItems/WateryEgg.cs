@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         public override bool? UseItem(Player player)
         {
             bool zoneJ = (player.position.X < 250 * 16 || player.position.X > (Main.maxTilesX - 250) * 16);
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>()))
             {
                 return false;
             }
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             }
             else
             {
-                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheSorrow>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>());
             }
             return true;
         }

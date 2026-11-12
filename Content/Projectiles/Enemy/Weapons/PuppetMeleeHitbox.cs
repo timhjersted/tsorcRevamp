@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {
@@ -19,7 +19,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     /// </summary>
     public class PuppetMeleeHitbox : ModProjectile
     {
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // matching HumanoidMeleeHitbox.
         private const float SourceOverlap = 22f;
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

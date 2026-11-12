@@ -188,7 +188,7 @@ namespace tsorcRevamp.NPCs.Friendly
             {
                 shopCustomPrice = 5,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>()))));
+            }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheSorrow>()))));
 
             shop.Add(new Item(ItemID.ChlorophyteArrow)
             {

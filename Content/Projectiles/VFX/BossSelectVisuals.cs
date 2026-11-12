@@ -403,16 +403,16 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 currentDownedList[i].scale = previewScale;
                 currentDownedList[i].alpha = 0;
 
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                 {
                     currentDownedList[i].ai[0] = 0;
                     currentDownedList[i].scale = 0.7f;
                 }
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
@@ -464,15 +464,15 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                         {
                             currentDownedList[i].ai[0] = 1;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
@@ -560,7 +560,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()) return 0.72f;
             if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()) return 0.65f;
             if (primaryNpcType == ModContent.NPCType<Chaos>()) return 0.65f;
-            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.TheRage>()) return 0.7f;
+            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()) return 0.7f;
             return 0.9f;
         }
 
@@ -741,10 +741,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             {
                 SpawnBoss(ModContent.NPCType<NPCs.Bosses.Gaibon>());
             }
-            if (id == ModContent.NPCType<NPCs.Bosses.Cataluminance>())
+            if (id == ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>())
             {
-                SpawnBoss(ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                SpawnBoss(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                SpawnBoss(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>());
+                SpawnBoss(ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
             }
 
             //Golem head gets drawn, but its body must be spawned

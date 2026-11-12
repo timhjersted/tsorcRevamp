@@ -253,7 +253,7 @@ namespace tsorcRevamp
         // hands the puppet its final held-weapon DrawData so a projectile can redraw the blade over other players.
         public override void TransformDrawData(ref PlayerDrawSet drawInfo)
         {
-            NPCs.Puppets.PuppetNPC.DrawingPuppetFor?.CaptureFinalHeldWeaponDraw(ref drawInfo);
+            NPCs.Invaders.PuppetNPC.DrawingPuppetFor?.CaptureFinalHeldWeaponDraw(ref drawInfo);
         }
 
         //Only one aura can be applied, highest in the enum list takes priority

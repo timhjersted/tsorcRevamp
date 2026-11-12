@@ -907,12 +907,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     // Tier-appropriate add (§12.9 "an existing enemy" with its real AI), chosen by the user: the Studded
                     // Leather Warrior up to Hardmode, the Black Ninja in SHM — both puppets, drawn in the Soul Mimic's
                     // obsidian shell (PuppetNPC.MirrorShell), which also makes them non-bosses with no banner and no loot.
-                    int addType = ModContent.NPCType<Puppets.StuddedLeatherWarrior>();
+                    int addType = ModContent.NPCType<Invaders.StuddedLeatherWarrior>();
                     int addExpertLife = MirrorAddLifeHardmode;
 
                     if (tsorcRevampWorld.SuperHardMode)
                     {
-                        addType = ModContent.NPCType<Puppets.BlackNinja>();
+                        addType = ModContent.NPCType<Invaders.BlackNinja>();
                         addExpertLife = MirrorAddLifeSuperHardmode;
                     }
 
@@ -926,7 +926,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         add.value = 0f;
                         add.boss = false;
 
-                        if (add.ModNPC is Puppets.PuppetNPC addPuppet)
+                        if (add.ModNPC is Invaders.PuppetNPC addPuppet)
                         {
                             addPuppet.MirrorShell = true;
                         }

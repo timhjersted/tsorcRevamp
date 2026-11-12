@@ -22,6 +22,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Bosses.Birds;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
 
 namespace tsorcRevamp.NPCs.Friendly
 {

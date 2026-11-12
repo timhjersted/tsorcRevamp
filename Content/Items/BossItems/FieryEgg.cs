@@ -26,7 +26,7 @@ namespace tsorcRevamp.Content.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()))
             {
                 return false;
             }
@@ -36,7 +36,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             }
             else
             {
-                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheRage>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Birds.TheRage>());
             }
             return true;
         }

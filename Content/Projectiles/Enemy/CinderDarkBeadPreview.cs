@@ -30,7 +30,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
 
             NPC caster = Main.npc[ownerNpc];
-            if (caster.ModNPC is NPCs.Puppets.Marik cinder)
+            if (caster.ModNPC is NPCs.Invaders.Marik cinder)
             {
                 Projectile.Center = cinder.StaffTipPosition;
             }

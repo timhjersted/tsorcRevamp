@@ -19,7 +19,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     {
         // Invisible-sprite convention (see PuppetMeleeHitbox): drawn entirely through PreDraw's
         // shader, so this points at the same shared placeholder rather than needing its own art.
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         private const float FullRadius = 160f; // 10 tiles
         private const int GrowTicks = 30;

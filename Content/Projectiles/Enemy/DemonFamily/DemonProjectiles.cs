@@ -19,7 +19,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
 
     /// <summary>
     /// The demon family's element per tier: dust, light, and what a hit does to the player. Shared by the demons'
-    /// contact hits (NPCs/Bosses/DemonBase.cs) and both projectiles below, so one tier's debuff can't drift between them.
+    /// contact hits (NPCs/Bosses/Demons/DemonBase.cs) and both projectiles below, so one tier's debuff can't drift between them.
     /// </summary>
     public static class DemonElement
     {

@@ -127,7 +127,7 @@ namespace tsorcRevamp.Content.Items
             {
                 return false;
             }
-            if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 return false;
             }
@@ -140,13 +140,13 @@ namespace tsorcRevamp.Content.Items
             {
                 if (!Main.dayTime)
                 {
-                    if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+                    if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>()))
                     {
                         //Triad
                         UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.OnUseText1"), Color.MediumPurple);
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
                         Projectile.NewProjectileDirect(player.GetSource_ItemUse(item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, player.whoAmI, 0, UsefulFunctions.ColorToFloat(Color.White));
 
                     }
@@ -248,7 +248,7 @@ namespace tsorcRevamp.Content.Items
             // Cannot equip wings until the hunter has been defeated unless you're in debug mode.
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()) && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
-                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     return false;
                 }
@@ -412,7 +412,7 @@ namespace tsorcRevamp.Content.Items
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
-                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
@@ -471,7 +471,7 @@ namespace tsorcRevamp.Content.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
-                if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
@@ -1107,7 +1107,7 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool CanRightClick(Item item)
         {
-            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 return false;
             }

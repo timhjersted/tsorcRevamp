@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.BarrowWightPhantomSet;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode

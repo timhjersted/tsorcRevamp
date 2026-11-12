@@ -10,11 +10,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
-    // Blaidd's projectiles, kept together because they only exist for him (NPCs/Puppets/Blaidd.cs).
+    // Blaidd's projectiles, kept together because they only exist for him (NPCs/Invaders/Blaidd.cs).
     // Design: tsorcDocs/Blaidd_Rework_Proposal.md.
 
     /// <summary>

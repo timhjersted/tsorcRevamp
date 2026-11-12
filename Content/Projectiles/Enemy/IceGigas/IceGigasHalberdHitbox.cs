@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override void AI()
         {
             NPC owner = Main.npc[(int)Projectile.ai[0]];
-            NPCs.Enemies.IceGigas gigas = owner.ModNPC as NPCs.Enemies.IceGigas;
+            NPCs.Bosses.Gigas.IceGigas gigas = owner.ModNPC as NPCs.Bosses.Gigas.IceGigas;
 
             if (!owner.active || gigas == null || !gigas.HalberdOut)
             {
@@ -51,7 +51,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override bool? CanDamage()
         {
             NPC owner = Main.npc[(int)Projectile.ai[0]];
-            NPCs.Enemies.IceGigas gigas = owner.ModNPC as NPCs.Enemies.IceGigas;
+            NPCs.Bosses.Gigas.IceGigas gigas = owner.ModNPC as NPCs.Bosses.Gigas.IceGigas;
             bool bladeLive = owner.active && gigas != null && gigas.HalberdBladeLive;
             return bladeLive;
         }
@@ -59,7 +59,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             NPC owner = Main.npc[(int)Projectile.ai[0]];
-            NPCs.Enemies.IceGigas gigas = owner.ModNPC as NPCs.Enemies.IceGigas;
+            NPCs.Bosses.Gigas.IceGigas gigas = owner.ModNPC as NPCs.Bosses.Gigas.IceGigas;
 
             if (!owner.active || gigas == null)
             {

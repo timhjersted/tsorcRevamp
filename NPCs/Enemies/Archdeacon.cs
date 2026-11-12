@@ -17,7 +17,7 @@ using Terraria.DataStructures;
 using tsorcRevamp.Content.Projectiles.Enemy.Triad;
 using tsorcRevamp.Content.Projectiles.Enemy.Archdeacon;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Content.Projectiles.Enemy;
 

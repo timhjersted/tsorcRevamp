@@ -2589,7 +2589,7 @@ namespace tsorcRevamp.NPCs
         private static void SpawnTeleportIllusion(NPC source)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient
-                || source.ModNPC is not Puppets.PuppetNPC)
+                || source.ModNPC is not Invaders.PuppetNPC)
             {
                 return;
             }
@@ -2617,7 +2617,7 @@ namespace tsorcRevamp.NPCs
             illusionGlobal.SuppressGlobalOnKillDrops = true;
             illusionGlobal.CanTeleport = false;
             illusionGlobal.EvasiveTeleportAway = false;
-            ((Puppets.PuppetNPC)source.ModNPC).InitializeTeleportIllusion(illusion);
+            ((Invaders.PuppetNPC)source.ModNPC).InitializeTeleportIllusion(illusion);
             illusion.netUpdate = true;
 
             if (Main.netMode == NetmodeID.Server)
@@ -2937,7 +2937,7 @@ namespace tsorcRevamp.NPCs
             // PuppetNPC owns a continuous authored attack sequencer. Its default contract is that
             // ordinary hits add light poise flinch but cannot replace neutral selection with an
             // evasive action; only a completed poise break calls PuppetNPC.OnStagger and cancels it.
-            if (npc.ModNPC is Puppets.PuppetNPC puppet && !puppet.AllowsReactiveDefense)
+            if (npc.ModNPC is Invaders.PuppetNPC puppet && !puppet.AllowsReactiveDefense)
             {
                 return;
             }

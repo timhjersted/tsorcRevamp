@@ -781,15 +781,15 @@ namespace tsorcRevamp.NPCs
             Attack = attack;
             Timer = 0;
             Direction = target.Center.X >= npc.Center.X ? 1 : -1;
-            royalSpearThrow = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight
+            royalSpearThrow = npc.ModNPC is Invaders.GreatRedKnight
                 && attack == KnightSpecialAttack.SpearThrow;
             redThrowMovement = attack switch
             {
                 KnightSpecialAttack.SpearThrow when royalSpearThrow
                     => ChooseGreatThrowMovement(npc, target, Direction),
-                KnightSpecialAttack.SpearThrow when npc.ModNPC is Enemies.RedKnight
+                KnightSpecialAttack.SpearThrow when npc.ModNPC is Invaders.RedKnight
                     => ChooseRedThrowMovement(npc, target, Direction),
-                KnightSpecialAttack.FirebombThrow when npc.ModNPC is Enemies.RedKnight
+                KnightSpecialAttack.FirebombThrow when npc.ModNPC is Invaders.RedKnight
                     => ChooseRedThrowMovement(npc, target, Direction),
                 _ => RedThrowMovement.None
             };
@@ -813,7 +813,7 @@ namespace tsorcRevamp.NPCs
             }
             if (IsMobileMeleeAttack(attack))
             {
-                float entrySpeed = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight ? 1.5f : 1f;
+                float entrySpeed = npc.ModNPC is Invaders.GreatRedKnight ? 1.5f : 1f;
                 if (npc.velocity.X * Direction < entrySpeed)
                 {
                     npc.velocity.X = Direction * entrySpeed;
@@ -978,7 +978,7 @@ namespace tsorcRevamp.NPCs
         {
             if (Timer < 45)
             {
-                float telegraphSpeed = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight ? 2f : 1.35f;
+                float telegraphSpeed = npc.ModNPC is Invaders.GreatRedKnight ? 2f : 1.35f;
                 ApproachHorizontalSpeed(npc, Direction, telegraphSpeed, 0.1f);
             }
             if (Timer == 45)
@@ -1041,7 +1041,7 @@ namespace tsorcRevamp.NPCs
             npc.direction = Direction;
             npc.spriteDirection = Direction;
             emberReturnDashTimer = Timer;
-            bool greatKnight = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
+            bool greatKnight = npc.ModNPC is Invaders.GreatRedKnight;
             float dashSpeed = greatKnight ? 10f : 7.5f;
             npc.velocity = new Vector2(Direction * dashSpeed, -2.8f);
             SpawnLunge(npc, damage, greatKnight ? 88f : 76f, 50f, 16, 4f);
@@ -1226,7 +1226,7 @@ namespace tsorcRevamp.NPCs
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
                 npc.netUpdate = true;
             }
-            bool greatKnight = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
+            bool greatKnight = npc.ModNPC is Invaders.GreatRedKnight;
             bool spawnHand = Timer >= 60 && Timer < 90
                 && (!greatKnight || (Timer - 60) % 2 == 0);
             if (spawnHand && Main.netMode != NetmodeID.MultiplayerClient)
@@ -1881,7 +1881,7 @@ namespace tsorcRevamp.NPCs
         // oversight:
         //   Stages A/B/C — the "hunting" bolts — use SmallRedLightning, the OLD branching red
         //                  lightning the regular RedKnight already fires at 1/3 health
-        //                  (NPCs/Enemies/RedKnight.cs:940). It is a GenericLaser with a texture
+        //                  (NPCs/Invaders/RedKnight.cs:940). It is a GenericLaser with a texture
         //                  and no custom .fx at all.
         //   Stage D      — the round-1 shader lightning, RedKnightLightningLane (which draws with
         //                  the RedKnightLightningBolt technique in RedKnightDestinedDeath.fx) —
@@ -2014,7 +2014,7 @@ namespace tsorcRevamp.NPCs
 
         /// <summary>
         /// One OLD-style bolt: SmallRedLightning, fired from the knight toward a point, exactly as
-        /// NPCs/Enemies/RedKnight.cs:940 already fires it. FollowHost is baked into that class's
+        /// NPCs/Invaders/RedKnight.cs:940 already fires it. FollowHost is baked into that class's
         /// SetDefaults, so ai1 must carry the host NPC index; the velocity supplies the aim.
         /// </summary>
         static void SpawnHuntingBolt(NPC npc, Vector2 point, int damage)
@@ -2147,7 +2147,7 @@ namespace tsorcRevamp.NPCs
         // which knows nothing about the controller and clears both during AttackPhase.Custom.
         public void SetCombatFlags(NPC npc, tsorcRevampGlobalNPC globalNPC)
         {
-            if (npc.ModNPC is Enemies.RedKnight)
+            if (npc.ModNPC is Invaders.RedKnight)
             {
                 int commitStart = CommitStart(Attack);
                 int commitEnd = RedCommitEnd(Attack);
@@ -2258,13 +2258,13 @@ namespace tsorcRevamp.NPCs
             npc.velocity.X *= 0.35f;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                bool greatKnight = npc.ModNPC is Bosses.SuperHardMode.GreatRedKnight;
+                bool greatKnight = npc.ModNPC is Invaders.GreatRedKnight;
                 if (completed == KnightSpecialAttack.CrimsonDominion)
                 {
                     // The plant already supplies its long punish window; resume Dominion's narrow pool.
                     attackCooldown = 90;
                 }
-                else if (npc.ModNPC is Enemies.RedKnight || DominionEngaged)
+                else if (npc.ModNPC is Invaders.RedKnight || DominionEngaged)
                 {
                     // The attack includes its release/settle tail. Leave 1.5–2.5s for melee between
                     // specials instead of another 5–8s with the whole ranged pool unavailable.
@@ -3063,7 +3063,7 @@ namespace tsorcRevamp.NPCs
             if (npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight forgotten)
                 return forgotten.AttackSpearTipWorld;
             // The puppet knights throw from their real hand, so the flying spear starts where the held one was.
-            if (npc.ModNPC is Enemies.RedKnightPuppet redKnight)
+            if (npc.ModNPC is Invaders.RedKnightPuppet redKnight)
             {
                 return redKnight.AttackHandWorld;
             }
@@ -3072,7 +3072,7 @@ namespace tsorcRevamp.NPCs
 
         static Vector2 BombLaunchSource(NPC npc)
         {
-            if (npc.ModNPC is Enemies.RedKnightPuppet redKnight)
+            if (npc.ModNPC is Invaders.RedKnightPuppet redKnight)
             {
                 return redKnight.AttackHandWorld;
             }
@@ -3083,7 +3083,7 @@ namespace tsorcRevamp.NPCs
         // old body-relative point (fallbackOffset, x mirrored by Direction).
         Vector2 PalmSource(NPC npc, Vector2 fallbackOffset)
         {
-            if (npc.ModNPC is Enemies.RedKnightPuppet redKnight)
+            if (npc.ModNPC is Invaders.RedKnightPuppet redKnight)
             {
                 return redKnight.CastHandWorld;
             }

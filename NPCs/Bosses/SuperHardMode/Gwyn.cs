@@ -20,7 +20,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
 using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 

@@ -16,7 +16,12 @@ using tsorcRevamp.NPCs.Enemies.GhostFighter;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Friendly;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Enemies.Archer;
+using tsorcRevamp.NPCs.Enemies.Hollow;
+using tsorcRevamp.NPCs.Enemies.Knight;
+using tsorcRevamp.NPCs.Enemies.Lothric;
+using tsorcRevamp.NPCs.Bosses.Demons;
 
 namespace tsorcRevamp.Banners
 {

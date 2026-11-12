@@ -19,7 +19,7 @@ using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Acolyte;
 using tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode

@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void PostAI()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheSorrow>())))
             {
                 //Legacy 2000-space; mapped on the expanded world (identity elsewhere). Runs every tick once the
                 //condition is met, so an un-shifted value here would silently re-pin her home each frame.

@@ -460,10 +460,10 @@ namespace tsorcRevamp.Systems
         public static class Slain
         {
             public static readonly SpawnCondition TheSorrow = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())));
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())));
 
             public static readonly SpawnCondition TheRage = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())));
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())));
 
             public static readonly SpawnCondition WyvernMage = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())));

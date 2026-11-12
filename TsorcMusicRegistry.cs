@@ -215,7 +215,7 @@ namespace tsorcRevamp
             {
                 bool isBossPuppet = ContentSamples.NpcsByNetId.TryGetValue(npc.Type, out NPC sample) && sample.boss;
 
-                if (npc is NPCs.Puppets.PuppetNPC && isBossPuppet && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
+                if (npc is NPCs.Invaders.PuppetNPC && isBossPuppet && npc is not NPCs.Enemies.SuperHardMode.CrystalKnight
                     && npc is not NPCs.Enemies.SuperHardMode.DarkrootSentry
                     && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenWarrior
                     && npc is not NPCs.Enemies.GhostFighter.GhostOfTheForgottenKnight

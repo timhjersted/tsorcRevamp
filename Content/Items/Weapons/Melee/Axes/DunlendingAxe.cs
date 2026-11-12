@@ -38,7 +38,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
             {
                 modifiers.FinalDamage *= 3;
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.BlackKnight>())
+            if (target.type == ModContent.NPCType<NPCs.Invaders.BlackKnight>())
             {
                 modifiers.FinalDamage *= 6;
             }

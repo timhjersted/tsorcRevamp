@@ -29,7 +29,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Melee.Shortswords;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.SuperHardMode

@@ -177,7 +177,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
-            bool isPuppet = npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling;
+            bool isPuppet = npc.ModNPC is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling;
             float progressScale = ProgressionScaling.LifeScale(npc);
 
             if (isPuppet)
@@ -1014,7 +1014,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
-            if (npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
+            if (npc.ModNPC is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
             {
                 return;
             }

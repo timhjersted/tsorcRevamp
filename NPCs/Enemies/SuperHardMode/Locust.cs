@@ -708,7 +708,7 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         static bool GrandOccultistIsAlive()
-            => NPC.AnyNPCs(ModContent.NPCType<Bosses.SuperHardMode.GrandOccultist>());
+            => NPC.AnyNPCs(ModContent.NPCType<Bosses.SuperHardMode.GrandOccultist.GrandOccultist>());
 
         static int NewGroupId()
         {
