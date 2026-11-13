@@ -9882,6 +9882,16 @@ Mods: {
 				DisplayName: Enemy Manhunter Bow
 				Tooltip: ""
 			}
+
+			EnemyAssassinBow: {
+				DisplayName: Enemy Assassin Bow
+				Tooltip: ""
+			}
+
+			EnemyRedCloudHunterBow: {
+				DisplayName: Enemy Red Cloud Hunter Bow
+				Tooltip: ""
+			}
 		}
 
 		Buffs: {
@@ -12392,12 +12402,17 @@ Mods: {
 			IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
 			HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
+			HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
 			TibianAmazonKnife.DisplayName: Tibian Amazon Knife
 			TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
 			WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
 			KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
 			BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
 			LurkerClawStrike.DisplayName: Lurker Claw Strike
+			BoneChaplainBlightFlame.DisplayName: Bone Chaplain Blight Flame
+			ElementalEruptionColumn.DisplayName: Elemental Eruption Column
+			ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
+			BoneRemains.DisplayName: Bone Remains
 		}
 
 		NPCs: {

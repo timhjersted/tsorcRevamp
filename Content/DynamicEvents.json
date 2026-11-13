@@ -6293,5 +6293,33 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "681ec75f-0e65-4f18-85f1-715d568ffc73",
+    "CenterX": 2096.0,
+    "CenterY": 887.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": true,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "TheDestroyer",
+        "SpawnX": 2098.0,
+        "SpawnY": 795.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

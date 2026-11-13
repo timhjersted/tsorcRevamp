@@ -28,7 +28,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             AirApproach,
             AirBreath,
             Land,
-            Recover
+            Recover,
+            // The quick walk-in before each bite of the triple bite; also the attack-bag card for the whole chain.
+            BiteChain,
+            // Crouch, a low ballistic hop solved from the target's position, jaws snapping on arrival, landing settle.
+            LeapBite,
+            // Big wing beats carry it up and backwards off the ground, breathing a long cone back at the target on the way.
+            RetreatBreath,
+            // One wing beat and pawing claws, then a sprint along the ground aimed past the target; the body is the weapon.
+            Charge
         }
 
         public const float ArtScale = 1f;
@@ -36,6 +44,41 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         public const int BiteLive = 16;
         public const int BiteHoldTicks = 8;
         public const int BiteRetractTicks = 18;
+        // Triple bite: walk in for 28 ticks, then a normal bite, three times. Advance 28 + tell 30 + the 42 ticks of
+        // live/hold/retract left over from the previous bite puts each bite's live window 100 ticks after the last.
+        public const int BiteChainBites = 3;
+        public const int BiteChainAdvanceTicks = 28;
+        public const float BiteChainWalkSpeed = 3.4f;
+        public const int BiteChainRecovery = 50;
+        // Turn bite: the body flips at the normal TurnBodyTick (50, ~70% of the way through the neck's 72-tick swing,
+        // the one tick the neck-to-chest overlap is authored for), then the head snaps on the new side at tick 72.
+        public const int TurnBiteAimLockTick = 60;
+        public const int TurnBiteLiveStart = 72;
+        // The swung head hangs ~365px out on the new side. The neck slides the snout up to TurnBiteReach px and a
+        // hop carries the whole body up to 96px back or 128px forward, so the snap connects from 150 to 600px behind.
+        public const float TurnBiteReach = 130f;
+        public const float TurnBiteHopBackSpeed = 6f;
+        public const float TurnBiteHopForwardSpeed = 8f;
+        public const float TurnBiteMinRange = 150f;
+        public const float TurnBiteMaxRange = 600f;
+        // Leap bite: the answer to a target 420-1000px ahead of the mouth. 40-tick crouch (landing spot locks at tick 30),
+        // then a hop under normal NPC gravity (0.3 px/tick^2) whose airtime grows with distance: 44-64 ticks, so the
+        // apex stays 73-154px. Jaws are live for the last LeapBiteLiveLead flight ticks plus LeapBiteLandLive after landing.
+        public const float LeapMinRange = 420f;
+        public const float LeapMaxRange = 1000f;
+        public const int LeapTell = 40;
+        public const int LeapLockTick = 30;
+        public const float LeapGravity = 0.3f;
+        public const int LeapMinAirTicks = 44;
+        public const int LeapMaxAirTicks = 64;
+        public const int LeapBiteLiveLead = 12;
+        public const int LeapBiteLandLive = 6;
+        public const float LeapBiteReach = 96f;
+        // The snout is solved to finish this far PAST where the target stood at the lock, so standing still is a hit.
+        public const float LeapOvershoot = 40f;
+        public const int LeapRecovery = 45;
+        // Takeoff ignores its cooldown and the ground minimum once the target is this far away.
+        public const float FarFlightRange = 1000f;
         public const int BreathTell = 70;
         public const int BreathLive = 90;
         public const int BreathCloseTicks = 12;
@@ -43,8 +86,51 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         public const float BreathSweepDegreesPerTick = 0.6f;
         public const int TailTell = 46;
         public const int TailLive = 12;
+        // Retreat breath: the answer to a target hugging the front (under the neck up to 200px past the mouth).
+        // 30-tick wing-spread tell, then a 120-tick climb 480px back (30 tiles) and 200px up. The breath opens two
+        // thirds of the way through the climb and burns 70 ticks, so it finishes while hovering at the far end.
+        public const int RetreatTell = 30;
+        public const int RetreatMoveTicks = 120;
+        public const int RetreatFireTick = RetreatTell + 80;
+        public const int RetreatBreathLive = 70;
+        public const float RetreatBack = 480f;
+        public const float RetreatUp = 200f;
+        // Long flame: 12 px/tick for LongFlameLifetime ticks = 804px (50 tiles). Lanes at +-5.7 degrees open the cone
+        // to ~160px (10 tiles) across at full range.
+        public const float LongFlameSpeed = 12f;
+        public const int LongFlameLifetime = 67;
+        public const float LongFlameSpreadDegrees = 5.7f;
+        // Strafe telegraph: the near foot lifts at takeoff and slams down on this tick.
+        public const int StrafeStompTick = 12;
+        // Ground charge: 45-tick tell (one wing beat, claws pawing; run solved at tick 35), then a run whose speed
+        // rises and falls on a sine curve, averaging ChargeAverageSpeed px/tick and peaking at 1.57x that. The body
+        // is aimed to stop ChargeOvershoot px past where the target stood. 16-tick skid, then a long recovery.
+        public const int ChargeTell = 45;
+        public const int ChargeLockTick = 35;
+        public const float ChargeAverageSpeed = 9f;
+        public const float ChargeOvershoot = 200f;
+        public const float ChargeMinRange = 150f;
+        public const float ChargeMaxRange = 700f;
+        public const int ChargeSkidTicks = 16;
+        public const int ChargeRecovery = 50;
         public const int AirTell = 44;
         public const int AirLive = 96;
+        public const int AirStrafeLive = 150;
+        // Aerial breath variants, picked once at the top of the takeoff climb and synced as airBreathMode.
+        public const byte AirBreathHover = 0;
+        public const byte AirBreathStrafe = 1;
+        public const byte AirBreathSkyward = 2;
+        // Strafe holds the jaw 50 degrees below level so the flame meets the ground ahead of the flight path.
+        public const float AirStrafePitch = 0.87f;
+        // DemonBreath dies 450px from the mouth; a strafe is only picked when the slanted lane to the ground is shorter.
+        public const float AirStrafeMaxSlant = 420f;
+        // The strafe's flame front starts short of the target and is solved to finish this far past them.
+        public const float AirStrafeOvershoot = 250f;
+        // A target standing this far above the nearest floor counts as "in the sky" (10 tiles).
+        public const float SkyTargetHeight = 160f;
+        // Aim limits in radians; positive pitch points the jaw down.
+        public const float AirAimDownLimit = 1.15f;
+        public const float AirAimUpLimit = 0.95f;
         public const int HeadDefense = 0;
         public const int NeckDefense = 150;
         public const int BodyDefense = 100;
@@ -130,6 +216,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         private float biteSpeed = 7.5f;
         private float biteReach = 96f;
         private float currentBiteExtension;
+        private float airRunSpeed = 4.5f;
+        private byte airBreathMode;
+        // 0 = not chaining; 1..BiteChainBites = which bite of the triple bite is in progress.
+        private byte biteChainStep;
+        // This turn snaps a bite on the new side before the body flips.
+        private bool turnBite;
+        // Leap bite: planned airtime of the hop, and the state tick it actually touched down on (-1 while not landed).
+        private int leapAirTicks = LeapMinAirTicks;
+        private int leapLandTick = -1;
+        private bool leapLandingShown;
+        // Ground charge: length of the run in ticks. Cut short on the authority if a wall or ledge stops it.
+        private int chargeTicks = 60;
         private int flightCooldown;
         private int tailCooldown;
         private int groundedTicks;
@@ -163,8 +261,93 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         public Vector2 TailBase { get; private set; }
         public Vector2 BreathDirection { get; private set; }
         public bool Airborne => State == DrakeState.Takeoff || State == DrakeState.AirApproach
-            || State == DrakeState.AirBreath || State == DrakeState.Land;
-        public string DebugAttackLabel => "Hellkite Drake " + DebugLabels.Humanize(State.ToString()) + " " + StateTimer;
+            || State == DrakeState.AirBreath || State == DrakeState.Land || State == DrakeState.RetreatBreath;
+
+        // Either breath made from the air; they share the neck aim, jaw timing, mouth glow and sounds.
+        private bool AirBreathing => State == DrakeState.AirBreath || State == DrakeState.RetreatBreath;
+
+        // Ticks the takeoff spends crouched on the ground before lifting. A planned strafe holds it for the stomp:
+        // foot up for StrafeStompTick ticks, slam, then 14 ticks for the dirt to roll out before the wings take over.
+        private int TakeoffCrouchTicks
+        {
+            get
+            {
+                if (airBreathMode == AirBreathStrafe)
+                {
+                    return StrafeStompTick + 14;
+                }
+
+                return 12;
+            }
+        }
+
+        // State tick the flames start on for the current aerial breath.
+        private int AirTellTicks
+        {
+            get
+            {
+                if (State == DrakeState.RetreatBreath)
+                {
+                    return RetreatFireTick;
+                }
+
+                return AirTell;
+            }
+        }
+        public string DebugAttackLabel
+        {
+            get
+            {
+                string label = "Hellkite Drake " + DebugLabels.Humanize(State.ToString());
+
+                if (State == DrakeState.AirApproach || State == DrakeState.AirBreath)
+                {
+                    if (airBreathMode == AirBreathStrafe)
+                    {
+                        label += " (Strafe)";
+                    }
+                    else if (airBreathMode == AirBreathSkyward)
+                    {
+                        label += " (Skyward)";
+                    }
+                    else
+                    {
+                        label += " (Hover)";
+                    }
+                }
+
+                if (State == DrakeState.Bite && biteChainStep > 0)
+                {
+                    label += " " + biteChainStep + "/" + BiteChainBites;
+                }
+
+                if (State == DrakeState.Turn && turnBite)
+                {
+                    label += " (Bite)";
+                }
+
+                return label + " " + StateTimer;
+            }
+        }
+
+        // Live flame ticks of the current aerial breath: the strafe burns longer so its run crosses the target.
+        private int AirLiveTicks
+        {
+            get
+            {
+                if (State == DrakeState.RetreatBreath)
+                {
+                    return RetreatBreathLive;
+                }
+
+                if (airBreathMode == AirBreathStrafe)
+                {
+                    return AirStrafeLive;
+                }
+
+                return AirLive;
+            }
+        }
 
         public override void SetStaticDefaults()
         {
@@ -353,6 +536,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 return;
             }
 
+            // Re-pick the nearest player twice a second, but only while free on the ground so no attack changes target midway.
+            if (authority && State == DrakeState.Ground && StateTimer % 30 == 0)
+            {
+                int previousTarget = NPC.target;
+                NPC.TargetClosest(false);
+
+                if (NPC.target != previousTarget)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
+
             NPC.timeLeft = 750;
             NPC.noTileCollide = false;
             NPC.noGravity = Airborne;
@@ -432,6 +627,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
                 case DrakeState.Turn:
                     NPC.velocity.X = 0f;
+
+                    if (authority && turnBite && StateTimer == TurnBiteAimLockTick)
+                    {
+                        // Lock the spot the jaws will snap at 12 ticks before they go live. The pose steers the mouth onto
+                        // this point each tick, so the neck's own drift during the turn cannot pull the bite off it.
+                        lockedImpact = target.Center;
+
+                        // Solve the hop that carries the body during the 16 live ticks. Positive = toward the new facing
+                        // (target beyond the snout), negative = back off (target under the neck). Stored in biteSpeed.
+                        float snoutGap = (lockedImpact.X - Mouth.X) * Facing;
+                        biteSpeed = MathHelper.Clamp(snoutGap / BiteLive, -TurnBiteHopBackSpeed, TurnBiteHopForwardSpeed);
+                        NPC.netUpdate = true;
+                    }
+
+                    // Small hop as the jaws go out, like the ground bite's, so the whole drake commits to the snap.
+                    if (turnBite && StateTimer == TurnBiteLiveStart - 2 && onGround)
+                    {
+                        NPC.velocity.Y = -3.8f;
+                    }
+
+                    if (turnBite && StateTimer >= TurnBiteLiveStart && StateTimer < TurnBiteLiveStart + BiteLive)
+                    {
+                        int hopDirection = Facing * Math.Sign(biteSpeed);
+                        Vector2 hopProbe = NPC.Bottom + new Vector2(hopDirection * (NPC.width * 0.5f + 20f), 2f);
+                        bool hopSupported = !onGround || Supported(hopProbe) || Supported(hopProbe + Vector2.UnitY * 16f);
+
+                        if (hopSupported && !NPC.collideX)
+                        {
+                            NPC.velocity.X = Facing * biteSpeed;
+                        }
+                    }
+
+                    if (authority && turnBite && StateTimer == TurnBiteLiveStart)
+                    {
+                        SpawnAttack(3, 75);
+                    }
+
                     if (authority && StateTimer == TurnBodyTick)
                     {
                         NPC.ai[2] = -turnFacing;
@@ -498,7 +730,173 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
                     if (authority && StateTimer >= BiteTell + BiteLive + BiteHoldTicks + BiteRetractTicks)
                     {
-                        BeginRecovery(30);
+                        if (biteChainStep == 0)
+                        {
+                            BeginRecovery(30);
+                        }
+                        else if (biteChainStep < BiteChainBites)
+                        {
+                            EnterState(DrakeState.BiteChain);
+                        }
+                        else
+                        {
+                            // Third bite done: a longer, unarmoured stand is the reward for surviving the chain.
+                            biteChainStep = 0;
+                            BeginRecovery(BiteChainRecovery);
+                        }
+                    }
+                    break;
+
+                case DrakeState.Charge:
+                    int runTick = StateTimer - ChargeTell;
+
+                    if (runTick < 0)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                    }
+
+                    if (authority && StateTimer == ChargeLockTick)
+                    {
+                        // Solve the run 10 ticks before it starts: far enough to carry the body ChargeOvershoot past
+                        // the target, at ChargeAverageSpeed. biteSpeed holds the average speed for the pose and clients.
+                        float chargeGap = (target.Center.X - NPC.Center.X) * Facing;
+                        float chargeTravel = MathHelper.Clamp(chargeGap + ChargeOvershoot, 300f, 1300f);
+                        chargeTicks = (int)(chargeTravel / ChargeAverageSpeed);
+                        biteSpeed = chargeTravel / chargeTicks;
+                        NPC.netUpdate = true;
+                    }
+
+                    if (runTick >= 0 && runTick < chargeTicks)
+                    {
+                        // Sine speed curve: slow off the mark, fastest mid-run, slowing into the skid. Its area is 1,
+                        // so the run covers the solved distance exactly when nothing stops it.
+                        float runProgress = runTick / (float)chargeTicks;
+                        float runCurve = MathF.Sin(MathHelper.Pi * runProgress) * MathHelper.PiOver2;
+                        float runSpeed = Math.Max(2f, biteSpeed * runCurve);
+                        Vector2 runProbe = NPC.Bottom + new Vector2(Facing * (NPC.width * 0.5f + 24f), 2f);
+                        bool runSupported = !onGround || Supported(runProbe) || Supported(runProbe + Vector2.UnitY * 16f);
+
+                        if (runSupported && !NPC.collideX)
+                        {
+                            NPC.velocity.X = Facing * runSpeed;
+                        }
+                        else if (authority && runTick > 2)
+                        {
+                            // Wall or ledge: end the run here and go straight to the skid.
+                            chargeTicks = runTick;
+                            NPC.netUpdate = true;
+                        }
+                    }
+                    else if (runTick >= chargeTicks)
+                    {
+                        NPC.velocity.X *= 0.82f;
+                    }
+
+                    if (authority && runTick == 0)
+                    {
+                        SpawnAttack(5, 95);
+                    }
+
+                    if (authority && runTick >= chargeTicks + ChargeSkidTicks)
+                    {
+                        BeginRecovery(ChargeRecovery);
+                    }
+                    break;
+
+                case DrakeState.LeapBite:
+                    int leapTick = StateTimer - LeapTell;
+
+                    if (leapTick < 0)
+                    {
+                        NPC.velocity.X *= 0.8f;
+                    }
+
+                    if (authority && StateTimer == LeapLockTick)
+                    {
+                        // Solve the hop 10 ticks before launch. The snout ends LeapOvershoot past the target; it already
+                        // sits ahead of the body and the lunge adds ~76px (LeapBiteReach at 0.65 rad), so the body
+                        // travels that much less. Airtime scales with distance to keep ground speed near 14-16 px/tick.
+                        lockedImpact = target.Center;
+                        float leapGap = (lockedImpact.X - Mouth.X) * Facing;
+                        float lungeForward = LeapBiteReach * MathF.Cos(0.65f);
+                        float leapTravel = MathHelper.Clamp(leapGap - lungeForward + LeapOvershoot, 200f, 1100f);
+                        leapAirTicks = Math.Clamp((int)(leapTravel / 14f), LeapMinAirTicks, LeapMaxAirTicks);
+                        biteSpeed = leapTravel / leapAirTicks;
+                        biteReach = LeapBiteReach;
+                        lockedAim = new Vector2(Facing * MathF.Cos(0.65f), MathF.Sin(0.65f));
+                        NPC.netUpdate = true;
+                    }
+
+                    if (leapTick == 0 && onGround)
+                    {
+                        // Launch speed that returns to this height after exactly leapAirTicks under LeapGravity.
+                        NPC.velocity.Y = -LeapGravity * leapAirTicks * 0.5f;
+                    }
+
+                    if (leapTick >= 0 && leapLandTick < 0)
+                    {
+                        NPC.velocity.X = Facing * biteSpeed;
+                    }
+                    else if (leapLandTick >= 0)
+                    {
+                        NPC.velocity.X *= 0.7f;
+                    }
+
+                    if (authority && leapLandTick < 0 && leapTick == leapAirTicks - LeapBiteLiveLead)
+                    {
+                        SpawnAttack(4, 85);
+                    }
+
+                    // Touchdown: floor under the feet, a wall in the way, or 40 ticks overdue (it hopped off a ledge).
+                    bool leapOverdue = leapTick > leapAirTicks + 40;
+
+                    if (authority && leapLandTick < 0 && leapTick > 6 && (onGround || NPC.collideX || leapOverdue))
+                    {
+                        leapLandTick = StateTimer;
+                        groundedTicks = 0;
+                        NPC.netUpdate = true;
+                    }
+
+                    if (authority && leapLandTick >= 0 && StateTimer >= leapLandTick + BiteHoldTicks + BiteRetractTicks)
+                    {
+                        BeginRecovery(LeapRecovery);
+                    }
+                    break;
+
+                case DrakeState.BiteChain:
+                    // Walk in at twice the normal pace with the jaw parted, stopping once the mouth is ~4 tiles off the target.
+                    float chainGap = (target.Center.X - Mouth.X) * Facing;
+                    float chainSpeed = 0f;
+
+                    if (chainGap > 70f)
+                    {
+                        chainSpeed = Facing * BiteChainWalkSpeed;
+                    }
+
+                    Vector2 chainProbe = NPC.Bottom + new Vector2(Facing * (NPC.width / 2f + 12f), 2f);
+                    bool chainSupport = Supported(chainProbe) || Supported(chainProbe + Vector2.UnitY * 12f);
+
+                    if (!chainSupport || NPC.collideX)
+                    {
+                        chainSpeed = 0f;
+                    }
+
+                    NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, chainSpeed, 0.2f);
+
+                    if (authority && (target.Center.X - NPC.Center.X) * Facing < -80f)
+                    {
+                        // The target got behind the body: drop the chain so the ground state can answer with a turn.
+                        biteChainStep = 0;
+                        EnterState(DrakeState.Ground);
+                    }
+                    else if (authority && StateTimer >= BiteChainAdvanceTicks)
+                    {
+                        biteChainStep++;
+                        Vector2 chainToTarget = target.Center - Mouth;
+                        float chainTargetDistance = Math.Max(0f, chainToTarget.Length() - 18f);
+                        lockedAim = AimAt(target.Center, 0.75f);
+                        biteReach = MathHelper.Clamp(chainTargetDistance * 0.65f, 80f, 112f);
+                        EnterState(DrakeState.Bite);
                     }
                     break;
 
@@ -544,6 +942,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 case DrakeState.Takeoff:
                 case DrakeState.AirApproach:
                 case DrakeState.AirBreath:
+                case DrakeState.RetreatBreath:
                 case DrakeState.Land:
                     TickAir(target, onGround, authority);
                     break;
@@ -557,9 +956,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     break;
             }
 
-            if (!Airborne && State != DrakeState.Turn && Math.Abs(NPC.velocity.X) > 0.1f)
+            if (!Airborne && State != DrakeState.Turn && State != DrakeState.LeapBite && Math.Abs(NPC.velocity.X) > 0.1f)
             {
-                walkClock += Math.Abs(NPC.velocity.X) / 1.7f;
+                // One clock unit per 1.7px walked. The charge caps the stride at 3 units a tick so the legs sprint
+                // without blurring; backing up runs the cycle in reverse so the feet don't moonwalk.
+                float stride = Math.Abs(NPC.velocity.X) / 1.7f;
+
+                if (State == DrakeState.Charge)
+                {
+                    stride = Math.Min(stride, 3f);
+                }
+
+                if (Math.Sign(NPC.velocity.X) != Facing)
+                {
+                    stride = -stride;
+                }
+
+                walkClock += stride + 62f;
                 walkClock %= 62f;
             }
 
@@ -609,9 +1022,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 desiredSpeed = Facing * 1.7f;
             }
-            else if (forward < -120f && behind < 50f)
+            else if (forward < -60f && behind < 50f)
             {
-                desiredSpeed = -Facing * 0.7f;
+                // Target under the neck: back away at close to walking pace until the jaws can reach them again.
+                desiredSpeed = -Facing * 1.5f;
             }
 
             Vector2 probe = NPC.Bottom + new Vector2(Math.Sign(desiredSpeed) * (NPC.width / 2f + 12f), 2f);
@@ -635,9 +1049,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             attackBag ??= new AttackBag<DrakeState>(cards =>
             {
                 cards.Add(DrakeState.Bite);
+                cards.Add(DrakeState.BiteChain);
                 cards.Add(DrakeState.Breath);
                 cards.Add(DrakeState.TailSlam);
                 cards.Add(DrakeState.Takeoff);
+                cards.Add(DrakeState.LeapBite);
+                cards.Add(DrakeState.RetreatBreath);
+                cards.Add(DrakeState.Charge);
             });
 
             bool Eligible(DrakeState move)
@@ -645,6 +1063,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 if (move == DrakeState.Bite)
                 {
                     return forward >= -15f && forward <= 220f && Math.Abs(target.Center.Y - Mouth.Y) < 175f
+                        && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
+                }
+
+                if (move == DrakeState.BiteChain)
+                {
+                    // Wider than the single bite's 220px: the chain walks its own way in.
+                    return forward >= -15f && forward <= 420f && Math.Abs(target.Center.Y - Mouth.Y) < 175f
                         && Collision.CanHitLine(Mouth, 1, 1, target.Center, 1, 1);
                 }
 
@@ -663,11 +1088,75 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     return rearTarget != null && tailCooldown == 0;
                 }
 
+                if (move == DrakeState.LeapBite)
+                {
+                    // Mid-to-long range, roughly level ground, and a clear body-sized lane to a supported landing.
+                    bool inLeapRange = forward >= LeapMinRange && forward <= LeapMaxRange;
+                    bool levelEnough = Math.Abs(target.Bottom.Y - NPC.Bottom.Y) < 120f;
+
+                    if (!inLeapRange || !levelEnough)
+                    {
+                        return false;
+                    }
+
+                    Vector2 leapLanding = NPC.Bottom + new Vector2(Facing * forward, 0f);
+                    bool landingSupported = Supported(leapLanding + Vector2.UnitY * 2f)
+                        || Supported(leapLanding + Vector2.UnitY * 18f);
+                    Vector2 lift = new Vector2(0f, -24f);
+                    return landingSupported && ClearRoute(NPC.Bottom + lift, leapLanding + lift);
+                }
+
+                if (move == DrakeState.Charge)
+                {
+                    // Target 150-700px ahead of the snout (the head is the ram, so they must start in front of it) on
+                    // roughly level ground, with a clear, supported lane at least as far as the target. The run
+                    // itself stops at any ledge or wall beyond that.
+                    float bodyGap = (target.Center.X - NPC.Center.X) * Facing;
+                    bool inChargeRange = forward >= ChargeMinRange && forward <= ChargeMaxRange;
+                    bool chargeLevel = Math.Abs(target.Bottom.Y - NPC.Bottom.Y) < 120f;
+
+                    if (!inChargeRange || !chargeLevel)
+                    {
+                        return false;
+                    }
+
+                    Vector2 chargeEnd = NPC.Bottom + new Vector2(Facing * bodyGap, 0f);
+                    Vector2 chargeMiddle = NPC.Bottom + new Vector2(Facing * bodyGap * 0.5f, 0f);
+                    bool laneSupported = (Supported(chargeEnd + Vector2.UnitY * 2f) || Supported(chargeEnd + Vector2.UnitY * 18f))
+                        && (Supported(chargeMiddle + Vector2.UnitY * 2f) || Supported(chargeMiddle + Vector2.UnitY * 18f));
+                    Vector2 chargeLift = new Vector2(0f, -24f);
+                    return laneSupported && ClearRoute(NPC.Bottom + chargeLift, chargeEnd + chargeLift);
+                }
+
+                if (move == DrakeState.RetreatBreath)
+                {
+                    // Target hugging the front: anywhere from under the chest (340px behind the mouth) to 200px past
+                    // the mouth, but not behind the body. Shares the flight cooldown, and needs the whole climb clear.
+                    bool huggingFront = forward >= -340f && forward <= 200f
+                        && (target.Center.X - NPC.Center.X) * Facing > -40f;
+
+                    if (!huggingFront || flightCooldown > 0 || groundedTicks < GroundMinimum)
+                    {
+                        return false;
+                    }
+
+                    Vector2 retreatEnd = NPC.Bottom + new Vector2(-Facing * RetreatBack, -RetreatUp);
+                    return ClearRoute(NPC.Bottom - Vector2.UnitY * 8f, retreatEnd, true);
+                }
+
+                // Out past FarFlightRange nothing on the ground can reach, so flight skips its cooldown and ground minimum.
+                if (Vector2.Distance(target.Center, NPC.Center) > FarFlightRange)
+                {
+                    return true;
+                }
+
                 return flightCooldown == 0 && groundedTicks >= GroundMinimum && behind < 65f;
             }
 
             if (attackBag.TryDraw(Eligible, out DrakeState chosen))
             {
+                biteChainStep = 0;
+
                 if (chosen == DrakeState.TailSlam)
                 {
                     if (!FindLanding(rearTarget.Center.X, NPC.Bottom.Y - 80f, out Vector2 landing)
@@ -689,6 +1178,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                         return;
                     }
 
+                    groundedTicks = 0;
+                    blockedTicks = 0;
+
+                    // Plan the strafe now, while the feet are still down, so a stomp can announce it. The climb's
+                    // top only confirms the plan (or drops to a hover); it never upgrades an unannounced flight.
+                    bool targetGrounded = Math.Abs(target.Bottom.Y - NPC.Bottom.Y) < SkyTargetHeight;
+                    airBreathMode = AirBreathHover;
+
+                    if (targetGrounded && forward >= 150f && forward <= 900f)
+                    {
+                        airBreathMode = AirBreathStrafe;
+                    }
+                }
+
+                if (chosen == DrakeState.LeapBite)
+                {
+                    leapLandTick = -1;
+                }
+
+                if (chosen == DrakeState.RetreatBreath)
+                {
                     groundedTicks = 0;
                     blockedTicks = 0;
                 }
@@ -713,6 +1223,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 turnFacing = Facing;
                 NPC.velocity.X = 0f;
+
+                // Half the turns snap a bite at whoever slipped behind, provided the swung-over head can reach them.
+                float behindDistance = Math.Abs(target.Center.X - NPC.Center.X);
+                float behindHeight = Math.Abs(target.Center.Y - NPC.Center.Y);
+                bool biteReachable = behindDistance >= TurnBiteMinRange && behindDistance <= TurnBiteMaxRange
+                    && behindHeight < 175f;
+                turnBite = biteReachable && Main.rand.NextBool();
                 EnterState(DrakeState.Turn);
             }
         }
@@ -738,14 +1255,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             if (State == DrakeState.Takeoff)
             {
-                if (StateTimer < 12)
+                if (StateTimer < TakeoffCrouchTicks)
                 {
                     NPC.velocity *= 0.6f;
                     return;
                 }
 
                 NPC.velocity = Vector2.Lerp(NPC.velocity, (waypoint - NPC.Bottom).SafeNormalize(-Vector2.UnitY) * 4f, 0.12f);
-                if (authority && (blockedTicks > 8 || StateTimer > 85))
+                if (authority && (blockedTicks > 8 || StateTimer > TakeoffCrouchTicks + 73))
                 {
                     StartLanding();
                     return;
@@ -753,16 +1270,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
                 if (authority && Vector2.DistanceSquared(NPC.Bottom, waypoint) < 400f)
                 {
-                    if (!FindLanding(target.Center.X, target.Bottom.Y - 96f, out lockedImpact))
+                    // Choose the aerial breath from where the target is right now. lockedImpact = the floor under them.
+                    bool floorFound = FindLanding(target.Center.X, target.Bottom.Y - 96f, out lockedImpact);
+                    float heightAboveFloor = lockedImpact.Y - target.Bottom.Y;
+                    bool targetInSky = !floorFound || heightAboveFloor > SkyTargetHeight;
+
+                    // The torso sits a neck-length behind the mouth, so every stand-off distance is measured from the mouth.
+                    float mouthOffset = Math.Abs(Mouth.X - NPC.Bottom.X);
+                    float forwardGap = (target.Center.X - Mouth.X) * Facing;
+
+                    // Strafe geometry: at the fixed pitch the flame travels slantLength and lands strafeLead px ahead of the mouth.
+                    float mouthHeight = Math.Max(60f, lockedImpact.Y - Mouth.Y);
+                    float slantLength = mouthHeight / MathF.Sin(AirStrafePitch);
+                    float strafeLead = mouthHeight / MathF.Tan(AirStrafePitch);
+
+                    if (targetInSky)
                     {
-                        StartLanding();
-                        return;
+                        // Sky target: come in a little below them, far enough back that the neck can aim.
+                        airBreathMode = AirBreathSkyward;
+                        waypoint = new Vector2(target.Center.X - Facing * (mouthOffset + 260f), target.Center.Y + 160f);
+                    }
+                    else if (airBreathMode == AirBreathStrafe && forwardGap >= strafeLead - 40f && forwardGap <= 900f
+                        && slantLength <= AirStrafeMaxSlant)
+                    {
+                        // Ground target ahead: strafe from right here. The run speed is solved so the flame front,
+                        // which starts strafeLead ahead of the mouth, finishes AirStrafeOvershoot past the target.
+                        airBreathMode = AirBreathStrafe;
+                        float runDistance = forwardGap - strafeLead + AirStrafeOvershoot;
+                        airRunSpeed = MathHelper.Clamp(runDistance / AirStrafeLive, 3f, 6f);
+                        waypoint = NPC.Bottom;
+                    }
+                    else
+                    {
+                        // Ground target under the neck or behind: back off to a hover in front of them and track with the jaw.
+                        airBreathMode = AirBreathHover;
+                        float hoverDistance = mouthOffset + 170f;
+                        waypoint = lockedImpact + new Vector2(-Facing * hoverDistance, -140f);
                     }
 
-                    // Leave the mouth in front of the target at native scale; the torso sits a neck-length farther back.
-                    float mouthOffset = Math.Abs(Mouth.X - NPC.Bottom.X);
-                    float hoverDistance = mouthOffset + 170f;
-                    waypoint = lockedImpact + new Vector2(-Facing * hoverDistance, -140f);
                     if (!ClearRoute(NPC.Bottom, waypoint, true))
                     {
                         StartLanding();
@@ -775,7 +1320,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             else if (State == DrakeState.AirApproach)
             {
                 Vector2 difference = waypoint - NPC.Bottom;
-                float speed = Math.Min(5f, difference.Length() * 0.08f);
+                // Cruise at 5 px/tick, rising to 9 when the waypoint is 500-1000px off so a far-flight arrives inside the 180-tick limit.
+                float remaining = difference.Length();
+                float farBoost = MathHelper.Clamp((remaining - 500f) / 500f, 0f, 1f);
+                float speedCap = 5f + 4f * farBoost;
+                float speed = Math.Min(speedCap, remaining * 0.08f);
                 NPC.velocity = Vector2.Lerp(NPC.velocity, difference.SafeNormalize(Vector2.Zero) * speed, 0.16f);
                 if (authority && (blockedTicks > 8 || StateTimer > 180))
                 {
@@ -783,24 +1332,116 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
                 else if (authority && difference.LengthSquared() < 900f)
                 {
+                    // Start the jaw on the target; the breath state steers it from here every tick.
+                    lockedAim = AimAt(target.Center, AirAimUpLimit);
                     EnterState(DrakeState.AirBreath);
                 }
             }
             else if (State == DrakeState.AirBreath)
             {
-                NPC.velocity *= 0.85f;
-                if (StateTimer >= AirTell && StateTimer < AirTell + AirLive)
+                int liveTicks = AirLiveTicks;
+                int liveTick = StateTimer - AirTell;
+                bool breathing = liveTick >= 0 && liveTick < liveTicks;
+
+                // Steer the jaw through the tell and the burn. lockedAim is what the head, neck and flames all read.
+                // Hover and Skyward chase the target at a capped rate (0.8 / 1.2 degrees per tick) so crossing under
+                // or over the stream outruns it; Strafe just settles on its fixed downward pitch.
+                if (liveTick < liveTicks)
                 {
-                    NPC.velocity.X = Facing * 2f;
+                    float wantedPitch = AirStrafePitch;
+                    float turnRate = 0.035f;
+
+                    if (airBreathMode != AirBreathStrafe)
+                    {
+                        Vector2 toTarget = target.Center - Mouth;
+                        float forwardDistance = Math.Max(30f, toTarget.X * Facing);
+                        wantedPitch = MathF.Atan2(toTarget.Y, forwardDistance);
+                        turnRate = 0.014f;
+                    }
+
+                    if (airBreathMode == AirBreathSkyward)
+                    {
+                        turnRate = 0.021f;
+                    }
+
+                    SteerAirAim(wantedPitch, turnRate);
                 }
 
-                if (authority && StateTimer >= AirTell && StateTimer < AirTell + AirLive
-                    && (StateTimer - AirTell) % BreathShotInterval == 0)
+                // Body motion per variant. Wings keep beating in every one of them (the airborne flap cycle).
+                Vector2 wantedVelocity = Vector2.Zero;
+
+                if (breathing && airBreathMode == AirBreathStrafe)
+                {
+                    // Level run over the target; the flame front on the ground moves with the body.
+                    wantedVelocity = new Vector2(Facing * airRunSpeed, 0f);
+                }
+                else if (breathing && airBreathMode == AirBreathSkyward)
+                {
+                    // Swoop: sink through the first half of the burn, climb through the second (a shallow U, ~75px deep).
+                    float swoop = MathF.Cos(MathHelper.Pi * liveTick / liveTicks);
+                    wantedVelocity = new Vector2(Facing * 3.2f, 2.4f * swoop);
+                }
+
+                NPC.velocity = Vector2.Lerp(NPC.velocity, wantedVelocity, 0.12f);
+
+                if (authority && breathing && liveTick % BreathShotInterval == 0)
                 {
                     SpawnBreath(68);
                 }
 
-                if (authority && (StateTimer >= AirTell + AirLive + BreathCloseTicks || blockedTicks > 8))
+                // Clients steer the aim from their own copy of the target; resync so the head never drifts far.
+                if (authority && StateTimer % 20 == 0)
+                {
+                    NPC.netUpdate = true;
+                }
+
+                if (authority && (StateTimer >= AirTell + liveTicks + BreathCloseTicks || blockedTicks > 8))
+                {
+                    StartLanding();
+                }
+            }
+            else if (State == DrakeState.RetreatBreath)
+            {
+                int moveTick = StateTimer - RetreatTell;
+                int fireTick = StateTimer - RetreatFireTick;
+                bool retreatBreathing = fireTick >= 0 && fireTick < RetreatBreathLive;
+
+                // Climb up and back on a sine-eased speed curve: still at both ends, fastest mid-climb. The curve's
+                // area is 1, so the body covers exactly RetreatBack x RetreatUp over RetreatMoveTicks.
+                Vector2 retreatVelocity = Vector2.Zero;
+
+                if (moveTick >= 0 && moveTick < RetreatMoveTicks)
+                {
+                    float climbProgress = moveTick / (float)RetreatMoveTicks;
+                    float speedCurve = MathF.Sin(MathHelper.Pi * climbProgress) * MathHelper.PiOver2;
+                    float backSpeed = RetreatBack / RetreatMoveTicks * speedCurve;
+                    float upSpeed = RetreatUp / RetreatMoveTicks * speedCurve;
+                    retreatVelocity = new Vector2(-Facing * backSpeed, -upSpeed);
+                }
+
+                NPC.velocity = Vector2.Lerp(NPC.velocity, retreatVelocity, 0.25f);
+
+                // Follow the target with the jaw at 0.4 degrees per tick. At this range that sweeps the far end of the
+                // cone at about 4.5 px/tick, slower than a running player, so the stream can be outrun or rolled through.
+                if (fireTick < RetreatBreathLive)
+                {
+                    Vector2 toTarget = target.Center - Mouth;
+                    float forwardDistance = Math.Max(30f, toTarget.X * Facing);
+                    float wantedPitch = MathF.Atan2(toTarget.Y, forwardDistance);
+                    SteerAirAim(wantedPitch, 0.007f);
+                }
+
+                if (authority && retreatBreathing && fireTick % BreathShotInterval == 0)
+                {
+                    SpawnBreath(72, true);
+                }
+
+                if (authority && StateTimer % 20 == 0)
+                {
+                    NPC.netUpdate = true;
+                }
+
+                if (authority && (StateTimer >= RetreatFireTick + RetreatBreathLive + BreathCloseTicks || blockedTicks > 8))
                 {
                     StartLanding();
                 }
@@ -824,6 +1465,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     StartLanding();
                 }
             }
+        }
+
+        // Turn the synced breath aim toward wantedPitch by at most turnRate radians this tick. Pitch is positive-down
+        // and clamped to the aerial aim limits; lockedAim is rebuilt on the current facing.
+        private void SteerAirAim(float wantedPitch, float turnRate)
+        {
+            wantedPitch = MathHelper.Clamp(wantedPitch, -AirAimUpLimit, AirAimDownLimit);
+            float aimPitch = MathF.Atan2(lockedAim.Y, lockedAim.X * Facing);
+            float pitchStep = MathHelper.Clamp(wantedPitch - aimPitch, -turnRate, turnRate);
+            aimPitch += pitchStep;
+            lockedAim = new Vector2(Facing * MathF.Cos(aimPitch), MathF.Sin(aimPitch));
         }
 
         private void StartLanding()
@@ -954,7 +1606,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 NPC.whoAmI, kind, sequence);
         }
 
-        private void SpawnBreath(int damage)
+        private void SpawnBreath(int damage, bool longRange = false)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -963,14 +1615,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             UpdatePose();
             // Emit three lanes across a ~4-tile (64px) mouth span that fan outward by ±9.5° as they travel.
+            // The long-range breath uses faster, longer-lived puffs on a tighter ±5.7° fan (see LongFlame constants).
             Vector2 forward = BreathDirection.SafeNormalize(new Vector2(Facing, 0f));
             Vector2 sideways = new Vector2(-forward.Y, forward.X);
             int flameType = ModContent.ProjectileType<HellkiteDrakeFlame>();
+            float laneSpreadDegrees = 9.5f;
+            float flameSpeed = DemonBreath.Speed;
+
+            if (longRange)
+            {
+                flameType = ModContent.ProjectileType<HellkiteDrakeLongFlame>();
+                laneSpreadDegrees = LongFlameSpreadDegrees;
+                flameSpeed = LongFlameSpeed;
+            }
+
             for (int lane = -1; lane <= 1; lane++)
             {
                 Vector2 spawnPosition = Mouth + sideways * (lane * 14f);
-                float spreadAngle = lane * MathHelper.ToRadians(9.5f) + Main.rand.NextFloat(-0.045f, 0.045f);
-                float speed = DemonBreath.Speed * Main.rand.NextFloat(0.92f, 1.08f);
+                float spreadAngle = lane * MathHelper.ToRadians(laneSpreadDegrees) + Main.rand.NextFloat(-0.045f, 0.045f);
+                float speed = flameSpeed * Main.rand.NextFloat(0.92f, 1.08f);
                 Vector2 velocity = forward.RotatedBy(spreadAngle) * speed;
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPosition, velocity,
                     flameType, damage, 0f, Main.myPlayer,
@@ -980,11 +1643,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         private Vector2 GetBreathAim()
         {
-            if (State == DrakeState.AirBreath)
-            {
-                return (lockedImpact - Mouth).SafeNormalize(Vector2.UnitY);
-            }
-
             Vector2 direction = lockedAim;
             int sweepTick = StateTimer - BreathTell;
             if (State == DrakeState.Breath && sweepTick >= -8)
@@ -1013,6 +1671,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                biteChainStep = 0;
+
                 if (Airborne)
                 {
                     StartLanding();
@@ -1033,6 +1693,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             writer.Write(walkClock);
             writer.Write(biteSpeed);
             writer.Write(biteReach);
+            writer.Write(airBreathMode);
+            writer.Write(airRunSpeed);
+            writer.Write(biteChainStep);
+            writer.Write(turnBite);
+            writer.Write(leapAirTicks);
+            writer.Write(leapLandTick);
+            writer.Write(chargeTicks);
             writer.Write(lockedAim.X);
             writer.Write(lockedAim.Y);
             writer.Write(lockedImpact.X);
@@ -1052,6 +1719,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             walkClock = reader.ReadSingle();
             biteSpeed = reader.ReadSingle();
             biteReach = reader.ReadSingle();
+            airBreathMode = reader.ReadByte();
+            airRunSpeed = reader.ReadSingle();
+            biteChainStep = reader.ReadByte();
+            turnBite = reader.ReadBoolean();
+            leapAirTicks = reader.ReadInt32();
+            leapLandTick = reader.ReadInt32();
+            chargeTicks = reader.ReadInt32();
             lockedAim = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             lockedImpact = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             waypoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
@@ -1114,6 +1788,45 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             int legWalkRow = WalkRow(LegWalkPlaybackRate);
             int mouthRow = 0;
             float breathClosing = 0f;
+
+            // Leap bite clocks, shared by the jaw, crouch, wings, legs and neck below.
+            // leapCrouch 0..1 = how deep the pre-launch crouch is; leapSnap 0..1 = how far out the jaws are.
+            bool leaping = State == DrakeState.LeapBite;
+            bool leapAirborne = leaping && StateTimer >= LeapTell && leapLandTick < 0;
+            float leapCrouch = 0f;
+            float leapSnap = 0f;
+
+            if (leaping && StateTimer < LeapTell)
+            {
+                leapCrouch = MathHelper.SmoothStep(0f, 1f, StateTimer / (float)LeapTell);
+            }
+            else if (leapAirborne)
+            {
+                // Uncoil over the first 8 flight ticks, then throw the jaws out over 8 ticks ending as the hit goes live.
+                int flightTick = StateTimer - LeapTell;
+                leapCrouch = 1f - MathHelper.Clamp(flightTick / 8f, 0f, 1f);
+                int snapStart = leapAirTicks - LeapBiteLiveLead - 8;
+                float snapProgress = MathHelper.Clamp((flightTick - snapStart) / 8f, 0f, 1f);
+                leapSnap = 1f - MathF.Pow(1f - snapProgress, 3f);
+            }
+            else if (leaping)
+            {
+                // Landed: hold the bite 8 ticks, then draw the neck back in over 18 (cosine).
+                int landedTicks = StateTimer - leapLandTick;
+                float retractProgress = MathHelper.Clamp((landedTicks - BiteHoldTicks) / (float)BiteRetractTicks, 0f, 1f);
+                leapSnap = 0.5f * (1f + MathF.Cos(MathHelper.Pi * retractProgress));
+            }
+
+            if (leaping)
+            {
+                mouthRow = 1;
+
+                if (leapAirborne || leapSnap > 0.5f)
+                {
+                    mouthRow = 2;
+                }
+            }
+
             if (State == DrakeState.Bite)
             {
                 mouthRow = 1;
@@ -1122,14 +1835,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                     mouthRow = 2;
                 }
             }
-            else if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+            else if (State == DrakeState.BiteChain)
+            {
+                // Jaw stays parted through the walk-in so the chain reads as one continuous threat.
+                mouthRow = 1;
+            }
+            else if (State == DrakeState.Breath || AirBreathing)
             {
                 int tellTicks = BreathTell;
                 int liveTicks = BreathLive;
-                if (State == DrakeState.AirBreath)
+                if (AirBreathing)
                 {
-                    tellTicks = AirTell;
-                    liveTicks = AirLive;
+                    tellTicks = AirTellTicks;
+                    liveTicks = AirLiveTicks;
                 }
 
                 int releaseEnd = tellTicks + liveTicks;
@@ -1149,10 +1867,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
             }
 
+            // Ground charge clocks. chargeRear 0..1..0 = the head rearing back through the first 35 tell ticks;
+            // chargeLow 0..1 = the head dropped to ram height (down over the last 12 tell ticks, back up in the skid).
+            bool charging = State == DrakeState.Charge;
+            float chargeRear = 0f;
+            float chargeLow = 0f;
+
+            if (charging)
+            {
+                int chargeRunTick = StateTimer - ChargeTell;
+                chargeRear = MathF.Sin(MathHelper.Pi * MathHelper.Clamp(StateTimer / 35f, 0f, 1f));
+                chargeLow = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((StateTimer - (ChargeTell - 12f)) / 12f, 0f, 1f));
+
+                if (chargeRunTick >= chargeTicks)
+                {
+                    float skidProgress = MathHelper.Clamp((chargeRunTick - chargeTicks) / (float)ChargeSkidTicks, 0f, 1f);
+                    chargeLow = 1f - MathHelper.SmoothStep(0f, 1f, skidProgress);
+                }
+
+                // Jaw parted for the whole charge.
+                mouthRow = 1;
+            }
+
             float bodyDrop = 0f;
             if (!Airborne && (walkRow == 1 || walkRow == 5))
             {
                 bodyDrop = 4f;
+            }
+
+            if (leaping)
+            {
+                // Sink 10px into the crouch before launch, and again briefly as the landing is absorbed.
+                bodyDrop = 10f * leapCrouch;
+
+                if (leapLandTick >= 0)
+                {
+                    float settle = MathHelper.Clamp((StateTimer - leapLandTick) / 14f, 0f, 1f);
+                    bodyDrop = 10f * MathF.Sin(MathHelper.Pi * settle);
+                }
             }
 
             for (int i = 0; i < Parts.Length; i++)
@@ -1169,6 +1921,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             // Cycle only the feet faster; the synced walk clock still drives the slower body and wings.
             bones[13].FrameRow = legWalkRow;
             bones[14].FrameRow = (legWalkRow + 4) % 8;
+
+            if (charging)
+            {
+                if (StateTimer < 30)
+                {
+                    // The tell's single wing beat: the folded wings run up through their eight lift frames and back
+                    // (2 ticks each) while the shoulders swing up 0.35 / 0.28 rad and down again.
+                    float beat = MathF.Sin(MathHelper.Pi * StateTimer / 30f);
+                    int beatStep = Math.Clamp(StateTimer / 2, 0, TurnWingRows.Length - 1);
+                    bones[11].FrameRow = TurnWingRows[beatStep];
+                    bones[12].FrameRow = (TurnWingRows[beatStep] + 7) % 8;
+                    bones[11].Rotation = -0.35f * beat;
+                    bones[12].Rotation = -0.28f * beat;
+                }
+                else
+                {
+                    // Wings held slightly lifted off the back for the run.
+                    bones[11].Rotation = -0.1f * chargeLow;
+                    bones[12].Rotation = -0.08f * chargeLow;
+                }
+            }
+
+            if (leaping)
+            {
+                // The hop's ground speed would spin the walk cycle, so the leap picks its own frames: planted feet
+                // (rows 0 / 4) on the ground, the two tucked flight rows (9 near, 8 far) in the air, wings folded on
+                // row 0 and lifted at the shoulder by up to 0.16 / 0.12 rad while airborne.
+                bones[11].FrameRow = 0;
+                bones[12].FrameRow = 7;
+                bones[13].FrameRow = 0;
+                bones[14].FrameRow = 4;
+
+                if (leapAirborne)
+                {
+                    float wingLift = MathHelper.Clamp((StateTimer - LeapTell) / 8f, 0f, 1f);
+                    bones[11].Rotation = -0.16f * wingLift;
+                    bones[12].Rotation = -0.12f * wingLift;
+                    bones[13].FrameRow = 9;
+                    bones[14].FrameRow = 8;
+                }
+            }
             if (State == DrakeState.Turn)
             {
                 // Lift the folded wings around the body flip, then ease them down as the tail settles.
@@ -1281,6 +2074,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
             }
 
+            if (charging)
+            {
+                // Rear the whole neck back 0.2 rad during the tell, then drop it 0.15 rad (head ~45px lower) to ram.
+                // Negative rotation is head-down. The neck stays rigid, so no link seams are stressed.
+                neckBend += 0.2f * chargeRear - 0.15f * chargeLow;
+            }
+
+            if (leaping)
+            {
+                // Same S-coil as the bite's windup while crouching, then the same neck extension driven by leapSnap.
+                neckBend += 0.45f * leapCrouch;
+                secondBend -= 0.85f * leapCrouch;
+                thirdBend += 0.4f * leapCrouch;
+                currentBiteExtension = biteReach * leapSnap;
+                biteAimWeight = leapSnap;
+            }
+
+            // 0..1 blend onto the aerial aim. Starts AirTell ticks before the flames (tick 0 for the normal aerial
+            // breath, tick 66 of the retreat) and takes 20 ticks, so the neck and head come round together.
+            float airAimClock = (StateTimer - (AirTellTicks - AirTell)) / 20f;
+            float aimIn = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(airAimClock, 0f, 1f));
+
+            if (AirBreathing)
+            {
+                // Bend the whole neck toward the aerial aim so the head is not the only part pointing at the target.
+                // Rotation is negative-down, the opposite sign to the aim pitch. Neck1 takes 22%, Neck2 44%, Neck3 64%;
+                // the head carries the full angle. Eases back out as the jaw closes.
+                float airPitch = -MathF.Atan2(lockedAim.Y, lockedAim.X * Facing);
+                float neckAim = airPitch * aimIn * (1f - breathClosing);
+                neckBend += 0.22f * neckAim;
+                secondBend += 0.22f * neckAim;
+                thirdBend += 0.20f * neckAim;
+            }
+
             // Share the bend outside the turn so the overlapping throat links stay aligned while attacking.
             Vector2 neckRoot = bones[0].Map(Parts[16].RestPivot);
             if (State == DrakeState.Bite)
@@ -1297,6 +2124,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
                 neckRoot.Y -= 26f * MathHelper.SmoothStep(0f, 1f, jawClearance);
             }
+            else if (leaping)
+            {
+                // Same 26px jaw clearance as the bite, so the open mouth clears the floor at touchdown.
+                neckRoot.Y -= 26f * leapSnap;
+            }
             else if (State == DrakeState.Breath)
             {
                 // Give the opened jaw clearance over flat ground while the flame sweeps downward.
@@ -1311,16 +2143,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             bones[3] = new Bone(Parts[3].RestPivot, bones[2].Map(Parts[3].RestPivot), neckBend + secondBend + thirdBend);
             Vector2 headPosition = bones[3].Map(Parts[15].RestPivot);
             float headAngle = 0.02f * MathF.Sin(phase - 0.8f);
-            if (State == DrakeState.Bite || State == DrakeState.Breath || State == DrakeState.AirBreath)
+            if (State == DrakeState.Bite || State == DrakeState.Breath || AirBreathing)
             {
                 Vector2 aim = lockedAim;
                 if (State == DrakeState.Breath)
                 {
                     aim = GetBreathAim();
-                }
-                else if (State == DrakeState.AirBreath)
-                {
-                    aim = (lockedImpact - ToWorld(headPosition)).SafeNormalize(new Vector2(Facing, 0.5f));
                 }
 
                 headAngle = -MathF.Atan2(aim.Y, aim.X * Facing);
@@ -1329,11 +2157,29 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 {
                     upperLimit = 1.15f;
                 }
+                else if (AirBreathing)
+                {
+                    upperLimit = AirAimUpLimit;
+                }
                 headAngle = MathHelper.Clamp(headAngle, -1.15f, upperLimit);
                 headAngle = MathHelper.Lerp(headAngle, 0.02f * MathF.Sin(phase - 0.8f), breathClosing);
+
+                if (State == DrakeState.RetreatBreath)
+                {
+                    // The retreat spends 66 ticks climbing before it aims; keep the head at rest until then.
+                    headAngle = MathHelper.Lerp(0.02f * MathF.Sin(phase - 0.8f), headAngle, aimIn);
+                }
             }
 
-            if (State == DrakeState.Bite && (currentBiteExtension > 0.01f || biteAimWeight > 0.01f))
+            if (leaping)
+            {
+                // Tip the head onto the leap's fixed 0.65 rad downward aim as the jaws go out.
+                float leapHeadAngle = -MathF.Atan2(lockedAim.Y, lockedAim.X * Facing);
+                leapHeadAngle = MathHelper.Clamp(leapHeadAngle, -1.15f, 0.65f);
+                headAngle = MathHelper.Lerp(headAngle, leapHeadAngle, leapSnap);
+            }
+
+            if ((State == DrakeState.Bite || leaping) && (currentBiteExtension > 0.01f || biteAimWeight > 0.01f))
             {
                 // Extend the neck chain 5–7 tiles along the locked aim vector and steer each link toward the bite angle.
                 Vector2 sourceAim = new Vector2(-lockedAim.X * Facing, lockedAim.Y).SafeNormalize(-Vector2.UnitX);
@@ -1354,6 +2200,72 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 PoseTurnNeck();
             }
+
+            if (State == DrakeState.Turn && turnBite)
+            {
+                // Turn bite: thrust the already swung-over neck along the locked aim, same reach and easing as the
+                // normal bite (7-tick cubic lunge, 8-tick hold, 18-tick cosine retract). 0..1 = how far out the jaws are.
+                int snapTick = StateTimer - TurnBiteLiveStart;
+                float snapAmount = 0f;
+
+                if (snapTick >= 0 && snapTick < BiteLive)
+                {
+                    float lungeProgress = MathHelper.Clamp((snapTick + 1f) / 7f, 0f, 1f);
+                    snapAmount = 1f - MathF.Pow(1f - lungeProgress, 3f);
+                }
+                else if (snapTick >= BiteLive && snapTick < BiteLive + BiteHoldTicks)
+                {
+                    snapAmount = 1f;
+                }
+                else if (snapTick >= BiteLive + BiteHoldTicks)
+                {
+                    int retractElapsed = snapTick - (BiteLive + BiteHoldTicks);
+                    float retractProgress = MathHelper.Clamp(retractElapsed / (float)BiteRetractTicks, 0f, 1f);
+                    snapAmount = 0.5f * (1f + MathF.Cos(MathHelper.Pi * retractProgress));
+                }
+
+                // Tip the head at the locked spot first. The head already wears the new facing, so pitch is measured
+                // against the new side (-turnFacing) and the sign undone by the body's current projection. Positive =
+                // jaw down; capped at 1.3 rad (74 degrees) so a target under the chin gets a downward stab.
+                Vector2 headWorld = ToWorld(bones[15].Position);
+                Vector2 headToImpact = lockedImpact - headWorld;
+                float snapPitch = MathF.Atan2(headToImpact.Y, headToImpact.X * -turnFacing);
+                snapPitch = MathHelper.Clamp(snapPitch, -0.75f, 1.3f);
+                bones[15].Rotation = snapPitch * turnFacing * Facing * snapAmount;
+
+                // Then slide the neck so the snout tip (head source pixel 16,372) lands on the spot, up to
+                // TurnBiteReach px. Re-solved every tick from the live pose, so the turn's own neck drift is absorbed.
+                Vector2 snoutWorld = ToWorld(bones[15].Map(new Vector2(16f, 372f)));
+                Vector2 lunge = lockedImpact - snoutWorld;
+                float lungeLength = lunge.Length();
+
+                if (lungeLength > TurnBiteReach)
+                {
+                    lunge *= TurnBiteReach / lungeLength;
+                }
+
+                lunge *= snapAmount;
+                currentBiteExtension = lunge.Length();
+                Vector2 snapOffset = new Vector2(lunge.X * Projection(), lunge.Y);
+                // The neck root stays seated in the chest (weight 0) so no gap opens at the shoulder; the stretch is
+                // taken by the outer links, which PreDraw pads with filler copies.
+                bones[17].Position += snapOffset * 0.05f;
+                bones[1].Position += snapOffset * 0.15f;
+                bones[2].Position += snapOffset * 0.5f;
+                bones[3].Position += snapOffset * 0.85f;
+                bones[15].Position += snapOffset;
+
+                // Jaw parts once the head has crossed, gapes for the snap, and half-closes through the retract.
+                if (StateTimer >= TurnBiteLiveStart - 6 && snapTick < BiteLive + BiteHoldTicks)
+                {
+                    mouthRow = 2;
+                }
+                else if (StateTimer >= TurnBiteLiveStart - 32 && snapTick < BiteLive + BiteHoldTicks + BiteRetractTicks / 2)
+                {
+                    mouthRow = 1;
+                }
+            }
+
             bones[15].FrameRow = mouthRow;
 
             // The dorsal crest belongs to the shoulder. Flex it slightly around the torso pivot so
@@ -1438,7 +2350,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             // These source sockets include the 32px lowered head placement and still point to the same art pixels.
             Vector2 mouthSocket = new Vector2(16f, 372f);
-            if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+            if (State == DrakeState.Breath || AirBreathing)
             {
                 // Head-frame pixel (48,94) sits inside the open jaw rather than on the snout tip.
                 mouthSocket = BreathMouthSocket;
@@ -1682,7 +2594,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             end = Mouth;
             sweptStart = Mouth;
             sweptEnd = Mouth;
-            if (kind == 0 && State == DrakeState.Bite && StateTimer >= BiteTell && StateTimer < BiteTell + BiteLive)
+            bool biteLive = kind == 0 && State == DrakeState.Bite
+                && StateTimer >= BiteTell && StateTimer < BiteTell + BiteLive;
+            bool turnBiteLive = kind == 3 && State == DrakeState.Turn && turnBite
+                && StateTimer >= TurnBiteLiveStart && StateTimer < TurnBiteLiveStart + BiteLive;
+
+            bool leapStillLive = leapLandTick < 0 || StateTimer < leapLandTick + LeapBiteLandLive;
+            bool leapBiteLive = kind == 4 && State == DrakeState.LeapBite
+                && StateTimer >= LeapTell + leapAirTicks - LeapBiteLiveLead && leapStillLive;
+
+            if (biteLive || turnBiteLive || leapBiteLive)
             {
                 start = Jaw;
                 end = ClipLine(Jaw, Mouth);
@@ -1693,6 +2614,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 }
 
                 sweptEnd = ClipLine(sweptStart, Mouth);
+                return true;
+            }
+
+            int chargeRunTick = StateTimer - ChargeTell;
+
+            if (kind == 5 && State == DrakeState.Charge && chargeRunTick >= 0 && chargeRunTick < chargeTicks)
+            {
+                // The lowered head is the ram: a line from the snout 130px back along the head and upper neck, which
+                // the carrier makes a 60px-wide capsule. At run speed that passes a standing player in about 12 ticks,
+                // inside one roll; the torso behind it deals nothing, the same rule as the bite. Swept from last tick's snout.
+                start = Mouth;
+                end = Mouth + new Vector2(-Facing * 130f, 0f);
+                sweptStart = previousMouth;
+
+                if (Vector2.DistanceSquared(sweptStart, Mouth) > 16000f)
+                {
+                    sweptStart = Mouth;
+                }
+
+                sweptEnd = Mouth;
                 return true;
             }
 
@@ -1732,7 +2673,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             if (visualSequence != sequence)
             {
                 visualSequence = sequence;
-                if (State == DrakeState.Breath || State == DrakeState.AirBreath)
+                if (State == DrakeState.Breath || AirBreathing)
                 {
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl")
                     {
@@ -1744,9 +2685,151 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 {
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.45f, Pitch = -0.6f }, TailBase);
                 }
+                else if (State == DrakeState.BiteChain && biteChainStep == 0 || State == DrakeState.Turn && turnBite
+                    || State == DrakeState.LeapBite || State == DrakeState.Charge)
+                {
+                    // A short, higher snarl opens the triple bite, leap bite and charge, and marks the turns that will snap.
+                    leapLandingShown = false;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/low-dragon-growl")
+                    {
+                        Volume = 0.6f,
+                        Pitch = 0.25f
+                    }, Mouth);
+                }
             }
 
-            if (State == DrakeState.Bite && StateTimer == BiteTell + 3)
+            if (State == DrakeState.Takeoff && airBreathMode == AirBreathStrafe && StateTimer == StrafeStompTick)
+            {
+                // Strafe telegraph: the raised foot slams down. A thud, a little shake, and a low wave of dirt that
+                // rises off the floor and rolls forward ~6 tiles in the direction the strafe will fly.
+                SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.9f, Pitch = -0.3f }, NPC.Bottom);
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.35f, Pitch = -0.4f }, NPC.Bottom);
+                UsefulFunctions.ScreenShake(NPC.Bottom, 3f, 10, distanceFalloff: 500f);
+
+                for (int i = 0; i < 40; i++)
+                {
+                    Vector2 stompOrigin = NPC.Bottom + new Vector2(Facing * Main.rand.NextFloat(-10f, 40f), -Main.rand.NextFloat(0f, 6f));
+                    Vector2 stompDrift = new Vector2(Facing * Main.rand.NextFloat(1.5f, 6f), Main.rand.NextFloat(-3.2f, -0.8f));
+                    Dust stompDust = Dust.NewDustPerfect(stompOrigin, DustID.Dirt, stompDrift, 0, default, Main.rand.NextFloat(1.1f, 1.7f));
+                    stompDust.noGravity = i % 3 == 0;
+                }
+            }
+
+            if (State == DrakeState.Charge)
+            {
+                Vector2 chargeNearFoot = NPC.Bottom;
+                Vector2 chargeFarFoot = ToWorld(new Vector2(340f, SourceFloor.Y));
+                int chargeRunTick = StateTimer - ChargeTell;
+
+                // Tell: the near claw paws the ground (dirt flicked backwards every 5 ticks) and the one wing beat whooshes.
+                if (chargeRunTick < 0 && StateTimer % 5 == 0)
+                {
+                    Vector2 paw = new Vector2(-Facing * Main.rand.NextFloat(2f, 4.5f), Main.rand.NextFloat(-2.6f, -0.8f));
+                    Dust.NewDustPerfect(chargeNearFoot, DustID.Dirt, paw, 0, default, Main.rand.NextFloat(1f, 1.4f));
+                    Dust.NewDustPerfect(chargeNearFoot, DustID.Dirt, paw * 0.6f, 0, default, Main.rand.NextFloat(0.8f, 1.1f));
+                }
+
+                if (StateTimer == 10)
+                {
+                    SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.7f, Pitch = -0.55f }, NPC.Center);
+                }
+
+                // Run: dirt thrown up behind both feet every other tick; footfall thuds come from the walk cycle above.
+                if (chargeRunTick >= 0 && chargeRunTick < chargeTicks && StateTimer % 2 == 0)
+                {
+                    Vector2 spray = new Vector2(-Facing * Main.rand.NextFloat(1f, 4f), Main.rand.NextFloat(-3f, -0.8f));
+                    Dust.NewDustPerfect(chargeNearFoot, DustID.Dirt, spray, 0, default, Main.rand.NextFloat(1f, 1.5f));
+                    Dust.NewDustPerfect(chargeFarFoot, DustID.Dirt, spray * 0.8f, 0, default, Main.rand.NextFloat(0.9f, 1.3f));
+                }
+
+                // Skid: claws plough forward, dirt and smoke pushed ahead of the feet, one grinding thud as it starts.
+                if (chargeRunTick >= chargeTicks && chargeRunTick < chargeTicks + ChargeSkidTicks)
+                {
+                    if (chargeRunTick == chargeTicks)
+                    {
+                        SoundEngine.PlaySound(SoundID.DeerclopsStep with { Volume = 0.8f, Pitch = -0.4f }, NPC.Bottom);
+                        UsefulFunctions.ScreenShake(NPC.Bottom, 2.5f, 8, distanceFalloff: 450f);
+                    }
+
+                    Vector2 plough = new Vector2(Facing * Main.rand.NextFloat(1.5f, 5f), Main.rand.NextFloat(-2.4f, -0.5f));
+                    Dust.NewDustPerfect(chargeNearFoot, DustID.Dirt, plough, 0, default, Main.rand.NextFloat(1f, 1.5f));
+                    Dust.NewDustPerfect(chargeFarFoot, DustID.Smoke, plough * 0.4f, 140, new Color(120, 100, 85), 1.2f);
+                }
+            }
+
+            if (State == DrakeState.LeapBite)
+            {
+                // Feet: the planted near claw is NPC.Bottom; the far claw stands ~74px toward the head (source x 340).
+                Vector2 nearFoot = NPC.Bottom;
+                Vector2 farFoot = ToWorld(new Vector2(340f, SourceFloor.Y));
+                int leapTick = StateTimer - LeapTell;
+
+                // Tell: claws scrabble, one clod of dirt per foot every 4 ticks, thrown backwards.
+                if (leapTick < 0 && StateTimer % 4 == 0)
+                {
+                    Vector2 scrabble = new Vector2(-Facing * Main.rand.NextFloat(1f, 3f), Main.rand.NextFloat(-2.2f, -0.6f));
+                    Dust.NewDustPerfect(nearFoot, DustID.Dirt, scrabble, 0, default, Main.rand.NextFloat(0.9f, 1.3f));
+                    Dust.NewDustPerfect(farFoot, DustID.Dirt, scrabble * 0.8f, 0, default, Main.rand.NextFloat(0.9f, 1.3f));
+                }
+
+                // Launch: a kick of dirt behind both feet and a wing-beat whoosh.
+                if (leapTick == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.6f, Pitch = -0.5f }, NPC.Center);
+
+                    for (int i = 0; i < 16; i++)
+                    {
+                        Vector2 kickOrigin = nearFoot;
+
+                        if (i % 2 == 0)
+                        {
+                            kickOrigin = farFoot;
+                        }
+
+                        Vector2 kick = new Vector2(-Facing * Main.rand.NextFloat(1.5f, 5f), Main.rand.NextFloat(-3.5f, -0.8f));
+                        Dust.NewDustPerfect(kickOrigin, DustID.Dirt, kick, 0, default, Main.rand.NextFloat(1f, 1.4f));
+                    }
+                }
+
+                // Landing: runs once, on the tick each machine learns the touchdown tick. Jaw-snap sound, the heavy
+                // slam sound and shake the tail slam uses, and dirt thrown up and outward from both feet.
+                if (leapLandTick >= 0 && !leapLandingShown)
+                {
+                    leapLandingShown = true;
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
+                    {
+                        Volume = 0.55f,
+                        Pitch = 0.05f
+                    }, NPC.Bottom);
+                    SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.5f, Pitch = -0.25f }, NPC.Bottom);
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, Pitch = -0.45f }, Mouth);
+                    UsefulFunctions.ScreenShake(NPC.Bottom, 4.5f, 12, distanceFalloff: 600f);
+
+                    for (int i = 0; i < 44; i++)
+                    {
+                        Vector2 landOrigin = nearFoot;
+
+                        if (i % 2 == 0)
+                        {
+                            landOrigin = farFoot;
+                        }
+
+                        landOrigin.X += Main.rand.NextFloat(-22f, 22f);
+                        Vector2 burst = new Vector2(Main.rand.NextFloat(-5.5f, 5.5f), Main.rand.NextFloat(-5.5f, -1.2f));
+                        Dust.NewDustPerfect(landOrigin, DustID.Dirt, burst, 0, default, Main.rand.NextFloat(1.1f, 1.6f));
+
+                        if (i % 4 == 0)
+                        {
+                            Dust.NewDustPerfect(landOrigin, DustID.Smoke, burst * 0.4f, 140, new Color(120, 100, 85), 1.4f);
+                        }
+                    }
+                }
+            }
+
+            bool biteSnapTick = State == DrakeState.Bite && StateTimer == BiteTell + 3;
+            bool turnSnapTick = State == DrakeState.Turn && turnBite && StateTimer == TurnBiteLiveStart + 3;
+
+            if (biteSnapTick || turnSnapTick)
             {
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.45f, Pitch = -0.2f }, Mouth);
                 SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, Pitch = -0.45f }, Mouth);
@@ -1754,12 +2837,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
 
             int tell = BreathTell;
-            if (State == DrakeState.AirBreath)
+            if (AirBreathing)
             {
-                tell = AirTell;
+                tell = AirTellTicks;
             }
 
-            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer < tell)
+            if ((State == DrakeState.Breath || AirBreathing) && StateTimer < tell)
             {
                 // Reuse Oolacile's mouth smoulder and swell, including its orange accent palette.
                 float progress = StateTimer / (float)tell;
@@ -1787,17 +2870,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             }
 
             int liveTicks = BreathLive;
-            if (State == DrakeState.AirBreath)
+            if (AirBreathing)
             {
-                liveTicks = AirLive;
+                liveTicks = AirLiveTicks;
             }
-            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer >= tell
+            if ((State == DrakeState.Breath || AirBreathing) && StateTimer >= tell
                 && StateTimer < tell + liveTicks
                 && (StateTimer - tell) % 12 == 0)
             {
                 SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.7f, Pitch = -0.35f }, Mouth);
             }
-            if ((State == DrakeState.Breath || State == DrakeState.AirBreath) && StateTimer == tell + liveTicks)
+            if ((State == DrakeState.Breath || AirBreathing) && StateTimer == tell + liveTicks)
             {
                 SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/breath1") with { Volume = 0.5f }, Mouth);
             }
@@ -1855,6 +2938,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.35f, Pitch = -0.4f }, NPC.Center);
             }
+
+            // Retreat breath: every down-beat while still low (the tell and the first 40 climb ticks) blows a sheet of
+            // dirt forward along the ground from under the wings, and the lift-off itself shakes the screen once.
+            if (State == DrakeState.RetreatBreath && StateTimer < RetreatTell + 40 && StateTimer % 14 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item32 with { Volume = 0.7f, Pitch = -0.65f }, NPC.Center);
+
+                for (int i = 0; i < 18; i++)
+                {
+                    Vector2 gustOrigin = NPC.Bottom + new Vector2(Main.rand.NextFloat(-150f, 150f), -Main.rand.NextFloat(0f, 10f));
+                    Vector2 gust = new Vector2(Facing * Main.rand.NextFloat(2f, 6.5f), Main.rand.NextFloat(-2.4f, -0.4f));
+                    Dust.NewDustPerfect(gustOrigin, DustID.Dirt, gust, 0, default, Main.rand.NextFloat(0.9f, 1.4f));
+                }
+            }
+
+            if (State == DrakeState.RetreatBreath && StateTimer == RetreatTell)
+            {
+                UsefulFunctions.ScreenShake(NPC.Bottom, 2.5f, 10, distanceFalloff: 500f);
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -1873,13 +2975,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 wingNear = 9;
                 wingFar = 10;
                 int flap = StateTimer / 4 % WingCycle.Length;
+
+                if (State == DrakeState.RetreatBreath)
+                {
+                    // Big, heavy beats for the retreat: 7 ticks per wing frame instead of 4 (one full beat per 56 ticks).
+                    flap = StateTimer / 7 % WingCycle.Length;
+                }
+
                 nearWingRow = WingCycle[flap];
                 farWingRow = WingCycle[(flap + 1) % WingCycle.Length];
-                if (State == DrakeState.Takeoff && StateTimer < 12)
+
+                if (State == DrakeState.RetreatBreath && StateTimer < RetreatTell)
+                {
+                    // Tell: feet still planted, wings already beating overhead.
+                    nearLeg = 0;
+                    farLeg = 4;
+                }
+
+                if (State == DrakeState.Takeoff && StateTimer < TakeoffCrouchTicks)
                 {
                     nearLeg = 8;
                     nearWingRow = 2;
                     farWingRow = 2;
+
+                    if (airBreathMode == AirBreathStrafe)
+                    {
+                        // Stomp: near foot raised (mid-swing walk row 2) until the slam, planted (row 0) after it.
+                        nearLeg = 0;
+                        farLeg = 4;
+
+                        if (StateTimer < StrafeStompTick)
+                        {
+                            nearLeg = 2;
+                        }
+                    }
                 }
 
                 if (State == DrakeState.Land && Vector2.DistanceSquared(NPC.Bottom, waypoint) < 1600f)
@@ -1914,12 +3043,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             DrawPart(spriteBatch, 17, 0, screenPos, drawColor);
 
             // When the neck stretches 5–7 tiles during Bite, draw interpolated Neck3/Neck2 links so no gaps open.
-            bool drawExtraNeckLinks = State == DrakeState.Bite && currentBiteExtension > 4f;
+            // The turn bite stretches the same links. Its neck layers each carry their own mirror and a large turn
+            // rotation, so a filler there copies the link it repeats instead of blending toward its neighbour.
+            bool turnStretch = State == DrakeState.Turn && turnBite;
+            bool neckStretching = State == DrakeState.Bite || State == DrakeState.LeapBite || turnStretch;
+            bool drawExtraNeckLinks = neckStretching && currentBiteExtension > 4f;
             if (drawExtraNeckLinks)
             {
                 Bone extraTip = new Bone(Parts[3].RestPivot,
                     Vector2.Lerp(bones[3].Position, bones[15].Position, 0.5f),
                     MathHelper.Lerp(bones[3].Rotation, bones[15].Rotation, 0.5f));
+
+                if (turnStretch)
+                {
+                    extraTip.Rotation = bones[3].Rotation;
+                    extraTip.HorizontalSign = bones[3].HorizontalSign;
+                }
+
                 DrawPartAtBone(spriteBatch, 3, 0, extraTip, screenPos, drawColor);
             }
 
@@ -1929,6 +3069,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 Bone extraMid = new Bone(Parts[2].RestPivot,
                     Vector2.Lerp(bones[2].Position, bones[3].Position, 0.5f),
                     MathHelper.Lerp(bones[2].Rotation, bones[3].Rotation, 0.5f));
+
+                if (turnStretch)
+                {
+                    extraMid.Rotation = bones[2].Rotation;
+                    extraMid.HorizontalSign = bones[2].HorizontalSign;
+                }
+
                 DrawPartAtBone(spriteBatch, 2, 0, extraMid, screenPos, drawColor);
             }
 
@@ -1938,6 +3085,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 Bone extraBase = new Bone(Parts[2].RestPivot,
                     Vector2.Lerp(bones[1].Position, bones[2].Position, 0.5f),
                     MathHelper.Lerp(bones[1].Rotation, bones[2].Rotation, 0.5f));
+
+                if (turnStretch)
+                {
+                    extraBase.Rotation = bones[2].Rotation;
+                    extraBase.HorizontalSign = bones[2].HorizontalSign;
+                }
+
                 DrawPartAtBone(spriteBatch, 2, 0, extraBase, screenPos, drawColor);
             }
 
@@ -2303,6 +3457,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             {
                 width = 28f;
             }
+            else if ((int)Projectile.ai[1] == 5)
+            {
+                // Ground charge: the whole lowered head, not a jaw-sized line.
+                width = 60f;
+            }
 
             float point = 0f;
             bool primary = Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
@@ -2333,6 +3492,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
                 ember.noGravity = true;
             }
         }
+    }
+
+    // The retreat breath's puff: the same flame, living long enough at 12 px/tick to carry 50 tiles (804px).
+    // Growth, the 14-tick fade, tile collision and the death gutter all scale off PuffLifetimeTicks in DemonBreath.
+    public class HellkiteDrakeLongFlame : HellkiteDrakeFlame
+    {
+        protected override int PuffLifetimeTicks => HellkiteDrake.LongFlameLifetime;
     }
 
     // Reuse Oolacile's flame sprite, orange dust, On Fire hit and complete projectile lifecycle.

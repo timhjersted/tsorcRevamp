@@ -9349,17 +9349,32 @@ Mods: {
 			}
 
 			ElementalNecromancerHeadpiece: {
-				// DisplayName: Hydris Necromancer Crown
+				// DisplayName: Elemental Necromancer Crown
 				// Tooltip: ""
 			}
 
 			ElementalNecromancerRobe: {
-				// DisplayName: Hydris Necromancer Robe
+				// DisplayName: Elemental Necromancer Robe
 				// Tooltip: ""
 			}
 
 			ElementalNecromancerBoots: {
-				// DisplayName: Hydris Necromancer Boots
+				// DisplayName: Elemental Necromancer Boots
+				// Tooltip: ""
+			}
+
+			ElementalHeadpiece: {
+				// DisplayName: Elemental Head
+				// Tooltip: ""
+			}
+
+			ElementalBreastplate: {
+				// DisplayName: Elemental Breastplate
+				// Tooltip: ""
+			}
+
+			ElementalGreaves: {
+				// DisplayName: Elemental Greaves
 				// Tooltip: ""
 			}
 
@@ -9904,6 +9919,16 @@ Mods: {
 
 			EnemyManhunterBow: {
 				// DisplayName: Enemy Manhunter Bow
+				// Tooltip: ""
+			}
+
+			EnemyAssassinBow: {
+				// DisplayName: Enemy Assassin Bow
+				// Tooltip: ""
+			}
+
+			EnemyRedCloudHunterBow: {
+				// DisplayName: Enemy Red Cloud Hunter Bow
 				// Tooltip: ""
 			}
 		}
@@ -12420,12 +12445,17 @@ Mods: {
 			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
 			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
+			// HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
 			// TibianAmazonKnife.DisplayName: Tibian Amazon Knife
 			// TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
 			// WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
 			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
 			// BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
 			// LurkerClawStrike.DisplayName: Lurker Claw Strike
+			// BoneChaplainBlightFlame.DisplayName: Bone Chaplain Blight Flame
+			// ElementalEruptionColumn.DisplayName: Elemental Eruption Column
+			// ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
+			// BoneRemains.DisplayName: Bone Remains
 		}
 
 		NPCs: {
@@ -12879,6 +12909,7 @@ Mods: {
 				Draw: 你听到弓弦拉动的声音...
 				Steps: 你听到了脚步声...
 				Hunt: 你被刺客盯上了...
+				// Vanished: The assassin has vanished...
 			}
 
 			AttraidiesIllusion: {
