@@ -32,6 +32,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         private const int AttachedPullTicks = 18;
         private const int LongRangePullMaxTicks = 90;
         private const float TetherBreakDamageFraction = 0.5f;
+        // Release the latch once the victim deals 5% of the Basilisk's max life to it.
+        private const float OwnerDamageReleaseFraction = 0.05f;
         private const int MaxFlightTicks = 120;
         private const int DrainInterval = 30;
         private const int HurtSoundInterval = 300;
@@ -213,7 +215,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             }
 
             Player player = Main.player[targetWho];
-            if (!player.active || player.dead || owner.life <= 0 || ownerDamageTakenWhileAttached >= owner.lifeMax * 0.2f)
+            if (!player.active || player.dead || owner.life <= 0 || ownerDamageTakenWhileAttached >= owner.lifeMax * OwnerDamageReleaseFraction)
             {
                 StartRetract();
                 return;
@@ -568,7 +570,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
                 if (projectile.ModProjectile is BasiliskLeechTongue tongue)
                 {
                     tongue.ownerDamageTakenWhileAttached += damageDone;
-                    if (tongue.ownerDamageTakenWhileAttached >= owner.lifeMax * 0.2f)
+                    if (tongue.ownerDamageTakenWhileAttached >= owner.lifeMax * OwnerDamageReleaseFraction)
                     {
                         tongue.StartRetract();
                     }
@@ -690,29 +692,42 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             float distance = Vector2.Distance(start, end);
             int segments = System.Math.Clamp((int)(distance / TongueSegmentSpacing), 2, 90);
             Vector2 origin = segmentTexture.Size() / 2f;
-            Vector2 previous = GetStringPoint(start, end, normal, offset, phase, 0f);
 
-            for (int i = 1; i <= segments; i++)
+            // Start at i = 0 so the root link anchors inside the head instead of leaving an 8px gap past MouthPosition.
+            for (int i = 0; i <= segments; i++)
             {
                 float progress = i / (float)segments;
-                Vector2 point = GetStringPoint(start, end, normal, offset, phase, progress);
-                Vector2 tangent = point - previous;
+                Vector2 point = GetStringPoint(start, end, normal, offset, phase, progress, distance);
+                Vector2 tangent;
+                if (i == 0)
+                {
+                    Vector2 nextPoint = GetStringPoint(start, end, normal, offset, phase, 1f / segments, distance);
+                    tangent = nextPoint - point;
+                }
+                else
+                {
+                    Vector2 previousPoint = GetStringPoint(start, end, normal, offset, phase, (i - 1) / (float)segments, distance);
+                    tangent = point - previousPoint;
+                }
+
                 if (tangent.LengthSquared() > 0.01f)
                 {
                     float rotation = tangent.ToRotation() + MathHelper.PiOver2;
                     float scale = 0.95f + 0.08f * (float)System.Math.Sin(progress * MathHelper.TwoPi + phase);
                     Main.EntitySpriteDraw(segmentTexture, point - Main.screenPosition, null, color * 0.95f, rotation, origin, scale, SpriteEffects.None, 0f);
                 }
-                previous = point;
             }
         }
 
-        private Vector2 GetStringPoint(Vector2 start, Vector2 end, Vector2 normal, float offset, float phase, float progress)
+        private Vector2 GetStringPoint(Vector2 start, Vector2 end, Vector2 normal, float offset, float phase, float progress, float distance)
         {
             float pulse = Main.GlobalTimeWrappedHourly * 11f + Projectile.identity * 0.09f + phase;
             float taper = (float)System.Math.Sin(progress * MathHelper.Pi);
             float wave = (float)System.Math.Sin(progress * MathHelper.TwoPi * 2.25f + pulse) * 5f * taper;
-            return Vector2.Lerp(start, end, progress) + normal * (offset + wave);
+
+            // Converge all three tendrils inside the mouth throat at progress = 0, then fan out past the jaws.
+            float mouthSpread = MathHelper.Clamp(distance * progress / 20f, 0f, 1f);
+            return Vector2.Lerp(start, end, progress) + normal * (offset * mouthSpread + wave);
         }
 
         private void PlayLeechHurtSound(Player player)

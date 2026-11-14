@@ -66,28 +66,382 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Broadsword;
 
         // Ranged handled by the bespoke ticks + CursedKnives, not the base generic ranged branch.
+        // SecondaryRangedWeaponItemType provides the held flask sprite during TickBomb.
         protected override int RangedWeaponItemType => -1;
+        protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<EnemySmokeBomb>();
+        protected override bool SecondaryRangedAvailable => false;
         protected override int MeleeDamage => 65;
         protected override int RangedDamage => 42;
 
-        // ── Melee tuning — agile duelist ────────────────────────────────────────────────
+        // ── Melee tuning — agile fire-sword duelist ─────────────────────────────────────
+        const string QuickslashName = "Quickslash";
+        const string UnderOverName = "Under-Over";
+        const string EmberLungeName = "Ember Lunge";
+        const string ThreeHitStandardName = "3-Hit Standard";
+        const string FiveHitFinisherName = "5-Hit Finisher";
+
+        const float ArcHighRad = -1.85f;
+        const float ArcLowRad = 1.90f;
+        const float EmberLungeMinRange = 140f;
+        const float EmberLungeMaxRange = 280f;
+
         protected override float TopSpeed => 3f;
         protected override float Acceleration => 0.11f;
-        protected override float MeleeRange => 78f;
+        protected override float MeleeRange => 72f;
         protected override float StabRange => 140f;
-        protected override float ComboMaxStartRange => 200f;
+        protected override float ComboMaxStartRange => EmberLungeMaxRange;
+        protected override float MeleeEngageRange => 88f;
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.50f;
+        protected override float ComboTelegraphAdvanceStopDistance => 56f;
         protected override int MeleeComboChance => 80;
-        protected override int MeleeTelegraphTicks => 34;
-        protected override int MinComboTelegraphTicks => 34;
+        protected override int MeleeTelegraphTicks => 30;
+        protected override int MinComboTelegraphTicks => 24;
+        protected override float ComboTelegraphMultiplier => 1f;
+        protected override bool UseSwingEasing => true;
+        protected override bool UseAimAdaptiveArc => true;
         protected override bool UseCompositeArmSwing => true;
+        protected override bool UseCompositeArmForAdditionalPhase =>
+            Phase == AttackPhase.PierceTelegraph
+            || Phase == AttackPhase.PierceDash
+            || Phase == AttackPhase.PierceRecovery
+            || Phase == AttackPhase.KnivesTelegraph
+            || Phase == AttackPhase.KnivesThrowPause
+            || Phase == AttackPhase.KnivesThrow
+            || (Phase == AttackPhase.NovaRecovery
+                && ((_vanishTimer > 0 && VanishTotal - _vanishTimer >= VanishTeleportTicks)
+                    || _bombTimer > 0));
+
+        protected override bool ForceHeldWeaponVisible
+        {
+            get
+            {
+                if (Phase != AttackPhase.NovaRecovery)
+                {
+                    return false;
+                }
+
+                if (_vanishTimer > 0)
+                {
+                    int elapsed = VanishTotal - _vanishTimer;
+                    int releaseTick = VanishTeleportTicks + VanishPostTeleportThrowTicks;
+                    return elapsed >= VanishTeleportTicks && elapsed <= releaseTick + ThrowReleaseTicks;
+                }
+
+                if (_bombTimer > 0)
+                {
+                    int elapsed = BombTotal - _bombTimer;
+                    return elapsed <= BombWindupTicks;
+                }
+
+                return false;
+            }
+        }
+
+        protected override bool MirrorHeldRangedRotationByFacing => true;
+
+        protected override float GetHeldRangedDrawScale(int itemType)
+        {
+            if (itemType == SecondaryRangedWeaponItemType)
+            {
+                return 0.85f;
+            }
+
+            if (itemType == CursedKnivesWeaponItemType)
+            {
+                return 0.95f;
+            }
+
+            return base.GetHeldRangedDrawScale(itemType);
+        }
+
+        protected override float GetHeldRangedRotationOffset(int itemType)
+        {
+            if (itemType == CursedKnivesWeaponItemType)
+            {
+                return MathHelper.PiOver2;
+            }
+
+            return base.GetHeldRangedRotationOffset(itemType);
+        }
+
+        protected override void ModifyAdditionalPhaseWeaponRotation(ref float weaponRotation)
+        {
+            const float WindupStartRad = 0.15f;
+            const float WindupCockedRad = -2.00f;
+            const float ThrowFollowThroughRad = 0.55f;
+
+            bool inThrowWindup = false;
+            float windupProgress = 0f;
+            bool inThrowRelease = false;
+            float releaseProgress = 0f;
+
+            if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
+            {
+                inThrowWindup = true;
+                windupProgress = 1f - MathHelper.Clamp(PhaseTimer / (float)Math.Max(1, _knivesWindupTotal), 0f, 1f);
+            }
+            else if (Phase == AttackPhase.KnivesThrow)
+            {
+                inThrowRelease = true;
+                releaseProgress = 1f - MathHelper.Clamp(PhaseTimer / (float)Math.Max(1, CursedKnivesThrowTicks), 0f, 1f);
+            }
+            else if (Phase == AttackPhase.NovaRecovery && _vanishTimer > 0)
+            {
+                int elapsed = VanishTotal - _vanishTimer;
+                int releaseTick = VanishTeleportTicks + VanishPostTeleportThrowTicks;
+                if (elapsed >= VanishTeleportTicks && elapsed < releaseTick)
+                {
+                    inThrowWindup = true;
+                    windupProgress = MathHelper.Clamp(
+                        (elapsed - VanishTeleportTicks) / (float)VanishPostTeleportThrowTicks,
+                        0f,
+                        1f);
+                }
+                else if (elapsed >= releaseTick)
+                {
+                    inThrowRelease = true;
+                    releaseProgress = MathHelper.Clamp((elapsed - releaseTick) / (float)ThrowReleaseTicks, 0f, 1f);
+                }
+            }
+            else if (Phase == AttackPhase.NovaRecovery && _bombTimer > 0)
+            {
+                int elapsed = BombTotal - _bombTimer;
+                if (elapsed < BombWindupTicks)
+                {
+                    inThrowWindup = true;
+                    windupProgress = MathHelper.Clamp(elapsed / (float)BombWindupTicks, 0f, 1f);
+                }
+                else
+                {
+                    inThrowRelease = true;
+                    releaseProgress = MathHelper.Clamp((elapsed - BombWindupTicks) / (float)ThrowReleaseTicks, 0f, 1f);
+                }
+            }
+
+            if (inThrowWindup)
+            {
+                weaponRotation = MathHelper.SmoothStep(WindupStartRad, WindupCockedRad, windupProgress);
+            }
+            else if (inThrowRelease)
+            {
+                weaponRotation = MathHelper.SmoothStep(WindupCockedRad, ThrowFollowThroughRad, releaseProgress);
+            }
+        }
         protected override bool UseAuthoredComboSwingClock => true;
         protected override bool AuthoredClockCoversJoustDash => true;
         protected override bool UseLogicalMeleeTelegraphs => true;
+        protected override bool MirrorMeleeSwingRotationByFacing => true;
         protected override int MeleeComboInterStepLingerTicks => 3;
         protected override int MeleeRecoveryLingerTicks => 6;
         protected override float PuppetJumpPower => 12f;
         protected override float PuppetJumpBoost => 6f;
         protected override Color MeleeTelegraphFlashColor => Color.OrangeRed;
+
+        protected override bool HasFireSlashVFX => true;
+        protected override Color FireSlashCinderColor => new Color(56, 10, 2);
+        protected override Color FireSlashFlameColor => new Color(255, 118, 18);
+        protected override Color FireSlashCoreColor => new Color(255, 238, 165);
+        protected override bool HasSwordArcVFX => true;
+        protected override VanillaSwordArcTexture SwordArcVFXTexture => VanillaSwordArcTexture.Excalibur;
+        protected override Color SwordArcVFXColor => new Color(255, 130, 35);
+
+        private bool EmberLungeActive =>
+            ActiveMeleeComboName == EmberLungeName
+            && (Phase == AttackPhase.MeleeComboTelegraph
+                || Phase == AttackPhase.MeleeComboAttack
+                || Phase == AttackPhase.MeleeComboPause
+                || Phase == AttackPhase.MeleeComboRecovery);
+
+        protected override bool UseLandingTimedLeapSlam => EmberLungeActive;
+        protected override float LeapSlamCarryRotation => -1.70f;
+        protected override float LeapSlamImpactRotation => 1.85f;
+        protected override MeleeCombo[] MeleeComboPoolOverride => HeroCombos;
+
+        private static MeleeComboStep HeroCut(ComboMotion motion, int telegraphTicks, int easeInTicks,
+            int easeOutTicks, int pauseAfter, float stepInDistance, float damageMult = 1f,
+            float reachMult = 1f, float decay = 7f)
+        {
+            // Keep HitWindowEnd synced with >= 30% peak weighted velocity so trailing settle frames never deal phantom hits.
+            int attackTicks = easeInTicks + easeOutTicks;
+            float hitWindowEnd = (easeInTicks + easeOutTicks * 1.204f / decay) / attackTicks;
+            return new MeleeComboStep
+            {
+                Motion = motion,
+                TelegraphTicks = telegraphTicks,
+                AttackTicks = attackTicks,
+                PostStepPause = pauseAfter,
+                DamageMult = damageMult,
+                ReachMult = reachMult,
+                ForwardPushMult = 0f,
+                StepInDistance = stepInDistance,
+                SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Weighted,
+                EaseInTicks = easeInTicks,
+                EaseOutTicks = easeOutTicks,
+                EaseOutDecay = decay,
+                HitWindowEnd = hitWindowEnd,
+            };
+        }
+
+        // Spec sheets (attack-timing-design): 215 deg envelope (-1.85..1.90 rad), ~172 deg live sweep,
+        // all live windows 12-16t (< 22t roll i-frames), inter-step live gaps >= 36t (Rule 3 & Rule 5 safe).
+        // Hitbox reach 72 * 0.7 = 50.4px matches visual 39.6px * 1.25 scale = 49.5px within 2%.
+        private static readonly MeleeCombo[] HeroCombos = new[]
+        {
+            // Quickslash — 24t tell -> 7+32=39t Weighted(7.0) (peak ~31 deg/t, live 12.5t), 18t recovery (44.5t open).
+            new MeleeCombo
+            {
+                Name = QuickslashName,
+                BaseWeight = 90,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.White,
+                CooldownAfterUse = 55,
+                RecoveryTicks = 18,
+                MoveBrake = 0.08f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.OverheadArc, 24, 7, 32, 0, stepInDistance: 28f),
+                },
+            },
+            // Under-Over — 32t low-coiled tell -> 39t Underhand -> 12t pause (46t gap) -> 42t Overhead + HeroFireArc, 26t rec.
+            new MeleeCombo
+            {
+                Name = UnderOverName,
+                BaseWeight = 85,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.LightYellow,
+                CooldownAfterUse = 90,
+                RecoveryTicks = 26,
+                MoveBrake = 0.12f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.UnderhandArc, 32, 7, 32, 12, stepInDistance: 34f, damageMult: 1.0f, reachMult: 1.05f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 8, 34, 0, stepInDistance: 42f, damageMult: 1.15f, reachMult: 1.12f),
+                },
+            },
+            // Ember Lunge (RangedStartOnly 140..280px) — 30t tell -> 45.6t solved leap (up 6.84, max vx 8.42 -> ~384px reach)
+            // -> 10t landing chop (-1.70..1.85) + HeroFireArc, 24t rec. Selectable outside MeleeEngageRange only.
+            new MeleeCombo
+            {
+                Name = EmberLungeName,
+                BaseWeight = 75,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 130,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                RecoveryTicks = 24,
+                MoveBrake = 0.06f,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.LeapSlam,
+                        TelegraphTicks = 30,
+                        AttackTicks = 78,
+                        PostStepPause = 0,
+                        DamageMult = 1.25f,
+                        ReachMult = 1.20f,
+                        ForwardPushMult = 1.65f,
+                        SwingSpeedMult = 1f,
+                        Ease = SwingEaseStyle.Whip,
+                        LeapHeightMult = 0.72f,
+                        LeapForwardSpeedMult = 1.65f,
+                        LeapStrikeRange = 115f,
+                    },
+                },
+            },
+            // 3-Hit Standard — 36t tell -> Over 40t (pause 12, gap 46t) -> Under 39t (pause 14, gap 49t)
+            // -> Heavy Over 45t + HeroFireArc, 32t recovery (~61t open). Gated anti-whiff in ShouldContinueMeleeCombo.
+            new MeleeCombo
+            {
+                Name = ThreeHitStandardName,
+                BaseWeight = 65,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Cyan,
+                CooldownAfterUse = 140,
+                RecoveryTicks = 32,
+                MoveBrake = 0.14f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.OverheadArc, 36, 8, 32, 12, stepInDistance: 34f, damageMult: 0.95f),
+                    HeroCut(ComboMotion.UnderhandArc, 0, 7, 32, 14, stepInDistance: 38f, damageMult: 1.0f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 9, 36, 0, stepInDistance: 46f, damageMult: 1.15f, reachMult: 1.12f),
+                },
+            },
+            // 5-Hit Finisher — 46t tell, HyperArmor -> 4 light weaves (38/36/36/38t, 20t dramatic beat before finisher)
+            // -> 48t heavy Overhead (live 16.5t, stepIn 64px) + HeroFireArc, 44t recovery (~75t open).
+            new MeleeCombo
+            {
+                Name = FiveHitFinisherName,
+                BaseWeight = 35,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Red,
+                CooldownAfterUse = 240,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RecoveryTicks = 44,
+                MoveBrake = 0.18f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.OverheadArc, 46, 8, 30, 12, stepInDistance: 28f, damageMult: 0.75f),
+                    HeroCut(ComboMotion.UnderhandArc, 0, 7, 29, 12, stepInDistance: 28f, damageMult: 0.75f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 7, 29, 12, stepInDistance: 32f, damageMult: 0.80f),
+                    HeroCut(ComboMotion.UnderhandArc, 0, 8, 30, 20, stepInDistance: 36f, damageMult: 0.85f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 10, 38, 0, stepInDistance: 64f, damageMult: 1.50f, reachMult: 1.22f),
+                },
+            },
+        };
+
+        protected override void ModifySwordArcVFX(MeleeComboStep step, VanillaSwordArcSettings settings)
+        {
+            settings.Opacity = 0.48f;
+            settings.Radius = Math.Max(52f, ComboReachBase * 0.7f * step.ReachMult * 1.15f);
+            settings.DustType = DustID.Torch;
+        }
+
+        protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
+        {
+            if (combo.Name == EmberLungeName)
+            {
+                return distance >= EmberLungeMinRange && distance <= EmberLungeMaxRange;
+            }
+
+            return true;
+        }
+
+        protected override bool ShouldContinueMeleeCombo(
+            string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            if (previousStepHit)
+            {
+                return true;
+            }
+
+            MeleeCombo combo = Array.Find(HeroCombos, candidate => candidate.Name == comboName);
+            if (combo.Steps == null || nextStepIndex >= combo.Steps.Length)
+            {
+                return false;
+            }
+
+            MeleeComboStep nextStep = combo.Steps[nextStepIndex];
+            float reach = ComboReachBase * 0.7f * nextStep.ReachMult;
+            float maxFollowDistance = reach + Math.Max(nextStep.StepInDistance, 56f);
+            return NPC.Distance(target.Center) <= maxFollowDistance;
+        }
+
+        protected override void ModifyNextMeleeComboStep(
+            string comboName, int nextStepIndex, Player target, ref MeleeComboStep nextStep)
+        {
+            if (nextStep.Ease != SwingEaseStyle.Weighted)
+            {
+                return;
+            }
+
+            float horizontalGap = Math.Abs(target.Center.X - NPC.Center.X);
+            nextStep.StepInDistance = MathHelper.Clamp(horizontalGap - 44f, 20f, 68f);
+        }
 
         protected override void ModifyMeleeArcEndpoints(ComboMotion motion,
             ref float startRotation, ref float endRotation)
@@ -95,34 +449,63 @@ namespace tsorcRevamp.NPCs.Invaders
             if (Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboAttack
                 || Phase == AttackPhase.MeleeComboPause || Phase == AttackPhase.MeleeComboRecovery)
             {
-                WeaponArchetypeTables.SetBroadswordComboArc(ActiveMeleeComboName, motion,
-                    ref startRotation, ref endRotation);
+                // Keep HeroofLumelia's broadsword arcs inside a clean shoulder-friendly 215 deg envelope
+                // (-1.85 overhead to +1.90 low-down) aligned with MeleeWeaponRotationOffset = PiOver4.
+                if (motion == ComboMotion.OverheadArc)
+                {
+                    startRotation = ArcHighRad;
+                    endRotation = ArcLowRad;
+                }
+                else if (motion == ComboMotion.UnderhandArc)
+                {
+                    startRotation = ArcLowRad;
+                    endRotation = ArcHighRad;
+                }
             }
         }
 
+        protected override float GetLogicalWindupOppositeEnd(ComboMotion motion, float attackStart, float oppositeEnd)
+        {
+            // Coil slightly opposite the cut instead of sweeping the full 215 deg arc backwards during windup.
+            if (motion == ComboMotion.OverheadArc)
+            {
+                return 0.35f;
+            }
+
+            if (motion == ComboMotion.UnderhandArc)
+            {
+                return -0.55f;
+            }
+
+            return base.GetLogicalWindupOppositeEnd(motion, attackStart, oppositeEnd);
+        }
+
         // Grey-smoke blink identity (kept from the legacy TeleportVisualStyle.GreySmoke).
-        protected override int TeleportTelegraphTicks => 120;
+        protected override int TeleportTelegraphTicks => 30;
         protected override int TeleportDustCount => 22;
         protected override Color TeleportDustTint => new Color(180, 180, 180);
         protected override int CasualStrollChance => 12;
 
-        // Grip tuning for the AncientFireSword sprite — starting values, fine-tune in-game.
+        // Grip tuning for AncientFireSword (-45 deg diagonal broadsword): +PiOver4 aligns the blade
+        // directly with _weaponRotation; small arm offset keeps the wrist natural without overhead pinch.
         protected override Vector2 MeleeHandleNorm => new Vector2(0.2f, 0.8f);
-        protected override float MeleeWeaponDrawScale => 1f;
-        protected override float MeleeWeaponRotationOffset => 0.9f;
+        protected override float MeleeWeaponDrawScale => 1.25f;
+        protected override float MeleeWeaponRotationOffset => MathHelper.PiOver4;
+        protected override float MeleeCompositeArmRotationOffset => 0.15f;
 
         // ── A1: Knife volleys (base CursedKnives template) ──────────────────────────────
         protected override bool CanThrowCursedKnives => true;
-        protected override int CursedKnivesWeaponItemType => -1;
+        protected override int CursedKnivesWeaponItemType => ModContent.ItemType<EnemyCursedKnife>();
         protected override float CursedKnivesRange => 780f;
         protected override float CursedKnivesMinRange => 90f;
         protected override float CursedKnivesCloseRange => 220f;
         protected override float CursedKnivesMidRange => 470f;
         protected override int CursedKnivesChance => 5;
-        protected override int CursedKnivesTelegraphTicks => 32;
+        protected override int CursedKnivesTelegraphTicks => BaseCursedKnivesTelegraphTicks
+            + (_postTeleportKnifeTimer > 0 ? PostTeleportKnifeExtraTicks : 0);
         protected override int CursedKnivesThrowTicks => 10;
-        protected override int CursedKnivesBackToBackGap => 12;
-        protected override int CursedKnivesFarGap => 22;
+        protected override int CursedKnivesBackToBackGap => BaseCursedKnivesTelegraphTicks;
+        protected override int CursedKnivesFarGap => BaseCursedKnivesTelegraphTicks;
         protected override int CursedKnivesRecoveryTicks => 38;
         protected override int CursedKnivesCooldownAfterUse => 300;
         protected override Color CursedKnivesTelegraphFlashColor => Color.White;
@@ -136,21 +519,41 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int PierceTelegraphTicks => 50;
         protected override int PierceDashTicks => 34;
         protected override float PierceDashSpeed => 15f;
+        protected override float PierceOvershootPastTarget => 160f;
+        protected override int PierceDashAccelTicks => 6;
+        protected override int PierceDashMaxTicks => 48;
+        // Cock the blade forward-down at thigh height instead of dangling vertical (+PiOver2).
+        protected override float PierceTelegraphRotation => 0.42f;
         protected override int PierceRecoveryTicks => 80;
         protected override int PierceCooldownAfterUse => 480;
 
-        // ── Bespoke set-piece state ─────────────────────────────────────────────────────
+        // ── Bespoke set-piece & teleport state ──────────────────────────────────────────
+        const int BaseCursedKnivesTelegraphTicks = 40;
+        const int PostTeleportKnifeExtraTicks = 30;
+        const int PostTeleportGraceDurationTicks = 120;
+        const int ThrowReleaseTicks = 10;
+        const int NoLosTeleportTicks = 240; // 4 seconds without straight-line LOS
+
         int _attackLabelTimer;
         int _knifePatternIndex;
+        int _knivesWindupTotal = BaseCursedKnivesTelegraphTicks;
+        int _noLosTicks;
+        int _postTeleportKnifeTimer;
 
         int _vanishTimer;
         int _vanishCd = 260;
-        Vector2 _vanishOrigin; // where the blink left from, for the clients' departure smoke
-        const int VanishTotal = 48;
+        Vector2 _vanishOrigin; // departure point for departure smoke & hold during 30t vanish
+        Vector2 _vanishDest; // validated arrival point behind/near the player
+        const int VanishTeleportTicks = 30;
+        const int VanishPostTeleportThrowTicks = 70; // 40t base knife windup + 30t post-TP extra telegraph
+        const int VanishFollowThroughTicks = 16;
+        const int VanishTotal = VanishTeleportTicks + VanishPostTeleportThrowTicks + VanishFollowThroughTicks;
 
         int _bombTimer;
         int _bombCd = 200;
-        const int BombTotal = 34;
+        const int BombWindupTicks = 42; // 22t base + 20t extra telegraph
+        const int BombFollowThroughTicks = 12;
+        const int BombTotal = BombWindupTicks + BombFollowThroughTicks;
 
         int _hornTimer;
         int _hornCd = 360;
@@ -200,12 +603,21 @@ namespace tsorcRevamp.NPCs.Invaders
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            // The 30t smoke windup IS the entire blink; avoid an extra hidden hold/second mist pair.
+            globalNPC.TeleportAppearanceDelay = 0;
+            globalNPC.TeleportArrivalMistTime = 0;
 
             EvasiveProfile.RedKnight(globalNPC);
         }
 
         protected override void RunMovementAI(float speedMult)
         {
+            if (_vanishTimer > 0 && VanishTotal - _vanishTimer < VanishTeleportTicks)
+            {
+                NPC.velocity = Vector2.Zero;
+                return;
+            }
+
             var globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavSearchRadius = 80;
             globalNPC.RemembersLastKnownPos = true;
@@ -217,6 +629,49 @@ namespace tsorcRevamp.NPCs.Invaders
                 attackRange: MeleeRange);
         }
 
+        protected override bool ShouldHoldAutomaticTeleport
+        {
+            get
+            {
+                if (_vanishTimer > 0 || _bombTimer > 0 || _rallyTimer > 0)
+                {
+                    return true;
+                }
+
+                // Rain of Arrows (TickHorn) parks in NovaRecovery: hold teleport until 4s of no LOS
+                // elapses so he still finishes nearby casts cleanly, then blink near the fleeing player.
+                if (_hornTimer > 0)
+                {
+                    return _noLosTicks < NoLosTeleportTicks;
+                }
+
+                return base.ShouldHoldAutomaticTeleport;
+            }
+        }
+
+        protected override void OnTeleportCompleted()
+        {
+            _noLosTicks = 0;
+            _hornTimer = 0;
+            _postTeleportKnifeTimer = PostTeleportGraceDurationTicks;
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NPC.netUpdate = true;
+            }
+        }
+
+        public override void OnStagger(NPC npc)
+        {
+            _vanishTimer = 0;
+            _bombTimer = 0;
+            _hornTimer = 0;
+            _rallyTimer = 0;
+            NPC.alpha = 0;
+            SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+            base.OnStagger(npc);
+        }
+
         public override void AI()
         {
             // Contact damage is live only during the Piercing Dash lunge (all other damage is
@@ -225,6 +680,30 @@ namespace tsorcRevamp.NPCs.Invaders
 
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+
+            if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
+            {
+                if (PhaseTimer > _knivesWindupTotal)
+                {
+                    _knivesWindupTotal = PhaseTimer;
+                }
+
+                if (!Main.dedServ && Main.rand.NextBool(3))
+                {
+                    Dust glintDust = Dust.NewDustPerfect(
+                        PuppetHandPosition + Main.rand.NextVector2Circular(4f, 4f),
+                        DustID.SilverFlame,
+                        new Vector2(0f, -0.6f),
+                        80,
+                        Color.White,
+                        0.85f);
+                    glintDust.noGravity = true;
+                }
+            }
+            else
+            {
+                _knivesWindupTotal = BaseCursedKnivesTelegraphTicks;
+            }
 
             if (_attackLabelTimer > 0)
             {
@@ -235,10 +714,66 @@ namespace tsorcRevamp.NPCs.Invaders
                 }
             }
 
+            if (_postTeleportKnifeTimer > 0)
+            {
+                _postTeleportKnifeTimer--;
+            }
+
             Player target = Main.player[NPC.target];
             if (target.dead || !target.active)
             {
                 return;
+            }
+
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool teleportBusy = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (teleportBusy)
+                {
+                    _noLosTicks = 0;
+                }
+                else
+                {
+                    bool hasLineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height, target.position, target.width, target.height)
+                        && Collision.CanHitLine(NPC.position, NPC.width, NPC.height, target.position, target.width, target.height);
+
+                    if (hasLineOfSight)
+                    {
+                        _noLosTicks = 0;
+                    }
+                    else
+                    {
+                        _noLosTicks++;
+
+                        // 4s without straight-line LOS forces a re-acquire blink even when A* thinks
+                        // a long path makes progress or Rain of Arrows is keeping him parked.
+                        if (_noLosTicks >= NoLosTeleportTicks
+                            && !ShouldHoldAutomaticTeleport
+                            && globalNPC.CanTeleport
+                            && globalNPC.TeleportChargesRemaining > 0
+                            && globalNPC.TeleportCooldownTimer == 0)
+                        {
+                            if (tsorcRevampAIs.TryTeleportReacquire(NPC, globalNPC))
+                            {
+                                _noLosTicks = 0;
+
+                                if (_hornTimer > 0)
+                                {
+                                    _hornTimer = 0;
+                                    EnterPhase(AttackPhase.Idle, 0);
+                                }
+
+                                NPC.netUpdate = true;
+                            }
+                            else
+                            {
+                                globalNPC.TeleportCooldownTimer = 30;
+                            }
+                        }
+                    }
+                }
             }
 
             // Rally is HP-gated and preempts the cooldown set-pieces; the rest run while idle. The set-piece bodies run on
@@ -263,10 +798,9 @@ namespace tsorcRevamp.NPCs.Invaders
             switch (piece)
             {
                 case HeroSetPiece.Vanish:
-                    SetAttackLabel("Vanishing Strike", 60);
+                    SetAttackLabel("Vanishing Strike", VanishTotal);
                     SmokePuff(_vanishOrigin);
-                    SmokePuff(NPC.Center);
-                    SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.2f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.2f }, _vanishOrigin);
                     break;
 
                 case HeroSetPiece.Bomb:
@@ -294,8 +828,10 @@ namespace tsorcRevamp.NPCs.Invaders
             writer.Write((short)_bombTimer);
             writer.Write((short)_hornTimer);
             writer.Write((short)_rallyTimer);
+            writer.Write((short)_postTeleportKnifeTimer);
             writer.Write((byte)_rallyStage);
             writer.WriteVector2(_vanishOrigin);
+            writer.WriteVector2(_vanishDest);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -305,8 +841,10 @@ namespace tsorcRevamp.NPCs.Invaders
             int bombTimer = reader.ReadInt16();
             int hornTimer = reader.ReadInt16();
             int rallyTimer = reader.ReadInt16();
+            _postTeleportKnifeTimer = reader.ReadInt16();
             _rallyStage = reader.ReadByte();
             _vanishOrigin = reader.ReadVector2();
+            _vanishDest = reader.ReadVector2();
 
             // A timer idle here that arrives near its full length started on the server this tick. The window ignores a
             // late snapshot of a set-piece this client already counted down.
@@ -342,23 +880,71 @@ namespace tsorcRevamp.NPCs.Invaders
             (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll) && _rallyTimer <= 0;
 
         // ── A2: Vanishing Strike ────────────────────────────────────────────────────────
-        // Grey-smoke vanish → blink behind the player → reappear flash (≥26t read) → point-blank
-        // knife burst.  The signature identity move — a rogue's disengage-and-punish.
+        // 30t grey-smoke vanish telegraph (departure + validated landing mist) → blink behind
+        // the player → 56t post-TP knife telegraph (26 base + 30 post-TP) → point-blank fan.
         private void TickVanish(Player target)
         {
             if (_vanishTimer > 0)
             {
+                int elapsed = VanishTotal - _vanishTimer;
                 _vanishTimer--;
+
+                if (elapsed < VanishTeleportTicks)
+                {
+                    NPC.alpha = 255;
+                    NPC.velocity = Vector2.Zero;
+                    NPC.Center = _vanishOrigin;
+                    return;
+                }
+
+                if (elapsed == VanishTeleportTicks)
+                {
+                    NPC.Center = _vanishDest;
+                    NPC.velocity = Vector2.Zero;
+                    NPC.alpha = 0;
+                    SmokePuff(NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.2f }, NPC.Center);
+                    SpawnTelegraphFlash(new Color(200, 200, 200));
+                }
+
+                NPC.alpha = 0;
                 NPC.velocity.X *= 0.7f;
                 int face = target.Center.X < NPC.Center.X ? -1 : 1;
                 NPC.direction = face;
                 NPC.spriteDirection = face;
 
-                if (_vanishTimer == VanishTotal - 26) // ~26t after reappearing = the strike
+                int throwElapsed = VanishTeleportTicks + VanishPostTeleportThrowTicks;
+                if (elapsed < throwElapsed)
                 {
+                    SetDisplayWeapon(CursedKnivesWeaponItemType, swing: false);
+                    if (elapsed == VanishTeleportTicks + 1 || elapsed == throwElapsed - 30)
+                    {
+                        SpawnTelegraphFlash(Color.White);
+                    }
+
+                    if (!Main.dedServ && Main.rand.NextBool(3))
+                    {
+                        Dust sparkDust = Dust.NewDustPerfect(
+                            PuppetHandPosition + Main.rand.NextVector2Circular(4f, 4f),
+                            DustID.SilverFlame,
+                            new Vector2(0f, -0.6f),
+                            90,
+                            Color.White,
+                            0.9f);
+                        sparkDust.noGravity = true;
+                    }
+                }
+                else if (elapsed == throwElapsed)
+                {
+                    SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
                     ThrowKnifeFan(5, 46f, 12f, target.Center);
                     SoundEngine.PlaySound(SoundID.Item17 with { Pitch = 0.2f }, NPC.Center);
                 }
+                else if (_vanishTimer == 0)
+                {
+                    SetDisplayWeapon(MeleeWeaponItemType, swing: false);
+                }
+
                 return;
             }
 
@@ -386,18 +972,92 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
+            // Pick a solid-floored, non-embedded landing spot (prefer behind player, fallback in front).
+            float[] candidateOffsetsX =
+            {
+                -target.direction * 96f,
+                -target.direction * 72f,
+                -target.direction * 128f,
+                target.direction * 96f,
+                target.direction * 72f,
+            };
+
+            Vector2? landingCenter = null;
+            int halfWidthTiles = (int)Math.Ceiling(NPC.width * 0.5f / 16f);
+            for (int offsetIndex = 0; offsetIndex < candidateOffsetsX.Length && !landingCenter.HasValue; offsetIndex++)
+            {
+                float candidateX = target.Center.X + candidateOffsetsX[offsetIndex];
+                int centerTileX = (int)(candidateX / 16f);
+                int baseFloorTileY = (int)(target.Bottom.Y / 16f);
+
+                for (int step = 0; step <= 12; step++)
+                {
+                    int deltaY = (step + 1) / 2;
+                    if (step % 2 == 0 && step > 0)
+                    {
+                        deltaY = -deltaY;
+                    }
+
+                    int floorTileY = baseFloorTileY + deltaY;
+                    if (!WorldGen.InWorld(centerTileX, floorTileY, 10))
+                    {
+                        continue;
+                    }
+
+                    Tile floorTile = Framing.GetTileSafely(centerTileX, floorTileY);
+                    bool solidFloor = WorldGen.SolidOrSlopedTile(floorTile) || Main.tileSolidTop[floorTile.TileType];
+                    if (!floorTile.HasTile || !solidFloor)
+                    {
+                        continue;
+                    }
+
+                    Vector2 boxBottom = new Vector2(candidateX, floorTileY * 16f);
+                    float boxLeft = boxBottom.X - NPC.width * 0.5f;
+                    float boxTop = boxBottom.Y - NPC.height;
+                    int tileLeft = (int)Math.Floor(boxLeft / 16f);
+                    int tileRight = (int)Math.Floor((boxLeft + NPC.width - 0.01f) / 16f);
+                    int tileTop = (int)Math.Floor(boxTop / 16f);
+                    int tileBottom = (int)Math.Floor((boxBottom.Y - 0.01f) / 16f);
+                    if (Collision.SolidTiles(tileLeft, tileRight, tileTop, tileBottom))
+                    {
+                        continue;
+                    }
+
+                    if (!NPC.lavaImmune && Collision.LavaCollision(new Vector2(boxLeft, boxTop), NPC.width, NPC.height))
+                    {
+                        continue;
+                    }
+
+                    if (centerTileX - halfWidthTiles >= 5)
+                    {
+                        landingCenter = new Vector2(boxBottom.X, boxBottom.Y - NPC.height * 0.5f);
+                        break;
+                    }
+                }
+            }
+
+            if (!landingCenter.HasValue)
+            {
+                return;
+            }
+
             _vanishCd = 380 + Main.rand.Next(200);
             _vanishTimer = VanishTotal;
             _vanishOrigin = NPC.Center;
+            _vanishDest = landingCenter.Value;
+            NPC.alpha = 255;
+            NPC.velocity = Vector2.Zero;
 
-            // Reappear just behind the player (opposite their facing).
-            float destX = target.Center.X - target.direction * 64f;
-            NPC.Bottom = new Vector2(destX, target.Bottom.Y);
-            NPC.direction = target.Center.X > NPC.Center.X ? 1 : -1;
-            NPC.spriteDirection = NPC.direction;
+            // Grey mist telegraphs both origin and validated landing for the full 30t vanish window.
+            float mistRadius = Math.Max(NPC.width, NPC.height) * 0.625f;
+            Projectile originMist = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), _vanishOrigin, Vector2.Zero,
+                ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, mistRadius);
+            originMist.timeLeft = VanishTeleportTicks;
+            Projectile destMist = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), _vanishDest, Vector2.Zero,
+                ModContent.ProjectileType<TeleportMistLinger>(), 0, 0, Main.myPlayer, 0f, mistRadius);
+            destMist.timeLeft = VanishTeleportTicks;
+
             PlaySetPieceStartCue(HeroSetPiece.Vanish);
-            SpawnTelegraphFlash(new Color(200, 200, 200));
-
             EnterPhase(AttackPhase.NovaRecovery, VanishTotal + 6); // park the combat machine
             NPC.netUpdate = true;
         }
@@ -407,29 +1067,45 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             if (_bombTimer > 0)
             {
+                int elapsed = BombTotal - _bombTimer;
                 _bombTimer--;
                 NPC.velocity.X *= 0.85f;
                 int face = target.Center.X < NPC.Center.X ? -1 : 1;
                 NPC.direction = face;
                 NPC.spriteDirection = face;
 
-                if (Main.rand.NextBool(2))
+                if (elapsed <= BombWindupTicks)
                 {
-                    Dust fuseDust = Dust.NewDustPerfect(NPC.Center + new Vector2(NPC.direction * 10f, -8f), DustID.Torch, Main.rand.NextVector2Circular(1f, 1f), 60, new Color(180, 90, 220), 1.2f);
-                    fuseDust.noGravity = true;
+                    SetDisplayWeapon(SecondaryRangedWeaponItemType, swing: false);
+                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    {
+                        Dust fuseDust = Dust.NewDustPerfect(
+                            PuppetHandPosition,
+                            DustID.Torch,
+                            Main.rand.NextVector2Circular(1f, 1f),
+                            60,
+                            new Color(180, 90, 220),
+                            1.2f);
+                        fuseDust.noGravity = true;
+                    }
                 }
 
-                if (_bombTimer == BombTotal - 22) // throw near the end of the wind-up
+                if (elapsed == BombWindupTicks) // throw near the end of the 42t wind-up
                 {
                     // The flask is a server spawn; the throw sound plays everywhere.
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        Vector2 muzzle = NPC.Center + new Vector2(NPC.direction * 10f, -8f);
+                        Vector2 muzzle = PuppetHandPosition;
                         Vector2 vel = UsefulFunctions.BallisticTrajectory(muzzle, target.Center, 10f, fallback: true);
                         vel += Main.rand.NextVector2Circular(1.5f, 0f);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), muzzle, vel, ModContent.ProjectileType<HeroPotionBomb>(), potionBombDamage, 0f, Main.myPlayer);
                     }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
+                }
+
+                if (_bombTimer == 0)
+                {
+                    SetDisplayWeapon(MeleeWeaponItemType, swing: false);
                 }
                 return;
             }
@@ -460,7 +1136,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
             _bombCd = 420 + Main.rand.Next(180);
             _bombTimer = BombTotal;
+            SetDisplayWeapon(SecondaryRangedWeaponItemType, swing: false);
             PlaySetPieceStartCue(HeroSetPiece.Bomb);
+            SpawnTelegraphFlash(new Color(180, 90, 220));
             EnterPhase(AttackPhase.NovaRecovery, BombTotal + 6);
             NPC.netUpdate = true;
         }
@@ -495,14 +1173,23 @@ namespace tsorcRevamp.NPCs.Invaders
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        float sweep = MathHelper.Lerp(-320f, 320f, (elapsed - 45) / 50f);
-                        float x = target.Center.X + sweep;
+                        float sweepProgress = (elapsed - 45) / 45f;
+                        float sweep = MathHelper.Lerp(-440f, 440f, sweepProgress);
+                        float centerX = target.Center.X + sweep;
                         for (int i = 0; i < 2; i++)
                         {
-                            Projectile.NewProjectile(NPC.GetSource_FromThis(),
-                                x + Main.rand.Next(-30, 30), target.Center.Y - 780f,
-                                (-30 + Main.rand.Next(60)) / 10f, 8.4f,
-                                ModContent.ProjectileType<HerosArrow>(), herosArrowDamage, 2f, Main.myPlayer);
+                            float spawnX = centerX + Main.rand.Next(-45, 45);
+                            float velocityX = (-30 + Main.rand.Next(60)) / 10f;
+                            Projectile.NewProjectile(
+                                NPC.GetSource_FromThis(),
+                                spawnX,
+                                target.Center.Y - 780f,
+                                velocityX,
+                                8.4f,
+                                ModContent.ProjectileType<HerosArrow>(),
+                                herosArrowDamage,
+                                2f,
+                                Main.myPlayer);
                         }
                     }
                     SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
@@ -528,8 +1215,8 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             float dist = NPC.Distance(target.Center);
-            bool tooClose = dist < 130f;
-            if (tooClose || !Main.rand.NextBool(150))
+            bool outOfBand = dist < 130f || dist > 950f;
+            if (outOfBand || !Main.rand.NextBool(150))
             {
                 return;
             }
@@ -718,6 +1405,8 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── Melee: fire flair on swings; heavy steps throw a HeroFireArc crescent ────────
+        bool _landingLeapFireArcReleased;
+
         protected override void DoMeleeAttack()
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, PitchVariance = 0.2f }, NPC.Center);
@@ -727,25 +1416,100 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override void DoComboMeleeHit(MeleeComboStep step)
         {
             base.DoComboMeleeHit(step);
+            _landingLeapFireArcReleased = false;
+        }
 
-            if (!Main.dedServ)
+        protected override void OnMeleeComboTelegraphTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            if (Main.dedServ || elapsed % 3 != 0)
             {
-                Vector2 tip = NPC.Center + new Vector2(NPC.direction * 34f, -6f);
-                for (int i = 0; i < 4; i++)
-                {
-                    Dust d = Dust.NewDustPerfect(tip + Main.rand.NextVector2Circular(16f, 16f), DustID.Torch, Vector2.Zero, 60, Color.OrangeRed, Main.rand.NextFloat(1.1f, 1.6f));
-                    d.noGravity = true;
-                }
+                return;
             }
 
-            // Heavy swings hurl a short-range fire crescent past the blade.
-            if (step.ReachMult >= 1.1f && Main.netMode != NetmodeID.MultiplayerClient)
+            Vector2 weaponDir = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+            Vector2 bladeTip = PuppetHandPosition + weaponDir * (ComboReachBase * 0.7f * step.ReachMult);
+            Dust ember = Dust.NewDustPerfect(
+                bladeTip + Main.rand.NextVector2Circular(6f, 6f),
+                DustID.Torch,
+                -weaponDir * 0.6f + new Vector2(0f, -0.5f),
+                80,
+                Color.OrangeRed,
+                Main.rand.NextFloat(1.0f, 1.4f));
+            ember.noGravity = true;
+        }
+
+        protected override void OnMeleeComboAttackTick(
+            MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+
+            if (step.Motion != ComboMotion.LeapSlam)
+            {
+                float progress = elapsed / (float)Math.Max(1, total - 1);
+                bool withinLiveWindow = step.HitWindowEnd <= 0f || progress <= step.HitWindowEnd;
+                if (withinLiveWindow)
+                {
+                    // Arm fire slash shader only while hitbox is live so fadeout matches disarm.
+                    ArmFireSlashVFX(bladeReach, progress);
+                }
+
+                int peakTick = Math.Max(1, step.EaseInTicks);
+                if (elapsed == peakTick && step.ReachMult >= 1.1f)
+                {
+                    ReleaseHeroFireArc();
+                }
+            }
+        }
+
+        protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
+        {
+            base.OnLandingTimedLeapSlamSwingTick(step, progress);
+
+            float bladeReach = ComboReachBase * 0.7f * step.ReachMult;
+            ArmFireSlashVFX(bladeReach, progress);
+
+            if (!_landingLeapFireArcReleased && progress >= 0.35f && step.ReachMult >= 1.1f)
+            {
+                _landingLeapFireArcReleased = true;
+                ReleaseHeroFireArc();
+            }
+        }
+
+        private void ReleaseHeroFireArc()
+        {
+            if (!Main.dedServ)
+            {
+                Vector2 weaponDir = PuppetWeaponDirection.SafeNormalize(new Vector2(NPC.direction, 0f));
+                Vector2 tip = PuppetHandPosition + weaponDir * 44f;
+                for (int i = 0; i < 6; i++)
+                {
+                    Dust spark = Dust.NewDustPerfect(
+                        tip + Main.rand.NextVector2Circular(12f, 12f),
+                        DustID.Torch,
+                        weaponDir * Main.rand.NextFloat(1.5f, 3.5f),
+                        60,
+                        Color.OrangeRed,
+                        Main.rand.NextFloat(1.2f, 1.7f));
+                    spark.noGravity = true;
+                }
+
+                SoundEngine.PlaySound(SoundID.Item73 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
+            }
+
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Player target = Main.player[NPC.target];
                 Vector2 origin = NPC.Center + new Vector2(NPC.direction * 24f, -6f);
-                Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 8f;
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel, ModContent.ProjectileType<HeroFireArc>(), fireArcDamage, 3f, Main.myPlayer);
-                SoundEngine.PlaySound(SoundID.Item73 with { Volume = 0.5f, Pitch = 0.2f }, NPC.Center);
+                Vector2 velocity = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 8f;
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromThis(),
+                    origin,
+                    velocity,
+                    ModContent.ProjectileType<HeroFireArc>(),
+                    fireArcDamage,
+                    3f,
+                    Main.myPlayer);
             }
         }
 

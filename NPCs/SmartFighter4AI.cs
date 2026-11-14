@@ -892,7 +892,8 @@ namespace tsorcRevamp.NPCs
                         {
                             // Retries exhausted: blink out if this enemy has a recovery teleport, else disengage.
                             nav.NoPathStrikes = 0;
-                            bool nearbyRecovery = globalNPC.CanTeleport
+                            bool nearbyRecovery = !globalNPC.SuppressAutoTeleportThisFrame
+                                && globalNPC.CanTeleport
                                 && globalNPC.TeleportStyle == TeleportStyle.RecoveryOnly
                                 && globalNPC.TeleportCooldownTimer == 0
                                 && (globalNPC.RecoveryTeleportMaxRange <= 0f
@@ -905,7 +906,7 @@ namespace tsorcRevamp.NPCs
                                     NavBehavior.ForceDisengage(npc, globalNPC);
                                 }
                             }
-                            else
+                            else if (!globalNPC.SuppressAutoTeleportThisFrame)
                             {
                                 NavBehavior.ForceDisengage(npc, globalNPC);
                             }
@@ -1011,14 +1012,15 @@ namespace tsorcRevamp.NPCs
                                 // reset this detector, and repeated the exact blocked/drop loop forever.
                                 // Recovery-only teleports are server-authoritative; clients wait for
                                 // the resulting NPC sync instead of independently disengaging.
-                                if (globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
-                                    || Main.netMode != NetmodeID.MultiplayerClient)
+                                if (!globalNPC.SuppressAutoTeleportThisFrame
+                                    && (globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
+                                        || Main.netMode != NetmodeID.MultiplayerClient))
                                 {
                                     if (!tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
                                         NavBehavior.ForceDisengage(npc, globalNPC);
                                 }
                             }
-                            else
+                            else if (!globalNPC.SuppressAutoTeleportThisFrame)
                             {
                                 NavBehavior.ForceDisengage(npc, globalNPC);
                             }
@@ -1070,7 +1072,8 @@ namespace tsorcRevamp.NPCs
                         // while it can technically throw at the player. A four-second failure to get
                         // even two tiles closer is a genuine traversal failure, so blink to a legal
                         // re-acquire point instead of restarting the same hill-loop.
-                        if (aggressiveTeleportRecovery
+                        if (!globalNPC.SuppressAutoTeleportThisFrame
+                            && aggressiveTeleportRecovery
                             && globalNPC.TeleportCountdown == 0
                             && globalNPC.TeleportAppearanceTimer == 0
                             && globalNPC.TeleportChargesRemaining > 0

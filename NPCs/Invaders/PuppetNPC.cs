@@ -348,6 +348,9 @@ namespace tsorcRevamp.NPCs.Invaders
             NPC.Bottom - new Vector2(PuppetVisualWidth, PuppetVisualHeight) + PuppetVisualOffset;
         private Vector2 PuppetVisualCenter =>
             NPC.Bottom - new Vector2(0f, PuppetVisualHeight * 0.5f) + PuppetVisualOffset;
+        // Center of the actually-drawn _puppet hitbox, matching the hand-position helpers below.
+        protected Vector2 PuppetSpriteCenter =>
+            PuppetVisualPosition + new Vector2(PuppetVisualWidth, PuppetVisualHeight) * 0.5f;
         protected abstract int MeleeWeaponItemType  { get; }   // -1 = none
         protected abstract int RangedWeaponItemType { get; }   // -1 = none
         protected virtual  int MagicWeaponItemType  => -1;
@@ -2178,8 +2181,10 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Draw a neutral carried weapon behind the puppet instead of in the attacking hand's layer.</summary>
         protected virtual bool DrawHeldWeaponBehindBody => false;
         protected virtual bool ShowRangedWeaponDuringRecovery => false;
+        protected virtual bool ForceHeldWeaponVisible => false;
 
         private bool IsWeaponVisiblePhase => !WeaponSheathed && (
+            ForceHeldWeaponVisible ||
             (ShowWeaponDuringNeutral && (Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll)) ||
             Phase == AttackPhase.MeleeTelegraph || Phase == AttackPhase.MeleeAttack ||
             (Phase == AttackPhase.MeleeRecovery && MeleeRecoveryLingerTicks > 0) ||
@@ -3430,6 +3435,18 @@ namespace tsorcRevamp.NPCs.Invaders
         /// (Cursed Dragon's poison cloud) and must keep their phase through it.</summary>
         protected virtual bool TeleportCancelsAttack => false;
 
+        /// <summary>True while an active attack, telegraph, pause, or recovery owns the puppet and must not be
+        /// interrupted by an automatic disengage/stuck teleport. Allows Idle, CasualStroll, ClosingDistance, FleeToHeal.</summary>
+        protected virtual bool ShouldHoldAutomaticTeleport => Phase != AttackPhase.Idle
+            && Phase != AttackPhase.CasualStroll
+            && Phase != AttackPhase.ClosingDistance
+            && Phase != AttackPhase.FleeToHeal;
+
+        /// <summary>Called once on the tick a queued teleport finishes warping/revealing at its destination.</summary>
+        protected virtual void OnTeleportCompleted()
+        {
+        }
+
         private bool TickPuppetTeleport(tsorcRevampGlobalNPC globalNPC, Player target)
         {
             if (!globalNPC.TeleportChargesInitialized)
@@ -3445,27 +3462,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 globalNPC.TeleportCooldownTimer--;
             }
 
-            // NovaCharge/NovaBlast are a committed, scripted set-piece (see the `committed` flags in
-            // UpdateAttackCommitFlags) - queuing a new teleport mid-charge freezes the nova's PhaseTimer
-            // (TickPuppetTeleport returns early below, skipping PuppetAttackAI) while a teleport telegraph
-            // plays on top of it, leaving the player unable to tell which will resolve first.
-            // A puppet that cancels its attack on teleport (Artorias) must not START a teleport inside a Piercing Dash sequence
-            // (flip opener, telegraphs, dashes, hold, flick): the disengage blink fires after 30 ticks without line of sight,
-            // which a 400px overshoot past a corner easily causes, and it cut the sequence off after the first miss.
-            bool inPierceSequence = Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash
-                || Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick
-                || (_flipSlashIntoPierce && (Phase == AttackPhase.FlipSlashRise || Phase == AttackPhase.FlipSlashLand));
-            bool pierceSequenceHoldsTeleport = TeleportCancelsAttack && inPierceSequence;
-
             if (Main.netMode != NetmodeID.MultiplayerClient
                 && globalNPC.CanTeleport
-                && !pierceSequenceHoldsTeleport
+                && !ShouldHoldAutomaticTeleport
                 && globalNPC.TeleportCountdown == 0
                 && globalNPC.TeleportAppearanceTimer == 0
                 && globalNPC.TeleportChargesRemaining > 0
-                && globalNPC.TeleportCooldownTimer == 0
-                && Phase != AttackPhase.NovaCharge
-                && Phase != AttackPhase.NovaBlast)
+                && globalNPC.TeleportCooldownTimer == 0)
             {
                 bool hasLineOfSight = Collision.CanHit(NPC.position, NPC.width, NPC.height,
                     target.position, target.width, target.height)
@@ -3510,6 +3513,10 @@ namespace tsorcRevamp.NPCs.Invaders
                 if (globalNPC.TeleportCountdown == 0)
                 {
                     tsorcRevampAIs.ExecuteQueuedTeleport(NPC);
+                    if (globalNPC.TeleportAppearanceTimer == 0)
+                    {
+                        OnTeleportCompleted();
+                    }
                 }
                 return true;
             }
@@ -3530,6 +3537,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     globalNPC.TeleportTelegraph = Vector2.Zero;
                     NPC.alpha = 0;
                     NPC.netUpdate = true;
+                    OnTeleportCompleted();
                 }
                 return true;
             }
@@ -3932,7 +3940,9 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             else if (!pierceHeldPhase)
             {
+                gnpc.SuppressAutoTeleportThisFrame = ShouldHoldAutomaticTeleport;
                 RunMovementAI(speedMult);
+                gnpc.SuppressAutoTeleportThisFrame = false;
             }
 
             // Anti-bounce: if FighterAI just reversed direction but the hold timer is still
@@ -5855,9 +5865,13 @@ namespace tsorcRevamp.NPCs.Invaders
                     if (--PhaseTimer <= 0)
                     {
                         if (_cursedKnivesVolleysLeft > 0)
+                        {
                             EnterPhase(AttackPhase.KnivesThrowPause, Math.Max(1, _cursedKnivesGap));
+                        }
                         else
+                        {
                             EnterPhase(AttackPhase.KnivesRecovery, CursedKnivesRecoveryTicks);
+                        }
                     }
                     break;
                 }
@@ -5872,6 +5886,8 @@ namespace tsorcRevamp.NPCs.Invaders
                     int faceK = target.Center.X < NPC.Center.X ? -1 : 1;
                     NPC.direction = faceK;
                     NPC.spriteDirection = faceK;
+                    SetDisplayWeapon(CursedKnivesWeaponItemType, swing: false);
+                    CheckAndFireFlash(CursedKnivesTelegraphFlashColor);
                     if (--PhaseTimer <= 0)
                     {
                         SetDisplayWeapon(CursedKnivesWeaponItemType, swing: true);
@@ -9498,6 +9514,14 @@ namespace tsorcRevamp.NPCs.Invaders
         /// it to hold a menacing raised pose longer (Gwyn's Wrath Flurry).</summary>
         protected virtual float LogicalWindupSettleFraction => 0.25f;
 
+        /// <summary>Opposite pose settled toward during the first beat of <see cref="LogicalSwingWindup"/>.
+        /// Defaults to the step's far arc endpoint; puppets may return a gentler anticipation pose so
+        /// underhand cuts do not swing overhead through the player before rising.</summary>
+        protected virtual float GetLogicalWindupOppositeEnd(ComboMotion motion, float attackStart, float oppositeEnd)
+        {
+            return oppositeEnd;
+        }
+
         private float LogicalSwingWindup(float oppositeEnd, float attackStart, float progress)
         {
             progress = MathHelper.Clamp(progress, 0f, 1f);
@@ -9679,11 +9703,25 @@ namespace tsorcRevamp.NPCs.Invaders
                 Player diveTarget = Main.player[NPC.target];
                 Vector2 aim = diveTarget.Center - NPC.Center;
                 if (Math.Abs(aim.X) > 2f)
+                {
                     NPC.direction = NPC.spriteDirection = aim.X < 0f ? -1 : 1;
-                float worldAngle = aim.SafeNormalize(new Vector2(NPC.direction, 0f)).ToRotation();
-                float targetRotation = NPC.direction == 1
-                    ? worldAngle + MathHelper.PiOver4 - MeleeWeaponRotationOffset
-                    : MathHelper.Pi + MathHelper.PiOver4 - worldAngle + MeleeWeaponRotationOffset;
+                }
+
+                float targetRotation;
+                if (MirrorMeleeSwingRotationByFacing)
+                {
+                    // Mirrored puppets work in facing-local space (0 = straight ahead, + = down).
+                    float localAimAngle = (float)Math.Atan2(aim.Y, Math.Abs(aim.X));
+                    targetRotation = localAimAngle + MathHelper.PiOver4 - MeleeWeaponRotationOffset;
+                }
+                else
+                {
+                    float worldAngle = aim.SafeNormalize(new Vector2(NPC.direction, 0f)).ToRotation();
+                    targetRotation = NPC.direction == 1
+                        ? worldAngle + MathHelper.PiOver4 - MeleeWeaponRotationOffset
+                        : MathHelper.Pi + MathHelper.PiOver4 - worldAngle + MeleeWeaponRotationOffset;
+                }
+
                 _weaponRotation = _weaponRotation.AngleLerp(targetRotation, 0.45f);
             }
             else if (Phase == AttackPhase.PierceStabHold)
@@ -10067,8 +10105,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
                         if (inTel)
                         {
+                            float oppositeEnd = GetLogicalWindupOppositeEnd(step.Motion, a0, a1);
                             _weaponRotation = UseLogicalMeleeTelegraphs
-                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                ? LogicalSwingWindup(oppositeEnd, a0, comboTelegraphT)
                                 : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         }
                         else if (inPause)
@@ -10091,8 +10130,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
                         if (inTel)
                         {
+                            float oppositeEnd = GetLogicalWindupOppositeEnd(step.Motion, a0, a1);
                             _weaponRotation = UseLogicalMeleeTelegraphs
-                                ? LogicalSwingWindup(a1, a0, comboTelegraphT)
+                                ? LogicalSwingWindup(oppositeEnd, a0, comboTelegraphT)
                                 : MathHelper.Lerp(_weaponRotation, a0, 0.30f);
                         }
                         else if (inPause)
@@ -11777,6 +11817,21 @@ namespace tsorcRevamp.NPCs.Invaders
             {
                 // Follow-through: keep the arm tracking the weapon as it eases back to the hold
                 // angle instead of snapping to Idle/Walk mid-settle (same fix as StabRecovery).
+                bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
+            }
+            else if (Phase == AttackPhase.PierceTelegraph)
+            {
+                // Telegraph jitter offsets Y slightly, which would make !onGround trip the Jump
+                // frame (arms up in air). Pin to lowered Use4 so back and fallback arms stay poised.
+                bodyRow = 4;
+            }
+            else if (Phase == AttackPhase.PierceDash)
+            {
+                bodyRow = 3; // Use3 — arm extended forward during lunge
+            }
+            else if (Phase == AttackPhase.PierceStabHold || Phase == AttackPhase.PierceStabFlick
+                  || Phase == AttackPhase.PierceRecovery)
+            {
                 bodyRow = BodyRowFromWeaponRotation(_weaponRotation, NPC.direction);
             }
             else if (_flight != null && _flight.IsDiving && MeleeWeaponItemType >= 0)
@@ -13469,9 +13524,11 @@ namespace tsorcRevamp.NPCs.Invaders
             }
             // A weapon that doubles as the melee weapon (e.g. a spear that also casts the primary-ranged
             // projectile) draws as MELEE — handle-anchored at full melee scale — not as a centred thrown item.
+            bool holdingCursedKnife = CursedKnivesWeaponItemType >= 0 && _heldItemType == CursedKnivesWeaponItemType;
             bool heldRangedLike = (_heldItemType == RangedWeaponItemType && RangedWeaponItemType != MeleeWeaponItemType)
                                || _heldItemType == SecondaryRangedWeaponItemType
-                               || HoldingMagicStaff;
+                               || HoldingMagicStaff
+                               || holdingCursedKnife;
             bool heldCrossbowLike = _heldItemType == _activeRangedItemType
                                  && _activeRangedStyle == RangedStyle.Crossbow;
             bool heldBowLike = _heldItemType == _activeRangedItemType
@@ -13633,7 +13690,17 @@ namespace tsorcRevamp.NPCs.Invaders
             // SpriteEffects.FlipHorizontally, so a bow's un-mirrored _weaponRotation was tilting the
             // same physical direction whether the sprite itself was flipped or not, reading as a
             // small held-close/twisted pose on the flipped (left-facing) side only.
-            float drawRotation = heldBowLike ? _weaponRotation * NPC.direction : _weaponRotation;
+            float drawRotation = _weaponRotation;
+
+            if (heldBowLike)
+            {
+                drawRotation = _weaponRotation * NPC.direction;
+            }
+            else if (heldRangedLike && MirrorHeldRangedRotationByFacing)
+            {
+                drawRotation = (_weaponRotation + GetHeldRangedRotationOffset(_heldItemType)) * NPC.direction;
+            }
+
             if (bowDrawPose)
             {
                 // Archer pose: the bow also tilts with the ±45° aim, matching the bow arm.
@@ -14048,6 +14115,13 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Whether this ranged sprite needs a horizontal flip for its current facing.
         /// Override for custom art authored facing left instead of the usual right.</summary>
         protected virtual bool ShouldFlipHeldRangedSpriteHorizontally(int itemType) => NPC.direction == -1;
+
+        /// <summary>Opt-in to mirror held ranged/thrown item rotation by facing using facing-right angles.</summary>
+        protected virtual bool MirrorHeldRangedRotationByFacing => false;
+
+        /// <summary>Angular offset (radians) added in facing-right space for held ranged/thrown sprites
+        /// when <see cref="MirrorHeldRangedRotationByFacing"/> is enabled.</summary>
+        protected virtual float GetHeldRangedRotationOffset(int itemType) => 0f;
 
         /// <summary>When true for the given held ranged item type, red "lit fuse" sparks are emitted
         /// off the top of it while it's in hand (e.g. a smoke bomb).  Default false.</summary>

@@ -855,16 +855,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal static void DrawQuaraInkGeyser(Vector2 center, float progress, bool active)
         {
             LoadAssets();
-            Draw(quaraInkGeyser, "QuaraInkGeyser", circle, brokenNoise,
+            float envelope = active
+                ? 1f - progress * progress * progress * 0.85f
+                : 0.45f + progress * 0.55f;
+            float opacity = (active ? 0.9f : 0.72f) * envelope;
+            Draw(quaraInkGeyser, "QuaraInkGeyser", cloudNoise, wavyDetailNoise,
                 center, Vector2.One * 80f, 0f, InkDark, InkMid, InkCore,
-                active ? 0.9f : 0.72f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
+                opacity, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawQuaraInkJet(Vector2 center, Vector2 velocity)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(quaraInkGeyser, "QuaraInkJet", windstreak, brokenNoise,
+            Draw(quaraInkGeyser, "QuaraInkJet", cloudNoise, wavyDetailNoise,
                 center - direction * 31f, new Vector2(82f, 26f), direction.ToRotation(),
                 InkDark, InkMid, InkCore, 0.84f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
@@ -988,7 +992,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraInkBurst:
-                    Draw(quaraInkGeyser, "QuaraInkBurst", circle, brokenNoise,
+                    Draw(quaraInkGeyser, "QuaraInkBurst", cloudNoise, wavyDetailNoise,
                         center, Vector2.One * 92f, 0f, InkDark, InkMid, InkCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;

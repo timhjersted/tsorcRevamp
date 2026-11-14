@@ -51,6 +51,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         public const float ClawRaisedAngle = -2f;
         public const float ClawFinishAngle = 1.2f;
         public const float ArmRestAngle = 1.45f;
+        public const float DisrupterWindupAngle = -1.75f;
+        public const float DisrupterCastAngle = -0.25f;
+        public const float DisrupterBraceBackAngle = 0.95f;
         public const int BiteLiveStart = 4;
         public const int BiteLiveEnd = 12;
         public const int BoundLiveStart = 4;
@@ -181,8 +184,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         protected override int BodyArmorDyeItemType => HeadArmorDyeItemType;
         protected override int LegsArmorDyeItemType => HeadArmorDyeItemType;
         protected override bool CustomAttackCommitted => stage == Stage.Action;
-        protected override float? FreeFrontArmFacingAngle => ResolveArmAngle();
-        protected override float? FreeBackArmFacingAngle => ResolveArmAngle();
+        protected override float? FreeFrontArmFacingAngle => ResolveFrontArmAngle();
+        protected override float? FreeBackArmFacingAngle => ResolveBackArmAngle();
 
         protected override void DoMeleeAttack()
         {
@@ -198,7 +201,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         public bool StrikeRunning => stage == Stage.Action && (move == Move.Bite || move == Move.Bound);
         public bool IsTongueCasting => move == Move.Tongue && stage != Stage.Recovery;
         public bool OwnsTongue(int ownerSequence) => sequence != 0 && sequence == ownerSequence;
-        public Vector2 MouthPosition => NPC.Center + new Vector2(NPC.direction * 20f, -12f + NPC.gfxOffY);
+        // Anchor inside the open jaw throat of the 64x56 animated head sprite (centered on PuppetSpriteCenter).
+        public Vector2 MouthPosition => PuppetSpriteCenter + new Vector2(NPC.direction * 14f, -13f + NPC.gfxOffY);
         public bool MeleeLive
         {
             get
@@ -223,7 +227,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         {
             get
             {
-                if (move == Move.None)
+                if (move == Move.None || move == Move.Disrupter)
                 {
                     return 0;
                 }
@@ -238,14 +242,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                     return Math.Max(0, 6 - stageTimer / 2);
                 }
 
-                if (stage == Stage.Action && (move == Move.Lob || move == Move.Disrupter))
+                if (stage == Stage.Action && move == Move.Lob)
                 {
-                    int interval = 30;
-                    if (move == Move.Lob)
-                    {
-                        interval = 40;
-                    }
-
+                    const int interval = 40;
                     int beat = stageTimer % interval;
                     if (beat < 8)
                     {
@@ -295,7 +294,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             return MathHelper.SmoothStep(ClawFinishAngle, ArmRestAngle, settle);
         }
 
-        private float? ResolveArmAngle()
+        private float? ResolveFrontArmAngle()
         {
             if (move == Move.None)
             {
@@ -328,6 +327,37 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 return ClawPose(elapsed, tellTicks, move == Move.Bound);
             }
 
+            if (move == Move.Disrupter)
+            {
+                if (stage == Stage.Tell)
+                {
+                    float windup = MathHelper.Clamp(stageTimer / (float)tellTicks, 0f, 1f);
+                    return MathHelper.SmoothStep(ArmRestAngle, DisrupterWindupAngle, windup);
+                }
+
+                if (stage == Stage.Action)
+                {
+                    if (Kind == FamilyKind.Walker || stageTimer >= 60)
+                    {
+                        int localTimer = stageTimer >= 60 ? stageTimer - 60 : stageTimer;
+                        float thrust = MathHelper.Clamp(localTimer / 8f, 0f, 1f);
+                        return MathHelper.SmoothStep(DisrupterWindupAngle, DisrupterCastAngle, thrust);
+                    }
+
+                    int beat = stageTimer % 30;
+                    if (beat < 8)
+                    {
+                        return MathHelper.SmoothStep(DisrupterWindupAngle, DisrupterCastAngle, beat / 8f);
+                    }
+
+                    float rewind = (beat - 8) / 22f;
+                    return MathHelper.SmoothStep(DisrupterCastAngle, DisrupterWindupAngle, rewind);
+                }
+
+                float settle = MathHelper.Clamp(stageTimer / 18f, 0f, 1f);
+                return MathHelper.SmoothStep(DisrupterCastAngle, ArmRestAngle, settle);
+            }
+
             float targetAngle = -0.5f;
             if (move == Move.Breath)
             {
@@ -346,6 +376,27 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
 
             return MathHelper.SmoothStep(ArmRestAngle, targetAngle, amount);
+        }
+
+        private float? ResolveBackArmAngle()
+        {
+            if (move == Move.Disrupter)
+            {
+                float amount = MathHelper.Clamp(stageTimer / 15f, 0f, 1f);
+                if (stage == Stage.Recovery)
+                {
+                    return MathHelper.SmoothStep(DisrupterBraceBackAngle, ArmRestAngle, amount);
+                }
+
+                if (stage == Stage.Action)
+                {
+                    return DisrupterBraceBackAngle;
+                }
+
+                return MathHelper.SmoothStep(ArmRestAngle, DisrupterBraceBackAngle, amount);
+            }
+
+            return ResolveFrontArmAngle();
         }
 
         public override void SetStaticDefaults()
@@ -1006,16 +1057,17 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
             else if (move == Move.Disrupter)
             {
+                Vector2 castOrigin = ClawPosition(false);
                 projectileType = ModContent.ProjectileType<BasiliskHypnoticDisrupter>();
                 damage = EnemyDamage.Projectile(disrupterExpert);
                 target = DisrupterTarget(shotIndex);
                 if (Kind == FamilyKind.Walker)
                 {
                     target = lockedTarget;
-                    velocity = UsefulFunctions.BallisticTrajectory(mouth, target, 3f);
+                    velocity = UsefulFunctions.BallisticTrajectory(castOrigin, target, 3f);
                     // Walker's legacy orb follows a player; Shifter/Hunter use fixed points.
                     // Aim-lock changes its launch tell, not its deliberately unusual homing mode.
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), mouth, velocity, projectileType, damage, 0f, Main.myPlayer, targetIndex);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), castOrigin, velocity, projectileType, damage, 0f, Main.myPlayer, targetIndex);
                     return;
                 }
                 else
@@ -1046,7 +1098,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                     velocity = angle.ToRotationVector2() * 4f;
                 }
 
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), mouth, velocity, projectileType, damage, 0f, Main.myPlayer, target.X, -target.Y);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), castOrigin, velocity, projectileType, damage, 0f, Main.myPlayer, target.X, -target.Y);
                 return;
             }
 
@@ -1209,7 +1261,8 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         // Collision follows the same empty-hand angles on dedicated servers and rendering clients.
         public Vector2 ClawPosition(bool backHand, int timerOffset = 0)
         {
-            float angle = ResolveArmAngle() ?? ArmRestAngle;
+            float? resolved = backHand ? ResolveBackArmAngle() : ResolveFrontArmAngle();
+            float angle = resolved ?? ArmRestAngle;
             if (stage == Stage.Action && (move == Move.Bite || move == Move.Bound))
             {
                 int elapsed = stageTimer + timerOffset;
@@ -1232,7 +1285,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 hand = rotation.ToRotationVector2() * 10f + new Vector2(-4f * lockedFacing, -2f) + new Vector2(0f, 3f * lockedFacing).RotatedBy(rotation);
             }
 
-            return NPC.Center + new Vector2(0f, NPC.gfxOffY) + hand;
+            return PuppetSpriteCenter + new Vector2(0f, NPC.gfxOffY) + hand;
         }
 
         public bool StrikeCollides(Rectangle target)
@@ -1353,18 +1406,124 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 }
             }
 
-            if (stage == Stage.Tell || (stage == Stage.Action && move == Move.Breath))
+            if (move == Move.Disrupter)
+            {
+                Vector2 hand = ClawPosition(false);
+                float chargeProgress = -1f;
+                if (stage == Stage.Tell)
+                {
+                    chargeProgress = MathHelper.Clamp(stageTimer / (float)tellTicks, 0f, 1f);
+                }
+                else if (stage == Stage.Action)
+                {
+                    if (stageTimer == 0)
+                    {
+                        chargeProgress = 1f;
+                    }
+                    else if (Kind != FamilyKind.Walker && stageTimer < 60 && (stageTimer % 30) >= 8)
+                    {
+                        chargeProgress = ((stageTimer % 30) - 8) / 22f;
+                    }
+
+                    bool shotJustFired = stageTimer == 1 || (Kind != FamilyKind.Walker && (stageTimer == 31 || stageTimer == 61));
+                    if (shotJustFired)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Vector2 burstVelocity = Main.rand.NextVector2Circular(3.2f, 3.2f);
+                            Dust burst = Dust.NewDustPerfect(hand, DustID.Shadowflame, burstVelocity, 70, Color.Purple, Main.rand.NextFloat(0.75f, 1.25f));
+                            burst.noGravity = true;
+                        }
+                    }
+                }
+
+                if (chargeProgress >= 0f)
+                {
+                    Lighting.AddLight(hand, Color.Purple.ToVector3() * MathHelper.Lerp(0.25f, 0.9f, chargeProgress));
+
+                    // Smouldering dark smoke rises gently from the hand and swells via fadeIn > scale.
+                    if (Main.rand.NextFloat() < MathHelper.Lerp(0.35f, 0.9f, chargeProgress))
+                    {
+                        Vector2 smokeVelocity = new Vector2(Main.rand.NextFloat(-0.35f, 0.35f), Main.rand.NextFloat(-1.0f, -0.35f));
+                        float smokeScale = MathHelper.Lerp(0.35f, 0.6f, chargeProgress);
+                        Dust smoke = Dust.NewDustPerfect(hand + Main.rand.NextVector2Circular(4f, 4f), DustID.Smoke, smokeVelocity, 150, new Color(52, 24, 76), smokeScale);
+                        smoke.noGravity = true;
+                        smoke.noLight = true;
+                        smoke.fadeIn = MathHelper.Lerp(0.85f, 1.45f, chargeProgress);
+                    }
+
+                    int flameCount = 1 + (int)(chargeProgress * 2f);
+                    for (int i = 0; i < flameCount; i++)
+                    {
+                        Vector2 offset = Main.rand.NextVector2Circular(3f + 4f * chargeProgress, 3f + 4f * chargeProgress);
+                        Vector2 flameVelocity = new Vector2(Main.rand.NextFloat(-0.45f, 0.45f), Main.rand.NextFloat(-1.1f, -0.25f));
+                        float flameScale = MathHelper.Lerp(0.4f, 0.85f, chargeProgress);
+                        Dust flame = Dust.NewDustPerfect(hand + offset, DustID.Shadowflame, flameVelocity, 80, default, flameScale);
+                        flame.noGravity = true;
+                        flame.fadeIn = MathHelper.Lerp(0.75f, 1.5f, chargeProgress);
+                    }
+
+                    if (chargeProgress > 0.25f)
+                    {
+                        int coreCount = chargeProgress > 0.7f ? 2 : 1;
+                        for (int i = 0; i < coreCount; i++)
+                        {
+                            float coreScale = MathHelper.Lerp(0.4f, 0.95f, chargeProgress);
+                            Dust core = Dust.NewDustPerfect(hand + Main.rand.NextVector2Circular(2.5f, 2.5f), DustID.PurpleTorch, Main.rand.NextVector2Circular(0.4f, 0.4f), 60, default, coreScale);
+                            core.noGravity = true;
+                            core.fadeIn = MathHelper.Lerp(0.7f, 1.3f, chargeProgress);
+                        }
+                    }
+                }
+            }
+            else if (move == Move.Spit || move == Move.Lob || move == Move.Desperate)
+            {
+                Vector2 mouth = MouthPosition;
+                float poisonProgress = -1f;
+                if (stage == Stage.Tell)
+                {
+                    poisonProgress = MathHelper.Clamp(stageTimer / (float)tellTicks, 0f, 1f);
+                }
+                else if (stage == Stage.Action && move == Move.Lob && stageTimer < 80 && (stageTimer % 40) >= 10)
+                {
+                    poisonProgress = ((stageTimer % 40) - 10) / 30f;
+                }
+                else if (stage == Stage.Action && move == Move.Desperate)
+                {
+                    poisonProgress = 0.85f;
+                }
+
+                if (poisonProgress >= 0f)
+                {
+                    Lighting.AddLight(mouth, Color.GreenYellow.ToVector3() * MathHelper.Lerp(0.25f, 0.85f, poisonProgress));
+
+                    int acidCount = poisonProgress < 0.35f ? (Main.rand.NextBool(2) ? 1 : 0) : 1 + (int)(poisonProgress * 2f);
+                    for (int i = 0; i < acidCount; i++)
+                    {
+                        Vector2 acidVelocity = Main.rand.NextVector2Circular(0.6f, 0.6f) + new Vector2(NPC.direction * 0.35f, 0f);
+                        float acidScale = MathHelper.Lerp(0.35f, 0.8f, poisonProgress);
+                        Dust acid = Dust.NewDustPerfect(mouth + Main.rand.NextVector2Circular(4f, 3f), DustID.CursedTorch, acidVelocity, 80, Color.GreenYellow, acidScale);
+                        acid.noGravity = true;
+                        acid.fadeIn = MathHelper.Lerp(0.75f, 1.55f, poisonProgress);
+                    }
+
+                    if (poisonProgress > 0.3f)
+                    {
+                        float dropletScale = MathHelper.Lerp(0.35f, 0.9f, poisonProgress);
+                        Dust droplet = Dust.NewDustPerfect(mouth + Main.rand.NextVector2Circular(3f, 2.5f), DustID.GreenTorch, Main.rand.NextVector2Circular(0.35f, 0.35f), 70, default, dropletScale);
+                        droplet.noGravity = poisonProgress < 0.7f;
+                        droplet.fadeIn = MathHelper.Lerp(0.65f, 1.25f, poisonProgress);
+                    }
+                }
+            }
+            else if (stage == Stage.Tell || (stage == Stage.Action && move == Move.Breath))
             {
                 Color color = MoveColor();
                 Lighting.AddLight(MouthPosition, color.ToVector3() * 0.6f);
                 if (Main.rand.NextBool(3))
                 {
                     int dustType = DustID.CursedTorch;
-                    if (move == Move.Disrupter)
-                    {
-                        dustType = DustID.Shadowflame;
-                    }
-                    else if (move == Move.Tongue || move == Move.Breath)
+                    if (move == Move.Tongue || move == Move.Breath)
                     {
                         dustType = DustID.PinkTorch;
                     }
@@ -1386,62 +1545,21 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
-            bool volleyCharge = stage == Stage.Action && shotCount < 3 && (move == Move.Lob || (move == Move.Disrupter && Kind != FamilyKind.Walker));
-            if ((stage != Stage.Tell && !volleyCharge) || move == Move.Bite || move == Move.Bound || move == Move.Breath)
+            if (stage != Stage.Tell || move != Move.Tongue)
             {
                 return;
             }
 
             Vector2 mouth = MouthPosition - screenPos;
-            Color color = MoveColor();
             float progress = MathHelper.Clamp(stageTimer / (float)tellTicks, 0f, 1f);
-            if (volleyCharge)
-            {
-                int interval = 30;
-                if (move == Move.Lob)
-                {
-                    interval = 40;
-                }
-
-                progress = (stageTimer % interval) / (float)interval;
-            }
-            int projectileType = ModContent.ProjectileType<BasiliskAcidSpit>();
-            if (move == Move.Disrupter)
-            {
-                projectileType = ModContent.ProjectileType<BasiliskHypnoticDisrupter>();
-            }
-            else if (move == Move.Tongue)
-            {
-                projectileType = ModContent.ProjectileType<BasiliskLeechTongue>();
-            }
-
+            int projectileType = ModContent.ProjectileType<BasiliskLeechTongue>();
             Texture2D texture = TextureAssets.Projectile[projectileType].Value;
             int frameCount = Math.Max(1, Main.projFrames[projectileType]);
             int frameHeight = texture.Height / frameCount;
             int frame = (stageTimer / 6) % frameCount;
             Rectangle source = new Rectangle(0, frame * frameHeight, texture.Width, frameHeight);
             float scale = MathHelper.Lerp(0.25f, 0.85f, progress);
-            if (move == Move.Lob)
-            {
-                scale *= 10f / 24f;
-            }
-
-            spriteBatch.Draw(texture, mouth, source, color * 0.7f, 0f, source.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-
-            if (move != Move.Tongue)
-            {
-                Vector2 aim = lockedTarget;
-                if (move == Move.Disrupter)
-                {
-                    aim = DisrupterTarget(shotCount);
-                }
-
-                Vector2 offset = aim - MouthPosition;
-                float length = Math.Min(offset.Length(), 640f);
-                // MagicPixel is 1x1000: a null source rect drew this as a length x 1000px block. Sample one texel.
-                Rectangle onePixel = new Rectangle(0, 0, 1, 1);
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, mouth, onePixel, color * 0.2f, offset.ToRotation(), Vector2.Zero, new Vector2(length, 1f), SpriteEffects.None, 0f);
-            }
+            spriteBatch.Draw(texture, mouth, source, Color.HotPink * 0.7f, 0f, source.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }
 
         public override void OnKill()

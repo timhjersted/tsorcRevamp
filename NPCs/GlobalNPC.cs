@@ -1601,6 +1601,9 @@ namespace tsorcRevamp.NPCs
         // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
         // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
         public bool CanTeleport = false;
+        // Transient per-frame gate: set by PuppetNPC while holding an active attack so SF4 stuck recovery
+        // cannot initiate a teleport mid-swing or mid-pierce. Never persisted or synced.
+        public bool SuppressAutoTeleportThisFrame = false;
         // Optional pursuit leash for normal enemies that should not blink after a fleeing player.
         public float TeleportReacquireMaxRange = float.PositiveInfinity;
         public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
