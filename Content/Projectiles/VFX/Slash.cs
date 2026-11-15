@@ -10,12 +10,13 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Commo
 
 namespace tsorcRevamp.Content.Projectiles.VFX
 {
-    // Custom swings provide their rendered blade, rather than asking the trail to guess its
-    // radius from an inventory rectangle. Returning false ends emission and starts the short fade.
+    // Custom swings provide their rendered blade. Player swings can keep supplying a pose
+    // through follow-through so the front of the trail stays attached as it fades.
     public interface IBladeSlashSource
     {
         Color SwordSlashColor { get; }
         int SwordSlashSequence { get; }
+        bool SwordSlashCutActive => true;
         bool TryGetSwordSlashPose(out Vector2 hand, out Vector2 bladeHeel, out Vector2 bladeTip);
     }
 
@@ -23,16 +24,23 @@ namespace tsorcRevamp.Content.Projectiles.VFX
     {
         public const int BladeFadeTicks = 6;
         public const float BladeHeadFadeStart = 0.985f;
+        public const float PlayerBladeHeadFadeStart = 0.9999f;
+        public const float PlayerBladeOpacity = 0.5f;
         private bool bladeSourceDriven;
         private float bladeBandHalfWidth;
         private bool bladeRotationInitialized;
         private float previousBladeRotation;
         private Vector2 bladeAnchorOffset;
+        private IBladeSlashSource playerBladeSource;
         private int bladeSequence;
-        private uint npcSampleTick = uint.MaxValue;
+        private uint bladeSampleTick = uint.MaxValue;
         private int npcTrailAge;
 
         private bool NPCDriven => Projectile.ai[1] == 2f;
+        private bool PlayerBladeDriven => Projectile.ai[0] > 0f && !NPCDriven;
+
+        // The additive pass uses CullNone, so reverse winding would draw the same pixels twice.
+        protected override bool IncludeStripBacksides => !PlayerBladeDriven;
 
         public override string Texture => base.Texture;
         public sealed override void SetDefaults()
@@ -42,6 +50,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             Projectile.tileCollide = false;
             Projectile.friendly = false;
             Projectile.penetrate = -1;
+            Projectile.timeLeft = 120;
 
             trailWidth = 45;
             trailPointLimit = 900;
@@ -83,26 +92,12 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         bool flippedSwing = false;
         int AttackId = 0;
 
-        // ai[0] > 0 means "driven by another projectile": ai[0] - 1 is that projectile's identity, and its
-        // Projectile.rotation is the blade's world angle. Used by custom-swing weapons (SwordOfLordGwyn) whose
-        // swing is a projectile, not the held item's useAnimation. 0 = the normal held-item-driven slash.
-        // ai[1] = 1 opts that source into measured blade geometry and active-cut timing; 0 keeps legacy callers.
-        // ai[1] = 2 instead names an NPC in ai[0] (index + 1), with its maximum emission ticks in ai[2].
-        bool DrivenByProjectile => Projectile.ai[0] > 0f;
-
-        // The strip is drawn trailWidth on EACH side of the points, and the points sit trailWidth from the pivot, so the
-        // normal slash covers radius 0..2*trailWidth. A driven (projectile) swing instead gets a thin band, a third as
-        // wide: with points at radius R the glow covers 0.67R..1.33R, so R = 0.75 * blade length puts its outer edge on the tip.
+        // Held-item strips cover 0..2*trailWidth. Custom swings supply their measured blade span.
         public override float WidthFunction(float progress)
         {
             if (bladeSourceDriven)
             {
                 return bladeBandHalfWidth;
-            }
-
-            if (DrivenByProjectile)
-            {
-                return trailWidth / 3f;
             }
 
             return trailWidth;
@@ -160,7 +155,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
             bool sameSwing = !bladeRotationInitialized || source == null || source.SwordSlashSequence == bladeSequence;
 
-            if (source != null && !reachedEnd && sameSwing)
+            if (source != null && sameSwing && (!reachedEnd || PlayerBladeDriven))
             {
                 emitting = source.TryGetSwordSlashPose(out hand, out bladeHeel, out bladeTip);
             }
@@ -188,15 +183,44 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             bladeAnchorOffset = hand - bodyCenter;
             Projectile.Center = hand;
             Projectile.rotation = direction.ToRotation() + MathHelper.PiOver2;
-            Projectile.timeLeft = BladeFadeTicks + 1;
+
+            if (PlayerBladeDriven)
+            {
+                if (!source.SwordSlashCutActive)
+                {
+                    reachedEnd = true;
+                    Projectile.timeLeft = Math.Min(Projectile.timeLeft, BladeFadeTicks);
+                }
+                else if (!reachedEnd)
+                {
+                    Projectile.timeLeft = Math.Max(Projectile.timeLeft, BladeFadeTicks + 2);
+                }
+            }
+            else
+            {
+                Projectile.timeLeft = BladeFadeTicks + 1;
+            }
+
+            // VertexStrip puts V=1 along rotation - Pi/2. Point that edge outwards
+            // for player blades so the shader's low-V feather sits at the heel.
+            float stripRotationOffset = 0f;
+            if (NPCDriven)
+            {
+                stripRotationOffset = MathHelper.Pi;
+            }
 
             if (!bladeRotationInitialized)
             {
+                if (PlayerBladeDriven)
+                {
+                    playerBladeSource = source;
+                }
+
                 previousBladeRotation = Projectile.rotation;
                 bladeSequence = source.SwordSlashSequence;
                 bladeRotationInitialized = true;
                 trailPositions.Add(hand + direction * radius);
-                trailRotations.Add(Projectile.rotation + MathHelper.Pi);
+                trailRotations.Add(Projectile.rotation + stripRotationOffset);
             }
 
             float rotationDelta = MathHelper.WrapAngle(Projectile.rotation - previousBladeRotation);
@@ -208,7 +232,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 float rotation = previousBladeRotation + rotationDelta * fraction;
                 Vector2 radial = (rotation - MathHelper.PiOver2).ToRotationVector2();
                 trailPositions.Add(hand + radial * radius);
-                trailRotations.Add(rotation + MathHelper.Pi);
+                trailRotations.Add(rotation + stripRotationOffset);
             }
 
             while (trailPositions.Count > trailPointLimit)
@@ -276,6 +300,13 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
             Player owner = Main.player[Projectile.owner];
 
+            if (PlayerBladeDriven)
+            {
+                // The blade's final pose is read in the draw pass after all swing AI has run.
+                Projectile.Center = owner.Center;
+                return;
+            }
+
             if (!initializedSlash)
             {
                 if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aimingInit))
@@ -300,17 +331,6 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 trailWidth = Math.Max(trailWidth, 50);
                 Projectile.timeLeft = owner.itemAnimationMax + 10;
 
-                if (DrivenByProjectile)
-                {
-                    // The driving swing ends on its own (reachedEnd below); this is only a safety cap.
-                    Projectile.timeLeft = 120;
-
-                    if (Projectile.ai[1] > 0f)
-                    {
-                        Projectile.timeLeft = 30;
-                    }
-                }
-
                 tsorcInstancedGlobalItem instancedGlobal = owner.HeldItem.GetGlobalItem<tsorcInstancedGlobalItem>();
                 float visualScale = Math.Max(0.05f, instancedGlobal.slashVisualScale);
                 trailWidth = Math.Max(1, (int)(trailWidth * visualScale));
@@ -326,69 +346,24 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 Initialize();
             }
 
-            Projectile drivingSwing = null;
-
-            if (DrivenByProjectile)
+            if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming) && AttackId != aiming.AttackId)
             {
-                int drivingIndex = Projectile.GetByUUID(Projectile.owner, (int)Projectile.ai[0] - 1);
-
-                if (drivingIndex >= 0)
-                {
-                    drivingSwing = Main.projectile[drivingIndex];
-                }
-
-                IBladeSlashSource bladeSource = drivingSwing?.ModProjectile as IBladeSlashSource;
-
-                if (Projectile.ai[1] > 0f)
-                {
-                    if (drivingSwing == null || !drivingSwing.active)
-                    {
-                        bladeSource = null;
-                    }
-
-                    UpdateBladeSource(owner.Center, bladeSource);
-                    return;
-                }
-
-                if (drivingSwing == null || !drivingSwing.active)
-                {
-                    // Swing is over: stop adding points and let the existing trail fade (trailIntensity ramps over the last 15 ticks).
-                    reachedEnd = true;
-                    Projectile.timeLeft = Math.Min(Projectile.timeLeft, 15);
-                }
-            }
-            else if (owner.HeldItem.TryGetGlobalItem(out ItemMeleeAttackAiming aiming))
-            {
-                //Main.NewText(aiming.AttackId);
-                if (AttackId != aiming.AttackId)
-                {
-                    reachedEnd = true;
-                }
+                reachedEnd = true;
             }
 
             // Moonlight's held-item path keeps its established pivot, sizing and timing.
             FollowOwnerPivot(owner.Center);
 
-            bool flipped = owner.gravDir == -1f && ModContent.GetInstance<tsorcRevampConfig>().GravityFix;
-
             if (Projectile.timeLeft > 10 && !reachedEnd)
             {
-                if (drivingSwing != null)
+                Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing, 1.2f);
+                if (owner.gravDir == 1f)
                 {
-                    // Trail points sit at (rotation - PiOver2), so +PiOver2 puts them exactly along the driving blade.
-                    Projectile.rotation = drivingSwing.rotation + MathHelper.PiOver2;
+                    Projectile.rotation += MathHelper.PiOver2;
                 }
-                else
+                else if (owner.direction == 1)
                 {
-                    Projectile.rotation = QuickSlashMeleeAnimation.MeleeSwingRotation(owner, owner.HeldItem, flippedSwing, 1.2f);
-                    if (owner.gravDir == 1f)
-                    {
-                        Projectile.rotation += MathHelper.PiOver2;
-                    }
-                    else if (owner.direction == 1)
-                    {
-                        Projectile.rotation += (float)Math.PI;
-                    }
+                    Projectile.rotation += MathHelper.Pi;
                 }
 
                 //Skip the first
@@ -470,6 +445,15 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             Vector2 pixelGridSize = new Vector2(
                 Math.Max(trailCurrentLength / pixelBlockSize, 1f),
                 Math.Max((WidthFunction(0f) * 2f) / pixelBlockSize, 1f));
+
+            if (PlayerBladeDriven)
+            {
+                // Whole cells keep quantized UVs inside the strip and the last visible
+                // block before the head taper, right up against the blade.
+                pixelGridSize.X = MathF.Ceiling(pixelGridSize.X);
+                pixelGridSize.Y = MathF.Ceiling(pixelGridSize.Y);
+            }
+
             effect.Parameters["PixelGrid"].SetValue(new Vector4(
                 pixelGridSize.X,
                 pixelGridSize.Y,
@@ -481,6 +465,11 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             if (bladeSourceDriven)
             {
                 headFadeStart = BladeHeadFadeStart;
+            }
+
+            if (PlayerBladeDriven)
+            {
+                headFadeStart = PlayerBladeHeadFadeStart;
             }
 
             effect.Parameters["HeadFadeStart"].SetValue(headFadeStart);
@@ -512,8 +501,20 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             {
                 lightingColor = Color.Lerp(lightingColor, Color.White, 0.42f);
             }
-            effect.Parameters["slashCenter"].SetValue(Color.White.MultiplyRGB(lightingColor).ToVector4());
-            effect.Parameters["slashEdge"].SetValue(slashColor.MultiplyRGB(lightingColor).ToVector4());
+
+            Vector4 centerColor = Color.White.MultiplyRGB(lightingColor).ToVector4();
+            Vector4 edgeColor = slashColor.MultiplyRGB(lightingColor).ToVector4();
+            if (PlayerBladeDriven)
+            {
+                // Additive blending already multiplies by source alpha. Scale RGB once
+                // so the slash contributes exactly half the light at the same fade.
+                Vector4 opacity = new(PlayerBladeOpacity, PlayerBladeOpacity, PlayerBladeOpacity, 1f);
+                centerColor *= opacity;
+                edgeColor *= opacity;
+            }
+
+            effect.Parameters["slashCenter"].SetValue(centerColor);
+            effect.Parameters["slashEdge"].SetValue(edgeColor);
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 
@@ -534,9 +535,9 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                     sourceNPC = Main.npc[npcIndex];
                 }
 
-                if (additiveContext && npcSampleTick != Main.GameUpdateCount)
+                if (additiveContext && bladeSampleTick != Main.GameUpdateCount)
                 {
-                    npcSampleTick = Main.GameUpdateCount;
+                    bladeSampleTick = Main.GameUpdateCount;
                     IBladeSlashSource source = sourceNPC?.ModNPC as IBladeSlashSource;
 
                     if (npcTrailAge > Math.Max(1, (int)Projectile.ai[2]))
@@ -565,6 +566,38 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             // The owner can move after projectile AI; anchor again immediately before rendering. A slash swung by a
             // mirror puppet (Soul Mimic / mirror invader) anchors to the puppet, not the player whose ItemCheck it borrowed.
             Vector2 ownerCenter = NPCs.FriendlyPuppets.MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+
+            if (PlayerBladeDriven && additiveContext && bladeSampleTick != Main.GameUpdateCount)
+            {
+                bladeSampleTick = Main.GameUpdateCount;
+                if (!initialized)
+                {
+                    Initialize();
+                }
+
+                // ai[0] carries the owning player's swing identity + 1. Use the same pose
+                // the sword will draw this frame, regardless of projectile slot order.
+                int swingIdentity = (int)Projectile.ai[0] - 1;
+                int swingIndex = Projectile.GetByUUID(Projectile.owner, swingIdentity);
+                IBladeSlashSource source = null;
+                if (swingIndex >= 0)
+                {
+                    Projectile swing = Main.projectile[swingIndex];
+                    if (swing.owner == Projectile.owner && swing.identity == swingIdentity)
+                    {
+                        source = swing.ModProjectile as IBladeSlashSource;
+                    }
+                }
+
+                // Queued swings can reuse the same projectile slot and identity.
+                if (playerBladeSource != null && !ReferenceEquals(source, playerBladeSource))
+                {
+                    source = null;
+                }
+
+                UpdateBladeSource(ownerCenter, source);
+            }
+
             if (bladeSourceDriven)
             {
                 ownerCenter += bladeAnchorOffset;

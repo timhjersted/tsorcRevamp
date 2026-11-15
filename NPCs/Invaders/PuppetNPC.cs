@@ -2499,6 +2499,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool IndependentBackHandWeapon => false;
         protected virtual float IndependentBackHandFacingAngle => -0.3f;
         protected virtual float IndependentBackHandDrawRotation => IndependentBackHandFacingAngle + BackHandWeapon.RotationOffset;
+        // Optional grip measured from the full-stretch rear-arm cell's vanilla pivot, in facing-right pixels.
+        protected virtual Vector2? IndependentBackHandGripFromPivot => null;
         // Optional composite rear-arm presentation, in unscaled player-template pixels.
         // False/zero retain vanilla art and geometry for every existing puppet.
         protected virtual bool UseFrontArmSpriteForBack => false;
@@ -10984,12 +10986,22 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             if (IndependentBackHandWeapon)
             {
+                float independentRotation = FacingAngleToCompositeArm(IndependentBackHandFacingAngle);
+                if (IndependentBackHandGripFromPivot is Vector2 grip)
+                {
+                    // Match the drawn rear shoulder: 24px above the feet to the cell center,
+                    // then 6px forward and 2px down to the arm pivot. Rotate the painted palm with the arm.
+                    Vector2 pivot = new Vector2(6f * NPC.direction, PuppetVisualHeight * 0.5f - 22f);
+                    grip.X *= NPC.direction;
+                    Vector2 handOffset = grip.RotatedBy(independentRotation);
+                    return PuppetSpriteCenter + pivot + handOffset + CompositeBodyBob;
+                }
+
                 // Vanilla's full-stretch back-hand ellipse, evaluated without the draw-only Player.
                 // This keeps dedicated-server cast origins identical to the visible rear grip.
-                float angle = FacingAngleToCompositeArm(IndependentBackHandFacingAngle) + MathHelper.PiOver2;
+                float angle = independentRotation + MathHelper.PiOver2;
                 Vector2 arm = new Vector2((float)Math.Cos(angle) * 10f, (float)Math.Sin(angle) * 12f);
                 Vector2 hand = PuppetVisualCenter + new Vector2(6f * NPC.direction, -2f) + arm + CompositeBodyBob;
-                float independentRotation = FacingAngleToCompositeArm(IndependentBackHandFacingAngle);
                 return hand + BackArmHandOffset(Player.CompositeArmStretchAmount.Full, independentRotation);
             }
 

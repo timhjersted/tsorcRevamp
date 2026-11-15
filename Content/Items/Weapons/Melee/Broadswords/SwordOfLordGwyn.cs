@@ -26,7 +26,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
         public override int BaseSwingTicks => 32;
 
-        public override bool UsesSlashTrail => true;
+        public override bool UsesBladeSlash => true;
 
         // Quicker and sharper than the Gravelord Sword: a short accel into a hard-falling speed curve with a long
         // settle, and a heavier, slower-starting slam. Gwyn's shorter blade needs a higher slam finish to meet the floor.
@@ -88,8 +88,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 
             tsorcInstancedGlobalItem instancedGlobal = Item.GetGlobalItem<tsorcInstancedGlobalItem>();
             instancedGlobal.slashColor = new Color(255, 160, 20); // orange-gold, between the old yellow and the first-flame orange-red
-            // Center the slash band at ~86px so its outer edge reaches the blade tip 115px from the fist.
-            instancedGlobal.slashVisualScale = 0.635f;
         }
 
         // A tap may arrive mid-swing: the controller then queues the next combo step instead of slashing at once.

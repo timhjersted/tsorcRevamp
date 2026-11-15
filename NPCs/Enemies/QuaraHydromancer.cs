@@ -215,6 +215,8 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override bool IndependentBackHandWeapon => true;
         protected override float IndependentBackHandFacingAngle => StaffArmAngle;
         protected override float IndependentBackHandDrawRotation => StaffTilt;
+        // Full-stretch rear-arm cell: painted palm (28, 40), shoulder pivot (26, 30).
+        protected override Vector2? IndependentBackHandGripFromPivot => new Vector2(2f, 10f);
         // Each cast brakes with its own pre-puppet damping, and the Tide Rush surge drives velocity itself.
         protected override bool SlowDownDuringCustom => false;
         protected override bool CustomAttackCommitted => IsCommitted();

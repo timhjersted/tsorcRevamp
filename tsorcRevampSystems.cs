@@ -68,20 +68,23 @@ namespace tsorcRevamp
         }
 
         /// <summary>
-        /// Tile coords to store so an NPC of the given type lands centered on the cursor (Main.MouseWorld).
-        /// Because the spawn anchors the NPC's bottom-center, we offset down by half the NPC's height so the
-        /// sprite's center — not its feet — ends up under the cursor (matching the centered cursor preview).
+        /// Shared placement and preview tile. Type 0 places a book at the cursor's tile center.
+        /// NPCs anchor at their feet, so the spawn tile is offset by half the NPC's height.
         /// </summary>
         public static void GetPlacementTile(int npcType, out int tileX, out int tileY)
         {
+            Vector2 mouse = tsorcRevampPlayer.RealMouseWorld;
+            if (npcType == 0)
+            {
+                tileX = (int)MathF.Floor(mouse.X / 16f);
+                tileY = (int)MathF.Floor(mouse.Y / 16f);
+                return;
+            }
+
             NPC temp = new NPC();
             temp.SetDefaults(npcType);
-            // RealMouseWorld is a stable snapshot of the cursor's world pos taken in the player update. Main.MouseWorld
-            // is recomputed mid-frame and drifts with the mod's camera/zoom during the draw phase, so the preview
-            // (drawn in PostDrawTiles) and the placement (CanUseItem) would disagree. Use the snapshot for both.
-            Vector2 mouse = tsorcRevampPlayer.RealMouseWorld;
-            tileX = (int)System.Math.Round(mouse.X / 16f);
-            tileY = (int)System.Math.Round((mouse.Y + temp.height / 2f) / 16f);
+            tileX = (int)MathF.Round(mouse.X / 16f);
+            tileY = (int)MathF.Round((mouse.Y + temp.height / 2f) / 16f);
         }
 
         internal static float visualLife = -1f;
@@ -564,6 +567,7 @@ namespace tsorcRevamp
                 }
                 mod.EnemySelectionUI.SelectedNpcType = 0;
                 mod.EnemySelectionUI.QuickAddMode = false;
+                mod.EnemySelectionUI.MovingEvent = null;
             }
 
             if (BonfireUIState.Visible)
@@ -1015,6 +1019,10 @@ namespace tsorcRevamp
                     // branch needed here. (PuppetNPC stays special-cased above because its label is
                     // composed from three separate sources.)
                     current = labelled.DebugAttackLabel;
+                }
+                else if (npc.type == NPCID.TheDestroyer && npc.TryGetGlobalNPC(out NPCs.Bosses.TheDestroyer.TheDestroyer destroyer))
+                {
+                    current = destroyer.DebugAttackLabel;
                 }
                 else
                 {
@@ -1683,6 +1691,12 @@ namespace tsorcRevamp
 
         public override void OnWorldUnload()
         {
+            var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
+            if (enemyUI != null)
+            {
+                enemyUI.MovingEvent = null;
+            }
+
             PuppetAttackTelemetry.EndSession("world-unload");
         }
 
@@ -2032,6 +2046,13 @@ namespace tsorcRevamp
             }
         }
 
+        private static void DrawEventBook(Vector2 center, Color color)
+        {
+            string texturePath = UsefulFunctions.RefactorableFilepath(typeof(EnemyDebugTome));
+            Texture2D icon = ModContent.Request<Texture2D>(texturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Main.spriteBatch.Draw(icon, center - Main.screenPosition, null, color, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);
+        }
+
         public override void PostDrawTiles()
         {
             EditorHoverTooltip = null; // always clear so tooltip doesn't persist after unequipping the tome
@@ -2041,21 +2062,36 @@ namespace tsorcRevamp
                 var mod = ModContent.GetInstance<tsorcRevamp>();
                 var enemyUI = mod.EnemySelectionUI;
                 var configUI = mod.SpawnPointConfigUI;
+                var movingEvent = enemyUI.MovingEvent;
+                bool placingNpc = enemyUI.SelectedNpcType != 0;
+                Vector2 mouseWorld = tsorcRevampPlayer.RealMouseWorld;
+                DynamicSpawnEvent hoveredMarker = null;
 
-                // Compute a state-based tooltip that always shows in the lower-left.
-                // NPC hover detection below overrides this with a more specific message.
-                if (enemyUI.SelectedNpcType != 0)
+                if (movingEvent != null)
                 {
-                    if (enemyUI.MovingEvent != null)
-                        EditorHoverTooltip = "Left click to drop event here  ·  Right click to cancel";
-                    else if (enemyUI.QuickAddMode)
+                    EditorHoverTooltip = "Left click to place event  ·  Right click to cancel";
+                }
+                else if (placingNpc)
+                {
+                    if (enemyUI.QuickAddMode)
+                    {
                         EditorHoverTooltip = "Left click to place (repeats)  ·  Right click to cancel";
+                    }
                     else
+                    {
                         EditorHoverTooltip = "Left click to place NPC  ·  Right click to cancel";
+                    }
                 }
                 else
                 {
                     EditorHoverTooltip = "Left click opens Quick Event menu  ·  Right click creates New Event";
+                    hoveredMarker = EnemyDebugTome.FindEventMarker(mouseWorld);
+                    if (hoveredMarker != null)
+                    {
+                        EditorHoverTooltip = Main.netMode == NetmodeID.SinglePlayer
+                            ? "Left click to move event  ·  Right click to edit"
+                            : "Click to edit event  ·  Move in single-player";
+                    }
                 }
 
                 // Use TransformationMatrix (not ZoomMatrix) so world-space draws line up with Main.MouseWorld.
@@ -2103,7 +2139,7 @@ namespace tsorcRevamp
                 }
 
                 var dynamicCopy = tsorcScriptedEvents.DynamicEvents != null ? tsorcScriptedEvents.DynamicEvents.ToArray() : System.Array.Empty<DynamicSpawnEvent>();
-                bool npcHovered = false; // NPC hover overrides the base tooltip; first hovered NPC wins
+                bool checkNpcHover = movingEvent == null && !placingNpc && hoveredMarker == null;
                 foreach (var scriptedEvent in dynamicCopy)
                 {
                     if (scriptedEvent == null)
@@ -2127,36 +2163,41 @@ namespace tsorcRevamp
                     }
 
                     bool isSelected = configUI.Visible && configUI.CurrentEvent == scriptedEvent;
+                    bool markerOnCursor = scriptedEvent == movingEvent;
 
-                    // Draw the ring (always drawn in editor mode: white/faint for invisible, correct color for visible)
-
-                    Color ringColor = scriptedEvent.VisibleRing ? GetDustColor(scriptedEvent.TriggerDust) : Color.White * 0.4f;
-                    float thickness = 2f;
-
-                    if (isSelected)
+                    // Hide the original marker and ring while carrying it. Regular events keep their NPC markers.
+                    if (!markerOnCursor)
                     {
-                        ringColor = Color.Gold;
-                        thickness = 3f;
-                    }
-
-                    int points = 60;
-                    float step = MathHelper.TwoPi / points;
-                    float radiusInPixels = (float)System.Math.Sqrt(scriptedEvent.Radius);
-                    for (int i = 0; i < points; i++)
-                    {
-                        Vector2 p1 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy(i * step) - Main.screenPosition;
-                        Vector2 p2 = centerPos + new Vector2(radiusInPixels, 0).RotatedBy((i + 1) * step) - Main.screenPosition;
-                        DrawLineScreen(Main.spriteBatch, p1, p2, ringColor, thickness);
-                    }
-
-                    // Draw the center icon. Quick-add events use their single NPC as the marker, so no book icon.
-                    if (!scriptedEvent.SingleNpcMarker)
-                    {
-                        Texture2D icon = ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Debug/EnemyDebugTome", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                        if (icon != null)
+                        Color ringColor = Color.White * 0.4f;
+                        float thickness = 2f;
+                        if (isSelected)
                         {
-                            Main.spriteBatch.Draw(icon, centerPos - Main.screenPosition, null, Color.White, 0f, icon.Size() / 2f, 1f, SpriteEffects.None, 0f);
+                            ringColor = Color.Gold;
+                            thickness = 3f;
                         }
+                        else if (scriptedEvent.VisibleRing)
+                        {
+                            ringColor = GetDustColor(scriptedEvent.TriggerDust);
+                        }
+
+                        int points = 60;
+                        float step = MathHelper.TwoPi / points;
+                        float radiusInPixels = MathF.Sqrt(scriptedEvent.Radius);
+                        for (int i = 0; i < points; i++)
+                        {
+                            Vector2 start = centerPos + new Vector2(radiusInPixels, 0).RotatedBy(i * step) - Main.screenPosition;
+                            Vector2 end = centerPos + new Vector2(radiusInPixels, 0).RotatedBy((i + 1) * step) - Main.screenPosition;
+                            DrawLineScreen(Main.spriteBatch, start, end, ringColor, thickness);
+                        }
+
+                        if (!scriptedEvent.SingleNpcMarker)
+                        {
+                            DrawEventBook(centerPos, Color.White);
+                        }
+                    }
+                    else if (scriptedEvent.SingleNpcMarker)
+                    {
+                        continue;
                     }
 
                     // Draw the NPCs and check for mouse hover (used for the cursor tooltip in the UI layer).
@@ -2179,41 +2220,44 @@ namespace tsorcRevamp
 
                         Main.instance.DrawNPCDirect(Main.spriteBatch, dummyNPC, false, Main.screenPosition);
 
-                        // Hover detection: same center + radius as the grab/remove hit-test in EnemyDebugTome.
-                        if (!npcHovered)
+                        if (checkNpcHover)
                         {
                             Vector2 npcCenter = new Vector2(npc.SpawnX * 16, npc.SpawnY * 16 - dummyNPC.height / 2f);
                             float hoverRadius = System.Math.Max(24f, System.Math.Max(dummyNPC.width, dummyNPC.height) / 2f);
-                            if (Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter) < hoverRadius)
+                            if (Vector2.Distance(mouseWorld, npcCenter) < hoverRadius)
                             {
-                                if (isSelected && scriptedEvent.SingleNpcMarker)
-                                    EditorHoverTooltip = "Left click to grab NPC and move event";
-                                else if (isSelected)
-                                    EditorHoverTooltip = "Left click to grab NPC  ·  Right click to remove";
-                                else
-                                    EditorHoverTooltip = "Left click to open event";
-                                npcHovered = true;
+                                EditorHoverTooltip = isSelected ? "Left click to grab NPC" : "Left click to open event";
+                                checkNpcHover = false;
                             }
                         }
                     }
                 }
 
-                // Cursor preview: draw the selected NPC translucently at the EXACT tile it will be placed on,
-                // through the same DrawNPCDirect path as placed markers. Preview == marker == in-game spawn,
-                // by construction — no offset math to drift out of sync.
-                if (enemyUI.SelectedNpcType != 0)
+                if (movingEvent != null || placingNpc)
                 {
-                    int selectedType = enemyUI.SelectedNpcType;
-                    GetPlacementTile(selectedType, out int pTileX, out int pTileY);
+                    int previewType = enemyUI.SelectedNpcType;
+                    if (movingEvent != null)
+                    {
+                        previewType = enemyUI.MovingEventNpcType;
+                    }
 
-                    NPC previewNPC = new NPC();
-                    previewNPC.SetDefaults(selectedType);
-                    previewNPC.active = true;
-                    previewNPC.Bottom = NpcSpawnBottom(pTileX, pTileY);
-                    previewNPC.alpha = 100; // ~60% opacity so it reads as a ghost preview
-
-                    Main.instance.LoadNPC(selectedType);
-                    Main.instance.DrawNPCDirect(Main.spriteBatch, previewNPC, false, Main.screenPosition);
+                    // Use the same snapped tile and anchor as the input handler.
+                    GetPlacementTile(previewType, out int tileX, out int tileY);
+                    if (previewType == 0)
+                    {
+                        Vector2 previewCenter = new Vector2(tileX * 16f + 8f, tileY * 16f + 8f);
+                        DrawEventBook(previewCenter, Color.White * 0.6f);
+                    }
+                    else
+                    {
+                        NPC previewNPC = new NPC();
+                        previewNPC.SetDefaults(previewType);
+                        previewNPC.active = true;
+                        previewNPC.Bottom = NpcSpawnBottom(tileX, tileY);
+                        previewNPC.alpha = 100;
+                        Main.instance.LoadNPC(previewType);
+                        Main.instance.DrawNPCDirect(Main.spriteBatch, previewNPC, false, Main.screenPosition);
+                    }
                 }
 
                 Main.spriteBatch.End();

@@ -1319,8 +1319,8 @@ Mods: {
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: "{$NPCs.TaurusKnight.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
+				DisplayName: "{$NPCs.Caliche.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Caliche.DisplayName}"
 			}
 
 			TetsujinBanner: {
@@ -12413,6 +12413,11 @@ Mods: {
 			ElementalEruptionColumn.DisplayName: Elemental Eruption Column
 			ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
 			BoneRemains.DisplayName: Bone Remains
+			DestroyerHullLaser.DisplayName: Destroyer Hull Laser
+			DestroyerMawBeam.DisplayName: Destroyer Maw Beam
+			DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
+			DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
+			CinderRainController.DisplayName: Cinder Rain Controller
 		}
 
 		NPCs: {
@@ -12427,6 +12432,9 @@ Mods: {
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
 			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
+			TheDestroyerOriginal.DisplayName: Old Destroyer
+			TheDestroyerOriginalBody.DisplayName: Old Destroyer
+			TheDestroyerOriginalTail.DisplayName: Old Destroyer
 			SkeletronPrime.Warning: WARNING: Laser power redirected......
 
 			AncestralSpirit: {
@@ -13008,7 +13016,7 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
-			TaurusKnight.DisplayName: Taurus, the Disgraced Champion
+			Caliche.DisplayName: Caliche, the Disgraced Champion
 			Tetsujin.DisplayName: Tetsujin
 			VampireBat.DisplayName: Vampire Bat
 			TibianAmazon.DisplayName: Tibian Amazon
@@ -14090,6 +14098,7 @@ Mods: {
 			TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			DemonLordPrototype.DisplayName: Demon Lord Prototype
 			Eland.DisplayName: Eland
 			EvilEye.DisplayName: Evil Eye
 			Gigas.DisplayName: Holy Gigas

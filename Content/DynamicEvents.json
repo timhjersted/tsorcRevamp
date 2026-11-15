@@ -818,10 +818,11 @@
     "EventID": "0c9bcf7d-cb40-4562-9dd5-abdb2affeb80",
     "CenterX": 2120.0,
     "CenterY": 730.0,
-    "Radius": 921600.0,
+    "Radius": 774400.0,
     "Square": false,
     "TriggerDust": 158,
     "VisibleRing": true,
+    "SpawnBurst": true,
     "SaveOnCompletion": true,
     "TextToDisplay": "'You killed my brother, Red! ... You've unleashed hell upon this world!' A hero from Lumelia has come seeking justice... ",
     "TextColorHex": "FAFAD2FF",
@@ -2419,7 +2420,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/TaurusKnight",
+        "NpcName": "tsorcRevamp/Caliche",
         "SpawnX": 3690.0,
         "SpawnY": 1545.0,
         "CustomHealth": null,
@@ -2993,7 +2994,7 @@
     "SingleNpcMarker": false,
     "Npcs": [
       {
-        "NpcName": "tsorcRevamp/TaurusKnight",
+        "NpcName": "tsorcRevamp/Caliche",
         "SpawnX": 5801.0,
         "SpawnY": 1381.0,
         "CustomHealth": null,
@@ -6297,8 +6298,8 @@
   {
     "EventID": "681ec75f-0e65-4f18-85f1-715d568ffc73",
     "CenterX": 2096.0,
-    "CenterY": 887.0,
-    "Radius": 57600.0,
+    "CenterY": 877.0,
+    "Radius": 25600.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": true,
@@ -6308,7 +6309,7 @@
     "TextColorHex": null,
     "WorldCondition": "OnlyAdventureMapCondition",
     "MapCondition": "",
-    "CustomAction": null,
+    "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
     "Npcs": [
       {

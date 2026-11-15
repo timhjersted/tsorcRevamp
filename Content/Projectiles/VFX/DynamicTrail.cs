@@ -495,6 +495,8 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         }
         public virtual void SetEffectParameters(Effect effect) { }
 
+        protected virtual bool IncludeStripBacksides => true;
+
         BasicEffect basicEffect;
         Texture2D starTexture;
         public bool additiveContext = false;
@@ -574,7 +576,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             }
 
             VertexStrip vertexStrip = new VertexStrip();
-            vertexStrip.PrepareStrip(positions, rotations, ColorFunction, WidthFunction, offset, includeBacksides: true);
+            vertexStrip.PrepareStrip(positions, rotations, ColorFunction, WidthFunction, offset, includeBacksides: IncludeStripBacksides);
             vertexStrip.DrawTrail();
 
             /*

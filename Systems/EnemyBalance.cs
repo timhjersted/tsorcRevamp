@@ -375,6 +375,9 @@ namespace tsorcRevamp.Systems
             Register(NPCID.TheDestroyer, 202500, 200000);
             Register(NPCID.TheDestroyerBody, 202500, 200000);
             Register(NPCID.TheDestroyerTail, 202500, 200000);
+            RegisterMod("TheDestroyerOriginal", 202500, 200000);
+            RegisterMod("TheDestroyerOriginalBody", 202500, 200000);
+            RegisterMod("TheDestroyerOriginalTail", 202500, 200000);
 
             // The Machine: the fight's real pool is core (35000, set in HandleLife) + six arms of 15000 each, about 125000 in
             // Expert. The 20000 -> 30000 pair is the SetDefaults value the table was built from, so it is x1.5 on all of it.
@@ -545,7 +548,6 @@ namespace tsorcRevamp.Systems
             Enemy("Tetsujin", shm: 20000); // strong; authored 3400
             Enemy("DarkrootImp", shm: 16000); // strong; authored 3500
             Enemy("DarkrootSentry", shm: 18000); // strong; authored 5400
-            Enemy("TaurusKnight", shm: 20000); // strong; authored 5400
             Enemy("Plaguesmith", shm: 50000); // elite; authored 8250
             Enemy("AncientDemon", shm: 35000); // elite; authored 15000
             Enemy("Massacre", shm: 90000); // elite; authored 20000

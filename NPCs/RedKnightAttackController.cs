@@ -550,7 +550,7 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.RedCourtProcession;
             }
-            if (ThirdHeraldComplete && HasUsableCinderRainLane(target.Center))
+            if (ThirdHeraldComplete && CinderRainController.HasUsableLane(target.Center))
             {
                 candidates[count++] = KnightSpecialAttack.CinderRain;
             }
@@ -1219,8 +1219,12 @@ namespace tsorcRevamp.NPCs
         void TickSpectralHandBarrage(NPC npc, Player target, KnightAttackStats stats)
         {
             ApproachHorizontalSpeed(npc, Direction, Timer < 90 ? 0.9f : 1.8f, 0.08f);
-            Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 1.25f);
-            if (Timer == 30)
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(npc.Center, Color.WhiteSmoke.ToVector3() * 1.25f);
+            }
+
+            if (Timer == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
@@ -1234,12 +1238,19 @@ namespace tsorcRevamp.NPCs
                 Vector2 castSource = PalmSource(npc, Vector2.Zero);
                 Vector2 velocity = UsefulFunctions.BallisticTrajectory(castSource, LockedTarget, 6f,
                     fallback: true) + Main.rand.NextVector2Circular(4f, 4f);
-                int projectileType = greatKnight
-                    ? ModContent.ProjectileType<GreatRedKnightUltrakillHand>()
-                    : ProjectileID.InsanityShadowHostile;
-                float handIndex = greatKnight ? (Timer - 60) / 2f : 0f;
+                int projectileType = ProjectileID.InsanityShadowHostile;
+                float handIndex = 0f;
+                float handFacing = 0f;
+                if (greatKnight)
+                {
+                    projectileType = ModContent.ProjectileType<GreatRedKnightUltrakillHand>();
+                    handIndex = (Timer - 60) / 2f;
+                    handFacing = Direction;
+                }
+
                 Projectile.NewProjectile(npc.GetSource_FromThis(), castSource, velocity,
-                    projectileType, EnemyDamage.Projectile(stats.GreatDamage), 0f, Main.myPlayer, ai0: handIndex);
+                    projectileType, EnemyDamage.Projectile(stats.GreatDamage), 0f, Main.myPlayer,
+                    ai0: handIndex, ai1: handFacing);
                 if (Timer == 60)
                 {
                     tsorcRevampAIs.RegisterFighterAttack(npc);
@@ -1278,22 +1289,19 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        const int CinderRainFirstWaveTick = 60;
-        const int CinderRainWaveInterval = 30;
-        const int CinderRainWaveCount = 4;
-        const float CinderRainSpawnHeight = 550f;
-        const float CinderRainExpireHeight = 104f;
+        const int CinderRainCastTick = 60;
+        const int CinderRainRecoveryTicks = 30;
 
         void TickCinderRain(NPC npc, Player target, KnightAttackStats stats)
         {
-            ApproachHorizontalSpeed(npc, Direction, Timer < CinderRainFirstWaveTick ? 1.15f : 2f,
+            ApproachHorizontalSpeed(npc, Direction, Timer < CinderRainCastTick ? 1.15f : 2f,
                 0.09f);
 
-            if (Timer == 30)
+            if (Timer == 30 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 // Prefer the fire-time position, but retain the selection-time validated point if
                 // the player crosses under a low ceiling during the windup.
-                if (HasUsableCinderRainLane(target.Center))
+                if (CinderRainController.HasUsableLane(target.Center))
                 {
                     LockedTarget = target.Center;
                 }
@@ -1301,7 +1309,7 @@ namespace tsorcRevamp.NPCs
                 npc.netUpdate = true;
             }
 
-            if (Timer < CinderRainFirstWaveTick && !Main.dedServ && Main.rand.NextBool(2))
+            if (Timer < CinderRainCastTick && !Main.dedServ && Main.rand.NextBool(2))
             {
                 Vector2 gatherPoint = PalmSource(npc, new Vector2(18f, -8f));
                 Dust mote = Dust.NewDustPerfect(
@@ -1313,44 +1321,18 @@ namespace tsorcRevamp.NPCs
                 mote.noLight = mote.type == DustID.Shadowflame;
             }
 
-            if (Timer >= CinderRainFirstWaveTick
-                && Timer < CinderRainFirstWaveTick + CinderRainWaveCount * CinderRainWaveInterval
-                && (Timer - CinderRainFirstWaveTick) % CinderRainWaveInterval == 0)
+            if (Timer == CinderRainCastTick)
             {
-                int wave = (Timer - CinderRainFirstWaveTick) / CinderRainWaveInterval;
-                SpawnCinderRainWave(npc, stats.MagicDamage, wave);
-                PlaySound(SoundID.Item34 with
+                // The storm stays at the locked position while the knight recovers and moves on.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Volume = 0.35f,
-                    Pitch = -0.18f + wave * 0.06f
-                }, npc.Center);
-                if (wave == 0)
-                {
+                    Projectile.NewProjectile(npc.GetSource_FromThis(), LockedTarget, Vector2.Zero,
+                        ModContent.ProjectileType<CinderRainController>(), EnemyDamage.Projectile(stats.MagicDamage),
+                        0f, Main.myPlayer, ai0: npc.whoAmI);
                     tsorcRevampAIs.RegisterFighterAttack(npc);
                 }
-            }
-        }
 
-        void SpawnCinderRainWave(NPC npc, int damage, int wave)
-        {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                return;
-            }
-
-            float[] laneOffsets = { -150f, 0f, 150f };
-            for (int lane = 0; lane < laneOffsets.Length; lane++)
-            {
-                float offset = laneOffsets[lane];
-                if (!TryFindCinderRainOrigin(LockedTarget, offset, out Vector2 origin))
-                {
-                    continue;
-                }
-                float waveDrift = (wave - (CinderRainWaveCount - 1) * 0.5f) * 0.12f;
-                Vector2 velocity = new(Main.rand.NextFloat(-0.65f, 0.65f) + waveDrift, 7.1f);
-                Projectile.NewProjectile(npc.GetSource_FromThis(), origin, velocity,
-                    ModContent.ProjectileType<DestinedDeathBreath>(), EnemyDamage.Projectile(damage), 2f, Main.myPlayer,
-                    ai0: LockedTarget.Y - CinderRainExpireHeight);
+                PlaySound(SoundID.Item34 with { Volume = 0.35f, Pitch = -0.18f }, npc.Center);
             }
         }
 
@@ -1683,10 +1665,12 @@ namespace tsorcRevamp.NPCs
         const int StormHeraldPairInterval = 20;
         const int StormHeraldLaneTelegraphTicks = 20;
         const int StormHeraldLaneActiveTicks = 12;
-        const int RedCourtLanceCount = 7;
-        const int RedCourtLaneSpacing = 72;
+        const int RedCourtLanceCount = 16;
+        const int RedCourtLaneSpacing = 96;
         const int RedCourtFirstPortalTick = 24;
-        const int RedCourtPortalInterval = 18;
+        const int RedCourtPortalInterval = 9;
+        const int RedCourtLastPortalTick = RedCourtFirstPortalTick + (RedCourtLanceCount - 1) * RedCourtPortalInterval;
+        const int RedCourtCommitEndTick = RedCourtLastPortalTick + 38;
 
         void TickRoyalStandard(NPC npc, Player target, KnightAttackStats stats)
         {
@@ -2104,29 +2088,41 @@ namespace tsorcRevamp.NPCs
         {
             // Keep the cast mobile. The fixed rig can carry the magic overlay while walking, and
             // the procession owns its sky geometry independently once it is locked.
-            ApproachHorizontalSpeed(npc, Direction, Timer < 145 ? 1.35f : 2.2f, 0.09f);
+            ApproachHorizontalSpeed(npc, Direction, Timer <= RedCourtLastPortalTick ? 1.35f : 2.2f, 0.09f);
 
             if (Timer == 0)
             {
-                LockedTarget = target.Center;
-                int sweepDirection = Math.Abs(target.velocity.X) >= 1.2f
-                    ? Math.Sign(target.velocity.X)
-                    : Direction;
-                AuxiliaryTargetB = new Vector2(sweepDirection, 0f);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    LockedTarget = target.Center;
+                    int sweepDirection = Direction;
+                    if (Math.Abs(target.velocity.X) >= 1.2f)
+                    {
+                        // Lead a running target once, then keep every portal on the committed sweep.
+                        sweepDirection = Math.Sign(target.velocity.X);
+                        float lead = MathHelper.Clamp(target.velocity.X * 32f, -176f, 176f);
+                        if (TryFindCourtPortalOrigin(LockedTarget, lead, out _))
+                        {
+                            LockedTarget += new Vector2(lead, 0f);
+                        }
+                    }
+
+                    AuxiliaryTargetB = new Vector2(sweepDirection, 0f);
+                    npc.netUpdate = true;
+                }
+
                 PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.32f }, npc.Center);
-                npc.netUpdate = true;
             }
 
-            if (Timer >= RedCourtFirstPortalTick
-                && Timer < RedCourtFirstPortalTick + RedCourtLanceCount * RedCourtPortalInterval
+            if (Main.netMode != NetmodeID.MultiplayerClient
+                && Timer >= RedCourtFirstPortalTick && Timer <= RedCourtLastPortalTick
                 && (Timer - RedCourtFirstPortalTick) % RedCourtPortalInterval == 0)
             {
                 int index = (Timer - RedCourtFirstPortalTick) / RedCourtPortalInterval;
                 int sweepDirection = AuxiliaryTargetB.X < 0f ? -1 : 1;
-                float laneOffset = sweepDirection * (index - (RedCourtLanceCount - 1) * 0.5f)
-                    * RedCourtLaneSpacing;
-                if (TryFindCourtPortalOrigin(LockedTarget, laneOffset, out Vector2 origin)
-                    && Main.netMode != NetmodeID.MultiplayerClient)
+                // Begin one lane before the locked point and send the rest down the escape route.
+                float laneOffset = sweepDirection * (index - 1) * RedCourtLaneSpacing;
+                if (TryFindCourtPortalOrigin(LockedTarget, laneOffset, out Vector2 origin))
                 {
                     // A slight drift in the procession direction stops the pattern reading as rain
                     // while retaining a clear vertical dodge lane.
@@ -2137,7 +2133,7 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            if (Timer == RedCourtFirstPortalTick + RedCourtLanceCount * RedCourtPortalInterval)
+            if (Timer == RedCourtLastPortalTick + RedCourtPortalInterval)
             {
                 PlaySound(SoundID.Item1 with { Volume = 0.78f, Pitch = -0.48f }, npc.Center);
             }
@@ -2184,7 +2180,7 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.CrimsonDominion => 60,
                 KnightSpecialAttack.FurnaceHerald => 30,
                 KnightSpecialAttack.StormHerald => 40,
-                KnightSpecialAttack.CinderRain => CinderRainFirstWaveTick,
+                KnightSpecialAttack.CinderRain => CinderRainCastTick,
                 KnightSpecialAttack.StormPursuit => 90,
                 _ => 30
             };
@@ -2218,12 +2214,11 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.FurnacePincer => 203,
             KnightSpecialAttack.RoyalStandard => 78,
             KnightSpecialAttack.StormbreakerEdict => 76,
-            KnightSpecialAttack.RedCourtProcession => 170,
+            KnightSpecialAttack.RedCourtProcession => RedCourtCommitEndTick,
             KnightSpecialAttack.CrimsonDominion => DominionHoldTicks - 50,
             KnightSpecialAttack.FurnaceHerald => 130,
             KnightSpecialAttack.StormHerald => 190,
-            KnightSpecialAttack.CinderRain => CinderRainFirstWaveTick
-                + CinderRainWaveCount * CinderRainWaveInterval,
+            KnightSpecialAttack.CinderRain => CinderRainCastTick + 1,
             KnightSpecialAttack.StormPursuit => 91,
             _ => CommitStart(attack) + 1
         };
@@ -2358,7 +2353,7 @@ namespace tsorcRevamp.NPCs
                 KnightSpecialAttack.FurnacePincer => 230,
                 KnightSpecialAttack.RoyalStandard => 200,
                 KnightSpecialAttack.StormbreakerEdict => 200,
-                KnightSpecialAttack.RedCourtProcession => 220,
+                KnightSpecialAttack.RedCourtProcession => RedCourtLastPortalTick + 88,
                 // Dominion's BLOCKING part is now only the plant-and-hold. Everything that used to
                 // fill the other 420 ticks (containment ring, arena-edge barrage, escape nova) is
                 // either gone or moved: the lightning is an ongoing loop and the nova is the death
@@ -2368,7 +2363,7 @@ namespace tsorcRevamp.NPCs
                 // 20t opening charge; pair telegraphs begin every 20t through tick 160, the last
                 // pair detonates at 180, then the boss has 30t of readable recovery.
                 KnightSpecialAttack.StormHerald => 210,
-                KnightSpecialAttack.CinderRain => 200,
+                KnightSpecialAttack.CinderRain => CinderRainCastTick + CinderRainRecoveryTicks,
                 KnightSpecialAttack.StormPursuit => 125,
                 _ => 1
             };
@@ -2400,8 +2395,8 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.FurnacePincer when Timer >= 105 && Timer < 205 => KnightHeldProp.Spear,
             KnightSpecialAttack.RoyalStandard when Timer <= RoyalFirstThrow => KnightHeldProp.Spear,
             KnightSpecialAttack.StormbreakerEdict when Timer < 122 => KnightHeldProp.Spear,
-            KnightSpecialAttack.RedCourtProcession when Timer < 170 => KnightHeldProp.Magic,
-            KnightSpecialAttack.CinderRain when Timer <= CinderRainFirstWaveTick => KnightHeldProp.Magic,
+            KnightSpecialAttack.RedCourtProcession when Timer < RedCourtCommitEndTick => KnightHeldProp.Magic,
+            KnightSpecialAttack.CinderRain when Timer <= CinderRainCastTick => KnightHeldProp.Magic,
             KnightSpecialAttack.StormPursuit when Timer <= 90 => KnightHeldProp.Spear,
             KnightSpecialAttack.CrimsonDominion => KnightHeldProp.Spear,
             _ => KnightHeldProp.None
@@ -2565,7 +2560,7 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack.PoisonCurtain => 60,
             KnightSpecialAttack.SpectralHandBarrage => 60,
             KnightSpecialAttack.PoisonSpearTether when Timer > 55 => 148,
-            KnightSpecialAttack.CinderRain => CinderRainFirstWaveTick,
+            KnightSpecialAttack.CinderRain => CinderRainCastTick,
             KnightSpecialAttack.RedCourtProcession => RedCourtFirstPortalTick,
             _ => -1
         };
@@ -2575,8 +2570,7 @@ namespace tsorcRevamp.NPCs
         public int PalmCastEndTick => Attack switch
         {
             KnightSpecialAttack.SpectralHandBarrage => 90,
-            KnightSpecialAttack.CinderRain => CinderRainFirstWaveTick + (CinderRainWaveCount - 1) * CinderRainWaveInterval,
-            KnightSpecialAttack.RedCourtProcession => RedCourtFirstPortalTick + (RedCourtLanceCount - 1) * RedCourtPortalInterval,
+            KnightSpecialAttack.RedCourtProcession => RedCourtLastPortalTick,
             _ => PalmCastReleaseTick
         };
 
@@ -2609,7 +2603,7 @@ namespace tsorcRevamp.NPCs
                     KnightSpecialAttack.CrimsonDominion => 90,
                     KnightSpecialAttack.FurnaceHerald => 150,
                     KnightSpecialAttack.StormHerald => 210,
-                    KnightSpecialAttack.CinderRain => CinderRainFirstWaveTick,
+                    KnightSpecialAttack.CinderRain => CinderRainCastTick,
                     KnightSpecialAttack.StormPursuit => 90,
                     _ => 1
                 };
@@ -3105,45 +3099,6 @@ namespace tsorcRevamp.NPCs
             {
                 SoundEngine.PlaySound(sound, position);
             }
-        }
-
-        static bool HasUsableCinderRainLane(Vector2 targetCenter)
-        {
-            int usable = 0;
-            float[] probes = { -150f, 0f, 150f };
-            for (int i = 0; i < probes.Length; i++)
-            {
-                if (TryFindCinderRainOrigin(targetCenter, probes[i], out _))
-                {
-                    usable++;
-                }
-            }
-            return usable >= 2;
-        }
-
-        static bool TryFindCinderRainOrigin(Vector2 targetCenter, float horizontalOffset,
-            out Vector2 origin)
-        {
-            float expiryY = targetCenter.Y - CinderRainExpireHeight;
-            Vector2 preferred = targetCenter + new Vector2(horizontalOffset, -CinderRainSpawnHeight);
-            for (int step = 0; step <= 22; step++)
-            {
-                Vector2 candidate = preferred + new Vector2(0f, step * 16f);
-                // Twelve clear tiles above the player are the minimum for this airborne-only rain.
-                if (candidate.Y > targetCenter.Y - 12f * 16f)
-                {
-                    break;
-                }
-                if (!Collision.SolidCollision(candidate - new Vector2(8f), 16, 16)
-                    && Collision.CanHitLine(candidate, 2, 2,
-                        new Vector2(candidate.X, expiryY), 2, 2))
-                {
-                    origin = candidate;
-                    return true;
-                }
-            }
-            origin = Vector2.Zero;
-            return false;
         }
 
         static bool TryFindCourtPortalOrigin(Vector2 lockedCenter, float horizontalOffset, out Vector2 origin)

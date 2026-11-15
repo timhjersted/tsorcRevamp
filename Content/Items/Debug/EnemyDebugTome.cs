@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -38,12 +39,17 @@ namespace tsorcRevamp.Content.Items.Debug
 
         public override bool CanUseItem(Player player)
         {
+            if (Main.dedServ || player.whoAmI != Main.myPlayer || Main.mapFullscreen)
+            {
+                return false;
+            }
+
             var configUI = ModContent.GetInstance<tsorcRevamp>().SpawnPointConfigUI;
             var enemyUI = ModContent.GetInstance<tsorcRevamp>().EnemySelectionUI;
 
-            // Selected-enemy clicks are handled in UpdatePlacementInput. Vanilla item use can reject a press
+            // Placement clicks are handled in UpdatePlacementInput. Vanilla item use can reject a press
             // before CanUseItem runs (or leave releaseUseItem false after UI interaction).
-            if (enemyUI.SelectedNpcType != 0)
+            if (enemyUI.SelectedNpcType != 0 || enemyUI.MovingEvent != null)
             {
                 return false;
             }
@@ -63,6 +69,33 @@ namespace tsorcRevamp.Content.Items.Debug
                 return false;
             }
 
+            Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
+            DynamicSpawnEvent markerEvent = FindEventMarker(mousePos);
+            if (markerEvent != null)
+            {
+                if (enemyUI.Visible)
+                {
+                    enemyUI.Hide();
+                }
+
+                if (player.altFunctionUse != 2 && Main.netMode == NetmodeID.SinglePlayer)
+                {
+                    if (configUI.Visible)
+                    {
+                        configUI.Hide();
+                    }
+
+                    enemyUI.MovingEvent = markerEvent;
+                    // Wait for release so the press that picks up the marker cannot also drop it.
+                    JustClosedUI = true;
+                    return false;
+                }
+
+                configUI.SetEvent(markerEvent);
+                configUI.Show();
+                return true;
+            }
+
             if (player.altFunctionUse == 2) // Right click
             {
                 // NOTE: right-click no longer deletes anything (removed placed NPCs / quick-add events). Deletion is
@@ -74,11 +107,14 @@ namespace tsorcRevamp.Content.Items.Debug
                 }
 
                 // Otherwise, Right click creates a new event!
-                Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
                 bool eventTooClose = false;
                 foreach (var ev in tsorcScriptedEvents.DynamicEvents)
                 {
-                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
+                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev))
+                    {
+                        continue;
+                    }
+
                     float dist = Vector2.Distance(mousePos, new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8));
                     if (dist < 32) // Within 2 tiles of an existing event center
                     {
@@ -133,8 +169,7 @@ namespace tsorcRevamp.Content.Items.Debug
             }
             else // Left click
             {
-                // If a multi-NPC event is open, check if clicking on a placed NPC to grab it (move mode).
-                // Quick-add events are skipped here: their NPC is the marker, so clicking it just opens the event (below).
+                // A placed NPC in the open regular event can be grabbed independently of its trigger.
                 if (configUI.Visible && configUI.CurrentEvent != null && !configUI.CurrentEvent.SingleNpcMarker)
                 {
                     var ev = configUI.CurrentEvent;
@@ -169,39 +204,15 @@ namespace tsorcRevamp.Content.Items.Debug
                     }
                 }
 
-                // Priority 2b: A single-NPC (quick-add) event that's already open — clicking its NPC grabs the
-                // whole event to relocate it (the NPC is the event marker, so moving it moves the event).
-                if (configUI.Visible && configUI.CurrentEvent != null && configUI.CurrentEvent.SingleNpcMarker)
-                {
-                    var ev = configUI.CurrentEvent;
-                    if (ev.Npcs.Count > 0)
-                    {
-                        var npc = ev.Npcs[0];
-                        Vector2 npcCenter = tsorcRevampSystems.NpcSpawnCenter(npc.NpcID, npc.SpawnX, npc.SpawnY);
-                        float grabRadius = tsorcRevampSystems.NpcHitRadius(npc.NpcID);
-                        if (Vector2.Distance(tsorcRevampPlayer.RealMouseWorld, npcCenter) < grabRadius)
-                        {
-                            NPC tempSize = new NPC();
-                            tempSize.SetDefaults(npc.NpcID);
-                            enemyUI.SelectedNpcType = npc.NpcID;
-                            enemyUI.QuickAddMode = false;
-                            enemyUI.MovingEvent = ev;
-                            Main.NewText($"Grabbed {tempSize.TypeName} event. Left click to move it, right click to cancel.");
-                            return true;
-                        }
-                    }
-                }
-
-                // Priority 3: Check if clicking on/near an existing event center, its detection RING, or any placed
-                // NPC sprite. Checking the ring matters because it's usually the most visually prominent part of an
-                // event (radii of dozens of tiles are common) — without it, clicking anywhere on a large ring except
-                // its exact 3-tile center silently fell through to P4 (Quick Add) instead of opening the event.
-                Vector2 mousePos = tsorcRevampPlayer.RealMouseWorld;
+                // The ring, area around the book, and individual NPC spawns still open the event settings.
                 DynamicSpawnEvent closestEvent = null;
                 float closestDist = float.MaxValue;
                 foreach (var ev in tsorcScriptedEvents.DynamicEvents)
                 {
-                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev)) continue;
+                    if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(ev))
+                    {
+                        continue;
+                    }
 
                     Vector2 evCenter = new Vector2(ev.CenterX * 16 + 8, ev.CenterY * 16 + 8);
                     float centerDist = Vector2.Distance(mousePos, evCenter);
@@ -239,7 +250,11 @@ namespace tsorcRevamp.Content.Items.Debug
                 if (closestEvent != null)
                 {
                     // Opening an event closes the Quick Add panel.
-                    if (enemyUI.Visible) enemyUI.Hide();
+                    if (enemyUI.Visible)
+                    {
+                        enemyUI.Hide();
+                    }
+
                     configUI.SetEvent(closestEvent);
                     configUI.Show();
                     return true;
@@ -255,6 +270,57 @@ namespace tsorcRevamp.Content.Items.Debug
                 }
             }
             return true;
+        }
+
+        internal static DynamicSpawnEvent FindEventMarker(Vector2 mousePos)
+        {
+            DynamicSpawnEvent closestEvent = null;
+            float closestDistance = float.MaxValue;
+            var events = tsorcScriptedEvents.DynamicEvents;
+            if (events == null)
+            {
+                return null;
+            }
+
+            foreach (var dynamicEvent in events)
+            {
+                if (!tsorcScriptedEvents.IsEventVisibleInCurrentWorld(dynamicEvent))
+                {
+                    continue;
+                }
+
+                Vector2 center = new Vector2(dynamicEvent.CenterX * 16f + 8f, dynamicEvent.CenterY * 16f + 8f);
+                float hitRadius = 22f; // Covers the 28-by-30 book sprite, including its corners.
+                if (dynamicEvent.SingleNpcMarker)
+                {
+                    if (dynamicEvent.Npcs.Count != 1 || dynamicEvent.Npcs[0].NpcID == 0)
+                    {
+                        continue;
+                    }
+
+                    DynamicSpawnEntry spawn = dynamicEvent.Npcs[0];
+                    Vector2 bottom = tsorcRevampSystems.NpcSpawnBottom(spawn.SpawnX, spawn.SpawnY);
+                    // Nearby sprites use their hitbox dimensions; distant markers need no NPC initialization.
+                    if (Vector2.DistanceSquared(mousePos, bottom) > 3000f * 3000f)
+                    {
+                        continue;
+                    }
+
+                    NPC markerNpc = new NPC();
+                    markerNpc.SetDefaults(spawn.NpcID);
+                    center = bottom - new Vector2(0f, markerNpc.height / 2f);
+                    hitRadius = Math.Max(24f, Math.Max(markerNpc.width, markerNpc.height) / 2f);
+                }
+
+                float distance = Vector2.Distance(mousePos, center);
+                if (distance < hitRadius && distance < closestDistance)
+                {
+                    closestEvent = dynamicEvent;
+                    closestDistance = distance;
+                }
+            }
+
+            return closestEvent;
         }
 
         // Called from ModSystem.UpdateUI after the editor panels update. UIElement hit tests use the current
@@ -275,10 +341,44 @@ namespace tsorcRevamp.Content.Items.Debug
             var mod = ModContent.GetInstance<tsorcRevamp>();
             var enemyUI = mod.EnemySelectionUI;
             var configUI = mod.SpawnPointConfigUI;
-            if (enemyUI.SelectedNpcType == 0 || JustClosedUI ||
+            if ((enemyUI.SelectedNpcType == 0 && enemyUI.MovingEvent == null) || JustClosedUI ||
                 (enemyUI.Visible && enemyUI.panel.ContainsPoint(Main.MouseScreen)) ||
                 (configUI.Visible && configUI.panel.ContainsPoint(Main.MouseScreen)))
             {
+                return;
+            }
+
+            if (enemyUI.MovingEvent != null)
+            {
+                if (rightPressed)
+                {
+                    enemyUI.MovingEvent = null;
+                    JustClosedUI = true;
+                    Main.NewText("Event move cancelled.");
+                    return;
+                }
+
+                if (!leftPressed || player.mouseInterface)
+                {
+                    return;
+                }
+
+                var movingEvent = enemyUI.MovingEvent;
+                int markerType = enemyUI.MovingEventNpcType;
+                enemyUI.MovingEvent = null;
+                JustClosedUI = true; // Consume this press if item use runs after UpdateUI.
+
+                tsorcRevampSystems.GetPlacementTile(markerType, out int tileX, out int tileY);
+                Point destination = new Point(tileX, tileY);
+                if (tsorcScriptedEvents.TryMoveDynamicEvent(movingEvent, destination, out string error))
+                {
+                    Main.NewText($"Event placed at ({tileX}, {tileY}).");
+                }
+                else
+                {
+                    Main.NewText($"{error} Event move cancelled.", Color.OrangeRed);
+                }
+
                 return;
             }
 
@@ -286,36 +386,13 @@ namespace tsorcRevamp.Content.Items.Debug
             {
                 enemyUI.SelectedNpcType = 0;
                 enemyUI.QuickAddMode = false;
-                enemyUI.MovingEvent = null;
                 JustClosedUI = true; // Prevent the same press from creating an event in CanUseItem.
                 Main.NewText("Cancelled NPC placement.");
                 return;
             }
 
-            if (!leftPressed) return;
-
-            if (enemyUI.MovingEvent != null)
+            if (!leftPressed)
             {
-                var moveEv = enemyUI.MovingEvent;
-                int moveType = moveEv.Npcs.Count > 0 ? moveEv.Npcs[0].NpcID : enemyUI.SelectedNpcType;
-                tsorcRevampSystems.GetPlacementTile(moveType, out int tileX, out int tileY);
-
-                moveEv.CenterX = tileX;
-                moveEv.CenterY = tileY;
-                if (moveEv.Npcs.Count > 0)
-                {
-                    moveEv.Npcs[0].SpawnX = tileX;
-                    moveEv.Npcs[0].SpawnY = tileY;
-                }
-                tsorcScriptedEvents.SaveDynamicEvents();
-
-                enemyUI.SelectedNpcType = 0;
-                enemyUI.MovingEvent = null;
-                JustClosedUI = true; // Consume this press if item use runs after UpdateUI.
-
-                NPC moved = new NPC();
-                moved.SetDefaults(moveType);
-                Main.NewText($"Moved {moved.TypeName} event to ({tileX}, {tileY})");
                 return;
             }
 

@@ -1,5 +1,8 @@
 using Microsoft.Xna.Framework;
+using System;
+using System.IO;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -9,10 +12,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     public class ProximityMineRocket : ModProjectile
     {
         public const float Speed = 6f;
+        public const int PreHardmodeHealth = 200;
+        public const int HardmodeHealth = 600;
         private const float ReleaseDistance = 150f;
         private const float TurnStrength = 0.07f;
         private const float Seeking = 0f;
         private const float Committed = 1f;
+
+        private int life;
+        private int maxLife;
+        private int pierceHitCooldown;
+        private int lastHitProjectileIdentity = -1;
+        private int meleeHitCooldown;
 
         public override void SetDefaults()
         {
@@ -32,10 +43,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // The blast is the only damage event, including on player contact.
         public override bool? CanDamage() => false;
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write((short)life);
+            writer.Write((short)maxLife);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            life = reader.ReadInt16();
+            maxLife = reader.ReadInt16();
+        }
+
         public override void OnSpawn(IEntitySource source)
         {
+            maxLife = Main.hardMode ? HardmodeHealth : PreHardmodeHealth;
+            life = maxLife;
             if (Main.dedServ)
+            {
                 return;
+            }
+
             // The mine vents smoke as this rocket lifts off out of the mine's own launch blast.
             for (int i = 0; i < 16; i++)
             {
@@ -50,9 +78,113 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void AI()
         {
+            if (maxLife <= 0)
+            {
+                maxLife = Main.hardMode ? HardmodeHealth : PreHardmodeHealth;
+                life = maxLife;
+            }
+
             Projectile.localAI[0]++;
+            if (Projectile.localAI[0] < 18f && Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
+            {
+                Projectile.tileCollide = false;
+            }
+            else
+            {
+                Projectile.tileCollide = true;
+            }
+
+            if (pierceHitCooldown > 0)
+            {
+                pierceHitCooldown--;
+            }
+
+            if (meleeHitCooldown > 0)
+            {
+                meleeHitCooldown--;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                // Allow players to shoot or strike the missile early (200 HP in PHM, 600 HP in HM) to detonate it in mid-air.
+                Rectangle hurtbox = Utils.CenteredRectangle(Projectile.Center, new Vector2(26f, 26f));
+                foreach (Projectile other in Main.ActiveProjectiles)
+                {
+                    if (!other.friendly || other.hostile || other.damage <= 0 || other.whoAmI == Projectile.whoAmI)
+                    {
+                        continue;
+                    }
+
+                    if (other.penetrate != 1 && pierceHitCooldown > 0 && other.identity == lastHitProjectileIdentity)
+                    {
+                        continue;
+                    }
+
+                    bool hitByProjectile = other.Colliding(other.Hitbox, hurtbox);
+                    if (!hitByProjectile)
+                    {
+                        continue;
+                    }
+
+                    int damageDealt = Math.Max(1, other.damage);
+                    life -= damageDealt;
+                    lastHitProjectileIdentity = other.identity;
+                    pierceHitCooldown = 10;
+                    SoundEngine.PlaySound(SoundID.NPCHit4, Projectile.Center);
+                    CombatText.NewText(hurtbox, CombatText.DamagedHostile, damageDealt);
+                    if (other.penetrate > 0)
+                    {
+                        other.penetrate--;
+                        if (other.penetrate == 0)
+                        {
+                            other.Kill();
+                        }
+                    }
+
+                    if (life <= 0)
+                    {
+                        Projectile.Kill();
+                        return;
+                    }
+
+                    Projectile.netUpdate = true;
+                    break;
+                }
+
+                if (meleeHitCooldown == 0)
+                {
+                    foreach (Player attacker in Main.ActivePlayers)
+                    {
+                        if (attacker.dead || attacker.ghost || attacker.itemAnimation <= 0 || attacker.HeldItem == null
+                            || attacker.HeldItem.damage <= 0 || attacker.HeldItem.noMelee)
+                        {
+                            continue;
+                        }
+
+                        float itemReach = attacker.GetAdjustedItemScale(attacker.HeldItem) * 42f;
+                        Vector2 swingCenter = attacker.MountedCenter + new Vector2(attacker.direction * itemReach * 0.5f, 0f);
+                        Rectangle meleeBox = Utils.CenteredRectangle(swingCenter, new Vector2(itemReach, itemReach));
+                        if (!meleeBox.Intersects(hurtbox))
+                        {
+                            continue;
+                        }
+
+                        int damageDealt = Math.Max(1, attacker.GetWeaponDamage(attacker.HeldItem));
+                        life -= damageDealt;
+                        meleeHitCooldown = Math.Max(10, attacker.itemAnimationMax / 2);
+                        SoundEngine.PlaySound(SoundID.NPCHit4, Projectile.Center);
+                        CombatText.NewText(hurtbox, CombatText.DamagedHostile, damageDealt);
+                        if (life <= 0)
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+
+                        Projectile.netUpdate = true;
+                        break;
+                    }
+                }
+
                 // Give the rocket six ticks to leave its parent explosion before proximity arms.
                 if (Projectile.localAI[0] >= 6f && PlayerWithinBlast())
                 {

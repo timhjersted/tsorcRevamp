@@ -12,7 +12,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     // The four projectiles of Taurus Knight's kit, kept together because they only exist for him
-    // (NPCs/Enemies/SuperHardMode/TaurusKnight.cs). Design: tsorcDocs/EnemyRevampPlans/TaurusKnight_Puppet_Proposal.md.
+    // (NPCs/Invaders/Caliche.cs). Design: tsorcDocs/EnemyRevampPlans/TaurusKnight_Puppet_Proposal.md.
 
     /// <summary>
     /// Quake Slam's ground shockwave: one thin front travelling along the floor away from the impact. Spawned as a

@@ -1286,8 +1286,8 @@ Mods: {
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: Знамя рыцаря-тельца
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
+				DisplayName: Знамя Калича
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Caliche.DisplayName}"
 			}
 
 			TetsujinBanner: {
@@ -12419,6 +12419,11 @@ Mods: {
 			// ElementalEruptionColumn.DisplayName: Elemental Eruption Column
 			// ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
 			// BoneRemains.DisplayName: Bone Remains
+			// DestroyerHullLaser.DisplayName: Destroyer Hull Laser
+			// DestroyerMawBeam.DisplayName: Destroyer Maw Beam
+			// DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
+			// DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
+			// CinderRainController.DisplayName: Cinder Rain Controller
 		}
 
 		NPCs: {
@@ -12433,6 +12438,9 @@ Mods: {
 			Mechanic.GivenName: Аша
 			Wizard.GivenName: Араз
 			TheDestroyer.HullGlow: Корпус Разрушителя начинает яростно светиться...
+			TheDestroyerOriginal.DisplayName: Старый Разрушитель
+			TheDestroyerOriginalBody.DisplayName: Старый Разрушитель
+			TheDestroyerOriginalTail.DisplayName: Старый Разрушитель
 			SkeletronPrime.Warning: ПРЕДУПРЕЖДЕНИЕ: мощность лазера перенаправлена......
 
 			AncestralSpirit: {
@@ -13014,7 +13022,7 @@ Mods: {
 			SerpentOfTheAbyssBody.DisplayName: Змей бездны
 			SerpentOfTheAbyssHead.DisplayName: Змей бездны
 			SerpentOfTheAbyssTail.DisplayName: Змей бездны
-			TaurusKnight.DisplayName: Рыцарь-Телец
+			Caliche.DisplayName: Калич, опозоренный чемпион
 			Tetsujin.DisplayName: Тецудзин
 			VampireBat.DisplayName: Летучая мышь-вампир
 			TibianAmazon.DisplayName: Тибианский амазон
@@ -14092,6 +14100,7 @@ Mods: {
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			// DemonLordPrototype.DisplayName: Demon Lord Prototype
 			// Eland.DisplayName: Eland
 			// EvilEye.DisplayName: Evil Eye
 			// Gigas.DisplayName: Holy Gigas

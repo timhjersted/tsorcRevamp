@@ -275,7 +275,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         /// <summary>Use Moonlight's Slash shader with the rendered heel/tip and a short active-cut
         /// lifetime. Set the item's slashColor; blade geometry and player scale are automatic.</summary>
         public virtual bool UsesBladeSlash => false;
-        public virtual bool UsesSlashTrail => UsesBladeSlash;
 
         /// <summary>Owner only. The slam's blade met the ground (or finished its cut in the air).</summary>
         public virtual void OnSlamImpact(Projectile swing, Player player, Vector2 impact, bool hitGround)
@@ -546,8 +545,14 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
         private bool holdResolved;
         public Color SwordSlashColor { get; private set; }
         public int SwordSlashSequence => 0;
+        public bool SwordSlashCutActive => strikeActive && float.IsNaN(slamStopAngle);
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.NeedsUUID[Type] = true;
+        }
 
         public override void SetDefaults()
         {
@@ -722,14 +727,13 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                 }
             }
 
-            if (strikeActive && !spawnedTrail && isOwner && weapon.UsesSlashTrail)
+            if (strikeActive && !spawnedTrail && isOwner && weapon.UsesBladeSlash)
             {
                 // ai[0] identifies this swing; Slash reads IBladeSlashSource for exact blade geometry/lifetime.
                 spawnedTrail = true;
-                float bladeDriven = weapon.UsesBladeSlash ? 1f : 0f;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Projectile.owner,
-                    Projectile.identity + 1, bladeDriven);
+                    Projectile.identity + 1);
             }
 
             if (!Main.dedServ)
@@ -807,9 +811,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             bladeHand = hand;
             bladeHeel = heel;
             bladeTip = tip;
-            // No holdResolved check: it is set the moment a hold-action weapon (Artorias) is released for a plain
-            // swing, which hid that weapon's slash on every cut. A swing traded for the hold action is killed anyway.
-            return poseReady && strikeActive && float.IsNaN(slamStopAngle);
+            // The landing and follow-through still supply the blade pose during the fade.
+            return poseReady && strikeStarted;
         }
 
         private void TryResolveSlam(Player player, Greatsword weapon, bool isOwner, bool requireGround, float currentAngle)

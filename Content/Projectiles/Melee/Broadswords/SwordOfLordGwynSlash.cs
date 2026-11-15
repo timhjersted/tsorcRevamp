@@ -4,7 +4,9 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
+using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 {
@@ -14,7 +16,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
     /// same scale with its grip point in the fist - geometry read from the SwordOfLordGwyn Greatsword.
     /// ai[0] = 1 (dash; the old ground slash mode is gone), ai[1] = facing, ai[2] = 1 when empowered.
     /// </summary>
-    class SwordOfLordGwynSlash : ModProjectile
+    class SwordOfLordGwynSlash : ModProjectile, IBladeSlashSource
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(SwordOfLordGwyn));
 
@@ -44,9 +46,15 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
         float drawScale = 1f;
         bool poseReady;
 
+        public Color SwordSlashColor => ContentSamples.ItemsByType[ModContent.ItemType<SwordOfLordGwyn>()]
+            .GetGlobalItem<tsorcInstancedGlobalItem>().slashColor;
+        public int SwordSlashSequence => 0;
+        public bool SwordSlashCutActive => Timer <= AnimationLifetime;
+
         public override void SetStaticDefaults()
         {
             ProjectileID.Sets.NoMeleeSpeedVelocityScaling[Type] = true;
+            ProjectileID.Sets.NeedsUUID[Type] = true;
         }
 
         public override void SetDefaults()
@@ -74,9 +82,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             }
             if (Timer == 1f && Main.myPlayer == Projectile.owner)
             {
-                // Broadsword-rework slash trail (colored by the item's slashColor). ai[0] = this swing's identity + 1
-                // tells the trail to follow our blade angle instead of the held item's useAnimation, which this
-                // projectile-driven swing never advances.
+                // Link the shared slash shader to the dash's drawn blade using the swing identity.
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                     ModContent.ProjectileType<Projectiles.VFX.Slash>(), 0, 0f, Projectile.owner, Projectile.identity + 1);
             }
@@ -140,6 +146,33 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
 
             float point = 0f;
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), hand, tip, BladeWidth, ref point);
+        }
+
+        public bool TryGetSwordSlashPose(out Vector2 bladeHand, out Vector2 bladeHeel, out Vector2 bladeTip)
+        {
+            bladeHand = hand;
+            bladeHeel = hand;
+            bladeTip = hand;
+            if (!poseReady)
+            {
+                return false;
+            }
+
+            // Use the sprite drawn in PreDraw even if a remote player's selected slot changes mid-dash.
+            Item drawnItem = ContentSamples.ItemsByType[ModContent.ItemType<SwordOfLordGwyn>()];
+            Greatsword sword = (Greatsword)drawnItem.ModItem;
+            Vector2 heelOffset = (sword.BladeHeel - sword.Grip) * drawScale;
+            Vector2 tipOffset = (sword.BladeTip - sword.Grip) * drawScale;
+
+            if (Direction < 0)
+            {
+                heelOffset.Y = -heelOffset.Y;
+                tipOffset.Y = -tipOffset.Y;
+            }
+
+            bladeHeel += heelOffset.RotatedBy(drawRotation);
+            bladeTip += tipOffset.RotatedBy(drawRotation);
+            return true;
         }
 
         /// <summary>

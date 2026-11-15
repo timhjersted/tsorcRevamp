@@ -243,7 +243,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            if (Age < MaterializeTicks && Main.rand.NextBool(2))
+            if (Age < MaterializeTicks && !Main.dedServ && Main.rand.NextBool(2))
             {
                 Vector2 dustPosition = Projectile.Center + Main.rand.NextVector2CircularEdge(28f, 18f);
                 Dust gather = Dust.NewDustPerfect(dustPosition,
@@ -278,8 +278,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.025f, 0.035f)
-                * (Age < MaterializeTicks ? 0.5f : 0.85f));
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.025f, 0.035f)
+                    * (Age < MaterializeTicks ? 0.5f : 0.85f));
+            }
             Projectile.localAI[0]++;
         }
 
@@ -878,7 +881,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         int TelegraphTicks => Math.Max(1, (int)Projectile.ai[0]);
         int ActiveTicks => Math.Max(1, Math.Abs((int)Projectile.ai[1]));
         bool SilentRelease => Projectile.ai[1] < 0f;
-        float Length => Math.Max(64f, Projectile.ai[2]);
+        // A negative length opts into the spectral hand's emission flash. The bolt itself uses the magnitude.
+        bool HasHandOriginCore => Projectile.ai[2] < 0f;
+        float Length => Math.Max(64f, Math.Abs(Projectile.ai[2]));
 
         public override void SetDefaults()
         {
@@ -900,9 +905,31 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.62f, Pitch = -0.42f }, Projectile.Center);
             }
-            Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
-                * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
+                    * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+            }
+
             Projectile.localAI[0]++;
+            int activeAge = Age - TelegraphTicks;
+            if (HasHandOriginCore && !Main.dedServ && activeAge >= 0 && activeAge < ActiveTicks
+                && activeAge % 3 == 0)
+            {
+                // Keep the flash on the fixed beam start after the casting hand has drifted away.
+                int moteCount = activeAge == 0 ? 9 : 2;
+                Vector2 forward = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                for (int i = 0; i < moteCount; i++)
+                {
+                    Vector2 origin = Projectile.Center + Main.rand.NextVector2Circular(3.5f, 3.5f);
+                    Vector2 velocity = forward * Main.rand.NextFloat(0.15f, 0.7f)
+                        + Main.rand.NextVector2Circular(0.65f, 0.65f);
+                    Dust spark = Dust.NewDustPerfect(origin, DustID.TintableDustLighted, velocity,
+                        20, new Color(255, 34, 45), Main.rand.NextFloat(0.62f, 0.92f));
+                    spark.noGravity = true;
+                }
+            }
+
             if (Age >= TelegraphTicks + ActiveTicks + 12)
             {
                 Projectile.Kill();

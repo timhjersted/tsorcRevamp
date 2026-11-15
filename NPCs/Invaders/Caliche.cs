@@ -13,14 +13,13 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
-using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
-namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
+namespace tsorcRevamp.NPCs.Invaders
 {
     /// <summary>
-    /// "The bull of the Foundry": a rare SHM great-hammer knight in Fossil armour, rendered as a puppet Player.
+    /// "The bull of the Foundry": a Super Hardmode great-hammer invader in Fossil armour.
     /// Heavy-tell, big-punish, and very aggressive — it closes fast, never swings at air, and its Quake Slam
     /// Cripples every player within 60 tiles to force a ground fight. Design and every number below:
     /// tsorcDocs/EnemyRevampPlans/TaurusKnight_Puppet_Proposal.md (handoff: TaurusKnight_Puppet_Handoff.md).
@@ -30,15 +29,15 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     ///    the shared combo engine, picked from a bag in ReactiveComboIndex.
     ///  - Bull Rush, Trident Javelin, Bull Breath and Brimstone Rain are set-pieces on the base's AttackPhase.Custom,
     ///    one Custom phase per stage (so every stage change is a synced phase change), picked from a second bag that
-    ///    also deals Leap Smash. The class name and type are load-bearing: scripted events, the banner and the
-    ///    spawn/balance registries reference TaurusKnight.
+    ///    also deals Leap Smash.
     /// </summary>
     [AutoloadBossHead]
-    public class TaurusKnight : PuppetNPC
+    [LegacyName("TaurusKnight")]
+    public class Caliche : PuppetNPC
     {
         // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
         // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
-        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(TaurusKnight)) + "_Head_Boss";
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(Caliche)) + "_Head_Boss";
 
         #region Tuning
 
@@ -255,9 +254,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         #region Loadout, stats and engine levers
 
-        protected override string InvaderTitle => "Taurus Knight";
+        protected override string InvaderTitle => DisplayName.Value;
         protected override bool AnnounceInvasion => false;
-        protected override bool DespawnsOnPartyWipe => false;
         protected override int EstusChargesMax => 0;
         protected override int CasualStrollChance => 0;
 
@@ -384,14 +382,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.height = 42;
             NPC.damage = 0; // Contact damage is only ever live during Bull Rush (see UpdateBullRushContactDamage).
             NPC.defense = 50;
-            NPC.timeLeft = 22000;
-            NPC.lifeMax = 5400; // New Enemy Balance overrides this (Systems/EnemyBalance.cs, 20000).
+            NPC.lifeMax = 200_000;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.value = 40000;
             NPC.knockBackResist = 0.01f;
             NPC.lavaImmune = true;
             NPC.aiStyle = -1;
+            NPC.boss = true;
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.TaurusKnightBanner>();
 
@@ -402,10 +400,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             globalNPC.PoiseStaggerResetsAI = true;
         }
 
-        // Never despawn except by timing out.
-        public override bool CheckActive()
+        protected override void OnPartyWipeDespawnStarted()
         {
-            return false;
+            base.OnPartyWipeDespawnStarted();
+
+            // Keep the ranged selector locked during the fade. It runs before the shared despawn check.
+            _rangedPickDelay = int.MaxValue;
         }
 
         protected override void RunMovementAI(float speedMult)

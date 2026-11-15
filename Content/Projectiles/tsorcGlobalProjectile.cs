@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Content.Projectiles.Pets.MiakodaNew;
 
@@ -620,21 +621,34 @@ namespace tsorcRevamp.Content.Projectiles
                 projectile.damage = 75;
             }
 
-            //Destroyer shoots true lasers instead of normal projectile lasers
-            //Probe lasers are replaced with true lasers. This is actually an enormous nerf because they were not telegraphed and were hard to see before.
-            if (NPC.AnyNPCs(NPCID.TheDestroyer))
+            if (projectile.type == ProjectileID.PinkLaser && SourceNPCType == NPCID.Probe
+                && SourceNPCIndex >= 0 && SourceNPCIndex < Main.maxNPCs)
             {
-                if (projectile.type == ProjectileID.DeathLaser)
+                NPC probe = Main.npc[SourceNPCIndex];
+                if (probe.active && probe.type == NPCID.Probe)
                 {
-                    projectile.Kill();
-                }
-                if (projectile.type == ProjectileID.PinkLaser)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    NPCs.Bosses.TheDestroyer.TheDestroyer probeState = probe.GetGlobalNPC<NPCs.Bosses.TheDestroyer.TheDestroyer>();
+                    if (probeState.IsRevampProbe || probeState.IsLegacyProbe)
                     {
-                        Projectile.NewProjectile(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -2, -1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            if (probeState.IsRevampProbe)
+                            {
+                                Projectile.NewProjectile(projectile.GetSource_FromThis(), probe.Center, projectile.velocity,
+                                    ModContent.ProjectileType<Projectiles.Enemy.DestroyerHullLaser>(),
+                                    EnemyDamage.Projectile(NPCs.Bosses.TheDestroyer.TheDestroyer.LaserDamage),
+                                    0f, Main.myPlayer, 60f, SourceNPCIndex, -1f);
+                            }
+                            else
+                            {
+                                Projectile.NewProjectile(projectile.GetSource_FromThis(), probe.Center, projectile.velocity,
+                                    ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0f, Main.myPlayer, -2f, SourceNPCIndex);
+                            }
+                        }
+
+                        projectile.Kill();
+                        return false;
                     }
-                    projectile.Kill();
                 }
             }
 

@@ -1362,10 +1362,9 @@ namespace tsorcRevamp.Systems
             // Hardmode and 0.07 in Hardmode. Its Super Hardmode line (0.01) sat behind the Hardmode one and never fired; it is now live.
             Spawn("StoneGolem", Depth.Cavern, phm: 0.15f, hm: 0.07f, shm: 0.01f);
 
-            // Super Hardmode only, one alive at a time; gates (one in 30 to one in 50) are folded in as 1/N. The old underworld line tested
-            // a tile row against a pixel value and never fired; it is live now. The old "nearby" chat message was removed (2026-10-21).
-            Spawn("TaurusKnight", AnyDesert, shm: 0.0222f, max: 1);
-            Spawn("TaurusKnight", Depth.Underworld, shm: 0.0333f, max: 1);
+            // Adventure Mode uses Caliche's scripted encounters. Sandbox keeps the Super Hardmode spawn weights.
+            Spawn("Caliche", Mode.Sandbox & AnyDesert, shm: 0.0222f, max: 1);
+            Spawn("Caliche", Mode.Sandbox & Depth.Underworld, shm: 0.0333f, max: 1);
 
             // Super Hardmode only: sky 0.5 and meteor 0.75; night doubles it and a blood moon doubles it again.           
             SpawnNightBoosted("Tetsujin", Zone.Meteor, shm: 0.75f);

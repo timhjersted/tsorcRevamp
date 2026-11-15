@@ -151,7 +151,7 @@ namespace tsorcRevamp
             BlackKnightHallowed,
             QueenSlimeEvent,
             GoblinSharkTropicalIsland,
-            GreatRedKnightInDesert,
+            GreatRedKnightInDesert, // Retired. Keep the enum entry so old world saves can still read its completion flag.
             AncestralSpiritEvent,
             SkeletronHidden,
             AlienAmbush,
@@ -327,11 +327,6 @@ namespace tsorcRevamp
 
             //QUEEN SLIME
             ScriptedEvent QueenSlimeEvent = new ScriptedEvent(new Vector2(7059, 1289), 25, NPCID.QueenSlimeBoss, DustID.HallowedTorch, true, true, true, LangUtils.GetTextValue("Events.QueenSlime"), Color.Pink, false);
-
-            //GREAT RED KNIGHT IN DESERT
-            ScriptedEvent GreatRedKnightInDesert = new ScriptedEvent(new Vector2(2229, 856), 100, ModContent.NPCType<NPCs.Invaders.GreatRedKnight>(), DustID.Shadowflame, true, false, true, LangUtils.GetTextValue("Events.GreatRedKnightInvasion"), Color.Red, false, SuperHardModeCustomCondition);
-            GreatRedKnightInDesert.SetCustomDrops(new List<int>() { ItemID.RagePotion, ItemID.WrathPotion, ModContent.ItemType<Humanity>() }, new List<int>() { 2, 2, 2 });
-            GreatRedKnightInDesert.SetCustomStats(null, null, null, 20000);
 
             //Ancestral Spirit
             ScriptedEvent AncestralSpiritEvent = new ScriptedEvent(new Vector2(4043, 143), 30, NPCID.Deerclops, DustID.Shadowflame, true, true, true, LangUtils.GetTextValue("Events.AncestralSpirit"), Color.Blue, false, OnlyAdventureMapCondition);
@@ -642,7 +637,7 @@ namespace tsorcRevamp
             ScriptedEvent ShadowTempleEvent2 = new ScriptedEvent(new Vector2(1734, 1297), 20, NPCID.Paladin, 133, true, true, false, LangUtils.GetTextValue("Events.ShadowTempleEvent2"), Color.Yellow);
 
             //Mushroom Cavern AMBUSH
-            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), };
+            List<int> MushroomCavernEnemyTypeList = new List<int>() { ModContent.NPCType<NPCs.Invaders.Caliche>(), ModContent.NPCType<NPCs.Enemies.Dworc.DworcAbysswalker>(), };
             List<Vector2> MushroomCavernEnemyLocations = new List<Vector2>() { new Vector2(3690, 1545), new Vector2(3675, 1545) };
             ScriptedEvent MushroomCavern = new ScriptedEvent(new Vector2(3690, 1535), 30, MushroomCavernEnemyTypeList, MushroomCavernEnemyLocations, DustID.Water, true, true, false, LangUtils.GetTextValue("Events.BridgeAmbush1"), Color.Red);
 
@@ -705,7 +700,7 @@ namespace tsorcRevamp
 
             ScriptedEvent FoundryEvent = new ScriptedEvent(new Vector2(5229, 1254), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>(), DustID.CursedTorch, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition);
 
-            ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Enemies.SuperHardMode.TaurusKnight>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition); 
+            ScriptedEvent FoundryEvent2 = new ScriptedEvent(new Vector2(5801, 1381), 25, ModContent.NPCType<NPCs.Invaders.Caliche>(), DustID.GoldFlame, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Yellow, false, RemixMapCondition);
 
             ScriptedEvent FrozenCathedralEvent = new ScriptedEvent(new Vector2(7635, 1735), 65, NPCID.IceQueen, 67, true, true, false, LangUtils.GetTextValue("Events.FrozenCathedralEvent"), Color.Cyan, false, RemixMapCondition, SetNightCustomAction);
             FrozenCathedralEvent.SetCustomStats(null, null, null, 10000);
@@ -778,7 +773,6 @@ namespace tsorcRevamp
                 {ScriptedEventType.QueenSlimeEvent, QueenSlimeEvent},
                 {ScriptedEventType.BlackKnightHallowed, BlackKnightHallowed},
                 {ScriptedEventType.GoblinSharkTropicalIsland, GoblinSharkTropicalIsland},
-                {ScriptedEventType.GreatRedKnightInDesert, GreatRedKnightInDesert},
                 {ScriptedEventType.AncestralSpiritEvent, AncestralSpiritEvent},
                 {ScriptedEventType.OldManEvent, OldManEvent},
                 {ScriptedEventType.SkeletronHidden, SkeletronHiddenEvent},
@@ -1139,8 +1133,10 @@ namespace tsorcRevamp
         /// </summary>
         public static bool IsEventVisibleInCurrentWorld(DynamicSpawnEvent ev)
         {
-            if (ev == null)
+            if (ev == null || (ev.ExpandedNativeCoords && !ExpandedWorldTransform.Active))
+            {
                 return false;
+            }
             // Legacy events (dumped from hardcoded data) stored world type in MapCondition, not WorldCondition.
             // Check WorldCondition first; fall back to MapCondition if it contains an Adventure/Remix token.
             string worldCond = ev.WorldCondition;
@@ -2002,20 +1998,149 @@ namespace tsorcRevamp
                 EnabledEvents.Add(newEvent);
             }
 
-            // Remove any hardcoded events from EnabledEvents that have a corresponding dynamic event (within 2 tiles)
-            EnabledEvents.RemoveAll(hardcoded => {
-                if (!string.IsNullOrEmpty(hardcoded.DynamicEventID)) return false;
-                foreach (var dyn in DynamicEvents)
+            // Keep migrated hardcoded events suppressed after a move. Older records infer the link from proximity.
+            var replacedHardcodedEvents = new HashSet<ScriptedEvent>();
+            foreach (var dynamicEvent in DynamicEvents)
+            {
+                if (dynamicEvent.ReplacedScriptedEvents == null ||
+                    (dynamicEvent.ExpandedNativeCoords && !ExpandedWorldTransform.Active))
                 {
-                    float dx = Math.Abs(dyn.CenterX - (hardcoded.centerpoint.X / 16f));
-                    float dy = Math.Abs(dyn.CenterY - (hardcoded.centerpoint.Y / 16f));
-                    if (dx < 2 && dy < 2)
+                    continue;
+                }
+
+                foreach (string eventName in dynamicEvent.ReplacedScriptedEvents)
+                {
+                    if (Enum.TryParse(eventName, out ScriptedEventType eventType) &&
+                        ScriptedEventDict.TryGetValue(eventType, out ScriptedEvent hardcoded))
                     {
-                        return true;
+                        replacedHardcodedEvents.Add(hardcoded);
                     }
                 }
+            }
+
+            EnabledEvents.RemoveAll(hardcoded => string.IsNullOrEmpty(hardcoded.DynamicEventID) &&
+                (replacedHardcodedEvents.Contains(hardcoded) || DynamicEvents.Any(dynamicEvent =>
+                    dynamicEvent.ReplacedScriptedEvents == null && IsNearEventCenter(dynamicEvent, hardcoded.centerpoint / 16f))));
+        }
+
+        private static bool IsNearEventCenter(DynamicSpawnEvent dynamicEvent, Vector2 tile)
+        {
+            return Math.Abs(dynamicEvent.CenterX - tile.X) < 2 && Math.Abs(dynamicEvent.CenterY - tile.Y) < 2;
+        }
+
+        internal static bool TryMoveDynamicEvent(DynamicSpawnEvent movingEvent, Point destination, out string error)
+        {
+            error = null;
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                error = "Event moves are available in single-player.";
                 return false;
-            });
+            }
+
+            int eventIndex = DynamicEvents.IndexOf(movingEvent);
+            if (eventIndex < 0 || !IsEventVisibleInCurrentWorld(movingEvent) || string.IsNullOrEmpty(movingEvent.EventID) ||
+                (movingEvent.SingleNpcMarker && movingEvent.Npcs.Count != 1))
+            {
+                error = "The event changed while you were moving it.";
+                return false;
+            }
+
+            if (!WorldGen.InWorld(destination.X, destination.Y))
+            {
+                error = "The destination is outside the world.";
+                return false;
+            }
+
+            Vector2 destinationTile = destination.ToVector2();
+            if (movingEvent.CenterX == destination.X && movingEvent.CenterY == destination.Y &&
+                (!movingEvent.SingleNpcMarker ||
+                    (movingEvent.Npcs[0].SpawnX == destination.X && movingEvent.Npcs[0].SpawnY == destination.Y)))
+            {
+                return true;
+            }
+
+            if (DynamicEvents.Any(other => other != movingEvent && IsEventVisibleInCurrentWorld(other) &&
+                IsNearEventCenter(other, destinationTile)))
+            {
+                error = "The destination is within two tiles of another event.";
+                return false;
+            }
+
+            if (RunningEvents.Any(scriptedEvent => scriptedEvent.DynamicEventID == movingEvent.EventID))
+            {
+                error = "The event is currently running.";
+                return false;
+            }
+
+            DynamicSpawnEvent updatedEvent;
+            try
+            {
+                // Save a copy first so an invalid edit or failed file replacement leaves the live event intact.
+                var eventsToSave = CloneDynamicEvents();
+                updatedEvent = eventsToSave[eventIndex];
+                if (updatedEvent.ReplacedScriptedEvents == null)
+                {
+                    updatedEvent.ReplacedScriptedEvents = ScriptedEventDict
+                        .Where(pair => IsNearEventCenter(movingEvent, pair.Value.centerpoint / 16f))
+                        .Select(pair => pair.Key.ToString())
+                        .ToList();
+                }
+
+                updatedEvent.CenterX = destination.X;
+                updatedEvent.CenterY = destination.Y;
+                if (updatedEvent.SingleNpcMarker)
+                {
+                    updatedEvent.Npcs[0].SpawnX = destination.X;
+                    updatedEvent.Npcs[0].SpawnY = destination.Y;
+                }
+
+                // A destination may have no legacy equivalent when an expanded coordinate override moved that tile.
+                if (ExpandedWorldTransform.Active)
+                {
+                    Point legacyTile = ExpandedWorldTransform.InverseMapTile(destination.X, destination.Y);
+                    Point expandedTile = ExpandedWorldTransform.MapTile(legacyTile.X, legacyTile.Y);
+                    if (expandedTile != destination)
+                    {
+                        updatedEvent.ExpandedNativeCoords = true;
+                    }
+                }
+
+                string json = SerializeDynamicEventsToLegacyJson(eventsToSave);
+                WriteDynamicEventsJson(json);
+            }
+            catch (Exception ex)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Error("Failed to move dynamic event: " + ex.Message);
+                error = "Could not save the new position.";
+                return false;
+            }
+
+            movingEvent.CenterX = destination.X;
+            movingEvent.CenterY = destination.Y;
+            movingEvent.ExpandedNativeCoords = updatedEvent.ExpandedNativeCoords;
+            movingEvent.ReplacedScriptedEvents = updatedEvent.ReplacedScriptedEvents;
+            if (movingEvent.SingleNpcMarker)
+            {
+                movingEvent.Npcs[0].SpawnX = destination.X;
+                movingEvent.Npcs[0].SpawnY = destination.Y;
+            }
+
+            // Update the existing trigger so enabled, queued and completed events keep their current status.
+            foreach (var runtimeEvent in EnabledEvents.Concat(QueuedEvents).Concat(DisabledEvents))
+            {
+                if (runtimeEvent.DynamicEventID != movingEvent.EventID)
+                {
+                    continue;
+                }
+
+                runtimeEvent.centerpoint = destinationTile * 16f;
+                if (movingEvent.SingleNpcMarker && runtimeEvent.eventNPCs?.Count == 1)
+                {
+                    runtimeEvent.eventNPCs[0].spawnCoords = destinationTile;
+                }
+            }
+
+            return true;
         }
         
         // ---- Expanded-world coordinate-space helpers for dynamic events ----------------------------------------
@@ -2089,34 +2214,57 @@ namespace tsorcRevamp
             }
         }
 
-        // Serialize the (runtime-space) in-memory DynamicEvents to LEGACY-space JSON for on-disk storage.
-        // Temporarily converts to legacy, serializes, then restores runtime (try/finally so a serialize error
-        // can't leave the in-memory list in legacy space). No-op conversion on non-expanded worlds.
-        private static string SerializeDynamicEventsToLegacyJson()
+        private static List<DynamicSpawnEvent> CloneDynamicEvents()
         {
-            if (!ExpandedWorldTransform.Active)
-                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+            string runtimeJson = JsonConvert.SerializeObject(DynamicEvents);
+            return JsonConvert.DeserializeObject<List<DynamicSpawnEvent>>(runtimeJson);
+        }
 
-            foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToLegacySpace(e);
+        // Transform a detached copy so serialization cannot change the runtime event coordinates.
+        private static string SerializeDynamicEventsToLegacyJson(List<DynamicSpawnEvent> events)
+        {
+            if (ExpandedWorldTransform.Active)
+            {
+                foreach (DynamicSpawnEvent dynamicEvent in events)
+                {
+                    DynamicEventToLegacySpace(dynamicEvent);
+                }
+            }
+
+            return JsonConvert.SerializeObject(events, Formatting.Indented);
+        }
+
+        private static void WriteDynamicEventsJson(string json)
+        {
+            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", "Content", "DynamicEvents.json");
+            Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+
+            // Keep both paths on the same volume and replace the original only after the full write succeeds.
+            string temporaryPath = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
             {
-                return JsonConvert.SerializeObject(DynamicEvents, Formatting.Indented);
+                File.WriteAllText(temporaryPath, json);
+                File.Move(temporaryPath, fullPath, overwrite: true);
             }
-            finally
+            catch
             {
-                foreach (DynamicSpawnEvent e in DynamicEvents) DynamicEventToRuntimeSpace(e);
+                File.Delete(temporaryPath);
+                throw;
             }
         }
 
         public static void SaveDynamicEvents()
         {
-            string relativePath = "Content/DynamicEvents.json";
-            string fullPath = Path.Combine(Main.SavePath, "ModSources", "tsorcRevamp", relativePath);
             try
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
-                string json = SerializeDynamicEventsToLegacyJson();
-                File.WriteAllText(fullPath, json);
+                var eventsToSave = DynamicEvents;
+                if (ExpandedWorldTransform.Active)
+                {
+                    eventsToSave = CloneDynamicEvents();
+                }
+
+                string json = SerializeDynamicEventsToLegacyJson(eventsToSave);
+                WriteDynamicEventsJson(json);
                 LoadDynamicEvents();
 
                 // Re-link the UI's CurrentEvent reference to the newly loaded object instance
@@ -2159,13 +2307,19 @@ namespace tsorcRevamp
             foreach (var pair in ScriptedEventDict)
             {
                 var ev = pair.Value;
+                string eventName = pair.Key.ToString();
+                if (DynamicEvents.Any(existing => existing.ReplacedScriptedEvents?.Contains(eventName) == true))
+                {
+                    continue;
+                }
                 
                 // Try to prevent dumping identical events if the user runs this multiple times.
                 // If the event already exists, backfill any missing NpcName values (e.g. from a pre-fix dump).
                 DynamicSpawnEvent existingEvent = null;
                 foreach (var existing in DynamicEvents)
                 {
-                    if (existing.CenterX == (int)(ev.centerpoint.X / 16) && existing.CenterY == (int)(ev.centerpoint.Y / 16) && existing.Radius == ev.radius)
+                    if (existing.ReplacedScriptedEvents == null && existing.CenterX == (int)(ev.centerpoint.X / 16) &&
+                        existing.CenterY == (int)(ev.centerpoint.Y / 16) && existing.Radius == ev.radius)
                     {
                         existingEvent = existing;
                         break;
@@ -3411,6 +3565,13 @@ namespace tsorcRevamp
         // Set automatically on save for events placed in the fold gap, which has no legacy equivalent.
         public bool ExpandedNativeCoords { get; set; }
         public bool ShouldSerializeExpandedNativeCoords() => ExpandedNativeCoords;
+        // Persist which hardcoded triggers this event replaced before moving away from their original tiles.
+        public List<string> ReplacedScriptedEvents { get; set; }
+        public bool ShouldSerializeReplacedScriptedEvents()
+        {
+            return ReplacedScriptedEvents != null;
+        }
+
         public List<DynamicSpawnEntry> Npcs { get; set; } = new List<DynamicSpawnEntry>();
 
         // Optional custom drops, mostly used for simple single-item drops.

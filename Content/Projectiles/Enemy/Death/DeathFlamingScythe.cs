@@ -29,6 +29,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         const int StraightLifetimeTicks = 8 * 60;
         const float ThrowDistance = 800f;
 
+        // Keep the original 80% bounds of the 106 × 84 vanilla sprite available on dedicated servers.
+        internal const int HitboxWidth = 84;
+        internal const int HitboxHeight = 67;
+
         MovementMode Mode => (MovementMode)(int)Projectile.ai[2];
 
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.FlamingScythe;
@@ -43,9 +47,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         public override void SetDefaults()
         {
             Projectile.scale = 3f;
-            Texture2D texture = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            Projectile.width = (int)(texture.Width * 0.8f);
-            Projectile.height = (int)(texture.Height * 0.8f);
+            Projectile.width = HitboxWidth;
+            Projectile.height = HitboxHeight;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;

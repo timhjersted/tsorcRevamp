@@ -142,7 +142,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<SerpentOfTheAbyssTail>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SnowOwl>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SpellboundGhoul>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<TaurusKnight>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<Caliche>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Tetsujin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianAmazon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianValkyrie>()] = EnemyImpactMaterial.Blood,

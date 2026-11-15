@@ -1621,7 +1621,10 @@ namespace tsorcRevamp
         {
             NPCID.TheDestroyer,
             NPCID.TheDestroyerBody,
-            NPCID.TheDestroyerTail
+            NPCID.TheDestroyerTail,
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginal>(),
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginalBody>(),
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginalTail>()
         };
 
             JungleWyvernSegments = new List<int>()

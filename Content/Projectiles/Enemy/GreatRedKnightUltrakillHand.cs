@@ -97,7 +97,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     Main.myPlayer,
                     ai0: BoltTelegraphTicks,
                     ai1: BoltActiveTicks,
-                    ai2: BoltLength
+                    ai2: -BoltLength
                 );
             }
 
@@ -123,6 +123,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Rectangle src = new Rectangle(0, sourceFrame * frameHeight, tex.Width, frameHeight);
             Vector2 origin = src.Size() / 2f;
             Color color = lightColor * ((255 - Projectile.alpha) / 255f);
+            // The vanilla hand reaches right. Use the synchronized cast facing through the whole drift.
+            SpriteEffects effects = Projectile.ai[1] < 0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             Main.EntitySpriteDraw(
                 tex,
@@ -132,7 +134,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Projectile.rotation,
                 origin,
                 Projectile.scale,
-                SpriteEffects.None,
+                effects,
                 0
             );
 

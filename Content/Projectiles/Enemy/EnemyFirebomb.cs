@@ -83,8 +83,42 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 Projectile.netUpdate = true;
             }
         }
+        public override bool? CanDamage()
+        {
+            if (Projectile.ai[2] == 2f && Projectile.timeLeft > 2)
+            {
+                return false;
+            }
+
+            return null;
+        }
+
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
+            if (Projectile.ai[2] == 2f)
+            {
+                if (Projectile.velocity.X != oldVelocity.X)
+                {
+                    Projectile.velocity.X = -oldVelocity.X * 0.35f;
+                }
+
+                if (Projectile.velocity.Y != oldVelocity.Y)
+                {
+                    if (oldVelocity.Y > 1.5f)
+                    {
+                        Projectile.velocity.Y = -oldVelocity.Y * 0.2f;
+                    }
+                    else
+                    {
+                        Projectile.velocity.Y = 0f;
+                    }
+
+                    Projectile.velocity.X *= 0.8f;
+                }
+
+                return false;
+            }
+
             // If colliding with a ceiling (moving upward and Y velocity was stopped/reversed by tile collision), bounce off ceiling rather than exploding
             if (oldVelocity.Y < -0.5f && Projectile.velocity.Y != oldVelocity.Y)
             {
@@ -101,7 +135,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (Projectile.ai[2] == 1f && Projectile.timeLeft > 2)
+            if (Projectile.ai[2] >= 1f && Projectile.timeLeft > 2)
             {
                 float progress = MathHelper.Clamp((240f - Projectile.timeLeft) / 210f, 0f, 1f);
                 Vector2 fusePoint = Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
@@ -130,7 +164,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Projectile.ai[2] != 1f && Main.rand.NextBool(2))
+                if (Projectile.ai[2] < 1f && Main.rand.NextBool(2))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;
@@ -179,14 +213,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // Play explosion sound
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { PitchVariance = 0.5f }, Projectile.Center);
 
-            if (Projectile.ai[2] == 1f && Main.netMode != NetmodeID.MultiplayerClient)
+            bool knightBomb = Projectile.ai[2] >= 1f;
+            if (knightBomb && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
                     ModContent.ProjectileType<RedKnightVFXBurst>(), 0, 0f, Main.myPlayer,
                     (float)RedKnightBurstKind.BombExplosionLayered, 1f);
             }
-
-            bool knightBomb = Projectile.ai[2] == 1f;
 
             // Knight bombs use a shader burst with a 120px footprint, matching their actual explosion hitbox.
             // Count up / scale down for knight bombs (28 @ 2.0 -> 52 @ 1.45): the same amount of ink,

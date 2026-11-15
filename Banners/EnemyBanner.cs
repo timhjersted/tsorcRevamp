@@ -628,7 +628,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 81;
 
-        public override int NPCType => ModContent.NPCType<TaurusKnight>();
+        public override int NPCType => ModContent.NPCType<Caliche>();
     }
 
     public class TetsujinBanner : EnemyBanner

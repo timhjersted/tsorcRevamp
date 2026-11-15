@@ -35,9 +35,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         {
             Projectile.scale = 3f;
             Projectile.ai[0] = (float)DeathFlamingScythe.MovementMode.Boomerang;
-            Texture2D texture = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            Projectile.width = (int)(texture.Width * 0.8f);
-            Projectile.height = (int)(texture.Height * 0.8f);
+            Projectile.width = DeathFlamingScythe.HitboxWidth;
+            Projectile.height = DeathFlamingScythe.HitboxHeight;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
