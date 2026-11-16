@@ -1035,7 +1035,8 @@ namespace tsorcRevamp
                 }
 
                 float dist = Vector2.Distance(npc.Center, Main.LocalPlayer.Center);
-                if (dist > 2400f)
+                float maxDebugDist = npc.type == NPCID.TheDestroyer ? 4500f : 2400f;
+                if (dist > maxDebugDist)
                 {
                     continue;
                 }
@@ -1052,9 +1053,16 @@ namespace tsorcRevamp
                 }
 
                 // Puppets can opt into extra clearance so a tall sprite (e.g. a mounted rider) doesn't
-                // sit on top of its own readout.
+                // sit on top of its own readout. The Destroyer's head moves rapidly across the arena,
+                // so anchor its attack readout directly above the local player instead.
                 float labelRise = inv != null ? inv.DebugLabelRise : 0f;
-                Vector2 headPos = new Vector2(npc.Top.X, npc.Top.Y) - Main.screenPosition - new Vector2(0f, 36f + labelRise);
+                Vector2 labelAnchor = npc.Top;
+                if (npc.type == NPCID.TheDestroyer)
+                {
+                    labelAnchor = Main.LocalPlayer.Top;
+                }
+
+                Vector2 headPos = new Vector2(labelAnchor.X, labelAnchor.Y) - Main.screenPosition - new Vector2(0f, 36f + labelRise);
                 if (!string.IsNullOrEmpty(history.older))
                 {
                     Vector2 size = headFont.MeasureString(history.older) * 0.65f;

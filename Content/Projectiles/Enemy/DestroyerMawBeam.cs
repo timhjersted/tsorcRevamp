@@ -12,11 +12,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     internal sealed class DestroyerMawBeam : ModProjectile
     {
-        internal const int LiveTicks = 210;
+        internal const int LiveTicks = 190;
         internal const int TellTicks = 25;
+        internal const float SweepArc = MathHelper.Pi;
         internal const float Length = 3000f;
         internal const float HitWidth = 90f;
+        internal const int RunawayMode = 4;
+        internal const int ThrashMode = 5;
+        private const float RunawayLength = 930f;
+        private const float RunawayHitWidth = 56f;
+        private const int ThrashLength = 990;
+        private const float ThrashHitWidth = 64f;
         private const int HoldTicks = 12;
+        private const int SweepTicks = LiveTicks - HoldTicks - 1;
+        private const int SweepRampTicks = 120;
+        private const float SweepSpeedGain = 0.30f;
         private const int FadeTicks = 12;
         private const float DrawWidth = 160f;
         private const float PixelBlockSize = 4f;
@@ -25,6 +35,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private int age = -TellTicks;
         private bool fired;
         private bool ending;
+        private bool mouthArmed;
+
+        private bool IsRunaway => Projectile.ai[2] == RunawayMode;
+        private bool IsThrash => Projectile.ai[2] == ThrashMode;
+        private bool IsMouthMounted => IsRunaway || IsThrash;
+        private int LiveDuration => Projectile.ai[2] switch
+        {
+            RunawayMode => TheDestroyer.RunawayFireTicks,
+            ThrashMode => TheDestroyer.ThrashFireTicks,
+            _ => LiveTicks
+        };
+        private float BeamLength => Projectile.ai[2] switch
+        {
+            RunawayMode => RunawayLength,
+            ThrashMode => ThrashLength,
+            _ => Length
+        };
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyLingeringLaser));
 
@@ -50,20 +77,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.ignoreWater = true;
             Projectile.DamageType = DamageClass.Magic;
             Projectile.netImportant = true;
-            Projectile.timeLeft = TellTicks + LiveTicks + FadeTicks + 2;
+            int longestBeam = System.Math.Max(TheDestroyer.RunawayFireTicks, TheDestroyer.ThrashFireTicks);
+            Projectile.timeLeft = TellTicks + longestBeam + FadeTicks + 2;
             Projectile.hide = true;
         }
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => fired && !ending && age <= LiveTicks;
+        public override bool? CanDamage() => fired && !ending && age <= LiveDuration && (!IsMouthMounted || mouthArmed);
 
-        internal static float SweepAngle(float openingAngle, int signedPhase, int elapsed)
+        internal static float SweepAngle(float openingAngle, int turnDirection, int elapsed)
         {
-            float progress = MathHelper.Clamp((elapsed - HoldTicks) / (float)(LiveTicks - HoldTicks - 1), 0f, 1f);
-            float eased = 0.4f * progress + 0.6f * progress * progress;
-            float arc = System.Math.Abs(signedPhase) == 3 ? 110f : 90f;
-            return openingAngle + MathHelper.ToRadians(arc) * System.Math.Sign(signedPhase) * eased;
+            int sweepTime = System.Math.Clamp(elapsed - HoldTicks, 0, SweepTicks);
+            int rampTime = System.Math.Min(sweepTime, SweepRampTicks);
+            int fullSpeedTime = sweepTime - rampTime;
+
+            // Integrate the linear speed ramp, then normalize the travel to finish the half-turn on the last live tick.
+            float rampTravel = rampTime * rampTime / (2f * SweepRampTicks);
+            float travel = sweepTime + SweepSpeedGain * (rampTravel + fullSpeedTime);
+            const float totalTravel = SweepTicks + SweepSpeedGain * (SweepTicks - SweepRampTicks * 0.5f);
+            float progress = travel / totalTravel;
+            return openingAngle + SweepArc * turnDirection * progress;
         }
 
         public override void AI()
@@ -71,8 +105,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             int headIndex = (int)Projectile.ai[0];
             NPC head = Main.npc[headIndex];
             bool hasHead = head.active && head.type == NPCID.TheDestroyer;
-            if (!ending && (!hasHead || head.GetGlobalNPC<TheDestroyer>().IsRetreating)
-                && Main.netMode != NetmodeID.MultiplayerClient)
+            TheDestroyer headState = null;
+            if (hasHead)
+            {
+                headState = head.GetGlobalNPC<TheDestroyer>();
+            }
+
+            bool matchingMove = headState != null && (IsRunaway && headState.IsRunawayMaw || IsThrash && headState.IsHullThrash);
+            bool lostMount = headState == null || headState.IsRetreating || IsMouthMounted && !matchingMove;
+            mouthArmed = headState != null
+                && (IsRunaway && headState.IsRunawayMawFiring || IsThrash && headState.IsHullThrashFiring);
+            if (!ending && lostMount && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 ending = true;
                 if (!fired)
@@ -81,19 +124,29 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     return;
                 }
 
-                age = LiveTicks;
+                age = LiveDuration;
                 Projectile.netUpdate = true;
             }
 
-            if (hasHead && !ending && age < LiveTicks)
+            if (hasHead && !ending && (age < LiveDuration || matchingMove))
             {
-                float angle = SweepAngle(Projectile.ai[1], (int)Projectile.ai[2], age);
+                float angle;
+                if (IsMouthMounted)
+                {
+                    // The mouth sprite drives the beam axis through the whip and each reversal.
+                    angle = head.rotation - MathHelper.PiOver2;
+                }
+                else
+                {
+                    angle = SweepAngle(Projectile.ai[1], (int)Projectile.ai[2], age);
+                }
+
                 Projectile.velocity = angle.ToRotationVector2();
                 Projectile.Center = head.Center + Projectile.velocity * (28f * head.scale);
             }
 
             age++;
-            if (age > LiveTicks + FadeTicks)
+            if (age > LiveDuration + FadeTicks)
             {
                 Projectile.Kill();
                 return;
@@ -109,11 +162,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 }
             }
 
-            if (!Main.dedServ && fired && age <= LiveTicks && age % 3 == 0)
+            if (!Main.dedServ && fired && age <= LiveDuration && age % 3 == 0)
             {
                 Vector2 offset = Main.rand.NextVector2Circular(9f, 9f);
                 Dust.NewDustPerfect(Projectile.Center + offset, DustID.SolarFlare, Projectile.velocity * 7f + offset * 0.35f, Scale: 2.4f).noGravity = true;
-                Vector2 sparkPosition = Projectile.Center + Projectile.velocity * Main.rand.NextFloat(30f, 1100f);
+                Vector2 sparkPosition = Projectile.Center + Projectile.velocity * Main.rand.NextFloat(30f, MathHelper.Min(1100f, BeamLength * 0.9f));
                 Dust.NewDustPerfect(sparkPosition, DustID.OrangeTorch, Projectile.velocity * 5f, Scale: 1.6f).noGravity = true;
             }
         }
@@ -134,9 +187,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             Vector2 origin = Projectile.Center;
-            Vector2 endpoint = origin + Projectile.velocity * Length;
+            Vector2 endpoint = origin + Projectile.velocity * BeamLength;
             float point = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin, endpoint, HitWidth, ref point);
+            float hitWidth = Projectile.ai[2] switch
+            {
+                RunawayMode => RunawayHitWidth,
+                ThrashMode => ThrashHitWidth,
+                _ => HitWidth
+            };
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin, endpoint, hitWidth, ref point);
         }
 
         public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
@@ -148,6 +207,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (fired && IsThrash)
+            {
+                float fade = MathHelper.Clamp((LiveDuration + FadeTicks - age) / (float)FadeTicks, 0f, 1f);
+                DestroyerHullLaser.DrawLegacyBeam(Projectile.Center, Projectile.velocity, ThrashLength, age, fade);
+                return false;
+            }
+
             beamEffect ??= ModContent.Request<Effect>("tsorcRevamp/Effects/DestroyerMawBeam", AssetRequestMode.ImmediateLoad);
             turbulentNoise ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/TurbulentNoise", AssetRequestMode.ImmediateLoad);
             Texture2D primary = turbulentNoise.Value;
@@ -159,7 +225,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 float charge = MathHelper.Clamp((TellTicks + age) / (float)TellTicks, 0f, 1f);
                 float tellWidth = MathHelper.Lerp(110f, 180f, charge);
-                Vector2 tellSize = new Vector2(Length, tellWidth);
+                Vector2 tellSize = new Vector2(BeamLength, tellWidth);
                 Vector2 tellBlocks = tellSize / 3f;
                 float tellScroll = 14f * (TellTicks + age) / primary.Width;
 
@@ -175,10 +241,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     effect.Parameters["Time"].SetValue(0.35f * charge);
                     effect.Parameters["BeamColor"].SetValue(new Vector3(1.0f, 0.16f, 0.02f));
                     effect.Parameters["NoiseScale"].SetValue(new Vector4(
-                        Length / primary.Width,
+                        BeamLength / primary.Width,
                         tellWidth / primary.Height,
                         tellScroll,
-                        Length / 140f));
+                        BeamLength / 140f));
                     effect.CurrentTechnique.Passes[0].Apply();
                     Main.EntitySpriteDraw(primary, drawPosition, null, Color.White, Projectile.velocity.ToRotation(),
                         origin, tellSize / primary.Size(), SpriteEffects.None, 0f);
@@ -191,9 +257,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return false;
             }
 
-            Vector2 drawSize = new Vector2(Length, DrawWidth);
+            float drawWidth = IsRunaway ? 126f : DrawWidth;
+            Vector2 drawSize = new Vector2(BeamLength, drawWidth);
             Vector2 blocks = drawSize / PixelBlockSize;
-            float opacity = MathHelper.Clamp((LiveTicks + FadeTicks - age) / (float)FadeTicks, 0f, 1f);
+            float opacity = MathHelper.Clamp((LiveDuration + FadeTicks - age) / (float)FadeTicks, 0f, 1f);
             float scroll = -14f * age / primary.Width;
 
             Main.spriteBatch.End();
@@ -208,10 +275,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 effect.Parameters["Time"].SetValue(age / 60f);
                 effect.Parameters["BeamColor"].SetValue(new Vector3(0.85f, 0.08f, 0.015f));
                 effect.Parameters["NoiseScale"].SetValue(new Vector4(
-                    Length / primary.Width,
-                    DrawWidth / primary.Height,
+                    BeamLength / primary.Width,
+                    drawWidth / primary.Height,
                     scroll,
-                    Length / 140f));
+                    BeamLength / 140f));
                 effect.CurrentTechnique.Passes[0].Apply();
                 Main.EntitySpriteDraw(primary, drawPosition, null, Color.White, Projectile.velocity.ToRotation(),
                     origin, drawSize / primary.Size(), SpriteEffects.None, 0f);

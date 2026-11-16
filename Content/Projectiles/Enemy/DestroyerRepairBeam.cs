@@ -12,9 +12,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     internal sealed class DestroyerRepairBeam : ModProjectile
     {
         private const int FadeTicks = 12;
-        private const int ChunkTicks = 30;
-        // 500 health every 30 ticks = 1000 health per second.
-        private const int HealPerChunk = 500;
+        private const int ChunkTicks = 60;
+        private const int HealPerChunk = 2000;
+        private const float BeamDrawWidth = 46f;
         private Vector2 endpoint;
         private Vector2 cutPosition;
         private int age;
@@ -64,25 +64,42 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 visible = true;
                 age++;
-                if (!Main.dedServ && (age == 1 || age % 4 == 0))
+                if (!Main.dedServ)
                 {
                     Vector2 beam = endpoint - Projectile.Center;
+                    float length = beam.Length();
                     Vector2 direction = beam.SafeNormalize(Vector2.Zero);
                     Vector2 lateral = direction.RotatedBy(MathHelper.PiOver2);
-                    Vector2 position = Vector2.Lerp(Projectile.Center, endpoint, Main.rand.NextFloat());
-                    Dust.NewDustPerfect(position, DustID.GreenTorch, direction * 4f, Scale: 1.35f).noGravity = true;
+                    Vector2 muzzle = BeamMuzzle(direction, length);
+                    Lighting.AddLight(muzzle, 0.08f, 0.58f, 0.20f);
 
-                    Vector2 emitterVelocity = direction * 2.2f + lateral * Main.rand.NextFloat(-0.8f, 0.8f);
-                    Dust.NewDustPerfect(Projectile.Center, DustID.GreenTorch, emitterVelocity, Scale: 1.15f).noGravity = true;
-
-                    // Show the spray on the incoming face of the hull, where the beam first meets the piece.
-                    float inset = Math.Min(beam.Length() * 0.5f, Math.Min(segment.width, segment.height) * 0.4f);
-                    Vector2 impact = endpoint - direction * inset;
-                    for (int side = -1; side <= 1; side += 2)
+                    if (age == 1 || age % 2 == 0)
                     {
-                        float spread = Main.rand.NextFloat(1.2f, 2.7f) * side;
-                        Vector2 sparkVelocity = lateral * spread - direction * Main.rand.NextFloat(0.6f, 1.6f);
-                        Dust.NewDustPerfect(impact, DustID.GreenTorch, sparkVelocity, Scale: 1.2f).noGravity = true;
+                        int count = age == 1 ? 7 : 3;
+                        for (int i = 0; i < count; i++)
+                        {
+                            Vector2 plume = direction * Main.rand.NextFloat(1.6f, 5.5f);
+                            plume += lateral * Main.rand.NextFloat(-2.3f, 2.3f);
+                            Vector2 origin = muzzle + Main.rand.NextVector2Circular(3f, 3f);
+                            Dust spark = Dust.NewDustPerfect(origin, DustID.GreenTorch, plume, Scale: Main.rand.NextFloat(0.75f, 1.25f));
+                            spark.noGravity = true;
+                        }
+                    }
+
+                    if (age == 1 || age % 4 == 0)
+                    {
+                        Vector2 position = Vector2.Lerp(muzzle, endpoint, Main.rand.NextFloat());
+                        Dust.NewDustPerfect(position, DustID.GreenTorch, direction * 4f, Scale: 1.35f).noGravity = true;
+
+                        // Scatter sparks at the first contact with the incoming face of the hull.
+                        float inset = Math.Min(length * 0.5f, Math.Min(segment.width, segment.height) * 0.4f);
+                        Vector2 impact = endpoint - direction * inset;
+                        for (int side = -1; side <= 1; side += 2)
+                        {
+                            float spread = Main.rand.NextFloat(1.2f, 2.7f) * side;
+                            Vector2 sparkVelocity = lateral * spread - direction * Main.rand.NextFloat(0.6f, 1.6f);
+                            Dust.NewDustPerfect(impact, DustID.GreenTorch, sparkVelocity, Scale: 1.2f).noGravity = true;
+                        }
                     }
                 }
 
@@ -144,12 +161,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             if (visible)
             {
                 float opacity = fadeRemaining > 0 ? fadeRemaining / (float)FadeTicks : Math.Min(age / 6f, 1f);
-                Vector2 start = Projectile.Center;
-                DestroyerHullLaser.DrawBand(Main.spriteBatch, start, endpoint, Color.LimeGreen * (0.7f * opacity), 12f);
-                DestroyerHullLaser.DrawBand(Main.spriteBatch, start, endpoint, Color.PaleGreen * opacity, 3f);
+                Vector2 beam = endpoint - Projectile.Center;
+                Vector2 direction = beam.SafeNormalize(Vector2.Zero);
+                Vector2 muzzle = BeamMuzzle(direction, beam.Length());
+                Color green = new Color(38, 255, 82);
+                DestroyerHullLaser.DrawLaser(muzzle, endpoint, BeamDrawWidth, green, opacity * 0.85f, 1.1f * opacity,
+                    -10f * age, "DestroyerRepairBeam");
             }
 
             return false;
+        }
+
+        private Vector2 BeamMuzzle(Vector2 direction, float length)
+        {
+            return Projectile.Center + direction * Math.Min(10f, length * 0.2f);
         }
 
         public override void OnKill(int timeLeft)

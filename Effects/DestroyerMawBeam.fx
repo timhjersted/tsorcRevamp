@@ -43,13 +43,19 @@ float4 MawPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
     return float4(saturate(rgb), alpha) * sampleColor.a;
 }
 
-float4 HullLaserPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+float4 HullLaser(float4 sampleColor, float2 coords, bool repair, bool overcharged)
 {
-    // Pixelated copy of GenericLaser (both telegraph and attack) with a conical origin taper at the emitter.
+    // All three hull beams share the pixel grid, flowing turbulence and narrow core.
     float2 uv = PixelateShaderUV(coords, PixelGrid);
     float distance = abs(uv.y - 0.5);
 
-    float originProgress = saturate((uv.x - 0.01) * NoiseScale.w);
+    float distanceFromCap = uv.x - 0.01;
+    if (repair)
+    {
+        distanceFromCap = min(distanceFromCap, 0.99 - uv.x);
+    }
+
+    float originProgress = saturate(distanceFromCap * NoiseScale.w);
     float coneProfile = sqrt(originProgress);
     float coneWidth = lerp(0.08, 1.0, coneProfile);
     float scaledDistance = distance / coneWidth;
@@ -69,9 +75,35 @@ float4 HullLaserPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : 
     float i4 = intensity * intensity;
     float whiteCore = i4 * i4 * (0.30 + 0.95 * liveNoise) * Time;
 
-    float3 rgb = BeamColor * liveNoise * envelope + float3(1.0, 0.98, 0.90) * whiteCore;
+    float3 coreColor = repair ? float3(0.73, 1.0, 0.82) : float3(1.0, 0.98, 0.90);
+    float3 rgb = BeamColor * liveNoise * envelope + coreColor * whiteCore;
+    if (overcharged)
+    {
+        // Let the sheath whip around the straight core, which still marks the collision line.
+        float wave = (sampleIntensity - detailIntensity) * 0.25;
+        float waveDistance = abs(uv.y - 0.5 - wave);
+        float surge = saturate((0.24 - waveDistance) * 6.0);
+        float sheath = surge * liveNoise * originProgress * endTaper * Opacity;
+        rgb += float3(1.0, 0.20, 0.045) * sheath;
+    }
+
     float alpha = saturate(envelope + whiteCore);
     return float4(rgb, alpha) * sampleColor.a;
+}
+
+float4 HullLaserPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+{
+    return HullLaser(sampleColor, coords, false, false);
+}
+
+float4 RepairBeamPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+{
+    return HullLaser(sampleColor, coords, true, false);
+}
+
+float4 OverchargedHullPixel(float4 sampleColor : COLOR0, float2 coords : TEXCOORD0) : COLOR0
+{
+    return HullLaser(sampleColor, coords, false, true);
 }
 
 technique DestroyerMawBeam
@@ -87,5 +119,21 @@ technique DestroyerHullLaser
     pass HullLaserPass
     {
         PixelShader = compile ps_2_0 HullLaserPixel();
+    }
+}
+
+technique DestroyerRepairBeam
+{
+    pass RepairBeamPass
+    {
+        PixelShader = compile ps_2_0 RepairBeamPixel();
+    }
+}
+
+technique DestroyerOverchargedHull
+{
+    pass OverchargedHullPass
+    {
+        PixelShader = compile ps_2_0 OverchargedHullPixel();
     }
 }

@@ -8,6 +8,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     class EnemyFirebomb : ModProjectile
     {
+        internal const float DestroyerDrop = 2f;
+        private const float DropImpactDamageMultiplier = 0.25f;
+
+        private bool IsDestroyerDrop => Projectile.ai[2] == DestroyerDrop;
+        private Vector2 FusePoint => Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
+        private float FuseProgress => MathHelper.Clamp((240f - Projectile.timeLeft) / (IsDestroyerDrop ? 238f : 210f), 0f, 1f);
 
         public override void SetDefaults()
         {
@@ -50,6 +56,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers)
         {
+            if (IsDestroyerDrop && Projectile.timeLeft > 2)
+            {
+                modifiers.FinalDamage *= DropImpactDamageMultiplier;
+                modifiers.Knockback *= 0.35f;
+                return;
+            }
+
             Projectile.timeLeft = 2; //sets it to 2 frames, to let the explosion ai kick in. Setdefaults is -1 pen, this allows it to only hit one npc, then run explosion ai.
             Projectile.netUpdate = true;
         }
@@ -85,9 +98,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         }
         public override bool? CanDamage()
         {
-            if (Projectile.ai[2] == 2f && Projectile.timeLeft > 2)
+            if (IsDestroyerDrop && Projectile.timeLeft > 2)
             {
-                return false;
+                return Projectile.ai[1] == 0f && Projectile.velocity.Y > 1.5f;
             }
 
             return null;
@@ -95,7 +108,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Projectile.ai[2] == 2f)
+            if (IsDestroyerDrop)
             {
                 if (Projectile.velocity.X != oldVelocity.X)
                 {
@@ -104,6 +117,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 if (Projectile.velocity.Y != oldVelocity.Y)
                 {
+                    // Floor contact ends impact damage for the rest of the fuse, including after a bounce.
+                    if (oldVelocity.Y > 0f && Projectile.ai[1] == 0f)
+                    {
+                        Projectile.ai[1] = 1f;
+                        Projectile.netUpdate = Main.netMode != NetmodeID.MultiplayerClient;
+                    }
+
                     if (oldVelocity.Y > 1.5f)
                     {
                         Projectile.velocity.Y = -oldVelocity.Y * 0.2f;
@@ -137,9 +157,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             if (Projectile.ai[2] >= 1f && Projectile.timeLeft > 2)
             {
-                float progress = MathHelper.Clamp((240f - Projectile.timeLeft) / 210f, 0f, 1f);
-                Vector2 fusePoint = Projectile.Center + new Vector2(3f, -8f).RotatedBy(Projectile.rotation);
-                RedKnightVFX.DrawBombFuse(fusePoint, progress, planted: false);
+                RedKnightVFX.DrawBombFuse(FusePoint, FuseProgress, planted: false);
             }
             return true;
         }
@@ -164,7 +182,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             else
             {
                 // Smoke and fuse dust spawn.
-                if (Projectile.ai[2] < 1f && Main.rand.NextBool(2))
+                if (IsDestroyerDrop && !Main.dedServ)
+                {
+                    float progress = FuseProgress;
+                    int interval = progress >= 0.75f ? 2 : 3;
+                    if (Projectile.timeLeft % interval == 0)
+                    {
+                        Vector2 fuse = FusePoint;
+                        EnemyVFX.SpawnBombFuseSparks(fuse, progress);
+                        Vector2 up = -Vector2.UnitY.RotatedBy(Projectile.rotation);
+                        Vector2 velocity = up * Main.rand.NextFloat(1.8f, 3.1f) + Main.rand.NextVector2Circular(1.4f, 1.4f);
+                        Dust ember = Dust.NewDustPerfect(fuse, DustID.Torch, velocity, Scale: 0.95f + progress * 0.35f);
+                        ember.noGravity = true;
+                    }
+                }
+                else if (!Main.dedServ && Projectile.ai[2] < 1f && Main.rand.NextBool(2))
                 {
                     int dustIndex = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 6, 0f, 0f, 100, default(Color), 1f);
                     Main.dust[dustIndex].scale = 0.1f + (float)Main.rand.Next(5) * 0.1f;

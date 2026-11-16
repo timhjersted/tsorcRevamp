@@ -816,9 +816,9 @@
   },
   {
     "EventID": "0c9bcf7d-cb40-4562-9dd5-abdb2affeb80",
-    "CenterX": 2120.0,
-    "CenterY": 730.0,
-    "Radius": 774400.0,
+    "CenterX": 2161.0,
+    "CenterY": 581.0,
+    "Radius": 518400.0,
     "Square": false,
     "TriggerDust": 158,
     "VisibleRing": true,
@@ -830,11 +830,14 @@
     "MapCondition": null,
     "CustomAction": null,
     "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [
+      "HeroofLumeliaFight"
+    ],
     "Npcs": [
       {
         "NpcName": "tsorcRevamp/HeroofLumelia",
-        "SpawnX": 2120.0,
-        "SpawnY": 730.0,
+        "SpawnX": 2162.0,
+        "SpawnY": 592.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,
@@ -6298,8 +6301,8 @@
   {
     "EventID": "681ec75f-0e65-4f18-85f1-715d568ffc73",
     "CenterX": 2096.0,
-    "CenterY": 877.0,
-    "Radius": 25600.0,
+    "CenterY": 845.0,
+    "Radius": 774400.0,
     "Square": false,
     "TriggerDust": 27,
     "VisibleRing": true,
@@ -6311,11 +6314,122 @@
     "MapCondition": "",
     "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
     "Npcs": [
       {
         "NpcName": "TheDestroyer",
         "SpawnX": 2098.0,
         "SpawnY": 795.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "088027c4-f19d-4a45-802b-0f111babfd45",
+    "CenterX": 5768.0,
+    "CenterY": 1383.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SkeletonWarrior",
+        "SpawnX": 5769.0,
+        "SpawnY": 1391.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0e0f4fe8-67c7-44d2-97b5-4330fff56e44",
+    "CenterX": 5778.0,
+    "CenterY": 1543.0,
+    "Radius": 518400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SkeletonWarrior",
+        "SpawnX": 5779.0,
+        "SpawnY": 1553.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "2cf75663-7867-4559-8dd8-7c9228f49037",
+    "CenterX": 5713.0,
+    "CenterY": 1546.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/SkeletonWarrior",
+        "SpawnX": 5718.0,
+        "SpawnY": 1545.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e6ef3b4f-959f-4504-8b2c-657e0dbd63bb",
+    "CenterX": 1046.0,
+    "CenterY": 176.0,
+    "Radius": 921600.0,
+    "Square": false,
+    "TriggerDust": 6,
+    "VisibleRing": true,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/HellkiteDrake",
+        "SpawnX": 1139.0,
+        "SpawnY": 200.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

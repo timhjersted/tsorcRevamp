@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -232,7 +234,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             if (!Main.dedServ)
             {
-                Lighting.AddLight(Projectile.Center, 0.5f, 0.25f, 0.04f);
+                Lighting.AddLight(Projectile.Center, 0.68f, 0.29f, 0.055f);
                 Vector2 backward = -Projectile.velocity.SafeNormalize(Vector2.UnitY);
                 Vector2 sideways = new Vector2(-backward.Y, backward.X);
                 Vector2 exhaust = Projectile.Center + backward * 15f;
@@ -248,6 +250,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     smoke.fadeIn = 1.3f;
                 }
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D sprite = TextureAssets.Projectile[Type].Value;
+            Vector2 origin = sprite.Size() * 0.5f;
+            Main.EntitySpriteDraw(sprite, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor),
+                Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            return false;
         }
 
         private bool PlayerWithinBlast()
