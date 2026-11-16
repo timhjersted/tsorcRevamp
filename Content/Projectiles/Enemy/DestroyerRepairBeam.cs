@@ -64,11 +64,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 visible = true;
                 age++;
-                if (!Main.dedServ && age % 4 == 0)
+                if (!Main.dedServ && (age == 1 || age % 4 == 0))
                 {
+                    Vector2 beam = endpoint - Projectile.Center;
+                    Vector2 direction = beam.SafeNormalize(Vector2.Zero);
+                    Vector2 lateral = direction.RotatedBy(MathHelper.PiOver2);
                     Vector2 position = Vector2.Lerp(Projectile.Center, endpoint, Main.rand.NextFloat());
-                    Vector2 velocity = (endpoint - Projectile.Center).SafeNormalize(Vector2.Zero) * 4f;
-                    Dust.NewDustPerfect(position, DustID.GreenTorch, velocity, Scale: 1.35f).noGravity = true;
+                    Dust.NewDustPerfect(position, DustID.GreenTorch, direction * 4f, Scale: 1.35f).noGravity = true;
+
+                    Vector2 emitterVelocity = direction * 2.2f + lateral * Main.rand.NextFloat(-0.8f, 0.8f);
+                    Dust.NewDustPerfect(Projectile.Center, DustID.GreenTorch, emitterVelocity, Scale: 1.15f).noGravity = true;
+
+                    // Show the spray on the incoming face of the hull, where the beam first meets the piece.
+                    float inset = Math.Min(beam.Length() * 0.5f, Math.Min(segment.width, segment.height) * 0.4f);
+                    Vector2 impact = endpoint - direction * inset;
+                    for (int side = -1; side <= 1; side += 2)
+                    {
+                        float spread = Main.rand.NextFloat(1.2f, 2.7f) * side;
+                        Vector2 sparkVelocity = lateral * spread - direction * Main.rand.NextFloat(0.6f, 1.6f);
+                        Dust.NewDustPerfect(impact, DustID.GreenTorch, sparkVelocity, Scale: 1.2f).noGravity = true;
+                    }
                 }
 
                 if (authority)

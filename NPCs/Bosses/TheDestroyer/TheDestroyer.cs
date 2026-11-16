@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.IO;
 using Terraria;
@@ -19,18 +20,23 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
     internal sealed class TheDestroyer : GlobalNPC, IDebugAttackLabel
     {
         internal const float HullPortOffset = 18f;
-        private const float EnclosingOrbitSpeed = 0.028f;
+        private const float EnclosingOrbitSpeed = 0.025f;
         private const float OverheadOrbitSpeed = 0.034f;
-        private const float EnclosingRadius = 540f;
+        private const float EnclosingRadius = 820f;
         private const float OverheadRadius = 440f;
         private const float OverheadHeight = 680f;
-        private const int OverheadShapeTicks = 145;
-        private const int EnclosingShapeTicks = 210;
-        private const int OverheadActiveTicks = 300;
-        private const int EnclosingActiveTicks = 330;
+        private const int OverheadShapeTicks = 180;
+        private const int EnclosingShapeTicks = 260;
+        private const int OverheadActiveTicks = 360;
+        private const int EnclosingLapTicks = 251;
+        private const int EnclosingActiveTicks = EnclosingLapTicks * 2;
+        private const int EnclosingFirstVolleyDelay = 16;
         internal const int OrbitTellTicks = 44;
         internal const int OrbitFireTicks = 20;
-        private const int OrbitBeamSpacing = OrbitTellTicks + OrbitFireTicks + DestroyerHullLaser.FadeTicks + 4;
+        internal const int EnclosingSecondFireTicks = OrbitFireTicks + 60;
+        private const int OrbitBeamLifetime = OrbitTellTicks + OrbitFireTicks + DestroyerHullLaser.FadeTicks + DestroyerHullLaser.PoseWaitTicks;
+        private const int OrbitBeamSpacing = OrbitBeamLifetime + 4;
+        private const float MaxHullBeamTurn = 0.055f;
         private const float MaxCoilSpeed = 24f;
         private const float EruptionReentryRange = 640f;
         // The old projectile's 40 spawn damage was multiplied by four on hit. Declare the Expert hit here.
@@ -57,14 +63,23 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const int RepairDuration = 240;
         private const int RepairCooldown = 420;
         private const int BeamCap = 3;
-        private const int PortTell = 20;
+        internal const int PortTell = 20;
+        internal const int HullArmingTicks = 32;
+        private const float WarmContactMultiplier = 0.5f;
+        private const int PayloadHotTicks = 12;
+        private const int BombBayTellTicks = 24;
+        private const int BombBayFlashFadeTicks = 10;
         private const int RippleDelay = 8;
-        private const int RippleRepeat = 180;
+        private const int RippleTurnTicks = 75;
         private const int ChargeRange = 1800;
         private const int ChargeOvershoot = 400;
         private const float ChargeSpeed = 30f;
         private const int MawLock = DestroyerMawBeam.TellTicks;
         private const int DashReaim = 12;
+
+        // Live angles in radians. The uneven spacing leaves a wider lane as the beams sweep together.
+        private static readonly float[] enclosingFirstVolleyAngles = { 0.61f, MathHelper.Pi + 1.60f, 2.52f };
+        private static readonly float[] enclosingSecondVolleyAngles = { 0.49f, 1.29f, 2.64f };
 
         private enum Move : byte
         {
@@ -95,6 +110,25 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             Retreat
         }
 
+        internal enum HullHeat : byte
+        {
+            Cold,
+            Arming,
+            Warm,
+            Hot
+        }
+
+        private static BasicEffect hullLightingEffect;
+        private static Asset<Texture2D> bombBayFlare;
+        private static readonly VertexPositionColorTexture[] hullVertices = new VertexPositionColorTexture[9];
+        private static readonly short[] hullIndices =
+        {
+            0, 1, 3, 1, 4, 3,
+            1, 2, 4, 2, 5, 4,
+            3, 4, 6, 4, 7, 6,
+            4, 5, 7, 5, 8, 7
+        };
+
         private Move move;
         private Beat beat;
         private int phase = 1;
@@ -116,6 +150,13 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private int orbitBeamStart;
         private int attacksBeforeNextOrbit;
         private float hullTurn;
+        private Vector2 hullTravel;
+        private int payloadReleaseTick = -1;
+        private int bombBayTellTick = -1;
+        private int bombBaySide;
+        private HullHeat beamHeat;
+        private float beamArmingProgress;
+        private ulong beamHeatTick;
         private bool announcedBeat;
         private bool bodyPoseForMaw;
         private AttackBag<Move> attackBag;
@@ -155,6 +196,19 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         {
             NPCID.Sets.TrailCacheLength[NPCID.TheDestroyer] = 10;
             NPCID.Sets.TrailingMode[NPCID.TheDestroyer] = 0;
+        }
+
+        public override void Unload()
+        {
+            BasicEffect effectToDispose = hullLightingEffect;
+            hullLightingEffect = null;
+            bombBayFlare = null;
+
+            if (effectToDispose != null && !effectToDispose.IsDisposed)
+            {
+                // Mod unloading can run on a worker. FNA releases GPU effects only on the main thread.
+                Main.QueueMainThreadAction(effectToDispose.Dispose);
+            }
         }
 
         public override void ApplyDifficultyAndPlayerScaling(NPC npc, int numPlayers, float balance, float bossAdjustment)
@@ -203,6 +257,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             if (npc.type != NPCID.TheDestroyer)
             {
                 writer.Write((byte)spawnOrdinal);
+                writer.Write((short)payloadReleaseTick);
+                writer.Write((short)bombBayTellTick);
+                writer.Write((sbyte)bombBaySide);
                 return;
             }
 
@@ -245,6 +302,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             if (npc.type != NPCID.TheDestroyer)
             {
                 spawnOrdinal = reader.ReadByte();
+                payloadReleaseTick = reader.ReadInt16();
+                bombBayTellTick = reader.ReadInt16();
+                bombBaySide = reader.ReadSByte();
                 return;
             }
 
@@ -286,18 +346,21 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
         public override bool CanHitPlayer(NPC npc, Player target, ref int cooldownSlot)
         {
-            if (npc.type == NPCID.TheDestroyerBody || npc.type == NPCID.TheDestroyerTail)
-            {
-                return TryGetHead(npc, out NPC owner) && owner.GetGlobalNPC<TheDestroyer>().SegmentHeat(spawnOrdinal) >= 1f;
-            }
-
-            if (npc.type == NPCID.Probe || !TryGetHead(npc, out NPC head))
+            if (npc.type == NPCID.Probe)
             {
                 return true;
             }
 
-            TheDestroyer state = head.GetGlobalNPC<TheDestroyer>();
-            return state.beat != Beat.Retreat;
+            HullHeat heat = GetHullHeat(npc, out _);
+            return heat >= HullHeat.Warm;
+        }
+
+        public override void ModifyHitPlayer(NPC npc, Player target, ref Player.HurtModifiers modifiers)
+        {
+            if (npc.type != NPCID.Probe && GetHullHeat(npc, out _) == HullHeat.Warm)
+            {
+                modifiers.FinalDamage *= WarmContactMultiplier;
+            }
         }
 
         public override bool CheckActive(NPC npc)
@@ -321,48 +384,82 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             if (npc.type != NPCID.TheDestroyer)
             {
                 float previousRotation = npc.rotation;
+                Vector2 previousPosition = npc.position;
                 RunMovement(npc, NPCID.TheDestroyer, NPCID.TheDestroyerBody, NPCID.TheDestroyerTail, false);
+                hullTravel = npc.position - previousPosition;
+                hullTurn = MathHelper.WrapAngle(npc.rotation - previousRotation);
                 if (npc.active && spawnOrdinal > 0 && TryGetHead(npc, out NPC head))
                 {
                     TheDestroyer headState = head.GetGlobalNPC<TheDestroyer>();
-                    if (authority && (headState.move == Move.EnclosingCoil || headState.move == Move.HullGlowSpin))
+                    bool bombPass = headState.move == Move.BombDrop && headState.beat == Beat.Active;
+                    if (authority && bombPass && bombBayTellTick >= 0 && payloadReleaseTick < 0 && headState.timer >= bombBayTellTick + BombBayTellTicks)
                     {
-                        hullTurn = MathHelper.WrapAngle(npc.rotation - previousRotation);
+                        // Release after the body follows the head so the projectile and flash share the bay's current pose.
+                        Vector2 dropPosition = BombBayPosition(npc);
+                        Vector2 dropVelocity = new Vector2(head.velocity.X * 0.12f, 2.5f);
+                        int projectileIndex = Projectile.NewProjectile(npc.GetSource_FromAI(), dropPosition, dropVelocity,
+                            ModContent.ProjectileType<EnemyFirebomb>(), EnemyDamage.Projectile(BombDamage), 9f,
+                            Main.myPlayer, 0f, 0f, 2f);
+                        if (projectileIndex < Main.maxProjectiles)
+                        {
+                            payloadReleaseTick = headState.timer;
+                            npc.netUpdate = true;
+                            if (!Main.dedServ)
+                            {
+                                SoundEngine.PlaySound(SoundID.Item1, dropPosition);
+                            }
+                        }
                     }
 
                     if (!Main.dedServ && npc.type == NPCID.TheDestroyerBody)
                     {
-                        bool curtainTelegraph = (headState.move == Move.CurtainPass || headState.move == Move.RippleBroadside)
-                            && headState.beat == Beat.Shape && headState.timer > 0 && headState.timer <= 60;
-                        if (curtainTelegraph)
+                        HullHeat heat = GetHullHeat(npc, out _);
+                        bool droppingPayload = headState.move == Move.BombDrop || headState.move == Move.MineDrop;
+                        bool launchingPayload = headState.move == Move.MineDrop || headState.move == Move.MissileBarrage;
+                        if (launchingPayload && heat == HullHeat.Hot && (Main.GameUpdateCount + npc.whoAmI) % 4 == 0)
                         {
-                            // Classic Old Destroyer spiraling torch-ribbon telegraph, reserved sparingly for full-hull curtain barrages.
-                            Vector2 headDirection = head.velocity.SafeNormalize((head.rotation - MathHelper.PiOver2).ToRotationVector2());
-                            Vector2 dustOffset = (headDirection * 48f).RotatedBy(MathHelper.ToRadians(6f * headState.timer));
-                            Vector2 dustVelocity = (headDirection * 12f).RotatedBy(MathHelper.PiOver2) / 6f;
-                            Dust.NewDustPerfect(npc.Center + dustOffset, DustID.Torch, dustVelocity, Scale: 3f).noGravity = true;
+                            Vector2 sparkVelocity = Main.rand.NextVector2Circular(2.7f, 2.7f);
+                            Dust spark = Dust.NewDustPerfect(npc.Center, DustID.Torch, sparkVelocity, Scale: 0.9f);
+                            spark.noGravity = true;
                         }
-                        else if (headState.move == Move.BombDrop && headState.beat == Beat.Shape && spawnOrdinal % 5 == 0 && headState.timer % 3 == 0)
+
+                        if (bombPass)
                         {
-                            Vector2 offset = Main.rand.NextVector2Circular(12f, 8f) + new Vector2(0f, 14f);
-                            Dust.NewDustPerfect(npc.Center + offset, DustID.RedTorch, new Vector2(0f, 1.5f), Scale: 1.5f).noGravity = true;
+                            float flash = BombBayFlash(headState);
+                            if (flash > 0f)
+                            {
+                                Vector2 bay = BombBayPosition(npc);
+                                Lighting.AddLight(bay, flash, flash * flash * 0.55f, flash * 0.10f);
+                                bool justReleased = payloadReleaseTick == headState.timer;
+                                if (justReleased || payloadReleaseTick < 0 && headState.timer % 5 == 0)
+                                {
+                                    int count = justReleased ? 6 : 1;
+                                    for (int i = 0; i < count; i++)
+                                    {
+                                        Vector2 speed = Main.rand.NextVector2Circular(2.4f, 1.8f) + Vector2.UnitY * 1.2f;
+                                        Dust spark = Dust.NewDustPerfect(bay, DustID.Torch, speed, Scale: 0.8f);
+                                        spark.noGravity = true;
+                                    }
+                                }
+                            }
                         }
-                        else if (headState.move == Move.MineDrop && headState.beat == Beat.Shape
-                            && spawnOrdinal >= 15 && spawnOrdinal <= 70 && spawnOrdinal % 5 == 0 && headState.timer % 3 == 0)
+
+                        if (droppingPayload && headState.beat == Beat.Shape && heat == HullHeat.Warm && headState.timer % 3 == 0)
                         {
-                            Vector2 offset = Main.rand.NextVector2Circular(12f, 8f) + new Vector2(0f, 14f);
-                            Dust.NewDustPerfect(npc.Center + offset, DustID.OrangeTorch, new Vector2(0f, 1.5f), Scale: 1.55f).noGravity = true;
+                            Vector2 offset = Main.rand.NextVector2Circular(12f, 12f) + new Vector2(0f, 14f);
+                            int dustType = headState.move == Move.BombDrop ? DustID.RedTorch : DustID.OrangeTorch;
+                            Dust.NewDustPerfect(npc.Center + offset, dustType, new Vector2(0f, 1.5f), Scale: 1.65f).noGravity = true;
                         }
                         else if (headState.move == Move.MissileBarrage && headState.beat == Beat.Active)
                         {
                             int telegraphAge = headState.MissileBayAge(spawnOrdinal);
-                            if (telegraphAge > 0 && telegraphAge <= MissileTelegraphTicks)
+                            if (telegraphAge == 1)
                             {
-                                if (telegraphAge == 1)
-                                {
-                                    SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.45f, Pitch = -0.35f }, npc.Center);
-                                }
+                                SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.45f, Pitch = -0.35f }, npc.Center);
+                            }
 
+                            if (telegraphAge >= HullArmingTicks && telegraphAge < MissileTelegraphTicks)
+                            {
                                 // Double the plume along each bay's local exhaust axis. Keep the scatter small so it stays attached to the bay.
                                 float progress = telegraphAge / (float)MissileTelegraphTicks;
                                 Vector2 segmentSide = npc.rotation.ToRotationVector2();
@@ -383,15 +480,6 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                                         exhaust.fadeIn = 1.35f;
                                     }
                                 }
-                            }
-                        }
-                        else if (headState.beat == Beat.Active)
-                        {
-                            int portAge = headState.PortAge(spawnOrdinal);
-                            if (portAge > 0 && portAge <= PortTell && portAge % 3 == 0)
-                            {
-                                Vector2 offset = Main.rand.NextVector2Circular(14f, 14f);
-                                Dust.NewDustPerfect(npc.Center + offset, DustID.Torch, -offset * 0.15f, Scale: 1.5f).noGravity = true;
                             }
                         }
                     }
@@ -420,6 +508,11 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             if (!npc.active || beat == Beat.Retreat)
             {
                 return;
+            }
+
+            if (!Main.dedServ)
+            {
+                DecorateTerrainTravel(npc);
             }
 
             // Grant the Updraft (ThermalRise) buff for the entire Destroyer fight, matching the legacy fight.
@@ -592,6 +685,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                     cards.Add(Move.HeadCharge);
                     cards.Add(Move.HeadCharge);
                     cards.Add(Move.HeadCharge);
+                    cards.Add(Move.HeadCharge);
                     cards.Add(Move.EnclosingCoil);
                     cards.Add(Move.EnclosingCoil);
                     cards.Add(Move.HullGlowSpin);
@@ -759,6 +853,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                         if (segment.type == NPCID.TheDestroyerBody && segment.realLife == npc.whoAmI)
                         {
                             segment.localAI[1] = 0f;
+                            TheDestroyer segmentState = segment.GetGlobalNPC<TheDestroyer>();
+                            if (segmentState.payloadReleaseTick >= 0 || segmentState.bombBayTellTick >= 0)
+                            {
+                                segmentState.payloadReleaseTick = -1;
+                                segmentState.bombBayTellTick = -1;
+                                segmentState.bombBaySide = 0;
+                                segment.netUpdate = true;
+                            }
                         }
                     }
                     break;
@@ -806,13 +908,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 SteerHead(npc, passDirection * shapeSpeed, 0.055f, 0.12f);
                 if (authority && timer >= duration)
                 {
-                    int extraRipple = 0;
+                    int passTicks = LastEmitterTick(npc) + PortTell + HullTell + DestroyerHullLaser.FireTicks
+                        + DestroyerHullLaser.FadeTicks + DestroyerHullLaser.PoseWaitTicks;
                     if (move == Move.RippleBroadside)
                     {
-                        extraRipple = RippleRepeat;
+                        passTicks = passTicks * 2 + RippleTurnTicks;
                     }
 
-                    SetBeat(npc, Beat.Active, LastEmitterTick(npc) + PortTell + HullTell + DestroyerHullLaser.FireTicks + DestroyerHullLaser.FadeTicks + extraRipple);
+                    SetBeat(npc, Beat.Active, passTicks);
                 }
 
                 return;
@@ -824,9 +927,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 firingSpeed = 11.5f;
             }
 
-            if (authority && move == Move.RippleBroadside && player != null && timer == RippleRepeat - 55)
+            if (authority && move == Move.RippleBroadside && player != null && timer == RippleRepeatTick - RippleTurnTicks + 1)
             {
-                // Curve the head back toward the player before the 180-tick repeat ripple starts so the body sweeps across the arena again.
+                // Turn after the first ripple has faded and give the hull time to follow before the next tell.
                 angle = (player.Center - npc.Center).ToRotation() - sweepSign * 0.0025f * timer;
                 npc.netUpdate = true;
             }
@@ -851,7 +954,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 EmitVolley(npc, timer - PortTell - 1, fireDirection);
                 if (move == Move.RippleBroadside)
                 {
-                    EmitVolley(npc, timer - PortTell - 1 - RippleRepeat, fireDirection);
+                    EmitVolley(npc, timer - PortTell - 1 - RippleRepeatTick, fireDirection);
                 }
 
                 if (timer >= duration)
@@ -958,9 +1061,8 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 return;
             }
 
-            int beamLifetime = OrbitTellTicks + OrbitFireTicks + DestroyerHullLaser.FadeTicks;
             int beamAge = timer - orbitBeamStart;
-            if (timer >= duration || (sequence == 2 && beamAge >= beamLifetime))
+            if (timer >= duration || (overhead && sequence == 2 && beamAge >= OrbitBeamLifetime))
             {
                 Vector2 exitDirection = new Vector2(heading, 0.45f);
                 goal = npc.Center + exitDirection * 480f;
@@ -969,79 +1071,23 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 return;
             }
 
-            if (sequence < 2 && timer + beamLifetime <= duration && (sequence == 0 || beamAge >= OrbitBeamSpacing))
+            if (overhead)
             {
-                float fireMiddle;
-                if (overhead)
+                if (sequence >= 2 || timer + OrbitBeamLifetime > duration || sequence > 0 && beamAge < OrbitBeamSpacing)
                 {
-                    // Cross the underside from one flank to the other. Each live arc is about 39 degrees.
-                    float lean = sequence == 0 ? -0.24f : 0.31f;
-                    fireMiddle = MathHelper.PiOver2 + sweepSign * lean;
-                }
-                else
-                {
-                    // Sweep across the center from opposite banks. The short beams leave exits near the rim.
-                    fireMiddle = sequence == 0 ? 0f : MathHelper.Pi;
+                    return;
                 }
 
-                // Lead the actual vent by the charge and half of the sweep, accounting for the hull update on the spawn tick.
-                float leadTicks = OrbitTellTicks + OrbitFireTicks * 0.5f;
-                if (overhead)
-                {
-                    leadTicks -= 2f;
-                }
-
+                // Sweep the underside from the opening flank to the opposite one.
+                float lean = sequence == 0 ? -0.24f : 0.31f;
+                float fireMiddle = MathHelper.PiOver2 + sweepSign * lean;
+                float leadTicks = OrbitTellTicks + OrbitFireTicks * 0.5f - 2f;
                 float tellAngle = fireMiddle - angularStep * leadTicks;
-                int portSide = overhead ? -sweepSign : sweepSign;
-                NPC emitter = null;
-                float bestAngleError = 0.16f;
-                foreach (NPC segment in Main.ActiveNPCs)
-                {
-                    if (segment.type != NPCID.TheDestroyerBody || segment.realLife != npc.whoAmI)
-                    {
-                        continue;
-                    }
-
-                    TheDestroyer segmentState = segment.GetGlobalNPC<TheDestroyer>();
-                    int ordinal = segmentState.spawnOrdinal;
-                    float turnError = Math.Abs(segmentState.hullTurn - angularStep);
-                    if (ordinal < 4 || ordinal == orbitBeamOrdinal || turnError > 0.006f)
-                    {
-                        continue;
-                    }
-
-                    Vector2 fromAnchor = segment.Center - anchor;
-                    float distanceToAnchor = fromAnchor.Length();
-                    if (Math.Abs(distanceToAnchor - radius) > 96f)
-                    {
-                        continue;
-                    }
-
-                    Vector2 portDirection = segment.rotation.ToRotationVector2() * portSide;
-                    Vector2 radialDirection = fromAnchor / distanceToAnchor;
-                    float radialAlignment = Vector2.Dot(radialDirection, portDirection);
-                    float expectedAlignment = overhead ? radialAlignment : -radialAlignment;
-                    float angleError = Math.Abs(MathHelper.WrapAngle(portDirection.ToRotation() - tellAngle));
-                    if (expectedAlignment >= 0.95f && angleError < bestAngleError)
-                    {
-                        bestAngleError = angleError;
-                        emitter = segment;
-                    }
-                }
-
+                int side = -sweepSign;
+                NPC emitter = FindOrbitEmitter(npc, radius, angularStep, tellAngle, side, true);
                 if (emitter != null)
                 {
-                    Vector2 direction = emitter.rotation.ToRotationVector2() * portSide;
-                    Vector2 muzzle = emitter.Center + direction * (HullPortOffset * emitter.scale);
-                    int portMode = overhead ? DestroyerHullLaser.OverheadPort : DestroyerHullLaser.EnclosingPort;
-                    if (portSide < 0)
-                    {
-                        portMode++;
-                    }
-
-                    int projectileIndex = Projectile.NewProjectile(emitter.GetSource_FromAI(), muzzle, direction,
-                        ModContent.ProjectileType<DestroyerHullLaser>(), EnemyDamage.Projectile(LaserDamage), 0f,
-                        Main.myPlayer, OrbitTellTicks, emitter.whoAmI, portMode);
+                    int projectileIndex = SpawnHullBeam(emitter, DestroyerHullLaser.OverheadPort, side, OrbitTellTicks);
                     if (projectileIndex < Main.maxProjectiles)
                     {
                         sequence++;
@@ -1050,7 +1096,140 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                         npc.netUpdate = true;
                     }
                 }
+
+                return;
             }
+
+            int lap = (timer - 1) / EnclosingLapTicks;
+            int lapEnd = (lap + 1) * EnclosingLapTicks;
+            bool firstLap = lap == 0;
+            int beamLifetime = firstLap ? OrbitBeamLifetime : OrbitBeamLifetime + EnclosingSecondFireTicks - OrbitFireTicks;
+            if (sequence > lap || timer < EnclosingFirstVolleyDelay || timer + beamLifetime > lapEnd)
+            {
+                return;
+            }
+
+            float[] volleyAngles = firstLap ? enclosingFirstVolleyAngles : enclosingSecondVolleyAngles;
+            float windupAngle = angularStep * OrbitTellTicks;
+            NPC[] emitters = new NPC[volleyAngles.Length];
+            for (int i = 0; i < emitters.Length; i++)
+            {
+                float tellAngle = volleyAngles[i] - windupAngle;
+                NPC emitter = FindOrbitEmitter(npc, radius, angularStep, tellAngle, sweepSign, false, emitters);
+                if (emitter == null)
+                {
+                    // A port across the ring can sweep the same axis when the near side is still closing.
+                    emitter = FindOrbitEmitter(npc, radius, angularStep, tellAngle + MathHelper.Pi, sweepSign, false, emitters);
+                    if (emitter == null)
+                    {
+                        return;
+                    }
+                }
+
+                emitters[i] = emitter;
+            }
+
+            int portMode = firstLap ? DestroyerHullLaser.EnclosingPort : DestroyerHullLaser.ExtendedEnclosingPort;
+            Span<int> spawnedBeams = stackalloc int[emitters.Length];
+            for (int i = 0; i < emitters.Length; i++)
+            {
+                int projectileIndex = SpawnHullBeam(emitters[i], portMode, sweepSign, OrbitTellTicks);
+                if (projectileIndex >= Main.maxProjectiles)
+                {
+                    for (int j = 0; j < i; j++)
+                    {
+                        Main.projectile[spawnedBeams[j]].Kill();
+                    }
+
+                    return;
+                }
+
+                spawnedBeams[i] = projectileIndex;
+            }
+
+            foreach (int projectileIndex in spawnedBeams)
+            {
+                if (Main.projectile[projectileIndex].ModProjectile is DestroyerHullLaser laser)
+                {
+                    laser.JoinVolley(emitters);
+                }
+            }
+
+            sequence = lap + 1;
+            npc.netUpdate = true;
+        }
+
+        private NPC FindOrbitEmitter(NPC head, float radius, float angularStep, float tellAngle, int side, bool overhead, NPC[] selectedEmitters = null)
+        {
+            NPC emitter = null;
+            float bestScore = float.MaxValue;
+            foreach (NPC segment in Main.ActiveNPCs)
+            {
+                if (segment.type != NPCID.TheDestroyerBody || segment.realLife != head.whoAmI)
+                {
+                    continue;
+                }
+
+                TheDestroyer segmentState = segment.GetGlobalNPC<TheDestroyer>();
+                int ordinal = segmentState.spawnOrdinal;
+                float turnError = Math.Abs(segmentState.hullTurn - angularStep);
+                if (ordinal < 4 || (overhead && ordinal == orbitBeamOrdinal) || turnError > 0.006f)
+                {
+                    continue;
+                }
+
+                if (selectedEmitters != null && Array.IndexOf(selectedEmitters, segment) >= 0)
+                {
+                    continue;
+                }
+
+                Vector2 fromAnchor = segment.Center - anchor;
+                float distanceToAnchor = fromAnchor.Length();
+                float innerAllowance = overhead ? 96f : 155f;
+                if (distanceToAnchor < radius - innerAllowance || distanceToAnchor > radius + 96f)
+                {
+                    continue;
+                }
+
+                Vector2 portDirection = segment.rotation.ToRotationVector2() * side;
+                Vector2 radialDirection = fromAnchor / distanceToAnchor;
+                float radialAlignment = Vector2.Dot(radialDirection, portDirection);
+                float expectedAlignment = overhead ? radialAlignment : -radialAlignment;
+                float angleError = Math.Abs(MathHelper.WrapAngle(portDirection.ToRotation() - tellAngle));
+                if (expectedAlignment < 0.95f || angleError >= 0.20f)
+                {
+                    continue;
+                }
+
+                float score = angleError;
+                if (!overhead)
+                {
+                    // Keep the emitter inside the chamber when turns overlap by favoring the inner turn.
+                    score += (distanceToAnchor - radius) * 0.0025f;
+                }
+
+                if (score < bestScore)
+                {
+                    bestScore = score;
+                    emitter = segment;
+                }
+            }
+
+            return emitter;
+        }
+
+        private static int SpawnHullBeam(NPC emitter, int portMode, int side, int tellTicks)
+        {
+            Vector2 direction = emitter.rotation.ToRotationVector2() * side;
+            Vector2 muzzle = emitter.Center + direction * (HullPortOffset * emitter.scale);
+            if (side < 0)
+            {
+                portMode++;
+            }
+
+            return Projectile.NewProjectile(emitter.GetSource_FromAI(), muzzle, direction,
+                ModContent.ProjectileType<DestroyerHullLaser>(), EnemyDamage.Projectile(LaserDamage), 0f,
+                Main.myPlayer, tellTicks, emitter.whoAmI, portMode);
         }
 
         private void RunCharge(NPC npc, Player player, bool authority)
@@ -1178,7 +1357,13 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 SteerHead(npc, shapeVelocity, 0.06f, 0.12f);
                 if (authority && timer >= duration)
                 {
-                    SetBeat(npc, Beat.Active, 95);
+                    int passTicks = 95;
+                    if (!dropMines)
+                    {
+                        passTicks += BombBayFlashFadeTicks;
+                    }
+
+                    SetBeat(npc, Beat.Active, passTicks);
                 }
 
                 return;
@@ -1197,14 +1382,41 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                             continue;
                         }
 
-                        int ordinal = segment.GetGlobalNPC<TheDestroyer>().spawnOrdinal;
+                        TheDestroyer segmentState = segment.GetGlobalNPC<TheDestroyer>();
+                        int ordinal = segmentState.spawnOrdinal;
                         if (ordinal <= 0 || ordinal % 5 != 0)
                         {
                             continue;
                         }
 
+                        if (!dropMines)
+                        {
+                            if (segmentState.bombBayTellTick >= 0 || timer + BombBayTellTicks + BombBayFlashFadeTicks > duration)
+                            {
+                                continue;
+                            }
+
+                            // Start the tell on approach so the moving bay is still over the lane at release.
+                            Vector2 travel = segmentState.hullTravel;
+                            Vector2 minimumTravel = new Vector2(-18f, -8f);
+                            Vector2 maximumTravel = new Vector2(18f, 8f);
+                            travel = Vector2.Clamp(travel, minimumTravel, maximumTravel);
+                            Vector2 expectedPosition = segment.Center + travel * BombBayTellTicks;
+                            bool overLane = expectedPosition.Y < player.Center.Y - 24f
+                                && Math.Abs(expectedPosition.X - player.Center.X) <= 640f;
+                            Vector2 normal = segment.rotation.ToRotationVector2();
+                            if (segment.Center.Y < player.Center.Y - 24f && overLane && Math.Abs(normal.Y) >= 0.35f)
+                            {
+                                segmentState.bombBaySide = normal.Y >= 0f ? 1 : -1;
+                                segmentState.bombBayTellTick = timer;
+                                segment.netUpdate = true;
+                            }
+
+                            continue;
+                        }
+
                         // MineDrop uses 4 fewer eligible fifth-segments (15..70 instead of 5..80) and caps at 8 dropped mines.
-                        if (dropMines && (ordinal < 15 || ordinal > 70 || sequence >= 8))
+                        if (ordinal < 15 || ordinal > 70 || sequence >= 8)
                         {
                             continue;
                         }
@@ -1214,28 +1426,32 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                         if (isAbovePlayer)
                         {
                             Vector2 dropPosition = segment.Center + new Vector2(0f, 18f);
-                            if (dropMines && Collision.SolidCollision(dropPosition - new Vector2(12f, 12f), 24, 24))
+                            if (Collision.SolidCollision(dropPosition - new Vector2(12f, 12f), 24, 24))
                             {
                                 continue;
                             }
 
-                            segment.localAI[1] = 1f;
-                            sequence++;
                             Vector2 dropVelocity = new Vector2(npc.velocity.X * 0.12f, 2.5f);
-                            if (dropMines)
-                            {
-                                Projectile.NewProjectile(segment.GetSource_FromAI(), dropPosition, dropVelocity,
-                                    ModContent.ProjectileType<ProximityMine>(), EnemyDamage.Projectile(BombDamage), 2f,
-                                    Main.myPlayer, 0f, 0f, npc.whoAmI + 1);
-                            }
-                            else
-                            {
-                                Projectile.NewProjectile(segment.GetSource_FromAI(), dropPosition, dropVelocity,
-                                    ModContent.ProjectileType<EnemyFirebomb>(), EnemyDamage.Projectile(BombDamage), 9f,
-                                    Main.myPlayer, 0f, 0f, 2f);
-                            }
+                            int projectileIndex = Projectile.NewProjectile(segment.GetSource_FromAI(), dropPosition, dropVelocity,
+                                ModContent.ProjectileType<ProximityMine>(), EnemyDamage.Projectile(BombDamage), 2f,
+                                Main.myPlayer, 0f, 0f, npc.whoAmI + 1);
 
-                            SoundEngine.PlaySound(SoundID.Item1, dropPosition);
+                            if (projectileIndex < Main.maxProjectiles)
+                            {
+                                segment.localAI[1] = 1f;
+                                segmentState.payloadReleaseTick = timer;
+                                segment.netUpdate = true;
+                                sequence++;
+                                if (sequence == 8)
+                                {
+                                    npc.netUpdate = true;
+                                }
+
+                                if (!Main.dedServ)
+                                {
+                                    SoundEngine.PlaySound(SoundID.Item1, dropPosition);
+                                }
+                            }
                         }
                     }
                 }
@@ -1695,6 +1911,75 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             return new Vector2(tileX * 16f + 8f, centerY * 16f + 32f);
         }
 
+        private static void DecorateTerrainTravel(NPC head)
+        {
+            Vector2 center = head.Center;
+            Vector2 previousCenter = head.oldPosition + head.Size * 0.5f;
+            Vector2 travel = center - previousCenter;
+            float distance = travel.Length();
+            if (distance < 1f || distance > 64f)
+            {
+                return;
+            }
+
+            // Follow the head's core in half-tile steps so a ram through a one-tile wall still kicks up dirt.
+            const int probeSize = 14;
+            Vector2 probeOffset = new Vector2(probeSize * 0.5f);
+            Vector2 direction = travel / distance;
+            int sampleCount = (int)MathF.Ceiling(distance / 8f);
+            Vector2 previousSample = previousCenter;
+            bool wasBuried = Collision.SolidCollision(previousSample - probeOffset, probeSize, probeSize);
+            bool touchedSolid = wasBuried;
+            Vector2 lastBuriedSample = previousSample;
+            for (int i = 1; i <= sampleCount; i++)
+            {
+                Vector2 sample = Vector2.Lerp(previousCenter, center, i / (float)sampleCount);
+                bool buried = Collision.SolidCollision(sample - probeOffset, probeSize, probeSize);
+                if (buried)
+                {
+                    touchedSolid = true;
+                    lastBuriedSample = sample;
+                }
+                else if (wasBuried)
+                {
+                    // Throw the debris into the open side of the crossing, along the actual heading.
+                    Vector2 burstOrigin = Vector2.Lerp(previousSample, sample, 0.5f) + direction * 4f;
+                    for (int j = 0; j < 20; j++)
+                    {
+                        Vector2 position = burstOrigin + Main.rand.NextVector2Circular(9f, 9f);
+                        Vector2 sprayDirection = direction.RotatedBy(Main.rand.NextFloat(-1.15f, 1.15f));
+                        Vector2 velocity = sprayDirection * Main.rand.NextFloat(3f, 11f);
+                        float scale = Main.rand.NextFloat(0.8f, 1.55f);
+                        Dust.NewDustPerfect(position, DustID.Dirt, velocity, Scale: scale);
+                    }
+
+                    Color soilColor = new Color(137, 99, 68);
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Vector2 position = burstOrigin + Main.rand.NextVector2Circular(12f, 12f);
+                        Vector2 velocity = direction * Main.rand.NextFloat(1.5f, 4f);
+                        velocity += Main.rand.NextVector2Circular(1.8f, 1.8f);
+                        Dust puff = Dust.NewDustPerfect(position, DustID.Smoke, velocity, 105, soilColor, 0.9f);
+                        puff.noGravity = true;
+                    }
+                }
+
+                previousSample = sample;
+                wasBuried = buried;
+            }
+
+            if (touchedSolid && Main.GameUpdateCount % 3 == 0)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 position = lastBuriedSample + Main.rand.NextVector2Circular(15f, 15f);
+                    Vector2 velocity = -direction * Main.rand.NextFloat(1f, 3.5f);
+                    velocity += Main.rand.NextVector2Circular(2f, 2f);
+                    Dust.NewDustPerfect(position, DustID.Dirt, velocity, Scale: 1.1f);
+                }
+            }
+        }
+
         private void DecorateMouth(NPC npc, int dustType, SoundStyle sound)
         {
             if (Main.dedServ)
@@ -1718,6 +2003,20 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             Vector2 facing = (head.rotation - MathHelper.PiOver2).ToRotationVector2();
             return head.Center + facing * (28f * head.scale);
         }
+
+        internal static bool CanFireHullPort(NPC segment)
+        {
+            // The follower moves through position corrections. NPC.velocity is zero on moving body pieces.
+            Vector2 travel = segment.GetGlobalNPC<TheDestroyer>().hullTravel;
+            return Math.Abs(travel.X) >= Math.Abs(travel.Y) * 0.30f;
+        }
+
+        internal static bool CanTrackHullLaser(NPC segment)
+        {
+            return Math.Abs(segment.GetGlobalNPC<TheDestroyer>().hullTurn) <= MaxHullBeamTurn;
+        }
+
+        private int RippleRepeatTick => (duration + RippleTurnTicks) / 2;
 
         private int EmitterStride
         {
@@ -1751,45 +2050,52 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             foreach (NPC segment in Main.ActiveNPCs)
             {
                 if (segment.type != NPCID.TheDestroyerBody || segment.realLife != head.whoAmI
-                    || segment.GetGlobalNPC<TheDestroyer>().spawnOrdinal != ordinal)
+                    || segment.GetGlobalNPC<TheDestroyer>().spawnOrdinal != ordinal || !CanTrackHullLaser(segment))
                 {
                     continue;
                 }
 
-                Vector2 origin = segment.Center;
-                Vector2 segmentNormal = segment.rotation.ToRotationVector2() * sweepSign;
-                if (Vector2.Dot(segmentNormal, direction) < 0f)
-                {
-                    segmentNormal = -segmentNormal;
-                }
-
-                Vector2 aimedDirection = Vector2.Lerp(direction, segmentNormal, 0.55f);
-                Vector2 beamVelocity = aimedDirection.SafeNormalize(direction);
-                Projectile.NewProjectile(segment.GetSource_FromAI(), origin, beamVelocity,
-                    ModContent.ProjectileType<DestroyerHullLaser>(), EnemyDamage.Projectile(LaserDamage), 0f,
-                    Main.myPlayer, HullTell, segment.whoAmI, 0.22f);
+                Vector2 normal = segment.rotation.ToRotationVector2();
+                int side = Vector2.Dot(normal, direction) >= 0f ? 1 : -1;
+                SpawnHullBeam(segment, DestroyerHullLaser.BroadsidePort, side, HullTell);
                 return;
             }
         }
 
         private void EmitHarassLaser(NPC head, Player player)
         {
-            int targetOrdinal = Main.rand.Next(1, 9) * 8;
+            NPC emitter = null;
+            float bestAlignment = 0.78f;
+            int firingSide = 0;
             foreach (NPC segment in Main.ActiveNPCs)
             {
-                if (segment.type != NPCID.TheDestroyerBody || segment.realLife != head.whoAmI
-                    || segment.GetGlobalNPC<TheDestroyer>().spawnOrdinal != targetOrdinal)
+                if (segment.type != NPCID.TheDestroyerBody || segment.realLife != head.whoAmI)
                 {
                     continue;
                 }
 
-                Vector2 toPlayer = (player.Center - segment.Center).SafeNormalize(Vector2.UnitY);
-                float spread = Main.rand.NextFloat(-0.18f, 0.18f);
-                Vector2 beamVelocity = toPlayer.RotatedBy(spread);
-                Projectile.NewProjectile(segment.GetSource_FromAI(), segment.Center, beamVelocity,
-                    ModContent.ProjectileType<DestroyerHullLaser>(), EnemyDamage.Projectile(LaserDamage), 0f,
-                    Main.myPlayer, HullTell + 10, segment.whoAmI, 0.20f);
-                return;
+                int ordinal = segment.GetGlobalNPC<TheDestroyer>().spawnOrdinal;
+                if (ordinal < 8 || ordinal > 64 || ordinal % 8 != 0 || !CanTrackHullLaser(segment))
+                {
+                    continue;
+                }
+
+                Vector2 normal = segment.rotation.ToRotationVector2();
+                Vector2 toPlayer = player.Center - segment.Center;
+                Vector2 aim = toPlayer.SafeNormalize(Vector2.Zero);
+                float facing = Vector2.Dot(normal, aim);
+                float alignment = Math.Abs(facing);
+                if (alignment > bestAlignment)
+                {
+                    emitter = segment;
+                    bestAlignment = alignment;
+                    firingSide = facing >= 0f ? 1 : -1;
+                }
+            }
+
+            if (emitter != null)
+            {
+                SpawnHullBeam(emitter, DestroyerHullLaser.HarassPort, firingSide, HullTell + 10);
             }
         }
 
@@ -1803,12 +2109,38 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             }
 
             int age = timer - (ordinal / stride - 1) * RippleDelay;
-            if (move == Move.RippleBroadside && age > RippleRepeat)
+            if (move == Move.RippleBroadside && age > RippleRepeatTick)
             {
-                age -= RippleRepeat;
+                age -= RippleRepeatTick;
             }
 
             return age;
+        }
+
+        private Vector2 BombBayPosition(NPC segment)
+        {
+            Vector2 axis = segment.rotation.ToRotationVector2();
+            float offset = HullPortOffset * segment.scale * bombBaySide;
+            return segment.Center + axis * offset;
+        }
+
+        private float BombBayFlash(TheDestroyer headState)
+        {
+            if (bombBayTellTick < 0 || headState.move != Move.BombDrop || headState.beat != Beat.Active)
+            {
+                return 0f;
+            }
+
+            if (payloadReleaseTick >= 0)
+            {
+                int elapsed = headState.timer - payloadReleaseTick;
+                float fade = MathHelper.Clamp(1f - elapsed / (float)BombBayFlashFadeTicks, 0f, 1f);
+                return fade * fade;
+            }
+
+            int chargeAge = headState.timer - bombBayTellTick;
+            float charge = MathHelper.Clamp(chargeAge / (float)BombBayTellTicks, 0f, 1f);
+            return 0.56f * charge * charge;
         }
 
         private int MissileBayAge(int ordinal)
@@ -1823,86 +2155,154 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             return timer - missileStep * MissileSegmentInterval;
         }
 
-        private static float ShotHeat(int age, int tellTicks, int liveTicks)
+        private static HullHeat ShotHeat(int age, int tellTicks, int liveTicks, out float armingProgress)
         {
+            armingProgress = 0f;
             if (age <= 0)
             {
-                return 0f;
+                return HullHeat.Cold;
+            }
+
+            if (age < HullArmingTicks)
+            {
+                armingProgress = age / (float)HullArmingTicks;
+                return HullHeat.Arming;
             }
 
             if (age < tellTicks)
             {
-                return MathHelper.Lerp(0.25f, 0.82f, age / (float)tellTicks);
+                return HullHeat.Warm;
             }
 
             int coolingAge = age - tellTicks - liveTicks;
             if (coolingAge < 0)
             {
-                return 1f;
+                return HullHeat.Hot;
             }
 
-            float cooling = MathHelper.Clamp(coolingAge / (float)DestroyerHullLaser.FadeTicks, 0f, 1f);
-            return MathHelper.Lerp(0.64f, 0f, cooling);
+            return coolingAge < DestroyerHullLaser.FadeTicks ? HullHeat.Warm : HullHeat.Cold;
         }
 
-        private float SegmentHeat(int ordinal)
+        internal HullHeat UpdateBeamHeat(int age, int leadTicks, int tellTicks, int liveTicks)
         {
-            if (ordinal <= 0)
+            HullHeat heat = ShotHeat(age + leadTicks, tellTicks + leadTicks, liveTicks, out float progress);
+            ulong tick = Main.GameUpdateCount;
+            // The synced projectile supplies the clock. When two beams share a vent, show the hotter one.
+            if (beamHeatTick != tick || heat > beamHeat)
             {
-                return 0f;
+                beamHeatTick = tick;
+                beamHeat = heat;
+                beamArmingProgress = progress;
             }
 
-            // Only a fully armed port reaches 1. Transitional light and charging red stay below contact damage.
-            if (move == Move.MissileBarrage)
+            return heat;
+        }
+
+        private HullHeat GetHullHeat(NPC npc, out float armingProgress)
+        {
+            armingProgress = 0f;
+            if (!TryGetHead(npc, out NPC head))
             {
-                if (beat == Beat.Active)
+                return HullHeat.Cold;
+            }
+
+            TheDestroyer headState = head.GetGlobalNPC<TheDestroyer>();
+            if (headState.beat == Beat.Retreat)
+            {
+                return HullHeat.Cold;
+            }
+
+            if (headState.move == Move.EnclosingCoil && headState.beat == Beat.Active)
+            {
+                return HullHeat.Hot;
+            }
+
+            if (npc.type == NPCID.TheDestroyer)
+            {
+                bool probeRam = move == Move.ProbeBarrage && (timer <= 55 || timer > 95 && timer <= 150);
+                bool ramming = beat == Beat.Active && (move == Move.HeadCharge || probeRam);
+                return ramming ? HullHeat.Hot : HullHeat.Warm;
+            }
+
+            if (spawnOrdinal <= 0)
+            {
+                return HullHeat.Cold;
+            }
+
+            HullHeat scheduledHeat = HullHeat.Cold;
+            if (headState.move == Move.EnclosingCoil)
+            {
+                // Keep the approaching hull cold, then show shutters and warm metal before making contact fully dangerous.
+                int armingAge = headState.timer - (EnclosingShapeTicks - HullArmingTicks - 32);
+                if (headState.beat == Beat.Shape && armingAge > 0)
                 {
-                    return ShotHeat(MissileBayAge(ordinal), MissileTelegraphTicks, MissileHotTicks);
+                    if (armingAge < HullArmingTicks)
+                    {
+                        armingProgress = armingAge / (float)HullArmingTicks;
+                        scheduledHeat = HullHeat.Arming;
+                    }
+                    else
+                    {
+                        scheduledHeat = HullHeat.Warm;
+                    }
                 }
-
-                return 0f;
-            }
-
-            if (move == Move.EnclosingCoil || move == Move.HullGlowSpin)
-            {
-                if (beat == Beat.Active && orbitBeamOrdinal == ordinal)
+                else if (headState.beat == Beat.Recovery && headState.timer < DestroyerHullLaser.FadeTicks)
                 {
-                    int beamAge = timer - orbitBeamStart + 1;
-                    return ShotHeat(beamAge, OrbitTellTicks, OrbitFireTicks);
+                    scheduledHeat = HullHeat.Warm;
                 }
-
-                if (move == Move.HullGlowSpin && beat == Beat.Shape)
+            }
+            else if (headState.move == Move.MissileBarrage && headState.beat == Beat.Active)
+            {
+                int missileAge = headState.MissileBayAge(spawnOrdinal);
+                scheduledHeat = ShotHeat(missileAge, MissileTelegraphTicks, MissileHotTicks, out armingProgress);
+            }
+            else if ((headState.move == Move.BombDrop || headState.move == Move.MineDrop) && spawnOrdinal % 5 == 0)
+            {
+                bool canDrop = headState.move == Move.BombDrop || spawnOrdinal >= 15 && spawnOrdinal <= 70 && headState.sequence < 8;
+                if (headState.beat == Beat.Shape && canDrop)
                 {
-                    float heatWave = MathF.Sin(timer * 0.09f - ordinal * 0.23f);
-                    return 0.22f + 0.18f * heatWave;
+                    int elapsed = headState.timer;
+                    if (elapsed < HullArmingTicks)
+                    {
+                        armingProgress = elapsed / (float)HullArmingTicks;
+                        scheduledHeat = HullHeat.Arming;
+                    }
+                    else
+                    {
+                        scheduledHeat = HullHeat.Warm;
+                    }
                 }
-
-                return 0f;
-            }
-
-            if (beat == Beat.Burrow || beat == Beat.Erupt || beat == Beat.Windup)
-            {
-                float progress = MathHelper.Clamp(timer / (float)duration, 0f, 1f);
-                float bandOrdinal = NPC.GetDestroyerSegmentsCount() * (1f - progress);
-                float distanceToBand = Math.Abs(ordinal - bandOrdinal);
-                return Math.Max(0f, 0.58f * (1f - distanceToBand / 10f));
-            }
-
-            if ((move == Move.BombDrop || move == Move.MineDrop) && (beat == Beat.Shape || beat == Beat.Active) && ordinal % 5 == 0)
-            {
-                if (move == Move.BombDrop || ordinal >= 15 && ordinal <= 70)
+                else if (headState.beat == Beat.Active)
                 {
-                    return 0.62f;
+                    if (payloadReleaseTick >= 0)
+                    {
+                        int payloadAge = headState.timer - payloadReleaseTick;
+                        int shotAge = HullArmingTicks + Math.Max(0, payloadAge);
+                        scheduledHeat = ShotHeat(shotAge, HullArmingTicks, PayloadHotTicks, out armingProgress);
+                    }
+                    else if (canDrop)
+                    {
+                        scheduledHeat = HullHeat.Warm;
+                    }
+                }
+            }
+            else if (headState.beat == Beat.Active)
+            {
+                int portAge = headState.PortAge(spawnOrdinal);
+                if (portAge > 0 && portAge <= PortTell)
+                {
+                    armingProgress = portAge / (float)HullArmingTicks;
+                    scheduledHeat = HullHeat.Arming;
                 }
             }
 
-            if (beat == Beat.Active)
+            if (Main.GameUpdateCount - beamHeatTick <= 1 && beamHeat >= scheduledHeat && beamHeat != HullHeat.Cold)
             {
-                int age = PortAge(ordinal);
-                return ShotHeat(age, PortTell + HullTell, DestroyerHullLaser.FireTicks);
+                armingProgress = beamArmingProgress;
+                return beamHeat;
             }
 
-            return 0f;
+            return scheduledHeat;
         }
 
         internal static bool TryGetHead(NPC segment, out NPC head)
@@ -2568,63 +2968,162 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 return true;
             }
 
-            if (!TryGetHead(npc, out NPC head))
+            Texture2D texture = TextureAssets.Npc[npc.type].Value;
+            Rectangle frame = npc.frame;
+            if (frame.Width <= 0 || frame.Height <= 0)
             {
                 return true;
             }
 
-            TheDestroyer state = head.GetGlobalNPC<TheDestroyer>();
-            if (npc.type != NPCID.TheDestroyer)
+            HullHeat heat = GetHullHeat(npc, out float armingProgress);
+            Vector2 spriteOrigin = frame.Size() * 0.5f;
+            bool flipped = npc.spriteDirection == 1;
+            SpriteEffects effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (npc.type == NPCID.TheDestroyer && move == Move.HeadCharge && beat == Beat.Active)
             {
-                float segmentHeat = state.SegmentHeat(spawnOrdinal);
-                DrawHull(npc, spriteBatch, screenPos, drawColor, segmentHeat, npc.type, false);
-                return false;
-            }
-
-            float glow = state.phase == 3 ? 0.72f : 0.10f;
-            if (state.beat == Beat.Burrow || state.beat == Beat.Erupt)
-            {
-                glow = Math.Max(glow, 0.85f);
-            }
-            else if (state.beat == Beat.Recovery && state.vulnerable)
-            {
-                float fraction = MathHelper.Clamp(state.timer / (float)state.duration, 0f, 1f);
-                glow = MathHelper.Lerp(1f, glow, fraction);
-            }
-            else if (state.beat == Beat.Windup)
-            {
-                int bodyCount = NPC.GetDestroyerSegmentsCount();
-                float fraction = MathHelper.Clamp(state.timer / (float)state.duration, 0f, 1f);
-                float band = bodyCount * (1f - fraction);
-                float difference = Math.Abs(band);
-                glow = Math.Max(glow, 1f - difference / (state.move == Move.MawBeam ? 16f : 9f));
-            }
-            else if (state.move == Move.HullGlowSpin && (state.beat == Beat.Shape || state.beat == Beat.Active))
-            {
-                glow = Math.Max(glow, 0.84f);
-            }
-
-            if (state.move == Move.HeadCharge && state.beat == Beat.Active)
-            {
-                Texture2D texture = TextureAssets.Npc[npc.type].Value;
-                Vector2 origin = npc.frame.Size() * 0.5f;
-                for (int i = npc.oldPos.Length - 1; i > 0; i -= 2)
+                for (int i = npc.oldPos.Length - 1; i > 0; i--)
                 {
                     if (npc.oldPos[i] != Vector2.Zero)
                     {
                         Vector2 trailCenter = npc.oldPos[i] + npc.Size * 0.5f;
-                        float opacity = 0.2f * (1f - i / (float)npc.oldPos.Length);
-                        spriteBatch.Draw(texture, trailCenter - screenPos, npc.frame, Color.OrangeRed * opacity,
-                            npc.rotation, origin, npc.scale, SpriteEffects.None, 0f);
+                        float opacity = 0.16f * (1f - i / (float)npc.oldPos.Length);
+                        Color trailColor = drawColor * opacity;
+                        spriteBatch.Draw(texture, trailCenter - screenPos, frame, trailColor,
+                            npc.rotation, spriteOrigin, npc.scale, effects, 0f);
                     }
                 }
             }
 
-            DrawHull(npc, spriteBatch, screenPos, drawColor, glow, npc.type);
+            // Sample across the rotating sprite. Shared grid vertices interpolate the light into a continuous shadow.
+            Vector2 spriteCenter = npc.Center;
+            for (int row = 0; row < 3; row++)
+            {
+                float acrossHeight = row * 0.5f;
+                for (int column = 0; column < 3; column++)
+                {
+                    float acrossWidth = column * 0.5f;
+                    Vector2 localPosition = new Vector2(frame.Width * acrossWidth, frame.Height * acrossHeight) - spriteOrigin;
+                    Vector2 worldPosition = spriteCenter + (localPosition * npc.scale).RotatedBy(npc.rotation);
+                    Vector3 sampledLight = Lighting.GetSubLight(worldPosition) * Lighting.GlobalBrightness;
+                    Color light = npc.GetAlpha(new Color(sampledLight));
+                    float frameX = flipped ? 1f - acrossWidth : acrossWidth;
+                    Vector2 uv = new Vector2((frame.X + frameX * frame.Width) / texture.Width,
+                        (frame.Y + acrossHeight * frame.Height) / texture.Height);
+                    hullVertices[row * 3 + column] = new VertexPositionColorTexture(new Vector3(worldPosition, 0f), light, uv);
+                }
+            }
+
+            GraphicsDevice device = spriteBatch.GraphicsDevice;
+            if (hullLightingEffect == null || hullLightingEffect.IsDisposed)
+            {
+                hullLightingEffect = new BasicEffect(device)
+                {
+                    VertexColorEnabled = true,
+                    TextureEnabled = true,
+                    FogEnabled = false,
+                    LightingEnabled = false
+                };
+            }
+
+            spriteBatch.End();
+            try
+            {
+                device.BlendState = BlendState.AlphaBlend;
+                device.DepthStencilState = DepthStencilState.None;
+                device.RasterizerState = RasterizerState.CullNone;
+                device.SamplerStates[0] = SamplerState.PointClamp;
+                hullLightingEffect.Texture = texture;
+                hullLightingEffect.World = Matrix.CreateTranslation(-screenPos.X, -screenPos.Y, 0f);
+                hullLightingEffect.View = Main.GameViewMatrix.TransformationMatrix;
+                Viewport viewport = device.Viewport;
+                hullLightingEffect.Projection = Matrix.CreateOrthographicOffCenter(0f, viewport.Width, viewport.Height, 0f, -1f, 1f);
+                hullLightingEffect.CurrentTechnique.Passes[0].Apply();
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, hullVertices, 0, hullVertices.Length,
+                    hullIndices, 0, hullIndices.Length / 3);
+
+                if (heat != HullHeat.Cold)
+                {
+                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp,
+                        DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                    try
+                    {
+                        Vector2 drawPosition = spriteCenter - screenPos;
+                        if (heat == HullHeat.Arming)
+                        {
+                            // Keep the matte warning readable in darkness while the vent's emissive is still off.
+                            Color ambient = hullVertices[4].Color;
+                            Color shutterLight = new Color(Math.Max(ambient.R, (byte)80), Math.Max(ambient.G, (byte)80),
+                                Math.Max(ambient.B, (byte)80), ambient.A);
+                            Vector2 shutterOrigin = new Vector2(3f, 5f);
+                            float separation = MathHelper.Lerp(2.5f, 11f, armingProgress);
+                            for (int side = -1; side <= 1; side += 2)
+                            {
+                                int sourceSide = flipped ? -side : side;
+                                int sourceX = frame.X + frame.Width / 2 + sourceSide * 10 - 3;
+                                Rectangle shutter = new Rectangle(sourceX, frame.Y + frame.Height / 2 - 5, 6, 10);
+                                Vector2 localOffset = new Vector2(separation * side * npc.scale, 0f);
+                                Vector2 shutterPosition = drawPosition + localOffset.RotatedBy(npc.rotation);
+                                spriteBatch.Draw(texture, shutterPosition, shutter, shutterLight,
+                                    npc.rotation, shutterOrigin, npc.scale, effects, 0f);
+                            }
+                        }
+                        else
+                        {
+                            Texture2D emissive = TextureAssets.Dest[npc.type - NPCID.TheDestroyer].Value;
+                            Color light = new Color(255, 64, 28, 0);
+                            if (heat == HullHeat.Hot)
+                            {
+                                // Keep the same vent silhouette. Solar Dye adds amber motion over the hot core only.
+                                light = new Color(255, 215, 155, 0);
+                            }
+
+                            spriteBatch.Draw(emissive, drawPosition, frame, light, npc.rotation, spriteOrigin, npc.scale, effects, 0f);
+                            if (bombBayTellTick >= 0 && TryGetHead(npc, out NPC owner))
+                            {
+                                float flash = BombBayFlash(owner.GetGlobalNPC<TheDestroyer>());
+                                if (flash > 0f)
+                                {
+                                    bombBayFlare ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/T_flare8_vfx", AssetRequestMode.ImmediateLoad);
+                                    Texture2D flareTexture = bombBayFlare.Value;
+                                    Vector2 flareOrigin = flareTexture.Size() * 0.5f;
+                                    Vector2 bay = BombBayPosition(npc) - screenPos;
+                                    float flareWidth = MathHelper.Lerp(26f, 48f, flash) * npc.scale;
+                                    Color chargeColor = new Color(255, 65, 18, 0);
+                                    Color releaseColor = new Color(255, 236, 170, 0);
+                                    Color flareColor = payloadReleaseTick >= 0 ? releaseColor : chargeColor;
+                                    spriteBatch.Draw(flareTexture, bay, null, flareColor * flash,
+                                        npc.rotation, flareOrigin, flareWidth / flareTexture.Width, SpriteEffects.None, 0f);
+                                }
+                            }
+
+                            if (heat == HullHeat.Hot)
+                            {
+                                int dyeIndex = GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye);
+                                ArmorShaderData shader = GameShaders.Armor.GetSecondaryShader(dyeIndex, Main.LocalPlayer);
+                                shader.UseColor(Color.OrangeRed);
+                                shader.Apply(null);
+                                Color flare = new Color(255, 182, 82, 0);
+                                spriteBatch.Draw(emissive, drawPosition, frame, flare,
+                                    npc.rotation, spriteOrigin, npc.scale, effects, 0f);
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        spriteBatch.End();
+                    }
+                }
+            }
+            finally
+            {
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
+                    DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            }
+
             return false;
         }
 
-        internal static void DrawHull(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, float glow, int vanillaType, bool drawIdleEffects = true)
+        internal static void DrawHull(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor, float glow, int vanillaType)
         {
             Texture2D texture = TextureAssets.Npc[npc.type].Value;
             Rectangle frame = npc.frame;
@@ -2636,36 +3135,20 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             Vector2 origin = frame.Size() * 0.5f;
             Vector2 drawPosition = npc.Center - screenPos;
             SpriteEffects effects = npc.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            if (!drawIdleEffects && glow <= 0f)
-            {
-                spriteBatch.Draw(texture, drawPosition, frame, drawColor, npc.rotation, origin, npc.scale, effects, 0f);
-                return;
-            }
-
             ArmorShaderData shader = GameShaders.Armor.GetSecondaryShader(GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
             spriteBatch.End();
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
             try
             {
-                Color heatColor = drawIdleEffects ? Color.OrangeRed : new Color(255, 48, 27);
-                shader.UseColor(Color.Lerp(Color.Black, heatColor, glow));
+                shader.UseColor(Color.Lerp(Color.Black, Color.OrangeRed, glow));
                 shader.Apply(null);
                 Color opaqueColor = new Color((int)drawColor.R, (int)drawColor.G, (int)drawColor.B, 255);
                 spriteBatch.Draw(texture, drawPosition, frame, opaqueColor, npc.rotation, origin, npc.scale, effects, 0f);
-                if (drawColor != Color.Black || !drawIdleEffects)
+                if (drawColor != Color.Black)
                 {
                     Texture2D emissive = TextureAssets.Dest[vanillaType - NPCID.TheDestroyer].Value;
                     Color ports = new Color(255, 255, 255, 0);
-                    if (!drawIdleEffects)
-                    {
-                        ports = new Color(255, 60, 35, 0) * (glow * 0.70f);
-                        if (glow >= 1f)
-                        {
-                            ports = new Color(255, 220, 185, 0);
-                        }
-                    }
-
                     spriteBatch.Draw(emissive, drawPosition, frame, ports, npc.rotation, origin, npc.scale, effects, 0f);
                 }
             }

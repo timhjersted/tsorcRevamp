@@ -2142,27 +2142,43 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public bool FromMirrorPuppet;
 
         /// <summary>NPC index of the puppet this projectile belongs to, or -1. Lets its AI run inside that puppet's
-        /// swap. Local to the owner's client (OnSpawn only runs where the projectile was created).</summary>
+        /// swap. Set on spawn and synced with the projectile.</summary>
         public int PuppetNpcIndex = -1;
 
         /// <summary>
         /// Where a projectile's owner VISUALLY is: the puppet's centre for a projectile a mirror puppet owns, otherwise
-        /// the owning player's centre. For VFX that re-anchor to <c>Main.player[owner]</c> at DRAW time (the Slash
-        /// trail does): draw runs outside any swap, so reading the player there pulls a puppet's effect onto the
-        /// player. The puppet's hitbox is player-sized, so its Center is where the swapped owner stood.
+        /// the owning player's centre. Draw and collision run outside the swap, so owner-anchored effects
+        /// use the synced puppet index to find the same origin as their firing AI.
         /// </summary>
         public static Vector2 GetOwnerVisualCenter(Projectile projectile)
         {
             MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
-            int puppetIndex = tag.PuppetNpcIndex;
-            bool puppetIndexValid = tag.FromMirrorPuppet && puppetIndex >= 0 && puppetIndex < Main.maxNPCs;
+            MirrorPuppetNPC puppet = tag.GetFiringPuppet(projectile);
 
-            if (puppetIndexValid && Main.npc[puppetIndex].active && Main.npc[puppetIndex].ModNPC is MirrorPuppetNPC)
+            if (puppet != null)
             {
-                return Main.npc[puppetIndex].Center;
+                return puppet.NPC.Center;
             }
 
-            return Main.player[projectile.owner].Center;
+            return tag.FromMirrorPuppet ? projectile.Center : Main.player[projectile.owner].Center;
+        }
+
+        internal MirrorPuppetNPC GetFiringPuppet(Projectile projectile)
+        {
+            int puppetIndex = PuppetNpcIndex;
+            bool puppetIndexValid = FromMirrorPuppet && puppetIndex >= 0 && puppetIndex < Main.maxNPCs;
+
+            if (puppetIndexValid)
+            {
+                NPC npc = Main.npc[puppetIndex];
+
+                if (npc.active && npc.ModNPC is MirrorPuppetNPC puppet && puppet.OwnerIndex == projectile.owner)
+                {
+                    return puppet;
+                }
+            }
+
+            return null;
         }
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)

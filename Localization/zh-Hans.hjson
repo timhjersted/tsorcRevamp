@@ -7605,7 +7605,7 @@ Mods: {
 				/* Tooltip:
 					'''
 					Summons a Soul Mimic: a liquid-metal copy of you
-					It fights with the weapon you are holding and those in hotbar slots 1 and 2
+					It copies your hotbar weapons when summoned and picks one that can reach its target
 					It has {3} times your max health, your defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
 					Takes all your summoner slots, up to {0}
 					Lasts {1} minutes, then dissolves

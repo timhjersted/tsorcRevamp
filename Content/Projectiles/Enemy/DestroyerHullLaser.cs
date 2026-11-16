@@ -17,27 +17,38 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal const int FadeTicks = 12;
         internal const int OverheadPort = 2;
         internal const int EnclosingPort = 4;
+        internal const int ExtendedEnclosingPort = 6;
+        internal const int BroadsidePort = 8;
+        internal const int HarassPort = 10;
+        internal const int PoseWaitTicks = 18;
+        private const int EnclosingLength = 1470;
         private const int Length = 2000;
         private const int ProbeLength = 2600;
         private const int OverheadLength = 1120;
-        private const int EnclosingLength = 740;
         private const int HitWidth = 22;
         private const int ProbeLiveTicks = 16;
         private const float PixelBlockSize = 3f;
         private static ReLogic.Content.Asset<Effect> laserEffect;
         private static ReLogic.Content.Asset<Texture2D> turbulentNoise;
         private Vector2 initialDirection;
-        private float initialHostRotation;
+        private int poseWait;
+        private NPC[] volleyEmitters;
         private int age;
         private bool initialized;
         private bool played;
+        private bool armed;
+        private bool fizzled;
+        private bool turnSuppressed;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyLingeringLaser));
 
         private int TellTicks => (int)Projectile.ai[0];
         private int HostIndex => (int)Projectile.ai[1];
         private bool IsProbe => Projectile.ai[2] < 0f;
-        private bool IsOrbitBeam => Projectile.ai[2] >= OverheadPort;
+        private bool IsOrbitBeam => Projectile.ai[2] >= OverheadPort && Projectile.ai[2] < BroadsidePort;
+        private bool IsEnclosing => Projectile.ai[2] >= EnclosingPort && Projectile.ai[2] < BroadsidePort;
+        private int PortSide => (int)Projectile.ai[2] % 2 == 0 ? 1 : -1;
+        private int ArmingLead => Projectile.ai[2] >= BroadsidePort && Projectile.ai[2] < HarassPort ? TheDestroyer.PortTell : 0;
 
         private int EndTick
         {
@@ -50,7 +61,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 if (IsOrbitBeam)
                 {
-                    return TellTicks + TheDestroyer.OrbitFireTicks;
+                    int liveTicks = Projectile.ai[2] >= ExtendedEnclosingPort ? TheDestroyer.EnclosingSecondFireTicks : TheDestroyer.OrbitFireTicks;
+                    return TellTicks + liveTicks;
                 }
 
                 return TellTicks + FireTicks;
@@ -68,7 +80,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 if (IsOrbitBeam)
                 {
-                    return Projectile.ai[2] >= EnclosingPort ? EnclosingLength : OverheadLength;
+                    return IsEnclosing ? EnclosingLength : OverheadLength;
                 }
 
                 return Length;
@@ -103,7 +115,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool ShouldUpdatePosition() => false;
 
-        public override bool? CanDamage() => initialized && age >= TellTicks && age < EndTick;
+        public override bool? CanDamage() => initialized && !turnSuppressed && (IsProbe || armed) && age >= TellTicks && age < EndTick;
+
+        internal void JoinVolley(NPC[] emitters)
+        {
+            // The server evaluates these emitters together, then sends each beam's arm or fade decision.
+            volleyEmitters = emitters;
+        }
 
         public override void AI()
         {
@@ -135,11 +153,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
+            // Cut the beam before following a fast bend. Clients hide their local sweep while the server confirms the kill.
+            turnSuppressed = !IsProbe && !TheDestroyer.CanTrackHullLaser(host);
+            if (turnSuppressed && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.Kill();
+                return;
+            }
+
             if (!initialized)
             {
                 initialized = true;
                 initialDirection = Projectile.velocity.SafeNormalize(Vector2.UnitY);
-                initialHostRotation = host.rotation;
             }
 
             // Keep the telegraph and active laser tethered to the emitting probe or body segment.
@@ -159,34 +184,95 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
                 Projectile.velocity = initialDirection;
             }
-            else if (IsOrbitBeam)
+            else
             {
                 // The port mount and the beam share the segment's facing every tick, including during the tell.
-                int portMode = (int)Projectile.ai[2];
-                int portSide = portMode % 2 == 0 ? 1 : -1;
-                Vector2 portDirection = host.rotation.ToRotationVector2() * portSide;
+                Vector2 portDirection = host.rotation.ToRotationVector2() * PortSide;
                 Projectile.Center = host.Center + portDirection * (TheDestroyer.HullPortOffset * host.scale);
                 Projectile.velocity = portDirection;
             }
-            else
+            if (IsProbe || armed || fizzled || age < TellTicks - 1)
             {
-                float followFactor = MathHelper.Clamp(Projectile.ai[2], 0f, 1f);
-                float deltaRotation = MathHelper.WrapAngle(host.rotation - initialHostRotation) * followFactor;
-                Projectile.velocity = initialDirection.RotatedBy(deltaRotation);
+                age++;
+            }
+            else if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                // An enclosing volley shares the movement gate so the ports come on together.
+                bool poseReady = TheDestroyer.CanFireHullPort(host);
+                if (poseReady && volleyEmitters != null)
+                {
+                    foreach (NPC emitter in volleyEmitters)
+                    {
+                        if (emitter == host)
+                        {
+                            continue;
+                        }
+
+                        if (!emitter.active || emitter.type != NPCID.TheDestroyerBody || emitter.realLife != host.realLife
+                            || !TheDestroyer.CanFireHullPort(emitter))
+                        {
+                            poseReady = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (poseReady)
+                {
+                    armed = true;
+                    age++;
+                    Projectile.netUpdate = true;
+                }
+                else if (++poseWait >= PoseWaitTicks)
+                {
+                    fizzled = true;
+                    age = EndTick;
+                    Projectile.netUpdate = true;
+                }
             }
 
-            age++;
             if (age >= EndTick + FadeTicks)
             {
                 Projectile.Kill();
                 return;
             }
 
-            if (!Main.dedServ)
+            bool bodyEmitter = !IsProbe && host.type == NPCID.TheDestroyerBody;
+            bool emitChargeDust = true;
+            if (bodyEmitter && !turnSuppressed)
             {
+                TheDestroyer segment = host.GetGlobalNPC<TheDestroyer>();
+                TheDestroyer.HullHeat heat = segment.UpdateBeamHeat(age, ArmingLead, TellTicks, EndTick - TellTicks);
+                emitChargeDust = heat >= TheDestroyer.HullHeat.Warm;
+            }
+
+            if (!Main.dedServ && !turnSuppressed)
+            {
+                if (bodyEmitter && emitChargeDust && age < EndTick)
+                {
+                    // Keep the flame at the middle of the hull. Charge and release share the same port.
+                    int warmStart = TheDestroyer.HullArmingTicks - ArmingLead;
+                    int warmDuration = Math.Max(1, TellTicks - warmStart);
+                    float charge = MathHelper.Clamp((age - warmStart) / (float)warmDuration, 0f, 1f);
+                    bool firing = age >= TellTicks;
+                    int interval = (int)MathHelper.Lerp(5f, 2f, charge);
+                    if (age == warmStart || age == TellTicks || Main.GameUpdateCount % interval == 0)
+                    {
+                        float scatter = 1.6f * host.scale;
+                        Vector2 flameOrigin = host.Center + Main.rand.NextVector2Circular(scatter, scatter);
+                        float flameSpeed = MathHelper.Lerp(0.45f, 1.65f, charge);
+                        Vector2 flameVelocity = Projectile.velocity * flameSpeed;
+                        flameVelocity += Main.rand.NextVector2Circular(0.45f, 0.45f);
+                        float scale = MathHelper.Lerp(0.75f, 1.15f, charge);
+                        int dustType = firing ? DustID.Torch : DustID.OrangeTorch;
+                        Dust flame = Dust.NewDustPerfect(flameOrigin, dustType, flameVelocity, Scale: scale);
+                        flame.noGravity = true;
+                    }
+                }
+
                 if (age < TellTicks)
                 {
-                    if (age % 5 == 0)
+                    if (!bodyEmitter && age % 5 == 0)
                     {
                         Vector2 chargeOffset = Main.rand.NextVector2CircularEdge(18f, 18f);
                         Vector2 chargeVelocity = -chargeOffset * 0.12f + host.velocity;
@@ -222,7 +308,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 writer.Write((short)age);
                 writer.WriteVector2(initialDirection);
-                writer.Write(initialHostRotation);
+                writer.Write(armed);
+                writer.Write(fizzled);
             }
         }
 
@@ -233,7 +320,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 initialized = true;
                 age = reader.ReadInt16();
                 initialDirection = reader.ReadVector2();
-                initialHostRotation = reader.ReadSingle();
+                armed = reader.ReadBoolean();
+                fizzled = reader.ReadBoolean();
             }
         }
 
@@ -255,18 +343,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (!initialized)
+            if (!initialized || turnSuppressed)
             {
-                return false;
-            }
-
-            if (IsOrbitBeam && age < TellTicks)
-            {
-                Vector2 tellEnd = Projectile.Center + Projectile.velocity * BeamLength;
-                float progress = age / (float)TellTicks;
-                float tellOpacity = MathHelper.Lerp(0.28f, 0.85f, progress);
-                DrawBand(Main.spriteBatch, Projectile.Center, tellEnd, Color.OrangeRed * (tellOpacity * 0.6f), 5f);
-                DrawBand(Main.spriteBatch, Projectile.Center, tellEnd, Color.Orange * tellOpacity, 2f);
                 return false;
             }
 
@@ -275,7 +353,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Effect effect = laserEffect.Value;
             Texture2D primary = turbulentNoise.Value;
 
-            bool firing = age >= TellTicks;
+            bool firing = !fizzled && age >= TellTicks;
             float beamLength = BeamLength;
             float drawWidth = 110f;
             float opacity = 0.35f;
@@ -288,6 +366,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 float pulse = Math.Abs((float)Math.Cos(age / 14f)) * 0.16f;
                 drawWidth = MathHelper.Lerp(90f, 130f, chargeRatio);
                 opacity = 0.24f + 0.24f * chargeRatio + pulse;
+                if (fizzled)
+                {
+                    opacity *= MathHelper.Clamp((EndTick + FadeTicks - age) / (float)FadeTicks, 0f, 1f);
+                }
                 scroll = 10f * age / primary.Width;
                 coreIntensity = 0f;
             }
@@ -362,7 +444,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnKill(int timeLeft)
         {
-            if (Main.dedServ || !initialized)
+            if (Main.dedServ || !initialized || !IsProbe && age + ArmingLead < TheDestroyer.HullArmingTicks)
             {
                 return;
             }

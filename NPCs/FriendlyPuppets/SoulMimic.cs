@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.IO;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
@@ -63,9 +65,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// The server also waits this long after spawning before it treats "owner has no buff" as a dismissal.</summary>
         public const int SummonBuffGraceTicks = 300;
 
-        /// <summary>Loadout slot 0 = the owner's held weapon (tracked live); 1 and 2 = hotbar slots 1 and 2,
-        /// snapshotted at summon. Design §5.</summary>
-        private const int LoadoutSize = 3;
+        private const int HotbarSlots = 10;
+        private const int HoverBarWidth = 38;
+        private const int HoverBarHeight = 5;
 
         // ── Tuning (ESTIMATE — first pass, tune in play) ────────────────────────────────────────
         /// <summary>Lowering one weapon and raising the next: no attacks for this long. Design §5.</summary>
@@ -177,8 +179,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private MimicStats _stats;
         private int _estusCharges;
 
+        // The server snapshots the hotbar at summon and sends the same slot assignments to the owner.
+        private readonly int[] _loadoutTypes = new int[HotbarSlots];
+        private readonly int[] _loadoutPrefixes = new int[HotbarSlots];
+
         // Server-only.
-        private readonly int[] _serverLoadoutTypes = new int[LoadoutSize];
         private Vector2 _heldWaypoint;
         private bool _hasHeldWaypoint;
         private int _retargetTimer;
@@ -202,11 +207,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         // All machines: local timer for the current state (reset when ai[3] changes), used for drink pose/progress.
         private MimicState _lastSeenState = MimicState.Fight;
         private int _stateTimer;
+        private byte _syncedStaminaFill = byte.MaxValue;
 
         // Owner-client only.
         private MimicState _ownerLastState = MimicState.Summoning;
-        private readonly Item[] _ownerLoadout = new Item[LoadoutSize];
-        private bool _ownerLoadoutInitialized;
+        private readonly Item[] _ownerLoadout = new Item[HotbarSlots];
         private bool _ownerGreatswordSwingActive;
         private int _ownerStationaryTicks;
         private bool _ceruleanInitialized;
@@ -240,7 +245,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             get
             {
-                bool slotValid = ActiveSlot >= 0 && ActiveSlot < LoadoutSize;
+                bool slotValid = ActiveSlot >= 0 && ActiveSlot < HotbarSlots;
 
                 if (!slotValid)
                 {
@@ -258,6 +263,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // Mortal, unlike the base puppet. HP/defense come from the owner at spawn (SpawnFor / ReceiveExtraAI).
             NPC.dontTakeDamage = false;
             NPC.immortal = false;
+            NPC.ShowNameOnHover = true;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath6;
             NPC.value = 0f;
@@ -272,6 +278,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             navigation.MaxJumpPower = JumpPower;
             navigation.MaxJumpBoost = JumpBoost;
             NPC.ai[1] = -1f;
+            NPC.ai[2] = -1f;
         }
 
         // ── Spawning ────────────────────────────────────────────────────────────────────────────
@@ -344,7 +351,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             int spawnX = (int)(owner.Center.X - owner.direction * SummonOffset);
             int spawnY = (int)owner.Bottom.Y;
-            int npcIndex = NPC.NewNPC(owner.GetSource_FromThis(), spawnX, spawnY, mimicType, 0, ownerIndex, -1f, 0f, (int)MimicState.Summoning);
+            int npcIndex = NPC.NewNPC(owner.GetSource_FromThis(), spawnX, spawnY, mimicType, 0, ownerIndex, -1f, -1f, (int)MimicState.Summoning);
 
             if (npcIndex < 0 || npcIndex >= Main.maxNPCs)
             {
@@ -357,14 +364,28 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             npc.life = npc.lifeMax;
             npc.direction = owner.direction;
 
-            // Server's view of the loadout (types only — the owner client holds the real Item clones).
-            Item heldItem = owner.HeldItem;
-            Item slotOneItem = owner.inventory[0];
-            Item slotTwoItem = owner.inventory[1];
-            mimic._serverLoadoutTypes[0] = IsUsableWeapon(heldItem, owner) ? heldItem.type : 0;
-            mimic._serverLoadoutTypes[1] = IsUsableWeapon(slotOneItem, owner) ? slotOneItem.type : 0;
-            mimic._serverLoadoutTypes[2] = IsUsableWeapon(slotTwoItem, owner) ? slotTwoItem.type : 0;
-            npc.ai[2] = FirstFilledSlot(mimic._serverLoadoutTypes);
+            for (int slot = 0; slot < HotbarSlots; slot++)
+            {
+                Item item = owner.inventory[slot];
+
+                if (!IsLoadoutWeapon(item))
+                {
+                    continue;
+                }
+
+                mimic._loadoutTypes[slot] = item.type;
+                mimic._loadoutPrefixes[slot] = item.prefix;
+
+                if (Main.netMode == NetmodeID.SinglePlayer)
+                {
+                    mimic._ownerLoadout[slot] = item.Clone();
+                }
+
+                if (mimic.ActiveSlot < 0 && (item.useAmmo == AmmoID.None || owner.HasAmmo(item)))
+                {
+                    npc.ai[2] = slot;
+                }
+            }
 
             if (Main.netMode == NetmodeID.Server)
             {
@@ -385,15 +406,30 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public override void SendExtraAI(BinaryWriter writer)
         {
             _stats.Write(writer);
+            writer.Write7BitEncodedInt(NPC.life);
             writer.Write((byte)_estusCharges);
+
+            for (int slot = 0; slot < HotbarSlots; slot++)
+            {
+                writer.Write7BitEncodedInt(_loadoutTypes[slot]);
+                writer.Write7BitEncodedInt(_loadoutPrefixes[slot]);
+            }
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             MimicStats stats = MimicStats.Read(reader);
-            int estusCharges = reader.ReadByte();
             ApplyStats(stats);
-            _estusCharges = estusCharges;
+
+            // Vanilla resolves full health before our custom maximum arrives, so send the exact life with it.
+            NPC.life = reader.Read7BitEncodedInt();
+            _estusCharges = reader.ReadByte();
+
+            for (int slot = 0; slot < HotbarSlots; slot++)
+            {
+                _loadoutTypes[slot] = reader.Read7BitEncodedInt();
+                _loadoutPrefixes[slot] = reader.Read7BitEncodedInt();
+            }
         }
 
         // ── AI (server decides; every machine advances the local state timer) ──────────────────────
@@ -628,14 +664,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 NPC.Bottom = owner.Bottom;
                 NPC.velocity = Vector2.Zero;
                 NPC.netUpdate = true;
-            }
-
-            // ── Loadout slot 0 follows the owner's held weapon (last valid one kept) ──
-            Item heldItem = owner.HeldItem;
-
-            if (IsUsableWeapon(heldItem, owner))
-            {
-                _serverLoadoutTypes[0] = heldItem.type;
             }
 
             // ── Target: the owner's minion target first, else the nearest threat near the owner ──
@@ -929,56 +957,67 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
             }
 
-            // ── Weapon choice: prefer the held weapon (slot 0) whenever it reaches, else any slot that does ──
+            // Prefer the first hotbar weapon that can hit now. If none can, keep the current weapon
+            // while closing in, or equip the first weapon with usable ammo.
             _weaponChoiceTimer--;
 
             bool weaponUseInProgress = (OwnerFlags & OwnerFlagAttacking) != 0;
 
-            if (target != null && state == MimicState.Fight && !weaponUseInProgress && _weaponChoiceTimer <= 0)
+            if (State == MimicState.Fight && !weaponUseInProgress && _weaponChoiceTimer <= 0)
             {
                 _weaponChoiceTimer = WeaponChoiceIntervalTicks;
-                float targetDistance = Vector2.Distance(NPC.Center, target.Center);
+                float targetDistance = float.MaxValue;
+                bool clearShot = false;
+
+                if (target != null)
+                {
+                    targetDistance = Vector2.Distance(NPC.Center, target.Center);
+                    clearShot = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
+                }
+
+                int currentSlot = ActiveSlot;
+                bool currentSlotReady = false;
+                int firstReadySlot = -1;
                 int bestSlot = -1;
 
-                for (int slot = 0; slot < LoadoutSize; slot++)
+                for (int slot = 0; slot < HotbarSlots; slot++)
                 {
-                    int itemType = _serverLoadoutTypes[slot];
+                    int itemType = _loadoutTypes[slot];
 
                     if (itemType <= 0)
                     {
                         continue;
                     }
 
-                    GetEngagementRange(ContentSamples.ItemsByType[itemType], out _, out float slotMaximum);
+                    Item weapon = ContentSamples.ItemsByType[itemType];
 
-                    if (targetDistance <= slotMaximum)
+                    if (weapon.useAmmo > 0 && !owner.HasAmmo(weapon))
+                    {
+                        continue;
+                    }
+
+                    if (firstReadySlot < 0)
+                    {
+                        firstReadySlot = slot;
+                    }
+
+                    currentSlotReady |= slot == currentSlot;
+                    GetEngagementRange(weapon, out _, out float slotMaximum);
+                    bool needsClearShot = slotMaximum > SpearLikeMaximum;
+
+                    if (targetDistance <= slotMaximum && (!needsClearShot || clearShot))
                     {
                         bestSlot = slot;
                         break;
                     }
                 }
 
-                int currentSlot = ActiveSlot;
-                bool currentSlotFilled = currentSlot >= 0 && currentSlot < LoadoutSize && _serverLoadoutTypes[currentSlot] > 0;
-                bool currentReaches = false;
-
-                if (currentSlotFilled)
+                if (bestSlot < 0)
                 {
-                    GetEngagementRange(ContentSamples.ItemsByType[_serverLoadoutTypes[currentSlot]], out _, out float currentMaximum);
-                    currentReaches = targetDistance <= currentMaximum;
+                    bestSlot = currentSlotReady ? currentSlot : firstReadySlot;
                 }
 
-                bool betterSlotExists = bestSlot >= 0 && bestSlot != currentSlot;
-                bool shouldSwitch = betterSlotExists && (!currentReaches || bestSlot == 0);
-
-                if (!currentSlotFilled)
-                {
-                    int fallbackSlot = FirstFilledSlot(_serverLoadoutTypes);
-                    shouldSwitch = fallbackSlot != currentSlot;
-                    bestSlot = fallbackSlot;
-                }
-
-                if (shouldSwitch)
+                if (bestSlot != currentSlot)
                 {
                     NPC.ai[2] = bestSlot;
                     State = MimicState.SwitchingWeapon;
@@ -1056,11 +1095,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 // Stand at the weapon's preferred distance (or the back-off distance), on our own side of the target.
                 int activeType = 0;
-                bool activeSlotValid = ActiveSlot >= 0 && ActiveSlot < LoadoutSize;
+                bool activeSlotValid = ActiveSlot >= 0 && ActiveSlot < HotbarSlots;
 
                 if (activeSlotValid)
                 {
-                    activeType = _serverLoadoutTypes[ActiveSlot];
+                    activeType = _loadoutTypes[ActiveSlot];
                 }
 
                 float preferredDistance = RangedPreferred;
@@ -1344,20 +1383,30 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
             }
 
-            // Hotbar slots 1 and 2 are cloned once; slot 0 follows the held weapon (last valid one kept, so holding
-            // a pickaxe or a potion doesn't disarm the mimic).
-            if (!_ownerLoadoutInitialized)
+            // Keep one Item instance per slot for weapon-specific state. If the hotbar changed before
+            // the owner received the NPC, rebuild from the server's snapshot instead.
+            for (int slot = 0; slot < HotbarSlots; slot++)
             {
-                _ownerLoadoutInitialized = true;
+                int itemType = _loadoutTypes[slot];
 
-                if (IsUsableWeapon(owner.inventory[0], owner))
+                if (itemType <= 0 || _ownerLoadout[slot] != null)
                 {
-                    _ownerLoadout[1] = owner.inventory[0].Clone();
+                    continue;
                 }
 
-                if (IsUsableWeapon(owner.inventory[1], owner))
+                Item item = owner.inventory[slot];
+                int prefix = _loadoutPrefixes[slot];
+
+                if (item.type == itemType && item.prefix == prefix)
                 {
-                    _ownerLoadout[2] = owner.inventory[1].Clone();
+                    _ownerLoadout[slot] = item.Clone();
+                }
+                else
+                {
+                    Item copy = new Item();
+                    copy.SetDefaults(itemType);
+                    copy.Prefix(prefix);
+                    _ownerLoadout[slot] = copy;
                 }
             }
 
@@ -1425,14 +1474,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             else
             {
                 OwnerFlags = (byte)(OwnerFlags & ~OwnerFlagAttacking);
-            }
-
-            Item heldItem = owner.HeldItem;
-            bool heldIsNew = _ownerLoadout[0] == null || _ownerLoadout[0].type != heldItem.type;
-
-            if (!attacking && IsUsableWeapon(heldItem, owner) && heldIsNew)
-            {
-                _ownerLoadout[0] = heldItem.Clone();
             }
 
             // ── Cerulean (mana pool is owner-side, so the whole flask lives here) ──
@@ -1529,7 +1570,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             Item weapon = ActiveWeapon;
 
-            if (weapon == null || weapon.IsAir)
+            if (weapon == null || weapon.IsAir || (weapon.useAmmo > 0 && !owner.HasAmmo(weapon)))
             {
                 return false;
             }
@@ -1550,10 +1591,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return false;
             }
 
-            // Lead moving targets by projectile travel time, capped.
+            // Lead moving targets by projectile travel time. Master Buster has an instant hit line.
             aimWorld = target.Center;
+            bool instantBeam = weapon.shoot == ModContent.ProjectileType<Content.Projectiles.MasterBuster>();
 
-            if (weapon.shootSpeed > 0f)
+            if (!instantBeam && weapon.shootSpeed > 0f)
             {
                 float travelTicks = Math.Min(MaxLeadTicks, distance / weapon.shootSpeed);
                 aimWorld += target.velocity * travelTicks;
@@ -1609,14 +1651,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         protected override bool HasOwnerActivity => IsDrinkingCerulean;
 
-        /// <summary>Cerulean lives on the owner's client; the server needs "drinking" to stop moving, other clients
-        /// need the timer and charges to draw the flask.</summary>
+        /// <summary>Sync the owner-side flask state and stamina fill through the existing pose and idle updates.</summary>
         protected override void WriteOwnerExtras(BinaryWriter writer)
         {
             writer.Write((short)_ceruleanDrinkTimer);
             writer.Write((short)_ceruleanDrinkTicks);
             writer.Write((byte)_ceruleanCharges);
             writer.Write((byte)_ceruleanChargesMax);
+            float staminaFill = GetOwnerStaminaFill();
+            writer.Write((byte)MathF.Round(staminaFill * byte.MaxValue));
         }
 
         protected override void ReadOwnerExtras(BinaryReader reader)
@@ -1625,6 +1668,91 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             _ceruleanDrinkTicks = reader.ReadInt16();
             _ceruleanCharges = reader.ReadByte();
             _ceruleanChargesMax = reader.ReadByte();
+            _syncedStaminaFill = reader.ReadByte();
+        }
+
+        private float GetOwnerStaminaFill()
+        {
+            tsorcRevampStaminaPlayer stamina = Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>();
+            float maximum = Math.Max(1f, stamina.staminaResourceMax2);
+            return MathHelper.Clamp(StaminaCurrent / maximum, 0f, 1f);
+        }
+
+        private Rectangle HoverBounds
+        {
+            get
+            {
+                if (StaysBehindSolidTiles)
+                {
+                    return Rectangle.Empty;
+                }
+
+                // The display clone uses the NPC's position but the NPC texture is only one pixel.
+                Rectangle bounds = NPC.Hitbox;
+                bounds.Inflate(4, 3);
+                return bounds;
+            }
+        }
+
+        private bool IsHovered => NPC.ShowNameOnHover
+            && !Main.hideUI
+            && !Main.mapFullscreen
+            && !Main.LocalPlayer.mouseInterface
+            && HoverBounds.Contains(Main.MouseWorld.ToPoint());
+
+        public override void ModifyHoverBoundingBox(ref Rectangle boundingBox)
+        {
+            boundingBox = HoverBounds;
+        }
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            if (IsHovered)
+            {
+                return false;
+            }
+
+            return null;
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (!IsHovered)
+            {
+                return;
+            }
+
+            float healthFill = MathHelper.Clamp(NPC.life / (float)Math.Max(1, NPC.lifeMax), 0f, 1f);
+            float staminaFill = _syncedStaminaFill / (float)byte.MaxValue;
+
+            if (OwnerIndex == Main.myPlayer && StaminaInitialized)
+            {
+                staminaFill = GetOwnerStaminaFill();
+            }
+
+            Vector2 top = NPC.Top - screenPos;
+            int left = (int)top.X - HoverBarWidth / 2;
+            int healthTop = (int)top.Y - 18;
+            int staminaTop = healthTop + HoverBarHeight + 3;
+            DrawHoverBar(spriteBatch, left, healthTop, healthFill, new Color(230, 84, 91));
+            DrawHoverBar(spriteBatch, left, staminaTop, staminaFill, new Color(119, 211, 91));
+        }
+
+        private static void DrawHoverBar(SpriteBatch spriteBatch, int left, int top, float fill, Color fillColor)
+        {
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle outline = new Rectangle(left, top, HoverBarWidth, HoverBarHeight);
+            Rectangle interior = new Rectangle(left + 1, top + 1, HoverBarWidth - 2, HoverBarHeight - 2);
+            spriteBatch.Draw(pixel, outline, Color.Black);
+            spriteBatch.Draw(pixel, interior, new Color(54, 52, 59));
+
+            int fillWidth = (int)MathF.Round(interior.Width * fill);
+
+            if (fillWidth > 0)
+            {
+                interior.Width = fillWidth;
+                spriteBatch.Draw(pixel, interior, fillColor);
+            }
         }
 
         /// <summary>The rise: fully sunk (hidden behind the ground) while the pool spreads, then eases up out of it.</summary>
@@ -1784,11 +1912,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         // ── Helpers (shared by the server's weapon choice/movement and the owner's attack decision) ─────
 
-        /// <summary>
-        /// Whether the mimic may wield this item. Design §5 filter: a real weapon (damage, not ammo/consumable),
-        /// not a minion/sentry staff (recursion), not a pure utility tool, and — if it fires ammo — the owner has some.
-        /// </summary>
-        private static bool IsUsableWeapon(Item item, Player owner)
+        /// <summary>Filters items for the summon snapshot. Ammo availability is checked when choosing and using a weapon.</summary>
+        private static bool IsLoadoutWeapon(Item item)
         {
             if (item == null || item.IsAir || item.damage <= 0 || item.useStyle == ItemUseStyleID.None)
             {
@@ -1816,25 +1941,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return false;
             }
 
-            if (item.useAmmo > 0 && !owner.HasAmmo(item))
-            {
-                return false;
-            }
-
             return true;
-        }
-
-        private static int FirstFilledSlot(int[] loadoutTypes)
-        {
-            for (int slot = 0; slot < loadoutTypes.Length; slot++)
-            {
-                if (loadoutTypes[slot] > 0)
-                {
-                    return slot;
-                }
-            }
-
-            return 0;
         }
     }
 
@@ -1879,7 +1986,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override string Command => "mimic";
 
-        public override string Description => "Summon a Soul Mimic: a reflective copy of you with your HP, defense, Estus, Cerulean and weapons (held + hotbar 1/2). /mimictest clear removes it.";
+        public override string Description => "Summon a Soul Mimic with your HP, defense, Estus, Cerulean and hotbar weapons. /mimictest clear removes it.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {

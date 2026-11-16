@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.FriendlyPuppets;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -38,6 +39,30 @@ namespace tsorcRevamp.Content.Projectiles
         bool spawnedLaser = false;
         public override void AI()
         {
+            MirrorPuppetProjectile tag = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            bool fromPuppet = tag.FromMirrorPuppet;
+
+            if (fromPuppet)
+            {
+                if (tag.GetFiringPuppet(Projectile) == null)
+                {
+                    return;
+                }
+
+                // The holdout is invisible. The firing client handles its use and the synced beam handles its own draw.
+                if (Projectile.owner != Main.myPlayer)
+                {
+                    Projectile.timeLeft = 2;
+                    return;
+                }
+
+                if (!MirrorPuppetSwap.Active)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
+
             Player player = Main.player[Projectile.owner];
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
 
@@ -82,6 +107,7 @@ namespace tsorcRevamp.Content.Projectiles
                 // The Prism immediately stops functioning if the player is Cursed (player.noItems) or "Crowd Controlled", e.g. the Frozen debuff.
                 // player.channel indicates whether the player is still holding down the mouse button to use the item.
                 bool stillInUse = player.channel && !player.noItems && !player.CCed;
+                stillInUse &= !fromPuppet || player.controlUseItem;
 
                 // Spawn in the lasers on the first frame if the player is capable of using the item.
                 if (stillInUse && !spawnedLaser)
