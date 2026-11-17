@@ -27,6 +27,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal const int ReactorPort = 22;
         internal const int RipplePort = 24;
         internal const int ShortPairPort = 26;
+        internal const int CurtainShortPairPort = 28;
         internal const int RippleFireTicks = 8;
         internal const int RippleFadeTicks = 6;
         internal const int ShortPairFireTicks = 180;
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const int EnclosingLength = EnclosingTurnCheckLength * 2;
         internal const int PassLength = 2000;
         internal const int RamLength = 840;
-        private const int ProbeLength = 2600;
+        internal const int ProbeLength = 60 * 16;
         private const int OverheadLength = 1120;
         private const int HourglassLength = 1380;
         private const int ReactorLength = 1160;
@@ -69,8 +70,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyLingeringLaser));
 
-        // Ram timing carries the planned live duration. Its fixed tell shares the head's windup.
-        private int TellTicks => IsRamBeam ? TheDestroyer.RamBeamTellTicks + 1 : (int)Projectile.ai[0] + PassDelay;
+        private int TellTicks
+        {
+            get
+            {
+                if (IsRamBeam)
+                {
+                    // Ram timing carries the planned live duration. Its fixed tell shares the head's windup.
+                    return TheDestroyer.RamBeamTellTicks + 1;
+                }
+
+                if (IsCurtainShortPair)
+                {
+                    return ShortPairTellTicks;
+                }
+
+                return (int)Projectile.ai[0] + PassDelay;
+            }
+        }
         private int PassDelay
         {
             get
@@ -109,6 +126,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private bool IsReactor => Projectile.ai[2] >= ReactorPort && Projectile.ai[2] < RipplePort;
         private bool IsRipple => Projectile.ai[2] >= RipplePort && Projectile.ai[2] < ShortPairPort;
         private bool IsShortPair => Projectile.ai[2] >= ShortPairPort;
+        private bool IsCurtainShortPair => Projectile.ai[2] >= CurtainShortPairPort;
         private int FadeDuration => IsRipple ? RippleFadeTicks : FadeTicks;
         private bool IsOrbitBeam => IsReactor || IsHourglass || Projectile.ai[2] >= OverheadPort && Projectile.ai[2] < BroadsidePort;
         private bool IsEnclosing => Projectile.ai[2] >= EnclosingPort && Projectile.ai[2] < BroadsidePort;
@@ -157,6 +175,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 if (IsRipple)
                 {
                     return TellTicks + RippleFireTicks;
+                }
+
+                if (IsCurtainShortPair)
+                {
+                    // The curtain holds these beams on through its return pass. AI sets the fade tick when the move ends.
+                    int fadeStart = (int)Projectile.ai[0];
+                    return fadeStart > 0 ? fadeStart : short.MaxValue - FadeTicks;
                 }
 
                 if (IsShortPair)
@@ -325,6 +350,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         age = Math.Max(age, EndTick);
                     }
                 }
+                else if (IsCurtainShortPair && Projectile.ai[0] == 0f)
+                {
+                    // Keep the projectile alive while the attack owns it, with enough time left for the final fade.
+                    Projectile.timeLeft = Math.Max(Projectile.timeLeft, FadeTicks + 2);
+                    if (!headState.IsCurtainCallTwo && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        if (!armed)
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+
+                        Projectile.ai[0] = age;
+                        Projectile.netUpdate = true;
+                    }
+                }
             }
 
             if (!initialized)
@@ -391,7 +432,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     turnSuppressed |= ExceedsSweepSpeed(previousOpposite, -previousHullDirection, oppositeMuzzle, -portDirection, BeamLength, !IsShortPair);
                 }
 
-                if (turnSuppressed && Main.netMode != NetmodeID.MultiplayerClient)
+                if (turnSuppressed && !IsCurtainShortPair && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.Kill();
                     return;

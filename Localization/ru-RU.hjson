@@ -728,7 +728,7 @@ Mods: {
 			AttraidiesDesc: Соберите все гребни, чтобы создать Куб разума.
 			RealAttraidiesName: Аттрайдис (настоящий)
 			RealAttraidiesDesc: Используйте реликвию Иллюзии истязателя разума, выпавшую из иллюзии Аттрайдиса.
-			HellkiteDragonDesc: Летает на гигантском магматическом небесном острове, расположенным над западными дюнами
+			HellkiteDragonDesc: В суперхардмоде охотится на открытой местности к востоку от деревни.
 			// OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc: Ищите врата яхщеров в Великой пропасти.
 			EarthFiendLichDesc: Ищите древний храм к западу от Пепельной пещеры.
@@ -4069,7 +4069,7 @@ Mods: {
 
 			HellkiteStone: {
 				DisplayName: Адский камень
-				Tooltip: Вызывает Адского дракона с неба...
+				Tooltip: Призывает Адского дракона ночью...
 				WrongTime: Ничего не происходит... Повторите попытку ночью.
 			}
 
@@ -4323,7 +4323,7 @@ Mods: {
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
 				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
-				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   31  [SHM] Hellkite Drake         (Bosses/SuperHardMode/HellkiteDrake/HellkiteDrake) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
 				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
 				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
@@ -12407,6 +12407,7 @@ Mods: {
 			// DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
 			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			// HellkiteDrakeDeathFlame.DisplayName: Destined Death Flame
 			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
 			// HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
 			// TibianAmazonKnife.DisplayName: Tibian Amazon Knife
@@ -14238,8 +14239,13 @@ Mods: {
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
 			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
-			// HellkiteDrake.DisplayName: Hellkite Drake
-			// HellkiteDrakeHitbox.DisplayName: Hellkite Drake
+
+			HellkiteDrake: {
+				DisplayName: Адский дракон
+				DespawnHandler: Адский дракон настиг свою добычу...
+			}
+
+			HellkiteDrakeHitbox.DisplayName: Адский дракон
 		}
 
 		Prefixes: {
@@ -14969,7 +14975,7 @@ Mods: {
 
 			SlayerHellkiteDragon: {
 				// FriendlyName: Dragon Slayer
-				// Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+				// Description: Defeat the Hellkite Drake, a fiery beast hunting near the Village.
 			}
 
 			SlayerKraken: {

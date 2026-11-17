@@ -186,7 +186,7 @@ namespace tsorcRevamp
                 || npcType == NPCID.QueenBee
                 || npcType == ModContent.NPCType<RedKnight>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>()
                 || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>())
             {
                 return BossClassification.OptionalField;

@@ -68,6 +68,7 @@ using tsorcRevamp.Content.Projectiles.Pets;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -887,6 +888,17 @@ namespace tsorcRevamp
             //you died sound
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f });
 
+            // Play the Warrior's line on a confirmed kill. PreKill credits his projectiles to his NPC slot,
+            // which Terraria carries in the death packet so nearby clients can play the positional sound.
+            int killerIndex = damageSource.SourceNPCIndex;
+            if (!Main.dedServ && killerIndex >= 0 && killerIndex < Main.maxNPCs)
+            {
+                NPC killer = Main.npc[killerIndex];
+                if (killer is { active: true, life: > 0, ModNPC: StuddedLeatherWarrior })
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/im-sorry"), killer.Center);
+                }
+            }
 
             bool onePlayerAlive = false;
             for (int i = 0; i < Main.maxPlayers; i++)

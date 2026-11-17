@@ -502,8 +502,8 @@ Mods: {
 			LothricAmbush2: Ambush!
 			DualSandsprogAmbush1: Ambush!
 			EnragedQB: An angry Queen Bee appears!
-			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
-			RemixHellkiteDragon: A Hellkite Dragon has come to feed...
+			HellkiteDragon: The village is under attack! A Hellkite Drake has come to feed...
+			RemixHellkiteDragon: A Hellkite Drake has come to feed...
 			ThunderBird: The Grand Thunder Bird appears!
 			QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
 			Viscount: Viscount is bloodthirsty!
@@ -729,7 +729,7 @@ Mods: {
 			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
+			HellkiteDragonDesc: Hunts on the open ground east of the Village in Super Hardmode.
 			OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc:
 				'''
@@ -987,8 +987,8 @@ Mods: {
 					'''
 				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Dragon has been defeated
-				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Dragon has been defeated
+				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Drake has been defeated
+				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Drake has been defeated
 				MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 30 and decreases mana regen delay by 100%
@@ -3811,7 +3811,7 @@ Mods: {
 			}
 
 			HellkiteBag: {
-				DisplayName: Treasure Bag (Hellkite Dragon)
+				DisplayName: Treasure Bag (Hellkite Drake)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4067,7 +4067,7 @@ Mods: {
 
 			HellkiteStone: {
 				DisplayName: Hellkite Stone
-				Tooltip: Summons a Hellkite Dragon from the sky...
+				Tooltip: Summons the Hellkite Drake at night...
 				WrongTime: Nothing happens... Retry at night.
 			}
 
@@ -4322,7 +4322,7 @@ Mods: {
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
 				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
-				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   31  [SHM] Hellkite Drake         (Bosses/SuperHardMode/HellkiteDrake/HellkiteDrake) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
 				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
 				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
@@ -12401,6 +12401,7 @@ Mods: {
 			DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
 			IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			HellkiteDrakeDeathFlame.DisplayName: Destined Death Flame
 			HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
 			HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
 			TibianAmazonKnife.DisplayName: Tibian Amazon Knife
@@ -14236,7 +14237,12 @@ Mods: {
 			MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
 			MirrorInvader.DisplayName: Mirror Invader
 			HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
-			HellkiteDrake.DisplayName: Hellkite Drake
+
+			HellkiteDrake: {
+				DisplayName: Hellkite Drake
+				DespawnHandler: The Hellkite Drake claims its prey...
+			}
+
 			HellkiteDrakeHitbox.DisplayName: Hellkite Drake
 		}
 
@@ -14967,7 +14973,7 @@ Mods: {
 
 			SlayerHellkiteDragon: {
 				FriendlyName: Dragon Slayer
-				Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+				Description: Defeat the Hellkite Drake, a fiery beast hunting near the Village.
 			}
 
 			SlayerKraken: {

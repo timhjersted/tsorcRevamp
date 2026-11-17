@@ -18,6 +18,9 @@ namespace tsorcRevamp
             //Fix lihzahrd power cell being consumed
             Terraria.IL_Player.TileInteractionsUse += PowerCell_Patch;
 
+            Terraria.IL_Player.ItemCheck_CheckCanUse += MechanicalWorm_IgnoreDaytime;
+            Terraria.IL_Player.ItemCheck_UseBossSpawners += MechanicalWorm_IgnoreDaytime;
+
             Terraria.IL_Player.Update += Player_Update;
             Terraria.IL_Player.Update += WingFallDamage_Patch;
 
@@ -118,6 +121,24 @@ namespace tsorcRevamp
 
         internal static void UnloadILs()
         {
+        }
+
+        private static void MechanicalWorm_IgnoreDaytime(ILContext il)
+        {
+            ILCursor cursor = new ILCursor(il);
+            if (!cursor.TryGotoNext(MoveType.After,
+                instruction => instruction.MatchLdfld<Item>("type"),
+                instruction => instruction.MatchLdcI4(ItemID.MechanicalWorm),
+                instruction => instruction.OpCode.Code is Code.Bne_Un or Code.Bne_Un_S,
+                instruction => instruction.MatchCall<Main>("IsItDay")))
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn($"Mechanical Worm daytime check missing in {il.Method.Name}.");
+                return;
+            }
+
+            // The item-type branch limits this to the Mechanical Worm. Use the vanilla night path without touching world time.
+            cursor.Emit(OpCodes.Pop);
+            cursor.Emit(OpCodes.Ldc_I4_0);
         }
 
         internal static void PowerCell_Patch(ILContext il)

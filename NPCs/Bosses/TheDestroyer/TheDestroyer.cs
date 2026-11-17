@@ -120,7 +120,8 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const float PassLaneHeight = 300f;
         private const int DriveThroughPortCount = 6;
         private const int DriveThroughFirstPort = 4;
-        private const int DriveThroughPortStride = 4;
+        private const int DriveThroughBaselineStride = 4;
+        private const int BroadsidePortStride = 6;
         private const int CurtainPortStride = 6;
         private const float CurtainPassSpeed = 10.5f;
         private const float CurtainRunoutDistance = CurtainPassSpeed * (DestroyerHullLaser.CurtainRunFireTicks - DestroyerHullLaser.FireTicks);
@@ -259,6 +260,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private int driveThroughResolvedPorts;
         private int driveThroughLastShot;
         private int driveThroughFadeUntil;
+        private int curtainFiredPorts;
         private bool curtainReachedBoundary;
         private bool curtainTurning;
         private int ramLiveTicks;
@@ -295,6 +297,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         internal bool IsRevampProbe => probeOwner >= 0;
         internal bool IsLegacyProbe => legacyProbe;
         internal bool IsRetreating => beat == Beat.Retreat;
+        internal bool IsCurtainCallTwo => move == Move.CurtainCall2;
         internal bool IsRunawayMaw => move == Move.RunawayMaw;
         internal bool IsRunawayMawFiring => IsRunawayMaw && beat == Beat.Active;
         internal bool IsHullThrash => move == Move.HullThrash;
@@ -418,6 +421,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             writer.Write((byte)attacksBeforeNextOrbit);
             writer.Write(bodyPoseForMaw);
             writer.Write(curtainTurning);
+            writer.Write((byte)curtainFiredPorts);
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader reader)
@@ -472,6 +476,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             attacksBeforeNextOrbit = reader.ReadByte();
             bodyPoseForMaw = reader.ReadBoolean();
             curtainTurning = reader.ReadBoolean();
+            curtainFiredPorts = reader.ReadByte();
         }
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
@@ -973,6 +978,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             vulnerable = false;
             bodyPoseForMaw = false;
             curtainTurning = false;
+            curtainFiredPorts = 0;
             anchor = player.Center;
             goal = anchor;
             if (player.Center.X >= npc.Center.X)
@@ -1249,12 +1255,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private void RunPass(NPC npc, Player player, bool authority)
         {
             bool curtain = move == Move.CurtainCall2;
-            float extraTravel = 0f;
+            int stride = curtain ? CurtainPortStride : BroadsidePortStride;
+            float speedLimit = curtain ? CurtainPassSpeed : 9.5f;
+            // The base exit and duration fit four-segment spacing. Carry the wider rear ports across the same lane.
+            int extraSegments = (stride - DriveThroughBaselineStride) * (DriveThroughPortCount - 1);
+            float extraTravel = extraSegments * HullSegmentSpacing * npc.scale;
             if (curtain)
             {
-                // Carry the more widely spaced rear ports across the same part of the arena.
-                int extraSegments = (CurtainPortStride - DriveThroughPortStride) * (DriveThroughPortCount - 1);
-                extraTravel = extraSegments * HullSegmentSpacing * npc.scale + CurtainRunoutDistance;
+                extraTravel += CurtainRunoutDistance;
             }
 
             if (beat == Beat.Setup)
@@ -1279,7 +1287,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                     driveThroughFadeUntil = 0;
                     curtainReachedBoundary = false;
                     curtainTurning = false;
-                    int extraTicks = (int)MathF.Ceiling(extraTravel / CurtainPassSpeed);
+                    int extraTicks = (int)MathF.Ceiling(extraTravel / speedLimit);
                     SetBeat(npc, Beat.Active, DriveThroughTicks + extraTicks);
                 }
 
@@ -1294,7 +1302,6 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             float alongLane = Vector2.Dot(fromLaneCenter, passDirection);
             float offLane = Vector2.Dot(fromLaneCenter, passNormal);
             float steerAngle = Math.Clamp(-offLane * 0.005f, -0.68f, 0.68f);
-            float speedLimit = curtain ? CurtainPassSpeed : 9.5f;
             float exitDistance = DriveThroughExit + extraTravel;
 
             float speed = Math.Clamp((exitDistance - alongLane) * 0.12f, 0.1f, speedLimit);
@@ -3236,7 +3243,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
             int maximumTell = PortTell + HullTell;
             bool curtain = move == Move.CurtainCall2;
-            int stride = curtain ? CurtainPortStride : DriveThroughPortStride;
+            int stride = curtain ? CurtainPortStride : BroadsidePortStride;
             int fireTicks = curtain ? DestroyerHullLaser.CurtainRunFireTicks : DestroyerHullLaser.FireTicks;
             int portMode = curtain ? DestroyerHullLaser.CurtainRunPort : DestroyerHullLaser.DriveThroughPort;
             // Start the tell ahead of the crossing so the live part straddles the target's lane.
@@ -3292,6 +3299,35 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                     driveThroughLastShot = timer;
                     int fadeUntil = timer + tellTicks + fireTicks + DestroyerHullLaser.FadeTicks + 1;
                     driveThroughFadeUntil = Math.Max(driveThroughFadeUntil, fadeUntil);
+                    if (curtain && (curtainFiredPorts & portBit) == 0)
+                    {
+                        int previousPorts = curtainFiredPorts;
+                        curtainFiredPorts |= portBit;
+                        head.netUpdate = true;
+                        if (previousPorts != 0)
+                        {
+                            // Open only newly bracketed gaps. Skipped and reserved long ports never get short pairs.
+                            int first = DriveThroughFirstPort + System.Numerics.BitOperations.TrailingZeroCount((uint)curtainFiredPorts) * stride;
+                            int last = DriveThroughFirstPort + System.Numerics.BitOperations.Log2((uint)curtainFiredPorts) * stride;
+                            int oldFirst = DriveThroughFirstPort + System.Numerics.BitOperations.TrailingZeroCount((uint)previousPorts) * stride;
+                            int oldLast = DriveThroughFirstPort + System.Numerics.BitOperations.Log2((uint)previousPorts) * stride;
+                            foreach (NPC gapSegment in Main.ActiveNPCs)
+                            {
+                                if (gapSegment.type != NPCID.TheDestroyerBody || gapSegment.realLife != head.whoAmI)
+                                {
+                                    continue;
+                                }
+
+                                int ordinal = gapSegment.GetGlobalNPC<TheDestroyer>().spawnOrdinal;
+                                bool newGap = ordinal > first && ordinal < last && (ordinal < oldFirst || ordinal > oldLast);
+                                if (newGap && (ordinal - DriveThroughFirstPort) % stride != 0)
+                                {
+                                    SpawnHullBeam(gapSegment, DestroyerHullLaser.CurtainShortPairPort, 1, 0);
+                                }
+                            }
+                        }
+                    }
+
                     break;
                 }
             }
@@ -4265,6 +4301,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             }
 
             if (authority && probeLaserCooldown == 0 && headState != null && !headState.IsRetreating && targetPlayer != null
+                && npc.WithinRange(targetPlayer.Center, DestroyerHullLaser.ProbeLength)
                 && Collision.CanHit(npc.position, npc.width, npc.height, targetPlayer.position, targetPlayer.width, targetPlayer.height))
             {
                 Vector2 aim = (targetPlayer.Center - npc.Center).SafeNormalize(probeAimDirection);

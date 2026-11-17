@@ -42,6 +42,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.GreatSerpent;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
@@ -1286,7 +1287,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<WyvernMageShadow>()                                            },
                 {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<GrandOccultist>()                                     },
                 {   ModContent.ItemType<ArtoriasBag>()              , ModContent.NPCType<Artorias>()                                                    },
-                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
+                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDrake>()                                               },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
                 {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
@@ -2794,6 +2795,18 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.ReportDrakeGrabBite:
+                    {
+                        int drakeIndex = reader.ReadInt16();
+                        int biteSequence = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && drakeIndex >= 0 && drakeIndex < Main.maxNPCs && Main.npc[drakeIndex].active
+                            && Main.npc[drakeIndex].ModNPC is HellkiteDrake drake)
+                        {
+                            drake.TryGrabPlayer(Main.player[whoAmI], biteSequence);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.ReportMadnessBuildup:
                     {
                         int buildup = reader.ReadByte();
@@ -3424,12 +3437,6 @@ namespace tsorcRevamp
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var HellkiteDragonPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
-                {
-                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon_Portrait").Value;
-                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
-                    sb.Draw(texture, centered, color);
-                };
                 var SeathPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
                 {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Seath_Portrait").Value;
@@ -3763,16 +3770,15 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss", // Field Boss
                     this,
-                    nameof(HellkiteDragonHead),
+                    nameof(HellkiteDrake),
                     20.1f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<HellkiteDragonHead>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    new List<int>() { ModContent.NPCType<HellkiteDragonHead>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonTail>() },
+                    () => tsorcRevampWorld.BossDefeated(ModContent.NPCType<HellkiteDrake>()),
+                    ModContent.NPCType<HellkiteDrake>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDragonHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDrake>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDrake.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.HellkiteDragonDesc"),
-                        ["spawnItems"] = ModContent.ItemType<HellkiteStone>(),
-                        ["customPortrait"] = HellkiteDragonPortrait
+                        ["spawnItems"] = ModContent.ItemType<HellkiteStone>()
                     }
                     );
 
@@ -5393,6 +5399,8 @@ namespace tsorcRevamp
         /// <summary>Victim client → server: a Darkroot Sentry vine hit me (latch) or I attacked while it holds me (strike).
         /// Payload: action byte (DarkrootVine.RequestLatch / RequestStrike), projectile owner byte, identity short.</summary>
         public const byte DarkrootVineRequest = 49;
+        /// <summary>The bitten client reports contact. The Drake validates the bite sequence and selects the hold.</summary>
+        public const byte ReportDrakeGrabBite = 50;
     }
 
     //config moved to separate file

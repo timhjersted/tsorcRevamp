@@ -30,8 +30,19 @@ namespace tsorcRevamp.Content.Items.BossItems
 
         public override bool? UseItem(Player player)
         {
+            if (player.whoAmI == Main.myPlayer)
+            {
+                int bossType = ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>();
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                {
+                    NetMessage.SendData(MessageID.SpawnBossUseLicenseStartEvent, number: player.whoAmI, number2: bossType);
+                }
+                else
+                {
+                    NPC.SpawnOnPlayer(player.whoAmI, bossType);
+                }
+            }
 
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>());
             return true;
         }
 
@@ -42,7 +53,7 @@ namespace tsorcRevamp.Content.Items.BossItems
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.HellkiteStone.WrongTime"), 175, 75, 255);
                 return false;
             }
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>()))
             {
                 return false;
             }

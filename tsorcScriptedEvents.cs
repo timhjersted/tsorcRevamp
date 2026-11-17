@@ -662,7 +662,9 @@ namespace tsorcRevamp
             //Sunken Sky Temple second event (Remix Map)
             ScriptedEvent MoltenSkyTempleEvent2 = new ScriptedEvent(new Vector2(90, 1893), 30, NPCID.MourningWood, 6, true, true, false, LangUtils.GetTextValue("Events.IceGolemWyvern"), Color.Orange, false, RemixMapCondition, SetNightCustomAction);
 
-            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4282, 405), 200, ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), DustID.OrangeTorch, true, true, true, LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, SuperHardModeCustomCondition, SetNightCustomAction);
+            ScriptedEvent HellkiteDragonEvent = new ScriptedEvent(new Vector2(4400, 659), 100,
+                ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>(), DustID.OrangeTorch, true, true, true,
+                LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, HellkiteDrakeCondition, SetNightCustomAction);
 
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, PreSkeletronDungeonGuardianCondition);
             
@@ -982,6 +984,12 @@ namespace tsorcRevamp
         public static bool SuperHardModeCustomCondition()
         {
             return tsorcRevampWorld.SuperHardMode;
+        }
+
+        public static bool HellkiteDrakeCondition()
+        {
+            return tsorcRevampWorld.SuperHardMode
+                && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>());
         }
 
         public static bool RemixMapCondition()
@@ -2443,7 +2451,7 @@ namespace tsorcRevamp
                                 //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
                                 if (EnabledEvents[i].eventNPCs != null && EnabledEvents[i].eventNPCs.Count > 0)
                                 {
-                                    if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>() && distance < 50000000
+                                    if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>() && distance < 50000000
                                             || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
                                     {
                                         //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.

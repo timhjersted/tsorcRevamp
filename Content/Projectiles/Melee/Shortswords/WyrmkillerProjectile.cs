@@ -6,6 +6,7 @@ using tsorcRevamp.NPCs.Bosses.JungleWyvern;
 using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 
@@ -56,6 +57,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Shortswords
                 || target.type == ModContent.NPCType<HellkiteDragonBody2>()
                 || target.type == ModContent.NPCType<HellkiteDragonBody3>()
                 || target.type == ModContent.NPCType<HellkiteDragonHead>()
+                || target.type == ModContent.NPCType<HellkiteDrake>()
+                || target.type == ModContent.NPCType<HellkiteDrakeHitbox>()
                 || target.type == ModContent.NPCType<HellkiteDragonLegs>()
                 || target.type == ModContent.NPCType<HellkiteDragonTail>()
                 || target.type == ModContent.NPCType<SeathTheScalelessBody>()

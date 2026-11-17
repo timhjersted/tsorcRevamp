@@ -44,7 +44,7 @@ public class DarkSoulNPC : GlobalNPC
                     else
                     {
                         bool isRequiredShmBoss = Systems.AbyssWorldSystem.IsRequiredBoss(npc.type);
-                        bool isOptionalShmBoss = npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
+                        bool isOptionalShmBoss = npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>()
                             || npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>()
@@ -57,7 +57,7 @@ public class DarkSoulNPC : GlobalNPC
                             UsefulFunctions.BroadcastText(LangUtils.GetTextValue(messageKey), Color.Orange);
                         }
 
-                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>())
+                        if (npc.type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>())
                         {
                             tsorcRevampWorld.isHellkiteDragonDead = true;
                         }

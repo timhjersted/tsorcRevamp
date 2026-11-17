@@ -10,7 +10,7 @@ using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
-using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.Birds;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
@@ -144,7 +144,7 @@ namespace tsorcRevamp.Systems
                 ModContent.NPCType<FireFiendMarilith>(),
                 ModContent.NPCType<EarthFiendLich>(),
                 ModContent.NPCType<WyvernMageShadow>(),
-                ModContent.NPCType<HellkiteDragonHead>(),
+                ModContent.NPCType<HellkiteDrake>(),
                 ModContent.NPCType<SeathTheScalelessHead>(),
                 ModContent.NPCType<GrandOccultist>(),
                 ModContent.NPCType<Artorias>(),

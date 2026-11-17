@@ -728,11 +728,7 @@ Mods: {
 			AttraidiesDesc: 收集所有的冠冕以合成思绪立方体！
 			RealAttraidiesName: 阿卓迪斯
 			RealAttraidiesDesc: 使用幻象掉落的噬魂怪遗物以迎接这挑战吧！
-			HellkiteDragonDesc:
-				'''
-				经常在村庄上方的天空中游荡，寻找它的下一顿餐食...
-				重构版地图: 据说它盘踞于西部沙漠上空的巨型熔岩空岛...
-				'''
+			HellkiteDragonDesc: 在超困难模式下，它会在村庄东边的开阔地猎食。
 			// OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc:
 				'''
@@ -4110,7 +4106,7 @@ Mods: {
 
 			HellkiteStone: {
 				DisplayName: 地狱风筝石
-				Tooltip: 召唤从天而降的地狱鸢龙...
+				Tooltip: 夜晚召唤炼狱鸢龙……
 				WrongTime: 无事发生...晚上再试试吧
 			}
 
@@ -4364,7 +4360,7 @@ Mods: {
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
 				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
-				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   31  [SHM] Hellkite Drake         (Bosses/SuperHardMode/HellkiteDrake/HellkiteDrake) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
 				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
 				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
@@ -12444,6 +12440,7 @@ Mods: {
 			// DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
 			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
 			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			// HellkiteDrakeDeathFlame.DisplayName: Destined Death Flame
 			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
 			// HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
 			// TibianAmazonKnife.DisplayName: Tibian Amazon Knife
@@ -14275,8 +14272,13 @@ Mods: {
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
 			// MirrorInvader.DisplayName: Mirror Invader
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
-			// HellkiteDrake.DisplayName: Hellkite Drake
-			// HellkiteDrakeHitbox.DisplayName: Hellkite Drake
+
+			HellkiteDrake: {
+				DisplayName: 炼狱鸢龙
+				DespawnHandler: 炼狱鸢龙抓住了它的猎物……
+			}
+
+			HellkiteDrakeHitbox.DisplayName: 炼狱鸢龙
 		}
 
 		Prefixes: {
@@ -15006,7 +15008,7 @@ Mods: {
 
 			SlayerHellkiteDragon: {
 				// FriendlyName: Dragon Slayer
-				// Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+				// Description: Defeat the Hellkite Drake, a fiery beast hunting near the Village.
 			}
 
 			SlayerKraken: {

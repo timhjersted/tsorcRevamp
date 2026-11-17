@@ -28,6 +28,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Runeterra;
 using tsorcRevamp.NPCs.Bosses.Birds;
@@ -249,13 +250,13 @@ namespace tsorcRevamp
 
         public override void LoadWorldData(TagCompound tag)
         {
-            LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
             CompletedDynamicEvents = tag.GetList<string>("CompletedDynamicEvents").ToList();
 
             IList<string> downedList = tag.GetList<string>("downed");
             DownedBetsy = downedList.Contains("DownedBetsy");
             isHellkiteDragonDead = downedList.Contains("isHellkiteDragonDead");
+            LoadSlain(tag);
             isOolacileSerpentDead = downedList.Contains("isOolacileSerpentDead");
             IllusionWandOfFrostGiven = downedList.Contains("IllusionWandOfFrostGiven");
 
@@ -472,6 +473,18 @@ namespace tsorcRevamp
                 NPCDefinition sentryKey = new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>());
                 NewSlain.TryGetValue(sentryKey, out int sentryCount);
                 NewSlain[sentryKey] = Math.Max(sentryCount, oldSentryCount);
+            }
+
+            // The Drake inherits the Dragon's progression slot, including first-kill rewards already earned.
+            NPCDefinition dragonKey = new NPCDefinition(ModContent.NPCType<HellkiteDragonHead>());
+            NPCDefinition drakeKey = new NPCDefinition(ModContent.NPCType<HellkiteDrake>());
+            NewSlain.TryGetValue(dragonKey, out int dragonCount);
+            NewSlain.TryGetValue(drakeKey, out int drakeCount);
+            if (dragonCount > 0 || drakeCount > 0 || isHellkiteDragonDead)
+            {
+                NewSlain.Remove(dragonKey);
+                NewSlain[drakeKey] = Math.Max(1, Math.Max(dragonCount, drakeCount));
+                isHellkiteDragonDead = true;
             }
         }
 
@@ -2690,7 +2703,7 @@ namespace tsorcRevamp
         //Gwyn
 
         //5 optional:
-        //Hellkite Dragon
+        //Hellkite Drake
         //Witchking
         //Oolicale Sorcerer
         //Chaos
@@ -2855,7 +2868,7 @@ namespace tsorcRevamp
 
         public static Dictionary<int, Vector2> SHMBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
+            { ModContent.NPCType<HellkiteDrake>(), new Vector2(4360, 656) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
             { ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
