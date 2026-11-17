@@ -160,7 +160,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             }
 
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ModContent.ItemType<AaronsProtectionStone>())
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<AaronsProtectionStone>())
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.AaronsProtectionStone.BotCOnly", (int)AaronsProtectionStone.DamageIncrease));
             }

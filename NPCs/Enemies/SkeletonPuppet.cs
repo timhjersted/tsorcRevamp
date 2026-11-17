@@ -96,6 +96,22 @@ namespace tsorcRevamp.NPCs.Enemies
         protected int ReassemblyTimer => _reassemblyTimer;
         /// <summary>Server: ticks left of the post-reform hold. Subclasses gate their next attack on it.</summary>
         protected int PostReformTicks => _postReformTicks;
+
+        /// <summary>Per-skeleton walk-speed multiplier, so two that spawn together drift out of step. Reads the GlobalNPC
+        /// personality roll Swiftness (0.7-1.3, server-rolled and synced) squeezed to a third of its spread: 0.9-1.1.</summary>
+        protected float WalkSpeedVariance
+        {
+            get
+            {
+                float swiftness = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().Swiftness;
+                if (swiftness <= 0f)
+                {
+                    return 1f;
+                }
+
+                return 1f + (swiftness - 1f) / 3f;
+            }
+        }
         /// <summary>Every machine (synced): lying in a pile a Bone Chaplain is holding for Resurrection.</summary>
         public bool IsHeldPile => _reassembly == Reassembly.Pile && _heldPile;
 

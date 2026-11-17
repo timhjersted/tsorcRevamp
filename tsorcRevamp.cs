@@ -2416,40 +2416,7 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.SyncPlayerDodgeroll:
                     {
-                        //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
-                        bool bounced = reader.ReadBoolean();
-                        byte who = reader.ReadByte();
-
-                        //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
-                        if (Main.netMode == NetmodeID.MultiplayerClient || !bounced)
-                        {
-                            //Sync everything
-                            Player player = Main.player[who];
-                            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                            modPlayer.forceDodgeroll = true;
-                            modPlayer.wantedDodgerollDir = reader.ReadSByte();
-                            player.velocity = reader.ReadVector2();
-
-                            //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                                rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
-                                rollPacket.Write(true);
-                                rollPacket.Write((byte)player.whoAmI);
-                                rollPacket.Write(modPlayer.wantedDodgerollDir);
-                                rollPacket.WriteVector2(player.velocity);
-
-                                //Iterate through all active clients and send it specifically to them
-                                for (int i = 0; i < Main.maxPlayers; i++)
-                                {
-                                    if (Main.player[i].active && i != player.whoAmI)
-                                    {
-                                        rollPacket.Send(i);
-                                    }
-                                }
-                            }
-                        }
+                        tsorcRevampPlayer.ReadDodgerollPacket(reader, whoAmI);
                         break;
                     }
                 case tsorcPacketID.SyncBonfire:

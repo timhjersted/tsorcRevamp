@@ -44,7 +44,7 @@ namespace tsorcRevamp.Utilities
         /// no repeat → allow the repeat (it's the only one open) → refill, no repeat → refill, allow the repeat.
         /// Returns false when nothing anywhere is eligible right now; the caller picks its own fallback move.
         /// </summary>
-        public bool TryDraw(Func<T, bool> isEligible, out T drawn)
+        public bool TryDraw(Func<T, bool> isEligible, out T drawn, Func<T, int> priority = null)
         {
             if (cards.Count == 0)
             {
@@ -75,7 +75,31 @@ namespace tsorcRevamp.Utilities
                 return false;
             }
 
-            int pickedSlot = Main.rand.Next(eligibleIndices.Count);
+            int choiceCount = eligibleIndices.Count;
+            if (priority != null)
+            {
+                // Keep only the highest-priority eligible cards for this draw. Lower-priority cards stay in the bag.
+                int bestPriority = int.MinValue;
+                choiceCount = 0;
+                for (int i = 0; i < eligibleIndices.Count; i++)
+                {
+                    int candidateIndex = eligibleIndices[i];
+                    int score = priority(cards[candidateIndex]);
+                    if (score > bestPriority)
+                    {
+                        bestPriority = score;
+                        choiceCount = 0;
+                    }
+
+                    if (score == bestPriority)
+                    {
+                        eligibleIndices[choiceCount] = candidateIndex;
+                        choiceCount++;
+                    }
+                }
+            }
+
+            int pickedSlot = Main.rand.Next(choiceCount);
             int cardIndex = eligibleIndices[pickedSlot];
             drawn = cards[cardIndex];
             cards.RemoveAt(cardIndex);

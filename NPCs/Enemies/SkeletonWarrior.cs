@@ -84,8 +84,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         const float KnockbackResist = 0.3f;
 
+        // Random beat (0-30t) before it may pick an attack, rolled at spawn and after every attack, so skeletons in a
+        // group stop swinging on the same tick.
+        const int MaxAttackHesitationTicks = 30;
+
         // ── Synced (written after the SkeletonPuppet payload) ─────────────────────────────────────────────────
         bool _shieldLost;
+
+        // ── Server-only: selection only runs here. -1 = not rolled yet (rolled on the first server tick). ─────────
+        int _attackHesitationTicks = -1;
 
         // ── Per machine: the shield-drop animation and this tick's lunge commit ────────────────────────────────
         bool _shieldStateSeen;
@@ -156,7 +163,7 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override int MeleeComboChance => 100;
         protected override int RangedStartMeleeComboChance => 100;
         // Server: no new attack for 60t after it stands up again.
-        protected override bool HoldAttackSelection => PostReformTicks > 0;
+        protected override bool HoldAttackSelection => PostReformTicks > 0 || _attackHesitationTicks != 0;
 
         // ── Shield ───────────────────────────────────────────────────────────────────────────────────────────
         // The vanilla Cobalt Shield: PuppetNPC resolves its equip strip (Acc_Shield_1) with no PNG. Raised while
@@ -296,6 +303,21 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.TargetClosest();
             }
 
+            // Attack hesitation counts down only in neutral, so the beat lands after the recovery rather than inside it.
+            if (Server)
+            {
+                bool neutralBeforeTick = Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll || Phase == AttackPhase.ClosingDistance;
+
+                if (_attackHesitationTicks < 0)
+                {
+                    _attackHesitationTicks = Main.rand.Next(0, MaxAttackHesitationTicks + 1);
+                }
+                else if (_attackHesitationTicks > 0 && neutralBeforeTick)
+                {
+                    _attackHesitationTicks--;
+                }
+            }
+
             _lungeCommitting = false;
             RunPuppetAI();
 
@@ -392,8 +414,18 @@ namespace tsorcRevamp.NPCs.Enemies
         // ── Movement: a planted advance via SmartFighter4; combos own their brake and step-in ─────────────────
         protected override void RunMovementAI(float speedMult)
         {
-            SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * speedMult, acceleration: Acceleration,
+            float topSpeed = TopSpeed * speedMult * WalkSpeedVariance;
+            SmartFighter4AI.Run(NPC, topSpeed: topSpeed, acceleration: Acceleration,
                 doorBreakingDamage: 3, attackRange: 700f);
+        }
+
+        // Server: a fresh random beat after every attack before the next pick (both combos are one step).
+        protected override void OnComboStepCompleted(MeleeComboStep step)
+        {
+            if (Server)
+            {
+                _attackHesitationTicks = Main.rand.Next(0, MaxAttackHesitationTicks + 1);
+            }
         }
 
         // Server: any completed poise break knocks the shield away for the rest of its life (reassembly included).

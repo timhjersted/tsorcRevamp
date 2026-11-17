@@ -458,7 +458,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     poseReady = ramLiveTime > 0;
                 }
 
-                if (poseReady && volleyEmitters != null)
+                if (poseReady && !IsReactor && volleyEmitters != null)
                 {
                     foreach (NPC emitter in volleyEmitters)
                     {

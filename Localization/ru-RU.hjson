@@ -5904,11 +5904,8 @@ Mods: {
 
 			StaminaVessel: {
 				DisplayName: Сосуд выносливости
-				Tooltip:
-					'''
-					Навсегда увеличивает максимальную выносливость на 5
-					Выносливость достигает максимума после употребления {0} сосудов
-					'''
+				Tooltip: Навсегда увеличивает максимальную выносливость на {0}
+				MaxVessels: Выносливость достигает максимума после употребления {0} сосудов
 				UsedCounter: "Всего употреблено: "
 			}
 
@@ -9614,6 +9611,10 @@ Mods: {
 				// DisplayName: Enemy Tainted Bow
 				// Tooltip: ""
 			}
+			EnemyRoyalThunderBow: {
+				// DisplayName: Royal Thunder Bow
+				// Tooltip: ""
+			}
 
 			EnemyYellowTail: {
 				// DisplayName: Enemy Yellow Tail
@@ -12326,6 +12327,7 @@ Mods: {
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			// RoyalThunderArrow.DisplayName: Thunder Arrow
 			ObsidianGuardArrow.DisplayName: Обсидиановая стрела
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
@@ -12425,6 +12427,7 @@ Mods: {
 			// DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
 			// DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
 			// CinderRainController.DisplayName: Cinder Rain Controller
+			// CinderShadowRift.DisplayName: Cinder Shadow Rift
 		}
 
 		NPCs: {
@@ -13004,11 +13007,9 @@ Mods: {
 			IceSkeleton.DisplayName: Ледяной скелет
 			// SkeletonWarrior.DisplayName: Skeleton Warrior
 
-			KnightOfGwyn: {
-				DisplayName: Рыцарь Гвина
-				DespawnHandler: Рыцарь Гвина одерживает победу...
-				Protection: Рыцарь Гвина защищён магическим барьером. Только Старший Шаман знает, как его разрушить!
-				Open: Рыцарь Гвина открывает бездну!
+			RoyalKnight: {
+				DisplayName: Королевский рыцарь
+				DespawnHandler: Королевский рыцарь одерживает победу...
 			}
 
 			ManOfWar.DisplayName: Человек войны

@@ -2232,7 +2232,9 @@
     "MapCondition": "HellkiteDrakeCondition",
     "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
-    "ReplacedScriptedEvents": ["HellkiteDragonEvent"],
+    "ReplacedScriptedEvents": [
+      "HellkiteDragonEvent"
+    ],
     "Npcs": [
       {
         "NpcName": "tsorcRevamp/HellkiteDrake",
@@ -6412,7 +6414,7 @@
   {
     "EventID": "e6ef3b4f-959f-4504-8b2c-657e0dbd63bb",
     "CenterX": 1046.0,
-    "CenterY": 176.0,
+    "CenterY": 181.0,
     "Radius": 921600.0,
     "Square": false,
     "TriggerDust": 6,

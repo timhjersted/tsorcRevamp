@@ -159,6 +159,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const float FrozenReformLifeFraction = 0.75f;
         const float KnockbackResist = 0.05f;
 
+        // Random extra planted beat (0-30t) at spawn and after every action, so a group never acts in lockstep.
+        const int PlanningBeatSpread = 30;
+
         const int SpearFormTicks = 8;
         const int SpearDissolveTicks = 10;
 
@@ -592,6 +595,13 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override void SkeletonAI()
         {
             _age++;
+
+            // Server, first tick: a random 0-30t planted beat, so skeletons that spawn together start out of step.
+            if (Server && _age == 1)
+            {
+                _restTicks = Main.rand.Next(0, PlanningBeatSpread + 1);
+                Snapshot();
+            }
 
             if (_restTicks > 0)
             {
@@ -1073,7 +1083,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             };
 
             _cooldowns[_move] = cooldown;
-            _restTicks = 12;
+            _restTicks = 12 + Main.rand.Next(0, PlanningBeatSpread + 1);
             _lastActionFacing = _lockFacing;
             _crossCheckTicks = 30;
             Trace("complete-" + _move);
@@ -1549,6 +1559,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     walkSpeed = 1.4f;
                 }
 
+                walkSpeed *= WalkSpeedVariance;
                 SmartFighter4AI.Run(NPC, topSpeed: walkSpeed, acceleration: Acceleration, doorBreakingDamage: 3, attackRange: 700f);
                 return;
             }

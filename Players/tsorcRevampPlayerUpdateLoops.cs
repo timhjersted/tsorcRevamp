@@ -123,9 +123,6 @@ namespace tsorcRevamp
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
 
-        public int DestinedDeathStacks = 0;
-        public float DestinedDeathCurrentHPLoss = 0f;
-        public bool DestinedDeathActive = false;
 
         public bool BrokenSpirit;
 
@@ -523,12 +520,6 @@ namespace tsorcRevamp
             Suppressed = false;
             MountsDisabled = false;
             Tired = false;
-            DestinedDeathActive = false;
-            if (Player.dead)
-            {
-                DestinedDeathStacks = 0;
-                DestinedDeathCurrentHPLoss = 0f;
-            }
             BeastMode1 = false;
 
             DragoonBoots = false;
@@ -1571,16 +1562,12 @@ namespace tsorcRevamp
                 Player.gravControl = false;
             }
 
-            // Suppressed also blocks the Gravity Globe's flip, which has no buff to delete.
+            // Suppressed also blocks the Gravity Globe's flip (which has no buff to delete).
+            // Wings are grounded via WingsDisabled in PostUpdateMiscEffects; rocket boots, bottle extra jumps,
+            // and jump height are deliberately left alone.
             if (Suppressed)
             {
                 Player.gravControl2 = false;
-
-                // Suppressed shuts down flight from ANY source, not just the Supersonic items: rocket boots are
-                // disabled here (after the equip pass that sets them); wings are grounded with Torn Wings/Crippled
-                // in PostUpdateMiscEffects. Bottle extra jumps and jump height are deliberately left alone.
-                Player.canRocket = false;
-                Player.rocketTime = 0;
             }
 
             // Suppressed / Treacherous Terrain: no mounts at all, minecarts included. Mount items are refused in
@@ -3815,38 +3802,6 @@ namespace tsorcRevamp
             Player.GetAttackSpeed(DamageClass.Generic) += ((CurseAttackSpeedBonus * ((CurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseAttackSpeedBonus * ((powerfulCurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
             Player.moveSpeed += ((CurseMovementSpeedBonus * ((CurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseMovementSpeedBonus * ((powerfulCurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
 
-            // Destined Death debuff logic
-            if (DestinedDeathActive)
-            {
-                float targetLoss = DestinedDeathStacks * 0.10f; // 10% per stack, up to 60%
-                if (DestinedDeathCurrentHPLoss < targetLoss)
-                {
-                    // Drain max HP by 5% per second (0.05f / 60f per tick)
-                    DestinedDeathCurrentHPLoss = Math.Min(targetLoss, DestinedDeathCurrentHPLoss + (0.05f / 60f));
-                }
-            }
-            else if (DestinedDeathCurrentHPLoss > 0f)
-            {
-                // Debuff expired — recover life at 10% per second (0.10f / 60f per tick)
-                DestinedDeathCurrentHPLoss = Math.Max(0f, DestinedDeathCurrentHPLoss - (0.10f / 60f));
-                if (DestinedDeathCurrentHPLoss <= 0f)
-                {
-                    DestinedDeathStacks = 0;
-                }
-            }
-
-            if (DestinedDeathCurrentHPLoss > 0f)
-            {
-                // Apply max HP reduction
-                Player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier -= DestinedDeathCurrentHPLoss; //feel free to multiply the mult instead if you want the debuffs impact to be higher
-                //Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
-
-                // At 60% max HP loss cap, gain 15% extra damage (additive)
-                if (DestinedDeathCurrentHPLoss >= 0.60f)
-                {
-                    Player.GetDamage(DamageClass.Generic) += 0.15f;
-                }
-            }
         }
     }
 }

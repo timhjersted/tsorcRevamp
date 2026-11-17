@@ -41,19 +41,21 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const int HourglassBeamLifetime = HourglassTellTicks + HourglassFireTicks + DestroyerHullLaser.FadeTicks + DestroyerHullLaser.PoseWaitTicks;
         private const int HourglassWaveSpacing = 94;
         private const float ReactorOrbitSpeed = 0.0205f;
-        private const int ReactorShapeTicks = 245;
+        private const int ReactorShapeTicks = 205;
+        private const int ReactorSetupTicks = 175;
         private const int ReactorReversalTicks = 112;
         private const int ReactorActiveTicks = 430;
         private const int ReactorWaves = 3;
         private const int ReactorTellTicks = 43;
         internal const int ReactorFireTicks = 154;
         private const int ThrashTellTicks = 56;
-        private const int ThrashSettleTicks = 13;
-        private const int ThrashDiveTicks = 34;
-        private const int ThrashImpactTicks = 24;
-        private const int ThrashFirstSweep = 92;
-        private const int ThrashSecondSweep = 112;
-        private const int ThrashFinalSweep = 106;
+        private const int ThrashImpactHoldTicks = 8;
+        private const int ThrashFirstSweep = 96;
+        private const int ThrashSecondSweep = 124;
+        private const int ThrashFinalSweep = 124;
+        private const int ThrashWhipSegments = 56;
+        private const int ThrashWhipFadeTicks = 40;
+        private const float ThrashSideOffset = 450f;
         internal const int ThrashFireTicks = ThrashFirstSweep + ThrashSecondSweep + ThrashFinalSweep;
         private const int EnclosingFirstLapTicks = 251;
         private const int EnclosingSecondLapTicks = 267;
@@ -107,10 +109,11 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const int BombBayFlashFadeTicks = 10;
         internal const int RippleDelay = 8;
         private const int RippleSegmentCount = 30;
+        private const int RippleMinimumSegments = 18;
+        private const int RippleShortRunTick = 205;
         private const int RippleSegmentDelay = 2;
         private const int RippleTellTicks = 42;
         private const int RippleWaveGap = 120;
-        private const int RippleWaveSpacing = (RippleSegmentCount - 1) * RippleSegmentDelay + DestroyerHullLaser.RippleFireTicks + RippleWaveGap;
         private const float RippleEntryDistance = 1690f;
         private const float RippleEntryHeight = 430f;
         private const int RippleSetupTicks = 230;
@@ -121,7 +124,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const int DriveThroughPortCount = 6;
         private const int DriveThroughFirstPort = 4;
         private const int DriveThroughBaselineStride = 4;
-        private const int BroadsidePortStride = 6;
+        private const int BroadsidePortStride = 7;
         private const int CurtainPortStride = 6;
         private const float CurtainPassSpeed = 10.5f;
         private const float CurtainRunoutDistance = CurtainPassSpeed * (DestroyerHullLaser.CurtainRunFireTicks - DestroyerHullLaser.FireTicks);
@@ -132,11 +135,11 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private const float DriveThroughEntry = 1480f;
         private const float DriveThroughExit = 1610f;
         private const int ChargeRange = 1800;
-        private const int ChargeOvershoot = 400;
-        private const float ChargeStandOff = 760f;
-        private const float ChargeMinimumLineupDistance = 315f;
-        private const float RamBrakeDistance = 17f * 16f;
-        private const float RamAimDistance = 4f * 16f;
+        private const int ChargeOvershoot = 20 * 16;
+        private const float RamBrakeDistance = 37f * 16f;
+        private const float RamAimDistance = 24f * 16f;
+        private const float ChargeStandOff = RamBrakeDistance + 18f * 16f;
+        private const float ChargeMinimumLineupDistance = RamBrakeDistance + 3f * 16f;
         private const float RamApproachSpeed = 12f;
         private const float RamTrackingSpeed = 4.7f;
         private const float RamSpeed = 25f;
@@ -166,14 +169,6 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             (57f, -72f, RunawaySecondSwing, RunawaySecondPause),
             (-72f, 35f, RunawayFinalSwing, 0)
         };
-
-        private static readonly (Vector2 Offset, float AimDegrees, int Ticks)[] thrashSweeps =
-        {
-            (new Vector2(110f, 66f), 55f, ThrashFirstSweep),
-            (new Vector2(-106f, -138f), -68f, ThrashSecondSweep),
-            (new Vector2(76f, 49f), 60f, ThrashFinalSweep)
-        };
-        private const float ThrashOpeningDegrees = -58f;
 
         // Live angles in radians. The uneven spacing leaves a wider lane as the beams sweep together.
         private static readonly float[] enclosingFirstVolleyAngles = { 0.61f, MathHelper.Pi + 1.60f, 2.52f };
@@ -261,9 +256,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private int driveThroughLastShot;
         private int driveThroughFadeUntil;
         private int curtainFiredPorts;
+        private int ripplePortCount;
+        private Vector2 thrashNearFloor;
+        private Vector2 thrashFarFloor;
+        private Vector2 thrashImpactPoint;
+        private byte thrashImpacts;
+        private byte shownThrashImpacts;
         private bool curtainReachedBoundary;
         private bool curtainTurning;
-        private int ramLiveTicks;
         private bool ramBackedOff;
         private int attacksBeforeNextOrbit;
         private float hullTurn;
@@ -278,6 +278,8 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         private bool bodyPoseForMaw;
         private bool openedFight;
         private AttackBag<Move> attackBag;
+        private int[] attackUses;
+        private bool lateAttackBag;
         private int probeOwner = -1;
         private bool legacyProbe;
         private bool fireBreathProbe;
@@ -422,6 +424,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             writer.Write(bodyPoseForMaw);
             writer.Write(curtainTurning);
             writer.Write((byte)curtainFiredPorts);
+            writer.Write((byte)ripplePortCount);
+            if (IsHullThrash)
+            {
+                writer.WriteVector2(thrashNearFloor);
+                writer.WriteVector2(thrashFarFloor);
+                writer.WriteVector2(thrashImpactPoint);
+                writer.Write(thrashImpacts);
+            }
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader reader)
@@ -456,6 +466,11 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 announcedBeat = false;
             }
 
+            if (nextMove != move)
+            {
+                shownThrashImpacts = 0;
+            }
+
             move = nextMove;
             beat = nextBeat;
             phase = reader.ReadByte();
@@ -477,6 +492,14 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             bodyPoseForMaw = reader.ReadBoolean();
             curtainTurning = reader.ReadBoolean();
             curtainFiredPorts = reader.ReadByte();
+            ripplePortCount = reader.ReadByte();
+            if (IsHullThrash)
+            {
+                thrashNearFloor = reader.ReadVector2();
+                thrashFarFloor = reader.ReadVector2();
+                thrashImpactPoint = reader.ReadVector2();
+                thrashImpacts = reader.ReadByte();
+            }
         }
 
         public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers)
@@ -540,7 +563,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                         EmitHourglassFire(npc, head.velocity);
                     }
 
-                    bool bombPass = headState.move == Move.BombDrop && headState.beat == Beat.Active;
+                    bool bombPass = headState.move == Move.BombDrop && headState.beat == Beat.Active && head.life * 2 >= head.lifeMax;
                     if (npc.type == NPCID.TheDestroyerBody && headState.move == Move.MissileBarrage && headState.beat == Beat.Active)
                     {
                         int missileAge = headState.MissileBayAge(spawnOrdinal);
@@ -685,6 +708,13 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
             if (authority && player != null)
             {
+                if (move == Move.BombDrop && npc.life * 2 < npc.lifeMax)
+                {
+                    // Swap the payload in flight. Unreleased bomb bay tells stop when the move changes.
+                    move = Move.MineDrop;
+                    npc.netUpdate = true;
+                }
+
                 if (!openedFight)
                 {
                     openedFight = true;
@@ -857,55 +887,46 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
         private void PickAttack(NPC npc, Player player)
         {
+            bool belowHalf = npc.life * 2 < npc.lifeMax;
+            if (lateAttackBag != belowHalf)
+            {
+                lateAttackBag = belowHalf;
+                attackBag?.Clear();
+            }
+
             if (attackBag == null)
             {
                 attackBag = new AttackBag<Move>(cards =>
                 {
                     cards.Add(Move.BroadsidePass2);
-                    cards.Add(Move.BroadsidePass2);
                     cards.Add(Move.CurtainCall2);
-                    cards.Add(Move.BroadsidePass1);
-                    cards.Add(Move.CurtainCall1);
-                    cards.Add(Move.HeadCharge);
-                    cards.Add(Move.HeadCharge);
-                    cards.Add(Move.HeadCharge);
                     cards.Add(Move.HeadCharge);
                     cards.Add(Move.EnclosingCoil);
-                    cards.Add(Move.EnclosingCoil);
-                    cards.Add(Move.HullGlowSpin);
-                    cards.Add(Move.HullGlowSpin);
-                    cards.Add(Move.HullGlowSpin);
-                    cards.Add(Move.HourglassSpin);
-                    cards.Add(Move.ReactorBreaker);
-                    cards.Add(Move.RunawayMaw);
-                    cards.Add(Move.BombDrop);
-                    cards.Add(Move.BombDrop);
-                    cards.Add(Move.MineDrop);
-                    cards.Add(Move.MineDrop);
-                    cards.Add(Move.MissileBarrage);
+                    cards.Add(Move.RippleBroadside);
                     cards.Add(Move.ProbeBarrage);
-                    if (phase == 2)
+                    if (lateAttackBag)
                     {
-                        cards.Add(Move.HeadCharge);
-                        cards.Add(Move.BombDrop);
-                        cards.Add(Move.MawBeam);
-                        cards.Add(Move.MawBeam);
-                        cards.Add(Move.RippleBroadside);
-                        cards.Add(Move.ProbeBarrage);
-                        cards.Add(Move.ProbeBarrage);
-                    }
-                    else if (phase == 3)
-                    {
-                        cards.Add(Move.HullThrash);
-                        cards.Add(Move.HullThrash);
-                        cards.Add(Move.HeadCharge);
+                        cards.Add(Move.HullGlowSpin);
+                        cards.Add(Move.HourglassSpin);
+                        cards.Add(Move.ReactorBreaker);
+                        cards.Add(Move.RunawayMaw);
                         cards.Add(Move.MineDrop);
+                        cards.Add(Move.MissileBarrage);
+                        if (phase == 3)
+                        {
+                            cards.Add(Move.HullThrash);
+                        }
+                    }
+                    else
+                    {
+                        cards.Add(Move.BroadsidePass1);
+                        cards.Add(Move.CurtainCall1);
+                        cards.Add(Move.BombDrop);
+                    }
+
+                    if (phase >= 2)
+                    {
                         cards.Add(Move.MawBeam);
-                        cards.Add(Move.MawBeam);
-                        cards.Add(Move.MawBeam);
-                        cards.Add(Move.RippleBroadside);
-                        cards.Add(Move.ProbeBarrage);
-                        cards.Add(Move.ProbeBarrage);
                     }
                 });
             }
@@ -932,35 +953,38 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             }
 
             Vector2 overheadApproach = player.Center - Vector2.UnitY * (OverheadHeight - OverheadRadius);
-            bool canSpin = canCircle && npc.life * 2 < npc.lifeMax && npc.Center.Y + 96f <= player.Center.Y
+            bool canSpin = canCircle && belowHalf && npc.Center.Y + 96f <= player.Center.Y
                 && overheadApproach.Y > 320f && Collision.CanHitLine(player.Center, 1, 1, overheadApproach, 1, 1);
             Vector2 hourglassApproach = player.Center - Vector2.UnitY * (HourglassHeight - OverheadRadius);
-            bool canHourglass = canCircle && npc.life * 2 < npc.lifeMax && hourglassApproach.Y > 320f
+            bool canHourglass = canCircle && belowHalf && hourglassApproach.Y > 320f
                 && Collision.CanHitLine(player.Center, 1, 1, hourglassApproach, 1, 1);
-            bool hasMawPerch = npc.life * 2 < npc.lifeMax && withinOrbitRange
+            // Reactor mounts can sweep out of terrain. Honor world bounds and reach without requiring a clear overhead tunnel.
+            bool canReactor = belowHalf && npc.WithinRange(player.Center, 1500f) && hourglassApproach.Y > 320f;
+            bool hasMawPerch = belowHalf && withinOrbitRange
                 && (HasMawPerch(player.Center, 1) || HasMawPerch(player.Center, -1));
             bool canThrash = phase == 3 && npc.life * 10 < npc.lifeMax * 3 && hasMawPerch;
-
-            // Lead the final phase with the thrash if the head has room to start the beam.
-            if (canThrash && beat == Beat.Erupt)
-            {
-                StartAttack(npc, player, Move.HullThrash);
-                return;
-            }
 
             // Wait for range or an eligible non-repeat. AttackBag's default fallback permits repeats.
             bool drew = attackBag.TryDraw(candidate => candidate != attackBag.Last
                 && (candidate != Move.HeadCharge || npc.Distance(player.Center) <= ChargeRange)
-                && (candidate != Move.RippleBroadside || npc.WithinRange(player.Center, 950f))
+                && (candidate != Move.RippleBroadside || npc.WithinRange(player.Center, 1250f))
                 && (candidate != Move.EnclosingCoil || canCircle && airborne)
                 && (candidate != Move.HullGlowSpin || canSpin)
-                && (candidate != Move.HourglassSpin && candidate != Move.ReactorBreaker || canHourglass)
+                && (candidate != Move.HourglassSpin || canHourglass)
+                && (candidate != Move.ReactorBreaker || canReactor)
                 && (candidate != Move.RunawayMaw || hasMawPerch)
                 && (candidate != Move.HullThrash || canThrash)
-                && (candidate != Move.BombDrop || (npc.life * 4 < npc.lifeMax * 3 && npc.life * 10 >= npc.lifeMax * 3))
-                && (candidate != Move.MineDrop || npc.life * 10 < npc.lifeMax * 3)
-                && (candidate != Move.MissileBarrage || npc.life * 2 < npc.lifeMax)
-                && (candidate != Move.ProbeBarrage || CountActiveProbes(npc) >= 4), out Move nextMove);
+                && (candidate != Move.BombDrop || npc.life * 4 < npc.lifeMax * 3)
+                && (candidate != Move.ProbeBarrage || CountActiveProbes(npc) >= 4), out Move nextMove, candidate =>
+                {
+                    int uses = attackUses[(int)candidate];
+                    if (uses == 0 && (candidate == Move.ReactorBreaker || candidate == Move.RippleBroadside || candidate == Move.HullThrash))
+                    {
+                        return 1;
+                    }
+
+                    return -uses;
+                });
             if (!drew)
             {
                 move = Move.None;
@@ -973,12 +997,20 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
         private void StartAttack(NPC npc, Player player, Move nextMove, bool skipSetup = false)
         {
+            attackUses ??= new int[(int)Move.HullThrash + 1];
+            attackUses[(int)nextMove]++;
             move = nextMove;
             sequence = 0;
             vulnerable = false;
             bodyPoseForMaw = false;
             curtainTurning = false;
             curtainFiredPorts = 0;
+            ripplePortCount = 0;
+            if (move == Move.HullThrash)
+            {
+                thrashImpacts = 0;
+                shownThrashImpacts = 0;
+            }
             anchor = player.Center;
             goal = anchor;
             if (player.Center.X >= npc.Center.X)
@@ -1128,6 +1160,10 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 if (move == Move.RippleBroadside)
                 {
                     setupTicks = RippleSetupTicks;
+                }
+                else if (move == Move.ReactorBreaker)
+                {
+                    setupTicks = ReactorSetupTicks;
                 }
 
                 SetBeat(npc, Beat.Setup, setupTicks);
@@ -1391,7 +1427,8 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
         {
             if (beat == Beat.Setup)
             {
-                if (authority && player != null && timer % 24 == 0 && !player.WithinRange(anchor, 150f))
+                if (authority && player != null && timer % 24 == 0 && timer <= RippleSetupTicks - 70
+                    && !player.WithinRange(anchor, 150f))
                 {
                     anchor = player.Center;
                     goal = anchor - new Vector2(heading * RippleEntryDistance, sweepSign * RippleEntryHeight);
@@ -1402,13 +1439,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 float distance = toEntry.Length();
                 float speed = Math.Min(distance * 0.08f, 18f);
                 GlideHead(npc, toEntry.SafeNormalize(Vector2.Zero) * speed, 0.18f);
-                if (authority && distance <= 38f)
+                if (authority && (distance <= 52f || timer >= duration))
                 {
                     SetBeat(npc, Beat.Shape, RippleShapeTicks);
-                }
-                else if (authority && timer >= duration)
-                {
-                    FinishAttack(npc);
                 }
 
                 return;
@@ -1427,14 +1460,17 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             {
                 // Lay the hull across the arena before committing its ports. Select one contiguous run along the actual chain.
                 float headLead = (npc.Center.X - anchor.X) * heading;
-                if (headLead >= 840f && timer % 4 == 0)
+                if (headLead >= 690f && timer % 4 == 0)
                 {
                     Vector2 target = player?.Center ?? anchor;
-                    int firstOrdinal = FindRippleRun(npc, target);
+                    int minSegments = timer >= RippleShortRunTick ? RippleMinimumSegments : RippleSegmentCount;
+                    int firstOrdinal = FindRippleRun(npc, target, minSegments, out int portCount);
                     if (firstOrdinal > 0)
                     {
                         sequence = firstOrdinal;
-                        int lastWarning = RippleWaveSpacing + (RippleSegmentCount - 1) * RippleSegmentDelay;
+                        ripplePortCount = portCount;
+                        int rippleSpan = (portCount - 1) * RippleSegmentDelay;
+                        int lastWarning = 2 * rippleSpan + DestroyerHullLaser.RippleFireTicks + RippleWaveGap;
                         int activeTicks = lastWarning + RippleTellTicks + DestroyerHullLaser.RippleFireTicks + DestroyerHullLaser.RippleFadeTicks + 2;
                         SetBeat(npc, Beat.Active, activeTicks);
                         return;
@@ -1450,19 +1486,20 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             }
 
             int waveTick = timer - 1;
-            bool secondWave = waveTick >= RippleWaveSpacing;
+            int waveSpacing = (ripplePortCount - 1) * RippleSegmentDelay + DestroyerHullLaser.RippleFireTicks + RippleWaveGap;
+            bool secondWave = waveTick >= waveSpacing;
             if (secondWave)
             {
-                waveTick -= RippleWaveSpacing;
+                waveTick -= waveSpacing;
             }
 
             int step = waveTick / RippleSegmentDelay;
-            if (step < RippleSegmentCount && waveTick % RippleSegmentDelay == 0)
+            if (step < ripplePortCount && waveTick % RippleSegmentDelay == 0)
             {
                 int ordinal = sequence + step;
                 if (secondWave)
                 {
-                    ordinal = sequence + RippleSegmentCount - 1 - step;
+                    ordinal = sequence + ripplePortCount - 1 - step;
                 }
 
                 foreach (NPC segment in Main.ActiveNPCs)
@@ -1640,28 +1677,52 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                     return;
                 }
 
-                // The center pass fires inward from the opposite arc. The outside passes start at mirrored bearings.
+                // The center pass fires inward. Bias the final pair along the spin so both sockets can clear the re-forming rim.
                 bool outward = sequence != 1;
                 int side = outward ? -sweepSign : sweepSign;
                 float offset = 0f;
                 if (outward)
                 {
-                    offset = (sequence == 0 ? heading : -heading) * 0.25f;
+                    offset = (sequence == 0 ? heading : sweepSign) * 0.25f;
                 }
 
                 float lead = angularStep * (ReactorTellTicks + ReactorFireTicks * 0.5f - 1f);
                 float tellAngle = MathHelper.PiOver2 + offset - lead;
-                NPC emitter = FindOrbitEmitter(npc, radius, angularStep, tellAngle, side, outward);
-                if (emitter != null)
+                bool finalSweep = sequence == ReactorWaves - 1;
+                NPC emitter = null;
+                bool fired = false;
+                if (finalSweep)
                 {
-                    int beam = SpawnHullBeam(emitter, DestroyerHullLaser.ReactorPort, side, ReactorTellTicks);
-                    if (beam < Main.maxProjectiles)
+                    // Both rays follow the orbit. Space their bearings so their crossings leave time for a second dodge.
+                    NPC leading = FindOrbitEmitter(npc, radius, angularStep, tellAngle + 0.54f * sweepSign, side, outward);
+                    NPC trailing = FindOrbitEmitter(npc, radius, angularStep, tellAngle - 0.54f * sweepSign, side, outward);
+                    if (leading != null && trailing != null)
                     {
-                        sequence++;
-                        orbitBeamStart = timer;
-                        orbitBeamOrdinal = emitter.GetGlobalNPC<TheDestroyer>().spawnOrdinal;
-                        npc.netUpdate = true;
+                        float separation = MathHelper.WrapAngle(leading.rotation - trailing.rotation);
+                        if (Math.Abs(separation) >= 0.76f)
+                        {
+                            fired = TrySpawnOrbitVolley(new[] { leading, trailing }, DestroyerHullLaser.ReactorPort, side, ReactorTellTicks);
+                            emitter = leading;
+                        }
                     }
+                }
+
+                if (!fired && (!finalSweep || timer >= 125))
+                {
+                    emitter = FindOrbitEmitter(npc, radius, angularStep, tellAngle, side, outward);
+                    if (emitter != null)
+                    {
+                        int beam = SpawnHullBeam(emitter, DestroyerHullLaser.ReactorPort, side, ReactorTellTicks);
+                        fired = beam < Main.maxProjectiles;
+                    }
+                }
+
+                if (fired)
+                {
+                    sequence++;
+                    orbitBeamStart = timer;
+                    orbitBeamOrdinal = emitter.GetGlobalNPC<TheDestroyer>().spawnOrdinal;
+                    npc.netUpdate = true;
                 }
 
                 return;
@@ -2019,7 +2080,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 // Brake early and keep aiming. Slow to a crawl at the edge of the commitment radius if the head needs to turn.
                 float remaining = Math.Max(0f, distance - RamAimDistance);
                 float closingSpeed = Math.Clamp(remaining * 0.4f, 0.75f, RamTrackingSpeed);
-                // Match the outward part of the player's motion separately so the distance taper cannot stall outside four tiles.
+                // Match outward player movement separately so tapering the closing speed does not stall the approach.
                 float catchup = retreatSpeed * MathHelper.Clamp(timer / 16f, 0f, 1f);
                 float trackingSpeed = Math.Min(closingSpeed + catchup, RamApproachSpeed - 1f);
                 GlideHead(npc, aim * trackingSpeed, 0.36f);
@@ -2059,12 +2120,13 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 {
                     lockedDirection = aim;
                     lockedOrigin = destination;
+                    goal = lockedOrigin + lockedDirection * ChargeOvershoot;
                     npc.velocity = lockedDirection * RamTellSpeed;
                     // Budget the distance lost to the 30-tick ramp so the head still clears the target.
                     float rampTravelLost = (RamSpeed - RamTellSpeed) * (RamAccelerationTicks - 1) * 0.5f;
                     float dashDistance = distance + ChargeOvershoot + rampTravelLost;
-                    ramLiveTicks = Math.Clamp((int)MathF.Ceiling(dashDistance / RamSpeed), RamAccelerationTicks, 70);
-                    SetBeat(npc, Beat.Active, ramLiveTicks);
+                    int liveTicks = Math.Clamp((int)MathF.Ceiling(dashDistance / RamSpeed), RamAccelerationTicks, 70);
+                    SetBeat(npc, Beat.Active, liveTicks);
                 }
                 else if (timer >= duration)
                 {
@@ -2078,8 +2140,12 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             {
                 float progress = MathHelper.Clamp(timer / (float)RamAccelerationTicks, 0f, 1f);
                 float speed = MathHelper.SmoothStep(RamTellSpeed, RamSpeed, progress);
-                SteerHead(npc, lockedDirection * speed, 0.016f, 1f);
-                if (authority && timer >= duration)
+                // Keep one straight line through the locked aim point. Trim the final step to the planned runout.
+                float remaining = Vector2.Dot(goal - npc.Center, lockedDirection);
+                float travel = Math.Clamp(remaining, 0f, speed);
+                npc.velocity = lockedDirection * travel;
+                npc.rotation = lockedDirection.ToRotation() + MathHelper.PiOver2;
+                if (authority && (remaining <= speed || timer >= duration))
                 {
                     if (++sequence < chainLength)
                     {
@@ -2096,8 +2162,11 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 return;
             }
 
-            Vector2 recoveryDrift = lockedDirection * MathHelper.Lerp(16f, 9f, MathHelper.Clamp(timer / (float)Math.Max(1, duration), 0f, 1f));
-            SteerHead(npc, recoveryDrift, 0.04f, 0.10f);
+            float peelAngle = lockedDirection.X >= 0f ? -1.8f : 1.8f;
+            Vector2 recoveryDirection = lockedDirection.RotatedBy(peelAngle);
+            float recoveryProgress = MathHelper.Clamp(timer / (float)duration, 0f, 1f);
+            float recoverySpeed = MathHelper.Lerp(16f, 9f, recoveryProgress);
+            SteerHead(npc, recoveryDirection * recoverySpeed, 0.06f, 0.12f);
             if (!Main.dedServ && timer % 4 == 0)
             {
                 Dust.NewDustPerfect(Mouth(npc), DustID.Smoke, Main.rand.NextVector2Circular(3f, 3f), Scale: 1.8f);
@@ -2677,20 +2746,36 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
         private void RunHullThrash(NPC npc, Player player, bool authority)
         {
+            if (!Main.dedServ && shownThrashImpacts != thrashImpacts)
+            {
+                shownThrashImpacts = thrashImpacts;
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.85f, Pitch = -0.35f }, thrashImpactPoint);
+                UsefulFunctions.ScreenShake(thrashImpactPoint, 14f, 24, distanceFalloff: 1050f);
+                for (int i = 0; i < 34; i++)
+                {
+                    Vector2 origin = thrashImpactPoint + Main.rand.NextVector2Circular(28f, 5f) - Vector2.UnitY * 5f;
+                    Vector2 drift = new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-6.8f, -1.5f));
+                    Dust.NewDustPerfect(origin, DustID.Stone, drift, Scale: Main.rand.NextFloat(1f, 1.8f));
+
+                    Color soil = new Color(148, 119, 95);
+                    Dust cloud = Dust.NewDustPerfect(origin, DustID.Smoke, drift * 0.57f, 65, soil, Main.rand.NextFloat(1.4f, 2.4f));
+                    cloud.noGravity = true;
+                }
+            }
+
             if (beat == Beat.Setup)
             {
                 Vector2 toPerch = goal - npc.Center;
                 float distance = toPerch.Length();
                 float speed = Math.Clamp(distance * 0.09f, 2f, 18f);
                 GlideHead(npc, toPerch.SafeNormalize(-Vector2.UnitX * heading) * speed, 0.18f);
-                if (authority && distance <= 42f)
+                if (authority && (distance <= 52f || timer >= duration))
                 {
                     Vector2 target = player?.Center ?? anchor;
                     Vector2 targetOffset = target - npc.Center;
                     float sideDistance = Math.Abs(targetOffset.X);
-                    bool inSweepRange = sideDistance >= 300f && Math.Abs(targetOffset.Y) <= sideDistance * 0.70f
-                        && targetOffset.LengthSquared() <= 780f * 780f;
-                    if (!inSweepRange || !Collision.CanHitLine(npc.Center, 1, 1, target, 1, 1))
+                    bool inSweepRange = sideDistance >= 240f && targetOffset.LengthSquared() <= 850f * 850f;
+                    if (!inSweepRange)
                     {
                         FinishAttack(npc);
                         return;
@@ -2698,11 +2783,17 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
                     anchor = target;
                     heading = target.X >= npc.Center.X ? 1 : -1;
+                    if (!TryFindThrashLanding(anchor, -heading, out thrashNearFloor))
+                    {
+                        thrashNearFloor = anchor + new Vector2(-heading * ThrashSideOffset, 108f);
+                    }
+
+                    if (!TryFindThrashLanding(anchor, heading, out thrashFarFloor))
+                    {
+                        thrashFarFloor = anchor + new Vector2(heading * ThrashSideOffset, 108f);
+                    }
+
                     SetBeat(npc, Beat.Windup, ThrashTellTicks);
-                }
-                else if (authority && timer >= duration)
-                {
-                    FinishAttack(npc);
                 }
 
                 return;
@@ -2711,8 +2802,7 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             if (beat == Beat.Windup)
             {
                 npc.velocity *= 0.70f;
-                float aim = (anchor - npc.Center).ToRotation();
-                float openingAngle = aim + MathHelper.ToRadians(ThrashOpeningDegrees * heading);
+                float openingAngle = MathHelper.PiOver2 - heading * 0.50f;
                 npc.rotation = npc.rotation.AngleTowards(openingAngle + MathHelper.PiOver2, 0.13f);
                 DecorateMouth(npc, DustID.SolarFlare, SoundID.ForceRoar);
                 if (authority && timer == duration - DestroyerMawBeam.TellTicks)
@@ -2734,140 +2824,87 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
 
             if (beat == Beat.Active)
             {
-                // The head lunges and recoils along three curved strokes. Each endpoint brings the turn and travel to rest.
-                int elapsed = timer;
-                Vector2 startOffset = Vector2.Zero;
-                Vector2 offset = thrashSweeps[^1].Offset;
-                float startAim = ThrashOpeningDegrees;
-                float aimOffset = thrashSweeps[^1].AimDegrees;
                 int stroke = 0;
-                foreach (var sweep in thrashSweeps)
+                int strokeTick = timer;
+                int strokeDuration = ThrashFirstSweep;
+                float headBottom = npc.height * 0.5f;
+                Vector2 nearCenter = thrashNearFloor - Vector2.UnitY * headBottom;
+                Vector2 farCenter = thrashFarFloor - Vector2.UnitY * headBottom;
+                Vector2 start = lockedOrigin;
+                Vector2 end = nearCenter;
+                float lift = 172f;
+                if (timer > ThrashFirstSweep)
                 {
-                    if (elapsed <= sweep.Ticks)
-                    {
-                        float progress = MathHelper.Clamp(elapsed / (float)sweep.Ticks, 0f, 1f);
-                        float eased = progress * progress * (3f - 2f * progress);
-                        float bow = MathF.Sin(progress * MathHelper.Pi);
-                        float bowDirection = stroke == 1 ? -1f : 1f;
-                        offset = Vector2.Lerp(startOffset, sweep.Offset, eased);
-                        offset.X += bowDirection * 42f * bow * bow;
-                        aimOffset = MathHelper.Lerp(startAim, sweep.AimDegrees, eased);
-                        break;
-                    }
-
-                    elapsed -= sweep.Ticks;
-                    startOffset = sweep.Offset;
-                    startAim = sweep.AimDegrees;
-                    stroke++;
+                    stroke = 1;
+                    strokeTick -= ThrashFirstSweep;
+                    strokeDuration = ThrashSecondSweep;
+                    start = nearCenter;
+                    end = farCenter;
+                    lift = 248f;
                 }
 
-                offset.X *= heading;
-                Vector2 pathCenter = lockedOrigin + offset;
-                Vector2 travel = pathCenter - npc.Center;
-                if (travel.LengthSquared() > 10f * 10f)
+                if (timer > ThrashFirstSweep + ThrashSecondSweep)
                 {
-                    travel = travel.SafeNormalize(Vector2.Zero) * 10f;
+                    stroke = 2;
+                    strokeTick -= ThrashSecondSweep;
+                    strokeDuration = ThrashFinalSweep;
+                    start = farCenter;
+                    end = nearCenter;
+                }
+
+                int travelTicks = strokeDuration - ThrashImpactHoldTicks;
+                float progress = MathHelper.Clamp(strokeTick / (float)travelTicks, 0f, 1f);
+                float eased = progress * progress * (3f - 2f * progress);
+                float liftProfile = 4f * progress * (1f - progress);
+                Vector2 pathCenter = Vector2.Lerp(start, end, eased) - Vector2.UnitY * (lift * liftProfile);
+                Vector2 travel = pathCenter - npc.Center;
+                if (travel.LengthSquared() > 20f * 20f)
+                {
+                    travel = travel.SafeNormalize(Vector2.Zero) * 20f;
                 }
 
                 npc.velocity = Collision.TileCollision(npc.position, travel, npc.width, npc.height);
-                // Aim from the resolved head position so walls can shorten the whip without jerking the beam.
                 Vector2 aimOrigin = npc.Center + npc.velocity;
-                float centerAngle = (anchor - aimOrigin).ToRotation();
-                float shotAngle = centerAngle + MathHelper.ToRadians(aimOffset * heading);
-                npc.rotation = npc.rotation.AngleTowards(shotAngle + MathHelper.PiOver2, 0.037f);
+                float targetBearing = (anchor - aimOrigin).ToRotation();
+                int turnSign = stroke == 1 ? heading : -heading;
+                float sidewaysWhip = turnSign * 0.60f * MathF.Cos(progress * MathHelper.Pi);
+                float arcAngle = MathHelper.PiOver2.AngleLerp(targetBearing + sidewaysWhip, liftProfile);
+                npc.rotation = npc.rotation.AngleTowards(arcAngle + MathHelper.PiOver2, 0.033f);
+
+                if (authority && progress >= 0.77f)
+                {
+                    int impactBit = 1 << stroke;
+                    if ((thrashImpacts & impactBit) == 0)
+                    {
+                        bool clippedFloor = travel.Y > 0f && npc.velocity.Y < travel.Y - 0.1f;
+                        if (!clippedFloor && strokeTick >= travelTicks)
+                        {
+                            Vector2 floorProbe = Collision.TileCollision(npc.position + npc.velocity, Vector2.UnitY * 3f, npc.width, npc.height);
+                            clippedFloor = floorProbe.Y < 2.9f;
+                        }
+
+                        if (clippedFloor)
+                        {
+                            // Report the swept hitbox's contact point. Only confirmed floor hits trigger shake and dust.
+                            thrashImpactPoint = aimOrigin + Vector2.UnitY * headBottom;
+                            thrashImpacts |= (byte)impactBit;
+                            npc.netUpdate = true;
+                        }
+                    }
+                }
+
                 if (authority && timer >= duration)
                 {
-                    npc.velocity = Vector2.Zero;
-                    if (TryFindThrashLanding(npc.Center, heading, out Vector2 landing))
-                    {
-                        goal = landing;
-                        lockedOrigin = npc.Center;
-                        SetBeat(npc, Beat.Shape, ThrashSettleTicks + ThrashDiveTicks);
-                    }
-                    else
-                    {
-                        vulnerable = true;
-                        SetBeat(npc, Beat.Recovery, 86);
-                    }
+                    vulnerable = true;
+                    SetBeat(npc, Beat.Recovery, 86);
                 }
 
                 return;
             }
 
-            if (beat == Beat.Shape)
+            if (timer <= DestroyerMawBeam.TellTicks)
             {
-                if (timer <= ThrashSettleTicks)
-                {
-                    npc.velocity = Vector2.Zero;
-                    return;
-                }
-
-                // Let the beam fade before the head pitches down into the floor. Stop at the first surface swept by the hitbox.
-                int diveAge = timer - ThrashSettleTicks;
-                float progress = MathHelper.Clamp(diveAge / (float)ThrashDiveTicks, 0f, 1f);
-                float headBottom = npc.height * 0.5f;
-                Vector2 impactCenter = goal - Vector2.UnitY * headBottom;
-                float centerX = MathHelper.SmoothStep(lockedOrigin.X, impactCenter.X, progress);
-                float centerY = MathHelper.Lerp(lockedOrigin.Y, impactCenter.Y, progress * progress);
-                Vector2 travel = new Vector2(centerX, centerY) - npc.Center;
-                npc.velocity = Collision.TileCollision(npc.position, travel, npc.width, npc.height);
-                if (npc.velocity.LengthSquared() > 0.1f)
-                {
-                    npc.rotation = npc.rotation.AngleTowards(npc.velocity.ToRotation() + MathHelper.PiOver2, 0.26f);
-                }
-
-                if (authority)
-                {
-                    bool touchedFloor = npc.velocity.Y < travel.Y - 0.08f;
-                    bool finishedDive = timer >= duration;
-                    if (finishedDive && !touchedFloor)
-                    {
-                        Vector2 floorProbe = Collision.TileCollision(npc.position + npc.velocity, Vector2.UnitY * 3f, npc.width, npc.height);
-                        touchedFloor = floorProbe.Y < 2.9f;
-                    }
-
-                    if (touchedFloor)
-                    {
-                        goal = npc.Center + npc.velocity + Vector2.UnitY * headBottom;
-                        sequence = 1;
-                    }
-
-                    if (touchedFloor || finishedDive || Math.Abs(npc.velocity.X - travel.X) > 1f)
-                    {
-                        vulnerable = true;
-                        SetBeat(npc, Beat.Recovery, 86);
-                    }
-                }
-
-                return;
-            }
-
-            if (sequence > 0 && timer <= ThrashImpactTicks)
-            {
-                npc.velocity = Vector2.Zero;
-                if (!Main.dedServ && !announcedBeat)
-                {
-                    announcedBeat = true;
-                    SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.85f, Pitch = -0.35f }, goal);
-                    UsefulFunctions.ScreenShake(goal, 12f, 22, distanceFalloff: 960f);
-                    for (int i = 0; i < 34; i++)
-                    {
-                        Vector2 origin = goal + Main.rand.NextVector2Circular(28f, 5f) - Vector2.UnitY * 5f;
-                        Vector2 drift = new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-6.8f, -1.5f));
-                        Dust.NewDustPerfect(origin, DustID.Stone, drift, Scale: Main.rand.NextFloat(1f, 1.8f));
-
-                        Color soil = new Color(148, 119, 95);
-                        Dust cloud = Dust.NewDustPerfect(origin, DustID.Smoke, drift * 0.57f, 65, soil, Main.rand.NextFloat(1.4f, 2.4f));
-                        cloud.noGravity = true;
-                    }
-                }
-
-                return;
-            }
-
-            if (timer <= ThrashSettleTicks)
-            {
-                npc.velocity = Vector2.Zero;
+                npc.velocity *= 0.72f;
                 return;
             }
 
@@ -3085,29 +3122,33 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             return new Vector2(tileX * 16f + 8f, centerY * 16f + 32f);
         }
 
-        private static bool TryFindThrashLanding(Vector2 headCenter, int side, out Vector2 landing)
+        private static bool TryFindThrashLanding(Vector2 target, int side, out Vector2 landing)
         {
             const int width = 38;
             const int height = 24;
-            Vector2 probe = headCenter + new Vector2(side * 154f - width * 0.5f, -12f);
             landing = Vector2.Zero;
-            if (Collision.SolidCollision(probe, width, height))
-            {
-                return false;
-            }
-
             Vector2 step = Vector2.UnitY * 12f;
-            for (int i = 0; i < 27; i++)
+            // Sample a few stations on each flank so a pit at the outer station can bring the slam closer in.
+            for (int station = 0; station < 3; station++)
             {
-                Vector2 travel = Collision.TileCollision(probe, step, width, height);
-                if (travel.Y < step.Y - 0.1f)
+                float offset = ThrashSideOffset - station * 74f;
+                Vector2 probe = target + new Vector2(side * offset - width * 0.5f, -106f);
+                if (Collision.SolidCollision(probe, width, height))
                 {
-                    landing = probe + new Vector2(width * 0.5f, height + travel.Y);
-                    Vector2 aboveFloor = landing - Vector2.UnitY * 36f;
-                    return Collision.CanHitLine(headCenter, 1, 1, aboveFloor, 1, 1);
+                    continue;
                 }
 
-                probe += step;
+                for (int depth = 0; depth < 40; depth++)
+                {
+                    Vector2 travel = Collision.TileCollision(probe, step, width, height);
+                    if (travel.Y < step.Y - 0.1f)
+                    {
+                        landing = probe + new Vector2(width * 0.5f, height + travel.Y);
+                        return true;
+                    }
+
+                    probe += step;
+                }
             }
 
             return false;
@@ -3343,8 +3384,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 && !DestroyerHullLaser.ExceedsSweepSpeed(previousCenter, -previousNormal, segment.Center, -normal, reach);
         }
 
-        private int FindRippleRun(NPC head, Vector2 target)
+        private int FindRippleRun(NPC head, Vector2 target, int minimumSegments, out int bestCount)
         {
+            bestCount = 0;
             Span<int> ports = stackalloc int[Main.maxNPCs];
             ports.Fill(-1);
             Span<float> hitColumns = stackalloc float[Main.maxNPCs];
@@ -3387,9 +3429,10 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 }
 
                 remaining++;
-                if (remaining >= RippleSegmentCount)
+                int count = Math.Min(remaining, RippleSegmentCount);
+                if (count >= minimumSegments && count >= bestCount)
                 {
-                    int first = ordinal - RippleSegmentCount + 1;
+                    int first = ordinal - count + 1;
                     float front = Main.npc[ports[first]].Center.X;
                     float rear = Main.npc[ports[ordinal]].Center.X;
                     float center = (front + rear) * 0.5f;
@@ -3405,8 +3448,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                     }
 
                     float error = Math.Abs(center - target.X) + closestRay * 0.65f;
-                    if (error < bestError)
+                    if (error < 1150f && (count > bestCount || error < bestError))
                     {
+                        bestCount = count;
                         bestError = error;
                         bestOrdinal = first;
                     }
@@ -3515,12 +3559,9 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             bool fieryOrbit = hourglass || headState.move == Move.ReactorBreaker;
             bool heatedOrbit = headState.move == Move.EnclosingCoil || fieryOrbit;
             bool thrashing = headState.move == Move.HullThrash;
-            bool thrashImpact = thrashing && headState.beat == Beat.Recovery && headState.sequence > 0
-                && headState.timer <= ThrashImpactTicks;
             if (heatedOrbit && headState.beat == Beat.Active
                 || hourglass && headState.beat == Beat.Shape
-                || thrashing && (headState.beat == Beat.Active || headState.beat == Beat.Shape)
-                || thrashImpact)
+                || thrashing && headState.beat == Beat.Active)
             {
                 return HullHeat.Hot;
             }
@@ -4729,6 +4770,64 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
             }
         }
 
+        private static Vector2 FollowThrashingHull(NPC segment, Vector2 precedingCenter, Vector2 towardPrevious,
+            float spacing, TheDestroyer headState, int ordinal)
+        {
+            int waveTick = headState.timer;
+            float recovery = 1f;
+            if (headState.beat == Beat.Windup)
+            {
+                waveTick -= ThrashTellTicks;
+            }
+            else if (headState.beat == Beat.Recovery)
+            {
+                waveTick += ThrashFireTicks;
+                recovery = MathHelper.Clamp(1f - headState.timer / (float)ThrashWhipFadeTicks, 0f, 1f);
+            }
+
+            // Roll a bend back through the connected joints. Taper its onset, tail, and release to keep the links continuous.
+            float arrival = MathHelper.Clamp((waveTick + 40f - ordinal * 0.8f) / 34f, 0f, 1f);
+            float tailBlend = MathHelper.Clamp((ThrashWhipSegments + 1 - ordinal) / 10f, 0f, 1f);
+            float strength = arrival * tailBlend * recovery;
+            float mainBend = MathF.Sin(waveTick * 0.078f - ordinal * 0.29f) * 0.062f;
+            float secondaryBend = MathF.Sin(waveTick * 0.117f - ordinal * 0.155f) * 0.019f;
+            float bend = (mainBend + secondaryBend) * strength;
+            Vector2 followCenter = precedingCenter - towardPrevious.RotatedBy(bend) * spacing;
+            Vector2 travel = followCenter - segment.Center;
+            if (strength <= 0f || travel.Y <= 2f || Collision.SolidCollision(segment.position, segment.width, segment.height))
+            {
+                return followCenter;
+            }
+
+            Vector2 allowed = Collision.TileCollision(segment.position, travel, segment.width, segment.height);
+            float floorY = segment.Center.Y + allowed.Y;
+            float heightFromPreceding = floorY - precedingCenter.Y;
+            if (allowed.Y >= travel.Y - 0.1f || Math.Abs(heightFromPreceding) >= spacing)
+            {
+                return followCenter;
+            }
+
+            // Swing the link along the floor to absorb the impact while remaining one segment length from its neighbor.
+            float reachAlongFloor = MathF.Sqrt(spacing * spacing - heightFromPreceding * heightFromPreceding);
+            int side = followCenter.X >= precedingCenter.X ? 1 : -1;
+            Vector2 floorCenter = new Vector2(precedingCenter.X + side * reachAlongFloor, floorY);
+            Vector2 floorHitbox = floorCenter - segment.Size * 0.5f;
+            if (Collision.SolidCollision(floorHitbox, segment.width, segment.height))
+            {
+                return followCenter;
+            }
+
+            if (!Main.dedServ && travel.Y > 4.5f && (Main.GameUpdateCount + (ulong)segment.whoAmI) % 5 == 0)
+            {
+                Vector2 contact = floorCenter + Vector2.UnitY * segment.height * 0.5f;
+                Vector2 dustTravel = new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-4f, -1.5f));
+                Dust.NewDustPerfect(contact, DustID.Stone, dustTravel, Scale: 1.2f);
+                Dust.NewDustPerfect(contact, DustID.Smoke, dustTravel * 0.5f, 85, new Color(148, 119, 95), 1.2f).noGravity = true;
+            }
+
+            return floorCenter;
+        }
+
         internal static void RunMovement(NPC npc, int headType, int bodyType, int tailType, bool legacy, bool directed = false)
         {
             if (npc.ai[3] >= 0f && npc.type != headType)
@@ -4821,10 +4920,26 @@ namespace tsorcRevamp.NPCs.Bosses.TheDestroyer
                 {
                     if (!brokenLink)
                     {
-                        Vector2 displacement = Main.npc[previousSegment].Center - npc.Center;
+                        Vector2 precedingCenter = Main.npc[previousSegment].Center;
+                        Vector2 displacement = precedingCenter - npc.Center;
                         float spacing = HullSegmentSpacing * npc.scale;
                         Vector2 towardPrevious = displacement.SafeNormalize(Vector2.Zero);
-                        npc.Center += towardPrevious * (displacement.Length() - spacing);
+                        Vector2 followCenter = precedingCenter - towardPrevious * spacing;
+                        TheDestroyer segmentState = npc.GetGlobalNPC<TheDestroyer>();
+                        int ordinal = segmentState.spawnOrdinal;
+                        if (ordinal > 0 && ordinal <= ThrashWhipSegments && TryGetHead(npc, out NPC thrashHead))
+                        {
+                            TheDestroyer headState = thrashHead.GetGlobalNPC<TheDestroyer>();
+                            bool whipping = headState.IsHullThrash && (headState.beat == Beat.Windup || headState.beat == Beat.Active
+                                || headState.beat == Beat.Recovery && headState.timer < ThrashWhipFadeTicks);
+                            if (whipping)
+                            {
+                                followCenter = FollowThrashingHull(npc, precedingCenter, towardPrevious, spacing, headState, ordinal);
+                                towardPrevious = (precedingCenter - followCenter).SafeNormalize(towardPrevious);
+                            }
+                        }
+
+                        npc.Center = followCenter;
                         if (towardPrevious != Vector2.Zero)
                         {
                             npc.rotation = towardPrevious.ToRotation() + MathHelper.PiOver2;

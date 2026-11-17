@@ -97,7 +97,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<JungleWyvernJuvenileBody3>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileLegs>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileTail>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<KnightOfGwyn>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<RoyalKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LivingShroomThief>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LothricBlackKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LothricBlackKnightOriginal>()] = EnemyImpactMaterial.Blood,

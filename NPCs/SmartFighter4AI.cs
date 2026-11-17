@@ -40,7 +40,9 @@ namespace tsorcRevamp.NPCs
         // Upper bound on the per-NPC NavSearchRadius span window. Raised 50->80 so a same-room player
         // a bit over 50 tiles away is still reachable by A* (the old 50 cap caused "no-goal-span" ->
         // no plan -> dumb-chase wedged on a ledge). Smaller per-NPC NavSearchRadius still = dumber+cheaper.
-        private const int ScanRadiusX = 80;
+        // Raised 80->120 for the Hero of Lumelia's artillery archers, who plan across ~100 tiles of arena. The window is
+        // +/- radius around the NPC (xMin..xMax in Replan), and only NPCs that set a NavSearchRadius above 80 are affected.
+        private const int ScanRadiusX = 120;
         private const int ScanRadiusY = 48;
         // Normal free-fall / platform-drop budget. Pursuit may descend farther toward the target's
         // elevation when the full body and landing validate; patrol keeps its shallow safety budget.

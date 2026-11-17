@@ -5941,11 +5941,8 @@ Mods: {
 
 			StaminaVessel: {
 				DisplayName: 耐力容器
-				Tooltip:
-					'''
-					永久增加 5 点耐力上限
-					消耗 {0} 次后耐力达到最大值
-					'''
+				Tooltip: 永久增加 {0} 点耐力上限
+				MaxVessels: 消耗 {0} 次后耐力达到最大值
 				UsedCounter: "当前已使用次数: "
 			}
 
@@ -9647,6 +9644,10 @@ Mods: {
 				// DisplayName: Enemy Tainted Bow
 				// Tooltip: ""
 			}
+			EnemyRoyalThunderBow: {
+				// DisplayName: Royal Thunder Bow
+				// Tooltip: ""
+			}
 
 			EnemyYellowTail: {
 				// DisplayName: Enemy Yellow Tail
@@ -12359,6 +12360,7 @@ Mods: {
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			// RoyalThunderArrow.DisplayName: Thunder Arrow
 			ObsidianGuardArrow.DisplayName: 黑曜石箭
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
@@ -12458,6 +12460,7 @@ Mods: {
 			// DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
 			// DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
 			// CinderRainController.DisplayName: Cinder Rain Controller
+			// CinderShadowRift.DisplayName: Cinder Shadow Rift
 		}
 
 		NPCs: {
@@ -13037,11 +13040,9 @@ Mods: {
 			IceSkeleton.DisplayName: 希斯门徒
 			// SkeletonWarrior.DisplayName: Skeleton Warrior
 
-			KnightOfGwyn: {
-				DisplayName: 葛温的骑士
-				DespawnHandler: 葛温的骑士占了上风...
-				Protection: 葛温的骑士被魔法屏障所保护，萨满长老知道如何打破它！
-				Open: 葛温的骑士扩大了深渊！
+			RoyalKnight: {
+				DisplayName: 皇家骑士
+				DespawnHandler: 皇家骑士占了上风...
 			}
 
 			ManOfWar.DisplayName: 战争缔造者

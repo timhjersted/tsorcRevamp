@@ -7465,7 +7465,7 @@ namespace tsorcRevamp.NPCs.Invaders
         ///   <paramref name="shotsOverride"/>: -1 = roll randomly via MaxRangedBurst; else use this exact count.
         ///   <paramref name="forceStanding"/>: bypass StandingRangedChance roll (used by aerial — controller owns velocity).
         /// </summary>
-        private void SetupRangedBurst(bool useSecondary, int shotsOverride, bool forceStanding)
+        protected void SetupRangedBurst(bool useSecondary, int shotsOverride, bool forceStanding)
         {
             _usingSecondaryRanged = useSecondary;
 
@@ -9626,7 +9626,15 @@ namespace tsorcRevamp.NPCs.Invaders
                 // Hold aim between shots at the same target angle each style's own telegraph uses
                 // (was hardcoded to Crossbow's regardless of style, so a Bow burst pattern held the
                 // Crossbow angle between shots instead of its own).
-                float burstPauseTarget = _activeRangedStyle == RangedStyle.Bow ? 0.0f : 0.05f;
+                float burstPauseTarget = 0.05f;
+                if (_activeRangedStyle == RangedStyle.Bow)
+                {
+                    burstPauseTarget = 0.0f;
+                }
+                else if (_activeRangedStyle == RangedStyle.Staff)
+                {
+                    burstPauseTarget = -0.70f;
+                }
                 _weaponRotation = MathHelper.Lerp(_weaponRotation, burstPauseTarget, 0.22f);
             }
             else if (Phase == AttackPhase.SpearTelegraph)

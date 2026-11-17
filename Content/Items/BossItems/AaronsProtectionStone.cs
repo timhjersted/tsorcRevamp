@@ -32,7 +32,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         }
         public override void UpdateEquip(Player player)
         {
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 if (player.whoAmI == Main.myPlayer)
                 {

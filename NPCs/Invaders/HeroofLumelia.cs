@@ -37,10 +37,13 @@ namespace tsorcRevamp.NPCs.Invaders
     //   A1       — Knife volleys (base CursedKnives): 1–3 volleys in a row, each a varied fan.
     //   A2       — Vanishing Strike (TickVanish): grey-smoke blink behind the player → reappear
     //              flash → point-blank knife burst.  The signature identity move.
-    //   A3       — Archer's Volley (TickHorn): raise a war-cry, then a marching line of arrows.
+    //   A3       — Archer's Volley (TickHorn): raise a war-cry; his four artillery ManHunters (spawned with the fight,
+    //              ~100 tiles out either side) answer with a marching line of lobbed flaming arrows.
     //   A4       — Piercing Dash (base CanPierce, NO impale): fiery committed lunge across the arena.
-    //   A5       — Rally (TickRally): at 50% / 25% HP, a warband event — widen his spacing, call in
-    //              ManHunters one after another, lob potion bombs, then return to normal aggression.
+    //   A5       — Rally (TickRally): at 50% / 25% HP, a war-cry — widen his spacing and lob potion bombs. At 25% a
+    //              Red Cloud Hunter joins him.
+    //   Archers  — TickArchers: spawns/respawns (20s) the four artillery archers; at 60% and 35% HP one pair each
+    //              stops lobbing and walks in to join the melee. The archers run their own AI (ManHunter).
     //   Bomb     — TickBomb: a lobbed HeroPotionBomb that inflicts Potion Sickness (denies healing).
     [AutoloadBossHead]
     class HeroofLumelia : PuppetNPC
@@ -52,7 +55,6 @@ namespace tsorcRevamp.NPCs.Invaders
         // Damage values (kept from the legacy kit — hostile-projectile balance already tuned around them).
         public int throwingKnifeDamage = 34;
         public int potionBombDamage = 43;
-        int herosArrowDamage = 42;
         int fireArcDamage = 44;
 
         NPCDespawnHandler despawnHandler;
@@ -557,11 +559,27 @@ namespace tsorcRevamp.NPCs.Invaders
 
         int _hornTimer;
         int _hornCd = 360;
-        const int HornTotal = 110;
+        // 45t war-cry pose (the read) + a short hold. The archers draw for 60t after the order, so their first arrow
+        // leaves about when he lowers his arm; each arrow then takes 127t (~2.1s: climb, then fall from above) to land.
+        const int HornTotal = 70;
 
         int _rallyTimer;
         int _rallyStage; // 0 = none fired, 1 = 50% fired, 2 = 25% fired
         const int RallyTotal = 300;
+
+        // ── Artillery archers (server only; the archers carry their own synced state) ─────────────────────
+        // Slot = side (even left, odd right) + pair: slots 0/1 hold 94 tiles out and join at 60% HP, slots 2/3 hold 106
+        // out and join at 35%. A dead artillery archer is replaced after ArcherRespawnTicks; a slot whose pair has been
+        // sent to join (_joinStage) is never spawned or respawned again.
+        const int ArcherSlotCount = 4;
+        const int ArcherRespawnTicks = 20 * 60;
+        const float NearPairStandoffTiles = 94f;
+        const float FarPairStandoffTiles = 106f;
+        const float FirstJoinHpFraction = 0.60f;
+        const float SecondJoinHpFraction = 0.35f;
+        readonly int[] _archerIds = { -1, -1, -1, -1 };
+        readonly int[] _archerRespawn = new int[ArcherSlotCount];
+        int _joinStage; // 0 = none sent, 1 = slots 0/1 sent (60%), 2 = slots 2/3 sent (35%)
 
         enum HeroSetPiece { Vanish, Bomb, Horn, Rally }
         // A client plays a set-piece's start cue when its synced timer arrives within this many ticks of full length.
@@ -680,6 +698,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
             base.AI();
             despawnHandler.TargetAndDespawn(NPC.whoAmI);
+            TickArchers();
 
             if (Phase == AttackPhase.KnivesTelegraph || Phase == AttackPhase.KnivesThrowPause)
             {
@@ -1144,8 +1163,11 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── A3: Archer's Volley ────────────────────────────────────────────────────────
-        // He raises a war-cry (the read), then his archers loose a marching line of arrows that
-        // sweeps across the player's position.  Run ALONG the sweep or break to cover.
+        // He raises a war-cry (the read) and orders a volley: every artillery archer that is holding a post with a
+        // open sky above it draws, then looses five flaming arrows nearly straight up. They fall back out of the sky
+        // (straight down or at 45 degrees) in one marching line of 20 landing points across the player's position,
+        // marked on the ground ~2.1s ahead (ManHunterLobArrow). Run ALONG the sweep, stand in a gap, or break to cover. The Hero only gives the cue here; each archer
+        // decides for itself whether it can fire (ManHunter.TickArtillery).
         private void TickHorn(Player target)
         {
             if (_hornTimer > 0)
@@ -1166,33 +1188,6 @@ namespace tsorcRevamp.NPCs.Invaders
                         moteDust.noGravity = true;
                     }
                     Lighting.AddLight(NPC.Center, 0.9f, 0.7f, 0.2f);
-                }
-                // Active (45..95t): march a falling line of arrows across the player. Arrows spawn on the server; the loose
-                // sound plays everywhere.
-                else if (elapsed >= 45 && elapsed < 95 && elapsed % 5 == 0)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        float sweepProgress = (elapsed - 45) / 45f;
-                        float sweep = MathHelper.Lerp(-440f, 440f, sweepProgress);
-                        float centerX = target.Center.X + sweep;
-                        for (int i = 0; i < 2; i++)
-                        {
-                            float spawnX = centerX + Main.rand.Next(-45, 45);
-                            float velocityX = (-30 + Main.rand.Next(60)) / 10f;
-                            Projectile.NewProjectile(
-                                NPC.GetSource_FromThis(),
-                                spawnX,
-                                target.Center.Y - 780f,
-                                velocityX,
-                                8.4f,
-                                ModContent.ProjectileType<HerosArrow>(),
-                                herosArrowDamage,
-                                2f,
-                                Main.myPlayer);
-                        }
-                    }
-                    SoundEngine.PlaySound(SoundID.Item5, NPC.Center);
                 }
                 return;
             }
@@ -1221,6 +1216,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
+            // No cue with nobody to answer it (all four archers dead or already joined): keep the cooldown short and retry.
+            if (!OrderArcherVolley())
+            {
+                _hornCd = 120;
+                return;
+            }
+
             _hornCd = 520 + Main.rand.Next(260);
             _hornTimer = HornTotal;
             PlaySetPieceStartCue(HeroSetPiece.Horn);
@@ -1234,8 +1236,8 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         // ── A5: Rally — the warband mini-event (50% / 25% HP) ───────────────────────────
-        // War-cry → he backs off (widens spacing), calls in ManHunters one after another, lobs
-        // potion bombs to cover the assembly, then returns to normal aggression.
+        // War-cry → he backs off (widens spacing), lobs potion bombs, then returns to normal aggression. The
+        // warband itself is the artillery archers (TickArchers); at 25% a Red Cloud Hunter also joins him.
         private void TickRally(Player target)
         {
             if (_rallyTimer > 0)
@@ -1262,13 +1264,7 @@ namespace tsorcRevamp.NPCs.Invaders
                     smokeDust.noGravity = true;
                 }
 
-                // Call in ManHunters one after another (five, at a steady cadence).
-                if (elapsed == 30 || elapsed == 75 || elapsed == 120 || elapsed == 165 || elapsed == 210)
-                {
-                    SpawnSupport(ModContent.NPCType<NPCs.Enemies.Archer.ManHunter>());
-                    SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.3f }, NPC.Center);
-                }
-                // Potion bombs to cover the assembly (server spawn, sound everywhere).
+                // Potion bombs to cover the warband's arrival (server spawn, sound everywhere).
                 if (elapsed == 90 || elapsed == 190)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -1279,15 +1275,10 @@ namespace tsorcRevamp.NPCs.Invaders
                     }
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, PitchVariance = 0.3f }, NPC.Center);
                 }
-                // Capstone lieutenant.
-                if (elapsed == 250)
+                // Capstone lieutenant: only the 25% rally calls one (the 50% rally has no add).
+                if (elapsed == 250 && _rallyStage >= 2)
                 {
-                    int lieutenantType = ModContent.NPCType<NPCs.Enemies.Archer.Assassin>();
-                    if (_rallyStage >= 2)
-                    {
-                        lieutenantType = ModContent.NPCType<NPCs.Enemies.Archer.RedCloudHunter>();
-                    }
-                    SpawnSupport(lieutenantType);
+                    SpawnSupport(ModContent.NPCType<NPCs.Enemies.Archer.RedCloudHunter>());
                     SoundEngine.PlaySound(SoundID.NPCHit6 with { Volume = 0.35f, Pitch = 0.1f }, NPC.Center);
                 }
                 return;
@@ -1549,6 +1540,169 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
             Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<TelegraphFlash>(), 0, 0, Main.myPlayer, UsefulFunctions.ColorToFloat(color));
+        }
+
+        // ── Artillery archers ───────────────────────────────────────────────────────────
+        // The archers run their own AI (ManHunter); the Hero spawns them, replaces dead ones, sends the volley cue
+        // (TickHorn) and flips a pair to the melee at 60% / 35% HP. Server only. The archers despawn themselves when
+        // this NPC is gone, so there is no cleanup here.
+        private void TickArchers()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
+            {
+                return;
+            }
+
+            float hpFraction = (float)NPC.life / NPC.lifeMax;
+
+            if (_joinStage == 0 && hpFraction <= FirstJoinHpFraction)
+            {
+                SendArchersToJoin(0, 1);
+                _joinStage = 1;
+            }
+            else if (_joinStage == 1 && hpFraction <= SecondJoinHpFraction)
+            {
+                SendArchersToJoin(2, 3);
+                _joinStage = 2;
+            }
+
+            for (int slot = 0; slot < ArcherSlotCount; slot++)
+            {
+                // A pair that has been sent in is part of the melee now: never spawn or replace it.
+                bool pairJoined = _joinStage >= 1 && slot < 2;
+                pairJoined = pairJoined || (_joinStage >= 2 && slot >= 2);
+
+                if (pairJoined)
+                {
+                    continue;
+                }
+
+                NPCs.Enemies.Archer.ManHunter archer;
+
+                if (_archerIds[slot] >= 0 && !TryGetArcher(slot, out archer))
+                {
+                    _archerIds[slot] = -1;
+                    _archerRespawn[slot] = ArcherRespawnTicks;
+                }
+
+                if (_archerIds[slot] >= 0)
+                {
+                    continue;
+                }
+
+                if (_archerRespawn[slot] > 0)
+                {
+                    _archerRespawn[slot]--;
+                    continue;
+                }
+
+                // No post found (or no NPC slot): retry in a second.
+                if (!TrySpawnArcher(slot))
+                {
+                    _archerRespawn[slot] = 60;
+                }
+            }
+        }
+
+        private bool TryGetArcher(int slot, out NPCs.Enemies.Archer.ManHunter archer)
+        {
+            archer = null;
+            int npcIndex = _archerIds[slot];
+
+            if (npcIndex < 0 || npcIndex >= Main.maxNPCs || !Main.npc[npcIndex].active)
+            {
+                return false;
+            }
+
+            archer = Main.npc[npcIndex].ModNPC as NPCs.Enemies.Archer.ManHunter;
+            return archer != null && archer.OwnerId == NPC.whoAmI;
+        }
+
+        // Spawns the slot's archer directly on its post (no walk-in: it is off-screen). Even slots are left of the
+        // Hero, odd right; the near pair holds 94 tiles out, the far pair 106.
+        private bool TrySpawnArcher(int slot)
+        {
+            int side = 1;
+
+            if (slot % 2 == 0)
+            {
+                side = -1;
+            }
+
+            float standoffTiles = FarPairStandoffTiles;
+
+            if (slot < 2)
+            {
+                standoffTiles = NearPairStandoffTiles;
+            }
+
+            float desiredX = NPC.Center.X + side * standoffTiles * 16f;
+            int feetTileY = (int)(NPC.Bottom.Y / 16f);
+            Vector2 postFeet;
+            bool foundPost = NPCs.Enemies.Archer.ManHunter.TryFindPost(desiredX, feetTileY, out postFeet);
+
+            if (!foundPost)
+            {
+                return false;
+            }
+
+            int npcIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)postFeet.X, (int)postFeet.Y, ModContent.NPCType<NPCs.Enemies.Archer.ManHunter>());
+
+            if (npcIndex >= Main.maxNPCs)
+            {
+                return false;
+            }
+
+            NPCs.Enemies.Archer.ManHunter archer = Main.npc[npcIndex].ModNPC as NPCs.Enemies.Archer.ManHunter;
+
+            if (archer != null)
+            {
+                archer.ConfigureAsHeroArcher(NPC.whoAmI, NPC.type, slot, side, standoffTiles, postFeet);
+            }
+
+            _archerIds[slot] = npcIndex;
+            return true;
+        }
+
+        private void SendArchersToJoin(int firstSlot, int secondSlot)
+        {
+            NPCs.Enemies.Archer.ManHunter archer;
+
+            if (TryGetArcher(firstSlot, out archer))
+            {
+                archer.BeginJoin();
+            }
+
+            if (TryGetArcher(secondSlot, out archer))
+            {
+                archer.BeginJoin();
+            }
+        }
+
+        // The volley cue: every artillery archer gets the same sweep direction. Returns false if there is nobody to answer.
+        private bool OrderArcherVolley()
+        {
+            int sweepDirection = 1;
+
+            if (Main.rand.NextBool())
+            {
+                sweepDirection = -1;
+            }
+
+            int ordered = 0;
+
+            for (int slot = 0; slot < ArcherSlotCount; slot++)
+            {
+                NPCs.Enemies.Archer.ManHunter archer;
+
+                if (TryGetArcher(slot, out archer) && archer.IsArtillery)
+                {
+                    archer.OrderVolley(sweepDirection);
+                    ordered++;
+                }
+            }
+
+            return ordered > 0;
         }
 
         private void SpawnSupport(int npcType)

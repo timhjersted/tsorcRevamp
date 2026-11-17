@@ -3914,7 +3914,7 @@ Mods: {
 					[c/00ffd4:It's true use may reveal itself in time...or at a particular location deep underground...]
 					'''
 				Summon: "A Gate has been opened. The Great Wall has passed into this dimension!... "
-				BotCOnly: "[c/ffbf00:Offers a {0}% damage boost]{$CommonItemTooltip.ForBotCOnly} when equipped."
+				BotCOnly: "[c/ffbf00:Offers a {0}% damage boost] in Souls Mode when equipped."
 			}
 
 			AbysmalStone: {
@@ -5899,11 +5899,8 @@ Mods: {
 
 			StaminaVessel: {
 				DisplayName: Stamina Vessel
-				Tooltip:
-					'''
-					Permanently increases max stamina by 5
-					Stamina maxes out after consuming {0}
-					'''
+				Tooltip: Permanently increases max stamina by {0}
+				MaxVessels: Stamina maxes out after consuming {0}
 				UsedCounter: "Consumed so far: "
 			}
 
@@ -9612,6 +9609,10 @@ Mods: {
 				DisplayName: Enemy Tainted Bow
 				Tooltip: ""
 			}
+			EnemyRoyalThunderBow: {
+				DisplayName: Royal Thunder Bow
+				Tooltip: ""
+			}
 
 			EnemyYellowTail: {
 				DisplayName: Enemy Yellow Tail
@@ -12320,6 +12321,7 @@ Mods: {
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			UlhanUnholyArrow.DisplayName: Unholy Arrow
+			RoyalThunderArrow.DisplayName: Thunder Arrow
 			ObsidianGuardArrow.DisplayName: Obsidian Arrow
 			UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			UlhanFireExplosion.DisplayName: Fire Explosion
@@ -12419,6 +12421,7 @@ Mods: {
 			DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
 			DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
 			CinderRainController.DisplayName: Cinder Rain Controller
+			CinderShadowRift.DisplayName: Cinder Shadow Rift
 		}
 
 		NPCs: {
@@ -12998,11 +13001,9 @@ Mods: {
 			IceSkeleton.DisplayName: Adept of Seath
 			SkeletonWarrior.DisplayName: Skeleton Warrior
 
-			KnightOfGwyn: {
-				DisplayName: Knight of Gwyn
-				DespawnHandler: Knight of Gwyn stands victorious...
-				Protection: Knight of Gwyn is protected by a magical barrier. Only the Shaman Elder knows how to break it!
-				Open: Knight of Gwyn opens the abyss!
+			RoyalKnight: {
+				DisplayName: Royal Knight
+				DespawnHandler: The Royal Knight stands victorious...
 			}
 
 			ManOfWar.DisplayName: Man of War
@@ -13154,7 +13155,7 @@ Mods: {
 				Luck: Good luck.
 				Gift: If you ever need more, you may roast some over the flames of a bonfire. Farewell.
 				BotCGift: Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell.
-				UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
+				UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems and Starlight Shards — may they sustain you on the road ahead. Farewell.
 				EasterEgg: Bearer... Seek... Seek... Lest...
 				button1: Bless
 				button2v1: Seek knowledge...

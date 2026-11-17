@@ -743,6 +743,7 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Hydra>(0.2f, 60f);
             Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
             // Elite / heavy knight
+            Add<Enemies.SuperHardMode.RoyalKnight>(0.15f, 120f); // puppet halberd elite: boss-tier poise; tells are the stagger windows, heavies, leaps and dashes are hyper-armored
             Add<Invaders.Caliche>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
             Add<Invaders.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows

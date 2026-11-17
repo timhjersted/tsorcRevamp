@@ -8,6 +8,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     public class DragonMeteorExplosion : ModProjectile
     {
+        internal const float DrakeImpact = 1f;
+        private bool FromDrake => Projectile.ai[0] == DrakeImpact;
 
         public override void SetStaticDefaults()
         {
@@ -25,6 +27,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.penetrate = -1;
             Projectile.timeLeft = 30; // 5 frames * 6 ticks/frame
             Projectile.DamageType = DamageClass.Magic;
+        }
+
+        public override bool? CanDamage()
+        {
+            if (FromDrake && Projectile.timeLeft <= 20)
+            {
+                return false;
+            }
+
+            return null;
         }
 
         public override void AI()
@@ -46,10 +58,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 Projectile.localAI[0] = 1f;
 
-                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.9f, Pitch = -0.1f }, Projectile.Center);
-
                 if (!Main.dedServ)
                 {
+                    SoundStyle impact = SoundID.Item14 with { Volume = 0.9f, Pitch = -0.1f };
+                    if (FromDrake)
+                    {
+                        impact = SoundID.DD2_MonkStaffGroundImpact with { Volume = 0.46f, Pitch = -0.28f, PitchVariance = 0.16f };
+                    }
+                    SoundEngine.PlaySound(impact, Projectile.Center);
+
                     // Brown/dirt dusts shooting up from impact point
                     for (int i = 0; i < 26; i++)
                     {
@@ -79,7 +96,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 d.noGravity = true;
             }
 
-            Lighting.AddLight(Projectile.Center, 1.2f, 0.4f, 0.1f);
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, 1.2f, 0.4f, 0.1f);
+            }
         }
     }
 }

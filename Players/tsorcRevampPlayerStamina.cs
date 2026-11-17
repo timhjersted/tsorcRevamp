@@ -538,10 +538,10 @@ namespace tsorcRevamp
             }
             else if (soulsPlayer.Unkindled)
             {
-                // Base 2.0 (raised from 1.85, 2026-11) against 0.85 cost; experimental 2.15 against 1.0 cost. Lower raw
-                // regen than BotC, but the cheaper swings mean Unkindled recovers net faster than BotC at both tiers - on
-                // purpose: waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
-                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 2.0f;
+                // Base 2.3 (raised from 2.0) against 0.85 cost; experimental 2.15 against 1.0 cost. Matches BotC's
+                // raw regen while keeping cheaper swings, so Unkindled recovers net faster than BotC - on purpose:
+                // waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
+                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 2.3f;
             }
             else
             {

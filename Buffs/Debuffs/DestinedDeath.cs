@@ -1,6 +1,7 @@
 using System;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Buffs.Debuffs
 {
@@ -15,44 +16,88 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public override void ModifyBuffText(ref string buffName, ref string tip, ref int rare)
         {
-            var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
-            int currentLossPct = (int)MathF.Round(modPlayer.DestinedDeathCurrentHPLoss * 100f);
-            int targetLossPct = modPlayer.DestinedDeathStacks * 10;
+            Player player = Main.LocalPlayer;
+            DestinedDeathPlayer deathPlayer = player.GetModPlayer<DestinedDeathPlayer>();
+            float currentLossPercent = deathPlayer.CurrentLossPercent;
 
-            if (modPlayer.DestinedDeathActive)
+            if (player.HasBuff(Type))
             {
-                tip = $"Maximum life reduced by {currentLossPct}% (Stacks: {modPlayer.DestinedDeathStacks}/6)";
-                if (currentLossPct >= 60)
+                int stacks = Math.Max(1, deathPlayer.Stacks);
+                int targetLossPercent = stacks * DestinedDeathPlayer.LossPercentPerStack;
+                tip = $"Maximum life reduced by {currentLossPercent:0.#}% (Target: {targetLossPercent}%, Stacks: {stacks}/{DestinedDeathPlayer.MaxStacks})";
+                if (deathPlayer.HasDamageBonus)
                 {
-                    tip += "\n60% max life loss cap reached! Gained +15% increased damage!";
+                    tip += $"\nMax life loss cap reached! Gained +{DestinedDeathPlayer.DamageBonusPercent}% increased damage!";
                 }
             }
-            else if (modPlayer.DestinedDeathCurrentHPLoss > 0f)
+            else if (currentLossPercent > 0f)
             {
-                tip = $"Recovering maximum life! Current loss: {currentLossPct}% (+10%/sec recovery)";
-            }
-        }
-
-        public override void Update(Player player, ref int buffIndex)
-        {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.DestinedDeathActive = true;
-            if (modPlayer.DestinedDeathStacks == 0)
-            {
-                modPlayer.DestinedDeathStacks = 1;
+                tip = $"Recovering maximum life! Current loss: {currentLossPercent:0.#}% (+{DestinedDeathPlayer.RecoveryPercentPerSecond}%/sec recovery)";
             }
         }
 
         public override bool ReApply(Player player, int time, int buffIndex)
         {
-            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            modPlayer.DestinedDeathActive = true;
-            if (modPlayer.DestinedDeathStacks < 6)
-            {
-                modPlayer.DestinedDeathStacks++;
-            }
-            player.buffTime[buffIndex] = time; // Refresh duration to minimum 12 seconds (720 ticks)
+            DestinedDeathPlayer deathPlayer = player.GetModPlayer<DestinedDeathPlayer>();
+            int previousStacks = Math.Max(1, deathPlayer.Stacks);
+            deathPlayer.Stacks = Math.Min(previousStacks + 1, DestinedDeathPlayer.MaxStacks);
+            player.buffTime[buffIndex] = time;
             return true;
+        }
+    }
+
+    public class DestinedDeathPlayer : ModPlayer
+    {
+        internal const int MaxStacks = 6;
+        internal const int LossPercentPerStack = 10;
+        internal const int RecoveryPercentPerSecond = 10;
+        internal const int DamageBonusPercent = 15;
+        private const int DrainPercentPerSecond = 5;
+        private const int DrainTicksPerStack = LossPercentPerStack * 60 / DrainPercentPerSecond;
+        private const int RecoveredTicksPerTick = RecoveryPercentPerSecond / DrainPercentPerSecond;
+        private int lifeLossTicks;
+
+        internal int Stacks { get; set; }
+        internal float CurrentLossPercent => (float)lifeLossTicks * LossPercentPerStack / DrainTicksPerStack;
+        internal bool HasDamageBonus => lifeLossTicks >= MaxStacks * DrainTicksPerStack;
+
+        public override void PostUpdateBuffs()
+        {
+            // Apply after the buff timer updates and before MaxHealthCalculator resolves max life.
+            // Count drain ticks so the damage bonus starts exactly when the full penalty is reached.
+            if (Player.HasBuff<DestinedDeath>())
+            {
+                Stacks = Math.Max(1, Stacks);
+                int targetTicks = Stacks * DrainTicksPerStack;
+                lifeLossTicks = Math.Min(targetTicks, lifeLossTicks + 1);
+            }
+            else
+            {
+                lifeLossTicks = Math.Max(0, lifeLossTicks - RecoveredTicksPerTick);
+                if (lifeLossTicks == 0)
+                {
+                    Stacks = 0;
+                }
+            }
+
+            if (lifeLossTicks == 0)
+            {
+                return;
+            }
+
+            MaxHealthCalculator healthCalculator = Player.GetModPlayer<MaxHealthCalculator>();
+            healthCalculator.MaxHealthMultiplier -= CurrentLossPercent / 100f;
+
+            if (HasDamageBonus)
+            {
+                Player.GetDamage(DamageClass.Generic) += DamageBonusPercent / 100f;
+            }
+        }
+
+        public override void UpdateDead()
+        {
+            Stacks = 0;
+            lifeLossTicks = 0;
         }
     }
 }

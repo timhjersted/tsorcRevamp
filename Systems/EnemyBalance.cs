@@ -499,7 +499,7 @@ namespace tsorcRevamp.Systems
             Enemy("RedCloudHunter", phm: 1500, hm: 3000, shm: 18000); // strong / strong / standard; authored 600 / 700 / 2000
             Enemy("LothricKnight", phm: 2000, hm: 6000, shm: 24000); // strong / elite / strong; authored 750 / 1400 / 2500
             Enemy("LothricSpearKnight", phm: 2000, hm: 4000, shm: 24000); // strong; authored 750 / 1200 / 3000
-            Enemy("Warlock", phm: 1500, hm: 3000); // elite / strong; authored 750 / 1500; caster, contact damage 0
+            Enemy("Warlock", hm: 3000, shm: 12000); // strong; Hardmode-only puppet caster since 2026-11-17; authored 1500; contact damage 0
             Enemy("BlackKnight", phm: 10000, hm: 20000, shm: 40000); // elite / elite / strong; authored 1000 / 2000 / 4000
             Enemy("LothricBlackKnight", phm: 2500, hm: 5000, shm: 30000); // elite / elite / strong; authored 1000 / 1500 / 5000
             Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 6000, shm: 12000); // strong; authored 1250 / 2500 / 3000; HP set high on purpose: piercing weapons hit every segment
@@ -562,11 +562,11 @@ namespace tsorcRevamp.Systems
             Enemy("Gigas", phm: 100000, hm: 100000, shm: 400000); // mini-boss; authored 32000 / 32000 / 32000
             Enemy("Hydra", phm: 400000); // mini-boss; authored 100000
             Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss; authored 22000 / 22000 / 22000
-            Enemy("KnightOfGwyn", shm: 200000); // elite; authored 25000
             Enemy("MinotaurMage", phm: 800, hm: 2800, shm: 10800); // standard; authored 155 / 155 / 155
             Enemy("MirrorInvader", hm: 100000, shm: 300000); // mini-boss (event ring, mid HM); authored 20000; contact damage 0. ESTIMATE: ~1m 25s at the HM 1,187 / ~1m 40s at the SHM ~2,950 reference DPS, before its 3 Estus (+36%)
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400
+            Enemy("RoyalKnight", shm: 150000); // elite; authored 25000
             Enemy("Mantassin", shm: 30000); // elite; authored 3000; caster, contact damage 0, SHM-only spawn
             Enemy("Sahagin", phm: 300, hm: 3000, shm: 18000); // fodder; authored 44 / 44 / 44
             Enemy("SerpentOfTheAbyssBody", shm: 20000); // elite; authored 10000

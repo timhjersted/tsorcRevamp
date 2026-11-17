@@ -254,7 +254,7 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
                 return;
             }
 
-            _shotAim = SolveArrowAim(target);
+            _shotAim = SolveShotAim(target);
 
             bool lockTick = PhaseTimer == AimLockTicks + 1;
 
@@ -266,7 +266,8 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
 
         // Intercept aim for a vanilla-AI arrow: lead the target by the flight time and raise the aim point by the
         // arrow's drop after its 15t straight phase. Four passes converge well under a pixel.
-        private Vector2 SolveArrowAim(Player target)
+        // Virtual so a subclass with a different shot (ManHunter's ballistic lob) can supply its own launch direction.
+        protected virtual Vector2 SolveShotAim(Player target)
         {
             Vector2 origin = PuppetBowGripPosition;
             Vector2 aimAt = target.Center;

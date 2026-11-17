@@ -470,6 +470,9 @@ namespace tsorcRevamp.Systems
 
             public static readonly SpawnCondition WyvernMageShadow = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>())));
+
+            public static readonly SpawnCondition Artorias = new(context =>
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())));
         }
 
         // The world's stage as a plain test, for rules that gate on it instead of carrying a weight per stage.
@@ -570,6 +573,15 @@ namespace tsorcRevamp.Systems
 
         // The Wyvern Fortress in the sky: meteorite brick or glass walls.
         private static readonly SpawnCondition WyvernFortress = Depth.Sky & Wall.Is(WallID.MeteoriteBrick, WallID.Glass);
+
+        // The top of a sky island: a level spawn tile inside the sky band (Depth.Sky reads the player's zone, so the spawn
+        // tile's own row is checked too), open to the sky above (no wall 5, 8 or 12 tiles up, so not inside a house), and
+        // not the Wyvern Fortress. No tile list: vanilla islands and the adventure map's custom islands both pass.
+        private static readonly SpawnCondition SkyIslandTop = Depth.Sky
+            & new SpawnCondition(context => context.Info.SpawnTileY < Main.worldSurface * 0.35)
+            & Terrain.LevelFooting
+            & Terrain.WallFreeAbove
+            & !WyvernFortress;
 
         // The Sunken Sky Temple in the adventure map's underworld: a Meteorite Brick floor, or Meteorite Brick Wall behind the
         // player. Spawn tile in the bottom 13% of the map (row ~2090+ on the 2400-tall map, ~1740+ on the 2000-tall one), which
@@ -887,11 +899,12 @@ namespace tsorcRevamp.Systems
             Spawn("BasiliskShifter", BasiliskGround, hm: 0.15f, shm: 0.075f, max: 2);
             Spawn("BasiliskWalker", BasiliskGround, phm: 0.15f, hm: 0.05f, max: 2);
 
-            // Every line was weight 1 behind a random gate (one in 100 to 250), folded into the weights.
-            Spawn("BlackKnight", Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.0001f, hm: 0.002f, shm: 0.003f);
-            Spawn("BlackKnight", Town.AtMostOne & Zone.Dungeon, hm: 0.001f, shm: 0.001f);
-            Spawn("BlackKnight", Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.0004f, shm: 0.0004f);
-            Spawn("BlackKnight", Town.AtMostOne & Depth.Underworld, hm: 0.0063f, shm: 0.0063f);
+            // Sandbox only: Adventure Mode places the Black Knight through its scripted encounters. Every line was weight 1 behind a
+            // random gate (one in 100 to 250), folded into the weights.
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.0001f, hm: 0.002f, shm: 0.003f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & Zone.Dungeon, hm: 0.001f, shm: 0.001f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.0004f, shm: 0.0004f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & Depth.Underworld, hm: 0.0063f, shm: 0.0063f);
 
             Spawn("Byakhee", QuietArea & Zone.Desert & Depth.Surface & Time.Night, hm: 0.0627f, shm: 0.0627f);
             Spawn("Byakhee", QuietArea & Zone.Desert & Depth.Surface & Time.Day, hm: 0.0368f, shm: 0.0368f);
@@ -1160,9 +1173,6 @@ namespace tsorcRevamp.Systems
             Spawn("JungleWyvernJuvenileHead", Downed.Skeletron & Zone.Jungle & Zone.Dungeon & NoDungeonMiniBossOrMage, phm: 0.05f, hm: 0.05f, shm: 0.05f);
             Spawn("JungleWyvernJuvenileHead", Water.Wet & Region.WestCoast, hm: 0.04f, shm: 0.04f, max: 2);
 
-            // Rare, Super Hardmode only. Used to be a pool.Add in tsorcRevampGlobalNPC.EditSpawnPool.
-            Spawn("KnightOfGwyn", Zone.Dungeon, shm: 0.01f);
-
             // Daytime grass with open air above, away from the evil, desert, jungle and meteor biomes. One alive at a time.
             Spawn("LivingShroomThief", Time.Day & Water.Dry & Terrain.OnGrass & Terrain.WallFreeAbove & !(Evil | Zone.Desert | Zone.Jungle | Zone.Meteor), phm: 0.17f, hm: 0.17f, shm: 0.17f, max: 1);
 
@@ -1321,6 +1331,11 @@ namespace tsorcRevamp.Systems
             Spawn("RedKnight", Zone.Dungeon, shm: 0.002f);
             Spawn("RedKnight", Depth.Underworld, hm: 0.00091f, shm: 0.0033f);
 
+            // Sandbox only: Adventure Mode places the Royal Knight through its own events. A rare dungeon elite, and the
+            // sky-island elite once Artorias is dead. max counts the live type, so two from any mix of rules blocks a third.
+            Spawn("RoyalKnight", Mode.Sandbox & Zone.Dungeon, shm: 0.01f, max: 2);
+            Spawn("RoyalKnight", Mode.Sandbox & Slain.Artorias & SkyIslandTop, shm: 0.2f, max: 2);
+
             // The lava-wall line (0.15) was meant to be the richer spot inside the underworld, but the old plain underworld line (0.1)
             // returned first and hid it; with the highest weight winning here, it now works. Hardmode adds the underground desert.
             Spawn("RingedKnight", Town.AtMostOne & Depth.Underworld, phm: 0.1f, hm: 0.1f, shm: 0.1f);
@@ -1402,8 +1417,7 @@ namespace tsorcRevamp.Systems
 
             // Locked until the first boss is down, one alive at a time. Gates (one in 300 to one in 1200) are folded in as 1/N; the
             // bigger weights apply outside the middle 30-70% of the map's width.
-            Spawn("Warlock", Downed.Eye & Depth.Cavern, phm: 0.00083f, max: 1);
-            Spawn("Warlock", Downed.Eye & Depth.Cavern & Region.OutsideSpan(0.3f, 0.7f), phm: 0.00233f, max: 1);
+            // Hardmode and above only (rev 4 of the Warlock puppet conversion); events also hand-place it.
             Spawn("Warlock", Downed.Eye & (Depth.BelowSurface | Zone.Jungle), hm: 0.00167f, shm: 0.00167f, max: 1);
             Spawn("Warlock", Downed.Eye & (Depth.BelowSurface | Zone.Jungle) & Region.OutsideSpan(0.3f, 0.7f), hm: 0.00333f, shm: 0.00333f, max: 1);
 

@@ -43,7 +43,6 @@ namespace tsorcRevamp.NPCs
                 || entity.type == ModContent.NPCType<LothricKnightOriginal>()
                 || entity.type == ModContent.NPCType<LothricSpearKnightOriginal>()
                 || entity.type == ModContent.NPCType<LothricBlackKnightOriginal>()
-                || entity.type == ModContent.NPCType<KnightOfGwyn>()
                 || entity.type == ModContent.NPCType<GreatRedKnight>();
         }
 
@@ -82,7 +81,7 @@ namespace tsorcRevamp.NPCs
 
             KnightPulseDebuffs debuffs = KnightPulseDebuffs.GrappleMalfunction;
             bool blackKnight = npc.ModNPC is LothricBlackKnight || npc.ModNPC is LothricBlackKnightOriginal;
-            bool alwaysDisablesWings = blackKnight || npc.ModNPC is KnightOfGwyn || npc.ModNPC is GreatRedKnight;
+            bool alwaysDisablesWings = blackKnight || npc.ModNPC is GreatRedKnight;
 
             if (Main.hardMode || alwaysDisablesWings)
             {
@@ -98,11 +97,6 @@ namespace tsorcRevamp.NPCs
             npc.netUpdate = true;
             Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, Vector2.Zero,
                 ModContent.ProjectileType<KnightDebuffPulseWave>(), 0, 0f, Main.myPlayer, (int)debuffs);
-
-            if (npc.ModNPC is KnightOfGwyn)
-            {
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.KnightOfGwyn.Protection"), 175, 75, 255);
-            }
         }
 
         public override void SendExtraAI(NPC npc, BitWriter bitWriter, BinaryWriter binaryWriter)
