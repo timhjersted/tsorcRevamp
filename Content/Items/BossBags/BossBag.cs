@@ -648,6 +648,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EmberOfTheFirstDawn>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<DraxEX>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.RodOfHarmony));
         }

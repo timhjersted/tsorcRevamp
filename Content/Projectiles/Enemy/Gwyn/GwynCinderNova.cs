@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
     ///Gwyn's Cinder Nova blast: an expanding ring of the First Flame. A dedicated radial shader is
     ///driven by the same pixel radius and half-thickness as the true annulus hitbox, so its white-hot
     ///front is the damage read while turbulent fire trails inward over already-safe ground.
-    ///ai[0] = max radius (px).
+    ///ai[0] = max radius (px). ai[1] = expansion speed (px/tick), 0 for the default.
     ///</summary>
     class GwynCinderNova : ModProjectile
     {
@@ -34,6 +34,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
         static Asset<Texture2D> ignitionFlare;
 
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 420f;
+        float CurrentExpandSpeed => Projectile.ai[1] > 0f ? Projectile.ai[1] : ExpandSpeed;
         float Radius => Projectile.localAI[0];
         bool Fading => Radius >= MaxRadius;
         float FadeOpacity => Fading
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
         {
             int broadphaseDiameter = (int)Math.Ceiling((MaxRadius + RingHalfThickness) * 2f);
             Projectile.Resize(broadphaseDiameter, broadphaseDiameter);
-            Projectile.timeLeft = (int)Math.Ceiling(MaxRadius / ExpandSpeed) + FadeOutTicks;
+            Projectile.timeLeft = (int)Math.Ceiling(MaxRadius / CurrentExpandSpeed) + FadeOutTicks;
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = -0.2f }, Projectile.Center); // fiery whoosh
         }
 
@@ -64,7 +65,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
-            Projectile.localAI[0] = Math.Min(MaxRadius, Radius + ExpandSpeed);
+            Projectile.localAI[0] = Math.Min(MaxRadius, Radius + CurrentExpandSpeed);
             //Ember supplement on the leading edge
             int emberCount = Fading ? 2 : 6;
             for (int i = 0; i < emberCount; i++)

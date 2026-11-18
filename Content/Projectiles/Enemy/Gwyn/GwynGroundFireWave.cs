@@ -21,7 +21,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
 
         int Direction => Projectile.ai[0] >= 0f ? 1 : -1;
         int ReachTiles => Projectile.ai[1] > 0f ? (int)Projectile.ai[1] : 20;
-        int Lifetime => (int)(ReachTiles * 16f / WaveSpeed) + 5;
+        // ai[2] = travel speed in px/tick; 0 keeps the Winged Plunge default.
+        float TravelSpeed => Projectile.ai[2] > 0f ? Projectile.ai[2] : WaveSpeed;
+        int Lifetime => (int)(ReachTiles * 16f / TravelSpeed) + 5;
 
         public override void SetStaticDefaults()
         {
@@ -48,7 +50,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
-            Projectile.position.X += Direction * WaveSpeed;
+            Projectile.position.X += Direction * TravelSpeed;
             if (!SnapToGround())
             {
                 Projectile.Kill();

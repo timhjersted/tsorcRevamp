@@ -31,7 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
             NPC.damage = 50;
-            NPC.defense = 40;
+            NPC.defense = 60;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 75000;

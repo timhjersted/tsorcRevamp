@@ -4160,6 +4160,20 @@ Mods: {
 				Summon: "A rumbling thunder shakes the ground below you... "
 			}
 
+			EmberOfTheFirstDawn: {
+				DisplayName: Ember of the First Dawn
+				Tooltip:
+					'''
+					A Stone older than the Flame, still warm from a morning no living thing has seen.
+					Use to return the world to its primordial form and bring forth the first dawn once more.					
+					'''
+				Warning: This cannot be undone.
+				AlreadyReturned: The age of the first dawn has already returned.
+				AgeBegins: The world returns to its primordial age.
+				Summon: Prime Gwyn rises to meet the first dawn!
+				TooFar: The Ember will only call its lord where Gwyn was fought.
+			}
+
 			LostScrollOfGwyn: {
 				DisplayName: Lost Scroll of Gwyn
 				Tooltip:
@@ -12811,6 +12825,12 @@ Mods: {
 				FinalShadowWave: The Wyvern Mage Shadow plunges you into darkness!
 				GhostDragonDead: Dare if you wish, Red...
 				Condition: Drops if his wyvern is dead
+			}
+
+			PrimeGwyn: {
+				DisplayName: Prime Gwyn, the First Lord
+				SecondPhase: The First Flame answers its lord!
+				FirstDawn: The first dawn breaks over a world without life!
 			}
 
 			Gwyn: {

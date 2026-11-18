@@ -724,6 +724,7 @@ namespace tsorcRevamp.NPCs
 
             // Bosses
             Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
+            Add<Bosses.Primordial.PrimeGwyn>(0.15f, 150f);
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
             Add<Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t

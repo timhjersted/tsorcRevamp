@@ -44,6 +44,8 @@ namespace tsorcRevamp
         public static bool IllusionWandOfFrostGiven;
         public static bool SuperHardMode;
         public static bool TheEnd;
+        // Set for good by the Ember of the First Dawn: Super Hardmode without the Abyss, after Gwyn's death.
+        public static bool PrimordialAge;
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
@@ -143,6 +145,7 @@ namespace tsorcRevamp
             IllusionWandOfFrostGiven = false;
             SuperHardMode = false;
             TheEnd = false;
+            PrimordialAge = false;
             CustomMap = false;
             OnlyAdventureMap = false;
             RemixMap = false;
@@ -193,6 +196,8 @@ namespace tsorcRevamp
             }
             if (TheEnd)
                 world_state.Add("TheEnd");
+            if (PrimordialAge)
+                world_state.Add("PrimordialAge");
             if (CustomMap)
                 world_state.Add("CustomMap");
             if (RemixMap)
@@ -269,6 +274,7 @@ namespace tsorcRevamp
             SuperHardMode = worldStateList.Contains("SuperHardMode");
             OrnsmoughIntroSeen = worldStateList.Contains("OrnsmoughIntroSeen");
             TheEnd = worldStateList.Contains("TheEnd");
+            PrimordialAge = worldStateList.Contains("PrimordialAge");
             ForceSandbox = worldStateList.Contains("ForceSandbox");
             CustomMap = !ForceSandbox && worldStateList.Contains("CustomMap");
             RemixMap = !ForceSandbox && worldStateList.Contains("RemixMap");
@@ -507,6 +513,7 @@ namespace tsorcRevamp
                 //height+GUID check can't be trusted; the server's verdict is authoritative.
                 writer.Write(ExpandedAdventure);
                 writer.Write(SuperHardMode);
+                writer.Write(PrimordialAge);
                 writer.WriteVector2(AbyssPortalLocation);
 
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
@@ -548,6 +555,7 @@ namespace tsorcRevamp
             bool priorExpandedAdventure = ExpandedAdventure;
             ExpandedAdventure = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
+            PrimordialAge = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
 
             // MP CLIENT FIX: PreUpdatePlayers' first-tick init computes ExpandedAdventure locally via
@@ -2462,7 +2470,7 @@ namespace tsorcRevamp
 
             if (!Main.dedServ)
             {
-                if (SuperHardMode)
+                if (SuperHardMode && !PrimordialAge)
                 {
                     for (int i = 0; i < TextureAssets.Moon.Length; i++)
                     {
@@ -2472,7 +2480,7 @@ namespace tsorcRevamp
                     TextureAssets.Sun2 = SHMSun2;
                     TextureAssets.Sun3 = SHMSun3;
                 }
-                if (TheEnd)
+                if (TheEnd || PrimordialAge)
                 { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
                     TextureAssets.Sun = VanillaSun1;
                     TextureAssets.Sun2 = VanillaSun2;
@@ -2571,6 +2579,12 @@ namespace tsorcRevamp
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".
         public static void InitiateTheEnd()
         {
+            // A Gwyn rematch must not undo the Ember's permanent Super Hardmode.
+            if (PrimordialAge)
+            {
+                return;
+            }
+
             Color c = new Color(255f, 255f, 60f);
             if (tsorcRevampWorld.SuperHardMode)
             {
@@ -2590,6 +2604,27 @@ namespace tsorcRevamp
             //		Main.NewText("You have vanquished the final guardian of the Abyss...");
             //		Main.NewText("The kiln of the First Flame has been ignited!");
             //		//Main.NewText("Congratulations, you have inherited the fire of this world. You will forever be known as the hero of the age.");  
+        }
+
+        /// <summary>Server or single player, once per world: returns Super Hardmode permanently. The Abyss stays
+        /// gone because Gwyn is already dead and the Abyss systems check this flag.</summary>
+        public static void EnterPrimordialAge()
+        {
+            if (PrimordialAge || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            PrimordialAge = true;
+            Main.hardMode = true;
+            SuperHardMode = true;
+            TheEnd = false;
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.AgeBegins"), 255, 190, 90);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
         }
 
         //Runs a double check on whether or not the world is the custom map.

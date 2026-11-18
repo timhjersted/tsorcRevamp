@@ -3297,7 +3297,7 @@ namespace tsorcRevamp
 
             // World-wide SHM underground rule. Keep this separate from the biome rules so removing it
             // later restores their original coverage. A boss pauses refreshes; existing stacks expire in 1s.
-            if (tsorcRevampWorld.SuperHardMode && Player.Center.Y > Main.worldSurface * 16.0
+            if (tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge && Player.Center.Y > Main.worldSurface * 16.0
                 && !tsorcRevampWorld.BossAlive
                 && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
@@ -3309,7 +3309,7 @@ namespace tsorcRevamp
             // A lit bonfire is a safe rest point and must not immediately reapply the debuff after buff updates.
             // Not applied while any boss is alive, so boss fights in the dungeon aren't crippled by the biome debuff
             // (already-applied stacks just expire within their 60-tick duration).
-            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode
+            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge
                 && !tsorcRevampWorld.BossAlive
                 && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {

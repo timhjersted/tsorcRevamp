@@ -1234,7 +1234,7 @@ namespace tsorcRevamp
         }
         public static bool AbyssPortalCustomCondition()
         {
-            if (tsorcRevampWorld.SuperHardMode && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.AbyssPortal>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Special.AbyssPortal>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
             {
                 return true;
             }

@@ -4199,6 +4199,20 @@ Mods: {
 				Summon: "你脚下在发生震动... "
 			}
 
+			EmberOfTheFirstDawn: {
+				DisplayName: 初晓余烬
+				Tooltip:
+					'''
+					比火焰更古老的石头，仍带着无人见过的那个清晨的温度。
+					使用后让世界回归原初之貌，再度唤来第一道黎明。
+					'''
+				Warning: 此举无法撤销。
+				AlreadyReturned: 第一道黎明的时代已经归来。
+				AgeBegins: 世界回归原初时代。
+				Summon: 原初葛温迎着第一道黎明而起！
+				TooFar: 余烬只会在与葛温交战之地呼唤它的君主。
+			}
+
 			LostScrollOfGwyn: {
 				DisplayName: 葛温遗失的卷轴
 				Tooltip:
@@ -12850,6 +12864,12 @@ Mods: {
 				FinalShadowWave: 飞龙法师堕魂将你拖入无尽黑暗！
 				GhostDragonDead: 尽管挣扎吧，瑞德...
 				Condition: 当他的灵鬼虬龙死后掉落
+			}
+
+			PrimeGwyn: {
+				DisplayName: 原初葛温，初代帝王
+				SecondPhase: 初始之火回应了它的君主！
+				FirstDawn: 第一道黎明降临在这片没有生命的世界！
 			}
 
 			Gwyn: {

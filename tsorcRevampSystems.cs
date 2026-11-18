@@ -226,7 +226,7 @@ namespace tsorcRevamp
             }
             MapMarkersUIState.Visible = true;
 
-            if (tsorcRevampWorld.SuperHardMode)
+            if (tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge)
             {
                 Vector2 abyssFissureCoords = tsorcRevampWorld.AbyssPortalLocation / 16;
                 abyssFissureCoords.X += 1.5f;

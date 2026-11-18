@@ -599,6 +599,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<NPCs.Invaders.BlackKnight>(),
                 ModContent.NPCType<NPCs.Invaders.GreatRedKnight>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(),
+                ModContent.NPCType<NPCs.Bosses.Primordial.PrimeGwyn>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
                 ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(),
             };
@@ -3149,6 +3150,15 @@ namespace tsorcRevamp
                     break;
                 }
 
+                case tsorcPacketID.UseEmberOfTheFirstDawn:
+                {
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        Content.Items.BossItems.EmberOfTheFirstDawn.ResolveUse(Main.player[whoAmI]);
+                    }
+                    break;
+                }
+
                 case tsorcPacketID.SyncOrnsteinStatic:
                 {
                     Content.Items.Armor.Enemy.OrnsteinSpellbladePlayer.ReceiveStaticPacket(reader, whoAmI);
@@ -5395,6 +5405,8 @@ namespace tsorcRevamp
         public const byte CutsceneSync = 51;
         /// <summary>A player's Ornstein Static count changed, so others can draw its sparks.</summary>
         public const byte SyncOrnsteinStatic = 52;
+        /// <summary>Client to server: this player used the Ember of the First Dawn.</summary>
+        public const byte UseEmberOfTheFirstDawn = 53;
     }
 
     //config moved to separate file

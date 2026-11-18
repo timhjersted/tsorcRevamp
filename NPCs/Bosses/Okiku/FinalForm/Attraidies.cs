@@ -1274,7 +1274,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 //Attraidies dies
                 //Spawn abyss portal NPC
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 1f, PlayOnlyIfFocused = false, MaxInstances = 0 });
-                if (Main.netMode != NetmodeID.MultiplayerClient)
+                if (Main.netMode != NetmodeID.MultiplayerClient && !tsorcRevampWorld.PrimordialAge)
                 {
                     NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
                 }
@@ -1361,7 +1361,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 }
             }
 
-            else
+            else if (!tsorcRevampWorld.PrimordialAge)
             {
 
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.AbyssOpen"), new Color(255, 255, 60));

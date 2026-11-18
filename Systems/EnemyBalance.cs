@@ -436,6 +436,7 @@ namespace tsorcRevamp.Systems
             RegisterMod("Artorias", 250000, 500000);
             RegisterMod("Chaos", 450000, 500000);
             RegisterMod("Gwyn", 750000, 1000000);
+            RegisterMod("PrimeGwyn", 1500000, 1500000); // base already set in PrimeGwyn.cs, so no multiplier
             RegisterMod("HellkiteDragonHead", 650000, 650000); // unchanged
             RegisterMod("WyvernMageShadow", 250000, 250000); // unchanged
             RegisterMod("GhostDragonHead", 600000, 600000); // unchanged; Wyvern Mage Shadow's dragon, the larger part of that fight (segments share the head's life)

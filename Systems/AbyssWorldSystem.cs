@@ -38,6 +38,7 @@ namespace tsorcRevamp.Systems
         private static bool worldLoaded;
 
         public static bool Active => worldLoaded && tsorcRevampWorld.SuperHardMode
+            && !tsorcRevampWorld.PrimordialAge
             && !tsorcRevampWorld.BossDefeated(ModContent.NPCType<Gwyn>());
         public static bool CurseActive => Active && entryTicksRemaining == 0;
         public static float EntryProgress => Active
