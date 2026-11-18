@@ -13,8 +13,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
     public class AncientDragonLance : ModdedSpearItem
     {
         public override int ProjectileID => ModContent.ProjectileType<AncientDragonLanceProj>();
-        public override int Width => 54;
-        public override int Height => 52;
+        public override int Width => 53;
+        public override int Height => 53;
         public override int BaseDmg => 15;
         public override int BaseCritChance => 0;
         public override float BaseKnockback => 4;

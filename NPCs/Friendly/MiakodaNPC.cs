@@ -644,7 +644,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
             }
             // Golem baby
-            else if (!BossDefeated(NPCID.Golem))
+            else if (!NPC.downedGolemBoss)
             {
                 // The player has likely defeated plantera at this point, but if they haven't they need to now.
                 if (!BossDefeated(NPCID.Plantera))

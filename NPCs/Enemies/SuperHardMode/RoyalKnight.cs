@@ -8,7 +8,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor.Enemy.RoyalKnightSet;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
-using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
 using tsorcRevamp.Content.Projectiles.Enemy.RoyalKnightBolts;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
@@ -50,7 +49,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int HeadArmorItemType => ModContent.ItemType<RoyalKnightHelmet>();
         protected override int BodyArmorItemType => ModContent.ItemType<RoyalKnightBreastplate>();
         protected override int LegsArmorItemType => ModContent.ItemType<RoyalKnightGreaves>();
-        protected override int MeleeWeaponItemType => ModContent.ItemType<RoyalKnightHalberd>();
+        protected override int MeleeWeaponItemType => ModContent.ItemType<GreatRoyalHalberd>();
         protected override int SpearWeaponItemType => -1;
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyRoyalThunderBow>();
         protected override int MagicWeaponItemType => -1;
@@ -68,27 +67,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int SpearDamage => EnemyDamage.Projectile(SwoopExpertDamage);
         protected override int RangedDamage => EnemyDamage.Projectile(ThunderArrowExpertDamage);
 
-        // ── Halberd geometry (measured from the 62x62 art: point (61, 0.5), butt (0.5, 61.5), a true 45 degree diagonal) ──
-        // The front hand grips 25% up the shaft from the butt. Grip->point = 0.75 x 86.3 texels x 1.3 draw x 1.35 body = 113px,
-        // so ComboReachBase 162 x 0.7 = 113px puts the hitbox on the drawn point.
-        private const float HalberdTextureSize = 62f;
-        private static readonly Vector2 HalberdPoint = new Vector2(61f, 0.5f);
-        private static readonly Vector2 HalberdButt = new Vector2(0.5f, 61.5f);
-        private const float HalberdGripFromButt = 0.25f;
-        private const float HalberdDrawScale = 1.3f;
-        private const float ThrustReachMult = 1.2f;   // 136px: the grip slides to ~0.10 at full extension
+        // ── Halberd geometry ────────────────────────────────────────────────────────
+        // The holdout's 153-texel shaft draws at 165px after weapon and body scaling.
+        // The new grips preserve the 113px cut and 136px thrust reaches and leave more shaft behind both hands.
+        public const float HalberdDrawScale = 0.8f;
+        private const float ThrustReachMult = 1.2f;   // 136px at full extension
         private const float SweepReachMult = 1.0f;    // 113px
         private const float SunfallReachMult = 1.15f; // 130px
 
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Halberd;
         protected override bool DrawWeaponAsSpear => true;
         protected override bool MirrorSpearRotationByFacing => true;
-        protected override string SpearDrawTexturePath => UsefulFunctions.RefactorableFilepath(typeof(RoyalKnightHalberd));
-        protected override Vector2 SpearTextureSize => new Vector2(HalberdTextureSize, HalberdTextureSize);
-        protected override Vector2 SpearHeadNorm => HalberdPoint / HalberdTextureSize;
-        protected override Vector2 SpearBaseNorm => HalberdButt / HalberdTextureSize;
+        protected override string SpearDrawTexturePath => GreatRoyalHalberd.HeldTexturePath;
+        protected override Vector2 SpearTextureSize => new Vector2(GreatRoyalHalberd.HeldTextureSize);
+        protected override Vector2 SpearHeadNorm => GreatRoyalHalberd.HeldPoint / GreatRoyalHalberd.HeldTextureSize;
+        protected override Vector2 SpearBaseNorm => GreatRoyalHalberd.HeldButt / GreatRoyalHalberd.HeldTextureSize;
         protected override float SpearDrawRotationOffset => 0f;
-        protected override Vector2 MeleeHandleNorm => (HalberdButt + (HalberdPoint - HalberdButt) * HalberdGripFromButt) / HalberdTextureSize;
+        protected override Vector2 MeleeHandleNorm => Vector2.Lerp(SpearHeadNorm, SpearBaseNorm, CarryGrip);
         protected override float MeleeWeaponDrawScale => HalberdDrawScale;
         protected override float ComboReachBase => 162f;
         protected override float MeleeBladeWidth => 14f;
@@ -121,11 +116,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override int RangedStartMeleeComboChance => 55;
         protected override Color MeleeTelegraphFlashColor => new Color(255, 225, 140);
 
-        // Spear-path grip, measured from the POINT (0 = head, 1 = butt). Carry and cuts hold 0.75 (a quarter up from the butt);
-        // a thrust slides the shaft out through the hands to 0.90 and back on the swing clock (sin pulse), and the Gilded
-        // Charge and Skyward Pike dash ride fully extended. 0.90 x 86.3 texels x 1.3 x 1.35 = 136px = the thrust reach.
-        public const float CarryGrip = 0.75f;
-        public const float ExtendedGrip = 0.90f;
+        // Grip is measured from the tip. Thrusts slide toward the butt and back via a sine pulse.
+        // Gilded Charge and Skyward Pike hold the same fully extended grip.
+        public const float CarryGrip = 0.6875f;
+        public const float ExtendedGrip = 0.825f;
 
         protected override float? OverrideSpearGrip(float swingClockT)
         {
@@ -869,7 +863,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(0.80f, 0.50f);
         protected override float GetHeldRangedDrawScale(int itemType) => BowDrawScale;
         protected override Rectangle GetBowStringTexels(int itemType) => new Rectangle(6, 4, 2, 70);
-        protected override string NockedBowArrowTexture => UsefulFunctions.RefactorableFilepath(typeof(ArcherBolt));
+        // The tip-up PNG matches the nocked draw's 90 degree offset and bottom-edge tail pivot.
+        protected override string NockedBowArrowTexture => UsefulFunctions.RefactorableFilepath(typeof(RoyalThunderArrow));
 
         // Grounded: two arrows 45t apart. In the air: Storm Volley, three arrows 8t apart. Grounding Shot: one skyward arrow.
         // The getter reads synced fields only, because a client rebuilds the burst from it in ReceiveExtraAI.

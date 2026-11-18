@@ -4,9 +4,8 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
-    // PLACEHOLDER sprite (copy of PurpleGemStaff) — replace with bespoke art (a dark wood shaft with a blue-violet orb
-    // held in a cage head, matching the Warlock's robe). Marik and the Archdeacon already show this same silhouette.
-    // 42x40, shaft runs from butt (0,39) to gem tip (41,0); the Warlock grips it 30% up from the butt.
+    // The 42x40 sprite runs from the lower-left heel to the upper-right cage.
+    // The Warlock grips the shaft 30% of the way up from the heel.
     /// <summary>Presentation-only staff held by the Warlock.</summary>
     public class EnemyWarlockStaff : ModItem
     {

@@ -13,8 +13,9 @@ namespace tsorcRevamp.Content.Items.Armor
     {
         public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/SmoughHelmet";
 
-        public static float Dmg = 10f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg);
+        public static float Dmg = 12f;
+        public const float DamageReduction = 6f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, DamageReduction);
         public override void SetStaticDefaults()
         {
         }
@@ -22,19 +23,20 @@ namespace tsorcRevamp.Content.Items.Armor
         {
             Item.width = 26;
             Item.height = 20;
-            Item.defense = 4;
-            Item.rare = ItemRarityID.Blue;
+            Item.defense = 20;
+            Item.rare = ItemRarityID.Yellow;
             Item.value = PriceByRarity.fromItem(Item);
         }
         public override void UpdateEquip(Player player)
         {
             player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            player.endurance += DamageReduction / 100f;
         }
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.CopperHelmet);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1500);
+            recipe.AddIngredient(ModContent.ItemType<SoulOfSmough>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

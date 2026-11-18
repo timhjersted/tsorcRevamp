@@ -530,6 +530,9 @@ namespace tsorcRevamp
                     InterfaceScaleType.UI)
                 );
             }
+
+            // Last, so the cutscene hides every layer added above.
+            Systems.CutsceneSystem.ApplyInterfaceLayers(layers);
         }
 
         public override void AddRecipeGroups()

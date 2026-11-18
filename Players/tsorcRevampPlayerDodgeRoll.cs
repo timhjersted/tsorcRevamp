@@ -21,6 +21,8 @@ using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Textures;
 using Freezethrower = tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers.Freezethrower;
 using GhostStepItem = tsorcRevamp.Content.Items.Accessories.Mobility.GhostStep;
+using OrnsteinBody = tsorcRevamp.Content.Items.Armor.Enemy.OrnsteinBody;
+using OrnsteinSpellbladePlayer = tsorcRevamp.Content.Items.Armor.Enemy.OrnsteinSpellbladePlayer;
 
 namespace tsorcRevamp
 {
@@ -146,6 +148,11 @@ namespace tsorcRevamp
         public float dodgeDuration = 0.37f;
         /// <summary>Latched at roll start so unequipping mid-dash can't change the profile halfway through.</summary>
         public bool dodgeIsGhostStep;
+        /// <summary>Latched at roll start: this Ghost Step dash was paid for as Ornstein's Lightning Dash. The owner decides and sends it.</summary>
+        public bool dodgeIsLightningDash;
+        /// <summary>Latched at roll start: tiles this dash travels beyond the roll it replaces.</summary>
+        private int dodgeDashExtraTiles;
+        private bool syncedDodgerollLightning;
         /// <summary>Frames of trail left to draw. Held at GhostAfterglowFrames while dashing, then counts down so the echoes fade.</summary>
         public int ghostStepAfterglow;
 
@@ -158,6 +165,8 @@ namespace tsorcRevamp
 
         // Full-speed dash covers this fraction of the duration; the rest is the stop / momentum hand-off (still invulnerable).
         private const float GhostDashFraction = 0.8f;
+        private const int LightningDashStartDust = 18;
+        private const int LightningDashEndDust = 10;
         // Per-frame velocity multiplier for the "no key held" stop. 0.3 leaves under 1px/frame after 3 frames.
         private const float GhostStopDecay = 0.3f;
         private const float GhostStopSnapSpeed = 0.5f;
@@ -397,6 +406,7 @@ namespace tsorcRevamp
             sbyte verticalDirection = reader.ReadSByte();
             sbyte facing = reader.ReadSByte();
             Vector2 startVelocity = reader.ReadVector2();
+            bool lightningDash = reader.ReadBoolean();
 
             if (horizontalDirection < -1 || horizontalDirection > 1 || verticalDirection < -1 || verticalDirection > 1
                 || (horizontalDirection == 0 && verticalDirection == 0) || (facing != -1 && facing != 1)
@@ -411,15 +421,16 @@ namespace tsorcRevamp
             modPlayer.wantedDodgerollVerticalDir = verticalDirection;
             modPlayer.syncedDodgerollFacing = facing;
             modPlayer.syncedDodgerollVelocity = startVelocity;
+            modPlayer.syncedDodgerollLightning = lightningDash;
             modPlayer.forceDodgeroll = true;
 
             if (isServer)
             {
-                modPlayer.SendDodgerollPacket(horizontalDirection, verticalDirection, facing, startVelocity);
+                modPlayer.SendDodgerollPacket(horizontalDirection, verticalDirection, facing, startVelocity, lightningDash);
             }
         }
 
-        private void SendDodgerollPacket(sbyte horizontalDirection, sbyte verticalDirection, sbyte facing, Vector2 startVelocity)
+        private void SendDodgerollPacket(sbyte horizontalDirection, sbyte verticalDirection, sbyte facing, Vector2 startVelocity, bool lightningDash)
         {
             bool isServer = Main.netMode == NetmodeID.Server;
             ModPacket rollPacket = Mod.GetPacket();
@@ -430,6 +441,7 @@ namespace tsorcRevamp
             rollPacket.Write(verticalDirection);
             rollPacket.Write(facing);
             rollPacket.WriteVector2(startVelocity);
+            rollPacket.Write(lightningDash);
             int ignoredClient = isServer ? Player.whoAmI : -1;
             rollPacket.Send(ignoreClient: ignoredClient);
         }
@@ -548,7 +560,7 @@ namespace tsorcRevamp
         {
             bool isLocal = Player.whoAmI == Main.myPlayer;
 
-            if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
+            if (isLocal && !Systems.CutsceneSystem.FreezesPlayers && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
                 // > 0, not > 30: the roll now follows the same rule as every other action — you may act with any
                 // stamina at all, and overdrawing banks the shortfall as debt you must repay before acting again.
                 // The old hard gate was the odd one out, and it made the roll silently unresponsive rather than
@@ -601,7 +613,22 @@ namespace tsorcRevamp
             }
 
             bool onGround = startVelocity.Y == 0f;
-            dodgeIsGhostStep = GhostStepEquipped;
+            // Ornstein's set turns every roll into the Ghost Step dash. The lightning is paid for by the owner, whose
+            // mana is the only exact value, and other clients follow the flag in the roll packet.
+            OrnsteinSpellbladePlayer spellblade = Player.GetModPlayer<OrnsteinSpellbladePlayer>();
+            dodgeIsLightningDash = false;
+
+            if (forceDodgeroll)
+            {
+                dodgeIsLightningDash = syncedDodgerollLightning;
+            }
+            else if (spellblade.SetActive && Player.statMana >= OrnsteinBody.LightningDashManaCost)
+            {
+                SpendManaOnHit(OrnsteinBody.LightningDashManaCost);
+                dodgeIsLightningDash = true;
+            }
+
+            dodgeIsGhostStep = GhostStepEquipped || spellblade.SetActive || dodgeIsLightningDash;
             sbyte verticalDirection = wantedDodgerollVerticalDir;
             dodgeDirection = wantedDodgerollDir;
             dodgeDirectionVisual = (sbyte)Player.direction;
@@ -661,7 +688,11 @@ namespace tsorcRevamp
 
             if (!Main.dedServ)
             {
-                if (dodgeIsGhostStep)
+                if (dodgeIsLightningDash)
+                {
+                    SoundEngine.PlaySound(SoundID.Item94 with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
+                }
+                else if (dodgeIsGhostStep)
                 {
                     SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
                 }
@@ -691,11 +722,38 @@ namespace tsorcRevamp
 
             if (dodgeIsGhostStep)
             {
-                dodgeDuration += GhostStepItem.ExtraImmunityFrames / 60f;
+                // Ghost Step and the Ornstein set give one dash between them, so their bonuses never stack.
+                int dashExtraFrames = OrnsteinBody.LightningDashExtraImmunityFrames;
+                dodgeDashExtraTiles = OrnsteinBody.LightningDashExtraDistanceTiles;
+
+                if (GhostStepEquipped)
+                {
+                    dashExtraFrames = GhostStepItem.ExtraImmunityFrames;
+                    dodgeDashExtraTiles = GhostStepItem.ExtraDistanceTiles;
+                }
+
+                dodgeDuration += dashExtraFrames / 60f;
+
+                if (dodgeIsLightningDash && isLocal)
+                {
+                    spellblade.SpawnDashHitbox();
+                }
+
+                // Gold and electric burst where a Lightning Dash starts. Runs on every client, like the puff below.
+                if (dodgeIsLightningDash && !Main.dedServ)
+                {
+                    for (int i = 0; i < LightningDashStartDust; i++)
+                    {
+                        int burstType = i % 2 == 0 ? DustID.GoldFlame : DustID.Electric;
+                        Vector2 burstPosition = Player.Center + Main.rand.NextVector2Circular(10f, 16f);
+                        Dust burst = Dust.NewDustPerfect(burstPosition, burstType, Main.rand.NextVector2Circular(3f, 3f), 60, default, 1f);
+                        burst.noGravity = true;
+                    }
+                }
 
                 // Faint white puff at the start of the dash, drifting back the way we came. Runs on every client
                 // (remote players reach here through forceDodgeroll); a dedicated server has nothing to draw.
-                if (!Main.dedServ)
+                if (!Main.dedServ && !dodgeIsLightningDash)
                 {
                     for (int i = 0; i < 18; i++)
                     {
@@ -724,7 +782,7 @@ namespace tsorcRevamp
 
             if (isLocal && Main.netMode == NetmodeID.MultiplayerClient)
             {
-                SendDodgerollPacket(dodgeDirection, verticalDirection, dodgeDirectionVisual, startVelocity);
+                SendDodgerollPacket(dodgeDirection, verticalDirection, dodgeDirectionVisual, startVelocity, dodgeIsLightningDash);
             }
 
             forceDodgeroll = false;
@@ -855,6 +913,19 @@ namespace tsorcRevamp
             bool useGroundRollPhysics = dodgeLiftStartedOnGround || OnGround(Player);
 
             TryGrantArtoriasAbysswalkerPoise();
+
+            // Electric sparks along the path of a Lightning Dash: two per tick, plus a third on every other tick.
+            if (dodgeIsLightningDash && !Main.dedServ)
+            {
+                int sparkCount = Main.GameUpdateCount % 2 == 0 ? 3 : 2;
+
+                for (int i = 0; i < sparkCount; i++)
+                {
+                    Vector2 sparkPosition = Player.Center + Main.rand.NextVector2Circular(12f, 20f);
+                    Dust spark = Dust.NewDustPerfect(sparkPosition, DustID.Electric, Main.rand.NextVector2Circular(1.2f, 1.2f), 60, default, 0.75f);
+                    spark.noGravity = true;
+                }
+            }
             /*
             bool chloranthyRing = false;
             for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
@@ -937,7 +1008,7 @@ namespace tsorcRevamp
                     // dodgeSpeed * GhostRollTravelSpeedTicks; the dash covers dodgeSpeed' * (burst frames + stop tail),
                     // where the tail is the geometric sum of the stop decay (0.3 + 0.09 + ... = 0.3 / 0.7).
                     float rollEquivalentTravel = dodgeSpeed * GhostRollTravelSpeedTicks;
-                    float ghostTravel = rollEquivalentTravel + GhostStepItem.ExtraDistanceTiles * 16f;
+                    float ghostTravel = rollEquivalentTravel + dodgeDashExtraTiles * 16f;
                     float burstFrames = (float)Math.Ceiling(fullSpeedEnd * 60f);
                     float stopTailFrames = GhostStopDecay / (1f - GhostStopDecay);
                     dodgeSpeed = ghostTravel / (burstFrames + stopTailFrames);
@@ -1038,6 +1109,17 @@ namespace tsorcRevamp
             if (dodgeTime >= dodgeDuration)
             {
                 isDodging = false;
+
+                // A last crackle where a Lightning Dash ends.
+                if (dodgeIsLightningDash && !Main.dedServ)
+                {
+                    for (int i = 0; i < LightningDashEndDust; i++)
+                    {
+                        Dust crackle = Dust.NewDustPerfect(Player.Center, DustID.Electric, Main.rand.NextVector2Circular(3.5f, 3.5f), 60, default, 0.9f);
+                        crackle.noGravity = true;
+                    }
+                }
+
                 //Player.eocDash = 0;
                 //forceSyncControls = true;
             }

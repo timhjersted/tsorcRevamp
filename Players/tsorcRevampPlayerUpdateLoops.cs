@@ -2865,13 +2865,16 @@ namespace tsorcRevamp
 
             // ZoneLihzhardTemple is true only while the player occupies the unsafe Lihzahrd
             // Brick wall used by the Forbidden dungeon, so nearby Jungle terrain is unaffected.
-            // This is shared by the original and Remix Adventure maps. The Golem's arena uses the same
-            // wall, so both debuffs are skipped while the Golem is alive (already-applied ones expire within 60 ticks).
-            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode
-                && !NPC.AnyNPCs(NPCID.Golem))
+            // This is shared by the original and Remix Adventure maps. The Ornstein and Smough arena uses the same
+            // wall: Suppressed lifts during that encounter, while Torn Wings stays on as part of its anti-air rules.
+            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
-                Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+
+                if (!NPCs.Bosses.Ornsmough.OrnsmoughDirector.EncounterActive)
+                {
+                    Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+                }
             }
 
             // Shadow Temple (Hardmode desert dungeon), original Adventure map only. Identified by its wall: plain Pink Dungeon Wall (ID 9),

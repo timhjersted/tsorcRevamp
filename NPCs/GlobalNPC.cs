@@ -269,6 +269,7 @@ namespace tsorcRevamp.NPCs
 
         public bool Venomized;
         public bool Electrified;
+        private int crushingBlowHits;
         public bool Irradiated;
         public bool IrradiatedByShroom;
 
@@ -743,6 +744,8 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Hydra>(0.2f, 60f);
             Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
             // Elite / heavy knight
+            Add<Bosses.Ornsmough.Ornstein>(0.15f, 120f); // phase two swaps to (0.08, 180) in BecomeEmpowered
+            Add<Bosses.Ornsmough.Smough>(0.05f, 200f);   // phase two swaps to (0.03, 260)
             Add<Enemies.SuperHardMode.RoyalKnight>(0.15f, 120f); // puppet halberd elite: boss-tier poise; tells are the stagger windows, heavies, leaps and dashes are hyper-armored
             Add<Invaders.Caliche>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
@@ -3370,6 +3373,7 @@ namespace tsorcRevamp.NPCs
             // Poise damage scales with the projectile's knockback stat × its per-projectile ProjectilePoiseMultiplier
             // lever (see project_poise_stagger_system).
             float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, projectile.owner, false);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {
@@ -3683,6 +3687,42 @@ namespace tsorcRevamp.NPCs
             return poiseKnockback;
         }
 
+        // Smough's Crushing Blow: every Nth hit on this enemy deals extra poise damage. These hooks run on the attacker's
+        // client, so the counter only sees that client's hits. ModifyHit peeks at it and the landed hit advances it,
+        // which keeps both passes on the same poise value.
+        private float ApplyCrushingBlowPoise(float poiseKnockback, NPC npc, int playerIndex, bool hitLanded)
+        {
+            if (playerIndex < 0 || playerIndex >= Main.maxPlayers || !Main.player[playerIndex].GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
+            {
+                return poiseKnockback;
+            }
+
+            bool isCrushingBlow = crushingBlowHits + 1 >= Content.Items.Armor.SmoughArmor.CrushingBlowHitCount;
+
+            if (hitLanded)
+            {
+                crushingBlowHits++;
+
+                if (isCrushingBlow)
+                {
+                    crushingBlowHits = 0;
+                    SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.7f, Pitch = -0.4f }, npc.Center);
+
+                    for (int i = 0; i < 14; i++)
+                    {
+                        Dust.NewDustPerfect(npc.Center, DustID.Stone, Main.rand.NextVector2Circular(4f, 4f), 0, default, 1.2f);
+                    }
+                }
+            }
+
+            if (isCrushingBlow)
+            {
+                poiseKnockback *= 1f + Content.Items.Armor.SmoughArmor.CrushingBlowPoiseBonus / 100f;
+            }
+
+            return poiseKnockback;
+        }
+
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             // Stalker cloak: hits still land and build poise (a stagger rips the cloak off), but each is capped at 1 damage with
@@ -3697,6 +3737,7 @@ namespace tsorcRevamp.NPCs
             // (see project_poise_stagger_system).
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, player.whoAmI, false);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -3773,6 +3814,7 @@ namespace tsorcRevamp.NPCs
             // Must match the poise damage computed in ModifyHitByItem above.
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, player.whoAmI, true);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -3808,6 +3850,7 @@ namespace tsorcRevamp.NPCs
         {
             // Must match the poise damage computed in ModifyHitByProjectile above.
             float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, projectile.owner, true);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {

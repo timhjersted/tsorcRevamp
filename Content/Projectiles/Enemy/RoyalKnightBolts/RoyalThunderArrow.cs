@@ -14,13 +14,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.RoyalKnightBolts
     /// ai[0] = 1: the visual-only skyward Grounding Shot arrow (no damage, no tile collision, flies off screen).</summary>
     public class RoyalThunderArrow : ModProjectile
     {
-        // Art: ArcherBolt 10x30, tip at the TOP edge, so rotation = travel direction + 90 degrees.
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArcherBolt));
-
         public const int LifetimeTicks = 75;
         const int FadeTicks = 12;
         public const int ElectrifiedTicks = 3 * 60;
-        static readonly Color BoltTint = new Color(255, 235, 150);
 
         bool VisualOnly => Projectile.ai[0] > 0f;
 
@@ -58,6 +54,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.RoyalKnightBolts
                 Projectile.hostile = false;
             }
 
+            // The arrowhead is on the top edge of the PNG. Add 90 degrees to align it with the velocity.
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             // Timeout fade: alpha ramps 0 -> 255 over the last FadeTicks, so an arrow that runs out mid-air dims away.
@@ -122,13 +119,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.RoyalKnightBolts
             }
         }
 
-        // The sprite is 10x30 with the tip at the top; draw it centred on the hitbox, tinted gold, full-bright.
+        // Draw the single 10x30 tip-up frame full-bright, preserving the gold and blue palette during the fade.
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Vector2 origin = texture.Size() / 2f;
             float opacity = 1f - Projectile.alpha / 255f;
-            Color drawColor = BoltTint * opacity;
+            Color drawColor = Color.White * opacity;
             Vector2 drawPosition = Projectile.Center - Main.screenPosition;
 
             Main.EntitySpriteDraw(texture, drawPosition, null, drawColor, Projectile.rotation, origin, 1f, SpriteEffects.None, 0);

@@ -65,6 +65,8 @@ namespace tsorcRevamp
         public static bool EnteredFloodedMachineTemple;
         public static bool EnteredPyramid;
         public static bool TalkedToShaman;
+        /// <summary>The full Ornstein and Smough intro plays once per world; later attempts use the short entrance.</summary>
+        public static bool OrnsmoughIntroSeen;
 
         public static List<string> CompletedDynamicEvents = new List<string>();
 
@@ -152,6 +154,7 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = false;
             EnteredPyramid = false;
             TalkedToShaman = false;
+            OrnsmoughIntroSeen = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -214,6 +217,8 @@ namespace tsorcRevamp
                 world_state.Add("EnteredPyramid");
             if (TalkedToShaman)
                 world_state.Add("TalkedToShaman");
+            if (OrnsmoughIntroSeen)
+                world_state.Add("OrnsmoughIntroSeen");
 
             if (DownedBetsy)
             {
@@ -262,6 +267,7 @@ namespace tsorcRevamp
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
+            OrnsmoughIntroSeen = worldStateList.Contains("OrnsmoughIntroSeen");
             TheEnd = worldStateList.Contains("TheEnd");
             ForceSandbox = worldStateList.Contains("ForceSandbox");
             CustomMap = !ForceSandbox && worldStateList.Contains("CustomMap");

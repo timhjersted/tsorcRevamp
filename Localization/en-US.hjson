@@ -3426,21 +3426,32 @@ Mods: {
 				DisplayName: Smough's Armor
 				Tooltip:
 					'''
+					Increases maximum life by {2}
+					Active shields cost {3}% less stamina to block
 					Increases the effectiveness of the Dragon Crest Shield
-					Set Bonus: Decreases all attack speed by {0}% multiplicatively but guarantees critical hits
+					{$CommonItemTooltip.SetBonus}Decreases all attack speed by {0}% multiplicatively but guarantees critical hits
 					Critical strike damage is reduced by {1}%
 					Also increases mana costs by {0}%
+					Every {4}th hit on the same enemy is a Crushing Blow, dealing {5}% more poise damage
 					'''
 			}
 
 			SmoughGreaves: {
 				DisplayName: Smough's Greaves
-				Tooltip: Decreases dodgeroll agility
+				Tooltip:
+					'''
+					{$CommonItemTooltip.NoKnockback}
+					Decreases dodgeroll agility
+					'''
 			}
 
 			SmoughHelmet: {
 				DisplayName: Smough's Helmet
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Reduces damage taken by {1}%
+					'''
 			}
 
 			SnarbolaxArmor: {
@@ -3797,6 +3808,11 @@ Mods: {
 
 			GwynBag: {
 				DisplayName: Treasure Bag (Gwyn, Lord of the First Dawn)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OrnsmoughBag: {
+				DisplayName: Treasure Bag (Ornstein & Smough)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -5861,6 +5877,16 @@ Mods: {
 			SoulOfArtorias: {
 				DisplayName: Soul of Artorias
 				Tooltip: "'The essence of Artorias of the Abyss'"
+			}
+
+			SoulOfOrnstein: {
+				DisplayName: Soul of Ornstein
+				Tooltip: "'The essence of Ornstein the Dragonslayer'"
+			}
+
+			SoulOfSmough: {
+				DisplayName: Soul of Smough
+				Tooltip: "'The essence of Smough the Executioner'"
 			}
 
 			SoulOfCinder: {
@@ -9475,6 +9501,40 @@ Mods: {
 				Tooltip: ""
 			}
 
+			OrnsteinHead: {
+				DisplayName: Ornstein's Lion Helm
+				Tooltip:
+					'''
+					Increases melee and magic critical strike chance by {0}%
+					Increases maximum mana by {1}
+					'''
+			}
+
+			OrnsteinBody: {
+				DisplayName: Ornstein's Armor
+				Tooltip:
+					'''
+					Increases melee and magic damage by {0}%
+					Melee hits restore {1} mana
+					{$CommonItemTooltip.SetBonus}Spellblade Current
+					Melee hits build Static, up to {2} stacks, which fade {3} seconds after your last melee hit
+					Your next magic cast spends all Static for {4}% more magic damage per stack
+					Each stack also fires a lightning arc at an enemy within {5} tiles for {6}% of the spell's damage
+					Magic hits grant Charged Edge for {7} seconds: your next melee hit fires a lightning bolt for {8}% of its damage
+					Taking a hit clears Static and Charged Edge
+					Your dodge roll becomes a dash. With {9} mana it becomes a Lightning Dash, dealing {10} damage and building Static
+					'''
+			}
+
+			OrnsteinLegs: {
+				DisplayName: Ornstein's Leggings
+				Tooltip:
+					'''
+					Increases movement speed by {0}%
+					Increases melee speed by {1}%
+					'''
+			}
+
 			RoyalKnightBreastplate: {
 				DisplayName: Royal Knight Breastplate
 				Tooltip: ""
@@ -9739,9 +9799,19 @@ Mods: {
 				DisplayName: Black Blade
 			}
 
-			RoyalKnightHalberd: {
+			GreatRoyalHalberd: {
 				Tooltip: ""
-				DisplayName: Royal Knight Halberd
+				DisplayName: Great Royal Halberd
+			}
+
+			OrnsteinSpear: {
+				DisplayName: Ornstein's Spear
+				Tooltip: Hold right-click to charge Dragonslayer's Lunge and release to thrust toward the cursor. At full charge, the first enemy hit conducts a bolt down the thrust line.
+			}
+
+			SmoughGreatHammer: {
+				DisplayName: Smough's Great Hammer
+				Tooltip: Right-click for Executioner's Quake. Hop into a slam from the ground or plunge from midair, sending shockwaves along the floor.
 			}
 
 			EnemyBeastClaw: {
@@ -10843,6 +10913,16 @@ Mods: {
 				Description: Your next melee or magic hit releases an abyss counterattack
 			}
 
+			OrnsteinStatic: {
+				DisplayName: Static
+				Description: {0} stacks: your next magic cast deals {1}% more damage and fires lightning arcs
+			}
+
+			OrnsteinChargedEdge: {
+				DisplayName: Charged Edge
+				Description: Your next melee hit fires a lightning bolt
+			}
+
 			ArtoriasAbysswalkerPoiseCooldown: {
 				DisplayName: Abyssal Poise Cooldown
 				Description: Dodge through danger again after this runs out
@@ -11277,6 +11357,7 @@ Mods: {
 		}
 
 		Projectiles: {
+			OrnsteinLightning.DisplayName: Ornstein Lightning
 			DworcFlask.DisplayName: Dworc Flask
 			DworcFireFlame.DisplayName: Lingering Fire
 			DworcStormRing.DisplayName: Abyss Storm
@@ -11793,6 +11874,9 @@ Mods: {
 			FetidExhaust.DisplayName: Noxious Jet
 			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear
 			PilgrimSpontoonProj.DisplayName: Forgotten Polearm
+			OrnsteinSpearProj.DisplayName: Ornstein's Spear
+			OrnsteinSpearLunge.DisplayName: Dragonslayer's Lunge
+			SmoughHammerSlam.DisplayName: Executioner's Quake
 			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance
 			GaeBolgProj.DisplayName: Gae Bolg
 			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear
@@ -12322,6 +12406,7 @@ Mods: {
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			UlhanUnholyArrow.DisplayName: Unholy Arrow
 			RoyalThunderArrow.DisplayName: Thunder Arrow
+			WardenLightning.DisplayName: Warden Lightning
 			ObsidianGuardArrow.DisplayName: Obsidian Arrow
 			UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			UlhanFireExplosion.DisplayName: Fire Explosion
@@ -13005,6 +13090,18 @@ Mods: {
 				DisplayName: Royal Knight
 				DespawnHandler: The Royal Knight stands victorious...
 			}
+
+			Ornstein: {
+				DisplayName: Dragon Slayer Ornstein
+				DespawnHandler: Ornstein returns to his watch...
+			}
+
+			Smough: {
+				DisplayName: Executioner Smough
+				DespawnHandler: Smough drags his hammer back into the dark...
+			}
+
+			CutsceneGolem.DisplayName: "{$NPCName.Golem}"
 
 			ManOfWar.DisplayName: Man of War
 			DarkrootImp.DisplayName: Darkroot Imp

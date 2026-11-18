@@ -397,6 +397,8 @@ namespace tsorcRevamp.Systems
 
             Register(NPCID.Plantera, 67200, 70000);
             Register(NPCID.Golem, 90000, 100000);
+            RegisterMod("Ornstein", 39216, 39216); // authored directly: 50k removed per Master kill (x1.275)
+            RegisterMod("Smough", 47059, 47059);   // authored directly: 60k removed per Master kill
             Register(NPCID.DukeFishron, 169000, 180000);
             Register(NPCID.HallowBoss, 198800, 200000);
 

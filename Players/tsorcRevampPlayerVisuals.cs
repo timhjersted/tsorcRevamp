@@ -339,7 +339,7 @@ namespace tsorcRevamp
             // 1 while dashing, fading to 0 over the afterglow so the whole trail dissolves after the dash ends.
             float afterglow = modPlayer.ghostStepAfterglow / (float)tsorcRevampPlayer.GhostAfterglowFrames;
             int cacheCount = drawInfo.DrawDataCache.Count;
-            Color ghostTint = new Color(200, 225, 255);
+            Color ghostTint = modPlayer.dodgeIsLightningDash ? new Color(255, 225, 140) : new Color(200, 225, 255);
 
             for (int echo = tsorcRevampPlayer.GhostTrailEchoes; echo >= 1; echo--)
             {

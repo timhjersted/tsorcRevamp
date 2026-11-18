@@ -3464,21 +3464,32 @@ Mods: {
 				DisplayName: 斯摩盔甲
 				Tooltip:
 					'''
+					增加 {2} 最大生命值
+					主动盾牌格挡时消耗的耐力减少 {3}%
 					加强龙纹盾的效果
 					{$CommonItemTooltip.SetBonus}乘算降低 {0}% 攻击速度但攻击必定暴击
 					减少 {1}% 暴击伤害
 					增加 {0}% 魔力消耗
+					对同一敌人的每第 {4} 次攻击为粉碎一击，造成的韧性伤害增加 {5}%
 					'''
 			}
 
 			SmoughGreaves: {
 				DisplayName: 斯摩腿甲
-				Tooltip: 降低翻滚能力
+				Tooltip:
+					'''
+					{$CommonItemTooltip.NoKnockback}
+					降低翻滚能力
+					'''
 			}
 
 			SmoughHelmet: {
 				DisplayName: 斯摩头盔
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					受到的伤害减少 {1}%
+					'''
 			}
 
 			SnarbolaxArmor: {
@@ -3835,6 +3846,11 @@ Mods: {
 
 			GwynBag: {
 				DisplayName: 宝藏袋（葛温—灰烬帝王）
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OrnsmoughBag: {
+				DisplayName: 宝藏袋（翁斯坦与斯摩）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -5903,6 +5919,16 @@ Mods: {
 			SoulOfArtorias: {
 				DisplayName: 亚尔特留斯之魂
 				Tooltip: 深渊行者—亚尔特留斯的精华
+			}
+
+			SoulOfOrnstein: {
+				DisplayName: 翁斯坦之魂
+				Tooltip: 猎龙者翁斯坦的精华
+			}
+
+			SoulOfSmough: {
+				DisplayName: 斯摩之魂
+				Tooltip: 刽子手斯摩的精华
 			}
 
 			SoulOfCinder: {
@@ -9510,6 +9536,40 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			OrnsteinHead: {
+				DisplayName: 翁斯坦的狮盔
+				Tooltip:
+					'''
+					增加 {0}% 近战和魔法暴击率
+					增加 {1} 最大魔力
+					'''
+			}
+
+			OrnsteinBody: {
+				DisplayName: 翁斯坦的盔甲
+				Tooltip:
+					'''
+					增加 {0}% 近战和魔法伤害
+					近战命中恢复 {1} 点魔力
+					{$CommonItemTooltip.SetBonus}魔剑电流
+					近战命中积累静电，最多 {2} 层，最后一次近战命中 {3} 秒后消散
+					下一次施法消耗全部静电，每层增加 {4}% 魔法伤害
+					每层还会向 {5} 格内的敌人释放一道闪电，造成法术伤害的 {6}%
+					魔法命中获得 {7} 秒充能之刃：下一次近战命中发射一道闪电，造成该次伤害的 {8}%
+					受到攻击时清除静电和充能之刃
+					翻滚变为冲刺。消耗 {9} 点魔力时变为闪电冲刺，造成 {10} 点伤害并积累静电
+					'''
+			}
+
+			OrnsteinLegs: {
+				DisplayName: 翁斯坦的护腿
+				Tooltip:
+					'''
+					增加 {0}% 移动速度
+					增加 {1}% 近战攻击速度
+					'''
+			}
+
 			RoyalKnightBreastplate: {
 				// DisplayName: Royal Knight Breastplate
 				// Tooltip: ""
@@ -9774,9 +9834,19 @@ Mods: {
 				// DisplayName: Black Blade
 			}
 
-			RoyalKnightHalberd: {
+			GreatRoyalHalberd: {
 				// Tooltip: ""
-				// DisplayName: Royal Knight Halberd
+				// DisplayName: Great Royal Halberd
+			}
+
+			OrnsteinSpear: {
+				DisplayName: 翁斯坦的长枪
+				Tooltip: 按住右键蓄力，松开后朝光标方向突刺。满蓄力突刺命中的首个敌人会沿突刺路线导出闪电。
+			}
+
+			SmoughGreatHammer: {
+				DisplayName: 斯摩的大锤
+				Tooltip: 右键发动震地重击。从地面跃起下砸，或在空中直接下坠，落地时沿地面释放冲击波。
 			}
 
 			EnemyBeastClaw: {
@@ -10878,6 +10948,16 @@ Mods: {
 				// Description: Your next melee or magic hit releases an abyss counterattack
 			}
 
+			OrnsteinStatic: {
+				DisplayName: 静电
+				Description: {0} 层：下一次施法增加 {1}% 伤害并释放闪电
+			}
+
+			OrnsteinChargedEdge: {
+				DisplayName: 充能之刃
+				Description: 下一次近战命中发射一道闪电
+			}
+
 			ArtoriasAbysswalkerPoiseCooldown: {
 				// DisplayName: Abyssal Poise Cooldown
 				// Description: Dodge through danger again after this runs out
@@ -11316,6 +11396,7 @@ Mods: {
 		}
 
 		Projectiles: {
+			OrnsteinLightning.DisplayName: 翁斯坦的闪电
 			// DworcFlask.DisplayName: Dworc Flask
 			// DworcFireFlame.DisplayName: Lingering Fire
 			// DworcStormRing.DisplayName: Abyss Storm
@@ -11832,6 +11913,9 @@ Mods: {
 			FetidExhaust.DisplayName: 腐败吐息
 			ForgottenPearlSpearProj.DisplayName: 被遗忘的珍珠矛
 			PilgrimSpontoonProj.DisplayName: 被遗忘的长枪
+			OrnsteinSpearProj.DisplayName: 翁斯坦的长枪
+			OrnsteinSpearLunge.DisplayName: 猎龙者突刺
+			SmoughHammerSlam.DisplayName: 刽子手震地击
 			ForgottenRadiantLanceProj.DisplayName: 被遗忘的光辉之枪
 			GaeBolgProj.DisplayName: 盖博尔格
 			HiRyuuSpearProj.DisplayName: 空域之矛
@@ -12361,6 +12445,7 @@ Mods: {
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
 			// RoyalThunderArrow.DisplayName: Thunder Arrow
+			// WardenLightning.DisplayName: Warden Lightning
 			ObsidianGuardArrow.DisplayName: 黑曜石箭
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
@@ -13044,6 +13129,18 @@ Mods: {
 				DisplayName: 皇家骑士
 				DespawnHandler: 皇家骑士占了上风...
 			}
+
+			Ornstein: {
+				DisplayName: 屠龙骑士翁斯坦
+				DespawnHandler: 翁斯坦回到了他的岗位...
+			}
+
+			Smough: {
+				DisplayName: 处刑者斯摩
+				DespawnHandler: 斯摩拖着巨锤退回了黑暗...
+			}
+
+			CutsceneGolem.DisplayName: "{$NPCName.Golem}"
 
 			ManOfWar.DisplayName: 战争缔造者
 			DarkrootImp.DisplayName: 黑森林小恶魔

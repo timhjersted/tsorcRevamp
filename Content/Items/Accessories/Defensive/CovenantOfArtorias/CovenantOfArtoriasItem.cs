@@ -35,5 +35,10 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias
         {
             player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
         }
+
+        public override void UpdateVanity(Player player)
+        {
+            player.GetModPlayer<CovenantOfArtoriasPlayer>().Equipped = true;
+        }
     }
 }

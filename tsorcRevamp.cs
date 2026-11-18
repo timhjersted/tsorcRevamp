@@ -1165,6 +1165,7 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronPrimeBossBag    , BossExtras.SublimeBoneDust    },
                 {   ItemID.PlanteraBossBag          , BossExtras.StaminaVessel      },
                 {   ItemID.GolemBossBag             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(), BossExtras.DarkSoulsOnly      },
                 {   ItemID.FishronBossBag           , BossExtras.StaminaVessel      },
                 {   ItemID.CultistBossBag           , BossExtras.DarkSoulsOnly      },
                 {   ItemID.MoonLordBossBag          , BossExtras.DarkSoulsOnly      },
@@ -1250,6 +1251,7 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronPrimeBossBag    , NPCID.SkeletronPrime      },      // but it doesn't really matter
                 {   ItemID.PlanteraBossBag          , NPCID.Plantera            },      // while their values are the same
                 {   ItemID.GolemBossBag             , NPCID.Golem               },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(), ModContent.NPCType<NPCs.Bosses.Ornsmough.Smough>() },
                 {   ItemID.FishronBossBag           , NPCID.DukeFishron         },
                 {   ItemID.CultistBossBag           , NPCID.CultistBoss         },
                 {   ItemID.MoonLordBossBag          , NPCID.MoonLordCore        },
@@ -1324,6 +1326,10 @@ namespace tsorcRevamp
                                                         {
                                                             ItemID.Picksaw
                                                         }                                   },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(),   new List<int>()
+                                                        {
+                                                            ItemID.Picksaw
+                                                        }                                   },
                 {   ItemID.FishronBossBag           ,   new List<int>()                     },
                 {   ItemID.CultistBossBag           ,   new List<int>()                     },
                 {   ItemID.MoonLordBossBag          ,   new List<int>()                     },
@@ -1379,6 +1385,11 @@ namespace tsorcRevamp
                                                         {
                                                             // CrestOfLife removed — Plantera is optional now, see MindCube.cs
                                                             ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 30, 30)
+                                                        }                                                                                },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(),   new List<IItemDropRule>()
+                                                        {
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.NonAdventureModeRule,
+                                                                                     ItemID.Picksaw, 3)
                                                         }                                                                                },
                 {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()
                                                         {
@@ -3129,6 +3140,18 @@ namespace tsorcRevamp
                 case tsorcPacketID.SyncFriendlyPuppetOwnerState:
                 {
                     NPCs.FriendlyPuppets.MirrorPuppetNPC.ReceiveOwnerState(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.CutsceneSync:
+                {
+                    Systems.CutsceneSystem.ReceivePacket(reader);
+                    break;
+                }
+
+                case tsorcPacketID.SyncOrnsteinStatic:
+                {
+                    Content.Items.Armor.Enemy.OrnsteinSpellbladePlayer.ReceiveStaticPacket(reader, whoAmI);
                     break;
                 }
 
@@ -5368,6 +5391,10 @@ namespace tsorcRevamp
         public const byte DarkrootVineRequest = 49;
         /// <summary>The bitten client reports contact. The Drake validates the bite sequence and selects the hold.</summary>
         public const byte ReportDrakeGrabBite = 50;
+        /// <summary>Server to clients: a cutscene started or stopped (Systems/CutsceneSystem.cs).</summary>
+        public const byte CutsceneSync = 51;
+        /// <summary>A player's Ornstein Static count changed, so others can draw its sparks.</summary>
+        public const byte SyncOrnsteinStatic = 52;
     }
 
     //config moved to separate file

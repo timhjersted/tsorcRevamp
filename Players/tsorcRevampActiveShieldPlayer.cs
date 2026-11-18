@@ -176,7 +176,7 @@ namespace tsorcRevamp
             // Resolve the Right-Click (2nd) slot use first; it gates blocking below.
             UpdateSecondSlotUse();
 
-            isBlocking = ComputeBlocking();
+            isBlocking = ComputeBlocking() && !Systems.CutsceneSystem.FreezesPlayers;
             if (!isBlocking)
             {
                 activeShieldType = -1;
@@ -711,7 +711,10 @@ namespace tsorcRevamp
             // ActiveShieldGlobalItem.UpdateEquip (which handles the accessory slots): the mod branch calls
             // ModItem.UpdateEquip directly, and ApplyEquipFunctional only invokes ItemLoader.UpdateAccessory,
             // not UpdateEquip. So this is the sole application point for a 2nd-slot shield — no double-dip.
-            if (data.PassiveRegenPenalty > 0f)
+            // Smough's Armor cancels the Dragon Crest's tax, matching the accessory-slot path.
+            bool smoughCancelsPenalty = rc.type == ModContent.ItemType<DragonCrestShield>() && Player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills;
+
+            if (data.PassiveRegenPenalty > 0f && !smoughCancelsPenalty)
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= data.PassiveRegenPenalty;
             }
@@ -801,6 +804,11 @@ namespace tsorcRevamp
                 cost = (float)Math.Ceiling(cost * PerfectParryCostMult);
             }
 
+            if (data.Resource == ShieldResource.Stamina)
+            {
+                cost = ApplySmoughBlockDiscount(cost);
+            }
+
             tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
 
             // Stability break: a hit heavy enough relative to your MAXIMUM stamina overwhelms the guard even when
@@ -834,6 +842,7 @@ namespace tsorcRevamp
                 {
                     stamSip = (int)Math.Ceiling(stamSip * PerfectParryCostMult);
                 }
+                stamSip = (int)ApplySmoughBlockDiscount(stamSip);
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
                 if (Player.statMana >= cost && stamina.staminaResourceCurrent >= stamSip)
                 {
@@ -1437,6 +1446,18 @@ namespace tsorcRevamp
             return false;
         }
 
+        // Smough's Armor: blocks cost less stamina. Mana is untouched, so a mana ward only saves on its stamina sip.
+        private float ApplySmoughBlockDiscount(float staminaCost)
+        {
+            if (!Player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills)
+            {
+                return staminaCost;
+            }
+
+            float costMultiplier = 1f - Content.Items.Armor.SmoughArmor.BlockStaminaDiscount / 100f;
+            return (float)Math.Ceiling(staminaCost * costMultiplier);
+        }
+
         private void TriggerUnblockableGuardBreak(ActiveShieldData data, Player.HurtInfo info)
         {
             float incomingDamage = info.SourceDamage > 0 ? info.SourceDamage : info.Damage;
@@ -1445,13 +1466,14 @@ namespace tsorcRevamp
 
             if (data.Resource == ShieldResource.Stamina)
             {
+                blockCost = ApplySmoughBlockDiscount(blockCost);
                 stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - blockCost);
             }
             else
             {
                 // Mana wards mirror their ordinary block payment: scaled mana plus the flat stamina sip.
                 Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit((int)blockCost);
-                int staminaSip = (int)Math.Ceiling(data.BaseCost / 3f);
+                int staminaSip = (int)ApplySmoughBlockDiscount((float)Math.Ceiling(data.BaseCost / 3f));
                 stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - staminaSip);
             }
 

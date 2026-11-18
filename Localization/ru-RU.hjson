@@ -3428,21 +3428,32 @@ Mods: {
 				DisplayName: Доспехи Смоуга
 				Tooltip:
 					'''
+					Увеличивает максимальное здоровье на {2}
+					Активные щиты тратят на {3}% меньше выносливости при блоке
 					Увеличивает эффективность щита с драконьим гребнем
-					Бонус набора: снижает скорость всех атак на {0}% мультипликативно, но гарантирует критические удары.
+					{$CommonItemTooltip.SetBonus}снижает скорость всех атак на {0}% мультипликативно, но гарантирует критические удары
 					Урон от критических ударов снижен на {1}%
 					Также увеличивает затраты маны на {0}%
+					Каждый {4}-й удар по одному врагу становится сокрушительным и наносит на {5}% больше урона по стойкости
 					'''
 			}
 
 			SmoughGreaves: {
 				DisplayName: Поножи Смоуга
-				Tooltip: Уменьшает ловкость при перекатах
+				Tooltip:
+					'''
+					{$CommonItemTooltip.NoKnockback}
+					Уменьшает ловкость при перекатах
+					'''
 			}
 
 			SmoughHelmet: {
 				DisplayName: Шлем Смоуга
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Снижает получаемый урон на {1}%
+					'''
 			}
 
 			SnarbolaxArmor: {
@@ -3798,6 +3809,11 @@ Mods: {
 
 			GwynBag: {
 				DisplayName: Мешок с сокровищами (Гвин, Повелитель Пепла)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OrnsmoughBag: {
+				DisplayName: Мешок с сокровищами (Орнштейн и Смоуг)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -5866,6 +5882,16 @@ Mods: {
 			SoulOfArtorias: {
 				DisplayName: Душа Арториаса
 				Tooltip: Сущность Арториаса из Бездны.
+			}
+
+			SoulOfOrnstein: {
+				DisplayName: Душа Орнштейна
+				Tooltip: Сущность Драконоборца Орнштейна.
+			}
+
+			SoulOfSmough: {
+				DisplayName: Душа Смоуга
+				Tooltip: Сущность палача Смоуга.
 			}
 
 			SoulOfCinder: {
@@ -9477,6 +9503,40 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			OrnsteinHead: {
+				DisplayName: Львиный шлем Орнштейна
+				Tooltip:
+					'''
+					Увеличивает шанс критического удара в ближнем бою и магией на {0}%
+					Увеличивает максимальный запас маны на {1}
+					'''
+			}
+
+			OrnsteinBody: {
+				DisplayName: Доспехи Орнштейна
+				Tooltip:
+					'''
+					Увеличивает урон в ближнем бою и магией на {0}%
+					Удары в ближнем бою восстанавливают {1} маны
+					{$CommonItemTooltip.SetBonus}Ток клинка чар
+					Удары в ближнем бою накапливают статику (до {2} зарядов), которая исчезает через {3} сек. после последнего такого удара
+					Следующее заклинание тратит всю статику и наносит на {4}% больше магического урона за заряд
+					Каждый заряд также выпускает молнию во врага в пределах {5} блоков, нанося {6}% урона заклинания
+					Попадания магией дают заряженный клинок на {7} сек.: следующий удар в ближнем бою выпускает молнию с {8}% его урона
+					Получение урона сбрасывает статику и заряженный клинок
+					Перекат становится рывком. За {9} маны это рывок-молния, наносящий {10} урона и накапливающий статику
+					'''
+			}
+
+			OrnsteinLegs: {
+				DisplayName: Поножи Орнштейна
+				Tooltip:
+					'''
+					Увеличивает скорость передвижения на {0}%
+					Увеличивает скорость ближнего боя на {1}%
+					'''
+			}
+
 			RoyalKnightBreastplate: {
 				// DisplayName: Royal Knight Breastplate
 				// Tooltip: ""
@@ -9741,9 +9801,19 @@ Mods: {
 				// DisplayName: Black Blade
 			}
 
-			RoyalKnightHalberd: {
+			GreatRoyalHalberd: {
 				// Tooltip: ""
-				// DisplayName: Royal Knight Halberd
+				// DisplayName: Great Royal Halberd
+			}
+
+			OrnsteinSpear: {
+				DisplayName: Копьё Орнштейна
+				Tooltip: Удерживайте правую кнопку мыши для зарядки выпада, затем отпустите для рывка к курсору. При полной зарядке первая поражённая цель проводит молнию вдоль линии удара.
+			}
+
+			SmoughGreatHammer: {
+				DisplayName: Большой молот Смоуга
+				Tooltip: Нажмите правую кнопку мыши, чтобы подпрыгнуть и ударить молотом о землю. В воздухе атака переходит в падение. От удара по земле расходятся волны.
 			}
 
 			EnemyBeastClaw: {
@@ -10845,6 +10915,16 @@ Mods: {
 				// Description: Your next melee or magic hit releases an abyss counterattack
 			}
 
+			OrnsteinStatic: {
+				DisplayName: Статика
+				Description: Зарядов: {0}. Следующее заклинание наносит на {1}% больше урона и выпускает молнии
+			}
+
+			OrnsteinChargedEdge: {
+				DisplayName: Заряженный клинок
+				Description: Следующий удар в ближнем бою выпускает молнию
+			}
+
 			ArtoriasAbysswalkerPoiseCooldown: {
 				// DisplayName: Abyssal Poise Cooldown
 				// Description: Dodge through danger again after this runs out
@@ -11283,6 +11363,7 @@ Mods: {
 		}
 
 		Projectiles: {
+			OrnsteinLightning.DisplayName: Молния Орнштейна
 			// DworcFlask.DisplayName: Dworc Flask
 			// DworcFireFlame.DisplayName: Lingering Fire
 			// DworcStormRing.DisplayName: Abyss Storm
@@ -11799,6 +11880,9 @@ Mods: {
 			FetidExhaust.DisplayName: Ядовитая струя
 			ForgottenPearlSpearProj.DisplayName: Забытое жемчужное копье
 			PilgrimSpontoonProj.DisplayName: Забытое древковое оружие
+			OrnsteinSpearProj.DisplayName: Копьё Орнштейна
+			OrnsteinSpearLunge.DisplayName: Выпад драконоборца
+			SmoughHammerSlam.DisplayName: Землетрясение палача
 			ForgottenRadiantLanceProj.DisplayName: Забытое Лучезарное копье
 			GaeBolgProj.DisplayName: Гаэ Болг
 			HiRyuuSpearProj.DisplayName: Привет, Рюу, Копье
@@ -12328,6 +12412,7 @@ Mods: {
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
 			// RoyalThunderArrow.DisplayName: Thunder Arrow
+			// WardenLightning.DisplayName: Warden Lightning
 			ObsidianGuardArrow.DisplayName: Обсидиановая стрела
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
@@ -13011,6 +13096,18 @@ Mods: {
 				DisplayName: Королевский рыцарь
 				DespawnHandler: Королевский рыцарь одерживает победу...
 			}
+
+			Ornstein: {
+				DisplayName: Драконоборец Орнштейн
+				DespawnHandler: Орнштейн возвращается на свой пост...
+			}
+
+			Smough: {
+				DisplayName: Палач Смоуг
+				DespawnHandler: Смоуг утаскивает свой молот обратно во тьму...
+			}
+
+			CutsceneGolem.DisplayName: "{$NPCName.Golem}"
 
 			ManOfWar.DisplayName: Человек войны
 			DarkrootImp.DisplayName: Бес Тёмных корней

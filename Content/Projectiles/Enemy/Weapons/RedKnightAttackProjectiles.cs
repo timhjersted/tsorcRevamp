@@ -103,7 +103,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         int Age => (int)Projectile.localAI[0];
         Vector2 PlantPoint => new(Projectile.ai[1], Projectile.ai[2]);
 
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear));
+        public override string Texture => RedKnightsSpear.SpritePath;
 
         public override void SetDefaults()
         {
@@ -115,7 +115,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
-            Projectile.scale = 0.8f;
+            Projectile.scale = 0.8f * RedKnightsSpear.ShortSpearScale;
         }
 
         public override void AI()
@@ -189,7 +189,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 float charge = MathHelper.Clamp((Age - FlightTicks) / (float)(RecallStart - FlightTicks), 0f, 1f);
                 DrawThread(source.Center, Projectile.Center, charge, Age >= RecallStart);
             }
-            return true;
+
+            RedKnightsSpear.DrawSpear(Projectile, lightColor, Projectile.rotation + MathHelper.PiOver4);
+            return false;
         }
 
         static void DrawThread(Vector2 start, Vector2 end, float charge, bool active)
@@ -589,11 +591,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         void DrawSpearSprite(Color lightColor)
         {
-            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            int textureType = Projectile.type;
+            float drawScale = Projectile.scale;
+            if (Mode == KnightStandardMode.RedKnight)
+            {
+                textureType = ModContent.ProjectileType<RedKnightsSpear>();
+                drawScale *= RedKnightsSpear.ShortSpearScale;
+            }
+
+            Texture2D texture = TextureAssets.Projectile[textureType].Value;
             float rotation = Projectile.rotation + MathHelper.PiOver4;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
                 Projectile.GetAlpha(lightColor), rotation, texture.Size() * 0.5f,
-                Projectile.scale, SpriteEffects.None, 0f);
+                drawScale, SpriteEffects.None, 0f);
         }
 
         static void SpawnBurst(RedKnightBurstKind kind, Vector2 position, float scale)

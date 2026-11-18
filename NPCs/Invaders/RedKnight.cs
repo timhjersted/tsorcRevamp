@@ -7,6 +7,7 @@ using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
@@ -26,6 +27,13 @@ namespace tsorcRevamp.NPCs.Invaders
         NPCDespawnHandler despawnHandler;
 
         protected override string InvaderTitle => "Red Knight";
+
+        protected override string SpearDrawTexturePath => RedKnightsSpear.SpritePath;
+        protected override Vector2 SpearTextureSize => new Vector2(RedKnightsSpear.SpriteSize);
+        protected override Vector2 SpearHeadNorm => new Vector2(0.5f / RedKnightsSpear.SpriteSize);
+        protected override Vector2 SpearBaseNorm => new Vector2(1f - 0.5f / RedKnightsSpear.SpriteSize);
+        protected override float SpearDrawRotationOffset => MathHelper.PiOver2;
+        protected override float MeleeWeaponDrawScale => RedKnightsSpear.ShortSpearScale;
 
         const string SpearLeapName = "Leaping Spear Thrust";
         const int SpearLeapStrikeTicks = 16;

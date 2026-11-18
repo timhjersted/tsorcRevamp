@@ -1134,11 +1134,20 @@ namespace tsorcRevamp.NPCs
             if (Timer == 45 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 launchSource = SpearLaunchSource(npc, Direction);
-                int projectileType = royalSpearThrow
-                    ? ModContent.ProjectileType<EnemyAncientBloodLanceProj>()
-                    : npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight
-                        ? ModContent.ProjectileType<ForgottenKnightSpear>()
-                        : ModContent.ProjectileType<BlackKnightSpear>();
+                int projectileType;
+                if (royalSpearThrow)
+                {
+                    projectileType = ModContent.ProjectileType<EnemyAncientBloodLanceProj>();
+                }
+                else if (npc.ModNPC is Enemies.GhostFighter.GhostOfTheForgottenKnight)
+                {
+                    projectileType = ModContent.ProjectileType<ForgottenKnightSpear>();
+                }
+                else
+                {
+                    projectileType = ModContent.ProjectileType<RedKnightsSpear>();
+                }
+
                 Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, LockedVelocity,
                     projectileType, EnemyDamage.Projectile(stats.SpearDamage), 0f, Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
@@ -1492,7 +1501,7 @@ namespace tsorcRevamp.NPCs
                 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(npc.GetSource_FromThis(), SpearLaunchSource(npc, Direction), LockedVelocity,
-                    ModContent.ProjectileType<BlackKnightSpear>(), EnemyDamage.Projectile(stats.SpearDamage), 0f,
+                    ModContent.ProjectileType<RedKnightsSpear>(), EnemyDamage.Projectile(stats.SpearDamage), 0f,
                     Main.myPlayer, ai2: 1f);
                 tsorcRevampAIs.RegisterFighterAttack(npc);
                 PlaySound(SoundID.Item1 with { Volume = 0.88f, Pitch = -0.08f }, npc.Center);
