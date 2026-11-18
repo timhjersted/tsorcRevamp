@@ -1604,7 +1604,7 @@ namespace tsorcRevamp
             }
 
             // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
-            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat && !Systems.CutsceneSystem.FreezesPlayers)
             {
                 ToggleStorage();
             }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -26,8 +27,33 @@ namespace tsorcRevamp.Content.Items.BossItems
             Item.useAnimation = 45;
             Item.useTime = 45;
             Item.consumable = false;
+
+            // Statless accessory: wearing it, even in a vanity slot, is how it wards off the arena curse.
+            Item.accessory = true;
         }
 
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            if (!tsorcRevampWorld.OnlyAdventureMap)
+            {
+                return;
+            }
+
+            // The Adventure map starts this fight at the arena ring, so the summon text would be wrong there.
+            int firstTooltipIndex = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
+            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
+
+            if (firstTooltipIndex < 0)
+            {
+                firstTooltipIndex = tooltips.Count;
+            }
+
+            string[] adventureLines = this.GetLocalization("AdventureTooltip").Value.Split('\n');
+            for (int i = 0; i < adventureLines.Length; i++)
+            {
+                tooltips.Insert(firstTooltipIndex + i, new TooltipLine(Mod, "AdventureTooltip" + i, adventureLines[i]));
+            }
+        }
 
         public override bool? UseItem(Player player)
         {
@@ -36,6 +62,12 @@ namespace tsorcRevamp.Content.Items.BossItems
         }
         public override bool CanUseItem(Player player)
         {
+            // On the Adventure map the arena ring is the only way to start this fight.
+            if (tsorcRevampWorld.OnlyAdventureMap)
+            {
+                return false;
+            }
+
             if (NPC.AnyNPCs(ModContent.NPCType<DarkShogunMask>())
                 || NPC.AnyNPCs(ModContent.NPCType<DarkDragonMask>())
                 || NPC.AnyNPCs(ModContent.NPCType<Okiku>())

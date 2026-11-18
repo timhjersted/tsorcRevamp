@@ -176,7 +176,7 @@ namespace tsorcRevamp
             // Resolve the Right-Click (2nd) slot use first; it gates blocking below.
             UpdateSecondSlotUse();
 
-            isBlocking = ComputeBlocking() && !Systems.CutsceneSystem.FreezesPlayers;
+            isBlocking = ComputeBlocking() && !Systems.CutsceneSystem.Freezes(Player);
             if (!isBlocking)
             {
                 activeShieldType = -1;

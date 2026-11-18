@@ -433,6 +433,190 @@ Mods: {
 			Tip: "Tip: "
 		}
 
+		Cutscenes: {
+			Speakers: {
+				Voice: '''???'''
+				Attraidies: '''Attraidies'''
+				Red: '''Red'''
+				Asha: '''Asha'''
+				Araz: '''Araz'''
+				Bodhi: '''Bodhi'''
+				Aaron: '''Aaron'''
+				Elijah: '''Elijah'''
+				Miakoda: '''Miakoda'''
+			}
+			UI: {
+				Next: '''Next'''
+				Skip: '''Skip'''
+			}
+			Curse.Taunt: '''Red, you arrogant fool. It's been fun toying with you, but you should have listened to Araz.'''
+			Arrival.Red: '''Alright Attraidies, let's end this.'''
+			Sorrow: {
+				Line01: '''You've come far, Red. I'm quite pleased.'''
+				Line02: '''You know, I really should thank you.'''
+				Line03: '''Enough games, Attraidies. Say what you will.'''
+				Line04: '''Ah, but it is the game that I set up, and which you played so masterfully, that has me so impressed.'''
+				Line05: '''You haven't realized by now? I wanted you to kill Aaron.'''
+				Line06: '''I corrupted his will, got him to betray you. I gave him the stone which you used to kill him...'''
+				Line07: '''...and I told him precisely what he needed to hear so that he'd think he'd be protecting himself by giving it to you.'''
+				Line08: '''But it was not just enchanted twice, but three times.'''
+				Line09: '''Once to create the Protection Stone, which I traded for the knowledge of your father's location. Twice to tie his life to the stone.'''
+				Line10: '''And a third time, to unleash the most powerful force of destruction this world has ever seen.'''
+				Line11: '''But I needed you, Red. You see, darkness thrives on darkness.'''
+				Line12: '''The spell that contained this army remained locked by the pure spirit of your father.'''
+				Line13: '''To break the seal, a warrior of pure spirit and innocence had to be corrupted by the lust for vengeance.'''
+				Line14: '''And you played right into it. You played right into it.'''
+				Line15: '''All you needed... Red... was a little push.'''
+				Line16: '''But I'll give you a chance, Red. See if you can handle this.'''
+			}
+			ThroughGate: {
+				Line01: '''Is that you, Asha?'''
+				Line02: '''Oh Red, thank God! I'm here! I knew you were coming... I could feel you.'''
+				Line03: '''Asha, I love you so much! I'm going to get you out of here.'''
+			}
+			Reunion: {
+				Line01: '''What did they do to you?'''
+				Line02: '''When I refused to tell them where your father's sword was, Attraidies tortured me for several days.'''
+				Line03: '''He finally gave up and left me here. I don't know why he didn't kill me. But thank God. It's so good to see you.'''
+				Line04: '''Let's get you out of here. I'll take you somewhere you can be safe.'''
+				Line05: '''What are you going to do?'''
+				Line06: '''I'm going to kill him.'''
+				Line07: '''In my quest to find you, I've done a terrible thing. I have to make right by my father and heal the Earth of this corruption I helped Attraidies unleash.'''
+				Line08: '''What did you do?'''
+				Line09: '''Attraidies has played all of us. But it doesn't matter. I did what I thought I needed to save you.'''
+				Line10: '''I believe you, Red. My heart aches to think of you leaving again after finding me, but I have to trust you'll come back to me.'''
+				Line11: '''I will come back, and we will finally be able to live in peace.'''
+				Line12: '''When we get to the surface, I'll take you to the islands to the West, and I will return there when Attraidies is finished.'''
+				Line12Remix: '''When we get to the surface, I'll take you to the tropics to the West, and I will return there when Attraidies is finished.'''
+				Line13: '''Okay, Red. But first, you need to know where to find your father's sword and Hallowed armor.'''
+				Line14: '''Do you remember the flooded Iron Mine near our old village? They lie beyond a dirt wall, marked by a block of green Chlorophyte.'''
+				Line14Remix: '''They have long been kept in the roots of the Old One's Tree, and the entrance is in the leaves of the tree, at the Dryad's house.'''
+				Line15: '''Past that is a seal of pure Chlorophyte that only the Drax could break.'''
+				Line15Remix: '''The path is sealed with pure Chlorophyte that only the Drax could break.'''
+				Line16: '''Okay, let's go.'''
+			}
+			Wisp: {
+				Line01: '''Red, is that you? It's me, Araz! I was an old friend of your father.'''
+				Line02: '''Attraidies took me captive shortly after the raid on your family's village. I'm imprisoned down here, below the gates!'''
+				Line03: '''I'm going to get you out of there, hold on!'''
+			}
+			Counsel: {
+				Line01: '''Araz, can you help me? Since you were captured, things have gotten so much worse.'''
+				Line02: '''Ever since I killed the snitch who gave us up to Attraidies, the world has been flooded with even more powerful beasts and demons.'''
+				Line03: '''The corruption is spreading farther and faster across the land. I don't know how I can stop it.'''
+				Line04: '''This is grave indeed, Red. I could sense something had happened. A portal was opened from another, far more hellish world.'''
+				Line05: '''I have seen this place in my dreams. Legend says demons from that world once claimed these lands, before they were banished in the great war of the Cataclysm.'''
+				Line06: '''I believe they have returned to the lands they once ruled. You have already defeated one, The Rage. But six more await.'''
+				Line06NoRage: '''I believe they have returned to the lands they once ruled. Seven of them await.'''
+				Line07: '''The Sorrow, The Hunter, The Destroyer, The Machine, the Triad, and the forgotten Golem. You'll have to brave each of them to weaken Attraidies' power enough to kill him.'''
+				Line08: '''With a shard from each of these seven gods, you can craft a catalyst strong enough to shield you from his power.'''
+				Line09: '''Do not go to him without it, Red.'''
+				Line10: '''Thank you, Araz. I accepted the karma of my actions the moment I took Aaron's life. I will bring peace back to these lands, even by my last breath.'''
+				Line11: '''Good luck, my friend. You've taken on your father's hardy spirit more than you know.'''
+				Line12: '''Before you go, let me see the crest The Rage dropped. Each crest should hide a riddle like this one, leading you to another.'''
+				Line13: '''This one is hidden by magic, but I've figured it out. Head East to the Frozen Ocean. The Sorrow awaits... Good luck!'''
+				Line13Remix: '''I can see your future will have you traveling to the Frozen Ocean to the East soon. The Sorrow awaits... Good luck!'''
+				Line13NoRage: '''Head East to the Frozen Ocean. The Sorrow awaits... Good luck!'''
+			}
+			Credits: {
+				Title: '''The Story of Red Cloud'''
+				Thanks: '''Thank you for playing.'''
+				ReplayHint: '''Use to relive the ending'''
+			}
+			Homecoming: {
+				Line01: '''Brother! You're alive! I thought you were dead!'''
+				Line02: '''But what about Elijah, and our parents... and Asha!? Are they alive!?'''
+				Line03: '''Oh god, Red, no. It was terrible. They killed father and mother.'''
+				Line04: '''I had to bury them alone with you. You weren't breathing...'''
+				Line05: '''Elijah and your wife, I don't know. I rushed home when I saw the smoke in the valley. They were nowhere in sight.'''
+				Line06: '''I only found you and our parents. Village scouts who saw the attack said the army headed East...'''
+				Line07: '''Then there's still a chance they're alive.'''
+				Line08: '''Father told us stories about Attraidies... I didn't believe...'''
+				Line09: '''...I will not let him destroy the peace our father gave his life to protecting.'''
+				Line10: '''I wish you luck, brother. You were always the most skilled in the arts of combat.'''
+				Line11: '''With the nerve damage in my leg, I would simply hinder your path.'''
+				Line12: '''I have food and supplies here. Please take what you need...'''
+				Line13: '''The mountain caverns to the West may be worth exploring before you set out as well.'''
+				Line14: '''Thank you, brother. You will be in my thoughts.'''
+			}
+			Well: {
+				Line01: '''That light...'''
+				Line02: '''Father!'''
+				Line03: '''It's time to head out..'''
+			}
+			Idol: {
+				Line01: '''Red! They said you were killed!'''
+				Line02: '''I know, I can't believe it either. I'm just glad you weren't visiting when they attacked. Almost all of my family...'''
+				Line03: '''I know, Red. I can't believe what they did... It's...'''
+				Line04: '''It was the Mindflayer King. He finally got his revenge... and he thought he killed me too...'''
+				Line05: '''I've already gathered my armor, weapons and food, and will soon depart.'''
+				Line06: '''Well... I see. I'll wish you luck, Red. It seems impossible, but...'''
+				Line07: '''Take this! It's always protected me. Perhaps it can protect you too.'''
+			}
+			ElijahRescue: {
+				Line01: '''Red, thank god! It's you! Get me out of here.'''
+				Line02: '''When Attraidies' army attacked, they took me captive. They're looking for our father's sword.'''
+				Line03: '''They beat me until they seemed convinced I didn't know and left me here to rot. But Red!...'''
+				Line04: '''Your wife Asha... She's alive.'''
+				Line05: '''They took her with them when they left me here, and they'll need her alive if they ever hope to find your father's sword.'''
+				Line06: '''Asha knows where our father laid his sword to rest?'''
+				Line07: '''When he saw them approaching he told her, and told us both to flee, but scouts captured us before we got to the forest. We didn't have a chance.'''
+				Line08: '''They think she's weak and they can still break her, but you and I know she'll never tell the Mindflayer King, even if they take her life.'''
+				Line09: '''I only hope you can find her before they realize this.'''
+				Line10: '''But Red, there's one last thing I need to tell you. Your friend Aaron... he's betrayed all of us.'''
+				Line11: '''He was standing beside the Mindflayer King when they took me here. He must have told him where to find us and our father.'''
+				Line12: '''No one in the village knows he's working with the Mindflayer King.'''
+				Line13: '''It disgusts me to think of him living up there with his new found riches, laughing, knowing that I must surely be dead and his secret is safe.'''
+				Line14: '''I don't know what to say, Red. As long as he remains alive... I'm sorry.'''
+				Line15: '''I think you know what you have to do.'''
+				Line16: '''Killing Aaron though, it won't be easy. He'll be expecting a direct attack and has surely taken on some powerful magic to protect himself.'''
+				Line17: '''Do not let him become suspicious. If you can think of something indirect... I just don't know what...'''
+				Line18: '''But enough talk. Go now. Hurry! I can make it back alright.'''
+				Line19: '''Past my cell window is the beast that guards this forgotten city. Steal its power and you may stand a chance.'''
+				Line20: '''I've seen what Attraidies has become. He has grown considerably more powerful since our father's time.'''
+				Line21: '''He communes with... unnatural celestial entities.'''
+				Line22: '''When you next return to the village, give me a place to stay there, and I can reforge your items for gold.'''
+			}
+			FireTemple: {
+				Line01: '''A book of ancient spells...'''
+				Line02: '''This room has been abandoned. If we secure it, we can rest here for the night.'''
+				Line03: '''Then I'll spend the evening reading through this tome of old magic.'''
+				Line04: '''Protection Idols and Enchantments...'''
+				Line05: '''And one spell in particular... Voodoo Mimicry.'''
+				Line06: '''An enchantment upon an object that grants the gift of invincibility.'''
+				Line07: '''Such magic is rarely used among gifted mages, as the price of such power is that one's life becomes tied to the object.'''
+				Line08: '''Destroy the object and you kill the enchanted.'''
+				Line09: '''The idol Aaron gave me... it's emanating the same force.'''
+				Line10: '''But surely he would have known?'''
+				Line11: '''Something seems odd, but the solution is too brilliant, and it has been in my possession since the beginning.'''
+				Line12: '''Destroying this stone may not prove so easy...'''
+			}
+			ShadowRumors: {
+				Line01: '''Red, I've heard many rumors about the Shadow Temple.'''
+				Line02: '''It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, a great underground lake and hallowed spike chasms...'''
+				Line02Remix: '''It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, waterways and corrupted spike chasms...'''
+				Line03: '''A brave soul, who once escaped this place alive, told me there are THREE hidden shortcuts...'''
+				Line04: '''One on the surface of the lake, one in a cave of horrors, and another almost near the entrance, here, but not quite.'''
+				Line04Remix: '''One on the surface of the temple waterways, one in a cave of horrors, and another almost near the entrance, here, but not quite.'''
+				Line05: '''I do not know what she meant...'''
+			}
+			DesertPaths: {
+				Line01: '''The puzzle on the water crest we obtained said to look for an ashen fog, illuminated by a violet glow... That should lead us to The Hunter.'''
+				Line02: '''But... the people who once lived beneath this desert left behind scrolls alluding to many secrets.'''
+				Line03: '''They spoke of a hidden path in the desert that leads to an ancient being known as Serris.'''
+				Line04: '''Serris technology was used by the people here to block one of the paths to the Shadow Temple... but such rumors could lead to madness.'''
+				Line05: '''Perhaps we should stay focused on finding the Hunter.'''
+				Line06: '''Ultimately, though, it is up to you. I will be of service to you until the very end...'''
+			}
+			RageWarning: {
+				Line01: '''Red, there's something you should know about The Rage, and other birds like its kind: when they are harmed too quickly, they are known to enrage.'''
+				Line02: '''Each bird has evolved a different defense, but all of them are more lethal in this phase. Be mindful of this.'''
+				Line03: '''As my father often told me, sometimes retreating, even for a moment, is the best way to advance.'''
+				Line04: '''You will know the Rage is about to enrage when its body glows brightly with fire.'''
+				Line05: '''When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!'''
+			}
+		}
+
 		Events: {
 			Pinwheel: Pinwheel turns its glance to you.
 			Death: The fated day of your death has arrived.
@@ -726,7 +910,7 @@ Mods: {
 			SerrisDesc: ???
 			DeathDesc: ???
 			AttraidiesName: Attraidies
-			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
+			AttraidiesDesc: Gather all the Crests to craft the Mind Cube. On the Adventure map, carry it into his arena. Elsewhere, use it to summon him.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
 			HellkiteDragonDesc: Hunts on the open ground east of the Village in Super Hardmode.
@@ -4195,6 +4379,13 @@ Mods: {
 					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
 					[c/00ffd4:If you are in the Remix map, you should also look for the Old One's Tree in the jungle...]
 					'''
+				AdventureTooltip:
+					'''
+					Shields your mind from the curse of Attraidies
+					Carry it or wear it in an accessory or vanity slot, then enter his arena to face him
+					This is it. The final battle.
+					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
+					'''
 			}
 
 			MindflayerIllusionRelic: {
@@ -4411,7 +4602,7 @@ Mods: {
 				26: Where does the Teleporter of the Great Pyramid lead to?
 				27: Golem controls the forcefield of the floating island high above Ashen Peak village.
 				28: Atop the Twin Peaks of Arazium, find the temple mouth that gazes at the sky above and the Great Chasm Below.
-				29: Craft the 8 Crests with shards found at the top of Attraidies' Dark Tower.
+				29: Craft the Mind Cube from the Crests and the shards found at the top of Attraidies' Dark Tower. On the Adventure map, carry it into his arena.
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
@@ -11617,6 +11808,7 @@ Mods: {
 			DarkLaser.DisplayName: DefaultLaserName
 			DarkLaserHost.DisplayName: Dark Laser Host
 			EnemyAttraidiesBlackFire.DisplayName: Black Fire
+			AttraidiesCurseBolt.DisplayName: Curse of Attraidies
 			EnemyBlackFireVisual.DisplayName: Black Fire
 			EnemySuddenDeathBall.DisplayName: Sudden Death Ball
 			EnemySuddenDeathStrike.DisplayName: Sudden Death Strike
@@ -12956,6 +13148,13 @@ Mods: {
 
 			AbyssPortal.DisplayName: Abyssal Fissure
 			AttraidiesApparition.DisplayName: Attraidies
+			AttraidiesArenaActor.DisplayName: Attraidies
+			StoryAshaActor.DisplayName: Asha
+			StoryArazActor.DisplayName: Araz
+			StoryWispActor.DisplayName: Wisp
+			StoryPropActor.DisplayName: Story Prop
+			StoryElijahActor.DisplayName: Elijah
+			StoryMiakodaActor.DisplayName: Miakoda
 			Faraam.DisplayName: Faraam
 			GwynBossVision.DisplayName: Gwyn Boss Vision
 			LeonhardPhase1.DisplayName: ???

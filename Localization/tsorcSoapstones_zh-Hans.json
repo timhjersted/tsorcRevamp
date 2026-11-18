@@ -57,6 +57,7 @@
   "tileY": 1367,
   "textWidth": 660,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -73,6 +74,7 @@
   "tileY": 1367,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -81,6 +83,7 @@
   "tileY": 1367,
   "textWidth": 460,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -96,6 +99,7 @@
   "tileY": 1367,
   "textWidth": 670,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -104,6 +108,7 @@
   "tileY": 1367,
   "textWidth": 740,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -112,6 +117,7 @@
   "tileY": 1367,
   "textWidth": 720,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -120,6 +126,7 @@
   "tileY": 1367,
   "textWidth": 700,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -435,7 +442,8 @@
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 620,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，一路延伸到神庙的范围之外， --NEWLINE   --NEWLINE 连接了岩浆猩红洞穴、巨大的地下湖和神圣地形的尖刺裂缝…\u0022",
@@ -443,6 +451,7 @@
   "tileY": 1121,
   "textWidth": 450,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -516,14 +525,16 @@
   "tileX": 2354,
   "tileY": 843,
   "textWidth": 460,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda：\u0022凝水之冠上的谜题说要寻找灰蒙蒙的雾 --NEWLINE   --NEWLINE 被紫罗兰色的光芒照亮…这会把我们引向猎手。 --NEWLINE   --NEWLINE 曾经生活在这片沙漠的人们留下卷轴，暗示了许多秘密。 --NEWLINE   --NEWLINE 他们说沙漠中有一条隐藏的小路 --NEWLINE   --NEWLINE 通向一个被称为塞里斯的古老生物。\u0022",
   "tileX": 2374,
   "tileY": 843,
   "textWidth": 420,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "检查过你的指南针和地图后，你认为东边的路一定是通往腐化的神庙下面的。 --NEWLINE   --NEWLINE 你可以感觉到这个方向有一个可怕的敌人，是你从未见过的。",
@@ -1083,6 +1094,7 @@
   "tileY": 713,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1099,6 +1111,7 @@
   "tileY": 709,
   "textWidth": 650,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1190,6 +1203,7 @@
   "tileY": 679,
   "textWidth": 150,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1213,6 +1227,7 @@
   "tileY": 713,
   "textWidth": 660,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1236,6 +1251,7 @@
   "tileY": 713,
   "textWidth": 420,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1260,6 +1276,7 @@
   "tileY": 695,
   "textWidth": 330,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1281,14 +1298,16 @@
   "tileX": 4242,
   "tileY": 709,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "当博迪看到你穿过敞开的门时，他愣住了。 --NEWLINE   --NEWLINE 然后高兴地喊道：\u0022我超，你还活着！我以为你死了！\u0022 --NEWLINE   --NEWLINE 你震惊地问：\u0022但以利亚和我们的父母…还有亚莎呢？他们还活着吗？\u0022 --NEWLINE   --NEWLINE \u0022噢，天哪，瑞德，不。太可怕了。他们杀了我们的父母。 --NEWLINE   --NEWLINE 我不得不把你和他们一起埋葬，你当时已经停止呼吸…\u0022",
   "tileX": 4249,
   "tileY": 709,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "右键单击发光的绿色骷髅和悬挂的骷髅以发现隐藏的战利品。",
@@ -1304,6 +1323,7 @@
   "tileY": 1822,
   "textWidth": 580,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1312,6 +1332,7 @@
   "tileY": 1822,
   "textWidth": 750,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1320,6 +1341,7 @@
   "tileY": 1822,
   "textWidth": 530,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1454,6 +1476,7 @@
   "tileY": 1740,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1462,6 +1485,7 @@
   "tileY": 1740,
   "textWidth": 800,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1470,6 +1494,7 @@
   "tileY": 1745,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1486,6 +1511,7 @@
   "tileY": 1745,
   "textWidth": 550,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1501,6 +1527,7 @@
   "tileY": 1745,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1509,6 +1536,7 @@
   "tileY": 1745,
   "textWidth": 540,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2384,14 +2412,16 @@
   "tileX": 7095,
   "tileY": 1457,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda：\u0022你要知道，当它的身躯燃烧起来时，愤怒就要狂暴了。 --NEWLINE   --NEWLINE 当它狂暴时会自愈，而且在短时间内内也会变得更加危险。 --NEWLINE   --NEWLINE 你应该好躲避的准备！移动性是关键！",
   "tileX": 7102,
   "tileY": 1457,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "这扇门被居住在山顶的飞龙法师封住了。 --NEWLINE   --NEWLINE Miakoda告诉你，在这扇门的后面是冻洋。",
@@ -2406,6 +2436,7 @@
   "tileY": 568,
   "textWidth": 580,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2437,6 +2468,7 @@
   "tileY": 604,
   "textWidth": 640,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2445,6 +2477,7 @@
   "tileY": 604,
   "textWidth": 720,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2453,6 +2486,7 @@
   "tileY": 604,
   "textWidth": 700,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2461,6 +2495,7 @@
   "tileY": 599,
   "textWidth": 580,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2469,6 +2504,7 @@
   "tileY": 599,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2548,12 +2584,13 @@
   "category": "location"
 }
 {
-  "text": "- 悲伤栖息的洞穴 - --NEWLINE   --NEWLINE 当你走进这里，你听到一个低沉洪亮的声音充斥这个地方， --NEWLINE   --NEWLINE 他说：\u0022你做的很好，瑞德，比我计划的还要顺利，我很高兴。\u0022 --NEWLINE   --NEWLINE 突然，阿卓迪斯出现在你面前，在空中盘旋。 --NEWLINE   --NEWLINE 你拿着剑向他冲去，却无法破开保护着他的原力场。",
+  "text": "- 你发现了悲伤栖息的洞穴 -",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 450,
   "style": 1,
-  "category": "story"
+  "category": "location",
+  "locationName": "悲伤栖息的洞穴"
 }
 {
   "text": "阿卓迪斯发出一声低沉的蔑笑。 --NEWLINE   --NEWLINE \u0022瑞德，\u0022他说，\u0022你必须学会如何品味这一刻。 --NEWLINE   --NEWLINE 正是你这呆蠢的提线木偶让我的生活有了乐子。 --NEWLINE   --NEWLINE 此外，我真的应该感谢你……\u0022 --NEWLINE   --NEWLINE 瑞德：\u0022你™够了没，说你真正想说的。\u0022",
@@ -2561,7 +2598,8 @@
   "tileY": 1645,
   "textWidth": 360,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022啊，虽然这个精妙的陷阱诡计是我想出来的， --NEWLINE   --NEWLINE 但你像野猪一样一头钻进来横冲直撞，还真是让我印象深刻。\u0022 --NEWLINE   --NEWLINE 瑞德沉默了。 --NEWLINE   --NEWLINE \u0022你还没醒悟吗？我想让你杀死亚伦。我利用他内心的邪念，让他背叛你。 --NEWLINE   --NEWLINE 我给了他能杀死自己的保护石，并告诉了他想要听到的谎言， --NEWLINE   --NEWLINE 这样他就会认为把石头交到你手上，是在保护自己。\u0022",
@@ -2569,7 +2607,8 @@
   "tileY": 1645,
   "textWidth": 540,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022保护石不只被施了两次魔法，还有第三次。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE   --NEWLINE 第二次是为了把亚伦的生命绑定在石头上， --NEWLINE   --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
@@ -2577,7 +2616,8 @@
   "tileY": 1645,
   "textWidth": 420,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，邪恶的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神封印。 --NEWLINE   --NEWLINE 要打破封印，一个纯真的战士必须被复仇的欲望所腐蚀。\u0022",
@@ -2585,7 +2625,8 @@
   "tileY": 1645,
   "textWidth": 420,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022你做得很好，瑞德。你所需要的…只是一点点复仇的诱惑。\u0022 --NEWLINE   --NEWLINE 阿卓迪斯的脸上露出邪恶笑容，深深刻在你的脑海中。 --NEWLINE   --NEWLINE \u0022但我会给你一个机会，瑞德。看看你能不能处理好这个。\u0022 --NEWLINE   --NEWLINE 然后，阿卓迪斯消失在黑暗魔法能量中，召唤悲伤代替他。",
@@ -2593,5 +2634,24 @@
   "tileY": 1645,
   "textWidth": 560,
   "style": 1,
+  "category": "story",
+  "retired": true
+}
+{
+  "text": "",
+  "tileX": 4247,
+  "tileY": 709,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4244,
+  "tileY": 709,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
   "category": "story"
 }

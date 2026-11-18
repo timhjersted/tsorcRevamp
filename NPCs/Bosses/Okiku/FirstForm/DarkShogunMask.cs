@@ -126,6 +126,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             Main.dayTime = false;
             Main.time = Main.nightLength / 2;
 
+            // Waits idle during the arena arrival scene, so the shield, quote and player tether all begin with the fight.
+            if (Systems.CutsceneSystem.IsActive && Systems.CutsceneSystem.SceneId == NPCs.Special.AttraidiesCutscenes.ArrivalScene)
+            {
+                NPC.dontTakeDamage = true;
+                NPC.velocity *= 0.9f;
+                return;
+            }
+
             if (!initiate)
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkShogunMask.Quote"), new Color(175, 75, 255));

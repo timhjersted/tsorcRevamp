@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -94,9 +94,6 @@ namespace tsorcRevamp.Tiles
 
             //In Aaron's home in Ashenpeak Village
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
-            SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4085, 708, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
 
             //In Village Mountain in cave accessible from rope vine jumping puzzle
             SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(3689, 414, 2, 2), ModContent.ItemType<NamelessSoldierSoul>(), 1));
@@ -190,9 +187,6 @@ namespace tsorcRevamp.Tiles
             {
                 SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(6941, 1583, 2, 2), ModContent.ItemType<HeroSoul>(), 1));
 
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
-                SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
                 SoulSkellyList.Add(new SoulSkellyGeocache(new Rectangle(4073, 713, 2, 2), ModContent.ItemType<AaronsProtectionStone>(), 1));
             }
 

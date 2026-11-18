@@ -9,8 +9,6 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Lore
 {
-    // PLACEHOLDER sprite (copy of Items/Lore/DodgerollMemo) — replace with bespoke art.
-
     /// <summary>
     /// Starting-inventory reference book explaining the mod's non-vanilla systems.
     ///

@@ -202,6 +202,17 @@ namespace tsorcRevamp
             SpawnUndeadMerchant,
             SpawnGoblin,
             AttraidiesTheSorrowEvent,
+            AttraidiesArenaEvent,
+            AshaGateScene,
+            ArazWispScene,
+            HomecomingScene,
+            WellMemoryScene,
+            IdolScene,
+            IdolSceneRemix,
+            FireTempleScene,
+            ShadowRumorsScene,
+            DesertPathsScene,
+            RageWarningScene,
             TwinEoWFight,
             DunledingAmbush,
             RemixDunledingAmbush,
@@ -492,7 +503,10 @@ namespace tsorcRevamp
             BlackKnightCity.SetCustomDrops(new List<int>() { ModContent.ItemType<SoulCoin>(), ModContent.ItemType<PurgingStone>() }, new List<int>() { 50, 1 });
 
             //ATTRAIDIES THE SORROW EVENT
-            ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, true, LangUtils.GetTextValue("Events.SorrowAttraidies"), Color.OrangeRed, false, AttraidiesTheSorrowCondition);
+            ScriptedEvent AttraidiesTheSorrowEvent = new ScriptedEvent(new Vector2(8216.5f, 1630), 30, ModContent.NPCType<NPCs.Special.AttraidiesApparition>(), DustID.ShadowbeamStaff, false, true, true, "default", Color.OrangeRed, false, AttraidiesTheSorrowCondition);
+
+            //Attraidies's arena: no NPC of its own, the action picks the curse scene or the fight from whether anyone carries the Mind Cube
+            ScriptedEvent AttraidiesArenaEvent = new ScriptedEvent(new Vector2(1400, 282), 30, (int?)null, DustID.ShadowbeamStaff, false, true, false, "default", default, false, NPCs.Special.AttraidiesCutscenes.RingCondition, NPCs.Special.AttraidiesCutscenes.RingAction);
 
             //TWIN EATER OF WORLDS FIGHT
             ScriptedEvent TwinEoWFight = new ScriptedEvent(new Vector2(3245, 1215), 15, default, DustID.ShadowbeamStaff, true, true, true, LangUtils.GetTextValue("Events.TwinEaters"), Color.Purple, false, TwinEoWCustomCondition, TwinEoWAction);
@@ -542,15 +556,33 @@ namespace tsorcRevamp
             ScriptedEvent SpawnUndeadMerchant = new ScriptedEvent(new Vector2(1686, 963), 50, default, 31, false, false, false, "", default, false, UndeadMerchantCondition, UndeadMerchantAction);
 
             //GOBLIN TINKERER  SPAWN EVENT
-            ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4456, 1744), 100, default, 31, true, true, false, "", default, false, TinkererCondition, TinkererAction);
+            ScriptedEvent SpawnGoblin = new ScriptedEvent(new Vector2(4461, 1744), 5, default, 31, true, false, false, "", default, false, TinkererCondition, TinkererAction);
 
             //MECHANIC SPAWN EVENT
-            ScriptedEvent SpawnMechanic = new ScriptedEvent(new Vector2(294, 1366), 100, default, 31, true, true, false, "", default, false, MechanicCondition, MechanicAction);
+            ScriptedEvent SpawnMechanic = new ScriptedEvent(new Vector2(300, 1366), 5, default, 31, true, false, false, "", default, false, MechanicCondition, MechanicAction);
+
+            //ASHA CALLS THROUGH THE SEALED GATE
+            ScriptedEvent AshaGateScene = new ScriptedEvent(new Vector2(320, 1366), 4, default, 31, true, false, false, "", default, false, AshaGateCondition, AshaGateAction);
 
             //WIZARD SPAWN EVENT
-            ScriptedEvent SpawnWizard = new ScriptedEvent(new Vector2(7322, 603), 40, default, 31, true, true, false, "", default, true, WizardCondition, WizardAction);
+            ScriptedEvent SpawnWizard = new ScriptedEvent(new Vector2(7314, 603), 3, default, 31, true, false, false, "", default, false, WizardCondition, WizardAction);
+
+            //ARAZ'S WISP FINDS RED ABOVE THE GATES
+            ScriptedEvent ArazWispScene = new ScriptedEvent(new Vector2(7300, 567), 6, default, 31, true, false, false, "", default, false, ArazWispCondition, ArazWispAction);
             
             ScriptedEvent SpawnLonelyFairy = new ScriptedEvent(new Vector2(7707, 1161), 50, default, 31, true, true, false, "", default, false, FairyCondition, FairyAction);
+
+            //ASHEN PEAK STORY SCENES
+            ScriptedEvent HomecomingScene = new ScriptedEvent(new Vector2(4248, 712), 4, default, 31, true, false, false, "", default, false, HomecomingCondition, HomecomingAction);
+            ScriptedEvent WellMemoryScene = new ScriptedEvent(new Vector2(4211, 712), 3, default, 31, true, false, false, "", default, false, WellMemoryCondition, WellMemoryAction);
+            ScriptedEvent IdolScene = new ScriptedEvent(new Vector2(4094, 712), 3, default, 31, true, false, false, "", default, false, IdolCondition, IdolAction);
+            ScriptedEvent IdolSceneRemix = new ScriptedEvent(new Vector2(4065, 712), 3, default, 31, true, false, false, "", default, false, IdolRemixCondition, IdolAction);
+
+            //STORY CONVERSATIONS WITH MIAKODA
+            ScriptedEvent FireTempleScene = new ScriptedEvent(new Vector2(4246, 1827), 4, default, 31, true, false, false, "", default, false, FireTempleCondition, FireTempleAction);
+            ScriptedEvent ShadowRumorsScene = new ScriptedEvent(new Vector2(1899, 1121), 5, default, 31, true, false, false, "", default, false, ShadowRumorsCondition, ShadowRumorsAction);
+            ScriptedEvent DesertPathsScene = new ScriptedEvent(new Vector2(2364, 843), 13, default, 31, true, false, false, "", default, false, DesertPathsCondition, DesertPathsAction);
+            ScriptedEvent RageWarningScene = new ScriptedEvent(new Vector2(7098, 1457), 7, default, 31, true, false, false, "", default, false, RageWarningCondition, RageWarningAction);
 
             //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
             ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, true, false, false, "", default, false, default, BoulderfallEvent1Action);
@@ -828,6 +860,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.SpawnGoblin, SpawnGoblin },
                 {ScriptedEventType.SpawnLonelyFairy, SpawnLonelyFairy },
                 {ScriptedEventType.AttraidiesTheSorrowEvent, AttraidiesTheSorrowEvent},
+                {ScriptedEventType.AttraidiesArenaEvent, AttraidiesArenaEvent},
                 {ScriptedEventType.TwinEoWFight, TwinEoWFight},
                 {ScriptedEventType.DunledingAmbush, DunledingAmbush},
                 {ScriptedEventType.RemixDunledingAmbush, RemixDunledingAmbush},
@@ -845,6 +878,16 @@ namespace tsorcRevamp
                 {ScriptedEventType.FirebombHollowAmbush, FirebombHollowAmbush},
                 {ScriptedEventType.SpawnMechanic, SpawnMechanic},
                 {ScriptedEventType.SpawnWizard, SpawnWizard},
+                {ScriptedEventType.AshaGateScene, AshaGateScene},
+                {ScriptedEventType.ArazWispScene, ArazWispScene},
+                {ScriptedEventType.HomecomingScene, HomecomingScene},
+                {ScriptedEventType.WellMemoryScene, WellMemoryScene},
+                {ScriptedEventType.IdolScene, IdolScene},
+                {ScriptedEventType.IdolSceneRemix, IdolSceneRemix},
+                {ScriptedEventType.FireTempleScene, FireTempleScene},
+                {ScriptedEventType.ShadowRumorsScene, ShadowRumorsScene},
+                {ScriptedEventType.DesertPathsScene, DesertPathsScene},
+                {ScriptedEventType.RageWarningScene, RageWarningScene},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
@@ -1289,7 +1332,7 @@ namespace tsorcRevamp
 
         public static bool TinkererCondition()
         {
-            return !NPC.AnyNPCs(NPCID.GoblinTinkerer);
+            return !NPC.AnyNPCs(NPCID.GoblinTinkerer) && !Systems.CutsceneSystem.IsActive;
         }
 
         public static bool FairyCondition()
@@ -1357,12 +1400,62 @@ namespace tsorcRevamp
 
         public static bool MechanicCondition()
         {
-            return !NPC.AnyNPCs(NPCID.Mechanic);
+            return !NPC.AnyNPCs(NPCID.Mechanic) && !Systems.CutsceneSystem.IsActive;
         }
 
         public static bool WizardCondition()
         {
-            return !NPC.AnyNPCs(NPCID.Wizard);
+            return !NPC.AnyNPCs(NPCID.Wizard) && !Systems.CutsceneSystem.IsActive;
+        }
+
+        public static bool AshaGateCondition()
+        {
+            return tsorcRevampWorld.CustomMap && NPCs.Special.StoryCutscenes.AshaUnrescued();
+        }
+
+        public static bool FireTempleCondition()
+        {
+            return NPCs.Special.StoryCutscenes.FireTempleReady();
+        }
+
+        public static bool ShadowRumorsCondition()
+        {
+            return NPCs.Special.StoryCutscenes.ShadowRumorsReady();
+        }
+
+        public static bool DesertPathsCondition()
+        {
+            return NPCs.Special.StoryCutscenes.DesertPathsReady();
+        }
+
+        public static bool RageWarningCondition()
+        {
+            return NPCs.Special.StoryCutscenes.RageWarningReady();
+        }
+
+        public static bool HomecomingCondition()
+        {
+            return NPCs.Special.StoryCutscenes.HomecomingReady();
+        }
+
+        public static bool WellMemoryCondition()
+        {
+            return NPCs.Special.StoryCutscenes.WellReady();
+        }
+
+        public static bool IdolCondition()
+        {
+            return NPCs.Special.StoryCutscenes.AdventureIdolReady();
+        }
+
+        public static bool IdolRemixCondition()
+        {
+            return NPCs.Special.StoryCutscenes.RemixIdolReady();
+        }
+
+        public static bool ArazWispCondition()
+        {
+            return tsorcRevampWorld.CustomMap && NPCs.Special.StoryCutscenes.ArazUnrescued();
         }
 
         #endregion
@@ -1496,13 +1589,7 @@ namespace tsorcRevamp
         //... is what it SHOULD do?
         public static EventActionStatus TinkererAction(ScriptedEvent thisEvent)
         {
-            NPC.savedGoblin = true;
-            Vector2 pos = ExpandedWorldTransform.MapWorld(new Vector2(4456, 1744) * 16);
-            NPC goblinNPC = NPC.NewNPCDirect(new EntitySource_Misc("Scripted Event"), (int)pos.X, (int)pos.Y, NPCID.GoblinTinkerer);
-            Microsoft.Xna.Framework.Point home = ExpandedWorldTransform.MapTile(4449, 1740);
-            goblinNPC.homeTileX = home.X;
-            goblinNPC.homeTileY = home.Y;
-            return EventActionStatus.CompletedEvent;
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.ElijahRescue);
         }
 
         public static EventActionStatus FairyAction(ScriptedEvent thisEvent)
@@ -1637,18 +1724,57 @@ namespace tsorcRevamp
 
         public static EventActionStatus MechanicAction(ScriptedEvent thisEvent)
         {
-            Vector2 mechPos = ExpandedWorldTransform.MapWorld(new Vector2(277, 1366) * 16);
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)mechPos.X, (int)mechPos.Y, NPCID.Mechanic);
-            NPC.savedMech = true;
-            return EventActionStatus.CompletedEvent;
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Reunion);
         }
 
         public static EventActionStatus WizardAction(ScriptedEvent thisEvent)
         {
-            Vector2 wizPos = ExpandedWorldTransform.MapWorld(new Vector2(7322, 603) * 16);
-            NPC.NewNPC(new EntitySource_Misc("Scripted Event"), (int)wizPos.X, (int)wizPos.Y, NPCID.Wizard);
-            NPC.savedWizard = true;
-            return EventActionStatus.CompletedEvent;
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Counsel);
+        }
+
+        public static EventActionStatus AshaGateAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.ThroughGate);
+        }
+
+        public static EventActionStatus FireTempleAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.FireTemple);
+        }
+
+        public static EventActionStatus ShadowRumorsAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.ShadowRumors);
+        }
+
+        public static EventActionStatus DesertPathsAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.DesertPaths);
+        }
+
+        public static EventActionStatus RageWarningAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.RageWarning);
+        }
+
+        public static EventActionStatus HomecomingAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Homecoming);
+        }
+
+        public static EventActionStatus WellMemoryAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Well);
+        }
+
+        public static EventActionStatus IdolAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Idol);
+        }
+
+        public static EventActionStatus ArazWispAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.Wisp);
         }
 
         public static EventActionStatus TwinEoWAction(ScriptedEvent thisEvent)
@@ -2455,6 +2581,7 @@ namespace tsorcRevamp
                                             Dust.NewDustPerfect(EnabledEvents[i].centerpoint, EnabledEvents[i].dustID, new Vector2(Main.rand.Next(-10, 10), Main.rand.Next(-10, 10)), 200, default, 3);
                                         }
                                     }
+                                    EnabledEvents[i].TriggeringPlayer = index;
                                     RunningEvents.Add(EnabledEvents[i]);
                                     EnabledEvents.RemoveAt(i);
                                     i--;
@@ -2493,6 +2620,7 @@ namespace tsorcRevamp
                                         }
                                     }
 
+                                    EnabledEvents[i].TriggeringPlayer = index;
                                     RunningEvents.Add(EnabledEvents[i]);
                                     EnabledEvents.RemoveAt(i);
                                     i--;
@@ -2946,6 +3074,9 @@ namespace tsorcRevamp
         public int eventTimer = 0;
 
         public int eventCooldownTimer = 300;
+
+        //Which player walked into the event's range, for scripts that need someone to center on. -1 until triggered.
+        public int TriggeringPlayer = -1;
 
         /// <summary>
         /// Prevents the peace candle effect from happening, even if it's a boss

@@ -1790,7 +1790,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected virtual bool SummonedCastAllowed => true;
         protected virtual void OnSummonedCastStarted(int busyTicks) { }
         protected virtual void OnFlashStepFinished(Player target) { }
-        protected virtual void OnFinalDeath() => tsorcRevampWorld.InitiateTheEnd();
+        protected virtual void OnFinalDeath()
+        {
+            tsorcRevampWorld.InitiateTheEnd();
+            Systems.CreditsRoll.StartAfterGwyn();
+        }
 
         /// <summary>True while any bespoke set-piece owns the boss.</summary>
         protected bool SetPieceRunning => _stormTimer > 0 || _plungeTimer > 0 || _riposteTimer > 0

@@ -1809,6 +1809,13 @@ namespace tsorcRevamp
             ModContent.NPCType<Bonfirefly>(),
             ModContent.NPCType<AbyssPortal>(),
             ModContent.NPCType<AttraidiesApparition>(),
+            ModContent.NPCType<AttraidiesArenaActor>(),
+            ModContent.NPCType<StoryAshaActor>(),
+            ModContent.NPCType<StoryArazActor>(),
+            ModContent.NPCType<StoryWispActor>(),
+            ModContent.NPCType<StoryPropActor>(),
+            ModContent.NPCType<StoryElijahActor>(),
+            ModContent.NPCType<StoryMiakodaActor>(),
             ModContent.NPCType<GwynBossVision>()
             };
             #endregion
@@ -1826,7 +1833,14 @@ namespace tsorcRevamp
                 ModContent.NPCType<NamelessKing>(),
                 ModContent.NPCType<Faraam>(),
                 ModContent.NPCType<AttraidiesFragment>(),
-                ModContent.NPCType<AttraidiesApparition>() // Spawns The Sorrow, then deactivates itself
+                ModContent.NPCType<AttraidiesApparition>(), // Spawns The Sorrow, then deactivates itself
+                ModContent.NPCType<AttraidiesArenaActor>(), // Fades away at the end of the curse scene
+                ModContent.NPCType<StoryAshaActor>(), // Story stand-ins are removed when their scene ends
+                ModContent.NPCType<StoryArazActor>(),
+                ModContent.NPCType<StoryWispActor>(),
+                ModContent.NPCType<StoryPropActor>(),
+                ModContent.NPCType<StoryElijahActor>(),
+                ModContent.NPCType<StoryMiakodaActor>()
             };
             #endregion
 
@@ -3146,7 +3160,7 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.CutsceneSync:
                 {
-                    Systems.CutsceneSystem.ReceivePacket(reader);
+                    Systems.CutsceneSystem.ReceivePacket(reader, whoAmI);
                     break;
                 }
 

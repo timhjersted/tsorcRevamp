@@ -1557,8 +1557,14 @@ namespace tsorcRevamp
                     Microsoft.Xna.Framework.Point retired = sign.expandedOnly
                         ? new Microsoft.Xna.Framework.Point(sign.tileX, sign.tileY)
                         : ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
-                    if (TileUtils.TryGetTileEntityAs(retired.X, retired.Y, out SoapstoneTileEntity _))
+                    if (TileUtils.TryGetTileEntityAs(retired.X, retired.Y, out SoapstoneTileEntity retiredEntity))
                     {
+                        // A sign this save has already read means its replacement scene must not play later.
+                        if (retiredEntity.read)
+                        {
+                            NPCs.Special.StoryCutscenes.NoteRetiredSignRead(sign.tileX, sign.tileY);
+                        }
+
                         WorldGen.KillTile(retired.X, retired.Y, noItem: true);
                         retiredSignCount++;
                     }
