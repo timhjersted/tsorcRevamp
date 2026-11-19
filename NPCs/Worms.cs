@@ -65,7 +65,7 @@ namespace tsorcRevamp.NPCs
             {
                 if (projectile.IsMinionOrSentryRelated)
                 {
-                    modifiers.FinalDamage *= 0.8f;
+                    modifiers.FinalDamage *= 0.9f;
                 }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
