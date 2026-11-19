@@ -34,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.JungleWyvern
             NPC.knockBackResist = 0f;
             NPC.timeLeft = 1750;
             NPC.damage = 35;
-            NPC.defense = 10;
+            NPC.defense = 20;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 91000000;
