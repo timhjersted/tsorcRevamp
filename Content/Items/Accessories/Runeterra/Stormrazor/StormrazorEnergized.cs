@@ -4,9 +4,8 @@ using tsorcRevamp.Buffs;
 
 namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor;
 
-public class StormrazorProc : ModBuff
+public class StormrazorEnergized : ModBuff
 {
-    public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Boost));
 
     public override void SetStaticDefaults()
     {

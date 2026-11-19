@@ -13,7 +13,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.ImperialMandate;
 
 public class ImperialMandateItem : ModItem
 {
-    public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
     public const float SummonDamage = 5f;
     public const float AtkSpeed = 4f;
     public const float CurrentPercentLifeDmg = 2.5f;

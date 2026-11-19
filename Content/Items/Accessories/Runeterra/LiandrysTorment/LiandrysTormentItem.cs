@@ -12,7 +12,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.LiandrysTorment;
 
 public class LiandrysTormentItem : ModItem
 {
-    public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
     public const float Dmg = 2f;
     public const int Mana = 20;
     public const int Health = 40;

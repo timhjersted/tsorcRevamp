@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor.Sounds;
 
 namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor;
 
@@ -30,8 +32,12 @@ public class StormrazorPlayer : ModPlayer
             if (EnergizedStacks < StormrazorItem.MaxEnergizedStacks)
             {
                 EnergizedStacks += Distance / StormrazorItem.EnergizedStackDivisor;
+                if (EnergizedStacks >= StormrazorItem.MaxEnergizedStacks)
+                {
+                    SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(StormrazorSound)) + "_Ready") with 
+                        { Volume = 0.5f }, Player.Center);
+                }
             }
-            Player.AddBuff(ModContent.BuffType<StormrazorEnergy>(), 2);
         }
     }
 
@@ -43,8 +49,11 @@ public class StormrazorPlayer : ModPlayer
         {
             modifiers.FlatBonusDamage += StormrazorItem.OnHitFlatBonusDmg;
             modifiers.CritDamage.Flat += StormrazorItem.OnHitFlatBonusDmg;
-            Player.AddBuff(ModContent.BuffType<StormrazorProc>(), StormrazorItem.MovespeedDuration * 60);
+            Player.AddBuff(ModContent.BuffType<StormrazorEnergized>(), StormrazorItem.MovespeedDuration * 60);
             EnergizedStacks = 0;
+            int rando = Main.rand.Next(1, 5);
+            SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(StormrazorSound)) + "_Hit" + rando) with 
+                { Volume = 0.8f }, Player.Center);
         }
     }
 
@@ -54,7 +63,12 @@ public class StormrazorPlayer : ModPlayer
             && (hit.DamageType == DamageClass.Melee || hit.DamageType == DamageClass.MeleeNoSpeed)
             && EnergizedStacks < StormrazorItem.MaxEnergizedStacks)
         {
-            EnergizedStacks += 3;
+            EnergizedStacks += 5;
+            if (EnergizedStacks >= StormrazorItem.MaxEnergizedStacks)
+            {
+                SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(StormrazorSound)) + "_Ready") with 
+                    { Volume = 0.5f }, Player.Center);
+            }
         }
     }
 }

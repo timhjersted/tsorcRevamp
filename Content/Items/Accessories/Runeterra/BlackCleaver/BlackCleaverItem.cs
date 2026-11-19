@@ -12,7 +12,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.BlackCleaver;
 
 public class BlackCleaverItem : ModItem
 {
-    public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
     public const float Dmg = 4f;
     public const int Health = 45;
     public const float AtkSpeed = 3f;

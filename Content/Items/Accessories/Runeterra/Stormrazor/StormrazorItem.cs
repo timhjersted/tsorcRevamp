@@ -12,7 +12,6 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor;
 
 public class StormrazorItem : ModItem
 {
-    public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(LudensTempestItem)); //temp
     public const float Dmg = 3f;
     public const float Crit = 3f;
     public const float AtkSpeed = 3f;
@@ -49,5 +48,6 @@ public class StormrazorItem : ModItem
         player.GetDamage(DamageClass.Melee) += Dmg / 100f;
         player.GetCritChance(DamageClass.Melee) += Crit;
         player.GetAttackSpeed(DamageClass.Melee) += AtkSpeed / 100f;
+        player.AddBuff(ModContent.BuffType<StormrazorEnergy>(), 10);
     }
 }
