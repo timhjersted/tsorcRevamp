@@ -10,7 +10,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
 {
     [AutoloadBossHead]
-    public class Okiku : ModNPC
+    public class OldOkiku : ModNPC
     {
         int lookMode;
         int attackPhase;
@@ -21,9 +21,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         bool phaseStarted;
         bool Initialized;
 
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/OldDarkShogunMask";
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Frostburn] = true;
@@ -49,7 +52,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.npcSlots = 2f;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = Item.buyPrice(0, 26);
+            NPC.value = 0;
             NPC.knockBackResist = 0f;
             Music = 39;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.Okiku.DespawnHandler"), Color.DarkMagenta, DustID.PurpleCrystalShard);
@@ -293,7 +296,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    int NewOkiku = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y, ModContent.NPCType<BrokenOkiku>(), 0);
+                    int NewOkiku = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y, ModContent.NPCType<OldBrokenOkiku>(), 0);
                     Main.npc[NewOkiku].life = NPC.life;
                 }
                 NPC.active = false;
@@ -375,5 +378,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             return false;
         }
 
+
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
+        {
+            return false;
+        }
     }
 }

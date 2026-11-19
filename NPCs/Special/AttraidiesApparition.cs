@@ -4,11 +4,12 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.NPCs.Bosses.Attraidies;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Special
 {
-    class AttraidiesApparition : ModNPC //Attraidies that appears in the cavern of The Sorrow
+    class AttraidiesApparition : AttraidiesPuppet //Attraidies that appears in the cavern of The Sorrow
     {
         private enum SceneStage : byte
         {
@@ -41,6 +42,11 @@ namespace tsorcRevamp.NPCs.Special
         private const int ChargeEndTick = 180;
         private const int RetryChargeStartTick = 155;
 
+        // Speaking gestures: each new line plays one for this long, cycling hand, staff lift, then pointing at Red.
+        private const int GestureTicks = 50;
+        private const int ChargeOverheadTick = 120;
+        private const float OpenHandAngle = -0.3f;
+
         private SceneStage stage = SceneStage.Voice;
         private SceneStage lastSeenStage = SceneStage.Voice;
         private bool sceneStarted;
@@ -48,23 +54,30 @@ namespace tsorcRevamp.NPCs.Special
         private int lineIndex;
         private int pauseTicks;
         private bool restoreFocusAfterPause;
+        private int gestureLine = -1;
+        private int gestureTimer;
 
-        public override void SetStaticDefaults()
+        protected override bool ShowsTeleportFlash => false;
+
+        protected override Vector2 FacingPoint
         {
-            // DisplayName.SetDefault("Attraidies");
-            Main.npcFrameCount[NPC.type] = 2;
+            get
+            {
+                if (leadPlayer >= 0)
+                {
+                    return Main.player[leadPlayer].Center;
+                }
+
+                return NPC.Center + new Vector2(NPC.direction * 100f, 0f);
+            }
         }
 
         public override void SetDefaults()
         {
+            ApplyBodyDefaults();
             NPC.npcSlots = 5;
             NPC.lifeMax = 80000;
-            NPC.scale = 1f;
             NPC.defense = 10;
-            NPC.height = 44;
-            NPC.width = 28;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
             NPC.dontTakeDamage = true;
             NPC.dontTakeDamageFromHostiles = true;
             NPC.alpha = 255;
@@ -72,12 +85,18 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            base.SendExtraAI(writer);
             writer.Write((byte)stage);
+            writer.Write((byte)lineIndex);
+            writer.Write((short)leadPlayer);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            base.ReceiveExtraAI(reader);
             stage = (SceneStage)reader.ReadByte();
+            lineIndex = reader.ReadByte();
+            leadPlayer = reader.ReadInt16();
         }
 
         private void SetStage(SceneStage newStage)
@@ -110,9 +129,52 @@ namespace tsorcRevamp.NPCs.Special
 
         #region AI
 
-        public override void AI()
+        protected override void TickForm()
         {
             bool authority = Main.netMode != NetmodeID.MultiplayerClient;
+
+            // Poses come from the synced stage and line, so every machine plays the same gesture.
+            if (lineIndex != gestureLine)
+            {
+                gestureLine = lineIndex;
+                gestureTimer = 0;
+            }
+
+            gestureTimer++;
+            FreeHandGesture = null;
+            SetPose(AttraidiesPose.Carry);
+
+            if (stage == SceneStage.Charging)
+            {
+                if (NPC.ai[2] < ChargeOverheadTick)
+                {
+                    SetPose(AttraidiesPose.Conduct);
+                }
+                else
+                {
+                    SetPose(AttraidiesPose.Overhead);
+                }
+            }
+            else if (stage == SceneStage.Talking && lineIndex <= 1)
+            {
+                SetPose(AttraidiesPose.Overhead);
+            }
+            else if (stage == SceneStage.Talking && gestureTimer < GestureTicks)
+            {
+                int gesture = lineIndex % 3;
+                if (gesture == 0)
+                {
+                    FreeHandGesture = OpenHandAngle;
+                }
+                else if (gesture == 1)
+                {
+                    SetPose(AttraidiesPose.Overhead);
+                }
+                else if (leadPlayer >= 0)
+                {
+                    SetAimPose(Main.player[leadPlayer].Center);
+                }
+            }
 
             if (authority && !sceneStarted)
             {
@@ -132,6 +194,8 @@ namespace tsorcRevamp.NPCs.Special
                     {
                         leadPlayer = ownerEvent.TriggeringPlayer;
                     }
+
+                    NPC.netUpdate = true;
 
                     CutsceneCast cast = AttraidiesCutscenes.BuildCast(NPC.Center, leadPlayer, AttraidiesCutscenes.SorrowScene);
                     CutsceneFocus focus = CutsceneFocus.BetweenLocalPlayerAndNpc(NPC.whoAmI);
@@ -239,6 +303,7 @@ namespace tsorcRevamp.NPCs.Special
                 {
                     CutsceneSystem.ClearLine();
                     lineIndex++;
+                    NPC.netUpdate = true;
                     pauseTicks = NormalPauseTicks;
 
                     if (lineIndex == 1)

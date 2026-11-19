@@ -12922,6 +12922,20 @@ Mods: {
 				HallowDarker: Тьма распространяется по Священным Пещерам...
 			}
 
+			OldDarkShogunMask.DisplayName: (Старая версия) Король-истязатель разума
+			OldAttraidiesShield.DisplayName: (Старая версия) Щит Аттрайдиса
+			OldDamnedSoul.DisplayName: (Старая версия) Проклятая душа
+			OldDarkDragonMask.DisplayName: (Старая версия) Аттрайдис
+			OldShadowDragonHead.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody2.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody3.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonLegs.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonTail.DisplayName: (Старая версия) Теневой дракон
+			OldOkiku.DisplayName: (Старая версия) Иллюзия истязателя разума
+			OldBrokenOkiku.DisplayName: (Старая версия) Иллюзия истязателя разума
+			OldAttraidies.DisplayName: (Старая версия) Аттрайдис
+			OldAttraidiesFragment.DisplayName: (Старая версия) Фрагмент Аттрайдиса
 			AttraidiesFragment.DisplayName: Фрагмент Аттрайдиса
 			AttraidiesMimic.DisplayName: Аттрайдис
 			DamnedSoul.DisplayName: Проклятая душа

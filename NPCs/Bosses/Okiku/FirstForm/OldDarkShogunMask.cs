@@ -18,7 +18,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
     [AutoloadBossHead]
-    public class DarkShogunMask : ModNPC
+    public class OldDarkShogunMask : ModNPC
     {
         private bool initiate;
 
@@ -33,7 +33,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         {
             get 
             {
-                if (!NPC.AnyNPCs(ModContent.NPCType<AttraidiesShield>()))
+                if (!NPC.AnyNPCs(ModContent.NPCType<OldAttraidiesShield>()))
                 {
                     return true;
                 }
@@ -61,6 +61,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
 
@@ -80,7 +83,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             NPC.noTileCollide = true;
             NPC.noGravity = true;
             NPC.knockBackResist = 0f;
-            NPC.value = 50000;
+            NPC.value = 0;
             NPC.rarity = 29;
             despawnHandler = new NPCDespawnHandler(LangUtils.GetTextValue("NPCs.DarkShogunMask.DespawnHandler"), Color.DarkMagenta, 54);
             IBigProgressBar bar;
@@ -182,11 +185,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                         {
                             if (Main.netMode != NetmodeID.MultiplayerClient)
                             {
-                                int shield = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesShield>(), 0, 0, NPC.whoAmI);
+                                int shield = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldAttraidiesShield>(), 0, 0, NPC.whoAmI);
 
                                 for (int i = 0; i < 6; i++)
                                 {
-                                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, i, NPC.whoAmI, shield);
+                                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldDamnedSoul>(), 0, i, NPC.whoAmI, shield);
                                 }
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
                                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
@@ -242,11 +245,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        int shield = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesShield>(), 0, 0, NPC.whoAmI);
+                        int shield = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldAttraidiesShield>(), 0, 0, NPC.whoAmI);
 
                         for (int i = 0; i < 6; i++)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, i, NPC.whoAmI, shield);
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldDamnedSoul>(), 0, i, NPC.whoAmI, shield);
                         }
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
@@ -276,7 +279,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     {
                         for (int i = 1; i < 7; i++)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<DamnedSoul>(), 0, -i, NPC.whoAmI);
+                            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldDamnedSoul>(), 0, -i, NPC.whoAmI);
                         }
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ExplosionFlash>(), 0, 0, Main.myPlayer, 550, 20);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<ShockwaveEffect>(), 0, 0, Main.myPlayer, 520, 60);
@@ -304,7 +307,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<DamnedSoul>())
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<OldDamnedSoul>())
                     {
                         Main.npc[i].position = NPC.Center + new Vector2(40 + 460 * RotDistance * (float)Math.Sin(TransformProgress / 500f), 0).RotatedBy(MathHelper.TwoPi * Main.npc[i].ai[0] / 6).RotatedBy(200 * RotSpeed) - new Vector2(30, 0);
                     }
@@ -333,14 +336,14 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                     }
                     for (int i = 0; i < 200; i++)
                     {
-                        if (Main.npc[i].type == ModContent.NPCType<DamnedSoul>())
+                        if (Main.npc[i].type == ModContent.NPCType<OldDamnedSoul>())
                         {
                             Main.npc[i].active = false;
                         }
                     }
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.DarkDragonMask>(), 0);
+                        NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<SecondForm.OldDarkDragonMask>(), 0);
                     }
                     NPC.active = false;
                 }
@@ -443,10 +446,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             return false;
         }
 
-        public override void BossLoot(ref string name, ref int potionType)
-        {
-            potionType = ItemID.GreaterHealingPotion;
-        }
         public override bool CheckActive()
         {
             return false;
@@ -555,6 +554,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
 
             return true;
+        }
+
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
+        {
+            return false;
         }
     }
 }

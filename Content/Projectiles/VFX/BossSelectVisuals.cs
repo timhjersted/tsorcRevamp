@@ -417,7 +417,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                     currentDownedList[i].ai[0] = 0;
                 }
 
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
@@ -460,7 +460,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                                 mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
                             }
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())
                         {
                             currentDownedList[i].ai[0] = 1;
                         }
@@ -499,6 +499,12 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 // That pipeline is unreliable inside preview UIs (and external NPC browsers), often
                 // leaving only their emissive weapon/effects. Use their existing legacy full-body art
                 // for a stable Tome portrait while leaving the live encounter renderer untouched.
+                bool hoveredFinalForm = currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>() && currentDownedList[i].ai[0] == 1;
+                if (hoveredFinalForm)
+                {
+                    NPCs.Bosses.Attraidies.Attraidies.DrawTomeAura(currentDownedList[i].Center, currentDownedList[i].scale);
+                }
+
                 if (!DrawPuppetTomePreview(primaryNpcType, currentDownedList[i].Center, currentDownedList[i].scale))
                 {
                     Main.instance.DrawNPCDirect(Main.spriteBatch, currentDownedList[i], false, Main.screenPosition);
@@ -581,6 +587,16 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 texturePath = "tsorcRevamp/NPCs/UnusedSprites/OldGwyn";
                 frameHeight = 56;
                 portraitScale = 1.2f;
+            }
+            else if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.BrokenOkiku>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.Okiku>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.DarkDragonMask>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.DarkShogunMask>())
+            {
+                texturePath = UsefulFunctions.RefactorableFilepath(typeof(NPCs.Bosses.Attraidies.Attraidies)) + "_TomePortrait";
+                frameHeight = 48;
+                portraitScale = 1.5f;
             }
             else
             {

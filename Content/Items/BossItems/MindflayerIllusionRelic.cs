@@ -43,7 +43,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             }
 
 
-            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
+            NPC.NewNPC(NPC.GetBossSpawnSource(player.whoAmI), (int)spawnPoint.X, (int)spawnPoint.Y, ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>());
 
             /*
             for (int i = 0; i < 50; i++)
@@ -83,7 +83,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         //int cast = 0;
         public override bool CanUseItem(Player player)
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>()))
             {
                 return false;
             }

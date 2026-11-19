@@ -56,8 +56,8 @@ namespace tsorcRevamp.Content.Items.BossItems
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Death.Death>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Serris.SerrisHead>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.HallowBoss);
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.DarkShogunMask>());
-            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Attraidies.DarkShogunMask>());
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>());
             NPC.SpawnOnPlayer(player.whoAmI, NPCID.MoonLordCore);
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<FireFiendMarilith>());
             NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<EarthFiendLich>());

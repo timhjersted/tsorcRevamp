@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             int dust = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y - 10), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 100, color, 1.4f);
             Main.dust[dust].noGravity = true;
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())))
             {
                 int dust2 = Dust.NewDust(new Vector2((float)Projectile.position.X, (float)Projectile.position.Y), Projectile.width / 2, Projectile.height / 2, DustID.DemonTorch, Projectile.velocity.X, Projectile.velocity.Y, 80, color, 1.4f);
                 Main.dust[dust2].noGravity = true;
@@ -68,7 +68,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             }
             target.AddBuff(BuffID.Poisoned, 1200 / buffLengthMod, false); //poisoned
 
-            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
+            if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())))
             {
                 target.AddBuff(BuffID.OnFire, 180 / buffLengthMod, false); //on fire   
             }

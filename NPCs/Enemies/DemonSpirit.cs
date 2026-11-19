@@ -14,7 +14,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 4;
+            Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;
@@ -24,7 +24,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 3;
-            AnimationType = 60;
+            // FindFrame advances the authored eight-frame loop at eight ticks per frame.
+            AnimationType = 0;
             NPC.width = 50;
             NPC.height = 50;
             NPC.damage = 42;

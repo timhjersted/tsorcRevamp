@@ -7,10 +7,11 @@ using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
-    public class ShadowDragonBody2 : ModNPC
+    public class OldShadowDragonBody3 : ModNPC
     {
         public int Timer = -1000;
 
+        int ObscureSawDamage = 23;
         public override void SetStaticDefaults()
         {
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
@@ -22,8 +23,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         }
         public override void SetDefaults()
         {
-            NPC.width = 32;
-            NPC.height = 32;
+            NPC.value = 0;
+            NPC.width = 22;
+            NPC.height = 22;
             NPC.aiStyle = 6;
             NPC.damage = 80;
             NPC.defense = 20;
@@ -34,15 +36,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.knockBackResist = 0f;
-            NPC.dontCountMe = true;
             DrawOffsetY = 50;
+            NPC.dontCountMe = true;
             bodyTypes = new int[] {
-            ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
-            ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
-            ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(),
-            ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonLegs>(),
-            ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody>(),
-            ModContent.NPCType<ShadowDragonLegs>(), ModContent.NPCType<ShadowDragonBody>(), ModContent.NPCType<ShadowDragonBody2>(), ModContent.NPCType<ShadowDragonBody3>()
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody2>(), ModContent.NPCType<OldShadowDragonBody3>()
             };
         }
         public static int[] bodyTypes;
@@ -52,12 +54,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
         {
             return false;
         }
-
-        int ObscureSawDamage = 23;
-
         public override void AI()
         {
-            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<ShadowDragonHead>(), bodyTypes, ModContent.NPCType<ShadowDragonTail>(), 25, 0.8f, 16f, 0.33f, true, false, true, false, false);
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<OldShadowDragonHead>(), bodyTypes, ModContent.NPCType<OldShadowDragonTail>(), 25, 0.8f, 16f, 0.33f, true, false, true, false, false);
 
             if (Main.rand.NextBool(3))
             {
@@ -82,6 +81,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 }
                 Timer = -300 - Main.rand.Next(300);
             }
+        }
+
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
+        {
+            return false;
         }
     }
 }

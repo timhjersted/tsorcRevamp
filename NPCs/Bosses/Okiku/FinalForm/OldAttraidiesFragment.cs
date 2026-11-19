@@ -9,10 +9,13 @@ using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
-    class AttraidiesFragment : ModNPC
+    class OldAttraidiesFragment : ModNPC
     {
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 3;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
@@ -31,7 +34,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
-            NPC.value = 3500;
+            NPC.value = 0;
         }
 
 
@@ -262,7 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             return false;
         }
 
-        public override void OnKill()
+        public override bool PreKill()
         {
             for (int i = 0; i < 50; i++)
             {
@@ -278,6 +281,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     Main.dust[dust].noGravity = true;
                 }
             }
+
+            return false;
         }
     }
 }

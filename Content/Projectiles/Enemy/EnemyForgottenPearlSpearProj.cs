@@ -24,7 +24,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
-            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+            // The native point faces upper-right. Rotate that diagonal onto velocity,
+            // keeping the draw unflipped so leftward throws remain point-first.
+            Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
+            Projectile.spriteDirection = 1;
         }
 
         public override bool PreKill(int timeLeft)

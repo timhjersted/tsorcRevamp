@@ -13,7 +13,7 @@ using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
 {
     [AutoloadBossHead]
-    public class BrokenOkiku : ModNPC
+    public class OldBrokenOkiku : ModNPC
     {
 
         int lookMode;
@@ -25,7 +25,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         int phaseTime;
         bool phaseStarted;
         bool Initialized = false;
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/DarkShogunMask";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/FirstForm/OldDarkShogunMask";
 
         public override void SetStaticDefaults()
         {
@@ -58,7 +58,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
             NPC.noGravity = true;
             NPC.knockBackResist = 0;
             NPC.lavaImmune = true;
-            NPC.value = 350000;
+            NPC.value = 0;
             despawnHandler = new NPCDespawnHandler(DustID.PurpleCrystalShard);
         }
         public int nextPhase
@@ -395,18 +395,11 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm
         }
 
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<MindflayerIllusionBag>()));
-            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<MindflayerIllusionRelic>()));
-            npcLoot.Add(notExpertCondition);
-        }
 
-
-        public override void BossLoot(ref string name, ref int potionType)
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
         {
-            potionType = ItemID.GreaterHealingPotion;
+            return false;
         }
     }
 }

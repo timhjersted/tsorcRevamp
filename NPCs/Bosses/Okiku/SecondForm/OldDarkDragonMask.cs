@@ -10,7 +10,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 {
     [AutoloadBossHead]
-    public class DarkDragonMask : ModNPC
+    public class OldDarkDragonMask : ModNPC
     {
 
         public bool DragonSpawned = false;
@@ -32,11 +32,15 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
 
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 7;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
         public override void SetDefaults()
         {
+            NPC.value = 0;
             NPC.width = 28;
             NPC.height = 44;
             NPC.aiStyle = -1;
@@ -69,12 +73,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
+                    DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<OldShadowDragonHead>(), NPC.whoAmI);
                     Main.npc[DragonIndex].velocity.Y = -10;
                 }
                 DragonSpawned = true;
             }
-            if (!NPC.AnyNPCs(ModContent.NPCType<ShadowDragonHead>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<OldShadowDragonHead>()))
             {
                 DragonDead = true;
                 TimerSpawn++;
@@ -123,7 +127,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                     ChannellingDragon = false;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<ShadowDragonHead>(), NPC.whoAmI);
+                        DragonIndex = NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.position.X + (NPC.width / 2), (int)NPC.position.Y + (NPC.height / 2), ModContent.NPCType<OldShadowDragonHead>(), NPC.whoAmI);
                         Main.npc[DragonIndex].velocity.Y = -10;
                     }
                     TimerSpawn = 0;
@@ -133,9 +137,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
             {
                 DragonDead = false;
                 //If we can't find the dragon, relocate it.
-                if (!Main.npc[DragonIndex].active || (Main.npc[DragonIndex].type != ModContent.NPCType<ShadowDragonHead>()))
+                if (!Main.npc[DragonIndex].active || (Main.npc[DragonIndex].type != ModContent.NPCType<OldShadowDragonHead>()))
                 {
-                    int? newIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<ShadowDragonHead>());
+                    int? newIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<OldShadowDragonHead>());
                     if (newIndex != null)
                     {
                         DragonIndex = newIndex.Value;
@@ -178,7 +182,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
            // nextRandPosX = reader.ReadInt32();
         }
 
-        public override void OnKill()
+        public override bool PreKill()
         {
             for (int i = 0; i < 50; i++)
             {
@@ -186,23 +190,21 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
                 Main.dust[dustDeath].noGravity = true;
             }
 
-            if (Main.npc[DragonIndex].type == ModContent.NPCType<ShadowDragonHead>())
+            if (Main.npc[DragonIndex].type == ModContent.NPCType<OldShadowDragonHead>())
             {
                 Main.npc[DragonIndex].life = 0;
             }
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.Okiku>(), 0);
+                NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<ThirdForm.OldOkiku>(), 0);
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.DarkDragonMask.Laughter"), new Color(175, 75, 255));
             }
+
+            return false;
         }
 
 
-        public override void BossLoot(ref string name, ref int potionType)
-        {
-            potionType = ItemID.GreaterHealingPotion;
-        }
         public override void FindFrame(int frameHeight)
         {
 

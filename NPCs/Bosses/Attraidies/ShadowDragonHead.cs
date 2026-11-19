@@ -3,7 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
+namespace tsorcRevamp.NPCs.Bosses.Attraidies
 {
     public class ShadowDragonHead : ModNPC
     {

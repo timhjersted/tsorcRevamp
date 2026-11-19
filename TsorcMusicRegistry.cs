@@ -274,8 +274,8 @@ namespace tsorcRevamp
             RegisterGroup(new[] { "SeathTheScalelessHead", "PrimordialCrystal" }, "Boss9", "Boss9", MusicID.Boss2);
             Register("GrandOccultist", "Boss14", "Boss14", MusicID.Boss3);
             Register("Gwyn", "Gwyn", "Gwyn", MusicID.Boss2);
-            RegisterGroup(new[] { "DarkShogunMask", "DarkDragonMask", "Okiku", "BrokenOkiku" }, "Boss5", "Boss5", MusicID.Boss2, SceneEffectPriority.BossHigh);
-            RegisterGroup(new[] { "AttraidiesMimic", "Attraidies" }, "Boss8", "Boss8", MusicID.Boss2);
+            RegisterGroup(new[] { "DarkShogunMask", "DarkDragonMask", "Okiku", "BrokenOkiku", "OldDarkShogunMask", "OldDarkDragonMask", "OldOkiku", "OldBrokenOkiku" }, "Boss5", "Boss5", MusicID.Boss2, SceneEffectPriority.BossHigh);
+            RegisterGroup(new[] { "AttraidiesMimic", "Attraidies", "OldAttraidies" }, "Boss8", "Boss8", MusicID.Boss2);
         }
 
         internal static void Clear()

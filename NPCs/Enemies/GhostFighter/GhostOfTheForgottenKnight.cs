@@ -28,6 +28,11 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override Color KnightLightColor => new Color(120, 130, 160);
         protected override int KnightGlintDust => DustID.IceTorch;
         protected override bool ShowWeaponDuringNeutral => true;
+        protected override string SpearDrawTexturePath => ForgottenKnightSpear.SpritePath;
+        protected override Vector2 SpearTextureSize => new Vector2(ForgottenKnightSpear.SpriteSize);
+        protected override Vector2 SpearHeadNorm => ForgottenKnightSpear.HeadTexel / ForgottenKnightSpear.SpriteSize;
+        protected override Vector2 SpearBaseNorm => ForgottenKnightSpear.BaseTexel / ForgottenKnightSpear.SpriteSize;
+        protected override float MeleeWeaponDrawScale => ForgottenKnightSpear.HeldScale;
         protected override float TopSpeed => tsorcRevampWorld.SuperHardMode ? 2f : Main.hardMode ? 1.5f : 1.2f;
         protected override float PuppetJumpPower => 13f;
         protected override float PuppetJumpBoost => 6f;
@@ -74,10 +79,20 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override float MeleeCompositeArmRotationOffset => IsThrustPose
             ? ThrustArmOffset(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer, LeapSlamSwingProgress)
             : base.MeleeCompositeArmRotationOffset;
-        protected override float SpearDrawRotationOffset => base.SpearDrawRotationOffset
-            + (IsThrustPose ? ThrustSpearAngle(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer, LeapSlamSwingProgress) : 0f);
+        protected override float SpearDrawRotationOffset
+        {
+            get
+            {
+                if (IsThrustPose)
+                {
+                    return ThrustSpearAngle(ActiveMeleeComboName, ThrustPosePhase, PhaseTimer, LeapSlamSwingProgress);
+                }
 
-        // 16 game pixels = 32 pixels in the 2x preview; measured tip/base centers are y0.5/y61.5.
+                return 0f;
+            }
+        }
+
+        // Move the ready grip 16 game pixels up the calibrated 61px shaft (32px in the 2x preview).
         public const float ThrustReadyGrip = 0.32f + 16f / 61f;
 
         public static float ThrustSpearAngle(string combo, string phase, int remaining, float leapProgress)

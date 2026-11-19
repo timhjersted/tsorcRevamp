@@ -12955,6 +12955,20 @@ Mods: {
 				HallowDarker: 阴影自神圣洞穴中散播...
 			}
 
+			OldDarkShogunMask.DisplayName: (旧版) 夺心魔王幻象
+			OldAttraidiesShield.DisplayName: (旧版) 阿卓迪斯护盾
+			OldDamnedSoul.DisplayName: (旧版) 堕落灵魂
+			OldDarkDragonMask.DisplayName: (旧版) 阿卓迪斯
+			OldShadowDragonHead.DisplayName: (旧版) 影龙
+			OldShadowDragonBody.DisplayName: (旧版) 影龙
+			OldShadowDragonBody2.DisplayName: (旧版) 影龙
+			OldShadowDragonBody3.DisplayName: (旧版) 影龙
+			OldShadowDragonLegs.DisplayName: (旧版) 影龙
+			OldShadowDragonTail.DisplayName: (旧版) 影龙
+			OldOkiku.DisplayName: (旧版) 夺心魔王幻象
+			OldBrokenOkiku.DisplayName: (旧版) 夺心魔王幻象
+			OldAttraidies.DisplayName: (旧版) 阿卓迪斯
+			OldAttraidiesFragment.DisplayName: (旧版) 阿卓迪斯分身
 			AttraidiesFragment.DisplayName: 阿卓迪斯分身
 			AttraidiesMimic.DisplayName: 阿卓迪斯
 			DamnedSoul.DisplayName: 堕落灵魂

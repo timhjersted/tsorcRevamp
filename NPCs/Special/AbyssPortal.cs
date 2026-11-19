@@ -47,7 +47,7 @@ namespace tsorcRevamp.NPCs.Special
         string filterIndex = "tsorcRevamp:abyssportal";
         public override void AI()
         {
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>()))
             {
                 NPC.life = 0;
                 if (Main.netMode != NetmodeID.Server && Filters.Scene[filterIndex] != null && Filters.Scene[filterIndex].IsActive())

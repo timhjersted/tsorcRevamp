@@ -13,10 +13,7 @@ using Terraria.ModLoader.Default;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Projectiles.VFX;
-using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
+using tsorcRevamp.NPCs.Bosses.Attraidies;
 using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.NPCs.Special
@@ -309,7 +306,7 @@ namespace tsorcRevamp.NPCs.Special
     }
 
     /// <summary>Attraidies as he appears in the curse scene: harmless, scripted, and gone when the scene ends.</summary>
-    public class AttraidiesArenaActor : ModNPC
+    public class AttraidiesArenaActor : AttraidiesPuppet
     {
         private enum ActorStage
         {
@@ -330,20 +327,19 @@ namespace tsorcRevamp.NPCs.Special
         private const int VanishTicks = 45;
         private const int BarCloseTicks = 20;
 
-        // Frame geometry: 60x60 art drawn with its bottom 4px below the hitbox, staff tip at (4,0) when raised.
-        private const float TipHorizontalOffset = 26f;
-        private const float TipHeightAboveFeet = 56f;
+        // Facing-space angles for the free hand: reaching toward the player, then closing upward as the curse charges.
+        private const float TauntHandAngle = -0.15f;
+        private const float ChannelHandStartAngle = 0.6f;
+        private const float ChannelHandEndAngle = -0.35f;
 
         private ActorStage Stage => (ActorStage)(int)NPC.ai[0];
 
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DarkShogunMask));
-
-        /// <summary>Where the raised staff ends. Bolts form and release here.</summary>
-        public Vector2 StaffTip => NPC.Bottom + new Vector2(TipHorizontalOffset * NPC.spriteDirection, -TipHeightAboveFeet);
+        protected override bool ShowsTeleportFlash => false;
+        protected override Vector2 FacingPoint => NPC.Center + new Vector2(NPC.ai[3] * 100f, 0f);
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[Type] = 3;
+            base.SetStaticDefaults();
 
             NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
             hiddenFromBestiary.Hide = true;
@@ -352,17 +348,11 @@ namespace tsorcRevamp.NPCs.Special
 
         public override void SetDefaults()
         {
-            NPC.width = 28;
-            NPC.height = 44;
-            NPC.aiStyle = -1;
-            NPC.damage = 0;
+            ApplyBodyDefaults();
             NPC.defense = 0;
             NPC.lifeMax = 1000;
-            NPC.noGravity = true;
-            NPC.noTileCollide = true;
             NPC.dontTakeDamage = true;
             NPC.dontTakeDamageFromHostiles = true;
-            NPC.knockBackResist = 0f;
             NPC.npcSlots = 0f;
             NPC.alpha = 255;
             NPC.ShowNameOnHover = false;
@@ -376,16 +366,6 @@ namespace tsorcRevamp.NPCs.Special
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;
-        }
-
-        public override void FindFrame(int frameHeight)
-        {
-            bool staffRaised = Stage == ActorStage.Cast || Stage == ActorStage.Channel;
-            NPC.frame.Y = 0;
-            if (staffRaised)
-            {
-                NPC.frame.Y = frameHeight;
-            }
         }
 
         private void SetStage(ActorStage stage)
@@ -444,7 +424,7 @@ namespace tsorcRevamp.NPCs.Special
             }
         }
 
-        public override void AI()
+        protected override void TickForm()
         {
             ActorStage stage = Stage;
             int stageTimer = (int)NPC.ai[1];
@@ -453,8 +433,6 @@ namespace tsorcRevamp.NPCs.Special
             bool authority = Main.netMode != NetmodeID.MultiplayerClient;
             bool hasVisuals = !Main.dedServ;
 
-            NPC.direction = (int)NPC.ai[3];
-            NPC.spriteDirection = NPC.direction;
             NPC.velocity = Vector2.Zero;
             NPC.timeLeft = 600;
             Lighting.AddLight(NPC.Center, 0.7f, 0.35f, 1f);
@@ -486,6 +464,61 @@ namespace tsorcRevamp.NPCs.Special
                 SetStage(ActorStage.Descend);
                 stage = ActorStage.Descend;
                 stageTimer = 0;
+            }
+
+            // Poses follow the synced stage, so every machine shows the same gesture without extra packets.
+            ScriptedStaffAngle = null;
+            FreeHandGesture = null;
+            Player cursedPlayer = null;
+            float curseCharge = 0f;
+            int curseBoltType = ModContent.ProjectileType<AttraidiesCurseBolt>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile bolt = Main.projectile[i];
+                if (bolt.active && bolt.type == curseBoltType)
+                {
+                    cursedPlayer = Main.player[(int)bolt.ai[1]];
+                    if ((int)bolt.ai[0] == AttraidiesCurseBolt.ModeAttached)
+                    {
+                        curseCharge = MathHelper.Clamp(bolt.ai[2] / AttraidiesCurseBolt.ChargeTicks, 0f, 1f);
+                    }
+                    break;
+                }
+            }
+
+            switch (stage)
+            {
+                case ActorStage.Taunt:
+                    SetPose(AttraidiesPose.Carry);
+                    FreeHandGesture = TauntHandAngle;
+                    break;
+
+                case ActorStage.Cast:
+                    SetPose(AttraidiesPose.Overhead);
+                    float raiseProgress = MathHelper.Clamp(stageTimer / (float)CastTicks, 0f, 1f);
+                    ScriptedStaffAngle = MathHelper.Lerp(CarryAngle, OverheadAngle, MathHelper.SmoothStep(0f, 1f, raiseProgress));
+                    break;
+
+                case ActorStage.Channel:
+                    if (cursedPlayer != null)
+                    {
+                        SetAimPose(cursedPlayer.Center);
+                    }
+                    FreeHandGesture = ChannelHandStartAngle;
+                    break;
+
+                case ActorStage.Descend:
+                    SetPose(AttraidiesPose.Carry);
+                    FreeHandGesture = MathHelper.Lerp(ChannelHandStartAngle, ChannelHandEndAngle, curseCharge);
+                    break;
+
+                case ActorStage.Vanish:
+                    SetPose(AttraidiesPose.Overhead);
+                    break;
+
+                default:
+                    SetPose(AttraidiesPose.Carry);
+                    break;
             }
 
             switch (stage)

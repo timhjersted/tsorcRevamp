@@ -11,7 +11,7 @@ using tsorcRevamp.Content.Projectiles.VFX;
 
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 {
-    public class DamnedSoul : ModNPC
+    public class OldDamnedSoul : ModNPC
     {
         private bool initiate;
 
@@ -21,6 +21,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
 
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 4;
 
             // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
@@ -28,6 +31,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         }
         public override void SetDefaults()
         {
+            NPC.value = 0;
             NPC.alpha = 50;
             NPC.width = 50;
             NPC.height = 50;
@@ -52,9 +56,9 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
         {
             get => Main.npc[(int)NPC.ai[1]];
         }
-        public DarkShogunMask AttraidiesMask
+        public OldDarkShogunMask AttraidiesMask
         {
-            get => Attraidies.ModNPC as DarkShogunMask;
+            get => Attraidies.ModNPC as OldDarkShogunMask;
         }
         public float ImmuneTimer
         {
@@ -92,7 +96,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
                 initiate = true;
             }
 
-            if(!NPC.AnyNPCs(ModContent.NPCType<AttraidiesShield>()) && NPC.ai[0] > -1)
+            if(!NPC.AnyNPCs(ModContent.NPCType<OldAttraidiesShield>()) && NPC.ai[0] > -1)
             {
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
@@ -209,6 +213,12 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FirstForm
             {
                 NPC.frame.Y = 0;
             }
+        }
+
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
+        {
+            return false;
         }
     }
 }

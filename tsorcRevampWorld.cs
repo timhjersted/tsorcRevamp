@@ -341,7 +341,7 @@ namespace tsorcRevamp
                 {
                     if (Main.tile[1365, 280].HasTile && Main.tile[1365, 280].IsActuated)
                     {
-                        NPCs.Bosses.Okiku.FinalForm.Attraidies.ActuateAttraidiesArena();
+                        NPCs.Bosses.Attraidies.Attraidies.ActuateAttraidiesArena();
                     }
                 }
             }
@@ -2910,7 +2910,7 @@ namespace tsorcRevamp
             { NPCID.Golem, new Vector2(6792, 1628) },
             { NPCID.HallowBoss, new Vector2(4468, 351) },
             { ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>(), new Vector2(2884, 240) },
-            { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>(), new Vector2(1401, 307) },
+            { ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>(), new Vector2(1401, 307) },
         };
 
         public static Dictionary<int, Vector2> SHMBossIDs = new Dictionary<int, Vector2>

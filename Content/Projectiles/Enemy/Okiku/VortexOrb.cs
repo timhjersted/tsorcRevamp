@@ -69,13 +69,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
                 }
             }
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            int finalBossIndex = NPCs.Bosses.Attraidies.Attraidies.ActiveFinalBossIndex();
+            if (finalBossIndex < 0)
             {
                 Projectile.Kill();
             }
             else
             {
-                originPoint = Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()).Value].Center;
+                originPoint = Main.npc[finalBossIndex].Center;
             }
 
 
@@ -93,12 +94,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
                         {
                             if (attraidiesPoint == Vector2.Zero)
                             {
-                                int? index = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>());
+                                if (finalBossIndex >= 0)
                                 {
-                                    if (index.HasValue)
-                                    {
-                                        attraidiesPoint = Main.npc[index.Value].Center;
-                                    }
+                                    attraidiesPoint = Main.npc[finalBossIndex].Center;
                                 }
                             }
                             projVel = UsefulFunctions.Aim(Projectile.Center, attraidiesPoint, 1);

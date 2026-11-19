@@ -417,6 +417,15 @@ namespace tsorcRevamp.Systems
             RegisterMod("DarkShogunMask", 75000, 75000); // unchanged
             RegisterMod("Attraidies", 400000, 400000); // unchanged
 
+            // The preserved comparison fight keeps the same values.
+            RegisterMod("OldDamnedSoul", 17250, 35000);
+            RegisterMod("OldShadowDragonHead", 126000, 130000);
+            RegisterMod("OldDarkDragonMask", 24000, 30000);
+            RegisterMod("OldOkiku", 22400, 25000);
+            RegisterMod("OldBrokenOkiku", 15400, 20000);
+            RegisterMod("OldDarkShogunMask", 75000, 75000);
+            RegisterMod("OldAttraidies", 400000, 400000);
+
             // ---- Twins V2 ----
             RegisterMod("RetinazerV2", 90000, 120000);
             RegisterMod("SpazmatismV2", 90000, 120000);

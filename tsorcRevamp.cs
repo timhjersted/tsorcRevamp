@@ -31,10 +31,8 @@ using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.Death;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Bosses.Attraidies;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Bosses.Serris;
@@ -1833,6 +1831,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<NamelessKing>(),
                 ModContent.NPCType<Faraam>(),
                 ModContent.NPCType<AttraidiesFragment>(),
+                ModContent.NPCType<OldAttraidiesFragment>(),
                 ModContent.NPCType<AttraidiesApparition>(), // Spawns The Sorrow, then deactivates itself
                 ModContent.NPCType<AttraidiesArenaActor>(), // Fades away at the end of the curse scene
                 ModContent.NPCType<StoryAshaActor>(), // Story stand-ins are removed when their scene ends
@@ -1903,6 +1902,11 @@ namespace tsorcRevamp
                 ModContent.NPCType<Okiku>(),
                 ModContent.NPCType<BrokenOkiku>(),
                 ModContent.NPCType<Attraidies>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.OldDarkShogunMask>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.OldDarkDragonMask>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.OldOkiku>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.OldBrokenOkiku>(),
+                ModContent.NPCType<OldAttraidies>(),
                 ModContent.NPCType<NPCs.Invaders.Kahlrun>(),
             };
             #endregion

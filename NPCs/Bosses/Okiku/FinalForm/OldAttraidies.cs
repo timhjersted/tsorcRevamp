@@ -25,17 +25,20 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
 {
     [AutoloadBossHead]
-    class Attraidies : ModNPC
+    class OldAttraidies : ModNPC
     {
         public override void SetStaticDefaults()
         {
+            NPCID.Sets.NPCBestiaryDrawModifiers hiddenFromBestiary = new NPCID.Sets.NPCBestiaryDrawModifiers();
+            hiddenFromBestiary.Hide = true;
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, hiddenFromBestiary);
             Main.npcFrameCount[NPC.type] = 7;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
 
             // Set NeedsExpertScaling for lifeMax scaling in multiplayer, otherwise scaling is skipped since NPC.damage=0.
             NPCID.Sets.NeedsExpertScaling[NPC.type] = true;
         }
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/DarkDragonMask";
+        public override string Texture => "tsorcRevamp/NPCs/Bosses/Okiku/SecondForm/OldDarkDragonMask";
         public override void SetDefaults()
         {
             NPC.aiStyle = -1;
@@ -53,7 +56,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             NPC.scale = 1.2f;
             NPC.noTileCollide = true;
             NPC.boss = true;
-            NPC.value = 600000;
+            NPC.value = 0;
             NPC .rarity =30;
             NPC.lavaImmune = true;
             NPC.knockBackResist = 0;
@@ -141,10 +144,6 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Quote"), 175, 75, 255);
                 InitializeMoves();
-                if (!Main.tile[1365, ExpandedWorldTransform.MapTileY(1365, 280)].IsActuated)
-                {
-                    ActuateAttraidiesArena();
-                }
                 initialized = true;
             }
 
@@ -224,7 +223,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     ClearObstructiveProjectiles();
                     for (int i = 0; i < Main.maxNPCs; i++)
                     {
-                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
+                        if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<OldAttraidiesFragment>())
                         {
                             Main.npc[i].active = false;
                             if (Main.netMode == NetmodeID.Server)
@@ -509,7 +508,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                     {
                         for (int i = 0; i < 5; i++)
                         {
-                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
+                            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldAttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
                         }
                     }
                 }
@@ -735,7 +734,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
+                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldAttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
                     }
                 }
             }
@@ -867,7 +866,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<AttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
+                        NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<OldAttraidiesFragment>(), ai0: NPC.whoAmI, ai1: i, ai3: Phase);
                     }
                 }
             }
@@ -1245,7 +1244,7 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             {
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<AttraidiesFragment>())
+                    if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<OldAttraidiesFragment>())
                     {
                         Main.npc[i].active = false;
                         if (Main.netMode == NetmodeID.Server)
@@ -1272,13 +1271,8 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             if (deathTimer > 400)
             {
                 //Attraidies dies
-                //Spawn abyss portal NPC
+                //The comparison fight opens no portal
                 SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Custom/MetalShatter") with { Volume = 1f, PlayOnlyIfFocused = false, MaxInstances = 0 });
-                if (Main.netMode != NetmodeID.MultiplayerClient && !tsorcRevampWorld.PrimordialAge)
-                {
-                    NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X, (int)NPC.Center.Y, ModContent.NPCType<NPCs.Special.AbyssPortal>(), ai0: 1);
-                }
-                tsorcRevampWorld.AbyssPortalLocation = NPC.Center;
                 NPC.dontTakeDamage = false;
                 NPC.StrikeNPC(NPC.CalculateHitInfo(999999, 1, true, 0), false, false);
             }
@@ -1302,123 +1296,61 @@ namespace tsorcRevamp.NPCs.Bosses.Okiku.FinalForm
             return false;
         }
 
-        public override void BossLoot(ref string name, ref int potionType)
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
         {
-            potionType = ItemID.SuperHealingPotion;
+            return false;
         }
+    }
 
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
+    /// <summary>Spawns the preserved fight for comparison: no argument or 1 starts at the first form, 2-5 start at that form.</summary>
+    public sealed class OldAttraidiesCommand : ModCommand
+    {
+        public override CommandType Type => CommandType.World;
+        public override string Command => "oldattraidies";
+        public override string Usage => "/oldattraidies [1-5]";
+        public override string Description => "Spawn the preserved Old Attraidies fight for comparison in Debug Mode.";
+
+        public override void Action(CommandCaller caller, string input, string[] args)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<AttraidiesBag>()));
-            IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<TheEnd>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<ShatteredReflection>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SeveringDusk>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BloomShards>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<PyroclasticFlow>()));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulOfAttraidies>(), 1, 10, 17));
-            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HeavenPiercer>()));
-            npcLoot.Add(notExpertCondition);
-        }
-
-        public override void OnKill()
-        {
-            Player player = Main.player[NPC.target];
-
-            for (int i = 0; i < 50; i++)
+            Player player = caller.Player;
+            if (player == null || !ModContent.GetInstance<tsorcRevampGameplayConfig>().DebugMode)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(10, 10);
-                int dust;
-                dust = Dust.NewDust(NPC.Center, 30, 30, DustID.PurpleCrystalShard, vel.X, vel.Y, 100, default, 5f);
-                Main.dust[dust].noGravity = true;
-                vel = Main.rand.NextVector2Circular(10, 10);
-                Dust.NewDust(NPC.Center, 30, 30, DustID.PurpleCrystalShard, vel.X, vel.Y, 240, default, 5f);
-                Main.dust[dust].noGravity = true;
-                vel = Main.rand.NextVector2Circular(20, 20);
-                Dust.NewDust(NPC.Center, 30, 30, 234, vel.X, vel.Y, 240, default, 5f);
-                Main.dust[dust].noGravity = true;
-                Dust.NewDust(NPC.Center, 30, 30, DustID.Torch, vel.X, vel.Y, 200, default, 3f);
+                caller.Reply("Use /oldattraidies as a player with Debug Mode enabled.", Color.Orange);
+                return;
             }
 
-            if (!tsorcRevampWorld.SuperHardMode)
+            int form = 1;
+            if (args.Length > 0 && (!int.TryParse(args[0], out form) || form < 1 || form > 5))
             {
+                caller.Reply("Usage: " + Usage, Color.Orange);
+                return;
+            }
 
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Portal"), new Color(255, 255, 60));
+            int[] formTypes =
+            {
+                ModContent.NPCType<FirstForm.OldDarkShogunMask>(),
+                ModContent.NPCType<SecondForm.OldDarkDragonMask>(),
+                ModContent.NPCType<ThirdForm.OldOkiku>(),
+                ModContent.NPCType<ThirdForm.OldBrokenOkiku>(),
+                ModContent.NPCType<OldAttraidies>(),
+            };
 
-                Main.hardMode = true;
-                tsorcRevampWorld.SuperHardMode = true;
-                tsorcRevampWorld.TheEnd = false;
-                Systems.AbyssWorldSystem.BeginEntry();
-
-                if (Main.netMode == NetmodeID.Server)
+            foreach (int formType in formTypes)
+            {
+                if (NPC.AnyNPCs(formType))
                 {
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-
-                if (tsorcRevampWorld.RemixMap)
-                {
-                    UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.HallowDarker"), new Color(255, 40, 255));
+                    caller.Reply("An Old Attraidies form is already active.", Color.Orange);
+                    return;
                 }
             }
 
-            else if (!tsorcRevampWorld.PrimordialAge)
+            int spawnX = (int)player.Center.X + player.direction * 480;
+            int spawnY = (int)player.Center.Y - 280;
+            int spawnIndex = NPC.NewNPC(player.GetSource_FromThis(), spawnX, spawnY, formTypes[form - 1], Target: player.whoAmI);
+            if (spawnIndex < Main.maxNPCs && Main.netMode == NetmodeID.Server)
             {
-
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.AbyssOpen"), new Color(255, 255, 60));
-                UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Attraidies.Hint"), new Color(249, 202, 12));
-
-                tsorcRevampWorld.SuperHardMode = true;
-                Main.hardMode = true;
-                tsorcRevampWorld.TheEnd = false;
-            }
-
-            if (tsorcRevampWorld.RemixMap && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Chaos>())))
-            {
-                (int xMin, int yMin, int xMax, int yMax)[] zones = new[]
-                {
-                    (7054, 1123, 7055, 1135),  
-                    (7002, 1194, 7003, 1206),  
-                    (7111, 1332, 7123, 1333),  
-                    (7171, 1232, 7183, 1233),  
-                    (7540,  994, 7541, 1012)   
-                };
-
-                foreach (var (xMin, yMin, xMax, yMax) in zones)
-                {
-                    for (int x = xMin; x <= xMax; x++)
-                    {
-                        for (int y = yMin; y <= yMax; y++)
-                        {
-                            Tile tile = Main.tile[x, y];
-                            if (tile != null && tile.IsActuated)
-                            {
-                                tile.IsActuated = false;
-                                WorldGen.SquareTileFrame(x, y);
-                            }
-                        }
-                    }
-
-                    if (Main.netMode == NetmodeID.Server)
-                    {
-                        NetMessage.SendTileSquare(-1, xMin, yMin, (xMax - xMin) + (yMax - yMin) + 2);
-                    }
-                }
-            }
-        }
-
-        public static void ActuateAttraidiesArena()
-        {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && !tsorcRevampWorld.RemixMap)
-            {
-                //Expanded-world Y offset: the arena (Y 59–306) is in the flat +200 band; X is invariant. 0 on legacy.
-                int dY = ExpandedWorldTransform.MapTileY(1365, 280) - 280;
-                for (int x = 1158; x < 1633; x++)
-                {
-                    for (int y = 59 + dY; y < 306 + dY; y++)
-                    {
-                        Wiring.ActuateForced(x, y);
-                    }
-                }
+                NetMessage.SendData(MessageID.SyncNPC, number: spawnIndex);
             }
         }
     }

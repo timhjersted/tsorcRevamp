@@ -12916,6 +12916,20 @@ Mods: {
 				HallowDarker: Darkness spreads through the Hallowed Caves...
 			}
 
+			OldDarkShogunMask.DisplayName: Old Mindflayer King
+			OldAttraidiesShield.DisplayName: Old Attraidies Shield
+			OldDamnedSoul.DisplayName: Old Damned Soul
+			OldDarkDragonMask.DisplayName: Old Attraidies, Second Form
+			OldShadowDragonHead.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody2.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody3.DisplayName: Old Shadow Dragon
+			OldShadowDragonLegs.DisplayName: Old Shadow Dragon
+			OldShadowDragonTail.DisplayName: Old Shadow Dragon
+			OldOkiku.DisplayName: Old Mindflayer Illusion
+			OldBrokenOkiku.DisplayName: Old Mindflayer Illusion
+			OldAttraidies.DisplayName: Old Attraidies
+			OldAttraidiesFragment.DisplayName: Old Attraidies Fragment
 			AttraidiesFragment.DisplayName: Attraidies Fragment
 			AttraidiesMimic.DisplayName: Attraidies
 			DamnedSoul.DisplayName: Damned Soul
