@@ -271,12 +271,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         // Settle raised early, then spend most of the tell lowering into the rising cut.
                         return 0.35f;
                     }
+                    if (LordsVerdictSwinging)
+                    {
+                        // Raise over the first 25 ticks; GetLogicalWindupOppositeEnd turns the rest into a hold.
+                        int verdictTelegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(LordsVerdictTelegraphTicks * ComboTelegraphMultiplier));
+                        return LordsVerdictRaiseTicks / (float)verdictTelegraphTicks;
+                    }
                     return base.LogicalWindupSettleFraction;
                 }
 
                 int telegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(FlurryTelegraphTicks * ComboTelegraphMultiplier));
                 return FlurryWindupRaiseTicks / (float)telegraphTicks;
             }
+        }
+
+        // Lord's Verdict holds the raised pose once it is reached, mirroring the giant sword forming above him.
+        protected override float GetLogicalWindupOppositeEnd(ComboMotion motion, float attackStart, float oppositeEnd)
+        {
+            if (LordsVerdictSwinging)
+            {
+                return attackStart;
+            }
+            return base.GetLogicalWindupOppositeEnd(motion, attackStart, oppositeEnd);
         }
 
         // The flurry's leaps carry the sword overhead through the air and swing when the player is
@@ -376,7 +392,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (CinderfallSwinging && motion == ComboMotion.GroundSlam)
+            if ((CinderfallSwinging || LordsVerdictSwinging) && motion == ComboMotion.GroundSlam)
             {
                 startRotation = RefinedRaisedPose;
                 endRotation = CinderfallLoweredPose;
@@ -625,6 +641,38 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             step.LeapStrikeRange = FlurryLeapStrikeRange;
             return step;
         }
+
+        // ── Lord's Verdict tuning (below half health) ───────────────────────────
+        // His overhead slam into the floor, mirrored by a giant gold copy of his sword above him
+        // (GwynLordsVerdictBlade) that lands flat in front of him. Both strike together; the timing
+        // sheet is on the pool entry.
+        protected const string LordsVerdictName = "Lord's Verdict";
+        const int LordsVerdictTelegraphTicks = 39;    // x1.15 = 44 on screen
+        const int LordsVerdictRaiseTicks = 25;        // of the 44: ease up into the cocked pose, then hold
+        const int LordsVerdictSlamTicks = 18;         // must match GwynLordsVerdictBlade.SlamTicks
+        const int LordsVerdictStopTicks = 2;          // the blade stops dead in the floor
+        const float LordsVerdictStopDecay = 8f;
+        const int LordsVerdictRecoveryTicks = 62;
+        const int LordsVerdictCooldown = 600;
+        const float LordsVerdictBladeDamage = 1.3f;
+        const float LordsVerdictBladeReach = 1.14f;   // under 1.15, so no fire crescent: the giant sword is the reach
+        const float LordsVerdictGiantDamage = 2f;
+        // Both swords land on Gwyn's floor height, so a target above or below it can't be hit; don't start it then.
+        const float LordsVerdictMaxHeightGap = 64f;
+
+        bool LordsVerdictSwinging => ComboSwinging(LordsVerdictName);
+        bool _lordsVerdictConjured;   // server only: the giant sword was spawned for this combo
+
+        /// <summary>Read by GwynLordsVerdictBlade: hold over him while this is true.</summary>
+        internal bool LordsVerdictTelegraphing =>
+            ActiveMeleeComboName == LordsVerdictName && Phase == AttackPhase.MeleeComboTelegraph;
+
+        /// <summary>Read by GwynLordsVerdictBlade: the first tick this is true starts its slam, in step with his.</summary>
+        internal bool LordsVerdictStriking =>
+            ActiveMeleeComboName == LordsVerdictName && Phase == AttackPhase.MeleeComboAttack;
+
+        /// <summary>Prime Gwyn Phase II+: the impact also sends a ground wave outward from the giant sword's tip.</summary>
+        protected virtual bool LordsVerdictTipWave => false;
 
         // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
         // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
@@ -956,6 +1004,33 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new MeleeCombo { Name = SkyLungeName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
                 InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 28,
                 Steps = new[] { WeightedSwordSwing(ComboMotion.HorizontalSweep, 32, 10, 40, 7f, 0, 1.2f, 1.45f, 0f) } },
+            // 22 — Lord's Verdict timing sheet (half health only; the giant sword is GwynLordsVerdictBlade)
+            // Poses -1.62 -> 2.45 rad (Cinderfall's floor end): 233° slam into the floor. Tell 39 authored =
+            // 44t on screen: 25t raise, then a hold while the giant sword forms above him (glint at 34).
+            // Strike: 18t cubic ease-in to the floor + 2t stop, armed the whole step (HitWindowEnd 0), in step
+            // with the giant sword's 18t quarter-circle slam. The giant stays live 16t on the floor, so no spot
+            // is covered for more than ~20t. Recovery 62t: landed-pose hold, then a 48t punish window after the
+            // floor band goes dead. Damage 1.3x (his blade) and 2x (the giant). No follow-up.
+            new MeleeCombo { Name = LordsVerdictName, BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = LordsVerdictCooldown, RecoveryTicks = LordsVerdictRecoveryTicks,
+                HeavyCommit = true, HyperArmor = true,
+                Steps = new[] {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.GroundSlam,
+                        TelegraphTicks = LordsVerdictTelegraphTicks,
+                        AttackTicks = LordsVerdictSlamTicks + LordsVerdictStopTicks,
+                        PostStepPause = 0,
+                        DamageMult = LordsVerdictBladeDamage,
+                        ReachMult = LordsVerdictBladeReach,
+                        ForwardPushMult = 0f,
+                        Ease = SwingEaseStyle.Weighted,
+                        EaseInTicks = LordsVerdictSlamTicks,
+                        EaseOutTicks = LordsVerdictStopTicks,
+                        EaseOutDecay = LordsVerdictStopDecay,
+                        HitWindowEnd = 0f,
+                    },
+                } },
         };
 
         protected override MeleeCombo[] MeleeComboPoolOverride => GwynCombos;
@@ -1181,6 +1256,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return HalfHealthMovesUnlocked;
             }
+            // Lord's Verdict: both swords land on his floor height, so only start it grounded, with the
+            // target on roughly that level.
+            if (combo.Name == LordsVerdictName)
+            {
+                Player verdictTarget = Main.player[NPC.target];
+                bool grounded = NPC.velocity.Y == 0f;
+                float heightGap = Math.Abs(verdictTarget.Bottom.Y - NPC.Bottom.Y);
+                return HalfHealthMovesUnlocked && grounded && heightGap <= LordsVerdictMaxHeightGap;
+            }
             if (combo.Name == CinderingLeapName || combo.Name == "Roll-Catch")
             {
                 return distance <= 300f;
@@ -1319,7 +1403,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             combo.HyperArmor = true;
-            if (combo.RuntimeV2Clip != null || combo.Name == WrathFlurryName || combo.Steps == null)
+            // Lord's Verdict is half-health only and its strike is timed to the giant sword's slam, so it keeps its own timing.
+            if (combo.RuntimeV2Clip != null || combo.Name == WrathFlurryName || combo.Name == LordsVerdictName || combo.Steps == null)
             {
                 return;
             }
@@ -4335,6 +4420,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.OnMeleeComboStarted(combo);
             _swordArcSpawnedForStep = false;
+            _lordsVerdictConjured = false;
             ResetFlurryPursuit(releasePause: false);
             _aerialStrikeElapsed = -1;
 
@@ -4345,6 +4431,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && combo.HeavyCommit
                 && combo.RuntimeV2Clip == null
                 && combo.Name != WrathFlurryName
+                && combo.Name != LordsVerdictName   // the giant sword's glint is its own tell
                 && combo.Steps != null
                 && combo.Steps.Length > 0
                 && combo.Steps[0].TelegraphTicks >= DelayedSwingMinTelegraph
@@ -4418,6 +4505,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
             base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+
+            // Lord's Verdict: the server conjures the giant sword on the tell's first tick; it forms above him
+            // and follows his combo from there.
+            bool verdictStart = combo.Name == LordsVerdictName && !_lordsVerdictConjured && Main.netMode != NetmodeID.MultiplayerClient;
+            if (verdictStart)
+            {
+                _lordsVerdictConjured = true;
+                int giantDamage = (int)(MeleeDamage * LordsVerdictGiantDamage);
+                float tipWaveFlag = 0f;
+                if (LordsVerdictTipWave)
+                {
+                    tipWaveFlag = 1f;
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Content.Projectiles.Enemy.Gwyn.GwynLordsVerdictBlade>(), giantDamage, 6f,
+                    Main.myPlayer, NPC.whoAmI, tipWaveFlag);
+            }
+
             if (combo.Name != CinderfallName || Main.dedServ)
             {
                 return;

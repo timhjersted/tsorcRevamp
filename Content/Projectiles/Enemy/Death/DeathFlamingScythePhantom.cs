@@ -19,10 +19,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         const float BoomerangThrowDistance = 800f;
         const int BoomerangOutboundTicks = 60;
 
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.FlamingScythe;
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DeathFlamingScythe));
 
         public override void SetStaticDefaults()
         {
+            Main.projFrames[Type] = DeathFlamingScythe.AnimationFrames;
+
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 500;
         }
 
@@ -55,6 +57,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         public override void AI()
         {
             Projectile.localAI[0]++;
+            int age = (int)Projectile.localAI[0];
+            Projectile.frame = age / DeathFlamingScythe.AnimationFrameTicks % DeathFlamingScythe.AnimationFrames;
+
             int movementMode = (int)Projectile.ai[0];
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             if (movementMode == (int)DeathFlamingScythe.MovementMode.Straight)
@@ -77,16 +82,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[ProjectileID.FlamingScythe].Value;
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Rectangle frame = texture.Frame(1, Main.projFrames[Type], 0, Projectile.frame);
+            Vector2 origin = frame.Size() / 2f;
+            float drawScale = Projectile.scale / DeathFlamingScythe.TextureResolutionScale;
             float opacity = 1f - Projectile.alpha / 255f;
+
             Main.EntitySpriteDraw(
                 texture,
                 Projectile.Center - Main.screenPosition,
-                null,
+                frame,
                 lightColor * opacity,
                 Projectile.rotation,
-                texture.Size() / 2f,
-                Projectile.scale,
+                origin,
+                drawScale,
                 SpriteEffects.None,
                 0f);
             return false;

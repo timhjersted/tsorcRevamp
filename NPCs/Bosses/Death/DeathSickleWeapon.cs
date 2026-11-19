@@ -11,8 +11,9 @@ using tsorcRevamp.Content.Projectiles.Enemy.Death;
 namespace tsorcRevamp.NPCs.Bosses.Death
 {
     /// <summary>
-    /// Standalone Death Sickle entity. It can follow an owner or be driven independently through
-    /// the movement-mode interface. ai[0] is the optional owner index; ai[1] is MovementMode.
+    /// Wound in the Veil: eight 704x704 frames of tapered violet magic, with an upper-right branch.
+    /// Legacy 97px coordinates retain the exact damage rectangles and end/middle pivots.
+    /// ai[0] is the optional owner index; ai[1] is MovementMode.
     /// </summary>
     class DeathSickleWeapon : ModNPC
     {
@@ -29,9 +30,9 @@ namespace tsorcRevamp.NPCs.Bosses.Death
         public static readonly Vector2 MiddlePoint = new(46f, 57f);
         public const float VisualScale = 7.2f;
         const float TextureWidth = 97f;
+        const int AnimationFrames = 8;
+        const int AnimationFrameTicks = 6;
         int currentContactDamage;
-
-        public override string Texture => "tsorcRevamp/NPCs/Bosses/Death/DeathSickleWeapon";
 
         internal int OwnerIndex => (int)NPC.ai[0];
         internal MovementMode Mode => (MovementMode)(int)NPC.ai[1];
@@ -43,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.Death
 
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 1;
+            Main.npcFrameCount[NPC.type] = AnimationFrames;
         }
 
         public override void SetDefaults()
@@ -103,41 +104,69 @@ namespace tsorcRevamp.NPCs.Bosses.Death
             NPC.spriteDirection = owner.direction;
         }
 
+        public override void FindFrame(int frameHeight)
+        {
+            NPC.frameCounter++;
+
+            if (NPC.frameCounter >= AnimationFrameTicks)
+            {
+                NPC.frameCounter = 0;
+                NPC.frame.Y += frameHeight;
+            }
+
+            if (NPC.frame.Y >= frameHeight * AnimationFrames)
+            {
+                NPC.frame.Y = 0;
+            }
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             Texture2D texture = TextureAssets.Npc[NPC.type].Value;
-            Vector2 origin = EffectiveDrawOrigin;
+            int frameHeight = texture.Height / AnimationFrames;
+            int frameIndex = NPC.frame.Y / frameHeight;
+            Rectangle frame = texture.Frame(1, AnimationFrames, 0, frameIndex);
+            Vector2 origin = BaseDrawOrigin * VisualScale;
+            float drawScale = NPC.scale / VisualScale;
+
+            // Convert the legacy pivots to native sprite pixels. Mirror within one frame,
+            // so the extra transparent padding never shifts the visual away from collision.
+            if (NPC.spriteDirection < 0)
+            {
+                origin.X = frame.Width - origin.X;
+            }
+
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             float opacity = NPC.Opacity;
 
             float intensity = currentContactDamage > 0 ? 1.25f : 0.85f;
             Color glowColor = GetGlowColor();
-            // Shader-driven glow, shaped by the sickle's own sprite.
+            // A narrow aura preserves the tapered tips; enlarged opaque copies obscured the new art.
             DeathVFX.DrawShaderGlow(
                 texture,
-                null,
+                frame,
                 NPC.Center + new Vector2(0f, NPC.gfxOffY),
                 NPC.rotation,
                 origin,
-                NPC.scale,
+                drawScale,
                 effects,
                 glowColor,
                 opacity * intensity,
-                haloRadius: 3f,
+                haloRadius: 4f,
                 haloDirections: 8,
-                bloomScale: 1.22f,
-                bloomOpacity: 0.28f,
-                rimOpacity: 0.5f,
-                coreOpacity: 0.4f);
+                bloomScale: 1.06f,
+                bloomOpacity: 0.12f,
+                rimOpacity: 0.16f,
+                coreOpacity: 0.25f);
 
             Main.EntitySpriteDraw(
                 texture,
                 NPC.Center - screenPos + new Vector2(0f, NPC.gfxOffY),
-                null,
+                frame,
                 NPC.GetAlpha(Color.White),
                 NPC.rotation,
                 origin,
-                NPC.scale,
+                drawScale,
                 effects,
                 0f);
 

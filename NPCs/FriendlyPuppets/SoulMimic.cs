@@ -1465,7 +1465,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             // A use in progress (as of last tick's ItemCheck): the server holds off on Estus until it's over.
-            bool attacking = UseState.ItemAnimation > 0 || _ownerGreatswordSwingActive;
+            bool attacking = UseState.ItemAnimation > 0 || HasAttachedWeapon;
 
             if (attacking)
             {

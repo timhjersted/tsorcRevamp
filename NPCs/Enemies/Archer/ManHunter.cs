@@ -84,7 +84,8 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
         private const float JoinWalkSpeedMult = 1.8f;
         private const float PostSearchTiles = 40f;
         private const int PostSearchHeightTiles = 24;
-        private const int PostClearAboveTiles = 8;
+        // Open sky required straight up from an archer's feet: both a post's candidate tile and the moment a lob starts.
+        private const int SkyClearTiles = 90;
 
         private enum ArcherMode : byte
         {
@@ -744,9 +745,15 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
 
             UpdateLobAnchor(target);
 
+            // 90 tiles of open sky straight up from the feet (4px up so the ray starts above the floor tile), then the
+            // actual leaning climb path from the bow.
+            Vector2 feet = NPC.Bottom + new Vector2(0f, -4f);
+            Vector2 skyTop = feet - new Vector2(0f, SkyClearTiles * 16f);
+            bool pathClear = skyTop.Y > 160f && Collision.CanHitLine(feet, 1, 1, skyTop, 1, 1);
+
             Vector2 origin = NPC.Top + new Vector2(0f, 14f);
             Vector2 climbEnd = origin + LobLaunchDirection() * (ManHunterLobArrow.AscendSpeed * ManHunterLobArrow.AscendTicks);
-            bool pathClear = climbEnd.Y > 160f && Collision.CanHitLine(origin, 1, 1, climbEnd, 1, 1);
+            pathClear = pathClear && climbEnd.Y > 160f && Collision.CanHitLine(origin, 1, 1, climbEnd, 1, 1);
 
             // Each arrow re-enters FallHeight above its landing point: that whole line has to be open sky.
             for (int i = 0; i < LobArrowCount && pathClear; i++)
@@ -814,7 +821,7 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
         }
 
         /// <summary>
-        /// Finds a standable spot near desiredX: solid floor, a flat 3-tile top, and PostClearAboveTiles of air above,
+        /// Finds a standable spot near desiredX: solid floor, a flat 3-tile top, and SkyClearTiles of air above,
         /// within PostSearchTiles of desiredX and PostSearchHeightTiles of referenceFeetTileY. Prefers the smallest
         /// horizontal distance, then the smallest height difference. Returns the feet position (bottom-centre).
         /// </summary>
@@ -865,7 +872,7 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
 
                             bool clearAbove = true;
 
-                            for (int rise = 1; rise <= PostClearAboveTiles; rise++)
+                            for (int rise = 1; rise <= SkyClearTiles; rise++)
                             {
                                 if (WorldGen.SolidTile(tileX, floorTileY - rise))
                                 {

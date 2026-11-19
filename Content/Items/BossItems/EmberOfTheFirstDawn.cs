@@ -2,28 +2,27 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Bosses.Primordial;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.BossItems
 {
     /// <summary>
-    /// Dropped by Gwyn. The first use anywhere returns the world to Super Hardmode for good, without the
-    /// Abyss. Prime Gwyn is summoned at Gwyn's event location until his own arena and teleport exist.
-    /// Multiplayer: the using client asks the server, which validates the use and makes every change.
+    /// Dropped by Gwyn. A confirmed first use permanently transforms the world into the Primordial world and plays its
+    /// cutscene (Systems/PrimordialWorldSystem.cs). Afterwards it returns its user to Prime Gwyn's landing point.
+    /// Multiplayer: the using client asks the server, which validates the use and makes every change. The return
+    /// teleport is the user's own movement, so the owning client performs it.
     /// </summary>
     class EmberOfTheFirstDawn : ModItem
     {
-        // Legacy tile coordinates of Gwyn's scripted events; MapTile converts them on the expanded map.
-        static readonly Vector2 AdventureSummonTile = new Vector2(832, 1244);
-        static readonly Vector2 RemixSummonTile = new Vector2(822, 1241);
-        const float SummonUseRange = 100f * 16f; // keeps the user inside Gwyn's 2000px coward ring on arrival
-        const float SandboxSummonDistance = 480f;
         const int UseDustCount = 36;
+
+        // A second use within this window confirms the transformation. Local to the using client; nothing to sync.
+        const int ConfirmWindowTicks = 300;
+        static uint confirmExpiresAt;
 
         public override void SetDefaults()
         {
@@ -52,7 +51,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         public override bool CanUseItem(Player player)
         {
             bool gwynSlain = tsorcRevampWorld.BossDefeated(ModContent.NPCType<Gwyn>());
-            return gwynSlain && !tsorcRevampWorld.BossAlive;
+            return gwynSlain && !tsorcRevampWorld.BossAlive && !PrimordialWorldSystem.SceneRunning && !CutsceneSystem.IsActive;
         }
 
         public override bool? UseItem(Player player)
@@ -70,12 +69,24 @@ namespace tsorcRevamp.Content.Items.BossItems
                 ember.noGravity = true;
             }
 
-            bool canSummonHere = TryGetSummonPoint(player, out _);
-            if (!canSummonHere)
+            Color textColor = new Color(255, 144, 64);
+
+            if (PrimordialWorldSystem.Conversion != PrimordialWorldSystem.ConversionState.None)
             {
-                Main.NewText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.TooFar"), new Color(255, 144, 64));
+                ReturnToLanding(player, textColor);
+                return true;
             }
 
+            // First use only warns. The warning must not say what changes, so the transformation stays a surprise.
+            bool confirmed = Main.GameUpdateCount < confirmExpiresAt;
+            if (!confirmed)
+            {
+                confirmExpiresAt = Main.GameUpdateCount + ConfirmWindowTicks;
+                Main.NewText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.Confirm"), textColor);
+                return true;
+            }
+
+            confirmExpiresAt = 0;
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 ModPacket packet = Mod.GetPacket();
@@ -89,50 +100,31 @@ namespace tsorcRevamp.Content.Items.BossItems
             return true;
         }
 
-        /// <summary>Server or single player. The world change comes first, so it stands even if the
-        /// summon cannot happen here or the player later dies to him.</summary>
+        /// <summary>Server or single player: a confirmed use from this player.</summary>
         internal static void ResolveUse(Player player)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient || !player.active || player.dead)
-            {
-                return;
-            }
-            if (!tsorcRevampWorld.BossDefeated(ModContent.NPCType<Gwyn>()))
-            {
-                return;
-            }
-
-            tsorcRevampWorld.EnterPrimordialAge();
-
-            if (tsorcRevampWorld.BossAlive || !TryGetSummonPoint(player, out Vector2 summonBottom))
-            {
-                return;
-            }
-
-            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.Summon"), 255, 190, 90);
-            NPC.NewNPC(new EntitySource_BossSpawn(player), (int)summonBottom.X, (int)summonBottom.Y,
-                ModContent.NPCType<PrimeGwyn>(), 0, 0f, 0f, 0f, 0f, player.whoAmI);
+            PrimordialWorldSystem.RequestTransformation(player);
         }
 
-        /// <summary>World point for his feet. Adventure maps use Gwyn's event location and need the user
-        /// nearby; sandbox worlds have no such place, so he appears a short way ahead of the user.</summary>
-        static bool TryGetSummonPoint(Player player, out Vector2 summonBottom)
+        // After the transformation the Ember carries its user back to the landing point east of Prime's ring.
+        static void ReturnToLanding(Player player, Color textColor)
         {
-            bool hasEventLocation = tsorcRevampWorld.OnlyAdventureMap || tsorcRevampWorld.RemixMap;
-            if (!hasEventLocation)
+            bool hasLanding = PrimordialWorldSystem.Site == PrimordialWorldSystem.SiteMode.Adventure && PrimordialWorldSystem.LandingWorld != Vector2.Zero;
+            if (!hasLanding)
             {
-                summonBottom = new Vector2(player.Center.X + player.direction * SandboxSummonDistance, player.Bottom.Y);
-                return true;
+                Main.NewText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.NoReturnPoint"), textColor);
+                return;
             }
 
-            Vector2 legacyTile = AdventureSummonTile;
-            if (tsorcRevampWorld.RemixMap)
+            Vector2 standPosition = PrimordialWorldSystem.LandingWorld - new Vector2(player.width / 2f, player.height);
+            player.Teleport(standPosition, TeleportationStyleID.DebugTeleport);
+            player.velocity = Vector2.Zero;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                legacyTile = RemixSummonTile;
+                NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, player.whoAmI, standPosition.X, standPosition.Y, TeleportationStyleID.DebugTeleport);
             }
 
-            summonBottom = ExpandedWorldTransform.MapTile(legacyTile) * 16f;
-            return Vector2.Distance(player.Center, summonBottom) <= SummonUseRange;
+            Main.NewText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.Return"), textColor);
         }
     }
 }

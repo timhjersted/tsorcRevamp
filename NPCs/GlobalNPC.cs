@@ -2854,6 +2854,12 @@ namespace tsorcRevamp.NPCs
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
+            // The Primordial world replaces the whole pool: wild Hellkite Drakes on the surface, Ancient Demons below.
+            if (Systems.PrimordialWorldSystem.ReplaceSpawnPool(pool, spawnInfo))
+            {
+                return;
+            }
+
             // The central spawn registry (Systems/EnemySpawns.cs) sets the pool entry of every mod enemy. First, so the clears and removals below still win.
             EnemySpawns.Apply(pool, spawnInfo);
 

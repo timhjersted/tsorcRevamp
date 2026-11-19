@@ -197,6 +197,9 @@ namespace tsorcRevamp
             }, mainTrack: "Pillars", priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
             RegisterAreaMusic(IsInArtoriasRuins, mainTrack: "Witchlands",
                 priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
+            // Primordial world: `Tomb` above ground everywhere, and for everyone watching the transformation.
+            RegisterAreaMusic(Systems.PrimordialWorldSystem.WantsTombMusic, mainTrack: "Tomb", remixTrack: "Tomb",
+                fallback: MusicID.Eerie, priority: SceneEffectPriority.Event);
 
             // Every invader gets a pack-specific default automatically. Explicit entries
             // below are registered afterwards and therefore replace this fallback.
@@ -274,6 +277,7 @@ namespace tsorcRevamp
             RegisterGroup(new[] { "SeathTheScalelessHead", "PrimordialCrystal" }, "Boss9", "Boss9", MusicID.Boss2);
             Register("GrandOccultist", "Boss14", "Boss14", MusicID.Boss3);
             Register("Gwyn", "Gwyn", "Gwyn", MusicID.Boss2);
+            Register("PrimeGwyn", "Boss8", "Boss8", MusicID.Boss2);
             RegisterGroup(new[] { "DarkShogunMask", "DarkDragonMask", "Okiku", "BrokenOkiku", "OldDarkShogunMask", "OldDarkDragonMask", "OldOkiku", "OldBrokenOkiku" }, "Boss5", "Boss5", MusicID.Boss2, SceneEffectPriority.BossHigh);
             RegisterGroup(new[] { "AttraidiesMimic", "Attraidies", "OldAttraidies" }, "Boss8", "Boss8", MusicID.Boss2);
         }
@@ -426,7 +430,8 @@ namespace tsorcRevamp
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
-                if (npc.active && Assignments.TryGetValue(npc.type, out TrackAssignment assignment))
+                // A wild Primordial Hellkite Drake is an ordinary enemy and keeps the area's music.
+                if (npc.active && !Systems.PrimordialWorldSystem.IsWildDrake(npc) && Assignments.TryGetValue(npc.type, out TrackAssignment assignment))
                 {
                     cachedAssignment = assignment;
                 }

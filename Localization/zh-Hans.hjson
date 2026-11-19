@@ -724,6 +724,7 @@ Mods: {
 			EnragedQB: 一只愤怒的蜂后出现了！
 			HellkiteDragon: 村庄受到袭击！一条炼狱鸢龙前来捕食...
 			RemixHellkiteDragon: 一条炼狱鸢龙开始了它的狩猎...
+			PrimeGwyn: 原初葛温，初代帝王，降临以迎接最初的黎明！
 			ThunderBird: 惊雷王鹰出现了！
 			QueenJellyfish: 湖中水母皇后正注视着你...
 			Viscount: 蝙蝠子爵正渴求你的鲜血！
@@ -4432,6 +4433,9 @@ Mods: {
 				AgeBegins: 世界回归原初时代。
 				Summon: 原初葛温迎着第一道黎明而起！
 				TooFar: 余烬只会在与葛温交战之地呼唤它的君主。
+				Confirm: 余烬在你手中燃得更炽热了。再次使用以将其释放。
+				Return: 余烬将你带回最初的黎明。
+				NoReturnPoint: 余烬在此处找不到可以送你回去的黎明。
 			}
 
 			LostScrollOfGwyn: {

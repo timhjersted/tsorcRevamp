@@ -345,7 +345,8 @@ namespace tsorcRevamp
 
         // Hardmode Souls-mode rule: bonfire map warping only works while resting at a bonfire.
         // "Resting" = has the Bonfire buff, which BonfireCheckpoint.NearbyEffects refreshes within 80px of a lit bonfire.
-        public bool BonfireWarpLocked => Main.hardMode && SoulsMode && !Player.HasBuff(ModContent.BuffType<Bonfire>());
+        // The Primordial world applies the same rule in every play mode.
+        public bool BonfireWarpLocked => ((Main.hardMode && SoulsMode) || tsorcRevampWorld.PrimordialAge) && !Player.HasBuff(ModContent.BuffType<Bonfire>());
 
         // Saved per character so the Hardmode warp-lock notice prints once, including on joining a world already in Hardmode.
         public bool HardmodeWarpNoticeShown;

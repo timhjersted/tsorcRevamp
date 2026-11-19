@@ -19,7 +19,7 @@ namespace tsorcRevamp.NPCs.Enemies
     {
         public override void SetStaticDefaults()
         {
-            Main.npcFrameCount[NPC.type] = 4;
+            Main.npcFrameCount[NPC.type] = 8;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Poisoned] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Venom] = true;
@@ -39,7 +39,8 @@ namespace tsorcRevamp.NPCs.Enemies
         {
             NPC.aiStyle = 22;
             NPC.npcSlots = 3;
-            AnimationType = 60;
+            // FindFrame drives the authored eight-frame, six-tick energy loop.
+            AnimationType = 0;
             NPC.width = 50;
             NPC.height = 50;
             NPC.damage = 48;
@@ -623,11 +624,13 @@ namespace tsorcRevamp.NPCs.Enemies
         #region Frames
         public override void FindFrame(int currentFrame)
         {
-            int num = 1;
+            int frameHeight = 1;
+
             if (!Main.dedServ)
             {
-                num = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
+                frameHeight = TextureAssets.Npc[NPC.type].Value.Height / Main.npcFrameCount[NPC.type];
             }
+
             if (NPC.velocity.X < 0)
             {
                 NPC.spriteDirection = -1;
@@ -636,14 +639,17 @@ namespace tsorcRevamp.NPCs.Enemies
             {
                 NPC.spriteDirection = 1;
             }
+
             NPC.rotation = NPC.velocity.X * 0.08f;
             NPC.frameCounter += 1.0;
-            if (NPC.frameCounter >= 8.0)
+
+            if (NPC.frameCounter >= 6.0)
             {
-                NPC.frame.Y = NPC.frame.Y + num;
+                NPC.frame.Y += frameHeight;
                 NPC.frameCounter = 0.0;
             }
-            if (NPC.frame.Y >= num * Main.npcFrameCount[NPC.type])
+
+            if (NPC.frame.Y >= frameHeight * Main.npcFrameCount[NPC.type])
             {
                 NPC.frame.Y = 0;
             }

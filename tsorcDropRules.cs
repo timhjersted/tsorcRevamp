@@ -217,7 +217,8 @@ namespace tsorcRevamp
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return tsorcRevampWorld.CheckForRemixMap();
+            // Saved flag, not the live tile signature: the Primordial world converts the tiles that signature reads.
+            return tsorcRevampWorld.RemixMap;
         }
 
         public bool CanShowItemDropInUI()
@@ -235,7 +236,7 @@ namespace tsorcRevamp
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return !tsorcRevampWorld.CheckForRemixMap();
+            return !tsorcRevampWorld.RemixMap;
         }
 
         public bool CanShowItemDropInUI()

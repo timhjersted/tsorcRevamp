@@ -168,13 +168,20 @@ namespace tsorcRevamp.NPCs.Bosses.Primordial
 
         // ── Combo pool ───────────────────────────────────────────────────────────
         // Gwyn's table is static and steps get written during a fight, so Prime owns a deep copy. Indices
-        // 0-21 match Gwyn. New V2 twins are real pool entries because clients resolve clips by pool index.
+        // below Gwyn's pool length match Gwyn. New V2 twins are real pool entries because clients resolve
+        // clips by pool index. Prime's own entries start right after Gwyn's, wherever that ends, so adding a
+        // Gwyn combo can't collide with them.
         const int TwinRoleCount = 5; // Cleave, Guillotine, Judgment, Riposte, Backhand
-        const int SecondPhaseTwinStart = 22;
-        const int ThirdPhaseTwinStart = SecondPhaseTwinStart + TwinRoleCount;
-        const int FalseDawnIndex = ThirdPhaseTwinStart + TwinRoleCount;
-        const int SolarChainIndex = FalseDawnIndex + 1;
-        const int PrimePoolLength = SolarChainIndex + 1;
+        static readonly int SecondPhaseTwinStart = BaseComboPool.Length;
+        static readonly int ThirdPhaseTwinStart = SecondPhaseTwinStart + TwinRoleCount;
+        static readonly int FalseDawnIndex = ThirdPhaseTwinStart + TwinRoleCount;
+        static readonly int SolarChainIndex = FalseDawnIndex + 1;
+        static readonly int PrimePoolLength = SolarChainIndex + 1;
+
+        // Lord's Verdict, Phase III: 34 authored = 39 on screen, so the giant sword's glint (tick 34) leads the
+        // slam by 5 ticks instead of 10. Phase II+ also sends the tip wave (LordsVerdictTipWave).
+        const int ThirdPhaseVerdictTelegraphTicks = 34;
+        protected override bool LordsVerdictTipWave => _primePhase != PrimePhase.First;
 
         const string FalseDawnName = "False Dawn";
         const string SolarChainName = "Solar Chain";
@@ -360,9 +367,17 @@ namespace tsorcRevamp.NPCs.Bosses.Primordial
         {
             base.CustomizeMeleeCombo(ref combo, healthFraction);
 
+            bool isVerdict = combo.Name == LordsVerdictName;
+            if (isVerdict && _primePhase == PrimePhase.Third)
+            {
+                combo.Steps[0].TelegraphTicks = ThirdPhaseVerdictTelegraphTicks;
+            }
+
+            // Lord's Verdict's strike is timed to the giant sword's slam, so no phase rescale.
             bool usesAuthoredTiming = combo.RuntimeV2Clip != null
                 || combo.Steps == null
-                || combo.Name == FalseDawnName;
+                || combo.Name == FalseDawnName
+                || isVerdict;
             if (usesAuthoredTiming)
             {
                 return;

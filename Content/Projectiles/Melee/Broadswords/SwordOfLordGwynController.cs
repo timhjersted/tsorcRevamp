@@ -7,6 +7,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
+using tsorcRevamp.NPCs.FriendlyPuppets;
 using SwordOfLordGwyn = tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.SwordOfLordGwyn;
 
 namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
@@ -225,11 +226,21 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             {
                 // The dash cancels a combo swing still in progress rather than carrying it along.
                 int swingType = ModContent.ProjectileType<GreatswordSwing>();
+                MirrorPuppetProjectile controllerTag = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
                 foreach (Projectile swing in Main.ActiveProjectiles)
                 {
                     if (swing.owner == player.whoAmI && swing.type == swingType)
                     {
-                        swing.Kill();
+                        // The summon shares the player's network owner. Cancel only this actor's swing.
+                        MirrorPuppetProjectile swingTag = swing.GetGlobalProjectile<MirrorPuppetProjectile>();
+                        bool sameActor = swingTag.FromMirrorPuppet == controllerTag.FromMirrorPuppet
+                            && (!controllerTag.FromMirrorPuppet || swingTag.PuppetNpcIndex == controllerTag.PuppetNpcIndex);
+
+                        if (sameActor)
+                        {
+                            swing.Kill();
+                        }
                     }
                 }
 

@@ -20,8 +20,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // Intentional permanent texture reuse of the vanilla flaming arrow sprite (the Man Hunter's own arrow).
         public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.FlamingArrow;
 
-        // Climb: px per tick along the launch direction, and how long it lasts (60t x 20px = 1200px, 75 tiles of sky).
-        public const float AscendSpeed = 20f;
+        // Climb: px per tick along the launch direction, and how long it lasts (60t x 25px = 1500px of path; at the ~8.5
+        // degree lean that is ~1483px = 92.7 tiles of height, so it clears the 90 tiles of sky the archer requires).
+        public const float AscendSpeed = 25f;
         public const int AscendTicks = 60;
         // Descent: vertical px per tick (a 45-degree arrow also moves this fast sideways) and its duration. 67t x 15px = 1005px,
         // more than half a 1440p screen above the target, so the arrow enters from above the top edge rather than popping in.

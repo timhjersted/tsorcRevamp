@@ -231,6 +231,7 @@ namespace tsorcRevamp
             SpawnMechanic,
             SpawnWizard,
             HellkiteDragonEvent,
+            PrimeGwynFight,
             EoL,
             RemixEoL,
             DungeonGuardian,
@@ -698,6 +699,11 @@ namespace tsorcRevamp
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>(), DustID.OrangeTorch, true, true, true,
                 LangUtils.GetTextValue("Events.HellkiteDragon"), new Color(175, 75, 255), false, HellkiteDrakeCondition, SetNightCustomAction);
 
+            // Primordial world: Prime Gwyn's ring sits 50 tiles left of the Hellkite village event, edge 100 tiles from the landing point.
+            ScriptedEvent PrimeGwynEvent = new ScriptedEvent(new Vector2(4350, 659), 50,
+                ModContent.NPCType<NPCs.Bosses.Primordial.PrimeGwyn>(), DustID.OrangeTorch, true, true, true,
+                LangUtils.GetTextValue("Events.PrimeGwyn"), new Color(255, 190, 90), false, PrimeGwynRingCondition);
+
             ScriptedEvent DungeonGuardianEvent = new ScriptedEvent(new Vector2(4228, 1800), 20, NPCID.DungeonGuardian, DustID.WhiteTorch, false, true, false, "default", new Color(175, 75, 255), false, PreSkeletronDungeonGuardianCondition);
             
             ScriptedEvent KingSlime2Event = new ScriptedEvent(new Vector2(4749, 639), 25, NPCID.KingSlime, DustID.MagicMirror, true, true, false, LangUtils.GetTextValue("Events.KingSlime"), Color.Cyan, false, RemixMapCondition);
@@ -889,6 +895,7 @@ namespace tsorcRevamp
                 {ScriptedEventType.DesertPathsScene, DesertPathsScene},
                 {ScriptedEventType.RageWarningScene, RageWarningScene},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
+                {ScriptedEventType.PrimeGwynFight, PrimeGwynEvent},
                 {ScriptedEventType.EoL, EoL},
                 {ScriptedEventType.DungeonGuardian, DungeonGuardianEvent },
                 {ScriptedEventType.DualSandsprogAmbush1, DualSandsprogAmbush1 },
@@ -1031,6 +1038,12 @@ namespace tsorcRevamp
 
         // The JSON event and its hard-coded fallback share this switch.
         private static readonly bool HellkiteVillageEventEnabled = false;
+
+        // Named (not a lambda) so the Primordial event gate can recognise it and keep its rule.
+        public static bool PrimeGwynRingCondition()
+        {
+            return Systems.PrimordialWorldSystem.PrimeRingAvailable();
+        }
 
         public static bool HellkiteDrakeCondition()
         {
@@ -2530,7 +2543,8 @@ namespace tsorcRevamp
                 {
                     for (int i = 0; i < EnabledEvents.Count; i++)
                     {
-                        if (EnabledEvents[i].condition())
+                        // In the Primordial world boss rings ignore progress conditions and ambushes stay off.
+                        if (Systems.PrimordialWorldSystem.EventConditionMet(EnabledEvents[i]))
                         {
                             float distance = Vector2.DistanceSquared(Main.player[index].position, EnabledEvents[i].centerpoint);
 
@@ -2546,8 +2560,10 @@ namespace tsorcRevamp
                                 //This has a Math.Sqrt in it, but that's fine because this code only runs for the handful-at-most events that will be onscreen at a time
                                 if (EnabledEvents[i].eventNPCs != null && EnabledEvents[i].eventNPCs.Count > 0)
                                 {
+                                    // Prime's landing point is 150 tiles from his ring centre, past the normal ~153-tile range, so it shares the long range.
                                     if ((EnabledEvents[i].visible && distance < 6000000) || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>() && distance < 50000000
-                                            || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000)
+                                            || EnabledEvents[i].eventNPCs[0].type == NPCID.HallowBoss && distance < 50000000
+                                            || EnabledEvents[i].eventNPCs[0].type == ModContent.NPCType<NPCs.Bosses.Primordial.PrimeGwyn>() && distance < 50000000)
                                     {
                                         //Add the event to the list of events that need to be synced to clients. These will be sent to the client once we're done here.
                                         if (Main.netMode == NetmodeID.Server && EnabledEvents[i].visible)

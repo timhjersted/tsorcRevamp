@@ -725,6 +725,7 @@ Mods: {
 			EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: The village is under attack! A Hellkite Drake has come to feed...
 			RemixHellkiteDragon: A Hellkite Drake has come to feed...
+			PrimeGwyn: Prime Gwyn, the First Lord, descends to meet the first dawn!
 			ThunderBird: The Grand Thunder Bird appears!
 			QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
 			Viscount: Viscount is bloodthirsty!
@@ -4393,6 +4394,9 @@ Mods: {
 				AgeBegins: The world returns to its primordial age.
 				Summon: Prime Gwyn rises to meet the first dawn!
 				TooFar: The Ember will only call its lord where Gwyn was fought.
+				Confirm: The Ember burns hotter in your hand. Use it again to let it go.
+				Return: The Ember carries you back to the first dawn.
+				NoReturnPoint: The Ember finds no dawn to return you to here.
 			}
 
 			LostScrollOfGwyn: {

@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -513,6 +514,32 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             return false;
         }
 
+        // ── Wild Drake (Primordial world) ─────────────────────────────────────────────────────────────────────────────
+        // A Drake from natural Primordial spawning is an ordinary enemy on the same NPC: no boss flag, bar, music or item
+        // loot, a quarter of the boss soul value, and no defeat record. The boss from a rematch or event is unchanged.
+        public const float WildSoulValue = 62500f;
+
+        /// <summary>Server-decided at spawn, synced in ExtraAI. Clients rebuild the boss flag and music from it.</summary>
+        public bool Wild;
+
+        public override void OnSpawn(IEntitySource source)
+        {
+            bool naturalSpawn = source is EntitySource_SpawnNPC;
+            if (naturalSpawn && tsorcRevampWorld.PrimordialAge)
+            {
+                Wild = true;
+                ApplyWildState();
+                NPC.netUpdate = true;
+            }
+        }
+
+        private void ApplyWildState()
+        {
+            NPC.boss = false;
+            NPC.value = WildSoulValue;
+            Music = -1;
+        }
+
         public override void BossLoot(ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
@@ -520,8 +547,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<HellkiteBag>()));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule,
+            // Every item drop sits behind "not a wild Drake"; a wild one gives Dark Souls only (from NPC.value).
+            LeadingConditionRule bossLoot = new LeadingConditionRule(new NotWildDrakeCondition());
+            bossLoot.OnSuccess(ItemDropRule.BossBag(ModContent.ItemType<HellkiteBag>()));
+            bossLoot.OnSuccess(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.NonExpertFirstKillRule,
                 ModContent.ItemType<GuardianSoul>()));
 
             LeadingConditionRule classicLoot = new LeadingConditionRule(new Conditions.NotExpert());
@@ -529,7 +558,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 12, 16));
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 600, 700));
-            npcLoot.Add(classicLoot);
+            bossLoot.OnSuccess(classicLoot);
+            npcLoot.Add(bossLoot);
+        }
+
+        private sealed class NotWildDrakeCondition : IItemDropRuleCondition
+        {
+            public bool CanDrop(DropAttemptInfo info)
+            {
+                return info.npc == null || !(info.npc.ModNPC is HellkiteDrake drake && drake.Wild);
+            }
+
+            public bool CanShowItemDropInUI()
+            {
+                return true;
+            }
+
+            public string GetConditionDescription()
+            {
+                return null;
+            }
         }
 
         public override bool CheckDead()
@@ -2697,6 +2745,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             writer.Write(waypoint.Y);
             writer.Write(home.X);
             writer.Write(home.Y);
+            writer.Write(Wild);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -2727,6 +2776,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
             lockedImpact = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             waypoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             home = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            Wild = reader.ReadBoolean();
+            if (Wild)
+            {
+                ApplyWildState();
+            }
         }
 
         private int WalkRow(float playbackRate)
