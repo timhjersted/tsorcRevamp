@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 
 namespace tsorcRevamp.Content.Projectiles.Summon.Whips.Dominatrix
 {
@@ -30,6 +31,11 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Whips.Dominatrix
             {
                 Projectile.velocity.Y += 0.05f;
             }
+        }
+
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            modifiers.ArmorPenetration += DominatrixItem.ThornArmorPen;
         }
     }
 }

@@ -11589,8 +11589,8 @@ Mods: {
 				// Description: Charging up for an energized strike!
 			}
 
-			StormrazorProc: {
-				// DisplayName: Stormrazor Proc
+			StormrazorEnergized: {
+				// DisplayName: Stormrazor Energized
 				// Description: Charged up!
 			}
 
@@ -11607,11 +11607,6 @@ Mods: {
 			ImperialMandateMark: {
 				// DisplayName: Imperial Mandate Mark
 				// Description: Mods.tsorcRevamp.Buffs.ImperialMandateMark.Description
-			}
-
-			StormrazorEnergized: {
-				// DisplayName: Stormrazor Energized
-				// Description: Mods.tsorcRevamp.Buffs.StormrazorEnergized.Description
 			}
 		}
 
