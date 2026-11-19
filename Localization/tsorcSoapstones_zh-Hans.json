@@ -1680,6 +1680,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1695,6 +1696,7 @@
   "tileY": 864,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1711,6 +1713,7 @@
   "tileY": 867,
   "textWidth": 220,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1741,6 +1744,7 @@
   "tileY": 863,
   "textWidth": 110,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1756,14 +1760,16 @@
   "tileX": 4902,
   "tileY": 867,
   "textWidth": 400,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "你的心沉了下去——你旁边的两座墓碑上没有碑文 --NEWLINE   --NEWLINE 这些一定是在埋葬你的时候挖的…",
   "tileX": 4911,
   "tileY": 867,
   "textWidth": 370,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "你醒来时咳着黑色的血块，有人认为你已经死去，遂将你埋在这里 --NEWLINE   --NEWLINE 你的心跳开始加速，手在黑暗中挣扎，寻找任何能帮你出去的东西 --NEWLINE   --NEWLINE 你感觉到背后有东西，发现了背包中你父亲遗留的破碎镐子…",
@@ -1771,6 +1777,7 @@
   "tileY": 873,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2650,6 +2657,24 @@
   "text": "",
   "tileX": 4244,
   "tileY": 709,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4915,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 867,
   "textWidth": 320,
   "style": 1,
   "retired": true,

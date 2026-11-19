@@ -615,6 +615,26 @@ Mods: {
 				Line04: '''You will know the Rage is about to enrage when its body glows brightly with fire.'''
 				Line05: '''When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!'''
 			}
+			BuriedAlive: {
+				Line01: '''Something sharp... a broken shard of Father's pickaxe.'''
+			}
+			UnmarkedGraves: {
+				Line01: '''Two more graves... unmarked. They must have been dug when mine was.'''
+				Line01Remix: '''One more grave... unmarked. It must have been dug when mine was.'''
+				Line02: '''It's coming back to me...'''
+				Line03: '''The village, raided and set ablaze...'''
+				Line04: '''An army wearing the sigil of Attraidies, the Mindflayer King.'''
+				Line05: '''I have to get to the house. Someone may have survived.'''
+			}
+			WhatRemains: {
+				Line01: '''My writings... my paintings... all of it destroyed.'''
+				Line02: '''Asha... you're gone.'''
+				Line03: '''What meaning can be found in this life?'''
+				Line04: '''This short life seeking simple pleasures, a little comfort, love, food and security?'''
+				Line05: '''This attachment to success and approval?'''
+				Line06: '''None of it matters now. All of this I leave behind, left to burn to ashes.'''
+				Line07: '''None of my family is here... but perhaps they made it to the village.'''
+			}
 		}
 
 		Events: {

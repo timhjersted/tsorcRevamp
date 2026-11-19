@@ -1531,7 +1531,8 @@
   "tileX": 4776,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- Эти ворота охраняют Забытый путь в Моргул-Мелег - --NEWLINE  --NEWLINE Вы достаете свой блокнот и пишете заметку: --NEWLINE  --NEWLINE \u0022Врата ящеров рядом с расплавленным ядром Земли, охраняющие нечто, что я не знаю, как описать... какое-то судно или транспортер.. \u0022 --NEWLINE  --NEWLINE Вы пытаетесь сделать его приблизительный набросок и рисуете башню над ним, ведущую в Забытый город, в качестве ориентира...",
@@ -1553,7 +1554,8 @@
   "tileX": 4808,
   "tileY": 864,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Вы обнаружили Забытый город",
@@ -1568,7 +1570,8 @@
   "tileX": 4837,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Этот мост сделан из раскаленного адского камня.  --NEWLINE  --NEWLINE \u0022Я и забыл, как здесь жарко…\u0022",
@@ -1597,7 +1600,8 @@
   "tileX": 4880,
   "tileY": 863,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "После победы над Скелетроном и отдыхом в ближайшем доме друидов вы возвращаетесь сюда и вглядываетесь в темноту внизу.  --NEWLINE  --NEWLINE Вы думаете, что это, должно быть, путь вперед, но за выступом ничего не видно. Сделав глубокий вдох, вы совершаете прыжок в неизвестность.",
@@ -1612,21 +1616,24 @@
   "tileX": 4905,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "У вас сжимается сердце -- две могилы рядом с твоей безымянны, но, должно быть, они были вырыты во времена твоей смерти. ",
   "tileX": 4915,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Вы просыпаетесь, кашляя черной засохшей кровью.  --NEWLINE  --NEWLINE Приходя в себя, ваше сердце начинает бешено колотиться, когда вы понимаете, что были похоронены заживо.  --NEWLINE  --NEWLINE Ты пытаешься найти в темноте что-нибудь, что могло бы помочь тебе выбраться, и чувствуешь, как что-то острое вонзается тебе в бок - обломок кирки твоего отца...",
   "tileX": 4919,
   "tileY": 873,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "К ЗАПАДУ \u003C--- --NEWLINE Деревня Пепельных Пиков --NEWLINE  --NEWLINE К ВОСТОКУ---\u003E --NEWLINE Три деревни Племени Орид --NEWLINE Руины Джунглей --NEWLINE Обсидиановый Вулкан --NEWLINE Неизвестно",
@@ -2497,6 +2504,69 @@
   "text": "",
   "tileX": 4080,
   "tileY": 713,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4925,
+  "tileY": 860,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4917,
+  "tileY": 854,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4909,
+  "tileY": 854,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 850,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4842,
+  "tileY": 855,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4976,
+  "tileY": 846,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4671,
+  "tileY": 852,
   "textWidth": 320,
   "style": 1,
   "retired": true,

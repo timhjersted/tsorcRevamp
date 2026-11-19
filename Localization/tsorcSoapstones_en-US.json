@@ -1712,6 +1712,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1727,6 +1728,7 @@
   "tileY": 864,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1744,6 +1746,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1774,6 +1777,7 @@
   "tileY": 863,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1790,6 +1794,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1798,6 +1803,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1806,6 +1812,7 @@
   "tileY": 873,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story",
   "locationName": "THE BURNED VILLAGE"
 }
@@ -2680,4 +2687,22 @@
   "category": "location",
   "locationName": "SHADEWOOD GARDEN",
   "expandedOnly": true
+}
+{
+  "text": "",
+  "tileX": 4911,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4902,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
 }

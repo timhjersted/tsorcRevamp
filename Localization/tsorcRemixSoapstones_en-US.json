@@ -1824,6 +1824,7 @@
   "tileY": 852,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1856,6 +1857,7 @@
   "tileY": 846,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1873,6 +1875,7 @@
   "tileY": 855,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1913,6 +1916,7 @@
   "tileY": 850,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1929,6 +1933,7 @@
   "tileY": 854,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1937,6 +1942,7 @@
   "tileY": 854,
   "textWidth": 320, 
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1953,6 +1959,7 @@
   "tileY": 860,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story,location",
   "locationName": "THE BURNED VILLAGE"
 }
@@ -3012,4 +3019,66 @@
   "category": "location",
   "locationName": "ORIGIN OF THE ABYSS"
 }
-
+{
+  "text": "",
+  "tileX": 4919,
+  "tileY": 873,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4915,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4880,
+  "tileY": 863,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4837,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4808,
+  "tileY": 864,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4776,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}

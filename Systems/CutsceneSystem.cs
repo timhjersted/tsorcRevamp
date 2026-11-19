@@ -951,6 +951,22 @@ namespace tsorcRevamp.Systems
             }
 
             Player localPlayer = Main.LocalPlayer;
+
+            // A new world opens on black: the HUD and world stay hidden on the frames before the first scene has started.
+            if (NPCs.Special.StoryCutscenes.BuriedSceneDue(localPlayer))
+            {
+                foreach (GameInterfaceLayer layer in layers)
+                {
+                    if (!layer.Name.Contains("Interface Logic"))
+                    {
+                        layer.Active = false;
+                    }
+                }
+
+                layers.Add(new LegacyGameInterfaceLayer("tsorcRevamp: Opening Black", NPCs.Special.StoryPropActor.DrawMemoryLayer, InterfaceScaleType.UI));
+                return;
+            }
+
             if (!IsParticipant(localPlayer))
             {
                 return;

@@ -2,17 +2,20 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.UI;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.NPCs.Bosses.Birds;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Special
 {
@@ -31,6 +34,9 @@ namespace tsorcRevamp.NPCs.Special
         ShadowRumors,
         DesertPaths,
         RageWarning,
+        BuriedAlive,
+        UnmarkedGraves,
+        WhatRemains,
     }
 
     public enum StoryCue : byte
@@ -68,6 +74,23 @@ namespace tsorcRevamp.NPCs.Special
         IdolResting,
         IdolStrike,
         IdolBack,
+        GraveDark,
+        GraveReveal,
+        GraveCough,
+        GraveSoil,
+        PickaxeGlint,
+        PickaxeRise,
+        PickaxeStow,
+        SealSoil,
+        SelectPickaxe,
+        VillageMemory,
+        VillageMemoryMark,
+        VillageMemoryEnd,
+        HouseSmoke,
+        TitleCard,
+        HouseEmbers,
+        PaintingRise,
+        PaintingAsh,
     }
 
     /// <summary>
@@ -170,6 +193,8 @@ namespace tsorcRevamp.NPCs.Special
         private const float FireReadTile = 4249.2f;
         private const float FireBookTile = 4251f;
         private const float FireBookRowY = 1827.4f;
+        private const int GraveDarkTicks = 180;
+        private const float GraveZoom = 1.7f;
 
         private const int SceneTicks = 60 * 60 * 15;
         private const int LineAutoTicks = 12 * 60;
@@ -196,8 +221,13 @@ namespace tsorcRevamp.NPCs.Special
         private static int actorIndex = -1;
         private static int propIndex = -1;
         private static bool skipped;
+        private static bool openingMusicHeld;
+        private static bool burnedVillageBannerPending;
 
         public static bool IsRunning => activeScene != StoryScene.None;
+
+        /// <summary>True on every machine during the grave scene. The scene id is already synced.</summary>
+        public static bool IsBuriedSceneRunning => CutsceneSystem.IsActive && CutsceneSystem.SceneId == SceneId(StoryScene.BuriedAlive);
 
         private static string SceneId(StoryScene scene)
         {
@@ -303,6 +333,133 @@ namespace tsorcRevamp.NPCs.Special
         {
             switch (scene)
             {
+                case StoryScene.BuriedAlive:
+                {
+                    OpeningMarks marks = Opening;
+                    return new List<Beat>
+                    {
+                        // Nothing but black at first. The chamber only appears once the screen has been dark long enough to feel it.
+                        Prop(StoryCue.GraveDark),
+                        Turn(1),
+                        Zoom(GraveZoom, 0),
+                        Wait(GraveDarkTicks),
+                        Prop(StoryCue.GraveReveal),
+                        Wait(StoryPropActor.GraveRevealTicks + 30),
+                        Prop(StoryCue.GraveCough),
+                        Wait(StoryPropActor.GraveCoughTicks),
+
+                        // The panic: left, right, left, right, each pair quicker, then a search of both walls.
+                        Prop(StoryCue.GraveSoil),
+                        Turn(-1),
+                        Wait(30),
+                        Turn(1),
+                        Wait(30),
+                        Turn(-1),
+                        Wait(14),
+                        Turn(1),
+                        Wait(20),
+                        WalkTo(marks.ChamberLeftStop, -1),
+                        Wait(15),
+                        WalkTo(marks.ChamberRightStop, 1),
+                        Wait(35),
+
+                        Prop(StoryCue.PickaxeGlint),
+                        Wait(45),
+                        Say(Speaker.Red, "Line01"),
+                        Prop(StoryCue.PickaxeRise),
+                        Wait(StoryPropActor.StagedItemRiseTicks + 110),
+                        Prop(StoryCue.PickaxeStow),
+                        Wait(StoryPropActor.StagedItemFadeTicks),
+
+                        // Red cannot look up, so the camera does it for him and finds the way out.
+                        Prop(StoryCue.SealSoil),
+                        CameraAt(marks.ChamberCenter, marks.SealRow, 80),
+                        Wait(150),
+                        Camera(Shot.Red, 70),
+                        Wait(70),
+
+                        new Beat { Kind = BeatKind.SkipLanding },
+                        Camera(Shot.Red, BarCloseTicks).If(WasSkipped),
+                        Prop(StoryCue.SelectPickaxe),
+                        Wait(15),
+                    };
+                }
+
+                case StoryScene.UnmarkedGraves:
+                {
+                    OpeningMarks marks = Opening;
+                    return new List<Beat>
+                    {
+                        Wait(20),
+                        WalkTo(marks.GraveStop, 1).If(RedRightOfPit),
+                        Turn(1).If(RedLeftOfPit),
+                        Zoom(TalkZoom),
+                        Wait(30),
+                        CameraAt(marks.GraveView.X, marks.GraveView.Y, 70),
+                        Wait(190),
+                        Say(Speaker.Red, "Line01").WithRemixText(),
+                        Camera(Shot.Red, 50),
+                        Wait(50),
+                        Say(Speaker.Red, "Line02"),
+
+                        // The village as he last saw it, then the army that burned it.
+                        Prop(StoryCue.VillageMemory),
+                        Wait(60),
+                        Say(Speaker.RedVoice, "Line03"),
+                        Prop(StoryCue.VillageMemoryMark),
+                        Wait(120),
+                        Say(Speaker.RedVoice, "Line04"),
+                        Wait(40),
+                        Prop(StoryCue.VillageMemoryEnd),
+                        Turn(marks.HouseDirection),
+                        Wait(StoryPropActor.VillageMemoryFadeTicks),
+                        Say(Speaker.Red, "Line05"),
+
+                        new Beat { Kind = BeatKind.SkipLanding },
+                        Turn(marks.HouseDirection).If(WasSkipped),
+                        Prop(StoryCue.HouseSmoke),
+                        Zoom(1f, 100),
+                        CameraAt(marks.TitleView.X, marks.TitleView.Y, 140),
+                        Wait(140),
+                        Prop(StoryCue.TitleCard),
+                        Wait(StoryPropActor.TitleCardTicks),
+                        Camera(Shot.Red, 60),
+                        Wait(60),
+                    };
+                }
+
+                case StoryScene.WhatRemains:
+                {
+                    OpeningMarks marks = Opening;
+                    return new List<Beat>
+                    {
+                        Prop(StoryCue.HouseEmbers),
+                        Wait(15),
+                        WalkTo(marks.HouseStand, -1),
+                        Zoom(TalkZoom),
+                        Wait(30),
+                        Say(Speaker.Red, "Line01"),
+                        Prop(StoryCue.PaintingRise),
+                        Zoom(ResolveZoom, 100),
+                        Wait(StoryPropActor.StagedItemRiseTicks + 30),
+                        Say(Speaker.Red, "Line02"),
+                        Say(Speaker.Red, "Line03"),
+                        Say(Speaker.Red, "Line04"),
+                        Say(Speaker.Red, "Line05"),
+                        Say(Speaker.Red, "Line06"),
+                        Prop(StoryCue.PaintingAsh),
+                        Wait(60),
+
+                        new Beat { Kind = BeatKind.SkipLanding },
+                        Prop(StoryCue.PaintingAsh).If(WasSkipped),
+                        Turn(-1).If(WasSkipped),
+                        Wait(BarCloseTicks).If(WasSkipped),
+                        Say(Speaker.Red, "Line07"),
+                        Zoom(1f),
+                        Wait(ZoomTicks),
+                    };
+                }
+
                 case StoryScene.ThroughGate:
                     return new List<Beat>
                     {
@@ -863,6 +1020,299 @@ namespace tsorcRevamp.NPCs.Special
             }
         }
 
+        // Everything the opening needs from each map. Rows and tiles are legacy coordinates.
+        private sealed class OpeningMarks
+        {
+            public int GapLeft;
+            public int GapRight;
+            public int SealRow;
+            public int SurfaceRow;
+            public int ChamberLeft;
+            public int ChamberRight;
+            public int ChamberFloorRow;
+            public int SealTileType;
+            public float ChamberCenter;
+            public float ChamberLeftStop;
+            public float ChamberRightStop;
+            public float GraveStop;
+            public Vector2 GraveView;
+            public Vector2 SmokePoint;
+            public Vector2 TitleView;
+            public int HouseDirection;
+            public float HouseZoneLeft;
+            public float HouseZoneRight;
+            public int HouseFloorRow;
+            public float HouseStand;
+            public float PaintingX;
+            public Point OldSign;
+        }
+
+        private static readonly OpeningMarks AdventureOpening = new OpeningMarks
+        {
+            GapLeft = 4918,
+            GapRight = 4920,
+            SealRow = 870,
+            SurfaceRow = 869,
+            ChamberLeft = 4917,
+            ChamberRight = 4921,
+            ChamberFloorRow = 875,
+            SealTileType = TileID.Dirt,
+            ChamberCenter = 4919.5f,
+            ChamberLeftStop = 4917.8f,
+            ChamberRightStop = 4920.9f,
+            GraveStop = 4922.6f,
+            GraveView = new Vector2(4927.5f, 866f),
+            SmokePoint = new Vector2(4812f, 866f),
+            TitleView = new Vector2(4850f, 858f),
+            HouseDirection = -1,
+            HouseZoneLeft = 4815f,
+            HouseZoneRight = 4818f,
+            HouseFloorRow = 869,
+            HouseStand = 4816.6f,
+            PaintingX = 4815.5f,
+            OldSign = new Point(4919, 873),
+        };
+
+        private static readonly OpeningMarks RemixOpening = new OpeningMarks
+        {
+            GapLeft = 4921,
+            GapRight = 4924,
+            SealRow = 857,
+            SurfaceRow = 856,
+            ChamberLeft = 4921,
+            ChamberRight = 4926,
+            ChamberFloorRow = 862,
+            SealTileType = TileID.Stone,
+            ChamberCenter = 4923f,
+            ChamberLeftStop = 4921.7f,
+            ChamberRightStop = 4924.5f,
+            GraveStop = 4925.8f,
+            GraveView = new Vector2(4928f, 853f),
+            SmokePoint = new Vector2(4978f, 846f),
+            TitleView = new Vector2(4958f, 845f),
+            HouseDirection = 1,
+            HouseZoneLeft = 4976f,
+            HouseZoneRight = 4980f,
+            HouseFloorRow = 851,
+            HouseStand = 4978.9f,
+            PaintingX = 4977.6f,
+            OldSign = new Point(4925, 860),
+        };
+
+        private static OpeningMarks Opening
+        {
+            get
+            {
+                if (tsorcRevampWorld.RemixMap)
+                {
+                    return RemixOpening;
+                }
+
+                return AdventureOpening;
+            }
+        }
+
+        private static bool OnOpeningMap => tsorcRevampWorld.OnlyAdventureMap || tsorcRevampWorld.RemixMap;
+
+        private static bool AnyBossSlain => tsorcRevampWorld.NewSlain != null && tsorcRevampWorld.NewSlain.Count > 0;
+
+        private static bool RedRightOfPit()
+        {
+            return Main.player[leadPlayer].Center.X / 16f > (Opening.GapLeft + Opening.GapRight + 1) * 0.5f;
+        }
+
+        private static bool RedLeftOfPit()
+        {
+            return !RedRightOfPit();
+        }
+
+        private static bool SealIntact(OpeningMarks marks)
+        {
+            for (int x = marks.GapLeft; x <= marks.GapRight; x++)
+            {
+                Point sealTile = ExpandedWorldTransform.MapTile(x, marks.SealRow);
+                if (!Main.tile[sealTile.X, sealTile.Y].HasTile)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // The chamber scene needs an unbroken seal: a dug-out grave means this world's opening has already happened.
+        private static bool CanStartBuried(Player player)
+        {
+            if (!OnOpeningMap || AnyBossSlain || IsRunning || CutsceneSystem.IsActive || CutsceneSystem.HasSeen(SceneId(StoryScene.BuriedAlive)))
+            {
+                return false;
+            }
+
+            if (!player.active || player.dead)
+            {
+                return false;
+            }
+
+            OpeningMarks marks = Opening;
+            Point bodyTile = player.Center.ToTileCoordinates();
+            Point topLeft = ExpandedWorldTransform.MapTile(marks.ChamberLeft, marks.SealRow + 1);
+            Point bottomRight = ExpandedWorldTransform.MapTile(marks.ChamberRight, marks.ChamberFloorRow);
+            bool insideChamber = bodyTile.X >= topLeft.X && bodyTile.X <= bottomRight.X && bodyTile.Y >= topLeft.Y && bodyTile.Y < bottomRight.Y;
+            return insideChamber && SealIntact(marks);
+        }
+
+        /// <summary>Single player only: the first scene is about to begin, so this frame must already be black.</summary>
+        public static bool BuriedSceneDue(Player player)
+        {
+            return Main.netMode == NetmodeID.SinglePlayer && CanStartBuried(player);
+        }
+
+        // Standing on solid ground beside the pit. Waiting for the landing keeps a held Red from dropping back into his grave.
+        private static bool StandingBesidePit(Player player, OpeningMarks marks)
+        {
+            const int SurfaceReachTiles = 12;
+            float surfaceY = ExpandedWorldTransform.MapTile(marks.GapLeft, marks.SurfaceRow).Y * 16f;
+            bool onSurface = player.velocity.Y == 0f && player.Bottom.Y <= surfaceY + 1f && player.Bottom.Y >= surfaceY - 16f;
+            int feetTileX = (int)(player.Center.X / 16f);
+            bool nearPit = feetTileX >= marks.GapLeft - SurfaceReachTiles && feetTileX <= marks.GapRight + SurfaceReachTiles;
+            bool overGap = feetTileX >= marks.GapLeft && feetTileX <= marks.GapRight;
+            return onSurface && nearPit && !overGap;
+        }
+
+        private static bool InHouseYard(Player player, OpeningMarks marks)
+        {
+            const int YardHeightTiles = 5;
+            float floorY = ExpandedWorldTransform.MapTile(marks.GapLeft, marks.HouseFloorRow).Y * 16f;
+            float tileX = player.Center.X / 16f;
+            bool insideX = tileX >= marks.HouseZoneLeft && tileX < marks.HouseZoneRight;
+            bool insideY = player.Bottom.Y <= floorY + 1f && player.Bottom.Y >= floorY - YardHeightTiles * 16f;
+            return insideX && insideY;
+        }
+
+        /// <summary>Server or single player, every tick: the three opening scenes wait in order for the player to reach each place.</summary>
+        internal static void TryStartOpeningScene()
+        {
+            if (!OnOpeningMap || AnyBossSlain || IsRunning || CutsceneSystem.IsActive)
+            {
+                return;
+            }
+
+            bool buriedSeen = CutsceneSystem.HasSeen(SceneId(StoryScene.BuriedAlive));
+            bool gravesSeen = CutsceneSystem.HasSeen(SceneId(StoryScene.UnmarkedGraves));
+            if (buriedSeen && gravesSeen && CutsceneSystem.HasSeen(SceneId(StoryScene.WhatRemains)))
+            {
+                return;
+            }
+
+            OpeningMarks marks = Opening;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (!player.active || player.dead)
+                {
+                    continue;
+                }
+
+                StoryScene dueScene = StoryScene.None;
+                if (!buriedSeen)
+                {
+                    if (CanStartBuried(player))
+                    {
+                        dueScene = StoryScene.BuriedAlive;
+                    }
+                }
+                else if (!gravesSeen)
+                {
+                    if (StandingBesidePit(player, marks))
+                    {
+                        dueScene = StoryScene.UnmarkedGraves;
+                    }
+                }
+                else if (InHouseYard(player, marks))
+                {
+                    dueScene = StoryScene.WhatRemains;
+                }
+
+                if (dueScene == StoryScene.None)
+                {
+                    continue;
+                }
+
+                // A scene that cannot get an NPC slot is given up, so it can never leave the screen waiting in black.
+                if (!Play(dueScene, i))
+                {
+                    CutsceneSystem.MarkSeen(SceneId(dueScene));
+                }
+
+                return;
+            }
+        }
+
+        /// <summary>Tile for /storyscene to place the player so a scene can be replayed at its real spot.</summary>
+        public static Vector2 OpeningTestTile(StoryScene scene)
+        {
+            OpeningMarks marks = Opening;
+            if (scene == StoryScene.BuriedAlive)
+            {
+                return new Vector2(marks.ChamberCenter - 0.6f, marks.ChamberFloorRow - 2.8f);
+            }
+
+            if (scene == StoryScene.UnmarkedGraves)
+            {
+                return new Vector2(marks.GraveStop - 0.6f, marks.SurfaceRow - 2.8f);
+            }
+
+            return new Vector2(marks.HouseStand - 0.6f, marks.HouseFloorRow - 2.8f);
+        }
+
+        /// <summary>True on this client while the map music should stay silent, from the grave until the title card.</summary>
+        public static bool OpeningMusicSilent => openingMusicHeld || BuriedSceneDue(Main.LocalPlayer);
+
+        /// <summary>Client side, every tick. The music hold begins with the grave and ends if the player leaves the area
+        /// another way. The location banner waits for the scene to end, because the HUD is hidden until then.</summary>
+        internal static void UpdateOpeningMusicHold()
+        {
+            const float ReleaseDistanceTiles = 150f;
+            const string BurnedVillageName = "THE BURNED VILLAGE";
+            Player player = Main.LocalPlayer;
+            if (IsBuriedSceneRunning && CutsceneSystem.IsParticipant(player))
+            {
+                openingMusicHeld = true;
+                burnedVillageBannerPending = true;
+            }
+            else if (burnedVillageBannerPending && !IsBuriedSceneRunning)
+            {
+                // Control has just returned, whether the scene played out or was skipped. Same reveal the old sign gave.
+                burnedVillageBannerPending = false;
+                Point signTile = ExpandedWorldTransform.MapTile(Opening.OldSign.X, Opening.OldSign.Y);
+                tsorcRevampWorld.DiscoveredLocations[new Vector2(signTile.X, signTile.Y)] = BurnedVillageName;
+
+                if (!ModContent.GetInstance<tsorcRevampConfig>().DisableLocationBanner)
+                {
+                    tsorcRevamp.ShowAnnouncementBanner(BurnedVillageName, Color.White);
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
+                }
+            }
+
+            if (!openingMusicHeld)
+            {
+                return;
+            }
+
+            Point chamberTile = ExpandedWorldTransform.MapTile((int)Opening.ChamberCenter, Opening.SealRow);
+            float distanceTiles = Vector2.Distance(player.Center, chamberTile.ToWorldCoordinates()) / 16f;
+            if (distanceTiles > ReleaseDistanceTiles)
+            {
+                openingMusicHeld = false;
+            }
+        }
+
+        /// <summary>Each client, as the title appears: the map music returns.</summary>
+        public static void OnTitleCardShown()
+        {
+            openingMusicHeld = false;
+        }
+
         // A sign the player has already read means they have lived this scene, so it must not replay on an old save.
         private static readonly Dictionary<Point, StoryScene> VillageSigns = new Dictionary<Point, StoryScene>
         {
@@ -889,6 +1339,18 @@ namespace tsorcRevamp.NPCs.Special
             { new Point(4092, 709), StoryScene.Idol },
             { new Point(4089, 713), StoryScene.Idol },
             { new Point(4080, 713), StoryScene.Idol },
+            { new Point(4919, 873), StoryScene.BuriedAlive },
+            { new Point(4925, 860), StoryScene.BuriedAlive },
+            { new Point(4915, 867), StoryScene.UnmarkedGraves },
+            { new Point(4905, 867), StoryScene.UnmarkedGraves },
+            { new Point(4911, 867), StoryScene.UnmarkedGraves },
+            { new Point(4902, 867), StoryScene.UnmarkedGraves },
+            { new Point(4917, 854), StoryScene.UnmarkedGraves },
+            { new Point(4909, 854), StoryScene.UnmarkedGraves },
+            { new Point(4808, 864), StoryScene.WhatRemains },
+            { new Point(4776, 867), StoryScene.WhatRemains },
+            { new Point(4976, 846), StoryScene.WhatRemains },
+            { new Point(4671, 852), StoryScene.WhatRemains },
         };
 
         public static void NoteRetiredSignRead(int legacyTileX, int legacyTileY)
@@ -1072,6 +1534,25 @@ namespace tsorcRevamp.NPCs.Special
                     if (IsSoulSkull(tile) && tile.TileFrameX >= 36 && tile.TileFrameX < 72)
                     {
                         tile.TileFrameX -= 36;
+                    }
+                }
+            }
+
+            // The grave scene needs its seal, so a dug-out grave is closed again and the opening can be replayed from the start.
+            openingMusicHeld = false;
+            if (OnOpeningMap)
+            {
+                OpeningMarks marks = Opening;
+                for (int x = marks.GapLeft; x <= marks.GapRight; x++)
+                {
+                    Point sealTile = ExpandedWorldTransform.MapTile(x, marks.SealRow);
+                    if (!Main.tile[sealTile.X, sealTile.Y].HasTile)
+                    {
+                        WorldGen.PlaceTile(sealTile.X, sealTile.Y, marks.SealTileType, true, true);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendTileSquare(-1, sealTile.X, sealTile.Y, 1);
+                        }
                     }
                 }
             }
@@ -1340,6 +1821,19 @@ namespace tsorcRevamp.NPCs.Special
                     spawnedProp = SpawnProp(new Vector2(WellShaftTile, WellSpeckRowY), lead);
                     break;
 
+                case StoryScene.BuriedAlive:
+                    // At the chamber ceiling, directly under the seal, where the loose earth falls from.
+                    spawnedProp = SpawnProp(new Vector2(Opening.ChamberCenter, Opening.SealRow + 1f), lead);
+                    break;
+
+                case StoryScene.UnmarkedGraves:
+                    spawnedProp = SpawnProp(Opening.SmokePoint, lead);
+                    break;
+
+                case StoryScene.WhatRemains:
+                    spawnedProp = SpawnProp(new Vector2(Opening.PaintingX, Opening.HouseFloorRow - 0.4f), lead);
+                    break;
+
                 case StoryScene.Idol:
                     spawnedActor = PlaceVillager(NPCID.Guide, "Cutscenes.Speakers.Aaron", Marks.AaronStart, -Marks.EntryDirection);
                     spawnedProp = SpawnProp(new Vector2(Marks.Skull.X + 1f, Marks.Skull.Y + 1f), lead);
@@ -1385,8 +1879,9 @@ namespace tsorcRevamp.NPCs.Special
                 }
             }
 
-            bool needsActor = scene != StoryScene.ThroughGate && scene != StoryScene.Well;
-            bool needsProp = scene == StoryScene.Homecoming || scene == StoryScene.Well || scene == StoryScene.Idol || scene == StoryScene.ElijahRescue || scene == StoryScene.FireTemple;
+            bool openingScene = scene == StoryScene.BuriedAlive || scene == StoryScene.UnmarkedGraves || scene == StoryScene.WhatRemains;
+            bool needsActor = scene != StoryScene.ThroughGate && scene != StoryScene.Well && !openingScene;
+            bool needsProp = openingScene || scene == StoryScene.Homecoming || scene == StoryScene.Well || scene == StoryScene.Idol || scene == StoryScene.ElijahRescue || scene == StoryScene.FireTemple;
             bool actorMissing = needsActor && (spawnedActor < 0 || spawnedActor >= Main.maxNPCs);
             bool propMissing = needsProp && (spawnedProp < 0 || spawnedProp >= Main.maxNPCs);
             if (actorMissing || propMissing)
@@ -1773,6 +2268,8 @@ namespace tsorcRevamp.NPCs.Special
             leadPlayer = -1;
             actorIndex = -1;
             propIndex = -1;
+            openingMusicHeld = false;
+            burnedVillageBannerPending = false;
         }
     }
 
@@ -1782,7 +2279,16 @@ namespace tsorcRevamp.NPCs.Special
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                StoryCutscenes.TryStartOpeningScene();
                 StoryCutscenes.Tick();
+            }
+        }
+
+        public override void PostUpdateEverything()
+        {
+            if (!Main.dedServ)
+            {
+                StoryCutscenes.UpdateOpeningMusicHold();
             }
         }
 
@@ -1794,6 +2300,18 @@ namespace tsorcRevamp.NPCs.Special
         public override void OnWorldUnload()
         {
             StoryCutscenes.Reset();
+        }
+    }
+
+    /// <summary>Keeps the map music silent from the grave until the title card. Music slot 0 is vanilla's silence.</summary>
+    public class OpeningSilenceScene : ModSceneEffect
+    {
+        public override int Music => 0;
+        public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
+
+        public override bool IsSceneEffectActive(Player player)
+        {
+            return StoryCutscenes.OpeningMusicSilent;
         }
     }
 
@@ -2400,6 +2918,22 @@ namespace tsorcRevamp.NPCs.Special
         public const int MemoryStrikeTicks = 70;
         public const int TimePassesTicks = 170;
         public const int IdolStrikeTicks = 100;
+        public const int GraveRevealTicks = 90;
+        public const int GraveCoughTicks = 140;
+        public const int StagedItemRiseTicks = 40;
+        public const int StagedItemFadeTicks = 20;
+        public const int VillageMemoryFadeTicks = 40;
+        public const int TitleCardTicks = 300;
+
+        private const int CoughCount = 2;
+        private const int CoughIntervalTicks = 80;
+        private const float RaisedArmAngle = -1.25f;
+        private const int KnightCrossTicks = 180;
+        private const int KnightCount = 5;
+        private const float KnightSpacing = 150f;
+        private const int VillageFadeInTicks = 30;
+        private const int TitleFadeTicks = 60;
+        private const int HouseCount = 5;
 
         private const int IdolImpactTick = 34;
         private const int TimeFadeTicks = 50;
@@ -2462,6 +2996,59 @@ namespace tsorcRevamp.NPCs.Special
             return Vector2.Lerp(hoverPoint, Lead.Center, Ease(cueTimer / (float)StoneTravelTicks));
         }
 
+        // Composite arms measure from straight down, so a quarter turn converts the raised angle, mirrored when facing left.
+        private float RaisedArmRotation
+        {
+            get
+            {
+                float worldAngle = RaisedArmAngle;
+                if (Lead.direction == -1)
+                {
+                    worldAngle = MathHelper.Pi - RaisedArmAngle;
+                }
+
+                return worldAngle - MathHelper.PiOver2;
+            }
+        }
+
+        // Just above Red's raised hand, so the held item reads clearly over his head.
+        private Vector2 HeldItemPoint => Lead.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, RaisedArmRotation) - new Vector2(0f, 12f);
+
+        private Vector2 PickaxeRestPoint
+        {
+            get
+            {
+                if (NPC.localAI[0] == 0f)
+                {
+                    return Lead.Bottom - new Vector2(0f, 7f);
+                }
+
+                return new Vector2(NPC.localAI[0], NPC.localAI[1]);
+            }
+        }
+
+        private void RaiseLeadArm()
+        {
+            Lead.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, RaisedArmRotation);
+        }
+
+        private void DrawStagedItem(SpriteBatch spriteBatch, Vector2 screenPos, int itemType, Vector2 restPoint, float lift, float alpha, Color tint, float whiteMix)
+        {
+            Main.instance.LoadItem(itemType);
+            Texture2D itemTexture = TextureAssets.Item[itemType].Value;
+            Vector2 worldPoint = Vector2.Lerp(restPoint, HeldItemPoint, lift);
+            Color lightColor = Lighting.GetColor(worldPoint.ToTileCoordinates()).MultiplyRGB(tint);
+            Color drawColor = Color.Lerp(lightColor, Color.White, whiteMix) * alpha;
+
+            SpriteEffects flip = SpriteEffects.None;
+            if (Lead.direction == -1)
+            {
+                flip = SpriteEffects.FlipHorizontally;
+            }
+
+            spriteBatch.Draw(itemTexture, worldPoint - screenPos, null, drawColor, 0f, itemTexture.Size() * 0.5f, 1f, flip, 0f);
+        }
+
         protected override void PerformCue(StoryCue cue, int cueTimer)
         {
             if (Main.dedServ)
@@ -2469,8 +3056,171 @@ namespace tsorcRevamp.NPCs.Special
                 return;
             }
 
+            // A faint light on Red through the whole grave scene, the only reason the chamber can be seen at all.
+            bool graveCue = cue >= StoryCue.GraveDark && cue <= StoryCue.SelectPickaxe;
+            if (graveCue)
+            {
+                Lighting.AddLight(Lead.Center, 0.42f, 0.36f, 0.32f);
+            }
+
+            bool smokeCue = cue == StoryCue.HouseSmoke || cue == StoryCue.TitleCard;
+            if (smokeCue)
+            {
+                // The prop stands at the burned house, so this column marks where Red has to go.
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 smokePoint = NPC.Center + new Vector2(Main.rand.NextFloat(-22f, 22f), Main.rand.NextFloat(-180f, 10f));
+                    Dust smoke = Dust.NewDustPerfect(smokePoint, DustID.Smoke, new Vector2(Main.rand.NextFloat(-0.3f, 0.5f), Main.rand.NextFloat(-1.8f, -0.8f)), 165, new Color(44, 38, 38), Main.rand.NextFloat(0.6f, 0.9f));
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.4f, 1.8f);
+                }
+            }
+
+            bool houseCue = cue >= StoryCue.HouseEmbers && cue <= StoryCue.PaintingAsh;
+            if (houseCue)
+            {
+                Lighting.AddLight(NPC.Center, 0.4f, 0.16f, 0.06f);
+                if (cueTimer % 3 == 0)
+                {
+                    Vector2 emberPoint = NPC.Center + new Vector2(Main.rand.NextFloat(-90f, 90f), Main.rand.NextFloat(-4f, 6f));
+                    Dust ember = Dust.NewDustPerfect(emberPoint, DustID.Torch, new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-2.2f, -0.9f)), 80, default, Main.rand.NextFloat(0.45f, 0.8f));
+                    ember.noGravity = true;
+                }
+
+                if (cueTimer % 7 == 0)
+                {
+                    Vector2 fleckPoint = NPC.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), Main.rand.NextFloat(-90f, 0f));
+                    Dust fleck = Dust.NewDustPerfect(fleckPoint, DustID.Smoke, new Vector2(Main.rand.NextFloat(0.2f, 0.8f), -0.2f), 175, new Color(30, 27, 27), Main.rand.NextFloat(0.5f, 0.75f));
+                    fleck.noGravity = true;
+                    fleck.noLight = true;
+                }
+            }
+
             switch (cue)
             {
+                case StoryCue.GraveCough:
+                    // Two visible coughs. Only the first is heard, using one fixed hurt sound until a real cough is recorded.
+                    for (int coughIndex = 0; coughIndex < CoughCount; coughIndex++)
+                    {
+                        if (cueTimer != coughIndex * CoughIntervalTicks)
+                        {
+                            continue;
+                        }
+
+                        if (coughIndex == 0)
+                        {
+                            SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Player_Hit_0") with { Volume = 0.8f, Pitch = -0.15f }, Lead.Center);
+                        }
+
+                        Vector2 mouthPoint = Lead.Center + new Vector2(Lead.direction * 6f, -10f);
+                        for (int i = 0; i < 16; i++)
+                        {
+                            Vector2 bloodVelocity = new Vector2(Lead.direction * Main.rand.NextFloat(1.2f, 3.6f), Main.rand.NextFloat(-2.2f, 0.2f));
+                            Dust.NewDustPerfect(mouthPoint, DustID.Blood, bloodVelocity, 40, new Color(95, 28, 30), Main.rand.NextFloat(0.7f, 1.1f));
+                        }
+                    }
+                    break;
+
+                case StoryCue.GraveSoil:
+                case StoryCue.SealSoil:
+                {
+                    // Loose earth falls from the seal. It comes down harder while the camera is studying it.
+                    int soilInterval = 5;
+                    if (cue == StoryCue.SealSoil)
+                    {
+                        soilInterval = 2;
+                        Lighting.AddLight(NPC.Center, 0.3f, 0.26f, 0.22f);
+                    }
+
+                    if (cueTimer % soilInterval == 0)
+                    {
+                        Vector2 soilPoint = NPC.Center + new Vector2(Main.rand.NextFloat(-30f, 30f), 2f);
+                        Dust.NewDustPerfect(soilPoint, DustID.Dirt, new Vector2(Main.rand.NextFloat(-0.2f, 0.2f), Main.rand.NextFloat(0.4f, 1.4f)), 40, default, Main.rand.NextFloat(0.7f, 1f));
+                    }
+                    break;
+                }
+
+                case StoryCue.PickaxeGlint:
+                    if (NPC.localAI[0] == 0f)
+                    {
+                        // Each machine marks the spot beside Red's feet; clients can be a moment apart, which nobody can see.
+                        NPC.localAI[0] = Lead.Bottom.X + Lead.direction * 12f;
+                        NPC.localAI[1] = Lead.Bottom.Y - 7f;
+                    }
+
+                    Lighting.AddLight(PickaxeRestPoint, 0.35f, 0.24f, 0.12f);
+                    if (cueTimer % 7 == 0)
+                    {
+                        Dust.NewDustPerfect(PickaxeRestPoint + Main.rand.NextVector2Circular(9f, 6f), DustID.GoldFlame, new Vector2(0f, -0.3f), 80, default, Main.rand.NextFloat(0.5f, 0.75f)).noGravity = true;
+                    }
+                    break;
+
+                case StoryCue.PickaxeRise:
+                case StoryCue.PaintingRise:
+                    RaiseLeadArm();
+                    break;
+
+                case StoryCue.PickaxeStow:
+                    if (cueTimer < StagedItemFadeTicks)
+                    {
+                        RaiseLeadArm();
+                    }
+                    break;
+
+                case StoryCue.SelectPickaxe:
+                    if (cueTimer == 0 && Lead.whoAmI == Main.myPlayer)
+                    {
+                        // The owner chooses, so the digging tool is already in hand on the first free frame.
+                        bool ownsPickaxe = false;
+                        for (int i = Lead.inventory.Length - 1; i >= 0; i--)
+                        {
+                            if (Lead.inventory[i].pick > 0)
+                            {
+                                ownsPickaxe = true;
+                                if (i < 10)
+                                {
+                                    Lead.selectedItem = i;
+                                }
+                            }
+                        }
+
+                        // The grave has no other way out, so a character without a pickaxe is given the shard it was shown.
+                        if (!ownsPickaxe)
+                        {
+                            Lead.QuickSpawnItem(new EntitySource_Misc("Story Cutscene"), ItemID.CopperPickaxe);
+                        }
+                    }
+                    break;
+
+                case StoryCue.VillageMemoryMark:
+                    if (cueTimer == KnightCrossTicks)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/ominous-creature2") with { Volume = 0.6f });
+                    }
+                    break;
+
+                case StoryCue.TitleCard:
+                    if (cueTimer == 0)
+                    {
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
+                        StoryCutscenes.OnTitleCardShown();
+                    }
+                    break;
+
+                case StoryCue.PaintingAsh:
+                    if (cueTimer == 0)
+                    {
+                        for (int i = 0; i < 34; i++)
+                        {
+                            Vector2 ashVelocity = new Vector2(Main.rand.NextFloat(0.2f, 1.8f) * -Lead.direction, Main.rand.NextFloat(-1.3f, 0.4f));
+                            Dust ash = Dust.NewDustPerfect(HeldItemPoint + Main.rand.NextVector2Circular(9f, 9f), DustID.Smoke, ashVelocity, 150, new Color(58, 52, 50), Main.rand.NextFloat(0.55f, 0.95f));
+                            ash.noGravity = true;
+                            ash.noLight = true;
+                        }
+                    }
+                    break;
+
                 case StoryCue.LoftGlint:
                     Lighting.AddLight(NPC.Center, 0.9f, 0.75f, 0.4f);
                     if (cueTimer % 4 == 0)
@@ -2691,6 +3441,48 @@ namespace tsorcRevamp.NPCs.Special
             Vector2 glowOrigin = glowTexture.Size() * 0.5f;
             float spin = Main.GlobalTimeWrappedHourly * 1.6f;
 
+            if (cue == StoryCue.PickaxeGlint || cue == StoryCue.PickaxeRise || cue == StoryCue.PickaxeStow)
+            {
+                float pickaxeLift = 1f;
+                float pickaxeAlpha = 1f;
+                if (cue == StoryCue.PickaxeGlint)
+                {
+                    pickaxeLift = 0f;
+                    float pulse = 0.5f + 0.5f * (float)Math.Sin(cueTimer * 0.16f);
+                    spriteBatch.Draw(glowTexture, PickaxeRestPoint - screenPos, null, new Color(255, 190, 110, 0) * (0.25f + 0.3f * pulse), spin, glowOrigin, 0.16f, SpriteEffects.None, 0f);
+                }
+                else if (cue == StoryCue.PickaxeRise)
+                {
+                    pickaxeLift = Ease(cueTimer / (float)StagedItemRiseTicks);
+                }
+                else
+                {
+                    pickaxeAlpha = 1f - MathHelper.Clamp(cueTimer / (float)StagedItemFadeTicks, 0f, 1f);
+                }
+
+                DrawStagedItem(spriteBatch, screenPos, ItemID.CopperPickaxe, PickaxeRestPoint, pickaxeLift, pickaxeAlpha, Color.White, 0.4f);
+                return false;
+            }
+
+            if (cue == StoryCue.HouseEmbers || cue == StoryCue.PaintingRise || cue == StoryCue.PaintingAsh)
+            {
+                float paintingLift = 0f;
+                float paintingAlpha = 1f;
+                if (cue == StoryCue.PaintingRise)
+                {
+                    paintingLift = Ease(cueTimer / (float)StagedItemRiseTicks);
+                }
+                else if (cue == StoryCue.PaintingAsh)
+                {
+                    paintingLift = 1f;
+                    paintingAlpha = 1f - MathHelper.Clamp(cueTimer / (float)StagedItemFadeTicks, 0f, 1f);
+                }
+
+                // A vanilla portrait, charred dark, stands in for the frame the old sign described.
+                DrawStagedItem(spriteBatch, screenPos, ItemID.TheMerchant, NPC.Center, paintingLift, paintingAlpha, new Color(135, 118, 110), 0f);
+                return false;
+            }
+
             if (cue == StoryCue.WellSpeck)
             {
                 float growth = Ease(cueTimer / (float)SpeckGrowTicks);
@@ -2727,14 +3519,24 @@ namespace tsorcRevamp.NPCs.Special
         public static bool DrawMemoryLayer()
         {
             int propType = ModContent.NPCType<StoryPropActor>();
+            bool foundProp = false;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
                 if (npc.active && npc.type == propType)
                 {
+                    foundProp = true;
                     ((StoryPropActor)npc.ModNPC).DrawMemory();
                     break;
                 }
+            }
+
+            // The opening is black before its stage hand exists on this machine, so no frame of the world leaks through.
+            bool openingWaits = StoryCutscenes.BuriedSceneDue(Main.LocalPlayer) || StoryCutscenes.IsBuriedSceneRunning;
+            if (!foundProp && openingWaits)
+            {
+                Rectangle fullScreen = new Rectangle(0, 0, (int)(Main.screenWidth / Main.UIScale) + 2, (int)(Main.screenHeight / Main.UIScale) + 2);
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, fullScreen, new Rectangle(0, 0, 1, 1), Color.Black);
             }
 
             return true;
@@ -2765,7 +3567,9 @@ namespace tsorcRevamp.NPCs.Special
         {
             StoryCue cue = Cue;
             int timer = CueTimer;
-            if (cue != StoryCue.Memory && cue != StoryCue.MemoryStrike && cue != StoryCue.TimePasses)
+            bool openingOverlay = cue == StoryCue.GraveDark || cue == StoryCue.GraveReveal || cue == StoryCue.TitleCard;
+            bool villageMemory = cue == StoryCue.VillageMemory || cue == StoryCue.VillageMemoryMark || cue == StoryCue.VillageMemoryEnd;
+            if (cue != StoryCue.Memory && cue != StoryCue.MemoryStrike && cue != StoryCue.TimePasses && !openingOverlay && !villageMemory)
             {
                 return;
             }
@@ -2776,6 +3580,46 @@ namespace tsorcRevamp.NPCs.Special
             float uiWidth = Main.screenWidth / Main.UIScale;
             float uiHeight = Main.screenHeight / Main.UIScale;
             Rectangle fullScreen = new Rectangle(0, 0, (int)uiWidth + 2, (int)uiHeight + 2);
+
+            if (cue == StoryCue.GraveDark)
+            {
+                spriteBatch.Draw(pixel, fullScreen, pixelSource, Color.Black);
+                return;
+            }
+
+            if (cue == StoryCue.GraveReveal)
+            {
+                float darkness = 1f - MathHelper.Clamp(timer / (float)GraveRevealTicks, 0f, 1f);
+                spriteBatch.Draw(pixel, fullScreen, pixelSource, Color.Black * darkness);
+                return;
+            }
+
+            if (cue == StoryCue.TitleCard)
+            {
+                float fadeUp = timer / (float)TitleFadeTicks;
+                float fadeDown = (TitleCardTicks - timer) / (float)TitleFadeTicks;
+                float titleAlpha = MathHelper.Clamp(Math.Min(fadeUp, fadeDown), 0f, 1f);
+                string title = LangUtils.GetTextValue("Cutscenes.Credits.Title");
+                DynamicSpriteFont titleFont = FontAssets.DeathText.Value;
+                float titleScale = 1f;
+
+                // Matches the credits: the large font does not cover Chinese.
+                if (Language.ActiveCulture.Name == "zh-Hans")
+                {
+                    titleFont = FontAssets.ItemStack.Value;
+                    titleScale = 2f;
+                }
+
+                Vector2 titleSize = titleFont.MeasureString(title) * titleScale;
+                Utils.DrawBorderStringFourWay(spriteBatch, titleFont, title, (uiWidth - titleSize.X) * 0.5f, uiHeight * 0.36f, new Color(214, 62, 50) * titleAlpha, Color.Black * titleAlpha, Vector2.Zero, titleScale);
+                return;
+            }
+
+            if (villageMemory)
+            {
+                DrawVillageMemory(cue, timer, uiWidth, uiHeight);
+                return;
+            }
 
             // A night's reading: down to black and back up to morning.
             if (cue == StoryCue.TimePasses)
@@ -2876,7 +3720,12 @@ namespace tsorcRevamp.NPCs.Special
                 DrawFigure(knightSheet, 16, knightX, floorY, true, alpha * emerge);
             }
 
-            // Ash banks roll across last, so the figures seem to stand inside the fog.
+            DrawAshFog(timer, alpha, uiWidth, floorY);
+        }
+
+        // Ash banks roll across last, so the figures seem to stand inside the fog.
+        private static void DrawAshFog(int timer, float alpha, float uiWidth, float floorY)
+        {
             Texture2D fogTexture = TextureAssets.Extra[98].Value;
             Vector2 fogOrigin = fogTexture.Size() * 0.5f;
             float fogSpan = uiWidth + 500f;
@@ -2885,8 +3734,108 @@ namespace tsorcRevamp.NPCs.Special
                 float travel = timer * (0.25f + i * 0.03f) + i * 173f;
                 float fogX = travel % fogSpan - 250f;
                 float fogY = floorY - 30f - i * 11 % 150;
-                spriteBatch.Draw(fogTexture, new Vector2(fogX, fogY), null, new Color(150, 144, 138, 0) * (0.2f * alpha), i * 0.7f, fogOrigin, 2.4f + i % 3 * 0.5f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(fogTexture, new Vector2(fogX, fogY), null, new Color(150, 144, 138, 0) * (0.2f * alpha), i * 0.7f, fogOrigin, 2.4f + i % 3 * 0.5f, SpriteEffects.None, 0f);
             }
+        }
+
+        /// <summary>Red's last memory of the village: burning house shapes, then the army crossing with its red sigils.</summary>
+        private static void DrawVillageMemory(StoryCue cue, int timer, float uiWidth, float uiHeight)
+        {
+            SpriteBatch spriteBatch = Main.spriteBatch;
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Texture2D glowTexture = TextureAssets.Extra[98].Value;
+            Vector2 glowOrigin = glowTexture.Size() * 0.5f;
+            Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+
+            // The army's clock: not started in the first cue, frozen at its end while the memory fades.
+            float alpha = MathHelper.Clamp(timer / (float)VillageFadeInTicks, 0f, 1f);
+            int armyTimer = -1;
+            if (cue == StoryCue.VillageMemoryMark)
+            {
+                alpha = 1f;
+                armyTimer = timer;
+            }
+            else if (cue == StoryCue.VillageMemoryEnd)
+            {
+                alpha = 1f - MathHelper.Clamp(timer / (float)VillageMemoryFadeTicks, 0f, 1f);
+                armyTimer = KnightCrossTicks + 30;
+            }
+
+            float centerX = uiWidth * 0.5f;
+            float floorY = uiHeight * 0.68f;
+            Rectangle fullScreen = new Rectangle(0, 0, (int)uiWidth + 2, (int)uiHeight + 2);
+            Rectangle floorBand = new Rectangle(0, (int)floorY, (int)uiWidth + 2, (int)(uiHeight - floorY) + 2);
+            spriteBatch.Draw(pixel, fullScreen, pixelSource, AshColor * alpha);
+            spriteBatch.Draw(pixel, floorBand, pixelSource, new Color(32, 29, 29) * alpha);
+
+            float flameClock = Main.GlobalTimeWrappedHourly;
+            for (int houseIndex = 0; houseIndex < HouseCount; houseIndex++)
+            {
+                // Fixed proportions per house, so the street holds still from frame to frame.
+                float houseX = uiWidth * (0.1f + houseIndex * 0.2f);
+                int houseWidth = 120 + houseIndex * 37 % 60;
+                int wallHeight = 75 + houseIndex * 53 % 45;
+                Rectangle wall = new Rectangle((int)houseX - houseWidth / 2, (int)floorY - wallHeight, houseWidth, wallHeight);
+                spriteBatch.Draw(pixel, wall, pixelSource, SilhouetteColor * alpha);
+
+                // A stepped roof keeps the silhouette as chunky as the game's own pixels.
+                const int RoofSteps = 5;
+                const int RoofStepHeight = 10;
+                for (int step = 0; step < RoofSteps; step++)
+                {
+                    int stepWidth = houseWidth + 14 - step * (houseWidth + 14) / RoofSteps;
+                    Rectangle roofRow = new Rectangle((int)houseX - stepWidth / 2, wall.Y - (step + 1) * RoofStepHeight, stepWidth, RoofStepHeight);
+                    spriteBatch.Draw(pixel, roofRow, pixelSource, SilhouetteColor * alpha);
+                }
+
+                float roofTop = wall.Y - RoofSteps * RoofStepHeight;
+                for (int flameIndex = 0; flameIndex < 3; flameIndex++)
+                {
+                    float flicker = 0.75f + 0.25f * (float)Math.Sin(flameClock * 7f + houseIndex * 1.7f + flameIndex * 2.1f);
+                    Vector2 flamePoint = new Vector2(houseX + (flameIndex - 1) * houseWidth * 0.28f, roofTop + 24f - 16f * flicker);
+                    spriteBatch.Draw(glowTexture, flamePoint, null, new Color(255, 96, 28, 0) * (0.75f * alpha * flicker), 0f, glowOrigin, new Vector2(0.55f, 0.95f * flicker), SpriteEffects.None, 0f);
+                    spriteBatch.Draw(glowTexture, flamePoint + new Vector2(0f, 10f), null, new Color(255, 196, 80, 0) * (0.65f * alpha * flicker), 0f, glowOrigin, new Vector2(0.25f, 0.5f * flicker), SpriteEffects.None, 0f);
+                }
+
+                // Sparks rise on fixed paths for the same reason the houses hold still.
+                for (int sparkIndex = 0; sparkIndex < 6; sparkIndex++)
+                {
+                    float rise = (flameClock * (32f + sparkIndex * 7f) + sparkIndex * 41f + houseIndex * 67f) % 180f;
+                    float sparkX = houseX + (float)Math.Sin(rise * 0.04f + sparkIndex) * (18f + sparkIndex * 9f);
+                    Rectangle spark = new Rectangle((int)sparkX, (int)(roofTop - rise), 3, 3);
+                    spriteBatch.Draw(pixel, spark, pixelSource, new Color(255, 130, 45) * (alpha * (1f - rise / 180f)));
+                }
+            }
+
+            if (armyTimer >= 0)
+            {
+                Texture2D knightSheet = ModContent.Request<Texture2D>(KnightSheetPath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                int knightFrameHeight = knightSheet.Height / 16;
+                float crossing = Ease(armyTimer / (float)KnightCrossTicks);
+                float leaderX = MathHelper.Lerp(-120f, centerX, crossing);
+                float chestY = floorY - knightFrameHeight * FigureScale * 0.58f;
+                float flare = Ease((armyTimer - KnightCrossTicks) / 24f);
+
+                for (int i = 0; i < KnightCount; i++)
+                {
+                    float knightX = leaderX - i * KnightSpacing;
+                    DrawFigure(knightSheet, 16, knightX, floorY, true, alpha);
+
+                    // Every chest carries the sigil. The leader's flares once the column has come to a stop.
+                    float markScale = 0.18f;
+                    if (i == 0)
+                    {
+                        markScale += 0.42f * flare;
+                    }
+
+                    Vector2 markPoint = new Vector2(knightX + 4f, chestY);
+                    Rectangle markCore = new Rectangle((int)markPoint.X - 4, (int)markPoint.Y - 4, 8, 8);
+                    spriteBatch.Draw(glowTexture, markPoint, null, new Color(255, 30, 24, 0) * alpha, 0f, glowOrigin, markScale, SpriteEffects.None, 0f);
+                    spriteBatch.Draw(pixel, markCore, pixelSource, new Color(225, 34, 30) * alpha);
+                }
+            }
+
+            DrawAshFog(timer, alpha, uiWidth, floorY);
         }
 
         // No class owns this older sheet any more, so its path cannot come from a type.
@@ -3087,7 +4036,7 @@ namespace tsorcRevamp.NPCs.Special
     {
         public override CommandType Type => CommandType.World;
         public override string Command => "storyscene";
-        public override string Usage => "/storyscene gate|reunion|wisp|counsel|homecoming|well|idol|elijah|firetemple|shadow|desert|rage|credits";
+        public override string Usage => "/storyscene buried|graves|remains|gate|reunion|wisp|counsel|homecoming|well|idol|elijah|firetemple|shadow|desert|rage|credits";
         public override string Description => "Debug: moves you to a story cutscene and plays it, or plays the credits.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
@@ -3106,6 +4055,21 @@ namespace tsorcRevamp.NPCs.Special
                 case "credits":
                     CreditsRoll.StartForEveryone();
                     return;
+
+                case "buried":
+                    scene = StoryScene.BuriedAlive;
+                    legacyTile = StoryCutscenes.OpeningTestTile(scene);
+                    break;
+
+                case "graves":
+                    scene = StoryScene.UnmarkedGraves;
+                    legacyTile = StoryCutscenes.OpeningTestTile(scene);
+                    break;
+
+                case "remains":
+                    scene = StoryScene.WhatRemains;
+                    legacyTile = StoryCutscenes.OpeningTestTile(scene);
+                    break;
 
                 case "gate":
                     scene = StoryScene.ThroughGate;
