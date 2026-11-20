@@ -278,7 +278,6 @@ namespace tsorcRevamp
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
                 
-                
                 float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(Player.HeldItem);
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
