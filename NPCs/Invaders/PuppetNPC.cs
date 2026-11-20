@@ -3345,7 +3345,7 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             // Phase-one "death" is the mount breaking, not the rider dying: refuse the kill, dismount, and
             // let the restored rider health carry the fight into phase two.
-            if (IsMounted)
+            if (IsMounted && !MirrorShell)
             {
                 DestroyMount();
                 return false;
@@ -12067,13 +12067,27 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             if (_puppet == null)
+            {
                 InitPuppet();
+            }
 
             SyncPuppet();
 
             // Store draw color so PuppetWeaponDrawLayer can read it during the pipeline below.
             bool teleportIllusion = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().IsTeleportIllusion;
-            _layerDrawColor = teleportIllusion ? drawColor * TeleportIllusionOpacity : drawColor;
+            float bodyOpacity = 1f;
+
+            if (teleportIllusion)
+            {
+                bodyOpacity = TeleportIllusionOpacity;
+            }
+
+            if (MirrorShell)
+            {
+                bodyOpacity *= NPC.Opacity;
+            }
+
+            _layerDrawColor = drawColor * bodyOpacity;
 
             // PuppetWeaponDrawLayer is registered at AfterParent(HeldItem) in tModLoader's pipeline.
             // By setting DrawingPuppetFor = this for exactly the duration of DrawPlayer, that layer
@@ -12109,10 +12123,10 @@ namespace tsorcRevamp.NPCs.Invaders
 
             bool previousFractal = _puppet.isFirstFractalAfterImage;
             float previousOpacity = _puppet.firstFractalAfterImageOpacity;
-            if (teleportIllusion)
+            if (teleportIllusion || MirrorShell)
             {
                 _puppet.isFirstFractalAfterImage = true;
-                _puppet.firstFractalAfterImageOpacity = TeleportIllusionOpacity;
+                _puppet.firstFractalAfterImageOpacity = bodyOpacity;
             }
 
             Main.PlayerRenderer.DrawPlayer(Main.Camera, _puppet, PuppetDrawPosition, 0f, Vector2.Zero, 0f, PuppetDrawScale);

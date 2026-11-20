@@ -288,7 +288,7 @@ namespace tsorcRevamp.NPCs.Invaders
         // Spec sheets (attack-timing-design): 215 deg envelope (-1.85..1.90 rad), ~172 deg live sweep,
         // all live windows 12-16t (< 22t roll i-frames), inter-step live gaps >= 36t (Rule 3 & Rule 5 safe).
         // Hitbox reach 72 * 0.7 = 50.4px matches visual 39.6px * 1.25 scale = 49.5px within 2%.
-        private static readonly MeleeCombo[] HeroCombos = new[]
+        internal static readonly MeleeCombo[] HeroCombos = new[]
         {
             // Quickslash — 24t tell -> 7+32=39t Weighted(7.0) (peak ~31 deg/t, live 12.5t), 18t recovery (44.5t open).
             new MeleeCombo

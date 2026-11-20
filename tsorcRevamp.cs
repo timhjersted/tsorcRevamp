@@ -3162,6 +3162,18 @@ namespace tsorcRevamp
                     break;
                 }
 
+                case tsorcPacketID.SyncMirrorSummonerClass:
+                {
+                    NPCs.FriendlyPuppets.MirrorSummonerPlayer.ReceiveClass(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.RequestEnemyWhipLatch:
+                {
+                    Content.Projectiles.Enemy.Weapons.EnemyWhipProjectileBase.ReceiveLatchRequest(reader, whoAmI);
+                    break;
+                }
+
                 case tsorcPacketID.CutsceneSync:
                 {
                     Systems.CutsceneSystem.ReceivePacket(reader, whoAmI);
@@ -5425,6 +5437,10 @@ namespace tsorcRevamp
         public const byte SyncOrnsteinStatic = 52;
         /// <summary>Client to server: this player used the Ember of the First Dawn.</summary>
         public const byte UseEmberOfTheFirstDawn = 53;
+        /// <summary>Client to server: summoner class eligibility for hostile Soul Mimic rituals.</summary>
+        public const byte SyncMirrorSummonerClass = 54;
+        /// <summary>Victim client to server: latch a server-owned enemy whip that hit this player.</summary>
+        public const byte RequestEnemyWhipLatch = 55;
     }
 
     //config moved to separate file

@@ -300,6 +300,12 @@ namespace tsorcRevamp.NPCs.Invaders
         /// </summary>
         public override bool CheckDead()
         {
+            // Echoes have one health pool. Skip the encounter's lethal-damage finale before it can refill life.
+            if (MirrorShell)
+            {
+                return true;
+            }
+
             // Killed before ever reaching 30% (e.g. a burst kill from above the gate): no Dominion,
             // no finale, die normally. Never gate the boss's death on a phase it never entered.
             if (!specialAttacks.DominionEngaged)

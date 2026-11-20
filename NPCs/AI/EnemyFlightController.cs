@@ -48,6 +48,13 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>Current dive/hover/strafe target in world coordinates.</summary>
         public Vector2 TargetWaypoint { get; private set; }
 
+        /// <summary>Opt-in: while set, Hover holds this world point instead of circling the target (no drift bob), so a
+        /// locked aim line or beam keeps its origin. Set by the owner's server-side attack logic; synced.</summary>
+        public Vector2? HoverAnchor;
+
+        /// <summary>Land: -1/+1 while gliding sideways to find dry ground (never descends into a pit or liquid), 0 otherwise.</summary>
+        private int _landSeekDirection;
+
         /// <summary>True when the wings should be visibly flapping this tick.
         /// False during glide / strafe / dive-fold.  Drives flap-and-glide cadence.</summary>
         public bool WingsActiveThisTick { get; private set; }
@@ -243,7 +250,14 @@ namespace tsorcRevamp.NPCs.AI
             // ── Ceiling-clearance routing ─────────────────────────────────────
             // If desired altitude or the path up is blocked, shift horizontally to find
             // a column with overhead clearance, then climb there.
-            if (HeadIsBlocked(npc) || StuckTicks > 60)
+            if (HoverAnchor.HasValue)
+            {
+                // Station-keeping for a locked attack: no drift, no circling; the spring below eases onto the point.
+                desired = HoverAnchor.Value;
+                _driftY = 0f;
+                _flapBurstTicks = 0;
+            }
+            else if (HeadIsBlocked(npc) || StuckTicks > 60)
             {
                 int seek = _clearanceSeekDir != 0 ? _clearanceSeekDir : SeekCeilingClearanceDir(npc);
                 if (seek == 0) seek = npc.direction; // fall back to current facing
@@ -376,7 +390,36 @@ namespace tsorcRevamp.NPCs.AI
         {
             // Descend toward ground.  Compare FEET (not center) to ground tile so we don't
             // declare "landed" while the body is still half a tile above the surface.
-            float groundY  = FindGroundY(npc);
+            float groundY  = FindGroundY(npc.Center.X, npc.Center.Y);
+            bool groundFound = groundY < npc.Center.Y + NoGroundDistance;
+            bool dryLanding = groundFound && !IsLiquidAbove(npc.Center.X, groundY);
+
+            // Never descend into a pit or liquid: hold altitude and glide toward the nearest column with dry ground.
+            // The flight budget isn't spent in Land, so this may take as long as it needs. No column found = hover here.
+            if (!dryLanding)
+            {
+                if (_landSeekDirection == 0)
+                {
+                    _landSeekDirection = FindDryGroundDirection(npc);
+                }
+
+                Vector2 aheadPosition = npc.position + new Vector2(_landSeekDirection * 8f, 0f);
+                bool wallAhead = _landSeekDirection != 0 && Collision.SolidCollision(aheadPosition, npc.width, npc.height);
+
+                if (wallAhead)
+                {
+                    _landSeekDirection = -_landSeekDirection;
+                }
+
+                float seekVelocityX = _landSeekDirection * Config.HoverTopSpeed;
+                npc.noGravity = true;
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, seekVelocityX, 0.15f);
+                npc.velocity.Y = MathHelper.Lerp(npc.velocity.Y, 0f, 0.2f);
+                WingsActiveThisTick = true;
+                return;
+            }
+
+            _landSeekDirection = 0;
             float feetY    = npc.position.Y + npc.height;
             float distFeet = groundY - feetY;
 
@@ -413,6 +456,7 @@ namespace tsorcRevamp.NPCs.AI
             Mode = mode;
             ModeTimer = duration;
             ModeSequence++;
+            _landSeekDirection = 0;
             if (mode == FlightMode.TakeOff)
                 FlightTicksRemaining = Config.MaxFlightTicks;
             // Reset drift state when leaving hover so it doesn't bleed into other modes.
@@ -552,20 +596,63 @@ namespace tsorcRevamp.NPCs.AI
         /// Without the platform check, an invader landing on a wood platform would never
         /// register "landed" — FindGroundY would skip past the platform looking for a deeper
         /// fully-solid tile, and TickLand would keep flapping forever.</summary>
-        private float FindGroundY(NPC npc)
+        private float FindGroundY(float worldX, float worldY)
         {
-            int x = (int)(npc.Center.X / 16f);
-            int yStart = (int)(npc.Center.Y / 16f);
+            int x = (int)(worldX / 16f);
+            int yStart = (int)(worldY / 16f);
             for (int y = yStart; y < yStart + 64; y++)
             {
-                if (y < 0 || y >= Main.maxTilesY) break;
+                if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY) break;
                 Tile t = Framing.GetTileSafely(x, y);
                 if (!t.HasUnactuatedTile) continue;
                 // Solid tile: standard ground.  TileSolidTop: platforms (Wood Platform etc.).
                 if (Main.tileSolid[t.TileType] || Main.tileSolidTop[t.TileType])
                     return y * 16f;
             }
-            return npc.Center.Y + 1024f; // no ground found (fall forever)
+            return worldY + NoGroundDistance; // no ground within 64 tiles: a pit
+        }
+
+        /// <summary>FindGroundY's "nothing below" offset (px); anything at or past it counts as no ground.</summary>
+        private const float NoGroundDistance = 1024f;
+
+        /// <summary>Columns searched each side for dry ground when Land starts over a pit or liquid (tiles).</summary>
+        private const int DryGroundSearchTiles = 40;
+
+        /// <summary>True when the tile resting on the ground at groundY holds liquid (water, lava, honey, shimmer).</summary>
+        private static bool IsLiquidAbove(float worldX, float groundY)
+        {
+            int x = (int)(worldX / 16f);
+            int y = (int)(groundY / 16f) - 1;
+
+            if (x < 0 || x >= Main.maxTilesX || y < 0 || y >= Main.maxTilesY)
+            {
+                return false;
+            }
+
+            return Framing.GetTileSafely(x, y).LiquidAmount > 0;
+        }
+
+        /// <summary>Nearest side (-1/+1) with dry ground under the NPC's current height, checking outward tile by tile;
+        /// 0 if neither side has any within DryGroundSearchTiles. Caller: TickLand over a pit or liquid.</summary>
+        private int FindDryGroundDirection(NPC npc)
+        {
+            for (int offsetTiles = 1; offsetTiles <= DryGroundSearchTiles; offsetTiles++)
+            {
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    float columnX = npc.Center.X + side * offsetTiles * 16f;
+                    float columnGroundY = FindGroundY(columnX, npc.Center.Y);
+                    // Ground must be below the feet: a hit at body height is a wall, not somewhere to land.
+                    bool columnHasGround = columnGroundY < npc.Center.Y + NoGroundDistance && columnGroundY > npc.Bottom.Y;
+
+                    if (columnHasGround && !IsLiquidAbove(columnX, columnGroundY))
+                    {
+                        return side;
+                    }
+                }
+            }
+
+            return 0;
         }
 
         // ─────────────────────────────────────────────────────────────────────
@@ -582,6 +669,12 @@ namespace tsorcRevamp.NPCs.AI
             writer.Write((short)Math.Clamp(FlightTicksRemaining, short.MinValue, short.MaxValue));
             writer.Write((short)Math.Clamp(CooldownRemaining, 0, short.MaxValue));
             writer.WriteVector2(TargetWaypoint);
+            writer.Write(HoverAnchor.HasValue);
+
+            if (HoverAnchor.HasValue)
+            {
+                writer.WriteVector2(HoverAnchor.Value);
+            }
         }
 
         /// <summary>Client side. Adopts the server's mode unless this client already predicted past it (a
@@ -595,6 +688,16 @@ namespace tsorcRevamp.NPCs.AI
             int flightTicksRemaining = reader.ReadInt16();
             int cooldownRemaining = reader.ReadInt16();
             Vector2 waypoint = reader.ReadVector2();
+            bool hasAnchor = reader.ReadBoolean();
+            Vector2? anchor = null;
+
+            if (hasAnchor)
+            {
+                anchor = reader.ReadVector2();
+            }
+
+            // The anchor is server intent like the waypoint: adopted even when the mode itself was predicted ahead.
+            HoverAnchor = anchor;
 
             int predictedAhead = ModeSequence - sequence;
             bool olderThanPrediction = predictedAhead > 0 && predictedAhead <= 2;

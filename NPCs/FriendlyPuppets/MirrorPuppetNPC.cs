@@ -59,6 +59,21 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>The puppet's own mana pool (max = the owner's statManaMax2). Weapons spend it through the
         /// owner's real mana code while it's swapped into owner.statMana. Owner-client only.</summary>
         internal int ManaCurrent;
+        internal virtual bool UsesFixedCombatResources => false;
+
+        protected void CancelNativeUse()
+        {
+            _useWeapon = null;
+            _clockTracking = false;
+            _hasPreviousBlade = false;
+            HasStrikeSweep = false;
+            UseState = new MirrorPuppetUseState
+            {
+                Direction = NPC.direction,
+                HeldProj = -1,
+                HeldProjIdentity = -1
+            };
+        }
         private int _manaRegenDelay;
         private float _manaRegenCount;
 
@@ -146,6 +161,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             if (!NPC.active || owner.dead)
             {
+                CancelNativeUse();
                 return;
             }
 
@@ -157,6 +173,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             {
                 StaminaCurrent = ownerStamina.staminaResourceMax2;
                 ManaCurrent = owner.statManaMax2;
+
+                if (UsesFixedCombatResources)
+                {
+                    StaminaCurrent = 200f;
+                    ManaCurrent = 200;
+                }
                 StaminaInitialized = true;
             }
 
@@ -218,6 +240,38 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             AfterWeaponUse(owner, weapon);
+
+            // Hostile encounter resources must survive host/class changes. Friendly summons retain player regen.
+            if (UsesFixedCombatResources)
+            {
+                if (ManaCurrent < manaBefore)
+                {
+                    _manaRegenDelay = 90;
+                }
+                else if (_manaRegenDelay > 0)
+                {
+                    _manaRegenDelay--;
+                }
+                else
+                {
+                    ManaCurrent = Math.Min(200, ManaCurrent + 2);
+                }
+
+                if (StaminaCurrent < staminaBefore)
+                {
+                    _staminaRegenDelay = 45;
+                }
+                else if (_staminaRegenDelay > 0)
+                {
+                    _staminaRegenDelay--;
+                }
+                else if (UseState.ItemAnimation == 0 && !HasAttachedWeapon)
+                {
+                    StaminaCurrent = Math.Min(200f, StaminaCurrent + 2f);
+                }
+
+                return;
+            }
 
             // Mana regen mirrors the owner: the puppet regenerates at the owner's CURRENT vanilla regen rate, and
             // only while the owner's own regen is running — so the mod's class rules (Bearer of the Curse pinned
@@ -361,6 +415,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>Owner side: drive swing/thrust melee on the eased clock instead of the native one.</summary>
         protected virtual bool UsesEasedMeleeClock => false;
+
+        // Optional encounter-owned clock, using the same Weighted curve as the source invader.
+        // The item still advances every native pose and runs its original effects in actor context.
+        protected virtual Invaders.MeleeComboStep? AuthoredMeleeStep => null;
+
+        private Invaders.MeleeComboStep? _clockAuthoredStep;
 
         /// <summary>Owner side: write one tModLoader log line per tracked swing (the test dummy's A/B readout).</summary>
         protected virtual bool LogsMeleeClock => false;
@@ -526,7 +586,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
 
                 int nativeDone = _clockNativeLength - UseState.ItemAnimation;
+
+                if (_clockAuthoredStep.HasValue)
+                {
+                    Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                    float poseProgress = Utilities.SwingEase.ApplyWeighted(0f, 1f, realTick,
+                        step.AttackTicks, step.EaseInTicks, step.EaseOutTicks, step.EaseOutDecay);
+                    nativeTarget = (int)Math.Floor(poseProgress * (_clockNativeLength - 1));
+
+                    if (realTick >= step.AttackTicks)
+                    {
+                        nativeTarget = _clockNativeLength;
+                    }
+                }
+
                 runs = Math.Clamp(nativeTarget - nativeDone, 0, MaxItemChecksPerTick);
+
+                if (_clockAuthoredStep.HasValue)
+                {
+                    runs = Math.Clamp(nativeTarget - nativeDone, 0, 16);
+                }
             }
 
             for (int run = 0; run < runs; run++)
@@ -570,6 +649,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     int runNativeProgress = _clockNativeLength - UseState.ItemAnimation;
                     bool poseInStrike = runNativeProgress >= _clockEaseInEnd && runNativeProgress < _clockStrikeEnd;
+
+                    if (_clockAuthoredStep.HasValue)
+                    {
+                        Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                        poseInStrike = _clockRealTicks >= step.EaseInTicks * 0.55f
+                            && _clockRealTicks <= step.AttackTicks * step.HitWindowEnd;
+                    }
+
                     runIsStrike = MirrorPuppetSwap.HasCapturedMeleeHitbox && poseInStrike;
                     float drawScale = DisplayClone.GetAdjustedItemScale(weapon);
                     ComputeHeldBlade(weapon, UseState.ItemLocation, UseState.ItemRotation, UseState.Direction, drawScale, out bladeHilt, out bladeTip);
@@ -640,6 +727,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     _clockTracking = true;
                     _clockEased = UsesEasedMeleeClock;
+                    _clockAuthoredStep = AuthoredMeleeStep;
                     _clockItemName = weapon.Name;
                     _clockNativeLength = Math.Max(1, UseState.ItemAnimationMax);
                     _clockEaseInEnd = (int)Math.Round(_clockNativeLength * EaseInNativeFraction);
@@ -681,13 +769,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             int nativeProgress = _clockNativeLength - UseState.ItemAnimation;
+            bool beforeStrike = nativeProgress < _clockEaseInEnd;
+            bool withinStrike = nativeProgress < _clockStrikeEnd;
 
-            if (nativeProgress < _clockEaseInEnd)
+            if (_clockAuthoredStep.HasValue)
+            {
+                Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                beforeStrike = _clockRealTicks < step.EaseInTicks * 0.55f;
+                withinStrike = _clockRealTicks <= step.AttackTicks * step.HitWindowEnd;
+            }
+
+            if (beforeStrike)
             {
                 CurrentMeleeSegment = MeleeClockSegment.EaseIn;
                 _clockEaseInCount++;
             }
-            else if (nativeProgress < _clockStrikeEnd)
+            else if (withinStrike)
             {
                 CurrentMeleeSegment = MeleeClockSegment.Strike;
                 _clockStrikeCount++;
@@ -1344,6 +1441,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             bool poseActive = payload.ReadBoolean();
             StaminaCurrent = payload.ReadSingle();
             ManaCurrent = payload.ReadInt32();
+            StaminaInitialized = true;
 
             _remoteHeldProjIdentity = -1;
             _remotePoseActive = poseActive;
@@ -1617,6 +1715,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public bool MouseInterface;
             public int StatLife;
             public int StatMana;
+            public int StatManaMax;
             public float ManaRegenDelay;
             public bool Immune;
             public bool ImmuneNoBlink;
@@ -1682,6 +1781,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.MouseInterface = owner.mouseInterface;
                 snapshot.StatLife = owner.statLife;
                 snapshot.StatMana = owner.statMana;
+                snapshot.StatManaMax = owner.statManaMax2;
                 snapshot.ManaRegenDelay = owner.manaRegenDelay;
                 snapshot.Immune = owner.immune;
                 snapshot.ImmuneNoBlink = owner.immuneNoBlink;
@@ -1749,6 +1849,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.mouseInterface = MouseInterface;
                 owner.statLife = StatLife;
                 owner.statMana = StatMana;
+                owner.statManaMax2 = StatManaMax;
                 owner.manaRegenDelay = ManaRegenDelay;
                 owner.immune = Immune;
                 owner.immuneNoBlink = ImmuneNoBlink;
@@ -1953,6 +2054,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.GetModPlayer<tsorcRevampPlayer>().isDodging = puppetRolling;
                 owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping = false;
                 owner.statMana = puppet.ManaCurrent;
+
+                if (puppet.UsesFixedCombatResources)
+                {
+                    owner.statManaMax2 = 200;
+                }
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = useState.StaminaOldItemAnimation;
 
                 // ── Run ───────────────────────────────────────────────────────────────────────
@@ -2006,7 +2112,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 useState.AimWorld = aimWorld;
                 useState.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
                 useState.GreatswordCombo = owner.GetModPlayer<GreatswordComboPlayer>().CaptureCombo();
-                puppet.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                if (!puppet.UsesFixedCombatResources)
+                {
+                    puppet.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                }
                 puppet.ManaCurrent = owner.statMana;
             }
             finally

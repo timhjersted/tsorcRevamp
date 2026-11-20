@@ -414,7 +414,7 @@ namespace tsorcRevamp.NPCs.Invaders
             };
         }
 
-        static readonly MeleeCombo[] CinderCombos =
+        internal static readonly MeleeCombo[] CinderCombos =
         {
             new MeleeCombo
             {

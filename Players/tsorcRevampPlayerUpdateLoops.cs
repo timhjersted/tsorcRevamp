@@ -372,7 +372,9 @@ namespace tsorcRevamp
         private int PercentLifeDrain(float percentPerSecond)
             => Math.Max(2, (int)Math.Round(Player.statLifeMax2 * percentPerSecond * 2f / 100f));
 
-        public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
+        public bool UsesWeaponStamina => (BearerOfTheCurse || Unkindled)
+            && !(NPCs.FriendlyPuppets.MirrorPuppetSwap.Active
+                && NPCs.FriendlyPuppets.MirrorPuppetSwap.Current?.UsesFixedCombatResources == true);
         public float WeaponStaminaMult(Item item)
         {
             bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;

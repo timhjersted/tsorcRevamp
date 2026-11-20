@@ -417,19 +417,36 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         {
             OnWhipHitPlayer(target);
             if (_attachedPlayer >= 0 || _attachedRetractAge >= 0)
+            {
                 return;
+            }
 
             // Credit the owner's combo step (hit-confirm branches read it); forwarded to the server in MP.
             if (TryGetOwner(out NPC ownerNPC, out _) && ownerNPC.ModNPC is PuppetNPC puppet)
+            {
                 puppet.ReportAttackHit();
+            }
 
             if (!LatchOnHit)
+            {
                 return;
+            }
 
             _attachedPlayer = target.whoAmI;
             _attachedAge = 0;
             Projectile.hostile = false;
             Projectile.netUpdate = true;
+
+            // A server-owned hostile whip hits on the victim's machine. Vanilla will not broadcast its netUpdate
+            // from that client, so report the latch to the server before the NPC decides the lash has finished.
+            if (Main.netMode == NetmodeID.MultiplayerClient && target.whoAmI == Main.myPlayer)
+            {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write(tsorcPacketID.RequestEnemyWhipLatch);
+                packet.Write(Projectile.owner);
+                packet.Write(Projectile.identity);
+                packet.Send();
+            }
 
             SoundEngine.PlaySound(SoundID.NPCHit13 with
             {
@@ -438,8 +455,54 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             }, target.Center);
         }
 
+        internal static void ReceiveLatchRequest(BinaryReader reader, int sender)
+        {
+            int projectileOwner = reader.ReadInt32();
+            int identity = reader.ReadInt32();
+
+            if (Main.netMode != NetmodeID.Server || sender < 0 || sender >= Main.maxPlayers)
+            {
+                return;
+            }
+
+            Player target = Main.player[sender];
+
+            if (!target.active || target.dead)
+            {
+                return;
+            }
+
+            foreach (Projectile candidate in Main.ActiveProjectiles)
+            {
+                if (candidate.owner != projectileOwner || candidate.identity != identity
+                    || candidate.ModProjectile is not EnemyWhipProjectileBase whip)
+                {
+                    continue;
+                }
+
+                bool recentLiveWindow = whip.LashAge >= whip.DamageStart - 12
+                    && whip.LashAge <= whip.DamageEnd + 20;
+                bool validOwner = whip.TryGetOwner(out NPC ownerNPC, out IEnemyWhipOwner owner)
+                    && owner.IsWhipActive;
+
+                if (!whip.LatchOnHit || !recentLiveWindow || !validOwner || whip._attachedPlayer >= 0
+                    || whip._attachedRetractAge >= 0
+                    || Vector2.Distance(target.Center, ownerNPC.Center) > whip.MaximumReach + 160f)
+                {
+                    return;
+                }
+
+                whip._attachedPlayer = sender;
+                whip._attachedAge = 0;
+                candidate.hostile = false;
+                candidate.netUpdate = true;
+                return;
+            }
+        }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
+            writer.Write((short)Age);
             writer.Write(_attachedPlayer);
             writer.Write(_attachedAge);
             writer.Write(_attachedRetractAge);
@@ -448,12 +511,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            Projectile.localAI[0] = reader.ReadInt16();
             _attachedPlayer = reader.ReadInt32();
             _attachedAge = reader.ReadInt32();
             _attachedRetractAge = reader.ReadInt32();
             _attachedRetractStart = reader.ReadVector2();
             if (_attachedPlayer >= 0 || _attachedRetractAge >= 0)
+            {
                 Projectile.hostile = false;
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)

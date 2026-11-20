@@ -221,6 +221,65 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private int _channelTicks;
         private Item _phaseWeapon;
 
+        protected struct UsePattern
+        {
+            public int TellTicks;
+            public int BurstMax;
+            public int RecoveryTicks;
+            public int ChannelTicks;
+            public int AimLockTicks;
+            public int GapTicks;
+        }
+
+        private UsePattern _pattern = new UsePattern { AimLockTicks = ShotAimLockTicks };
+        private int _betweenUses;
+        private int _lastPatternUses;
+        internal int PatternUseIndex;
+        internal int PatternUseTicks;
+
+        protected virtual void ConfigureUsePattern(Item weapon, WeaponCategory category, ref UsePattern pattern)
+        {
+        }
+
+        /// <summary>Owner side, once the authored tell has run out: true keeps holding it (an apex shot waits for the top
+        /// of its jump, a leap swing for strike range). Capped at <see cref="MaxTellHoldTicks"/> past the tell.</summary>
+        protected virtual bool ShouldHoldTell()
+        {
+            return false;
+        }
+
+        /// <summary>Longest a subclass may hold past the authored tell before the use releases anyway.</summary>
+        internal const int MaxTellHoldTicks = 150;
+
+        /// <summary>Ticks left in the authored tell (negative while a subclass holds past it). Meaningful only in Tell;
+        /// on the server and other clients it is the owner's streamed value.</summary>
+        protected int TellTicksRemaining => _tellTicks - _phaseTicks;
+
+        protected void ResetUseWrapper()
+        {
+            if (_phaseWeapon != null)
+            {
+                if (_restoreUseSound)
+                {
+                    _phaseWeapon.UseSound = _tellUseSound;
+                }
+
+                if (_restoreShootsEveryUse)
+                {
+                    _phaseWeapon.shootsEveryUse = true;
+                }
+            }
+
+            _restoreUseSound = false;
+            _restoreShootsEveryUse = false;
+            _strikeActive = false;
+            _phaseWeapon = null;
+            _phaseTicks = 0;
+            CurrentUsePhase = UsePhase.Ready;
+            LastUseFailed = false;
+            CancelNativeUse();
+        }
+
         // Deferred to release: the shot the tell's start run skipped, and the use sound it muted (played at release).
         private bool _shotSuppressed;
         private SoundStyle? _tellUseSound;
@@ -373,7 +432,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             Item weapon = ActiveWeapon;
             WeaponCategory category = Categorize(weapon);
             bool hasTarget = ChooseTarget(owner, out Vector2 targetCenter);
-            bool heldProjectileActive = UseState.HeldProj >= 0 && UseState.HeldProj < Main.maxProjectiles && Main.projectile[UseState.HeldProj].active;
+            bool heldProjectileActive = HasAttachedWeapon;
             bool handsFree = UseState.ItemAnimation == 0 && !heldProjectileActive;
 
             // A different weapon in hand between uses (the invader AI switches weapons) starts the wrapper over — except
@@ -403,11 +462,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             bool meleeRules = rulesCategory == WeaponCategory.SwingMelee || rulesCategory == WeaponCategory.HeldProjectileMelee || rulesCategory == WeaponCategory.Whip;
-            int aimLockTicks = ShotAimLockTicks;
+            int aimLockTicks = _pattern.AimLockTicks;
 
             if (rulesCategory == WeaponCategory.NearInstantShot)
             {
-                aimLockTicks = NearInstantAimLockTicks;
+                aimLockTicks = Math.Max(aimLockTicks, NearInstantAimLockTicks);
             }
 
             _aimLocked = false;
@@ -425,6 +484,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 bool shotRules = rulesCategory == WeaponCategory.Shot || rulesCategory == WeaponCategory.NearInstantShot;
                 bool nextShotDue = UseState.ItemTime <= aimLockTicks;
                 _aimLocked = (meleeRules && midUse) || (shotRules && midUse && nextShotDue);
+
+                if (rulesCategory == WeaponCategory.Channelled && _pattern.AimLockTicks >= 24)
+                {
+                    _aimLocked = true;
+                }
             }
 
             if (hasTarget && !_aimLocked)
@@ -472,7 +536,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 if (shotRules)
                 {
-                    float minimumDistance = EffectiveShotSpeed(weapon) * ShotReactionTicks;
+                    float minimumDistance = Math.Min(EffectiveShotSpeed(weapon) * ShotReactionTicks, RangedMaximum - 96f);
                     float targetDistance = Vector2.Distance(NPC.Center, targetCenter);
 
                     if (targetDistance < minimumDistance)
@@ -501,6 +565,35 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     }
                 }
 
+                _pattern = new UsePattern
+                {
+                    TellTicks = _tellTicks,
+                    BurstMax = 1,
+                    RecoveryTicks = ShotRecoveryTicks,
+                    ChannelTicks = ChannelMaxTicks,
+                    AimLockTicks = aimLockTicks
+                };
+
+                if (category == WeaponCategory.SwingMelee)
+                {
+                    _pattern.BurstMax = MeleeBurstMax;
+                }
+                else if (category == WeaponCategory.Shot || category == WeaponCategory.NearInstantShot)
+                {
+                    _pattern.BurstMax = ShotBurstMax;
+                }
+
+                if (meleeRules || category == WeaponCategory.Channelled)
+                {
+                    _pattern.RecoveryTicks = MeleeRecoveryTicks;
+                }
+
+                ConfigureUsePattern(weapon, category, ref _pattern);
+                _tellTicks = _pattern.TellTicks;
+                _betweenUses = 0;
+                _lastPatternUses = UsesStartedTotal;
+                PatternUseIndex = 0;
+                PatternUseTicks = 0;
                 CurrentUsePhase = UsePhase.Tell;
                 _phaseTicks = 0;
                 _burstStartUses = UsesStartedTotal;
@@ -561,7 +654,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     UseState.ItemRotation = (float)Math.Atan2(aimDirection.Y * facing, aimDirection.X * facing);
                 }
 
-                if (_phaseTicks < _tellTicks)
+                bool authoredTellRunning = _phaseTicks < _tellTicks;
+                bool holdWindowLeft = _phaseTicks < _tellTicks + MaxTellHoldTicks;
+                bool heldBySubclass = !authoredTellRunning && holdWindowLeft && ShouldHoldTell();
+
+                if (authoredTellRunning || heldBySubclass)
                 {
                     return true;
                 }
@@ -599,16 +696,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             {
                 // Uses started since the tell (the tell's own use included). Held-projectile melee, whips and channels: 1.
                 int usesThisBurst = UsesStartedTotal - _burstStartUses;
-                int burstMax = 1;
-
-                if (_useCategory == WeaponCategory.SwingMelee)
-                {
-                    burstMax = MeleeBurstMax;
-                }
-                else if (_useCategory == WeaponCategory.Shot || _useCategory == WeaponCategory.NearInstantShot)
-                {
-                    burstMax = ShotBurstMax;
-                }
+                PatternUseIndex = Math.Max(0, usesThisBurst - 1);
+                PatternUseTicks++;
+                int burstMax = _pattern.BurstMax;
 
                 bool burstCountReached = usesThisBurst >= burstMax;
                 bool staminaLeft = StaminaCurrent > 0f;
@@ -622,7 +712,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         _channelTicks++;
                     }
 
-                    wantsUse = _channelTicks < ChannelMaxTicks;
+                    wantsUse = _channelTicks < _pattern.ChannelTicks;
                 }
                 else
                 {
@@ -640,6 +730,24 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 if (!hasTarget)
                 {
                     wantsUse = false;
+                }
+
+                if (UsesStartedTotal != _lastPatternUses)
+                {
+                    _lastPatternUses = UsesStartedTotal;
+                    _betweenUses = _pattern.GapTicks;
+                    PatternUseTicks = 0;
+                }
+
+                // Count the gap after the native animation and its attached projectile both finish.
+                if (_betweenUses > 0 && (handsFree || UseState.ItemAnimation <= 1))
+                {
+                    wantsUse = false;
+
+                    if (handsFree)
+                    {
+                        _betweenUses--;
+                    }
                 }
 
                 // Between uses of a burst, face the (re-aimed) target before the next use starts, as at the tell's start.
@@ -661,16 +769,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     CurrentUsePhase = UsePhase.Recovery;
                     _phaseTicks = 0;
-                    _recoveryTicks = ShotRecoveryTicks;
-
-                    if (meleeRules)
-                    {
-                        _recoveryTicks = MeleeRecoveryTicks;
-                    }
-                    else if (_useCategory == WeaponCategory.Channelled)
-                    {
-                        _recoveryTicks = ChannelRecoveryTicks;
-                    }
+                    _recoveryTicks = _pattern.RecoveryTicks;
 
                     if (LogsMeleeClock)
                     {
@@ -909,6 +1008,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             // Wrapper state for the other clients' tell visuals (the pose itself is in the base pose stream: a tell is a
             // held use, so it streams every tick).
             writer.Write((byte)CurrentUsePhase);
+            writer.Write((byte)PatternUseIndex);
+            writer.Write((short)PatternUseTicks);
 
             if (CurrentUsePhase == UsePhase.Tell)
             {
@@ -942,6 +1043,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         protected override void ReadOwnerExtras(BinaryReader reader)
         {
             CurrentUsePhase = (UsePhase)reader.ReadByte();
+            PatternUseIndex = reader.ReadByte();
+            PatternUseTicks = reader.ReadInt16();
 
             if (CurrentUsePhase == UsePhase.Tell)
             {
