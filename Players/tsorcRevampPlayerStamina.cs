@@ -958,13 +958,16 @@ namespace tsorcRevamp
                 //no stamina regen during a roll/swordspin/using an item/drinking a flask, for balance? Yes
                 if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping && !isDrinkingFlask)
                 {
+                    // Minion staves do not consume stamina on swing and should not pause stamina regen mid-swing.
+                    bool swingingStaminaItem = Player.itemAnimation != 0 && Player.HeldItem.DamageType != DamageClass.Summon;
+
                     if (!Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
                         // Unkindled no longer regenerates while swinging either, matching Bearer of the
                         // Curse. Classic keeps regenerating unconditionally — it pays no weapon stamina,
                         // so gating it would only punish dodge rolls.
                         bool blockedByAttacking = Player.GetModPlayer<tsorcRevampPlayer>().Unkindled
-                            && Player.itemAnimation != 0;
+                            && swingingStaminaItem;
 
                         if (!blockedByAttacking && staminaResourceRegenTimer > 3)
                         {
@@ -972,13 +975,16 @@ namespace tsorcRevamp
                             staminaResourceRegenTimer = 0;
                         }
                     }
-                    else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.itemAnimation == 0 && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
+                    else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !swingingStaminaItem && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
                     {
                         if (staminaResourceRegenTimer > 3)
                         {
                             ApplyRegenTick(staminaResourceGain);
 
-                            if (staminaResourceCurrent > minionStaminaCap) { staminaResourceCurrent = minionStaminaCap; }
+                            if (staminaResourceCurrent > minionStaminaCap)
+                            {
+                                staminaResourceCurrent = minionStaminaCap;
+                            }
 
                             staminaResourceRegenTimer = 0;
                         }

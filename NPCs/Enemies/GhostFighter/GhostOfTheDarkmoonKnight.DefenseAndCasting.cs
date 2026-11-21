@@ -81,7 +81,34 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             {
                 _castAim = (Main.player[_castTarget].Center - PuppetHandPosition).SafeNormalize(new Vector2(NPC.direction, 0));
                 NPC.direction = NPC.spriteDirection = _castAim.X < 0 ? -1 : 1;
-                if (progress >= 29f / 42f) Snapshot();
+
+                if (progress >= 29f / 42f)
+                {
+                    Snapshot();
+                }
+            }
+
+            // Fire a short (~2-tile) directional dust burst when aim locks 12 ticks before release.
+            if (!Main.dedServ && _cast == Cast.Barrage && PhaseTimer == MagicTelegraphFlashLeadTicks)
+            {
+                Vector2 aimDirection = _castAim.SafeNormalize(new Vector2(NPC.direction, 0));
+                Vector2 perpendicular = new Vector2(-aimDirection.Y, aimDirection.X);
+
+                for (int i = 0; i < 14; i++)
+                {
+                    Vector2 spawnPosition = PuppetHandPosition + aimDirection * Main.rand.NextFloat(0f, 10f) + perpendicular * Main.rand.NextFloat(-3f, 3f);
+                    Vector2 velocity = aimDirection * Main.rand.NextFloat(2.0f, 3.8f) + perpendicular * Main.rand.NextFloat(-0.35f, 0.35f);
+                    Dust bodyDust = Dust.NewDustPerfect(spawnPosition, DustID.ShadowbeamStaff, velocity, 90, default, Main.rand.NextFloat(0.75f, 1.2f));
+                    bodyDust.noGravity = true;
+                }
+
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 spawnPosition = PuppetHandPosition + aimDirection * Main.rand.NextFloat(2f, 12f) + perpendicular * Main.rand.NextFloat(-2f, 2f);
+                    Vector2 velocity = aimDirection * Main.rand.NextFloat(3.0f, 4.6f) + perpendicular * Main.rand.NextFloat(-0.2f, 0.2f);
+                    Dust sparkDust = Dust.NewDustPerfect(spawnPosition, DustID.AncientLight, velocity, 80, Accent, Main.rand.NextFloat(0.45f, 0.75f));
+                    sparkDust.noGravity = true;
+                }
             }
         }
         protected override void DoMagicAttack()
@@ -186,7 +213,6 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 int elapsed = Phase == AttackPhase.MagicTelegraph ? 42 - PhaseTimer : MagicAttackTicks - PhaseTimer;
                 bool show = Phase == AttackPhase.MagicTelegraph ? elapsed >= 10 : elapsed % 15 >= 4 && elapsed / 15 < _shotCount - 1;
                 if (show) DarkmoonVisuals.DrawHandOrb(PuppetHandPosition, Phase == AttackPhase.MagicTelegraph ? MathHelper.Clamp((elapsed - 10) / 20f, 0.25f, 1) : 0.6f + 0.4f * (elapsed % 15 - 4) / 11f);
-                if (Phase == AttackPhase.MagicTelegraph) DarkmoonVisuals.Line(PuppetHandPosition, PuppetHandPosition + _castAim * 700, Accent * 0.45f, 1f);
             }
             if (_cast == Cast.Vigil && Phase == AttackPhase.MagicTelegraph)
             {

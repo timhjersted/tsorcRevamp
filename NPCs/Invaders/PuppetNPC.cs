@@ -14577,8 +14577,15 @@ namespace tsorcRevamp.NPCs.Invaders
         internal static Player.CompositeArmStretchAmount CompositeArmStretch = Player.CompositeArmStretchAmount.Full;
 
         /// <summary>Automatic structured attack telemetry master switch. World load enables it and
-        /// starts a timestamped JSONL session; <c>/swingarm log</c> remains a manual override.</summary>
-        internal static bool SwingDebugLog = true;
+        /// starts a timestamped JSONL session; <c>/swingarm log</c> flips the toggle. Reads false unless the DebugMode
+        /// config is on too, so players never build a JSON sample per attacking puppet per tick or fill Logs/.</summary>
+        internal static bool SwingDebugLog
+        {
+            get => _swingDebugLogToggle && ModContent.GetInstance<tsorcRevampConfig>().DebugMode;
+            set => _swingDebugLogToggle = value;
+        }
+
+        private static bool _swingDebugLogToggle = true;
 
         /// <summary>Phases whose <c>_weaponRotation</c> represents an actual swinging-arm motion
         /// (as opposed to a held-aim pose).  Only these drive the composite arm experiment.</summary>

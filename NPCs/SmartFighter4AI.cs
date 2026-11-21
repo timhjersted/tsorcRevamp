@@ -5260,6 +5260,13 @@ namespace tsorcRevamp.NPCs
         private static void LogFrame(NPC npc, Player player, NavState nav, bool grounded, bool los,
             bool attack, string action, string reason)
         {
+            // Developer diagnostic only, like the [fsm] nav log: without this every player reopened the log file several
+            // times a second per SF4 enemy and built the full diagnostic string each time.
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                return;
+            }
+
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             int now = (int)Main.GameUpdateCount;
             // Sample finer while on/working a rope so fast vibration & phasing are actually captured between lines.
