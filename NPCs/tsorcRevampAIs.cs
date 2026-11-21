@@ -2257,25 +2257,14 @@ namespace tsorcRevamp.NPCs
                             continue;
                         }
 
-                        // Line of sight from where the NPC's centre would land to the player's centre, both in world
-                        // pixels. This used to pass TILE coordinates to Collision.CanHit, testing a spot by the world
-                        // origin, so only QueueTeleport's later re-check screened anything and most tries were wasted.
-                        Vector2 landingCenter = new Vector2(landingTileX * 16f, landingTileY * 16f - npc.height / 2f);
-                        Vector2 playerCenter = Main.player[npc.target].Center;
-                        bool landingHasLineOfSight = Collision.CanHit(landingCenter, 1, 1, playerCenter, 1, 1)
-                            && Collision.CanHitLine(landingCenter, 1, 1, playerCenter, 1, 1);
                         // A teleport must actually relocate: for the first 90 tries, reject landings within
                         // MinTeleportTravelTiles of where the NPC stands now (the "blinked 5 tiles for nothing" case).
                         // Flank tries are exempt: the target's far side is a purposeful spot even when it is close.
+                        Vector2 landingCenter = new Vector2(landingTileX * 16f, landingTileY * 16f - npc.height / 2f);
                         float travelTiles = Vector2.Distance(landingCenter, npc.Center) / 16f;
                         bool landsTooClose = !flanking && i < 90 && travelTiles < MinTeleportTravelTiles;
 
-                        if (requireLineofSight && !landingHasLineOfSight)
-                        {
-                            continue;
-                        }
-
-                        else if (landsTooClose)
+                        if (landsTooClose)
                         {
                             continue;
                         }
@@ -2293,6 +2282,21 @@ namespace tsorcRevamp.NPCs
                         {
                             //Main.NewText("Fail 4");
                             continue;
+                        }
+
+                        // Line of sight from where the NPC's centre would land to the player's centre, in world pixels.
+                        // Tested last and only when required: the two raycasts cost far more than every check above, and
+                        // a failed search runs this up to QueueTeleportSearchRounds x 100 x (landings per column) times.
+                        if (requireLineofSight)
+                        {
+                            Vector2 playerCenter = Main.player[npc.target].Center;
+                            bool landingHasLineOfSight = Collision.CanHit(landingCenter, 1, 1, playerCenter, 1, 1)
+                                && Collision.CanHitLine(landingCenter, 1, 1, playerCenter, 1, 1);
+
+                            if (!landingHasLineOfSight)
+                            {
+                                continue;
+                            }
                         }
 
                         //Then teleport and return
@@ -2529,13 +2533,18 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Fresh GenerateTeleportPosition searches (100 random tries each) before QueueTeleport gives up. It was 100 rounds
+        // while the inner line-of-sight test was broken and nearly every round "succeeded" on its first landing; with the
+        // real raycasts a failed 100-round search cost ~10,000 tries and stalled the game every retry (every 30 ticks).
+        private const int QueueTeleportSearchRounds = 4;
+
         public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false, int minRange = 11)
         {
             Vector2? potentialNewPos;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < QueueTeleportSearchRounds; i++)
                 {
                     potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight, preferHighGround, minRange);
                     if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))

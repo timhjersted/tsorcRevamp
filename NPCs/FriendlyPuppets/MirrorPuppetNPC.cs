@@ -2229,9 +2229,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         // for the whole update so those hooks cannot read or change the real player's weapon state.
         private static void RunPuppetProjectileUpdate(On_Projectile.orig_Update orig, Projectile projectile, int index)
         {
-            MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            // Vanilla calls Update on all 1000 slots every tick. A never-used slot is a bare new Projectile() with no
+            // globals, so GetGlobalProjectile threw KeyNotFoundException for each one: hundreds of exceptions per tick.
+            if (!projectile.active || !projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag))
+            {
+                orig(projectile, index);
+                return;
+            }
 
-            if (!projectile.active || !tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
+            if (!tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
             {
                 orig(projectile, index);
                 return;
@@ -2285,7 +2291,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         private static void RunPuppetProjectileKill(On_Projectile.orig_Kill orig, Projectile projectile)
         {
-            MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            // Same guard as RunPuppetProjectileUpdate: a slot that never ran SetDefaults has no globals.
+            if (!projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag))
+            {
+                orig(projectile);
+                return;
+            }
 
             if (!tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
             {
