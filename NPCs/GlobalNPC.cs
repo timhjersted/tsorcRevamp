@@ -1611,6 +1611,10 @@ namespace tsorcRevamp.NPCs
         public bool SuppressAutoTeleportThisFrame = false;
         // Optional pursuit leash for normal enemies that should not blink after a fleeing player.
         public float TeleportReacquireMaxRange = float.PositiveInfinity;
+        // Puppet Aggressive teleporters only: keep blinking back to the target (cooldown-gated, within
+        // TeleportReacquireMaxRange) after nav has given up into Search/Patrol. Without it the reacquire needs a
+        // Pursue-only give-up clock, so a puppet that gave up stood idle until it despawned. Set in SetDefaults; not synced.
+        public bool TeleportReacquiresAfterGiveUp = false;
         public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
         public TeleportStyle TeleportStyle = TeleportStyle.Normal;
         // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
@@ -5066,7 +5070,18 @@ namespace tsorcRevamp.NPCs
                 {
                     Patience = Main.rand.NextFloat(0.5f, 2);
                 }
-                if (Cowardice == -1)
+                // Puppets and knights never flee at low HP. They have no flee movement, so a Fleeing roll only shut off
+                // every attack for the rest of the fight (CanStartAttack / the melee gate refuse while Fleeing).
+                bool neverFlees = npc.ModNPC is PuppetNPC
+                    || npc.type == ModContent.NPCType<Enemies.Knight.RingedKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricBlackKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricSpearKnight>();
+                if (neverFlees)
+                {
+                    Cowardice = 0;
+                }
+                else if (Cowardice == -1)
                 {
                     Cowardice = Main.rand.NextFloat(0, 0.3f);
                 }

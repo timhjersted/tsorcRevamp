@@ -15,6 +15,7 @@ using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Potions.RadiantLifegem;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
@@ -47,6 +48,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         ThunderLance,
         StormPillar,
         Constellation,
+        DragonRush,
+        ReapingVault,
 
         // Smough
         OverheadExecution,
@@ -163,6 +166,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         private int _lastTargetSide;
         private int _crossCount;
         private int _crossWindow;
+        private WardenMove _approachMove;
+        private int _approachTicks;
 
         // ── Tuning shared by both bosses ─────────────────────────────────────────
         public const int PostGapTicks = 30;
@@ -174,8 +179,14 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         private const int LockHoldCapTicks = 60;
         private const int LockCancelTicks = 30;
         private const int NeutralEntryGrace = 45;
-        private const int PairedNeutralGap = 20;
-        private const int FlankCooldownTicks = 240;
+        // Idle time after any move, alone or paired. Owl Father-style pressure: the recoveries are the breathing room.
+        private const int NeutralGapTicks = 20;
+        private const int FlankCooldownTicks = 150;
+        // A melee card drawn out of reach runs in first: up to MeleeApproachRange past the move's strike range, for at most
+        // MeleeApproachMaxTicks at ApproachSpeedMult x walk speed, then swings once inside the strike range.
+        protected const float MeleeApproachRange = 200f;
+        private const int MeleeApproachMaxTicks = 90;
+        private const float ApproachSpeedMult = 1.4f;
         private const float FlankDistance = 21f * 16f;
         private const float TokenCloserPixels = 160f;
         private const int TokenPassChancePercent = 40;
@@ -199,6 +210,13 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         protected abstract WardenMove ReactiveMove { get; }
         protected abstract void FillBag(List<WardenMove> cards);
         protected abstract bool IsMoveEligible(WardenMove move, float distance, float rise, bool clearLine);
+        /// <summary>How close a melee card must be before it swings; 0 for moves that never run in first.</summary>
+        protected abstract float MeleeStrikeRange(WardenMove move);
+        /// <summary>Cards the partner without the press token may play from its flank.</summary>
+        protected abstract bool IsFlankerCard(WardenMove move);
+        protected abstract Color SwingArcBodyColor { get; }
+        protected abstract Color SwingArcCoreColor { get; }
+        protected abstract Color SwingArcDarkColor { get; }
         protected abstract string ComboNameFor(WardenMove move);
         protected abstract void TickBossMove(Player target, bool server);
         protected abstract void StartAntiAir(List<int> highPlayers);
@@ -245,7 +263,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 EaseInTicks = easeInTicks,
                 EaseOutTicks = easeOutTicks,
                 EaseOutDecay = decay,
-                HitWindowEnd = (easeInTicks + armedSettleTicks) / attackTicks,
+                // Live for the whole swing, settle included: rolling is judged by how long the blade overlaps the player.
+                HitWindowEnd = 1f,
                 StepInDistance = stepIn,
             };
         }
@@ -372,6 +391,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         // ── Starting moves ───────────────────────────────────────────────────────
         protected bool StartMove(WardenMove move)
         {
+            ClearApproach();
             string comboName = ComboNameFor(move);
             if (comboName != null)
             {
@@ -394,6 +414,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
 
         protected void BeginCustomMove(WardenMove move)
         {
+            ClearApproach();
             CurrentMove = move;
             MoveStage = 0;
             MoveTicks = 0;
@@ -408,6 +429,42 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             StartCustomAttack(CustomSafetyTicks, MeleeWeaponItemType, swingPose: false);
             NPC.netUpdate = true;
             RequestNetworkSnapshot();
+        }
+
+        private void ClearApproach()
+        {
+            if (_approachMove == WardenMove.None)
+            {
+                return;
+            }
+
+            _approachMove = WardenMove.None;
+            _approachTicks = 0;
+            NPC.netUpdate = true;
+        }
+
+        /// <summary>Path check for the scripted leaps: the body fits at every point and each leg between them is clear.
+        /// Gating on this keeps a leap from being chosen when a wall or ceiling would stop it short.</summary>
+        protected bool BodyPathClear(params Vector2[] centers)
+        {
+            Vector2 halfBody = new Vector2(NPC.width, NPC.height) * 0.5f;
+
+            for (int i = 0; i < centers.Length; i++)
+            {
+                Vector2 bodyTopLeft = centers[i] - halfBody;
+                if (Collision.SolidCollision(bodyTopLeft, NPC.width, NPC.height))
+                {
+                    return false;
+                }
+
+                bool legBlocked = i > 0 && !Collision.CanHitLine(centers[i - 1], 1, 1, centers[i], 1, 1);
+                if (legBlocked)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>Queues a move for this boss once it is next neutral, delayTicks from now (tandems, regroup).</summary>
@@ -531,7 +588,13 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 waypoint = new Vector2(target.Center.X + side * FlankDistance, target.Center.Y);
             }
 
-            SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * speedMult, acceleration: Acceleration, doorBreakingDamage: 5,
+            float approachMult = 1f;
+            if (_approachMove != WardenMove.None)
+            {
+                approachMult = ApproachSpeedMult;
+            }
+
+            SmartFighter4AI.Run(NPC, topSpeed: TopSpeed * speedMult * approachMult, acceleration: Acceleration, doorBreakingDamage: 5,
                 attackRange: 850f, movementWaypoint: waypoint);
         }
 
@@ -676,6 +739,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
 
             if (CutsceneHold || Role == DuoRole.Fallen)
             {
+                ClearApproach();
                 _wasNeutral = false;
                 _entryGrace = NeutralEntryGrace;
                 return;
@@ -740,23 +804,59 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 return;
             }
 
+            float rise = NPC.Bottom.Y - target.Bottom.Y;
+            bool clearLine = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
+            bool pairedFlanker = Role == DuoRole.Paired && partner != null && !HasPressToken;
+
+            // Running in for a drawn melee card: swing once inside its strike range, give up after the cap or if the
+            // player got away. Losing the press token hands the close fight to the partner, so the run-in stops too.
+            if (_approachMove != WardenMove.None)
+            {
+                _approachTicks++;
+                float strikeRange = MeleeStrikeRange(_approachMove);
+                bool inStrikeRange = distance <= strikeRange && rise <= GroundRiseLimit;
+                bool playerGotAway = distance > strikeRange + MeleeApproachRange + 80f;
+                bool gaveUp = _approachTicks >= MeleeApproachMaxTicks || playerGotAway || pairedFlanker;
+
+                if (inStrikeRange && !pairedFlanker)
+                {
+                    StartMove(_approachMove);
+                }
+                else if (gaveUp)
+                {
+                    ClearApproach();
+                }
+
+                return;
+            }
+
             if (_neutralGap > 0)
             {
                 _neutralGap--;
                 return;
             }
 
-            float rise = NPC.Bottom.Y - target.Bottom.Y;
-            bool clearLine = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
-            bool pairedFlanker = Role == DuoRole.Paired && partner != null && !HasPressToken;
+            _bag ??= new AttackBag<WardenMove>(FillBag);
 
+            // The flanker plays its own ranged cards from the shared deck on a slower clock; its signature move is the
+            // fallback when none of them is eligible from where it stands.
             if (pairedFlanker)
             {
-                bool flankReady = _flankCooldown <= 0 && IsMoveEligible(FlankerMove, distance, rise, clearLine);
-                if (flankReady)
+                if (_flankCooldown > 0)
+                {
+                    return;
+                }
+
+                bool drewFlankCard = _bag.TryDraw(move => IsFlankerCard(move) && IsMoveEligible(move, distance, rise, clearLine), out WardenMove flankMove);
+                if (!drewFlankCard)
+                {
+                    flankMove = FlankerMove;
+                }
+
+                if (drewFlankCard || IsMoveEligible(FlankerMove, distance, rise, clearLine))
                 {
                     _flankCooldown = FlankCooldownTicks;
-                    StartMove(FlankerMove);
+                    StartMove(flankMove);
                 }
 
                 return;
@@ -771,24 +871,31 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 }
             }
 
-            _bag ??= new AttackBag<WardenMove>(FillBag);
             if (_bag.TryDraw(move => IsMoveEligible(move, distance, rise, clearLine), out WardenMove drawn))
             {
+                bool needsRunIn = ComboNameFor(drawn) != null && distance > MeleeStrikeRange(drawn);
+                if (needsRunIn)
+                {
+                    _approachMove = drawn;
+                    _approachTicks = 0;
+                    NPC.netUpdate = true;
+                    return;
+                }
+
                 StartMove(drawn);
             }
         }
 
         private void OnReturnedToNeutral(WardenPuppet partner)
         {
+            ClearApproach();
             CurrentMove = WardenMove.None;
-
+            _neutralGap = NeutralGapTicks;
             if (Role == DuoRole.Alone)
             {
-                _neutralGap = Main.rand.Next(60, 121);
                 return;
             }
 
-            _neutralGap = PairedNeutralGap;
             if (HasPressToken && partner != null && Main.rand.Next(100) < TokenPassChancePercent)
             {
                 PassToken(partner);
@@ -926,6 +1033,56 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             {
                 MarkLive();
             }
+
+            bool arcMotion = step.Motion == ComboMotion.OverheadArc || step.Motion == ComboMotion.UnderhandArc
+                || step.Motion == ComboMotion.HorizontalSweep || step.Motion == ComboMotion.GroundSlam;
+            if (elapsed == 0 && arcMotion && IsServerSide)
+            {
+                // The sweep comes from the authored arc endpoints, so underhand cuts run backwards.
+                float arcStart = 0f;
+                float arcEnd = 0f;
+                ModifyMeleeArcEndpoints(step.Motion, ref arcStart, ref arcEnd);
+                float sweep = (arcEnd - arcStart) * NPC.direction;
+                float radius = ComboReachBase * 0.7f * step.ReachMult;
+
+                VanillaSwordArcSettings settings = SwingArcSettings(sweep, radius, total);
+                settings.Easing = VanillaSwordArcEasing.Weighted;
+                settings.WeightedEaseInTicks = step.EaseInTicks;
+                settings.WeightedEaseOutTicks = step.EaseOutTicks;
+                settings.WeightedEaseOutDecay = step.EaseOutDecay;
+                VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer, settings, Vector2.Zero, hostile: false);
+            }
+        }
+
+        /// <summary>A tracked crescent riding the live weapon for swingTicks, in this boss's colours. sweep is world radians,
+        /// signed (positive turns clockwise on screen). Callers pick the easing, spawn it on the server; the projectile syncs.</summary>
+        protected VanillaSwordArcSettings SwingArcSettings(float sweep, float radius, int swingTicks)
+        {
+            return new VanillaSwordArcSettings
+            {
+                Texture = VanillaSwordArcTexture.Excalibur,
+                Easing = VanillaSwordArcEasing.Linear,
+                Duration = Math.Max(1, swingTicks),
+                StartAngle = PuppetWeaponDirection.ToRotation(),
+                SweepAngle = sweep,
+                Radius = radius,
+                Opacity = 0.7f,
+                FadeInFraction = Math.Min(0.12f, 2f / swingTicks),
+                FadeOutFraction = 0.35f,
+                AfterimageLag = MathHelper.PiOver4,
+                AfterimageOpacity = 0.55f,
+                BodyOpacity = 0.8f,
+                CoreOpacity = 0.3f,
+                DrawTipSparkle = false,
+                TintWithWorldLighting = false,
+                DarkColor = SwingArcDarkColor,
+                BodyColor = SwingArcBodyColor,
+                CoreColor = SwingArcCoreColor,
+                DustType = -1,
+                DustCount = 0,
+                TrackPuppetBlade = true,
+                EnableCollision = false,
+            };
         }
 
         protected override void DoMeleeAttack()
@@ -1136,6 +1293,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             writer.WriteVector2(MoveStart);
             writer.Write((sbyte)MoveDirection);
             writer.Write(MoveFlag);
+            writer.Write((byte)_approachMove);
             writer.Write(NPC.lifeMax);
             base.SendExtraAI(writer);
         }
@@ -1172,6 +1330,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             MoveStart = reader.ReadVector2();
             MoveDirection = reader.ReadSByte();
             MoveFlag = reader.ReadBoolean();
+            _approachMove = (WardenMove)reader.ReadByte();
             NPC.lifeMax = reader.ReadInt32();
             base.ReceiveExtraAI(reader);
         }

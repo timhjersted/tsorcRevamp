@@ -23,7 +23,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(Projectiles.InvisibleNothingProj));
 
-        const float WaveSpeed = 7f;
+        // Subclass levers (the Hellkite Drake's Wing Gust). Defaults are the Chaos / Artorias values.
+        protected virtual float WaveSpeed => 7f;
+        protected virtual bool SpawnCloudGores => true;
+        protected virtual Vector3 WaveLight => new Vector3(0.5f, 0.15f, 0.7f);
+        protected virtual int GeyserDustType => ShadowVariant ? DustID.PurpleTorch : DustID.Shadowflame;
+        protected virtual int EmberDustType => ShadowVariant ? DustID.Smoke : DustID.DemonTorch;
+        protected virtual Color WaveDustColor => default;
+
         const int WaveTravelTicks = 120; //~52 tiles of travel after arming — doubled so it covers the arena
         const int CloudInterval = 6;     //~20 trailing cloud gores per wave over those 120 ticks
         const int ImpactDamage = 25;     //flat, not NPC.damage-scaled: this is a battlefield hazard, not a nuke
@@ -31,9 +38,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
 
         const int WeightOfShadowTicks = 3 * 60; // fixed 3s: Weight of Shadow is not a LongerExpertDebuff, so Expert does not stretch it
 
-        int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
+        protected int Direction => (int)Projectile.ai[0] >= 0 ? 1 : -1;
         int ArmDelay => (int)Projectile.ai[1];
-        bool ShadowVariant => Projectile.ai[2] >= 0.5f;
+        protected bool ShadowVariant => Projectile.ai[2] >= 0.5f;
         bool Armed => Projectile.localAI[0] > ArmDelay;
 
         // Ticks the wave crawls after arming. A shadow wave whose ai[2] is above 1 carries its run in px, converted at WaveSpeed.
@@ -116,30 +123,25 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
             }
 
             //The wave itself: dark fire geysers erupting from the ground as it passes (shadow variant: abyss-purple flame + grey smoke)
-            int geyserDustType = DustID.Shadowflame;
-            int emberDustType = DustID.DemonTorch;
-            if (ShadowVariant)
-            {
-                geyserDustType = DustID.PurpleTorch;
-                emberDustType = DustID.Smoke;
-            }
+            int geyserDustType = GeyserDustType;
+            int emberDustType = EmberDustType;
 
             for (int i = 0; i < 3; i++)
             {
                 Vector2 dustPosition = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), Projectile.position.Y + Projectile.height - 6f);
-                int dust = Dust.NewDust(dustPosition, 4, 4, geyserDustType, Direction * 0.5f, Main.rand.NextFloat(-6f, -3f), 80, default, Main.rand.NextFloat(1.4f, 2f));
+                int dust = Dust.NewDust(dustPosition, 4, 4, geyserDustType, Direction * 0.5f, Main.rand.NextFloat(-6f, -3f), 80, WaveDustColor, Main.rand.NextFloat(1.4f, 2f));
                 Main.dust[dust].noGravity = true;
             }
 
             if (Main.rand.NextBool(2))
             {
-                int ember = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, emberDustType, 0f, -2f, 0, default, 1f);
+                int ember = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, emberDustType, 0f, -2f, 0, WaveDustColor, 1f);
                 Main.dust[ember].noGravity = true;
             }
 
             //A cloud every few ticks as the wave crawls, so roughly ten per side trail the dust rather than all
             //appearing at the impact point. Client-side only — gores are pure decoration and never sync.
-            if (!Main.dedServ && Projectile.localAI[0] % CloudInterval == 0)
+            if (SpawnCloudGores && !Main.dedServ && Projectile.localAI[0] % CloudInterval == 0)
             {
                 int variant = Main.rand.Next(1, 4);
                 Vector2 cloudVelocity = new Vector2(Direction * Main.rand.NextFloat(0.5f, 2f), Main.rand.NextFloat(-3f, -1f));
@@ -148,7 +150,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Chaos
                     ModContent.Find<ModGore>($"tsorcRevamp/ChaosImpactCloud{variant}").Type, Main.rand.NextFloat(0.7f, 1.1f));
             }
 
-            Lighting.AddLight(Projectile.Center, 0.5f, 0.15f, 0.7f);
+            Lighting.AddLight(Projectile.Center, WaveLight);
         }
 
         ///<summary>Aligns the projectile bottom with the ground below/above; false = blocked by a tall wall or open pit.</summary>

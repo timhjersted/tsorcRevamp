@@ -1,5 +1,6 @@
 using System;
 using Terraria;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
 
@@ -7,6 +8,10 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class DestinedDeath : ModBuff
     {
+        // Description numbers come from DestinedDeathPlayer: {0}% per stack, {1}% cap, {2}% damage bonus at the cap.
+        public override LocalizedText Description => base.Description.WithFormatArgs(DestinedDeathPlayer.LossPercentPerStack,
+            DestinedDeathPlayer.MaxStacks * DestinedDeathPlayer.LossPercentPerStack, DestinedDeathPlayer.DamageBonusPercent);
+
         public override void SetStaticDefaults()
         {
             Main.debuff[Type] = true;
@@ -48,8 +53,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 
     public class DestinedDeathPlayer : ModPlayer
     {
-        internal const int MaxStacks = 6;
-        internal const int LossPercentPerStack = 10;
+        // 12 stacks of 5% each: the same 60% cap as before, reached in smaller steps.
+        internal const int MaxStacks = 12;
+        internal const int LossPercentPerStack = 5;
         internal const int RecoveryPercentPerSecond = 10;
         internal const int DamageBonusPercent = 15;
         private const int DrainPercentPerSecond = 5;

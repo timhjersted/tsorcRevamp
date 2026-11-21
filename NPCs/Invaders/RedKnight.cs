@@ -242,6 +242,10 @@ namespace tsorcRevamp.NPCs.Invaders
             redKnightGlobalNPC.CanTeleport = true;
             redKnightGlobalNPC.TeleportStyle = TeleportStyle.Aggressive;
             redKnightGlobalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
+            // Reacquire = a flank on the target's far side, also after nav gave up, out to 100 tiles.
+            redKnightGlobalNPC.TeleportFlanksTarget = true;
+            redKnightGlobalNPC.TeleportReacquiresAfterGiveUp = true;
+            redKnightGlobalNPC.TeleportReacquireMaxRange = 1600f;
 
             // Start from the knight-family retreat profile, then remove its random on-hit blink below.
             EvasiveProfile.RedKnight(redKnightGlobalNPC);

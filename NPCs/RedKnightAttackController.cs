@@ -2584,6 +2584,9 @@ namespace tsorcRevamp.NPCs
         };
 
         public bool IsSpectralHandBarrage => Attack == KnightSpecialAttack.SpectralHandBarrage;
+        /// <summary>Crimson Teleport Ambush's hidden stretch. Synced in Send/Receive, unlike the NPC.alpha it also sets, so
+        /// draw code reads this to decide visibility on every machine.</summary>
+        public bool IsRedTeleportHidden => redTeleportHidden;
         public float SpectralGatherProgress => IsSpectralHandBarrage
             ? MathHelper.Clamp(Timer / 60f, 0f, 1f)
             : 0f;

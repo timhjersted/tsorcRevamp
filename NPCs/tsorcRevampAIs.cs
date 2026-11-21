@@ -2164,6 +2164,9 @@ namespace tsorcRevamp.NPCs
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
+        // Tiles. GenerateTeleportPosition skips landings closer than this to the NPC's current centre (until its last tries).
+        private const float MinTeleportTravelTiles = 10f;
+
         public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true, bool preferHighGround = false, int minRange = 11)
         {
             int playerTileY = (int)(Main.player[npc.target].Center.Y / 16f);
@@ -2254,10 +2257,26 @@ namespace tsorcRevamp.NPCs
                             continue;
                         }
 
-                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
-                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        // Line of sight from where the NPC's centre would land to the player's centre, both in world
+                        // pixels. This used to pass TILE coordinates to Collision.CanHit, testing a spot by the world
+                        // origin, so only QueueTeleport's later re-check screened anything and most tries were wasted.
+                        Vector2 landingCenter = new Vector2(landingTileX * 16f, landingTileY * 16f - npc.height / 2f);
+                        Vector2 playerCenter = Main.player[npc.target].Center;
+                        bool landingHasLineOfSight = Collision.CanHit(landingCenter, 1, 1, playerCenter, 1, 1)
+                            && Collision.CanHitLine(landingCenter, 1, 1, playerCenter, 1, 1);
+                        // A teleport must actually relocate: for the first 90 tries, reject landings within
+                        // MinTeleportTravelTiles of where the NPC stands now (the "blinked 5 tiles for nothing" case).
+                        // Flank tries are exempt: the target's far side is a purposeful spot even when it is close.
+                        float travelTiles = Vector2.Distance(landingCenter, npc.Center) / 16f;
+                        bool landsTooClose = !flanking && i < 90 && travelTiles < MinTeleportTravelTiles;
+
+                        if (requireLineofSight && !landingHasLineOfSight)
                         {
-                            //Main.NewText("Fail 3");
+                            continue;
+                        }
+
+                        else if (landsTooClose)
+                        {
                             continue;
                         }
 

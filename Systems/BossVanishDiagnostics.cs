@@ -68,7 +68,9 @@ namespace tsorcRevamp.Systems
 
             // Boss bodies, plus segments/parts that share a boss's health pool (worms, The Machine's limbs).
             bool sharesBossLife = npc.realLife >= 0 && npc.realLife < Main.maxNPCs && Main.npc[npc.realLife].boss;
-            snapshot.Tracked = npc.boss || sharesBossLife;
+            // TEMPORARY DIAGNOSTIC (Black Knight despawn reports): also track Black Knights, which are not bosses.
+            bool isBlackKnight = npc.type == ModContent.NPCType<NPCs.Invaders.BlackKnight>();
+            snapshot.Tracked = npc.boss || sharesBossLife || isBlackKnight;
             snapshot.Type = npc.type;
             snapshot.Name = npc.FullName;
             snapshot.Life = npc.life;
@@ -96,12 +98,23 @@ namespace tsorcRevamp.Systems
             {
                 likelyCause = "life <= 0 without a kill (vanilla UpdateNPC silent removal)";
             }
+            else if (previous.TimeLeft <= 1)
+            {
+                // TEMPORARY DIAGNOSTIC: vanilla NPC.CheckActive counts timeLeft down from 750 while no player is within
+                // about one screen of the NPC, and removes it at 0.
+                likelyCause = "timeLeft ran out (vanilla CheckActive inactivity despawn: no player within ~1 screen for 750 ticks)";
+            }
+
+            // TEMPORARY DIAGNOSTIC: pursuit and teleport state, for the Black Knight despawn/teleport reports.
+            tsorcRevampGlobalNPC vanishedGlobal = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            string pursuitText = $"pursuit={vanishedGlobal.PursuitState} disengage={vanishedGlobal.DisengageTimer} tpCountdown={vanishedGlobal.TeleportCountdown} tpAppear={vanishedGlobal.TeleportAppearanceTimer} tpCooldown={vanishedGlobal.TeleportCooldownTimer} fleeing={vanishedGlobal.Fleeing}";
 
             StringBuilder report = new StringBuilder();
             report.AppendLine($"[BossVanish] {previous.Name} (type {previous.Type}, slot {index}) vanished on tick {Main.GameUpdateCount}. Likely cause: {likelyCause}");
             report.AppendLine($"  netMode={Main.netMode} modVersion={Mod.Version}");
             report.AppendLine($"  last tick: life={previous.Life}/{previous.LifeMax} timeLeft={previous.TimeLeft} target={previous.Target} center={previous.Center} velocity={previous.Velocity}");
             report.AppendLine($"  now: active={npc.active} type={npc.type} life={npc.life} timeLeft={npc.timeLeft} center={npc.Center}");
+            report.AppendLine($"  state: {pursuitText}");
 
             if (tracker.RecentHits == null)
             {

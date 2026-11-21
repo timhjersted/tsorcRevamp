@@ -153,6 +153,10 @@ namespace tsorcRevamp.NPCs.Invaders
             redKnightGlobalNPC.CanTeleport = true;
             redKnightGlobalNPC.TeleportStyle = TeleportStyle.Aggressive;
             redKnightGlobalNPC.TeleportVisualStyle = TeleportVisualStyle.Fire;
+            // Reacquire = a flank on the target's far side, also after nav gave up, out to 100 tiles.
+            redKnightGlobalNPC.TeleportFlanksTarget = true;
+            redKnightGlobalNPC.TeleportReacquiresAfterGiveUp = true;
+            redKnightGlobalNPC.TeleportReacquireMaxRange = 1600f;
             redKnightGlobalNPC.NavSearchRadius = 80;
             redKnightGlobalNPC.CanUseRopes = true;
         }
@@ -467,8 +471,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            // Synced hide state only: NPC.alpha is never synced (see RedKnightPuppet.PreDraw).
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool visible = NPC.alpha < 255 && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0;
+            bool visible = !specialAttacks.IsRedTeleportHidden && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0;
             if (visible && specialAttacks.IsHerald)
             {
                 if (specialAttacks.Attack == KnightSpecialAttack.FurnaceHerald)
@@ -498,7 +503,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
             // Front half of the engulf, over the body and the planted lance, much lighter so the knight stays readable.
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            bool visible = NPC.alpha < 255 && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0;
+            bool visible = !specialAttacks.IsRedTeleportHidden && globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0;
             if (visible && DominionEngulfOpacity > 0f)
             {
                 RedKnightVFX.DrawDominionEngulf(NPC.Bottom - new Vector2(0f, NPC.gfxOffY), NPC.scale,

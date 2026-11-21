@@ -16,7 +16,7 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.NPCs.Bosses.Demons
 {
     // Ancient Demon of the Abyss — SHM wandering elite, tier 3 of the demon family (shared AI in NPCs/Bosses/Demons/DemonBase.cs).
-    // Element: bright red flame with black smoke; every hit adds a Destined Death stack (max 6) and refreshes Abyss 30s.
+    // Element: bright red flame with black smoke; every hit adds a Destined Death stack (max 12) and refreshes Abyss 30s.
     // Signatures:
     //   Doom Orb       (bag x1) darkness gathers over the horns → a harmless orb drifts 10 tiles above the player and
     //                  fires 4 straight bolts, each glinting 20t first, then implodes. Max one alive.

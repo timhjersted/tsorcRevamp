@@ -164,7 +164,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DemonFamily
         /// The tier's debuff for one hit. Called from OnHitPlayer hooks, which run on the hit player's own machine, so
         /// AddBuff / ApplyExplicit there syncs normally (unlike the old T3 server-side Abyss on cast).
         /// onFireTicks is T1's On Fire duration; curseAmount is T2's buildup. T3 always adds one Destined Death stack
-        /// (each AddBuff re-application is +1 stack, max 6) and refreshes Abyss to 30s.
+        /// (each AddBuff re-application is +1 stack, max 12) and refreshes Abyss to 30s.
         /// </summary>
         public static void ApplyHitDebuff(Player target, DemonTier tier, int onFireTicks, int curseAmount)
         {

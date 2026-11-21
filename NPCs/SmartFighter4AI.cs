@@ -1006,7 +1006,56 @@ namespace tsorcRevamp.NPCs
                                 || (globalNPC.TeleportCooldownTimer == 0
                                     && (globalNPC.RecoveryTeleportMaxRange <= 0f
                                         || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange));
-                            if (globalNPC.CanTeleport && recoveryInRange)
+
+                            // Not stuck, just standing: target in sight, feet within 2 tiles of ours, at most 30 tiles
+                            // away, and every column between has floor at our feet row (or one below) and a clear body.
+                            // Holding position there (kiting, waiting out a cooldown) is not a reason to blink or give up.
+                            float feetDiff = Math.Abs(npc.Bottom.Y - player.Bottom.Y);
+                            float horizontalTiles = Math.Abs(player.Center.X - npc.Center.X) / TileF;
+                            bool openWalkToTarget = los && feetDiff <= 2f * TileF && horizontalTiles <= 30f;
+                            if (openWalkToTarget)
+                            {
+                                int floorRow = (int)(npc.Bottom.Y / TileF);
+                                int bodyTiles = (int)Math.Ceiling(npc.height / TileF);
+                                int startColumn = (int)(npc.Center.X / TileF);
+                                int endColumn = (int)(player.Center.X / TileF);
+                                int columnStep = Math.Sign(endColumn - startColumn);
+                                for (int column = startColumn; column != endColumn; column += columnStep)
+                                {
+                                    Tile floorTile = Main.tile[column, floorRow];
+                                    Tile dipTile = Main.tile[column, floorRow + 1];
+                                    bool floorHere = UsefulFunctions.IsTileReallySolid(column, floorRow)
+                                        || (floorTile.HasTile && Main.tileSolidTop[floorTile.TileType]);
+                                    bool dipFloor = UsefulFunctions.IsTileReallySolid(column, floorRow + 1)
+                                        || (dipTile.HasTile && Main.tileSolidTop[dipTile.TileType]);
+
+                                    bool bodyClear = true;
+                                    for (int row = floorRow - bodyTiles; row < floorRow; row++)
+                                    {
+                                        if (UsefulFunctions.IsTileReallySolid(column, row))
+                                        {
+                                            bodyClear = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if ((!floorHere && !dipFloor) || !bodyClear)
+                                    {
+                                        openWalkToTarget = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Aggressive teleporters also wait out their cooldown here instead of blinking every 4s window.
+                            bool aggressiveOnCooldown = globalNPC.TeleportStyle == TeleportStyle.Aggressive
+                                && globalNPC.TeleportCooldownTimer > 0;
+
+                            if (openWalkToTarget || (globalNPC.CanTeleport && aggressiveOnCooldown))
+                            {
+                                nav.LastPlanResult = $"hard-stuck ignored x={nav.HardStuckCheckX / TileF:F1} openWalk={openWalkToTarget} tpCooldown={globalNPC.TeleportCooldownTimer}";
+                            }
+                            else if (globalNPC.CanTeleport && recoveryInRange)
                             {
                                 // Use the same robust reacquire search as the navigation FSM: a wider
                                 // radius, a legal sightline near the target, and normal charge/cooldown

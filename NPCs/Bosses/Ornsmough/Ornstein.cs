@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Items.Armor.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
+using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
@@ -36,6 +37,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         public const int LightExpert = 180;
         public const int GiantLightExpert = 210;
         public const int SkewerExpert = 200;
+        public const int RushExpert = 220;
         public const int ColossusSkewerExpert = 240;
         public const int PlungeExpert = 200;
         public const int BoltExpert = 140;
@@ -134,7 +136,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
 
         protected override MeleeCombo[] MeleeComboPoolOverride => OrnsteinCombos;
 
-        /// <summary>A couched thrust: JoustDash Whip over 20t, live 12t, push 1.0 x walk speed; the grip pulse carries the reach.</summary>
+        /// <summary>A couched thrust: JoustDash Whip over 20t, live the whole thrust, push 1.0 x walk speed; the grip pulse carries the reach.</summary>
         private static MeleeComboStep ThrustStep(int telegraph, int pause)
         {
             return new MeleeComboStep
@@ -147,30 +149,31 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 ReachMult = 1f,
                 ForwardPushMult = 1f,
                 Ease = SwingEaseStyle.Whip,
-                HitWindowEnd = 0.6f,
+                HitWindowEnd = 1f,
             };
         }
 
         /*
          * Timing sheet (attack-timing-design §3). On-screen tell = authored (multiplier 1).
-         * Arc Thrust:      tell 24 | 3 thrusts of 20t, live 12t, 8t tail + 24t pause -> next live 32t after the last ended |
-         *                  step 3 only on a hit or with the target within 140px in front; its bolt leaves on tick 6 | recovery 36
-         * Reaping Sweep:   tell 26 | Horizontal 0.2 -> 3.7 rad under the body (200 deg), 8/36 k7, live ~14t | recovery 30
-         * Colossal Cleave: tell 40 | GroundSlam -1.62 -> 2.0 (210 deg), 12/40 k6, live ~20t | 32t tail + 18t pause ->
-         *                  rising reap (Underhand 2.0 -> -1.45, 10/36 k7) ~54t after the slam's window | recovery 60
+         * Every step is live for its whole swing; rolling is judged by how long the moving blade overlaps the player.
+         * Arc Thrust:      tell 24 | 3 thrusts of 20t, live 20t + 24t pause -> next live 24t after the last ended |
+         *                  step 3 only on a hit or with the target within 140px in front; its bolt leaves on tick 6 | recovery 26
+         * Reaping Sweep:   tell 26 | Horizontal 0.2 -> 3.7 rad under the body (200 deg), 8/36 k7, live 44t | recovery 24
+         * Colossal Cleave: tell 40 | GroundSlam -1.62 -> 2.0 (210 deg), 12/40 k6, live 52t | 18t pause ->
+         *                  rising reap (Underhand 2.0 -> -1.45, 10/36 k7), only on a hit or within 220px | recovery 60
          */
         private static readonly MeleeCombo[] OrnsteinCombos = new[]
         {
             new MeleeCombo
             {
                 Name = ArcThrustName, BaseWeight = 100, Preferred = ComboRangeBand.Any, InitialFlashColor = Color.White,
-                RecoveryTicks = 36, MoveBrake = 0f,
+                RecoveryTicks = 26, MoveBrake = 0f,
                 Steps = new[] { ThrustStep(24, 24), ThrustStep(0, 24), ThrustStep(0, 0) }
             },
             new MeleeCombo
             {
                 Name = ReapingSweepName, BaseWeight = 100, Preferred = ComboRangeBand.Any, InitialFlashColor = Color.Gold,
-                RecoveryTicks = 30, MoveBrake = 0.1f,
+                RecoveryTicks = 24, MoveBrake = 0.1f,
                 Steps = new[] { WeightedStep(ComboMotion.HorizontalSweep, 26, 8, 36, 7f, 0, 1f, 0.9f, 30f) }
             },
             new MeleeCombo
@@ -205,6 +208,30 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     a1 = -1.45f;
                     break;
             }
+        }
+
+        protected override Color SwingArcBodyColor => new Color(255, 205, 90);
+        protected override Color SwingArcCoreColor => new Color(255, 250, 225);
+        protected override Color SwingArcDarkColor => new Color(110, 70, 15);
+
+        protected override float MeleeStrikeRange(WardenMove move)
+        {
+            switch (move)
+            {
+                case WardenMove.ArcThrust:
+                    return 190f;
+                case WardenMove.ColossalCleave:
+                    return 200f;
+                case WardenMove.ReapingSweep:
+                    return ReactiveRange;
+                default:
+                    return 0f;
+            }
+        }
+
+        protected override bool IsFlankerCard(WardenMove move)
+        {
+            return move == WardenMove.ThunderJavelin || move == WardenMove.ThunderLance || move == WardenMove.LeapingPlunge;
         }
 
         protected override string ComboNameFor(WardenMove move)
@@ -360,6 +387,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     WardenMove.ArcThrust, WardenMove.ArcThrust, WardenMove.ArcThrust, WardenMove.ArcThrust,
                     WardenMove.LeapingPlunge, WardenMove.LeapingPlunge,
                     WardenMove.ThunderJavelin, WardenMove.ThunderJavelin,
+                    WardenMove.DragonRush, WardenMove.DragonRush,
+                    WardenMove.ReapingVault, WardenMove.ReapingVault,
                 });
                 return;
             }
@@ -374,6 +403,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 WardenMove.ThunderJavelin,
                 WardenMove.ThunderLance, WardenMove.ThunderLance,
                 WardenMove.StormPillar,
+                WardenMove.DragonRush, WardenMove.DragonRush,
+                WardenMove.ReapingVault, WardenMove.ReapingVault,
             });
         }
 
@@ -390,11 +421,24 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 case WardenMove.ColossusSkewer:
                     return grounded && clearLine && distance >= skewerMin && distance <= skewerMax;
                 case WardenMove.ArcThrust:
-                    return grounded && distance <= 190f;
                 case WardenMove.ColossalCleave:
-                    return grounded && distance <= 200f;
+                    return grounded && distance <= MeleeStrikeRange(move) + MeleeApproachRange;
+                case WardenMove.DragonRush:
+                    return grounded && clearLine && distance >= RushMinRange && distance <= RushMaxRange;
+                case WardenMove.ReapingVault:
+                    return grounded && clearLine && distance >= VaultMinRange && distance <= VaultMaxRange && VaultPathClear(TargetPlayer);
                 case WardenMove.LeapingPlunge:
-                    return clearLine && distance >= 160f && distance <= plungeMax;
+                {
+                    if (!clearLine || distance < 160f || distance > plungeMax)
+                    {
+                        return false;
+                    }
+
+                    // Same rise-hang-dive path the move flies: a ceiling or wall in the way would stop it short.
+                    Vector2 targetCenter = TargetPlayer.Center;
+                    Vector2 apex = PlungeApex(targetCenter);
+                    return BodyPathClear(NPC.Center, apex, targetCenter - new Vector2(0f, 24f));
+                }
                 case WardenMove.ThunderJavelin:
                     return clearLine && distance >= 320f && distance <= 1100f;
                 case WardenMove.ThunderLance:
@@ -438,6 +482,24 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         private const int ColossusPauseTicks = 20;
         private const int ColossusRetellTicks = 18;
         private const int ColossusRecoveryTicks = 60;
+
+        /*
+         * Dragon Rush: the long-range couched charge. Spear level and tip forward the whole way, like the Skewer.
+         * Tell 46t (aim tracks to t38, gold aim line the full distance, tip charge, thunder at t1).
+         * Dash: 6t squared ramp to 26 px/t (28 as Giant), overshoots 220px past the locked point, 110px slide-out,
+         *   live the whole dash. 90 tiles + 220px = 1660px needs ~67t at 26 px/t, so the 84t cap only stops a blocked dash.
+         * Counter: roll through it (the spear passes in ~3t at that speed) or jump it. Recovery 64t, the longest punish he has.
+         * Selection: grounded, clear line, 30-90 tiles; two cards in each phase's deck.
+         */
+        private const float RushMinRange = 30f * 16f;
+        private const float RushMaxRange = 90f * 16f;
+        private const int RushTellTicks = 46;
+        private const int RushAimLockTick = 38;
+        private const float RushPeakSpeed = 26f;
+        private const float GiantRushPeakSpeed = 28f;
+        private const float RushOvershoot = 220f;
+        private const int RushMaxDashTicks = 84;
+        private const int RushRecoveryTicks = 64;
         private float _dashRemaining;
         private bool _secondDashDone;
 
@@ -455,9 +517,13 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     case WardenMove.LungingSkewer:
                     case WardenMove.PincerDash:
                     case WardenMove.ColossusSkewer:
+                    case WardenMove.DragonRush:
                         return MoveStage != SkewerRecover;
                     case WardenMove.LeapingPlunge:
                         return MoveStage != PlungeRecover;
+                    case WardenMove.ReapingSweep:
+                    case WardenMove.ReapingVault:
+                        return MoveStage != ReapRecover;
                     case WardenMove.ThunderJavelin:
                     case WardenMove.ThunderLance:
                     case WardenMove.Constellation:
@@ -477,10 +543,15 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 case WardenMove.LungingSkewer:
                 case WardenMove.PincerDash:
                 case WardenMove.ColossusSkewer:
+                case WardenMove.DragonRush:
                     TickSkewer(target, server);
                     break;
                 case WardenMove.LeapingPlunge:
                     TickPlunge(target, server);
+                    break;
+                case WardenMove.ReapingSweep:
+                case WardenMove.ReapingVault:
+                    TickReap(target, server);
                     break;
                 case WardenMove.ThunderJavelin:
                 case WardenMove.ThunderLance:
@@ -518,6 +589,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 case SkewerRetell:
                 {
                     NPC.velocity.X *= 0.8f;
+                    bool rush = CurrentMove == WardenMove.DragonRush;
                     int tellTicks = SkewerTellTicks;
                     int lockTick = SkewerAimLockTick;
                     if (MoveStage == SkewerRetell)
@@ -525,11 +597,21 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                         tellTicks = ColossusRetellTicks;
                         lockTick = ColossusRetellTicks - 6;
                     }
+                    else if (rush)
+                    {
+                        tellTicks = RushTellTicks;
+                        lockTick = RushAimLockTick;
+                    }
 
                     if (MoveTicks == 1 && MoveStage == SkewerTell)
                     {
                         _secondDashDone = false;
                         SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.6f, Pitch = -0.2f }, NPC.Center);
+
+                        if (rush)
+                        {
+                            SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.5f, Pitch = 0.3f }, NPC.Center);
+                        }
                     }
 
                     bool scripted = MoveFlag;
@@ -553,6 +635,10 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                         if (CurrentMove == WardenMove.ColossusSkewer)
                         {
                             damage = ColossusSkewerExpert;
+                        }
+                        else if (rush)
+                        {
+                            damage = RushExpert;
                         }
 
                         ArmBlade(SpearReach * 1.1f, damage);
@@ -586,6 +672,10 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     {
                         recoveryTicks = ColossusRecoveryTicks;
                     }
+                    else if (CurrentMove == WardenMove.DragonRush)
+                    {
+                        recoveryTicks = RushRecoveryTicks;
+                    }
 
                     if (server && MoveTicks >= recoveryTicks)
                     {
@@ -600,9 +690,16 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         {
             float peakSpeed = Empowered ? 24f : 22f;
             float overshoot = Empowered ? 140f : 120f;
+            int maxDashTicks = SkewerMaxDashTicks;
             if (CurrentMove == WardenMove.PincerDash)
             {
                 overshoot = 260f;
+            }
+            else if (CurrentMove == WardenMove.DragonRush)
+            {
+                peakSpeed = Empowered ? GiantRushPeakSpeed : RushPeakSpeed;
+                overshoot = RushOvershoot;
+                maxDashTicks = RushMaxDashTicks;
             }
 
             if (MoveTicks == 1)
@@ -628,7 +725,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             SpawnDashTrail();
 
             bool blocked = MoveTicks > 3 && NPC.collideX;
-            bool finished = _dashRemaining <= 0f || blocked || MoveTicks >= SkewerMaxDashTicks;
+            bool finished = _dashRemaining <= 0f || blocked || MoveTicks >= maxDashTicks;
             if (!server || !finished)
             {
                 return;
@@ -678,9 +775,11 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                 return;
             }
 
-            for (int i = 1; i <= 8; i++)
+            // One mote per ~48px, never fewer than 8, so a 90-tile rush line reads as solidly as a short one.
+            int motes = Math.Max(8, (int)(Vector2.Distance(from, to) / 48f));
+            for (int i = 1; i <= motes; i++)
             {
-                Vector2 point = Vector2.Lerp(from, to, i / 8f);
+                Vector2 point = Vector2.Lerp(from, to, i / (float)motes);
                 Dust line = Dust.NewDustPerfect(point, DustID.GoldFlame, Vector2.Zero, 100, Color.White, 0.8f);
                 line.noGravity = true;
             }
@@ -731,6 +830,265 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             return start.Y - 40f * 16f;
         }
 
+        /*
+         * Reaping Sweep: one spear sweep from low in front, down under the body, to low behind (0.2 -> 3.7 rad, 200 deg),
+         * so it covers both sides of him. Two ways in:
+         *   Grounded (reactive): fires after the player crosses to his other side within 60t and 120px; it catches a
+         *     second roll behind him. Tell 30t: a short hop back while the spear lifts high (-1.3), then it drops to the
+         *     start in the last 10t. Strike 40t (Snap ease), live the whole sweep. Recovery 26t: 8t held, then the spear
+         *     turns back over the top (the short way, ~131 deg) to the carry.
+         *   Vault (deck card, 7-20 tiles): the same tell without the hop, aim locks at t24, then a 36t low arc (apex 96px)
+         *     that lands 150px past the player. The sweep runs from 20% to 80% of the flight, so the blade passes through
+         *     the player as he goes over. Live from 15% to 85% of the flight. Lands into a 36t recovery.
+         * Counter: roll through the sweep (the blade crosses a standing player in ~12t), or for the vault, run under
+         * the jump early. Neither has projectiles.
+         */
+        private const byte ReapTell = 0;
+        private const byte ReapStrike = 1;
+        private const byte ReapRecover = 2;
+        private const int ReapTellTicks = 30;
+        private const int ReapDropTicks = 10;
+        private const int ReapStrikeTicks = 40;
+        private const int ReapHoldTicks = 8;
+        private const int ReapRecoveryTicks = 26;
+        private const int VaultRecoveryTicks = 36;
+        private const int VaultAimLockTick = 24;
+        private const int VaultAirTicks = 36;
+        private const float VaultApexLift = 96f;
+        private const float VaultOvershoot = 150f;
+        private const float VaultMinRange = 7f * 16f;
+        private const float VaultMaxRange = 20f * 16f;
+        private const float VaultSweepStart = 0.2f;
+        private const float VaultSweepEnd = 0.8f;
+        private const float VaultLiveStart = 0.15f;
+        private const float VaultLiveEnd = 0.85f;
+        private const float ReapStartRotation = 0.2f;
+        private const float ReapEndRotation = 3.7f;
+        private const float ReapCockedRotation = -1.3f;
+        private const float ReapHopBackSpeed = 2.5f;
+        private const int ReapHopTicks = 10;
+
+        /// <summary>Where the vault lands: VaultOvershoot past the player on the ground under that point.</summary>
+        private Vector2 VaultLanding(Player target, int direction)
+        {
+            float landingX = target.Center.X + direction * VaultOvershoot;
+            float landingY = target.Bottom.Y;
+            if (PuppetGroundDustWave.TryFindGroundY(landingX, target.Bottom.Y, out float groundY))
+            {
+                landingY = groundY;
+            }
+
+            return new Vector2(landingX, landingY);
+        }
+
+        /// <summary>Samples the vault's arc (the same chord and lift TickReap flies) so a low ceiling or a wall never picks it.</summary>
+        private bool VaultPathClear(Player target)
+        {
+            int direction = Math.Sign(target.Center.X - NPC.Center.X);
+            if (direction == 0)
+            {
+                direction = NPC.direction;
+            }
+
+            Vector2 startBottom = NPC.Bottom;
+            Vector2 landingBottom = VaultLanding(target, direction);
+            Vector2 halfHeight = new Vector2(0f, NPC.height * 0.5f + 2f);
+
+            const int Samples = 8;
+            Vector2[] centers = new Vector2[Samples + 1];
+            for (int i = 0; i <= Samples; i++)
+            {
+                float progress = i / (float)Samples;
+                Vector2 chord = Vector2.Lerp(startBottom, landingBottom, progress);
+                float arc = 4f * VaultApexLift * progress * (1f - progress);
+                centers[i] = chord - new Vector2(0f, arc) - halfHeight;
+            }
+
+            return BodyPathClear(centers);
+        }
+
+        private void TickReap(Player target, bool server)
+        {
+            bool vault = CurrentMove == WardenMove.ReapingVault;
+
+            switch (MoveStage)
+            {
+                case ReapTell:
+                {
+                    bool aimOpen = !vault || MoveTicks <= VaultAimLockTick;
+                    if (aimOpen)
+                    {
+                        FaceX(target.Center.X);
+                        MoveDirection = NPC.direction;
+                    }
+
+                    // Grounded: a short hop back as the spear lifts, which reads as the coil. Vault: plant and coil.
+                    bool hopping = !vault && MoveTicks <= ReapHopTicks;
+                    if (hopping)
+                    {
+                        NPC.velocity.X = -MoveDirection * ReapHopBackSpeed;
+                    }
+                    else
+                    {
+                        NPC.velocity.X *= 0.8f;
+                    }
+
+                    // Lift high, then drop to the sweep's start in the last ReapDropTicks.
+                    int dropStart = ReapTellTicks - ReapDropTicks;
+                    if (MoveTicks < dropStart)
+                    {
+                        CustomRotation = CustomRotation.AngleLerp(ReapCockedRotation, 0.18f);
+                    }
+                    else
+                    {
+                        CustomRotation = CustomRotation.AngleLerp(ReapStartRotation, 0.35f);
+                    }
+
+                    SpawnTipCharge(MoveTicks / (float)ReapTellTicks);
+
+                    if (MoveTicks == 1)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.55f, Pitch = 0.1f }, NPC.Center);
+                    }
+
+                    if (server && MoveTicks >= ReapTellTicks && !HoldCustomTellForLock() && CurrentMove != WardenMove.LockCancel)
+                    {
+                        MoveStart = NPC.Bottom;
+                        if (vault)
+                        {
+                            MovePoint = VaultLanding(target, MoveDirection);
+                        }
+
+                        int damage = Empowered ? GiantLightExpert : LightExpert;
+                        ArmBlade(SpearReach, damage);
+                        SetStage(ReapStrike);
+                    }
+
+                    break;
+                }
+
+                case ReapStrike:
+                {
+                    int strikeTicks = vault ? VaultAirTicks : ReapStrikeTicks;
+                    float progress = MathHelper.Clamp(MoveTicks / (float)strikeTicks, 0f, 1f);
+                    float sweepT = progress;
+                    bool live = true;
+
+                    if (vault)
+                    {
+                        // Kinematic arc like Smough's Bound: chord from take-off to landing, lifted by a parabola.
+                        NPC.noGravity = true;
+                        Vector2 chord = Vector2.Lerp(MoveStart, MovePoint, progress);
+                        float arc = 4f * VaultApexLift * progress * (1f - progress);
+                        Vector2 desiredBottom = chord - new Vector2(0f, arc);
+                        NPC.velocity = desiredBottom - NPC.Bottom;
+                        SpawnDashTrail();
+
+                        sweepT = MathHelper.Clamp((progress - VaultSweepStart) / (VaultSweepEnd - VaultSweepStart), 0f, 1f);
+                        live = progress >= VaultLiveStart && progress <= VaultLiveEnd;
+                    }
+                    else
+                    {
+                        NPC.velocity.X *= 0.85f;
+                    }
+
+                    CustomRotation = SwingEase.Apply(ReapStartRotation, ReapEndRotation, sweepT, SwingEaseStyle.Snap);
+
+                    if (MoveTicks == 1 && server)
+                    {
+                        // The crescent lasts as long as the sweep itself: the whole strike grounded, 60% of the flight in a vault.
+                        int arcTicks = strikeTicks;
+                        if (vault)
+                        {
+                            arcTicks = (int)(strikeTicks * (VaultSweepEnd - VaultSweepStart));
+                        }
+
+                        float sweep = (ReapEndRotation - ReapStartRotation) * MoveDirection;
+                        VanillaSwordArcSettings settings = SwingArcSettings(sweep, SpearReach, arcTicks);
+                        settings.Easing = VanillaSwordArcEasing.EaseOut;
+                        VanillaSwordArc.SpawnForNPC(NPC.GetSource_FromAI(), NPC, 0, 0f, Main.myPlayer, settings, Vector2.Zero, hostile: false);
+                    }
+
+                    if (MoveTicks == 1 && !Main.dedServ)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Center);
+                    }
+
+                    if (live)
+                    {
+                        MarkLive();
+                        TickBladeHit();
+                    }
+                    else
+                    {
+                        StopMeleeHit();
+                    }
+
+                    bool landedEarly = vault && MoveTicks > VaultAirTicks / 2 && NPC.collideY;
+                    if (server && (MoveTicks >= strikeTicks || landedEarly))
+                    {
+                        NPC.noGravity = false;
+                        StopMeleeHit();
+                        if (vault)
+                        {
+                            NPC.velocity = Vector2.Zero;
+                            PlayVaultLanding();
+                        }
+
+                        SetStage(ReapRecover);
+                    }
+
+                    break;
+                }
+
+                case ReapRecover:
+                {
+                    NPC.noGravity = false;
+                    NPC.velocity.X *= 0.8f;
+
+                    // Hold the finished pose, then AngleLerp back to the carry, which takes the short way over the top
+                    // instead of unwinding the whole sweep back under the body.
+                    if (MoveTicks > ReapHoldTicks)
+                    {
+                        CustomRotation = CustomRotation.AngleLerp(-0.3f, 0.12f);
+                    }
+
+                    int recoveryTicks = vault ? VaultRecoveryTicks : ReapRecoveryTicks;
+                    if (server && MoveTicks >= recoveryTicks)
+                    {
+                        EndMove();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        private void PlayVaultLanding()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Bottom);
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 velocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-2.5f, -0.5f));
+                Dust spark = Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-16f, 16f), -2f), DustID.GoldFlame, velocity, 80, default, 1.1f);
+                spark.noGravity = true;
+            }
+        }
+
+        /// <summary>The hang point three quarters of the way over, 9 tiles above the target, kept under any ceiling.</summary>
+        private Vector2 PlungeApex(Vector2 targetCenter)
+        {
+            float apexX = MathHelper.Lerp(NPC.Center.X, targetCenter.X, 0.75f);
+            float apexY = Math.Min(NPC.Center.Y - 80f, targetCenter.Y - PlungeApexAboveTarget);
+            apexY = Math.Max(apexY, FindCeilingCap(new Vector2(apexX, NPC.Center.Y)));
+            return new Vector2(apexX, apexY);
+        }
+
         private void TickPlunge(Player target, bool server)
         {
             switch (MoveStage)
@@ -744,10 +1102,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     if (server && MoveTicks >= PlungeTellTicks)
                     {
                         MoveStart = NPC.Center;
-                        float apexX = MathHelper.Lerp(NPC.Center.X, target.Center.X, 0.75f);
-                        float apexY = Math.Min(NPC.Center.Y - 80f, target.Center.Y - PlungeApexAboveTarget);
-                        apexY = Math.Max(apexY, FindCeilingCap(new Vector2(apexX, NPC.Center.Y)));
-                        MovePoint = new Vector2(apexX, apexY);
+                        MovePoint = PlungeApex(target.Center);
                         SetStage(PlungeRise);
                     }
                     break;

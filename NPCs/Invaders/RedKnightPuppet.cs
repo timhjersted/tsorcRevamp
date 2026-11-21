@@ -1262,15 +1262,17 @@ namespace tsorcRevamp.NPCs.Invaders
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            // Crimson Teleport Ambush hides the knight with alpha 255 between markers; the puppet draw ignores alpha.
-            if (NPC.alpha >= 255)
+            // Hidden during Crimson Teleport Ambush's marker stretch and the fire teleport's hide window. Both read synced
+            // state, not NPC.alpha: alpha is never synced, so a client that missed its local restore (the ambush cut short
+            // by a stagger after the server had already cleared the flag) kept alpha 255 and never drew him again.
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool teleportHidden = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            if (teleportHidden || specialAttacks.IsRedTeleportHidden)
             {
                 return false;
             }
 
-            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (globalNPC.TeleportCountdown <= 0 && globalNPC.TeleportAppearanceTimer <= 0
-                && specialAttacks.IsSpectralHandBarrage)
+            if (specialAttacks.IsSpectralHandBarrage)
             {
                 RedKnightVFX.DrawUltrakillSeal(NPC.Center, specialAttacks.SpectralGatherProgress);
             }
@@ -1283,7 +1285,7 @@ namespace tsorcRevamp.NPCs.Invaders
             base.PostDraw(spriteBatch, screenPos, drawColor);
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            if (NPC.alpha >= 255 || globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0
+            if (specialAttacks.IsRedTeleportHidden || globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0
                 || Phase != AttackPhase.Custom || !specialAttacks.Active)
             {
                 return;

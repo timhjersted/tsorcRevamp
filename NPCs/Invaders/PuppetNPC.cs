@@ -119,6 +119,10 @@ namespace tsorcRevamp.NPCs.Invaders
         /// Measured on the give-up state, not distance from an arena, so a chase that drifts away never
         /// despawns in front of the player.</summary>
         protected virtual int AbandonedDespawnTicks => 0;
+
+        /// <summary>World pixels. While nav is still pursuing (Pursue/Search) a live target within this distance, the
+        /// puppet's vanilla inactivity despawn timer is held full. 1600 = 100 tiles, the knights' reacquire teleport reach.</summary>
+        protected virtual float PursuitKeepAliveRange => 1600f;
         private int _abandonedTicks;
 
         /// <summary>The per-tick test <see cref="AbandonedDespawnTicks"/> counts. Default: nav has given up the chase
@@ -3477,9 +3481,13 @@ namespace tsorcRevamp.NPCs.Invaders
                     && Collision.CanHitLine(NPC.position, NPC.width, NPC.height,
                         target.position, target.width, target.height);
 
+                // Aggressive: lost sight and not closing in for 30 ticks, or (opt-in) nav already gave up the chase.
+                bool lostTarget = !hasLineOfSight && globalNPC.DisengageTimer >= 30;
+                bool gaveUpChase = globalNPC.TeleportReacquiresAfterGiveUp && globalNPC.PursuitState != PursuitState.Pursue;
+
                 bool shouldTeleport = globalNPC.TeleportStyle switch
                 {
-                    TeleportStyle.Aggressive => !hasLineOfSight && globalNPC.DisengageTimer >= 30,
+                    TeleportStyle.Aggressive => lostTarget || gaveUpChase,
                     TeleportStyle.Relaxed => globalNPC.PursuitState == PursuitState.Patrol && globalNPC.PatrolElapsed >= 300,
                     TeleportStyle.RecoveryOnly => false,
                     _ => globalNPC.PursuitState == PursuitState.Patrol || globalNPC.PursuitState == PursuitState.Search,
@@ -3562,6 +3570,25 @@ namespace tsorcRevamp.NPCs.Invaders
             if (!gnpc.IsTeleportIllusion && DespawnsOnPartyWipe && UpdatePartyWipeDespawn())
             {
                 return;
+            }
+
+            // Never despawn mid-chase. Vanilla CheckActive removes a non-boss NPC after 750 ticks with no player within
+            // about one screen of it, which removed puppets that were still fighting (kiting at range, player up a cliff).
+            // Refreshing timeLeft while pursuing a live target in range blocks that; once nav gives up (Patrol) or the
+            // target gets past PursuitKeepAliveRange, the vanilla off-screen despawn applies again. Server only:
+            // CheckActive never runs on a client.
+            if (Main.netMode != NetmodeID.MultiplayerClient && !gnpc.IsTeleportIllusion)
+            {
+                bool stillPursuing = gnpc.PursuitState == PursuitState.Pursue || gnpc.PursuitState == PursuitState.Search;
+                Player keepAliveTarget = Main.player[NPC.target];
+                bool targetAlive = keepAliveTarget.active && !keepAliveTarget.dead;
+                float keepAliveDistance = NPC.Distance(keepAliveTarget.Center);
+                bool targetInRange = keepAliveDistance <= PursuitKeepAliveRange;
+
+                if (stillPursuing && targetAlive && targetInRange)
+                {
+                    NPC.timeLeft = NPC.activeTime;
+                }
             }
 
             // Client: entry cues of a phase adopted from a snapshot — its transition ran on the server, not here. Deferred

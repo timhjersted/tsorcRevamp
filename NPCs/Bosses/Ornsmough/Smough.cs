@@ -118,10 +118,11 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
 
         /*
          * Timing sheet (attack-timing-design §3). On-screen tell = authored (multiplier 1).
-         * Overhead Execution: tell 46 | GroundSlam -1.62 -> 2.0 (207 deg), 12/40 k6, live ~20t, impact tick 12 | 32t tail + 55
+         * Every step is live for its whole swing; rolling is judged by how long the moving hammer overlaps the player.
+         * Overhead Execution: tell 46 | GroundSlam -1.62 -> 2.0 (207 deg), 12/40 k6, live 52t, impact tick 12 | recovery 55
          * Thunder Execution:  the same strike with marching sky strikes inside a 75t recovery
          * Wide -> Back Sweep: tell 36 | Overhead -1.45 -> 2.2, Underhand 2.2 -> -1.45 (shared joint, 209 deg each), 10/40 k7,
-         *                     live ~17t, 33t tail + 18t pause -> second live 51t after the first ended | conditional | recovery 45
+         *                     live 50t, 18t pause -> second swing only on a hit or in range | recovery 30
          * Grinding Spin:      tell 30 | eased spin live 40t, deliberately not rollable in place | recovery 50
          */
         private static readonly MeleeCombo[] SmoughCombos = new[]
@@ -141,7 +142,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             new MeleeCombo
             {
                 Name = WideSweepName, BaseWeight = 100, Preferred = ComboRangeBand.Any, InitialFlashColor = Color.Gold,
-                RecoveryTicks = 45, MoveBrake = 0.1f,
+                RecoveryTicks = 30, MoveBrake = 0.1f,
                 Steps = new[]
                 {
                     WeightedStep(ComboMotion.OverheadArc, 36, 10, 40, 7f, 18, 1f, 1.05f, 60f),
@@ -151,7 +152,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             new MeleeCombo
             {
                 Name = ChargedSweepName, BaseWeight = 100, Preferred = ComboRangeBand.Any, InitialFlashColor = Color.LightCyan,
-                RecoveryTicks = 45, MoveBrake = 0.1f,
+                RecoveryTicks = 30, MoveBrake = 0.1f,
                 Steps = new[]
                 {
                     WeightedStep(ComboMotion.OverheadArc, 36, 10, 40, 7f, 18, 1f, 1.05f, 60f),
@@ -183,6 +184,33 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
                     a1 = -1.45f;
                     break;
             }
+        }
+
+        protected override Color SwingArcBodyColor => new Color(230, 150, 60);
+        protected override Color SwingArcCoreColor => new Color(255, 225, 160);
+        protected override Color SwingArcDarkColor => new Color(80, 40, 12);
+
+        protected override float MeleeStrikeRange(WardenMove move)
+        {
+            switch (move)
+            {
+                case WardenMove.OverheadExecution:
+                case WardenMove.ThunderExecution:
+                    return 160f;
+                case WardenMove.WideSweep:
+                    return 200f;
+                case WardenMove.ChargedSweep:
+                    return 220f;
+                case WardenMove.GrindingSpin:
+                    return ReactiveRange;
+                default:
+                    return 0f;
+            }
+        }
+
+        protected override bool IsFlankerCard(WardenMove move)
+        {
+            return move == WardenMove.RubbleHeave || move == WardenMove.SpikedCharge;
         }
 
         protected override string ComboNameFor(WardenMove move)
@@ -461,15 +489,13 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             {
                 case WardenMove.OverheadExecution:
                 case WardenMove.ThunderExecution:
-                    return grounded && distance <= 160f;
                 case WardenMove.WideSweep:
-                    return grounded && distance <= 200f;
                 case WardenMove.ChargedSweep:
-                    return grounded && distance <= 220f;
+                    return grounded && distance <= MeleeStrikeRange(move) + MeleeApproachRange;
                 case WardenMove.ExecutionersBound:
-                    return clearLine && distance >= 240f && distance <= 720f;
+                    return clearLine && distance >= 240f && distance <= 720f && BoundPathClear();
                 case WardenMove.StormBound:
-                    return clearLine && distance >= 260f && distance <= 760f;
+                    return clearLine && distance >= 260f && distance <= 760f && BoundPathClear();
                 case WardenMove.SpikedCharge:
                     return grounded && clearLine && distance >= 300f && distance <= 900f;
                 case WardenMove.RubbleHeave:
@@ -492,7 +518,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             float rise = NPC.Bottom.Y - target.Bottom.Y;
             bool clearLine = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
 
-            if (IsMoveEligible(WardenMove.OverheadExecution, distance, rise, clearLine))
+            bool slamInReach = distance <= MeleeStrikeRange(WardenMove.OverheadExecution);
+            if (slamInReach && IsMoveEligible(WardenMove.OverheadExecution, distance, rise, clearLine))
             {
                 // Anvil & Spark: Ornstein's tell starts at slam + 20, so his dash is live 32t after the slam window ends.
                 const int SlamTellTicks = 46;
@@ -602,6 +629,29 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             }
 
             return aroundY;
+        }
+
+        /// <summary>Samples the parabola TickBound flies (same chord, apex and landing point) and checks the body fits along it,
+        /// so a low ceiling or a wall between the two never picks a Bound that would stop short.</summary>
+        private bool BoundPathClear()
+        {
+            Player target = TargetPlayer;
+            Vector2 startBottom = NPC.Bottom;
+            Vector2 landingBottom = new Vector2(target.Center.X, FloorUnder(target.Center.X, target.Bottom.Y));
+            float apexLift = Math.Max(BoundApexHeight, startBottom.Y - landingBottom.Y + 96f);
+            Vector2 halfHeight = new Vector2(0f, NPC.height * 0.5f + 2f);
+
+            const int Samples = 8;
+            Vector2[] centers = new Vector2[Samples + 1];
+            for (int i = 0; i <= Samples; i++)
+            {
+                float progress = i / (float)Samples;
+                Vector2 chord = Vector2.Lerp(startBottom, landingBottom, progress);
+                float arc = 4f * apexLift * progress * (1f - progress);
+                centers[i] = chord - new Vector2(0f, arc) - halfHeight;
+            }
+
+            return BodyPathClear(centers);
         }
 
         private void TickBound(Player target, bool server)

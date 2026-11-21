@@ -145,6 +145,10 @@ namespace tsorcRevamp.NPCs.Invaders
             blackKnightGlobalNPC.TeleportVisualStyle = NPCs.TeleportVisualStyle.Plague;
             // 30 + SmokeFireTeleportSnapTicks (30) hidden, then he emerges with ~2s of the plague cloud still going.
             blackKnightGlobalNPC.TeleportTelegraphTime = 30;
+            // Reacquire = a flank on the target's far side, also after nav gave up, out to 100 tiles.
+            blackKnightGlobalNPC.TeleportFlanksTarget = true;
+            blackKnightGlobalNPC.TeleportReacquiresAfterGiveUp = true;
+            blackKnightGlobalNPC.TeleportReacquireMaxRange = 1600f;
             // Only the blink: a heavy thing does not scramble out of the way, it removes itself by magic.
             blackKnightGlobalNPC.EvasiveTeleportAway = true;
 
@@ -1244,8 +1248,12 @@ namespace tsorcRevamp.NPCs.Invaders
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            // The plague teleport hides him with alpha 255; the puppet draw ignores alpha.
-            if (NPC.alpha >= 255)
+            // Hidden for the plague teleport's whole hide window. Read from the synced teleport timers, not NPC.alpha:
+            // alpha is never synced, so a client whose reveal tick was overwritten by the server's final snapshot kept
+            // alpha 255 and never drew him again (alive and attacking, but invisible).
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool teleportHidden = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            if (teleportHidden)
             {
                 return false;
             }
@@ -1255,7 +1263,9 @@ namespace tsorcRevamp.NPCs.Invaders
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
-            if (NPC.alpha >= 255)
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            bool teleportHidden = globalNPC.TeleportCountdown > 0 || globalNPC.TeleportAppearanceTimer > 0;
+            if (teleportHidden)
             {
                 return;
             }
