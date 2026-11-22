@@ -11,6 +11,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows.BowRework;
 
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
@@ -197,12 +198,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// targeting; the wrapper owns everything about the use itself.</summary>
         protected abstract bool ChooseTarget(Player owner, out Vector2 targetCenter);
 
+        /// <summary>Target's current velocity for predictive shot leading. Subclasses with a player target override it.</summary>
+        protected virtual Vector2 GetTargetVelocity(Player owner) => Vector2.Zero;
+
         /// <summary>The wrapper's phase. Owner side it's authoritative; other clients get it in the owner extras.</summary>
         internal UsePhase CurrentUsePhase;
 
         /// <summary>Owner side: the held weapon is a shot and the target is inside its minimum firing distance. The
         /// invader AI (step 5) backs off or switches to a melee slot on it.</summary>
         internal bool TooCloseToFire;
+
+        /// <summary>Owner side: the held ranged/magic weapon's ballistic or direct path to the target is blocked by
+        /// solid terrain. The invader AI climbs/repositions to clear ground or high ground instead of shooting dirt.</summary>
+        internal bool ShotBlockedByTerrain;
 
         /// <summary>Owner side: the last use the wrapper tried didn't start. The invader AI switches weapon on it.</summary>
         internal bool LastUseFailed;
@@ -432,6 +440,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             Item weapon = ActiveWeapon;
             WeaponCategory category = Categorize(weapon);
             bool hasTarget = ChooseTarget(owner, out Vector2 targetCenter);
+            Vector2 targetVelocity = hasTarget ? GetTargetVelocity(owner) : Vector2.Zero;
             bool heldProjectileActive = HasAttachedWeapon;
             bool handsFree = UseState.ItemAnimation == 0 && !heldProjectileActive;
 
@@ -493,7 +502,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             if (hasTarget && !_aimLocked)
             {
-                Vector2 toTarget = targetCenter - NPC.Center;
+                Vector2 aimTarget = targetCenter;
+
+                if (!meleeRules && weapon != null && !weapon.IsAir)
+                {
+                    aimTarget = SolveRangedAimTarget(NPC.Center, targetCenter, targetVelocity, weapon);
+                }
+
+                Vector2 toTarget = aimTarget - NPC.Center;
                 float desiredAngle = toTarget.ToRotation();
                 bool threatening = CurrentUsePhase == UsePhase.Tell || CurrentUsePhase == UsePhase.Using;
 
@@ -522,6 +538,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             // ── Phases ──
             TooCloseToFire = false;
+            ShotBlockedByTerrain = false;
 
             if (CurrentUsePhase == UsePhase.Ready)
             {
@@ -544,6 +561,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                         TooCloseToFire = true;
                         return false;
                     }
+                }
+
+                bool rangedCheck = shotRules || category == WeaponCategory.NearInstantShot;
+
+                if (rangedCheck && !HasClearShotPath(NPC.Center, targetCenter, targetVelocity, weapon))
+                {
+                    ShotBlockedByTerrain = true;
+                    return false;
                 }
 
                 // Start the use THIS tick (its first run), then hold it as the tell. Tell length from item stats only.
@@ -867,8 +892,30 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             {
                 Main.instance.LoadItem(weapon.type);
                 Rectangle frame = Main.player[Main.myPlayer].GetItemDrawFrame(weapon.type);
-                float weaponLength = Math.Max(frame.Width, frame.Height) * drawScale;
-                _tellTip = DisplayClone.MountedCenter + aimDirection * weaponLength;
+                bool horizontalShootSprite = weapon.useStyle == ItemUseStyleID.Shoot && !Item.staff[weapon.type];
+                float tipDistance;
+
+                if (horizontalShootSprite)
+                {
+                    // Horizontal shoot sprites (bows, repeaters, guns) extend forward by frame.Width, not frame.Height.
+                    // Using Max(Width, Height) pushed bow dust out by the bow's vertical limb height.
+                    if (weapon.noUseGraphic)
+                    {
+                        // Matches PostDraw: grip at MountedCenter + 8px, origin X at 35% of sprite width.
+                        tipDistance = 8f + frame.Width * 0.65f * drawScale;
+                    }
+                    else
+                    {
+                        Vector2 holdoutOffset = weapon.ModItem?.HoldoutOffset() ?? Vector2.Zero;
+                        tipDistance = Math.Max(6f, (frame.Width + holdoutOffset.X) * drawScale);
+                    }
+                }
+                else
+                {
+                    tipDistance = Math.Max(frame.Width, frame.Height) * drawScale;
+                }
+
+                _tellTip = DisplayClone.MountedCenter + aimDirection * tipDistance;
             }
 
             _hasTellTip = true;
@@ -891,6 +938,110 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Dust dust = Dust.NewDustPerfect(dustPosition, DustID.RainbowMk2, dustVelocity, 0, tellColor, dustScale);
                 dust.noGravity = true;
             }
+        }
+
+        /// <summary>Ulhan-style predictive + ballistic aim point: leads moving targets (0.5x vertical damping so jumps
+        /// don't overshoot into the sky) and compensates for vanilla arrow gravity (15 ticks flat, then 0.1 px/tick^2).</summary>
+        internal static Vector2 SolveRangedAimTarget(Vector2 origin, Vector2 targetCenter, Vector2 targetVelocity, Item weapon)
+        {
+            if (weapon == null || weapon.IsAir)
+            {
+                return targetCenter;
+            }
+
+            Vector2 dampedVelocity = new Vector2(targetVelocity.X, targetVelocity.Y * 0.5f);
+
+            if (weapon.useAmmo == AmmoID.Arrow)
+            {
+                // Standard bows add basic wooden arrow shootSpeed (+3); charged bows use weapon.shootSpeed directly.
+                float launchSpeed = weapon.shootSpeed;
+
+                if (!weapon.channel)
+                {
+                    launchSpeed += 3f;
+                }
+
+                launchSpeed = Math.Max(6f, launchSpeed);
+                Vector2 aimPoint = targetCenter;
+
+                for (int iteration = 0; iteration < 4; iteration++)
+                {
+                    float flightTicks = Math.Min(Vector2.Distance(origin, aimPoint) / launchSpeed, 48f);
+                    float fallingTicks = Math.Max(0f, flightTicks - 15f);
+                    float verticalDrop = 0.05f * fallingTicks * (fallingTicks + 1f);
+                    aimPoint = targetCenter + dampedVelocity * flightTicks - new Vector2(0f, verticalDrop);
+                }
+
+                return aimPoint;
+            }
+
+            float shotSpeed = Math.Max(6f, EffectiveShotSpeed(weapon));
+
+            if (shotSpeed >= NearInstantShotSpeed)
+            {
+                return targetCenter;
+            }
+
+            Vector2 leadPoint = targetCenter;
+
+            for (int iteration = 0; iteration < 2; iteration++)
+            {
+                float flightTicks = Math.Min(Vector2.Distance(origin, leadPoint) / shotSpeed, 36f);
+                leadPoint = targetCenter + dampedVelocity * flightTicks;
+            }
+
+            return leadPoint;
+        }
+
+        /// <summary>Simulates the solved arrow arc (or straight line for non-arrow shots) to check whether solid terrain
+        /// blocks the shot before reaching the target.</summary>
+        internal static bool HasClearShotPath(Vector2 origin, Vector2 targetCenter, Vector2 targetVelocity, Item weapon)
+        {
+            if (weapon == null || weapon.IsAir)
+            {
+                return Collision.CanHitLine(origin, 4, 4, targetCenter, 4, 4);
+            }
+
+            if (weapon.useAmmo != AmmoID.Arrow)
+            {
+                return Collision.CanHitLine(origin, 4, 4, targetCenter, 4, 4);
+            }
+
+            float launchSpeed = weapon.shootSpeed;
+
+            if (!weapon.channel)
+            {
+                launchSpeed += 3f;
+            }
+
+            launchSpeed = Math.Max(6f, launchSpeed);
+            Vector2 aimPoint = SolveRangedAimTarget(origin, targetCenter, targetVelocity, weapon);
+            Vector2 direction = (aimPoint - origin).SafeNormalize(Vector2.UnitX);
+            Vector2 position = origin;
+            Vector2 velocity = direction * launchSpeed;
+            int maxTicks = Math.Min(60, (int)Math.Ceiling(Vector2.Distance(origin, aimPoint) / launchSpeed) + 8);
+
+            for (int tick = 1; tick <= maxTicks; tick++)
+            {
+                if (tick >= 15)
+                {
+                    velocity.Y = Math.Min(16f, velocity.Y + 0.1f);
+                }
+
+                position += velocity;
+
+                if (Vector2.DistanceSquared(position, targetCenter) <= 28f * 28f)
+                {
+                    return true;
+                }
+
+                if (tick >= 2 && Collision.SolidCollision(position - new Vector2(3f, 3f), 6, 6))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>Average opaque pixel of the item sprite, lifted 25% toward white so dark weapons still read. Cached per
@@ -944,9 +1095,61 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return tellColor;
         }
 
-        /// <summary>Tell overlays: the weapon itself for noUseGraphic weapons (spears, yoyos, flails, whips draw nothing
-        /// in hand), and for shots an aim line from the tip that brightens and thickens once the aim locks.
-        /// Subclasses that override PostDraw must call base.</summary>
+        protected override void DecorateDisplayClone(Player clone)
+        {
+            base.DecorateDisplayClone(clone);
+
+            BowDrawAnimationPlayer bowPlayer = clone.GetModPlayer<BowDrawAnimationPlayer>();
+            bowPlayer.ActiveStandardBowDraw = false;
+
+            if (CurrentUsePhase != UsePhase.Tell)
+            {
+                return;
+            }
+
+            Item weapon = clone.inventory[0];
+
+            if (!BowDrawAnimationPlayer.IsStandardAnimatedBow(weapon))
+            {
+                return;
+            }
+
+            // Seed the clone's first ammo slot with the same basic arrow the swap uses so ResolveArrowProjectileType
+            // picks each bow's real projectile (Hellwing bat, Frost Arrow, Shadowflame Arrow, Fire Arrow, etc.).
+            if (UsesBasicAmmo)
+            {
+                Item basicArrow = MirrorPuppetSwap.BasicAmmoFor(AmmoID.Arrow);
+
+                if (basicArrow != null)
+                {
+                    clone.inventory[54] = basicArrow;
+                }
+            }
+
+            float pullProgress = MathHelper.Clamp(_phaseTicks / (float)Math.Max(1, _tellTicks), 0f, 1f);
+            Vector2 aimDirection = _aimAngle.ToRotationVector2();
+
+            bowPlayer.ActiveStandardBowDraw = true;
+            bowPlayer.IsReleasing = false;
+            bowPlayer.PullProgress = pullProgress;
+            bowPlayer.ReleaseProgress = 0f;
+            bowPlayer.AimDirection = aimDirection;
+            bowPlayer.ArrowProjectileType = bowPlayer.ResolveArrowProjectileType(weapon);
+
+            BowDrawAnimationPlayer.ApplyBowArmPose(
+                clone,
+                aimDirection,
+                pullProgress,
+                false,
+                0f,
+                out bowPlayer.BackArmStretch,
+                out bowPlayer.BackArmRotation,
+                out bowPlayer.FrontArmStretch,
+                out bowPlayer.FrontArmRotation);
+        }
+
+        /// <summary>Tell overlay: draws the held weapon for noUseGraphic weapons (bows, spears, yoyos, flails, whips
+        /// that draw nothing in hand until release). Subclasses that override PostDraw must call base.</summary>
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             if (CurrentUsePhase != UsePhase.Tell || !_hasTellTip || DisplayClone == null)
@@ -956,50 +1159,90 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             Item weapon = DisplayClone.inventory[0];
 
-            if (weapon == null || weapon.IsAir)
+            if (weapon == null || weapon.IsAir || !weapon.noUseGraphic)
             {
                 return;
             }
 
+            Main.instance.LoadItem(weapon.type);
+            Texture2D texture = TextureAssets.Item[weapon.type].Value;
+            Rectangle frame = Main.player[Main.myPlayer].GetItemDrawFrame(weapon.type);
             Vector2 aimDirection = _aimAngle.ToRotationVector2();
-            Color tellColor = GetWeaponTellColor(weapon.type);
+            float drawScale = DisplayClone.GetAdjustedItemScale(weapon);
+            bool horizontalShootSprite = weapon.useStyle == ItemUseStyleID.Shoot && !Item.staff[weapon.type];
 
-            if (weapon.noUseGraphic)
+            Vector2 grip = DisplayClone.MountedCenter;
+            Vector2 gripOrigin = new Vector2(0f, frame.Height);
+            float rotation = _aimAngle + MathHelper.PiOver4;
+            SpriteEffects effects = SpriteEffects.None;
+
+            if (horizontalShootSprite)
             {
-                // Grip at the sprite's bottom-left corner; item sprites are drawn diagonally (tip up-right), so +45° puts
-                // the tip along the aim.
-                Main.instance.LoadItem(weapon.type);
-                Texture2D texture = TextureAssets.Item[weapon.type].Value;
-                Rectangle frame = Main.player[Main.myPlayer].GetItemDrawFrame(weapon.type);
-                Vector2 grip = DisplayClone.MountedCenter;
-                Vector2 gripOrigin = new Vector2(0f, frame.Height);
-                float rotation = _aimAngle + MathHelper.PiOver4;
-                float drawScale = DisplayClone.GetAdjustedItemScale(weapon);
-                Color litColor = Lighting.GetColor(grip.ToTileCoordinates());
-                spriteBatch.Draw(texture, grip - screenPos, frame, litColor, rotation, gripOrigin, drawScale, SpriteEffects.None, 0f);
+                // Bows and guns face straight right in their item sprites (0 rad), not diagonally up-right (+45°).
+                grip = DisplayClone.MountedCenter + aimDirection * 8f;
+                gripOrigin = new Vector2(frame.Width * 0.35f, frame.Height * 0.5f);
+                rotation = _aimAngle;
+
+                if (aimDirection.X < 0f)
+                {
+                    effects = SpriteEffects.FlipVertically;
+                }
             }
 
-            bool drawsAimLine = _useCategory == WeaponCategory.Shot || _useCategory == WeaponCategory.Channelled || _useCategory == WeaponCategory.NearInstantShot;
+            Color litColor = Lighting.GetColor(grip.ToTileCoordinates());
+            spriteBatch.Draw(texture, grip - screenPos, frame, litColor, rotation, gripOrigin, drawScale, effects, 0f);
 
-            if (!drawsAimLine)
+            // Charged/held noUseGraphic bows (e.g. Artemis Bow) skip BowStringAndArrowDrawLayer: draw their resolved
+            // arrow sprite nocked along the aim during the tell so the projectile reads before release.
+            if (horizontalShootSprite && weapon.useAmmo == AmmoID.Arrow)
             {
-                return;
+                if (UsesBasicAmmo)
+                {
+                    Item basicArrow = MirrorPuppetSwap.BasicAmmoFor(AmmoID.Arrow);
+
+                    if (basicArrow != null)
+                    {
+                        DisplayClone.inventory[54] = basicArrow;
+                    }
+                }
+
+                BowDrawAnimationPlayer bowPlayer = DisplayClone.GetModPlayer<BowDrawAnimationPlayer>();
+                int arrowProjType = bowPlayer.ResolveArrowProjectileType(weapon);
+
+                if (arrowProjType > ProjectileID.None && arrowProjType < TextureAssets.Projectile.Length)
+                {
+                    Main.instance.LoadProjectile(arrowProjType);
+                    Texture2D arrowTexture = TextureAssets.Projectile[arrowProjType].Value;
+
+                    if (arrowTexture != null)
+                    {
+                        int arrowFrames = Math.Max(1, Main.projFrames[arrowProjType]);
+                        int arrowFrameHeight = arrowTexture.Height / arrowFrames;
+                        Rectangle arrowRect = new Rectangle(0, 0, arrowTexture.Width, arrowFrameHeight);
+                        Vector2 arrowOrigin = new Vector2(arrowTexture.Width * 0.5f, arrowFrameHeight - 2f);
+                        float arrowRotation = _aimAngle + MathHelper.PiOver2;
+                        SpriteEffects arrowEffects = SpriteEffects.None;
+                        Color arrowColor = litColor;
+
+                        if (arrowProjType == ProjectileID.Hellwing)
+                        {
+                            arrowOrigin = new Vector2(arrowTexture.Width * 0.5f, arrowFrameHeight * 0.5f);
+                            arrowRotation = _aimAngle;
+                            arrowColor = Color.White;
+
+                            if (aimDirection.X < 0f)
+                            {
+                                arrowRotation = _aimAngle + MathHelper.Pi;
+                                arrowEffects = SpriteEffects.FlipHorizontally;
+                            }
+                        }
+
+                        float pullProgress = MathHelper.Clamp(_phaseTicks / (float)Math.Max(1, _tellTicks), 0f, 1f);
+                        Vector2 nockPosition = grip - aimDirection * (4f + 6f * pullProgress);
+                        spriteBatch.Draw(arrowTexture, nockPosition - screenPos, arrowRect, arrowColor, arrowRotation, arrowOrigin, 1f, arrowEffects, 0f);
+                    }
+                }
             }
-
-            // Utils.DrawLine takes world coords. Fades in over the tell; locked = near-white and 3 px, the "dodge now" cue.
-            float progress = MathHelper.Clamp(_phaseTicks / (float)Math.Max(1, _tellTicks), 0f, 1f);
-            float lineLength = Math.Min(_aimDistance + 48f, 1000f);
-            Vector2 lineEnd = _tellTip + aimDirection * lineLength;
-            Color lineColor = tellColor * (0.25f + 0.45f * progress);
-            float lineWidth = 2f;
-
-            if (_aimLocked)
-            {
-                lineColor = Color.Lerp(tellColor, Color.White, 0.6f) * 0.9f;
-                lineWidth = 3f;
-            }
-
-            Utils.DrawLine(spriteBatch, _tellTip, lineEnd, lineColor, lineColor, lineWidth);
         }
 
         /// <summary>Subclasses that add their own extras must call base first (and in ReadOwnerExtras).</summary>

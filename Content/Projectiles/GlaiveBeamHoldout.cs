@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.FriendlyPuppets;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -71,22 +72,37 @@ namespace tsorcRevamp.Content.Projectiles
             if (charge <= 0)
             {
                 Projectile.frame = 10;
-                //Drain BotC players stamina
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+
+                // Starting a new charge cycle after a firing phase: pay the weapon's stamina cost again.
+                if (charge == 0 && spawnedLaser && !fromPuppet && Projectile.owner == Main.myPlayer)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
+                    tsorcRevampPlayer tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+                    if (!staminaPlayer.CanUseWeapon)
+                    {
+                        player.channel = false;
+                    }
+                    else if (tsorcPlayer.UsesWeaponStamina)
+                    {
+                        bool manaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+                        bool arcaneBurnThreshold = player.HasBuff(ModContent.BuffType<ArcaneSorcery>())
+                            && staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f;
+
+                        if (!manaBurnActive && !arcaneBurnThreshold)
+                        {
+                            Item heldItem = player.HeldItem;
+                            float staminaMult = tsorcPlayer.WeaponStaminaMult(heldItem);
+                            int scaledUseAnimation = (int)(heldItem.useAnimation / player.GetAttackSpeed(heldItem.DamageType));
+                            staminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * staminaMult;
+                        }
+                    }
                 }
             }
             //If not, move up the animation sheet as the weapon charges
             else
             {
                 Projectile.frame = (int)((charge / MaxCharge) * (NumAnimationFrames));
-
-                //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 120 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2))
-                {
-                    player.channel = false;
-                }
             }
             //If it's finished charging, there will be a delay before the next. Set it to negative for the duration, so it stays in the "firing" state.
             if (charge == MaxCharge)

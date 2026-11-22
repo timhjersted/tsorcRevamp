@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Terraria.ModLoader.IO;
@@ -13,6 +15,7 @@ using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.NPCs.AI;
 using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
@@ -33,8 +36,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     /// player (-1 none), ai[3] = <see cref="InvaderState"/>. Loadout, active slot and Estus charges ride in SendExtraAI.
     /// One primary echo lives at a time. Death returns a summon card until the finite defeated-invader pool is spent.
     /// </summary>
+    [AutoloadBossHead]
     public class MirrorInvader : HostileMirrorPuppetNPC, IEnemyWhipOwner
     {
+        // PLACEHOLDER sprite (copy of StuddedLeatherWarrior) — replace with bespoke art.
+        // Overrides MirrorPuppetNPC's InvisibleNothingProj so NPC browsers and the Bestiary have a visible icon.
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(MirrorInvader));
+
+        // PLACEHOLDER sprite (copy of StuddedLeatherWarrior_Head_Boss) — replace with bespoke art.
+        public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(MirrorInvader)) + "_Head_Boss";
+
+        private static readonly SoundStyle InvasionBannerSound = new SoundStyle("tsorcRevamp/Sounds/DarkSouls/invader-announcement") with { Volume = 0.7f };
+
         public enum InvaderState
         {
             Fight = 0,
@@ -109,10 +122,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>Evasion: reacts to a given threat with this chance, one decision per lockout. Lower than the Soul
         /// Mimic's 0.75 — an enemy that rolls everything is a wall, not a duel.</summary>
-        private const float EvadeChance = 0.5f;
-        private const int EvadeDecisionLockoutTicks = 90;
-        /// <summary>A player within 5 tiles, facing it, mid-swing with a melee weapon, is a melee threat.</summary>
-        private const float MeleeThreatRange = 5f * 16f;
+        private const float EvadeChance = 0.55f;
+        private const int EvadeDecisionLockoutTicks = 75;
+        private const int EvadeRetryLockoutTicks = 30;
+        /// <summary>A player within 8 tiles, facing it, mid-swing with a melee weapon, is a melee threat.</summary>
+        private const float MeleeThreatRange = 8f * 16f;
         private const float JumpEvadeSpeed = 7.5f;
         private const float StrafeDistance = 5f * 16f;
         private const int StrafeTicks = 24;
@@ -154,6 +168,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private const byte OwnerFlagRecovering = 16;
         private const byte OwnerFlagUseFailed = 32;
         private const byte OwnerFlagSummoner = 64;
+        private const byte OwnerFlagShotBlocked = 128;
 
         // Loadout (synced): item type + prefix per usable hotbar weapon. Items are rebuilt from them on every machine.
         private readonly int[] _loadoutTypes = new int[HotbarSlots];
@@ -190,6 +205,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private int _strafeDirection;
         private Vector2 _heldWaypoint;
         private bool _hasHeldWaypoint;
+        private Vector2 _vantageWaypoint;
+        private bool _hasVantageWaypoint;
+        private int _vantageRefreshTicks;
+        private Vector2 _vantageTargetPos;
         private int _estusHealTicksLeft;
         private float _estusHealPerTick;
         private float _estusHealAccumulator;
@@ -409,6 +428,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             MarikFury,
             WarriorCrossbow,
             OwlBow,
+            RangedQuickVolley,
+            RangedFlurry,
             NinjaCast,
             MarikCast,
             DarkHarvest,
@@ -507,11 +528,20 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
+        public override void SetStaticDefaults()
+        {
+            // Intentionally does not call base.SetStaticDefaults(), which hides friendly/test mirror puppets from the Bestiary.
+            Main.npcFrameCount[Type] = 1;
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+        }
+
         public override void SetDefaults()
         {
             base.SetDefaults();
 
             NPC.lifeMax = UnregisteredLifeMax;
+            NPC.boss = true;
+            NPC.npcSlots = 10f;
             NPC.dontTakeDamage = false;
             NPC.immortal = false;
             NPC.HitSound = SoundID.PlayerHit;
@@ -528,6 +558,25 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             navigation.CanUseRopes = true;
             navigation.MaxJumpPower = JumpPower;
             navigation.MaxJumpBoost = JumpBoost;
+        }
+
+        public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment)
+        {
+            // EnemyBalanceNPC skips npc.boss; apply this invader's EnemyBalance registry HP here with multiplayer scaling.
+            if (EnemyBalance.TryGetEnemyExpertHp(Type, out int expertHp))
+            {
+                NPC.lifeMax = (int)Math.Round(EnemyBalance.ModeScaledLife(NPC, expertHp) * balance);
+            }
+        }
+
+        public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            if (NPC.IsABestiaryIconDummy)
+            {
+                return true;
+            }
+
+            return base.PreDraw(spriteBatch, screenPos, drawColor);
         }
 
         // ── Spawning (server / single player) ─────────────────────────────────────────────────────
@@ -832,6 +881,23 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public override void OnKill()
         {
             RemoveAdds();
+
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            Terraria.ModLoader.Config.NPCDefinition definition = new(ModContent.NPCType<MirrorInvader>());
+
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
+            {
+                tsorcRevampWorld.NewSlain.Add(definition, 1);
+
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.WorldData);
+                }
+            }
         }
 
         /// <summary>Server: its ghost adds go with it (dead or dissolved). Removed, not killed, so they drop nothing.
@@ -853,6 +919,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public override void AI()
         {
             base.AI();
+
+            // First-spawn invasion banner: localAI[0] is unsynced, so every client announces once independently.
+            if (Main.netMode != NetmodeID.Server && NPC.localAI[0] == 0f)
+            {
+                NPC.localAI[0] = 1f;
+                tsorcRevamp.ShowAnnouncementBanner(
+                    Language.GetTextValue("Mods.tsorcRevamp.EncounterPresentation.Banners.InvadedBy", DisplayName.Value),
+                    Color.White);
+                SoundEngine.PlaySound(InvasionBannerSound);
+            }
 
             InvaderState state = State;
 
@@ -1630,8 +1706,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             // ── Evasion: a player shot about to hit, or a player swinging at it up close → roll / hop / sidestep ──
             // Never mid-attack: a committed tell or burst is the player's punish window (§12.10).
-            // Never airborne or mid movement-attack either: a roll or jump-evade would fight the flight or the launch.
-            bool canEvade = state == InvaderState.Fight && !attacking && (OwnerFlags & OwnerFlagRecovering) == 0
+            // Allowed during Recovery so it can dodge incoming threats between bursts instead of standing helpless.
+            bool canEvade = state == InvaderState.Fight && !attacking
                 && !airborne && _moveAction == MoveAction.None;
             bool threatFound = false;
             bool threatIsMelee = false;
@@ -1655,7 +1731,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     }
 
                     Item swingerWeapon = swinger.HeldItem;
-                    bool meleeSwing = swingerWeapon != null && swingerWeapon.damage > 0 && !swingerWeapon.noMelee;
+                    bool meleeSwing = swingerWeapon != null && swingerWeapon.damage > 0
+                        && (swingerWeapon.CountsAsClass(DamageClass.Melee)
+                            || swingerWeapon.CountsAsClass(DamageClass.SummonMeleeSpeed)
+                            || !swingerWeapon.noMelee);
                     bool facingUs = Math.Sign(NPC.Center.X - swinger.Center.X) == swinger.direction;
                     bool inReach = Vector2.Distance(swinger.Center, NPC.Center) <= MeleeThreatRange;
 
@@ -1671,8 +1750,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             if (threatFound && _evadeLockout == 0)
             {
-                _evadeLockout = EvadeDecisionLockoutTicks;
                 bool reacts = Main.rand.NextFloat() < EvadeChance;
+                _evadeLockout = reacts ? EvadeDecisionLockoutTicks : EvadeRetryLockoutTicks;
 
                 if (reacts)
                 {
@@ -1964,11 +2043,128 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                     standDistance = Math.Max(standDistance, minimumShotDistance + ShotDistanceMargin);
                 }
 
-                waypoint = target.Center + new Vector2(sideOfTarget * standDistance, 0f);
+                bool rangedWeapon = activeItem != null && !activeItem.IsAir
+                    && (minimumShotDistance > 0f || preferredDistance >= RangedPreferred);
+                bool shotBlocked = (OwnerFlags & OwnerFlagShotBlocked) != 0;
+
+                if (_vantageRefreshTicks > 0)
+                {
+                    _vantageRefreshTicks--;
+                }
+
+                if (rangedWeapon)
+                {
+                    bool currentSpotClear = !shotBlocked && HasClearShotPath(NPC.Center, target.Center, target.velocity, activeItem);
+                    bool targetShifted = Vector2.Distance(target.Center, _vantageTargetPos) > 96f;
+                    bool needsVantageScan = !_hasVantageWaypoint || _vantageRefreshTicks <= 0 || targetShifted || !currentSpotClear;
+
+                    if (needsVantageScan)
+                    {
+                        // Scan nearby standable columns (favoring high ground above the target) that have a clear shot path.
+                        float minVantageDist = Math.Max(112f, minimumShotDistance + ShotDistanceMargin);
+                        float maxVantageDist = Math.Max(minVantageDist + 48f, maximumDistance - 32f);
+                        int centerTileX = (int)(NPC.Center.X / 16f);
+                        int baseTileY = (int)((NPC.Bottom.Y - 1f) / 16f);
+                        float bestScore = float.NegativeInfinity;
+                        Vector2 bestPoint = Vector2.Zero;
+                        bool foundVantage = false;
+
+                        for (int offsetX = -14; offsetX <= 14; offsetX += 2)
+                        {
+                            int tileX = centerTileX + offsetX;
+
+                            if (tileX < 4 || tileX >= Main.maxTilesX - 4)
+                            {
+                                continue;
+                            }
+
+                            int minTileY = Math.Max(4, baseTileY - 10);
+                            int maxTileY = Math.Min(Main.maxTilesY - 4, baseTileY + 10);
+
+                            for (int tileY = minTileY; tileY <= maxTileY; tileY++)
+                            {
+                                Tile floorTile = Main.tile[tileX, tileY];
+                                bool standable = UsefulFunctions.IsTileReallySolid(tileX, tileY)
+                                    || (floorTile.HasUnactuatedTile && TileID.Sets.Platforms[floorTile.TileType]);
+
+                                if (!standable)
+                                {
+                                    continue;
+                                }
+
+                                bool headroomClear = !UsefulFunctions.IsTileReallySolid(tileX, tileY - 1)
+                                    && !UsefulFunctions.IsTileReallySolid(tileX, tileY - 2)
+                                    && !UsefulFunctions.IsTileReallySolid(tileX, tileY - 3);
+
+                                if (!headroomClear)
+                                {
+                                    continue;
+                                }
+
+                                Vector2 candidateCenter = new Vector2(tileX * 16f + 8f, tileY * 16f - NPC.height * 0.5f);
+                                float distToTarget = Vector2.Distance(candidateCenter, target.Center);
+
+                                if (distToTarget < minVantageDist || distToTarget > maxVantageDist)
+                                {
+                                    continue;
+                                }
+
+                                if (!HasClearShotPath(candidateCenter, target.Center, target.velocity, activeItem))
+                                {
+                                    continue;
+                                }
+
+                                // Prioritize nearby high ground above the target, while staying near standDistance.
+                                float elevationAboveTarget = Math.Clamp((target.Center.Y - candidateCenter.Y) / 16f, -6f, 6f);
+                                float elevationAboveSelf = Math.Clamp((NPC.Center.Y - candidateCenter.Y) / 16f, -4f, 6f);
+                                float travelDistance = Vector2.Distance(NPC.Center, candidateCenter);
+                                float score = elevationAboveTarget * 25f
+                                    + elevationAboveSelf * 10f
+                                    - Math.Abs(distToTarget - standDistance) * 0.12f
+                                    - travelDistance * 0.08f;
+
+                                if (score > bestScore)
+                                {
+                                    bestScore = score;
+                                    bestPoint = candidateCenter;
+                                    foundVantage = true;
+                                }
+
+                                // Highest open surface in this column checked; move to next column.
+                                break;
+                            }
+                        }
+
+                        _hasVantageWaypoint = foundVantage;
+                        _vantageWaypoint = bestPoint;
+                        _vantageTargetPos = target.Center;
+                        _vantageRefreshTicks = 45;
+                    }
+
+                    if (_hasVantageWaypoint)
+                    {
+                        waypoint = _vantageWaypoint;
+                    }
+                    else if (!currentSpotClear)
+                    {
+                        // No clear standoff perch found: climb directly over terrain toward the target for clearance.
+                        waypoint = target.Center;
+                    }
+                    else
+                    {
+                        waypoint = target.Center + new Vector2(sideOfTarget * standDistance, 0f);
+                    }
+                }
+                else
+                {
+                    _hasVantageWaypoint = false;
+                    waypoint = target.Center + new Vector2(sideOfTarget * standDistance, 0f);
+                }
             }
 
+            bool needRepositionForClearance = (OwnerFlags & OwnerFlagShotBlocked) != 0;
             float horizontalGap = Math.Abs(waypoint.X - NPC.Center.X);
-            bool closeEnough = horizontalGap <= EngagementSlack && Math.Abs(waypoint.Y - NPC.Center.Y) < 64f;
+            bool closeEnough = !needRepositionForClearance && horizontalGap <= EngagementSlack && Math.Abs(waypoint.Y - NPC.Center.Y) < 64f;
 
             if (closeEnough)
             {
@@ -2910,6 +3106,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             {
                 available.Add(CombatMemory.WarriorCrossbow);
                 available.Add(CombatMemory.OwlBow);
+
+                if (category != WeaponCategory.Channelled)
+                {
+                    available.Add(CombatMemory.RangedQuickVolley);
+                    available.Add(CombatMemory.RangedFlurry);
+                }
             }
 
             if (includeSummon && _summonsUnlocked && _summonCard && _summonCooldown == 0 && _activeEcho == null)
@@ -2975,17 +3177,33 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                     break;
                 case CombatMemory.WarriorCrossbow:
-                    pattern.TellTicks = 34;
-                    pattern.BurstMax = 1;
-                    pattern.RecoveryTicks = 38;
-                    pattern.AimLockTicks = 12;
+                    pattern.TellTicks = 28;
+                    pattern.BurstMax = 2;
+                    pattern.GapTicks = 16;
+                    pattern.RecoveryTicks = 32;
+                    pattern.AimLockTicks = 10;
                     break;
                 case CombatMemory.OwlBow:
-                    pattern.TellTicks = 42;
-                    pattern.BurstMax = 2;
-                    pattern.GapTicks = 36;
-                    pattern.RecoveryTicks = 36;
-                    pattern.AimLockTicks = 12;
+                    pattern.TellTicks = 34;
+                    pattern.BurstMax = 3;
+                    pattern.GapTicks = 14;
+                    pattern.RecoveryTicks = 34;
+                    pattern.AimLockTicks = 10;
+                    break;
+                case CombatMemory.RangedQuickVolley:
+                    pattern.TellTicks = 26;
+                    pattern.BurstMax = 3;
+                    pattern.GapTicks = 6;
+                    pattern.RecoveryTicks = 30;
+                    pattern.AimLockTicks = 8;
+                    break;
+                case CombatMemory.RangedFlurry:
+                    // Sustained player-like rapid fire: 5 shots for normal bows/guns, up to 7 for fast auto-fire weapons.
+                    pattern.TellTicks = 32;
+                    pattern.BurstMax = weapon.useTime <= 12 ? 7 : 5;
+                    pattern.GapTicks = weapon.useTime <= 12 ? 0 : 4;
+                    pattern.RecoveryTicks = 40;
+                    pattern.AimLockTicks = 8;
                     break;
                 case CombatMemory.NinjaCast:
                     pattern.TellTicks = 60;
@@ -3007,6 +3225,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (category == WeaponCategory.NearInstantShot)
             {
                 pattern.AimLockTicks = 24;
+            }
+
+            // Charged bows (e.g. Artemis Bow, useTime 60) scale shot speed and accuracy with charge time:
+            // releasing early at 36 ticks fires slow, inaccurate arrows that land short.
+            if (weapon.channel && weapon.useAmmo == AmmoID.Arrow)
+            {
+                int fullChargeTicks = Math.Clamp(weapon.useTime, 36, 90);
+                pattern.ChannelTicks = Math.Max(pattern.ChannelTicks, fullChargeTicks);
             }
 
             _memoryStartUses = UsesStartedTotal;
@@ -3301,6 +3527,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 flags |= OwnerFlagSummoner;
             }
 
+            if (ShotBlockedByTerrain)
+            {
+                flags |= OwnerFlagShotBlocked;
+            }
+
             OwnerFlags = flags;
         }
 
@@ -3321,6 +3552,25 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 StaminaCurrent = Math.Max(0f, StaminaCurrent - cost * startedUses);
             }
+        }
+
+        protected override Vector2 GetTargetVelocity(Player owner)
+        {
+            int targetIndex = TargetIndex;
+
+            if (targetIndex < 0 || targetIndex >= Main.maxPlayers)
+            {
+                return Vector2.Zero;
+            }
+
+            Player target = Main.player[targetIndex];
+
+            if (!target.active || target.dead)
+            {
+                return Vector2.Zero;
+            }
+
+            return target.velocity;
         }
 
         protected override bool ChooseTarget(Player owner, out Vector2 targetCenter)
@@ -3406,6 +3656,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         protected override void DecorateDisplayClone(Player clone)
         {
+            base.DecorateDisplayClone(clone);
+
             if (State == InvaderState.Whipping)
             {
                 clone.itemAnimation = 0;

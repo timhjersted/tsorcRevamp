@@ -81,6 +81,27 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Specialist
             }
             else
             {
+                if (!Main.dedServ)
+                {
+                    Vector2 aimDir = speed.SafeNormalize(Vector2.UnitX * player.direction);
+                    Vector2 muzzlePos = position + aimDir * 38f;
+
+                    // Reduced forward-cone muzzle flash matching MarksmanShot's impact dust (111).
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Vector2 dustVel = aimDir.RotatedByRandom(0.28f) * Main.rand.NextFloat(2.5f, 6.5f);
+                        Dust flash = Dust.NewDustPerfect(muzzlePos, 111, dustVel, 30, default, 0.85f);
+                        flash.noGravity = true;
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Vector2 sparkVel = aimDir.RotatedByRandom(0.8f) * Main.rand.NextFloat(0.8f, 2.2f);
+                        Dust spark = Dust.NewDustPerfect(muzzlePos, 111, sparkVel, 30, default, 0.65f);
+                        spark.noGravity = true;
+                    }
+                }
+
                 return true;
             }
         }

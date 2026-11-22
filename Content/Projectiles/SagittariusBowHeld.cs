@@ -19,6 +19,7 @@ namespace tsorcRevamp.Content.Projectiles
             chargeRate = (1f / bow.useTime);
             DrawOffsetX = -65;
             DrawOriginOffsetY = -37;
+            Projectile.scale = 0.75f;
             Main.projFrames[Projectile.type] = 7;
         }
 

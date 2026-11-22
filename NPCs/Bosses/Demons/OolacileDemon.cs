@@ -16,6 +16,7 @@ namespace tsorcRevamp.NPCs.Bosses.Demons
     // Element: orange torch fire, On Fire. Signature: Spirit Ring — the Desert Spirit's ghost-skull sorcery (DemonSpiritSkull),
     // green-dripping and +50 Poison buildup per hit. Its punisher also throws one homing skull instead of a fireball.
     [AutoloadBossHead]
+    [LegacyName("AncientOolacileDemon")]
     class OolacileDemon : DemonBase
     {
         // Spirit Ring: 50t violet converge onto the body → 8 skulls outward at 5 px/t (45° gaps ≈ 125px at 10 tiles) →

@@ -497,6 +497,14 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item8, Projectile.position);
             }
 
+            if (!isTryingToMove && Math.Abs(Projectile.velocity.X) < 0.1f)
+            {
+                Projectile.velocity.X = 0f;
+            }
+
+            // Snapshot vertical velocity before gravity so PlayerFrame knows whether the spirit is grounded.
+            float preGravityVelocityY = Projectile.velocity.Y;
+
             // Apply gravity at the very end of the AI loop unless disabled (e.g. during rope climb)
             if (!SmartProjectileFighterAI.IsGravityDisabled(Projectile))
             {
@@ -571,8 +579,10 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             }
 
             int facing = RigFacing;
+            float rigVelocityX = Math.Abs(Projectile.velocity.X) < 0.1f ? 0f : Projectile.velocity.X;
+            float rigVelocityY = Math.Abs(preGravityVelocityY) < 0.01f ? 0f : preGravityVelocityY;
             _rig.direction = facing;
-            _rig.velocity = Projectile.velocity;
+            _rig.velocity = new Vector2(rigVelocityX, rigVelocityY);
             _rig.position = Projectile.Bottom - new Vector2(_rig.width * 0.5f, _rig.height);
             _rig.PlayerFrame();
             // PlayerFrame re-derives the dye shaders; write them back so the whole outfit stays gold.

@@ -990,9 +990,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 bool groundBelow = false;
 
-                for (int drop = 1; drop <= RollLedgeDropTiles; drop++)
+                for (int drop = 0; drop <= RollLedgeDropTiles; drop++)
                 {
-                    if (UsefulFunctions.IsTileReallySolid(tileX, feetTileY + drop))
+                    int checkY = feetTileY + drop;
+
+                    if (checkY < 0 || checkY >= Main.maxTilesY)
+                    {
+                        continue;
+                    }
+
+                    Tile floorTile = Main.tile[tileX, checkY];
+                    bool isPlatform = floorTile.HasUnactuatedTile && TileID.Sets.Platforms[floorTile.TileType];
+
+                    if (UsefulFunctions.IsTileReallySolid(tileX, checkY) || isPlatform)
                     {
                         groundBelow = true;
                         break;
@@ -1592,6 +1602,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>The puppet whose use is running (for projectile tagging / debugging).</summary>
         public static MirrorPuppetNPC Current;
 
+        // Real owner state while a swap is active: RunPuppetProjectileDamage restores these around Projectile.Damage
+        // so hostile puppet projectiles test collision against the real player's position instead of the puppet's.
+        internal static Player SwappedOwner;
+        internal static Vector2 SwappedOwnerRealPosition;
+        internal static Vector2 SwappedOwnerRealVelocity;
+        internal static int SwappedOwnerRealDirection;
+        internal static bool SwappedOwnerVelocityMutated;
+
         /// <summary>Running count of projectiles spawned inside a swap (MirrorPuppetProjectile.OnSpawn). The melee clock
         /// diffs it around each run to log where in a swing a sword beam fires.</summary>
         public static int ProjectilesSpawned;
@@ -1898,6 +1916,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             Active = true;
             Current = puppet;
+            SwappedOwner = owner;
+            SwappedOwnerRealPosition = ownerState.Position;
+            SwappedOwnerRealVelocity = ownerState.Velocity;
+            SwappedOwnerRealDirection = ownerState.Direction;
+            SwappedOwnerVelocityMutated = false;
 
             try
             {
@@ -2121,6 +2144,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             finally
             {
                 ownerState.Restore(owner);
+
+                if (SwappedOwnerVelocityMutated)
+                {
+                    owner.velocity = SwappedOwnerRealVelocity;
+                }
+
+                SwappedOwner = null;
+                SwappedOwnerVelocityMutated = false;
                 Active = false;
                 Current = null;
             }
@@ -2179,6 +2210,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
             On_NetMessage.SendData += FilterSwapPackets;
             On_Projectile.Update += RunPuppetProjectileUpdate;
+            On_Projectile.Damage += RunPuppetProjectileDamage;
             On_Projectile.Kill += RunPuppetProjectileKill;
             On_Main.DrawProj += DrawPuppetProjectile;
             On_Player.UpdateProjectileCaches += ExcludePuppetProjectileCounts;
@@ -2287,6 +2319,47 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             Vector2 aimWorld = puppet.UseState.AimWorld;
             MirrorPuppetSwap.RunAsPuppet(owner, puppet, weapon, wantsUse, aimWorld,
                 () => orig(projectile, index), capturePose);
+        }
+
+        private static void RunPuppetProjectileDamage(On_Projectile.orig_Damage orig, Projectile projectile)
+        {
+            if (!MirrorPuppetSwap.Active || MirrorPuppetSwap.SwappedOwner == null
+                || !projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag) || !tag.HostileToPlayers)
+            {
+                orig(projectile);
+                return;
+            }
+
+            // Projectile.Update runs inside RunAsPuppet with owner.position moved onto the puppet. Restore the real
+            // player's position/velocity during Damage() so hostile projectiles hit the real player (not at the puppet).
+            Player owner = MirrorPuppetSwap.SwappedOwner;
+            Vector2 puppetPosition = owner.position;
+            Vector2 puppetVelocity = owner.velocity;
+            int puppetDirection = owner.direction;
+
+            projectile.hostile = true;
+            projectile.friendly = false;
+
+            owner.position = MirrorPuppetSwap.SwappedOwnerRealPosition;
+            owner.velocity = MirrorPuppetSwap.SwappedOwnerRealVelocity;
+            owner.direction = MirrorPuppetSwap.SwappedOwnerRealDirection;
+
+            try
+            {
+                orig(projectile);
+            }
+            finally
+            {
+                if (owner.velocity != MirrorPuppetSwap.SwappedOwnerRealVelocity)
+                {
+                    MirrorPuppetSwap.SwappedOwnerRealVelocity = owner.velocity;
+                    MirrorPuppetSwap.SwappedOwnerVelocityMutated = true;
+                }
+
+                owner.position = puppetPosition;
+                owner.velocity = puppetVelocity;
+                owner.direction = puppetDirection;
+            }
         }
 
         private static void RunPuppetProjectileKill(On_Projectile.orig_Kill orig, Projectile projectile)
@@ -2655,6 +2728,27 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>Per-hit cap as a fraction of the victim's max HP, from the firing weapon's weight (§12.4).</summary>
         public float HitCapFraction;
+
+        public override bool PreAI(Projectile projectile)
+        {
+            if (HostileToPlayers)
+            {
+                projectile.hostile = true;
+                projectile.friendly = false;
+            }
+
+            return true;
+        }
+
+        public override bool? CanHitNPC(Projectile projectile, NPC target)
+        {
+            if (HostileToPlayers)
+            {
+                return false;
+            }
+
+            return null;
+        }
 
         public override void PostAI(Projectile projectile)
         {

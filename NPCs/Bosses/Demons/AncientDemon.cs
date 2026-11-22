@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Bosses.Demons
     //                  fires 4 straight bolts, each glinting 20t first, then implodes. Max one alive.
     //   Death's Grasp  (phase 2, bag x1) fire pools at its feet → a low red-black wave crawls along the floor to where the
     //                  player stood (jump it), simmers 30t, then erupts into a 12-tile column (leave the spot).
+    [LegacyName("AncientDemonOfTheAbyss")]
     class AncientDemon : DemonBase
     {
         // Doom Orb: 60t tell → orb at the horns → 30t recovery. The orb's own timeline is in DemonDoomOrb.

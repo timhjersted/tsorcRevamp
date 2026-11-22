@@ -82,8 +82,48 @@ namespace tsorcRevamp.Content.Items
         {
             ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;
         }
+
+        public override bool AltFunctionUse(Item item, Player player)
+        {
+            // Sentries don't have a buff icon to right-click away. If a sentry weapon has no right-click action
+            // of its own, let right-click dismiss any active sentries it spawned.
+            if (item.sentry && item.shoot > ProjectileID.None)
+            {
+                bool hasCustomAltUse = item.ModItem != null && item.ModItem.AltFunctionUse(player);
+                if (!hasCustomAltUse && player.ownedProjectileCounts[item.shoot] > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override bool CanUseItem(Item item, Player player)
         {
+            // Right-clicking a sentry weapon without its own alt-fire despawns its active sentries immediately
+            // before mana or weapon stamina is spent.
+            if (player.altFunctionUse == 2 && item.sentry && item.shoot > ProjectileID.None)
+            {
+                bool hasCustomAltUse = item.ModItem != null && item.ModItem.AltFunctionUse(player);
+                if (!hasCustomAltUse)
+                {
+                    if (player.whoAmI == Main.myPlayer)
+                    {
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile proj = Main.projectile[i];
+                            if (proj.active && proj.owner == player.whoAmI && proj.type == item.shoot)
+                            {
+                                proj.Kill();
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
             // The Curse blocks vanilla teleporters in Souls Mode (see IsCursedTeleporter); use the player attempting it.
             if (IsCursedTeleporter(item, player))
             {

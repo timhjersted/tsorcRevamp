@@ -717,6 +717,18 @@ namespace tsorcRevamp.Content.Projectiles
                 {
                     staminaPlayer.RecordWeaponOutputDamage(WeaponStaminaSourceItemType, damageDone);
                 }
+
+                // Step flail stamina drain up to 0.4/frame for 0.5s when a flail (or Heaven's Tear's rain) lands a hit.
+                bool isFlailHit = projectile.aiStyle == ProjAIStyleID.Flail
+                    || projectile.type == ProjectileID.Anchor
+                    || ModdedFlail
+                    || (projectile.type == ProjectileID.RainFriendly
+                        && player.ownedProjectileCounts[ModContent.ProjectileType<Melee.Flails.HeavensTearBall>()] > 0);
+
+                if (isFlailHit && !fromFriendlyPuppet)
+                {
+                    staminaPlayer.flailActiveHitTimer = tsorcRevampStaminaPlayer.FlailActiveHitWindowTicks;
+                }
                 // DISABLED: minions no longer drain stamina. A minion is "cast once, damage forever", so a
                 // per-damage drain is an uncontrollable tax — it scales with how long a fight runs and how many
                 // minions are out, neither of which the player is actively choosing moment to moment. The

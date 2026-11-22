@@ -43,6 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
     /// the boss animates and fires from the staff tip for free (enemy-redesign G0.7 / G4).
     /// </summary>
     [AutoloadBossHead]
+    [LegacyName("AbysmalOolacileSorcerer")]
     class GrandOccultist : PuppetNPC
     {
         // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s

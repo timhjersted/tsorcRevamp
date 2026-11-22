@@ -248,6 +248,7 @@ namespace tsorcRevamp
             Register("GreatRedKnight", "Boss13", "Boss13", MusicID.Boss1);
             Register("BlackKnight", "Boss15", null, MusicID.Boss1);
             Register("LeonhardPhase1", "Invader", "Invader", MusicID.Boss1);
+            Register("MirrorInvader", "Boss19", "Boss19", MusicID.Boss2);
             Register("Blaidd", "Boss4", "Invader", MusicID.Boss1);
             Register("Gigas", "GoblinInvasion", "GoblinInvasion", MusicID.GoblinInvasion, SceneEffectPriority.BossLow);
             Register("IceGigas", "Boss12", "Boss12", MusicID.Boss2);

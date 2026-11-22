@@ -202,6 +202,7 @@ namespace tsorcRevamp.NPCs.Invaders
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.AttackCommitted = false;
             globalNPC.AttackTelegraphing = false;
+            globalNPC.EstusDrinking = false;
             globalNPC.SuppressDodgeBlink = false;
             // A smoke teleport normally advances inside the main combat loop. Party-wipe fading exits
             // that loop deliberately, so its countdown must be cancelled rather than left holding an
@@ -4387,6 +4388,7 @@ namespace tsorcRevamp.NPCs.Invaders
             globalNPC.ShieldGuarding = false;
             globalNPC.AttackCommitted = false;
             globalNPC.AttackTelegraphing = false;
+            globalNPC.EstusDrinking = false;
             npc.netUpdate = true;
         }
 
@@ -8765,6 +8767,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
             globalNPC.AttackCommitted    = committed;
             globalNPC.AttackTelegraphing = telegraph && !committed;
+            globalNPC.EstusDrinking      = Phase == AttackPhase.Healing;
         }
 
         // ── Aerial actions (default implementations) ──────────────────────────────

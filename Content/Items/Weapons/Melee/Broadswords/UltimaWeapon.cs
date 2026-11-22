@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             recipe.AddIngredient(ModContent.ItemType<AtmaWeapon>());
             recipe.AddIngredient(ModContent.ItemType<BlueTitanite>(), 8);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 140000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 130000);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

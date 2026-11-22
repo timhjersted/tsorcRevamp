@@ -82,8 +82,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeWeaponItemType => ModContent.ItemType<DualBladedAxe>();
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyFireFlask>();
 
-        protected override int MeleeDamage => 28;
-        protected override int RangedDamage => 18;
+        protected override int MeleeDamage => 20;
+        protected override int RangedDamage => 15;
 
         protected override int EstusChargesMax => 3;
         protected override int HealAnimationTicks => 180;
@@ -202,6 +202,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.LightGreen,
                 CooldownAfterUse = 180,
+                RecoveryTicks = 22,
                 MoveBrake = 0.22f,
                 Steps = new[]
                 {
@@ -234,6 +235,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.Gold,
                 CooldownAfterUse = 180,
+                RecoveryTicks = 24,
                 MoveBrake = 0.08f,
                 Steps = new[]
                 {
@@ -252,6 +254,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.OrangeRed,
                 CooldownAfterUse = 240,
+                RecoveryTicks = 28,
                 HeavyCommit = true,
                 HyperArmor = true,
                 MoveBrake = 0.40f,
@@ -265,6 +268,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Close,
                 InitialFlashColor = Color.LightGoldenrodYellow,
                 CooldownAfterUse = 260,
+                RecoveryTicks = 26,
                 HeavyCommit = true,
                 HyperArmor = true,
                 MoveBrake = 0.35f,
@@ -283,6 +287,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Far,
                 InitialFlashColor = Color.MediumPurple,
                 CooldownAfterUse = 320,
+                RecoveryTicks = 24,
                 HeavyCommit = true,
                 HyperArmor = true,
                 RangedStartOnly = true,
@@ -303,6 +308,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Any,
                 InitialFlashColor = Color.Orange,
                 CooldownAfterUse = 300,
+                RecoveryTicks = 26,
                 HeavyCommit = true,
                 HyperArmor = true,
                 RangedStartOnly = true,
@@ -324,6 +330,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.Orange,
                 CooldownAfterUse = 210,
+                RecoveryTicks = 24,
                 HeavyCommit = true,
                 RangedStartOnly = true,
                 MoveBrake = 0.08f,
@@ -340,6 +347,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.OrangeRed,
                 CooldownAfterUse = 220,
+                RecoveryTicks = 26,
                 HeavyCommit = true,
                 RangedStartOnly = true,
                 MoveBrake = 0.12f,
@@ -356,6 +364,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = Color.SandyBrown,
                 CooldownAfterUse = 300,
+                RecoveryTicks = 28,
                 HeavyCommit = true,
                 HyperArmor = true,
                 RangedStartOnly = true,
@@ -396,7 +405,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override float MeleeCompositeArmRotationOffset => MeleeWeaponRotationOffset;
         protected override bool UseLandingTimedLeapSlam => true;
         protected override int MeleeComboInterStepLingerTicks => 3;
-        protected override int MeleeRecoveryLingerTicks => 6;
+        protected override int MeleeRecoveryLingerTicks => 16;
         // The composite arm already mirrors its arc by facing. Mirror the axe's raw arc as well so
         // left-facing casts and uppercuts remain attached to the hand instead of rotating backward.
         protected override bool MirrorMeleeSwingRotationByFacing => true;
@@ -603,7 +612,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override Color RangedTelegraphFlashColor => new Color(255, 120, 40);
 
         protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<HeavyCrossbow>();
-        protected override int SecondaryRangedDamage => 24;
+        protected override int SecondaryRangedDamage => 18;
         protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
         protected override float SecondaryRangedRange => 560f;
         protected override float SecondaryRangedMinRange => 180f;

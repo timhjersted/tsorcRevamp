@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
@@ -199,10 +200,31 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                         ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f);
 
-                    // Each repeated cast also pays the item-use mana normally charged when spawning a controller.
-                    if (channeling && player.HeldItem.type == ModContent.ItemType<GravemawTome>()
-                        && player.CheckMana(player.HeldItem, pay: true))
+                    // Each repeated cast also pays the item-use mana and stamina normally charged when spawning a controller.
+                    tsorcRevampPlayer tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                    bool canRepeat = channeling
+                        && player.HeldItem.type == ModContent.ItemType<GravemawTome>()
+                        && staminaPlayer.CanUseWeapon
+                        && player.CheckMana(player.HeldItem, pay: true);
+
+                    if (canRepeat)
                     {
+                        if (tsorcPlayer.UsesWeaponStamina)
+                        {
+                            bool manaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+                            bool arcaneBurnThreshold = player.HasBuff(ModContent.BuffType<ArcaneSorcery>())
+                                && staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f;
+
+                            if (!manaBurnActive && !arcaneBurnThreshold)
+                            {
+                                Item heldItem = player.HeldItem;
+                                float staminaMult = tsorcPlayer.WeaponStaminaMult(heldItem);
+                                int scaledUseAnimation = (int)(heldItem.useAnimation / player.GetAttackSpeed(heldItem.DamageType));
+                                staminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * staminaMult;
+                            }
+                        }
+
                         novaRepeating = true;
                         Projectile.localAI[0] = 0f;
                         Projectile.netUpdate = true;

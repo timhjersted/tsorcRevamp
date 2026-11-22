@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
@@ -68,11 +70,44 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 player.itemTime = 2;
                 player.itemAnimation = 2;
 
-                // Mana upkeep.
-                if (Projectile.localAI[0] % AttackInterval == 0 && !player.CheckMana(ManaCost, true))
-                {
-                    Projectile.Kill();
-                    return;
+                // Mana and stamina upkeep on each inhale pulse.
+                if (Projectile.localAI[0] % AttackInterval == 0)
+                {
+                    if (!player.CheckMana(ManaCost, true))
+                    {
+                        Projectile.Kill();
+                        return;
+                    }
+
+                    // The initial click already paid one full weapon use before the maw spawned.
+                    if (Projectile.localAI[0] > 0f)
+                    {
+                        tsorcRevampPlayer tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                        tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+                        if (!staminaPlayer.CanUseWeapon)
+                        {
+                            Projectile.Kill();
+                            return;
+                        }
+
+                        if (tsorcPlayer.UsesWeaponStamina)
+                        {
+                            bool manaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+                            bool arcaneBurnThreshold = player.HasBuff(ModContent.BuffType<ArcaneSorcery>())
+                                && staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f;
+
+                            if (!manaBurnActive && !arcaneBurnThreshold)
+                            {
+                                Item heldItem = player.HeldItem;
+                                int baseUseTime = heldItem.type == ModContent.ItemType<GravemawTome>() ? heldItem.useAnimation : GravemawTome.BaseUseTime;
+                                int scaledUseAnimation = Math.Max(1, (int)(baseUseTime / player.GetAttackSpeed(DamageClass.Magic)));
+                                float staminaMult = tsorcPlayer.WeaponStaminaMult(heldItem);
+                                float pulseStaminaCost = tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * staminaMult * ((float)AttackInterval / scaledUseAnimation);
+                                staminaPlayer.staminaResourceCurrent -= pulseStaminaCost;
+                            }
+                        }
+                    }
                 }
             }
             Projectile.localAI[0]++;

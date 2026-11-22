@@ -230,7 +230,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
             if (NPC.life <= NPC.lifeMax / 4 && breath == false && Main.hardMode)
             {
                 breath = true;
@@ -246,7 +245,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
 
                 //play breath sound
-                if (Main.rand.NextBool(3))
+                if (!Main.dedServ && Main.rand.NextBool(3))
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.3f, Pitch = 0.1f }, NPC.Center); //flame thrower
                 }
@@ -280,7 +279,7 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
 
-            if (Main.rand.NextBool(1000))
+            if (!Main.dedServ && Main.rand.NextBool(1000))
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Zombie13 with { Volume = 0.5f, PitchVariance = 1f }, NPC.Center);
             }

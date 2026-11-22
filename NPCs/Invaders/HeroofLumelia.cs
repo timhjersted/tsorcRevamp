@@ -597,7 +597,7 @@ namespace tsorcRevamp.NPCs.Invaders
             NPC.width = 20;
             NPC.height = 42;
             NPC.lifeMax = 8000;
-            NPC.defense = 75;
+            NPC.defense = 15;
             NPC.damage = 0; // contact 0 — damage comes from weapon hitboxes / projectiles (invader convention)
             NPC.boss = true;
             NPC.npcSlots = 5f;

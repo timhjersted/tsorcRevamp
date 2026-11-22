@@ -22,6 +22,7 @@ namespace tsorcRevamp.NPCs.Invaders
     // Design/spec cards: tsorcDocs/AbyssalNinja_Rework_Proposal.md.
     // One owner per sequence: the base owns sword combos/Estus; this class owns custom attacks.
     [AutoloadBossHead]
+    [LegacyName("AbyssalNinjaInvader")]
     public partial class AbyssalNinja : PuppetNPC
     {
         public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(AbyssalNinja)) + "_Head_Boss";

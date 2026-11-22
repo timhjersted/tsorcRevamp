@@ -1,5 +1,7 @@
 using System;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
@@ -49,6 +51,89 @@ namespace tsorcRevamp.Buffs.Debuffs
             player.buffTime[buffIndex] = time;
             return true;
         }
+
+        public override void Update(NPC npc, ref int buffIndex)
+        {
+            // Redirect worm segments to their shared health pool so a multi-segment boss only procs once.
+            NPC targetNpc = npc;
+            if (npc.realLife >= 0 && npc.realLife < Main.maxNPCs && Main.npc[npc.realLife].active)
+            {
+                targetNpc = Main.npc[npc.realLife];
+            }
+
+            DestinedDeathNPC deathNpc = targetNpc.GetGlobalNPC<DestinedDeathNPC>();
+            if (!deathNpc.HasTriggeredHpLoss)
+            {
+                deathNpc.HasTriggeredHpLoss = true;
+
+                if (Main.netMode != NetmodeID.MultiplayerClient && targetNpc.lifeMax > 1)
+                {
+                    int lifeLoss = Math.Max(1, (int)(targetNpc.lifeMax * DestinedDeathNPC.OneTimeHpLossFraction));
+                    targetNpc.life = Math.Max(1, targetNpc.life - lifeLoss);
+                    targetNpc.netUpdate = true;
+
+                    if (!Main.dedServ)
+                    {
+                        CombatText.NewText(targetNpc.Hitbox, new Color(210, 25, 45), lifeLoss, dramatic: true);
+                    }
+                    else
+                    {
+                        NetMessage.SendData(
+                            MessageID.CombatTextInt,
+                            number: (int)new Color(210, 25, 45).PackedValue,
+                            number2: targetNpc.Center.X,
+                            number3: targetNpc.Center.Y,
+                            number4: lifeLoss
+                        );
+                    }
+                }
+
+                if (!Main.dedServ)
+                {
+                    for (int i = 0; i < 18; i++)
+                    {
+                        bool blood = i % 3 != 0;
+                        Dust procDust = Dust.NewDustPerfect(
+                            targetNpc.Center + Main.rand.NextVector2Circular(targetNpc.width * 0.45f, targetNpc.height * 0.45f),
+                            blood ? DustID.Blood : DustID.Wraith,
+                            Main.rand.NextVector2Circular(4f, 4f) + new Vector2(0f, -1.5f),
+                            blood ? 80 : 155,
+                            default,
+                            blood ? Main.rand.NextFloat(1.0f, 1.5f) : Main.rand.NextFloat(0.8f, 1.2f)
+                        );
+                        procDust.noGravity = true;
+                        procDust.noLight = !blood;
+                    }
+                }
+            }
+
+            if (!Main.dedServ && Main.rand.NextBool(4))
+            {
+                bool blood = Main.rand.NextBool(2);
+                Dust aura = Dust.NewDustDirect(
+                    npc.position,
+                    npc.width,
+                    npc.height,
+                    blood ? DustID.Blood : DustID.Wraith,
+                    0f,
+                    -1.2f,
+                    blood ? 90 : 155,
+                    default,
+                    Main.rand.NextFloat(0.8f, 1.2f)
+                );
+                aura.noGravity = true;
+                aura.noLight = !blood;
+            }
+        }
+    }
+
+    public class DestinedDeathNPC : GlobalNPC
+    {
+        public const float OneTimeHpLossFraction = 0.05f;
+
+        public override bool InstancePerEntity => true;
+
+        public bool HasTriggeredHpLoss;
     }
 
     public class DestinedDeathPlayer : ModPlayer

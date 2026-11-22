@@ -30,7 +30,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             Item.shootSpeed = 24f;
             Item.DamageType = DamageClass.Magic;
             Item.noMelee = true;
-            Item.mana = 201;
+            Item.mana = 199;
             Item.scale = 0.8f;
             Item.useAnimation = 60;
             Item.useTime = 60;

@@ -589,6 +589,15 @@ namespace tsorcRevamp.NPCs
         public bool ShieldGuarding = false;
         public const float ShieldGuardPoiseMult = 0.5f; // front hits build half poise while guarding
 
+        // Set true per-tick by a puppet actively drinking Estus (AttackPhase.Healing). While active, poise
+        // bypasses PoiseBreakCooldown and escalation stacks, doubles knockback poise, and adds a rate-limited
+        // percentage of base PoiseMax so 0-knockback magic weapons can reliably interrupt the heal.
+        public bool EstusDrinking = false;
+        public const float EstusDrinkPoiseMult = 2f;
+        public const float EstusDrinkFlatPoiseFraction = 0.25f;
+        public const int EstusDrinkFlatPoiseCooldownTicks = 15;
+        private int estusFlatPoiseCooldown = 0;
+
         // Reactive shield capability (shared by the shield enemies — HollowSoldier/Spearman + the Lothric knights —
         // configured via ShieldProfile). Layers on TOP of each enemy's own autonomous shield-timer rhythm:
         //  • PreemptiveBlockChance: per-tick roll, when a threat is detected (incoming projectile, or the player within
@@ -818,24 +827,43 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
+
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
+
             // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Keep in sync with HandlePoiseOnHit.
             if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
             {
                 poiseDamage *= ShieldGuardPoiseMult;
             }
+
+            // Drinking Estus overrides the post-stagger immunity window so an active heal is never uninterruptible.
+            bool poiseImmune = PoiseBreakCooldown > 0 && !EstusDrinking;
+
             // ZERO knockback whenever the enemy can't take stagger damage = the white-bar states: hyper-armor
             // (AttackCommitted), already-staggered (manual slide drives it), OR the post-stagger recovery i-frames
-            // (PoiseBreakCooldown). Previously the recovery window took REDUCED flinch; now it's fully immune.
-            if (AttackCommitted || StaggerTimer > 0 || PoiseBreakCooldown > 0)
+            // (PoiseBreakCooldown, unless drinking Estus).
+            if (AttackCommitted || StaggerTimer > 0 || poiseImmune)
             {
                 modifiers.DisableKnockback();
                 PoiseWillBreakThisHit = false;
                 return;
             }
-            // Neutral / windup: light flinch so the hit always reads.
+
+            float poiseThreshold = EffectivePoiseMax;
+            if (EstusDrinking)
+            {
+                poiseThreshold = PoiseMax;
+                poiseDamage *= EstusDrinkPoiseMult;
+
+                if (estusFlatPoiseCooldown <= 0)
+                {
+                    poiseDamage += PoiseMax * EstusDrinkFlatPoiseFraction;
+                }
+            }
+
+            // Neutral / windup / drinking: light flinch so the hit always reads.
             modifiers.Knockback *= PoiseFlinchFactor;
-            PoiseWillBreakThisHit = (Poise + poiseDamage) >= EffectivePoiseMax;
+            PoiseWillBreakThisHit = (Poise + poiseDamage) >= poiseThreshold;
         }
 
         /// <summary>Post-strike: accumulate poise and trigger the stagger if it broke. Source is the attacker's center,
@@ -847,31 +875,51 @@ namespace tsorcRevamp.NPCs
                 PoiseWillBreakThisHit = false;
                 return; // hyper-armor: no poise, no knockback
             }
+
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob — keep in sync with ApplyPoiseToKnockback
+
             // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Mirrors ApplyPoiseToKnockback.
             if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
             {
                 poiseDamage *= ShieldGuardPoiseMult;
             }
+
             if (StaggerTimer > 0)
             {
                 ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
                 PoiseWillBreakThisHit = false;
                 return;
             }
-            if (PoiseBreakCooldown > 0)
+
+            bool poiseImmune = PoiseBreakCooldown > 0 && !EstusDrinking;
+            if (poiseImmune)
             {
                 PoiseWillBreakThisHit = false;
                 return; // post-stagger i-frames: immune to further poise damage (anti-stunlock)
             }
 
+            float poiseThreshold = EffectivePoiseMax;
+            if (EstusDrinking)
+            {
+                poiseThreshold = PoiseMax;
+                poiseDamage *= EstusDrinkPoiseMult;
+
+                if (estusFlatPoiseCooldown <= 0)
+                {
+                    poiseDamage += PoiseMax * EstusDrinkFlatPoiseFraction;
+                    estusFlatPoiseCooldown = EstusDrinkFlatPoiseCooldownTicks;
+                    npc.netUpdate = true;
+                }
+            }
+
             Poise += poiseDamage;
             PoiseRegenDelay = PoiseRegenDelayTicks;
 
-            if (PoiseWillBreakThisHit || Poise >= EffectivePoiseMax)
+            if (PoiseWillBreakThisHit || Poise >= poiseThreshold)
             {
                 TriggerStagger(npc, sourceCenter);
             }
+
             PoiseWillBreakThisHit = false;
         }
 
@@ -1135,13 +1183,22 @@ namespace tsorcRevamp.NPCs
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
         private void TriggerStagger(NPC npc, Vector2 sourceCenter)
         {
+            bool interruptedEstus = EstusDrinking;
+
             Poise = 0f;
             StaggerTimer = StaggerDurationTicks;
+            estusFlatPoiseCooldown = 0;
             SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center); // stagger cue
+
             // Escalation: add a stack and refresh the (long) window. The rising EffectivePoiseMax is what makes re-staggers
             // progressively harder — the recovery cooldown stays a flat ~recovery window (not stack-scaled, or it'd balloon).
-            PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
-            PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            // Interrupting an Estus drink skips escalation so punishing a heal never bloats normal combat poise.
+            if (!interruptedEstus)
+            {
+                PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
+                PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            }
+
             PoiseBreakCooldown = PoiseBreakCooldownTicks;
             ApplyStaggerImpulse(npc, sourceCenter, 1f);
             // Cancel a windup attack. Enemies with bespoke attack STATE (C# flags / custom timer slots) implement
@@ -1168,6 +1225,8 @@ namespace tsorcRevamp.NPCs
                     FighterRangedStandShotsRemaining = 0;
                 }
             }
+
+            EstusDrinking = false;
             ResetCombatTempoSequence(clearRecovery: true);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
             npc.netUpdate = true;
@@ -1349,6 +1408,10 @@ namespace tsorcRevamp.NPCs
             if (PoiseBreakCooldown > 0)
             {
                 PoiseBreakCooldown--;
+            }
+            if (estusFlatPoiseCooldown > 0)
+            {
+                estusFlatPoiseCooldown--;
             }
             if (PoiseEscalationTimer > 0)
             {
@@ -2617,6 +2680,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write((byte)Math.Clamp(PoiseEscalationStacks, 0, byte.MaxValue));
             binaryWriter.Write((short)Math.Clamp(PoiseEscalationTimer, 0, short.MaxValue));
             binaryWriter.Write(staggerSlideVelocity);
+            binaryWriter.Write((byte)Math.Clamp(estusFlatPoiseCooldown, 0, byte.MaxValue));
 
             // Evasion / quick-step: the server rolls and arms these (EvasiveOnHit, preemptive steps). Clients need them for the
             // step velocity, the i-frames (CanBeHit*/CanHitPlayer read QuickStepTimer) and the RunningDash telegraph.
@@ -2739,6 +2803,7 @@ namespace tsorcRevamp.NPCs
             PoiseEscalationStacks = binaryReader.ReadByte();
             PoiseEscalationTimer = binaryReader.ReadInt16();
             staggerSlideVelocity = binaryReader.ReadSingle();
+            estusFlatPoiseCooldown = binaryReader.ReadByte();
 
             // TriggerStagger's cues play on the server, where they are silent: play them on the first snapshot of a new
             // stagger. The 10-tick window ignores a late snapshot of a stagger this client already counted down.
@@ -3215,6 +3280,13 @@ namespace tsorcRevamp.NPCs
                         ? new Color(182, 92, 224)
                         : new Color(238, 143, 55);
                     tsorcRevamp.ShowAnnouncementBanner(EncounterPresentationRegistry.GetBannerText(style), bannerColor);
+                    SoundEngine.PlaySound(DefeatBannerSound);
+                }
+                else if (npc.ModNPC is FriendlyPuppets.MirrorInvader)
+                {
+                    tsorcRevamp.ShowAnnouncementBanner(
+                        EncounterPresentationRegistry.GetBannerText(EncounterBannerStyle.InvaderVanquished),
+                        new Color(238, 143, 55));
                     SoundEngine.PlaySound(DefeatBannerSound);
                 }
             }
@@ -4253,8 +4325,19 @@ namespace tsorcRevamp.NPCs
                 //   white  = can't take stagger damage — hyperarmor (committed attack) OR the post-stagger recovery i-frames;
                 //   yellow (flashing) = actively staggered/broken.
                 // The "can't stagger" states show a full/locked bar so the white reads as a shield, not an empty sliver.
-                bool cantStagger = globalNPC.AttackCommitted || globalNPC.PoiseBreakCooldown > 0;
-                float poisePercentage = (globalNPC.StaggerTimer > 0 || globalNPC.PoiseBreakCooldown > 0) ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
+                // Drinking Estus overrides PoiseBreakCooldown and escalation stacks, so show the live orange fill bar.
+                bool poiseImmune = globalNPC.PoiseBreakCooldown > 0 && !globalNPC.EstusDrinking;
+                bool cantStagger = globalNPC.AttackCommitted || poiseImmune;
+                float poiseThreshold = globalNPC.EstusDrinking ? globalNPC.PoiseMax : globalNPC.EffectivePoiseMax;
+                float poisePercentage;
+                if (globalNPC.StaggerTimer > 0 || poiseImmune)
+                {
+                    poisePercentage = 1f;
+                }
+                else
+                {
+                    poisePercentage = globalNPC.Poise / poiseThreshold;
+                }
                 Color poiseColor;
                 if (globalNPC.StaggerTimer > 0)
                 {

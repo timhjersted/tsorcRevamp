@@ -773,6 +773,9 @@ namespace tsorcRevamp
         const float HeldProjectileDrainPerFrame = 0.5f;
         const float SpecialHeldProjectileDrainPerFrame = 0.4f;
         const float FlailDrainPerFrame = 0.2f;
+        const float FlailActiveHitDrainPerFrame = 0.4f;
+        internal const int FlailActiveHitWindowTicks = 30;
+        internal int flailActiveHitTimer = 0;
         const float YoyoDrainPerFrame = 0.25f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
@@ -789,6 +792,11 @@ namespace tsorcRevamp
             //Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
             //Main.NewText("Timer: " + staminaResourceRegenTimer);
+
+            if (flailActiveHitTimer > 0)
+            {
+                flailActiveHitTimer--;
+            }
 
             for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
             {
@@ -858,7 +866,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.Anchor || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame * mult;
+                        float flailDrain = flailActiveHitTimer > 0 ? FlailActiveHitDrainPerFrame : FlailDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= flailDrain * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {

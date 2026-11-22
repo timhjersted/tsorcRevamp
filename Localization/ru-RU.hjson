@@ -6919,6 +6919,17 @@ Mods: {
 					'''
 			}
 
+			GrandOolacileAxe: {
+				// DisplayName: Grand Oolacile Axe
+				/* Tooltip:
+					'''
+					The abyss-forged great axe-maul of the Grand Occultist
+					Every {0}rd swing is an overhead Dark Judgment slam dealing {1}% more damage and unleashing an abyssal shockwave
+					Tap Right-Click to hurl the axe, erupting Destined Death flames on impact and sticking into the ground until retrieved with an underhand catch swing
+					Hold Right-Click ({2} mana) to channel Staff-Axe Weave, firing fans of {3} homing magic Oolacile dark bolts
+					''' */
+			}
+
 			AncientFireSword: {
 				DisplayName: Древний огненный меч
 				Tooltip:
@@ -10144,33 +10155,60 @@ Mods: {
 			}
 
 			CaiusPyreItem: {
-				// DisplayName: Caius Pyre Item
-				// Tooltip: ""
+				// DisplayName: Caius' Pyre
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a fiery rift which shoots fireballs towards your cursor
+					''' */
 			}
 
 			GaleforceItem: {
-				// DisplayName: Galeforce Item
-				// Tooltip: ""
+				// DisplayName: Galeforce
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a magical bow which shoots magic arrows towards your cursor
+					''' */
 			}
 
 			TyphoonItem: {
-				// DisplayName: Typhoon Item
-				// Tooltip: ""
+				// DisplayName: Typhoon
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hellish bow which shoots flaming arrows towards your cursor
+					Applies hellfire
+					''' */
 			}
 
 			XBowItem: {
-				// DisplayName: X Bow Item
-				// Tooltip: ""
+				// DisplayName: X-Bow
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a mystical crossbow which shoots piercing arrows towards your cursor at high speed
+					''' */
 			}
 
 			ShadowSickleItem: {
-				// DisplayName: Shadow Sickle Item
-				// Tooltip: ""
+				// DisplayName: Shadow Sickle
+				/* Tooltip:
+					'''
+					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+					Uses mana to slash hit enemys multiple times over time on-hit
+					Refunds {0} mana on-hit with the Sickle
+					''' */
 			}
 
 			BeetleIdolItem: {
-				// DisplayName: Beetle Idol Item
-				// Tooltip: ""
+				// DisplayName: Beetle Idol
+				/* Tooltip:
+					'''
+					Summons a Samurai Beetle to fight for you
+					Performs a [c/FF00FF:Shocking Slash] every third hit
+					There can only be one
+					''' */
 			}
 
 			EnemyEphemeralAxe: {
@@ -12782,6 +12820,14 @@ Mods: {
 			// WarlockWardRing.DisplayName: Warlock Ward Ring
 			// ManHunterLobArrow.DisplayName: Man Hunter Lob Arrow
 			// GwynLordsVerdictBlade.DisplayName: Gwyn Lords Verdict Blade
+			// GrandOolacileAxeController.DisplayName: Grand Oolacile Axe Controller
+			// GrandOolacileDarkBolt.DisplayName: Grand Oolacile Dark Bolt
+			// GrandOolacileDestinedBurst.DisplayName: Grand Oolacile Destined Burst
+			// GrandOolacileFlameColumn.DisplayName: Grand Oolacile Flame Column
+			// GrandOolacileFlameField.DisplayName: Grand Oolacile Flame Field
+			// GrandOolacileJudgmentWave.DisplayName: Grand Oolacile Judgment Wave
+			// GrandOolacileThrownAxe.DisplayName: Grand Oolacile Thrown Axe
+			// GrandOolacileJudgmentBlaze.DisplayName: Grand Oolacile Judgment Blaze
 		}
 
 		NPCs: {
@@ -14630,7 +14676,7 @@ Mods: {
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
 			// SoulMimic.DisplayName: Soul Mimic
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
-			// MirrorInvader.DisplayName: Mirror Invader
+			// MirrorInvader.DisplayName: Soul Mimic
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
 
 			HellkiteDrake: {

@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
@@ -147,6 +149,16 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             float knockback = player.GetWeaponKnockback(Item);
             Projectile.NewProjectile(swing.GetSource_FromThis(), player.MountedCenter, new Vector2(facing, flightTicks),
                 ModContent.ProjectileType<ArtoriasGreatswordLeap>(), damage, knockback, player.whoAmI, target.X, target.Y);
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 130000);
+            recipe.AddTile(TileID.DemonAltar);
+
+            recipe.Register();
         }
     }
 }

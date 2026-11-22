@@ -339,7 +339,7 @@ namespace tsorcRevamp
                     return true;
                 }
 
-                else if (item.damage <= 1 || item.type == ModContent.ItemType<GlaiveBeam>() || item.type == ModContent.ItemType<ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                else if (item.damage <= 1 || item.type == ModContent.ItemType<ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
                 {
                     return true;
                 }

@@ -600,6 +600,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<NPCs.Bosses.Primordial.PrimeGwyn>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
                 ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(),
+                ModContent.NPCType<NPCs.FriendlyPuppets.MirrorInvader>(),
             };
             #endregion
             //--------
