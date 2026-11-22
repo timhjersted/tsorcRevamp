@@ -20,7 +20,7 @@ public class ArcaneSorceryPlayer : ModPlayer
     
     public bool ManaBurn;
     public const float ManaBurnStaminaThreshold = 33f;
-    public const float ManaBurnCostMult = 4f;
+    public const float ManaBurnCostMult = 3f;
     public const float ManaBurnBadResistance = 100f;
     public const float ManaBurnMagicDamageAmp = 10f;
     public const float ManaBurnMagicAttackSpeedAmp = 0f; //was 20f; zeroed to test Mana Burn's damage without the attack speed bonus

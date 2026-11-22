@@ -288,9 +288,14 @@ namespace tsorcRevamp
                 if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>())
                     return true;
 
-                if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) &&
-                    modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
+                if ((Player.HasBuff(ModContent.BuffType<ArcaneSorcery>())) &&
+                    ((modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
+                    || Player.HasBuff(ModContent.BuffType<ManaBurn>())))
                 {
+                    if (!Player.HasBuff(ModContent.BuffType<ManaBurn>()) && Player.itemAnimation > 0)
+                    {
+                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), ManaBurn.Duration * 60);
+                    }
                     return true;
                 }
 
