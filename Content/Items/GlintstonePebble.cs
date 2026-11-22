@@ -113,7 +113,7 @@ namespace tsorcRevamp.Content.Items
 
                 int damage = (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(BaseDamage));
 
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+                if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
                 {
                     damage = (int)(damage * 1.2f); //because player.GetDamage(DamageClass.Generic)Mult isnt taking it into accound for some reason :/
                 }

@@ -165,7 +165,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Volume = 0.7f, Pitch = 0.2f }, player.Center);
+            SoundEngine.PlaySound(SoundID.Item151, player.Center);
 
             for (int i = 0; i < 30; i++)
             {

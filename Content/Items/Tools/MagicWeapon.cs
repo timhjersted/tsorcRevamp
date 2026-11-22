@@ -51,7 +51,7 @@ namespace tsorcRevamp.Content.Items.Tools
 
             player.AddBuff(ModContent.BuffType<Buffs.MagicWeapon>(), Duration * 60);
 
-            if (!modPlayer.ShadowmoonCloak)
+            if (!modPlayer.Equipped)
             {
                 player.AddBuff(ModContent.BuffType<MagicImbueCooldown>(), Cooldown * 60);
             }

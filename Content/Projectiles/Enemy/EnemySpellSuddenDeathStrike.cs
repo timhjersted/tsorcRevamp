@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -36,6 +37,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             {
                 Projectile.Kill();
                 return;
+            }
+
+            // Fade out over the last 12 ticks of the 12-frame (4 ticks/frame = 48t) life instead of blinking out at full
+            // brightness: alpha 0 -> 200, scale 1 -> 0.8. Lifetime, speed and damage are unchanged for every caster.
+            int ticksLeft = (12 - Projectile.frame) * 4 - Projectile.frameCounter;
+            if (ticksLeft <= 12)
+            {
+                float fade = 1f - ticksLeft / 12f;
+                int fadeAlpha = (int)(fade * 200f);
+                Projectile.alpha = Math.Max(Projectile.alpha, fadeAlpha);
+                Projectile.scale = MathHelper.Lerp(1f, 0.8f, fade);
             }
 
             //It flies through walls, so it must be LOUD: shadowflame wisp trail + purple glow

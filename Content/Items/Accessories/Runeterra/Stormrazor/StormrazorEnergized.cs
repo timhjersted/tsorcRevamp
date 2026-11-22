@@ -1,0 +1,18 @@
+using Terraria;
+using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
+
+namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Stormrazor;
+
+public class StormrazorEnergized : ModBuff
+{
+
+    public override void SetStaticDefaults()
+    {
+    }
+
+    public override void Update(Player player, ref int buffIndex)
+    {
+        player.moveSpeed += StormrazorItem.MovespeedBoost / 100f;
+    }
+}

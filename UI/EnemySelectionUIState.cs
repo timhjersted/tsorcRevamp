@@ -26,9 +26,21 @@ namespace tsorcRevamp.UI
         public int SelectedNpcType = 0;
         // True while the cursor enemy came from this Quick Add panel (place => new single-NPC event).
         public bool QuickAddMode = false;
-        // When set, the cursor enemy is a single-NPC event being relocated: placing it moves both the
-        // event center and its one NPC to the new tile (rather than creating a new event).
+        // The cursor carries a trigger marker. Quick Events use the NPC sprite in place of the book.
         public DynamicSpawnEvent MovingEvent = null;
+        public int MovingEventNpcType
+        {
+            get
+            {
+                if (MovingEvent?.SingleNpcMarker == true && MovingEvent.Npcs.Count == 1)
+                {
+                    return MovingEvent.Npcs[0].NpcID;
+                }
+
+                return 0;
+            }
+        }
+
         public UIPanel panel;
         private UIText closeButton;
         private bool dragging;

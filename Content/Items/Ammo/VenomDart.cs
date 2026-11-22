@@ -33,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             recipe.AddIngredient(ItemID.PoisonDart, 100);
             recipe.AddIngredient(ItemID.VialofVenom, 1);
             recipe.AddIngredient(ItemID.ChlorophyteBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 150);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.AncientGoldenSet;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Utilities;
 
@@ -571,10 +572,6 @@ namespace tsorcRevamp.Content.Items.VanillaItems
 
         public override string IsArmorSet(Item head, Item body, Item legs)
         {
-            if (head.type == ModContent.ItemType<AncientGoldenHelmet>() && body.type == ItemID.Gi && legs.type == ModContent.ItemType<AncientGoldenGreaves>())
-            {
-                return "GoldenGi";
-            }
             if (head.type == ItemID.ChlorophyteMask && body.type == ItemID.ChlorophytePlateMail && legs.type == ItemID.ChlorophyteGreaves)
             {
                 return "ChlorophyteMask";
@@ -589,16 +586,9 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             }
             else return base.IsArmorSet(head, body, legs);
         }
-        public static int GoldenGiFlatDamage = 3;
         public const float SolarSetDR = 14f;
         public override void UpdateArmorSet(Player player, string set)
         {
-            if (set == "GoldenGi")
-            {
-                player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.GoldenGi", GoldenGiFlatDamage);
-
-                player.GetDamage(DamageClass.Melee).Flat += GoldenGiFlatDamage;
-            }
             if (set == "ChlorophyteMask")
             {
                 player.setBonus = LangUtils.GetTextValue("Items.VanillaItems.ChlorophyteMaskSet", 5);

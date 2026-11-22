@@ -2,6 +2,7 @@ using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
+using System.IO;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
@@ -28,6 +29,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.timeLeft = InitialLifetime;
+            Projectile.netImportant = true;
         }
 
         private const float MaxStormRadius = 60f * 16f;
@@ -131,6 +133,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private void DrawStormEdge(float outwardSpeed)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             // The phase lasts much longer now, so stagger a third of the old circumference sample
             // per tick. Persistent dust fills the gaps without saturating Terraria's global dust pool.
             int count = Math.Max(8, GetStormDustCount(size) / 3);
@@ -172,6 +179,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(Projectile.timeLeft);
+            writer.Write(size);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            Projectile.timeLeft = reader.ReadInt32();
+            size = reader.ReadSingle();
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

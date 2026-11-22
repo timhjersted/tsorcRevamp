@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.NPCs.FriendlyPuppets
 {
     /// <summary>
-    /// Step-0 go/no-go rig for the Mimic Tear swap (tsorcDocs/MimicTear_FriendlyPuppet_Design.md §11).
+    /// Step-0 go/no-go rig for the Soul Mimic swap (tsorcDocs/MimicTear_FriendlyPuppet_Design.md §11).
     /// A motionless reflective copy of the player that uses hotbar slot 1 or 2 through the owner's real
     /// ItemCheck. Spawned and steered with /mimictest. Not obtainable in normal play.
     ///
@@ -118,8 +118,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
     /// <summary>
     /// Step-3 rig for the hostile mirror damage path (design §12.3–12.4): a motionless, immortal copy of the owner that
     /// attacks the nearest living player (you, in single player) with hotbar slot 1 or 2 — eased melee strikes that
-    /// hurt, flipped hostile projectiles, the per-hit cap and the death message. Not the invader: no movement, tells,
-    /// bursts, rolls or Estus (steps 4–5). Debug: the strike hitbox is outlined red while it's live.
+    /// hurt, flipped hostile projectiles, the per-hit cap and the death message — through the step-4 use wrapper
+    /// (tells, aim cap + lock, bursts, recovery, ranged minimum distance; one [MirrorUse] log line per release and per
+    /// burst). Not the invader: no movement, rolls or Estus (step 5). Debug: the last strike sweep is drawn in red and
+    /// the wrapper phase is written above its head.
     /// Spawned with /mimictest hostile; 1/2/ease/clear work on it like on the friendly dummy.
     ///
     /// ai[0] = owner (the host that runs its swap), ai[2] = hotbar slot (0 or 1), ai[3] = melee clock (1 eased, default).
@@ -168,18 +170,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
-        protected override bool ChooseAttack(Player owner, out Vector2 aimWorld)
+        protected override bool ChooseTarget(Player owner, out Vector2 targetCenter)
         {
             // Test-rig shortcut: the target is picked on the host's client (the invader will get it from the server).
             Player target = FindNearestLivingPlayer();
 
             if (target == null)
             {
-                aimWorld = NPC.Center + new Vector2(NPC.direction * 100f, 0f);
+                targetCenter = NPC.Center;
                 return false;
             }
 
-            aimWorld = target.Center;
+            targetCenter = target.Center;
             return true;
         }
 
@@ -211,21 +213,33 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+
+            // Wrapper phase above the head (screen coords), plus "too close" when a shot is refused for distance.
+            string phaseLabel = CurrentUsePhase.ToString();
+
+            if (TooCloseToFire)
+            {
+                phaseLabel += " (too close)";
+            }
+
+            Vector2 labelPosition = NPC.Top - screenPos + new Vector2(-30f, -28f);
+            Utils.DrawBorderString(spriteBatch, phaseLabel, labelPosition, Color.OrangeRed, 0.8f);
+
             if (LastStrikeShowTicks <= 0)
             {
                 return;
             }
 
-            // Red outline of the last Strike-segment hitbox (2px lines), so the live window can be judged by eye.
-            Rectangle box = LastStrikeHitboxWorld;
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Color lineColor = Color.Red * 0.8f;
-            int left = (int)(box.X - screenPos.X);
-            int top = (int)(box.Y - screenPos.Y);
-            spriteBatch.Draw(pixel, new Rectangle(left, top, box.Width, 2), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left, top + box.Height - 2, box.Width, 2), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left, top, 2, box.Height), lineColor);
-            spriteBatch.Draw(pixel, new Rectangle(left + box.Width - 2, top, 2, box.Height), lineColor);
+            // The last strike sweep, so the live window can be judged by eye: the blade where the sweep began (dim red),
+            // where it ended (bright red), and the arc its tip covered between them (orange). Utils.DrawLine takes
+            // world coords. Everything inside that wedge is what TryStrikeLocalPlayer tested.
+            Color startColor = Color.Red * 0.45f;
+            Color endColor = Color.Red * 0.9f;
+            Color tipPathColor = Color.Orange * 0.8f;
+            Utils.DrawLine(spriteBatch, LastSweepStartHilt, LastSweepStartTip, startColor, startColor, 2f);
+            Utils.DrawLine(spriteBatch, LastSweepEndHilt, LastSweepEndTip, endColor, endColor, 2f);
+            Utils.DrawLine(spriteBatch, LastSweepStartTip, LastSweepEndTip, tipPathColor, tipPathColor, 2f);
         }
     }
 
@@ -239,9 +253,9 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override string Command => "mimictest";
 
-        public override string Usage => "/mimictest [spawn|hostile|clear|cursor|target|1|2|ease on|ease off]";
+        public override string Usage => "/mimictest [spawn|hostile|invader|clear|cursor|target|1|2|ease on|ease off]";
 
-        public override string Description => "Mimic Tear swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
+        public override string Description => "Soul Mimic swap test rig: spawn a reflective copy that uses hotbar slot 1/2 through your own item code.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
@@ -289,6 +303,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 int spawnY = (int)player.Bottom.Y;
                 NPC.NewNPC(player.GetSource_FromThis(), spawnX, spawnY, hostileDummyType, 0, player.whoAmI, 0f, 0f, 1f);
                 caller.Reply("Hostile mirror test dummy spawned (slot 1, eased). It attacks the nearest player. Hotbar 1+2 are snapshotted now.", Color.OrangeRed);
+                return;
+            }
+
+            if (action == "invader")
+            {
+                // The real invader (build step 5), copying you: ten tiles in front, feet level with yours.
+                Vector2 invaderFeet = player.Bottom + new Vector2(player.direction * 160f, 0f);
+                int invaderIndex = MirrorInvader.SpawnFor(player, invaderFeet);
+
+                if (invaderIndex < 0)
+                {
+                    caller.Reply("Mirror invader could not be spawned.", Color.Orange);
+                    return;
+                }
+
+                caller.Reply("Mirror invader spawned: your look and every usable hotbar weapon. /mimictest clear removes it.", Color.OrangeRed);
                 return;
             }
 

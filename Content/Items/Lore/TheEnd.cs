@@ -28,7 +28,7 @@ namespace tsorcRevamp.Content.Items.Lore
             {
                 if (tooltips[i].Text.Contains("obscured") || tooltips[i].Text.Contains("模糊不清"))
                 {
-                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())))
+                    if (tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())))
                     {
                         tooltips[i].Text = LangUtils.GetTextValue("Items.TheEnd.Obscured");
                     }

@@ -45,6 +45,8 @@ using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
 
@@ -106,14 +108,13 @@ namespace tsorcRevamp
             On_NPC.SpawnOnPlayer += DisableBossSpawn;
 
             Terraria.On_NPC.AI_037_Destroyer += DestroyerAIRevamp;
+            Terraria.On_NPC.VanillaHitEffect += DestroyerHitEffect;
 
             On_NPCUtils.TargetClosestOldOnesInvasion += OldOnesArmyPatch;
 
             Terraria.On_NPC.AI_111_DD2LightningBug += LightningBugTeleport;
 
             Terraria.On_Player.QuickBuff += CustomQuickBuff;
-            Terraria.On_Player.QuickMana += CustomQuickMana;
-            Terraria.On_Player.QuickHeal += CustomQuickHeal;
             Terraria.On_Player.QuickGrapple_GetItemToUse += Player_QuickGrapple_GetItemToUse;
             Terraria.On_Player.QuickMount_GetItemToUse += Player_QuickMount_GetItemToUse; ;
 
@@ -134,7 +135,6 @@ namespace tsorcRevamp
             Terraria.On_Player.HasUnityPotion += HasWormholePotion;
             Terraria.On_Player.TakeUnityPotion += ConsumeWormholePotion;
 
-            Terraria.On_Main.DrawNPCs += DrawNPCsPatch;
 
             Terraria.GameContent.On_ShopHelper.GetShoppingSettings += ShopHelper_GetShoppingSettings;
 
@@ -218,6 +218,8 @@ namespace tsorcRevamp
 
             On_NPC.CanBeChasedBy += On_NPC_CanBeChasedBy;
 
+            On_NPC.UpdateNPC_BuffApplyVFX += On_NPC_UpdateNPC_BuffApplyVFX;
+
             On_Player.ApplyEquipFunctional += On_Player_ApplyEquipFunctional;
 
             On_Player.UpdateEquips += On_Player_UpdateEquips;
@@ -237,6 +239,8 @@ namespace tsorcRevamp
             On_Player.UpdateArmorSets += On_Player_UpdateArmorSets;
 
             On_Player.ItemCheck_EmitUseVisuals += On_Player_ItemCheck_EmitUseVisuals;
+
+            On_Player.CheckCrackedBrickBreak += On_Player_CheckCrackedBrickBreak;
 
             On_Player.GetPointOnSwungItemPath += On_Player_GetPointOnSwungItemPath;
 
@@ -353,15 +357,13 @@ namespace tsorcRevamp
             // GetModPlayer would throw IndexOutOfRangeException every draw frame, preventing orig()
             // from running and causing the entire DoDraw to abort — which blocks the update loop.
             int mp = Main.myPlayer;
+            orig(self);
             if (!Main.gameMenu && mp >= 0 && mp < Main.player.Length
                 && Main.player[mp] != null && Main.player[mp].active
-                && Main.player[mp].GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
+                && AbyssVisualOpacity > 0f)
             {
-                DrawAbyssSpaceBackground();
-                return;
+                DrawAbyssSpaceBackground(AbyssVisualOpacity);
             }
-
-            orig(self);
         }
 
         private static Artorias FindActiveArtorias()
@@ -377,11 +379,19 @@ namespace tsorcRevamp
             return null;
         }
 
-        internal static bool IsAbyssVisualActive()
+        internal static float AbyssVisualOpacity
         {
-            return IsArtoriasAbyssSurgeActive()
-                || Main.LocalPlayer?.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss == true;
+            get
+            {
+                if (Main.gameMenu) return 0f;
+                // Combat voids retain their full-strength visuals, independent of world progression.
+                if (IsVesselVoidVisualActive() || IsArtoriasAbyssSurgeActive()) return 1f;
+                if (Systems.AbyssWorldSystem.Active) return Systems.AbyssWorldSystem.Darkness;
+                return Main.LocalPlayer?.HasBuff(ModContent.BuffType<Abyss>()) == true ? 1f : 0f;
+            }
         }
+
+        internal static bool IsAbyssVisualActive() => AbyssVisualOpacity > 0f;
 
         internal static bool IsArtoriasAbyssSurgeActive()
         {
@@ -393,11 +403,11 @@ namespace tsorcRevamp
             return NPCs.Bosses.VesselOfSouls.VesselOfSoulsFadeSystem.WorldHidden;
         }
 
-        private static void DrawAbyssSpaceBackground()
+        private static void DrawAbyssSpaceBackground(float opacity)
         {
             Texture2D pixel = TextureAssets.MagicPixel.Value;
             Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
-            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black);
+            Main.spriteBatch.Draw(pixel, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), pixelSource, Color.Black * opacity);
 
             if (abyssLastScreenPosition == Vector2.Zero)
             {
@@ -409,14 +419,14 @@ namespace tsorcRevamp
             bool vesselVoid = IsVesselVoidVisualActive();
             float animationScale = vesselVoid ? 0.5f : 1f;
             DrawAbyssStarLayer(pixel, 112f, 0.012f, 0.42f, 0.7f,
-                vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255),
-                vesselVoid ? new Color(255, 105, 85) : Color.White, animationScale);
+                (vesselVoid ? new Color(170, 25, 20) : new Color(180, 220, 255)) * opacity,
+                (vesselVoid ? new Color(255, 105, 85) : Color.White) * opacity, animationScale);
             DrawAbyssStarLayer(pixel, 76f, 0.022f, 0.62f, 1f,
-                vesselVoid ? new Color(255, 95, 70) : Color.White,
-                vesselVoid ? new Color(255, 145, 115) : Color.White, animationScale);
+                (vesselVoid ? new Color(255, 95, 70) : Color.White) * opacity,
+                (vesselVoid ? new Color(255, 145, 115) : Color.White) * opacity, animationScale);
             DrawAbyssStarLayer(pixel, 48f, 0.038f, 0.28f, 1.25f,
-                vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230),
-                vesselVoid ? new Color(255, 85, 65) : Color.White, animationScale);
+                (vesselVoid ? new Color(255, 155, 120) : new Color(200, 255, 230)) * opacity,
+                (vesselVoid ? new Color(255, 85, 65) : Color.White) * opacity, animationScale);
         }
 
         internal static void DrawVesselInteriorBackground(float opacity = 1f)
@@ -505,7 +515,7 @@ namespace tsorcRevamp
                 return;
             }
 
-            Main.spriteBatch.Draw(pixel, position + trail, null, color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(pixel, position + trail, new Rectangle(0, 0, 1, 1), color, trail.ToRotation(), new Vector2(1f, 0.5f), new Vector2(length, thickness), SpriteEffects.None, 0f);
         }
 
         private static float Hash01(int x, int y, int seed)
@@ -1638,15 +1648,16 @@ namespace tsorcRevamp
             }
         }
 
-        // Fog machines toggle their 2x2 frame between an off block (frameX 0/18) and an on block
-        // (frameX 36/54) when wired - any subtile reading frameX >= 36 means the machine is on.
+        // Echo-painted fog machines stay hidden in every state, on or off - they're never a secret worth
+        // revealing. (Vanilla's on block is frameX 0/18 - fog only emits at frameX 0 - so a frame check
+        // here would have to be inverted; hiding unconditionally sidesteps that.)
         // Chimneys toggle a 3x3 frame the same way but on frameY instead, resting at frameY 0 when off;
         // wiring it on jumps the whole block to frameY 54 (vanilla's own smoke-particle check,
         // TileDrawing.cs, keys off exactly this frameY == 54 on the top-left subtile), then a brief
         // wind-down animation climbs frameY through 108+ before it settles back to 0 - so frameY >= 54
         // on any subtile covers "on or still winding down" without needing to find the corner tile.
-        // Only the activated state should defeat Echo Goggles/Monolith; an inert prop reveals like any
-        // other echo-painted tile.
+        // Only the activated chimney state defeats Echo Goggles/Monolith; an inert chimney reveals like
+        // any other echo-painted tile.
         private static bool AdventureProp_AlwaysInvisibleWhenEchoPainted(Func<Tile, bool> orig, Tile tile)
         {
             if (!tile.IsTileInvisible || !ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
@@ -1654,10 +1665,10 @@ namespace tsorcRevamp
                 return orig(tile);
             }
 
-            bool isActivatedFogMachine = tile.TileType == TileID.FogMachine && tile.TileFrameX >= 36;
+            bool isFogMachine = tile.TileType == TileID.FogMachine;
             bool isActivatedChimney = tile.TileType == TileID.Chimney && tile.TileFrameY >= 54;
 
-            if (isActivatedFogMachine || isActivatedChimney)
+            if (isFogMachine || isActivatedChimney)
             {
                 return false;
             }
@@ -1740,6 +1751,23 @@ namespace tsorcRevamp
                     Main.soundVolume = oldVolume;
                 }
             }
+        }
+
+        // Thin ice still breaks under Supersonic Wings / Dragoon helmets, which give Ice Skates grip only (IceGripOnly), unless a
+        // real Ice Skates source is also worn. Vanilla's Player.Update runs "if (!iceSkate) CheckIceBreak();" then
+        // CheckCrackedBrickBreak() on the owning client, before tile collision. This hook is that second call, so running
+        // CheckIceBreak here sees the same position and fall speed (> 7) vanilla would have.
+        private static void On_Player_CheckCrackedBrickBreak(On_Player.orig_CheckCrackedBrickBreak orig, Player self)
+        {
+            tsorcRevampPlayer modPlayer = self.GetModPlayer<tsorcRevampPlayer>();
+            bool skatesSkippedIceCheck = self.iceSkate && modPlayer.IceGripOnly && !modPlayer.HasRealIceSkates;
+
+            if (skatesSkippedIceCheck)
+            {
+                self.CheckIceBreak();
+            }
+
+            orig(self);
         }
 
         private static Rectangle On_Player_ItemCheck_EmitUseVisuals(On_Player.orig_ItemCheck_EmitUseVisuals orig, Player self, Item sItem, Rectangle itemRectangle)
@@ -2026,6 +2054,55 @@ namespace tsorcRevamp
         /// Gated on the weapon bench being enabled so <c>/weaponbench off</c> restores vanilla behaviour
         /// exactly — otherwise minions would fixate on a decorative dummy in someone's base.
         /// </summary>
+        // Burning NPCs (On Fire / Hellfire): vanilla spawns a scale-3.5 torch dust on 3 ticks in 4, which reads as
+        // big blocky pixels. Its own fire blocks are skipped by clearing the two flags just for the vanilla VFX
+        // call (they are restored straight after, so damage-over-time - computed elsewhere - is untouched), then a
+        // smaller, sparser flame is spawned here: ~1 tick in 3, scale 1.1-1.6, 1 in 4 a falling ember.
+        private const float BurnDustChance = 0.35f;
+
+        private static void On_NPC_UpdateNPC_BuffApplyVFX(On_NPC.orig_UpdateNPC_BuffApplyVFX orig, NPC self)
+        {
+            bool onFire = self.onFire;
+            bool onFire3 = self.onFire3;
+            self.onFire = false;
+            self.onFire3 = false;
+            try
+            {
+                orig(self);
+            }
+            finally
+            {
+                self.onFire = onFire;
+                self.onFire3 = onFire3;
+            }
+
+            bool burning = onFire || onFire3;
+            if (!burning)
+            {
+                return;
+            }
+
+            // Vanilla's steady burn glow, every tick.
+            Lighting.AddLight((int)(self.Center.X / 16f), (int)(self.Center.Y / 16f), 1f, 0.3f, 0.1f);
+
+            if (Main.dedServ || Main.rand.NextFloat() >= BurnDustChance)
+            {
+                return;
+            }
+
+            Vector2 corner = new Vector2(self.position.X - 2f, self.position.Y - 2f);
+            Dust flame = Dust.NewDustDirect(corner, self.width + 4, self.height + 4, DustID.Torch,
+                self.velocity.X * 0.4f, self.velocity.Y * 0.4f, 100, default, Main.rand.NextFloat(1.1f, 1.6f));
+            flame.noGravity = true;
+            flame.velocity *= 1.2f;
+            flame.velocity.Y -= 0.6f;
+            if (Main.rand.NextBool(4))
+            {
+                flame.noGravity = false;
+                flame.scale *= 0.6f;
+            }
+        }
+
         private static bool On_NPC_CanBeChasedBy(On_NPC.orig_CanBeChasedBy orig, NPC self, object attacker, bool ignoreDontTakeDamage)
         {
             if (self.type == NPCID.TargetDummy && self.active && Utilities.Balance.WeaponBench.AutoEnabled)
@@ -2195,6 +2272,62 @@ namespace tsorcRevamp
                 behindTilesCache.Clear();
                 behindTilesCache.AddRange(_otherBehindTilesProjs);
 
+                // Same problem for the puppets partly buried in the ground (Soul Mimic summon and dissolve, the
+                // invader's dissolve, the Witchking's plunged blade): draw them here, before the solid tiles, so the
+                // ground still hides the buried part; DrawnBeforeSolidTiles makes vanilla's later behind-tiles pass skip
+                // them this frame. Mirror puppets and enemy puppets are separate base classes with the same pair.
+                bool puppetBatchStarted = false;
+
+                try
+                {
+                    for (int npcIndex = 0; npcIndex < Main.maxNPCs; npcIndex++)
+                    {
+                        NPC npc = Main.npc[npcIndex];
+                        if (!npc.active || !npc.behindTiles)
+                        {
+                            continue;
+                        }
+
+                        NPCs.FriendlyPuppets.MirrorPuppetNPC buriedMirrorPuppet = npc.ModNPC as NPCs.FriendlyPuppets.MirrorPuppetNPC;
+                        NPCs.Invaders.PuppetNPC buriedEnemyPuppet = npc.ModNPC as NPCs.Invaders.PuppetNPC;
+                        bool mirrorBuried = buriedMirrorPuppet != null && buriedMirrorPuppet.StaysBehindSolidTiles;
+                        bool enemyBuried = buriedEnemyPuppet != null && buriedEnemyPuppet.StaysBehindSolidTiles;
+
+                        if (!mirrorBuried && !enemyBuried)
+                        {
+                            continue;
+                        }
+
+                        if (!puppetBatchStarted)
+                        {
+                            // Vanilla's own behind-tiles NPC pass state (Main.DoDraw_DrawNPCsBehindTiles).
+                            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+                                DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                            puppetBatchStarted = true;
+                        }
+
+                        if (mirrorBuried)
+                        {
+                            buriedMirrorPuppet.DrawnBeforeSolidTiles = false;
+                            self.DrawNPC(npcIndex, true);
+                            buriedMirrorPuppet.DrawnBeforeSolidTiles = true;
+                        }
+                        else
+                        {
+                            buriedEnemyPuppet.DrawnBeforeSolidTiles = false;
+                            self.DrawNPC(npcIndex, true);
+                            buriedEnemyPuppet.DrawnBeforeSolidTiles = true;
+                        }
+                    }
+                }
+                finally
+                {
+                    if (puppetBatchStarted)
+                    {
+                        Main.spriteBatch.End();
+                    }
+                }
+
                 if (_modBehindSolidTilesProjs.Count > 0)
                 {
                     // The spritebatch is ended between the non-solid and solid tile passes; same state as DrawCachedProjs.
@@ -2352,6 +2485,7 @@ namespace tsorcRevamp
             }
 
             Texture2D pixel = TextureAssets.MagicPixel.Value;
+            float visualOpacity = AbyssVisualOpacity;
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.UIScaleMatrix);
 
             float parallax = 0.08f;
@@ -2386,7 +2520,7 @@ namespace tsorcRevamp
                     float pulse = 0.5f + 0.5f * (float)Math.Sin(visualTime * (1.5f + Hash01(cellX, cellY, 113) * 2.0f) + seed * MathHelper.TwoPi);
                     Color accent = vesselVoid ? new Color(255, 55, 45) : new Color(180, 220, 255);
                     Color baseColor = vesselVoid ? new Color(255, 125, 105) : Color.White;
-                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse);
+                    Color color = (Hash01(cellX, cellY, 173) > 0.7f ? accent : baseColor) * (0.75f * pulse * visualOpacity);
                     int size = Hash01(cellX, cellY, 233) > 0.85f ? 2 : 1;
 
                     Main.spriteBatch.Draw(pixel, new Rectangle((int)particlePosition.X, (int)particlePosition.Y, size, size), color);
@@ -2496,7 +2630,7 @@ namespace tsorcRevamp
                 {
                     restrictedHook = true;
                 }
-                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (self.miscEquips[3].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     restrictedHook = true;
                 }
@@ -2519,7 +2653,7 @@ namespace tsorcRevamp
                         {
                             restrictedHook = true;
                         }
-                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                        if (self.inventory[i].type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                         {
                             restrictedHook = true;
                         }
@@ -2608,46 +2742,77 @@ namespace tsorcRevamp
                 }
             }
 
-            // Crimson only counts while the player is actually near crimson tiles. Vanilla sets ZoneCrimson at 300 crimson
-            // tiles anywhere in a ~169x124 window around the player (Main.buffScanAreaWidth/Height), so the red water,
-            // background and music reach ~80 tiles past the biome edge. Here we also require MinTiles crimson tiles inside
-            // a small box (RadiusX/Y tiles each side). Clearing the flag before orig() also keeps ZonePurity honest.
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && self.ZoneCrimson)
+            // Crimson and snow only count while the player is actually near their tiles. Vanilla sets these zones from
+            // tile counts anywhere in a ~169x124 window around the player (Main.buffScanAreaWidth/Height), so the music,
+            // background and red water reach ~80 tiles past the biome edge. Here we also require
+            // BiomeNearbyMinTiles of them inside a small box around the player. Clearing the flags before orig() also
+            // keeps ZonePurity honest. Vanilla assigns both zones earlier in UpdateBiomes, so the clear sticks.
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                const int RadiusX = 12;
-                const int RadiusY = 10;
-                const int MinTiles = 20;
+                // Keep vanilla's full Crimson radius while Brain of Cthulhu is alive so it does not despawn mid-arena,
+                // and count Crimson background walls so open Crimson caverns still qualify before summoning.
+                bool brainOfCthulhuAlive = NPC.AnyNPCs(NPCID.BrainofCthulhu);
 
-                int centerTileX = (int)self.Center.X / 16;
-                int centerTileY = (int)self.Center.Y / 16;
-                int nearbyCrimsonTiles = 0;
-
-                // Stops counting as soon as MinTiles is reached; the common case (standing in crimson) exits within a few columns.
-                for (int tileX = centerTileX - RadiusX; tileX <= centerTileX + RadiusX && nearbyCrimsonTiles < MinTiles; tileX++)
+                if (self.ZoneCrimson && !brainOfCthulhuAlive)
                 {
-                    for (int tileY = centerTileY - RadiusY; tileY <= centerTileY + RadiusY && nearbyCrimsonTiles < MinTiles; tileY++)
+                    bool hasNearbyCrimson = HasNearbyBiomeTiles(
+                        self,
+                        tileType => TileID.Sets.Crimson[tileType],
+                        wallType => WallID.Sets.Crimson[wallType]
+                            || wallType == WallID.Flesh
+                            || wallType == WallID.CrimtaneBrick
+                            || wallType == WallID.CrimstoneBrick);
+
+                    if (!hasNearbyCrimson)
                     {
-                        if (!WorldGen.InWorld(tileX, tileY))
-                        {
-                            continue;
-                        }
-
-                        Tile tile = Main.tile[tileX, tileY];
-
-                        if (tile.HasTile && TileID.Sets.Crimson[tile.TileType])
-                        {
-                            nearbyCrimsonTiles++;
-                        }
+                        self.ZoneCrimson = false;
                     }
                 }
 
-                if (nearbyCrimsonTiles < MinTiles)
+                // Snow, snow brick and every ice variant: vanilla's own snow-biome tile weights.
+                if (self.ZoneSnow && !HasNearbyBiomeTiles(self, tileType => TileID.Sets.SnowBiome[tileType] > 0))
                 {
-                    self.ZoneCrimson = false;
+                    self.ZoneSnow = false;
                 }
             }
 
             return orig(self);
+        }
+
+        // Box half-size in tiles (12 wide, 10 tall each side of the player's center) and the tile count it must hold.
+        private const int BiomeNearbyRadiusX = 12;
+        private const int BiomeNearbyRadiusY = 10;
+        private const int BiomeNearbyMinTiles = 20;
+
+        // True when at least BiomeNearbyMinTiles tiles (or optional background walls) match in the box around the player.
+        // Stops counting once the minimum is reached, so standing inside the biome exits within a few columns.
+        private static bool HasNearbyBiomeTiles(Player player, Func<ushort, bool> isBiomeTile, Func<ushort, bool> isBiomeWall = null)
+        {
+            int centerTileX = (int)player.Center.X / 16;
+            int centerTileY = (int)player.Center.Y / 16;
+            int nearbyBiomeCount = 0;
+
+            for (int tileX = centerTileX - BiomeNearbyRadiusX; tileX <= centerTileX + BiomeNearbyRadiusX && nearbyBiomeCount < BiomeNearbyMinTiles; tileX++)
+            {
+                for (int tileY = centerTileY - BiomeNearbyRadiusY; tileY <= centerTileY + BiomeNearbyRadiusY && nearbyBiomeCount < BiomeNearbyMinTiles; tileY++)
+                {
+                    if (!WorldGen.InWorld(tileX, tileY))
+                    {
+                        continue;
+                    }
+
+                    Tile tile = Main.tile[tileX, tileY];
+                    bool matchesTile = tile.HasTile && isBiomeTile(tile.TileType);
+                    bool matchesWall = isBiomeWall != null && tile.WallType != WallID.None && isBiomeWall(tile.WallType);
+
+                    if (matchesTile || matchesWall)
+                    {
+                        nearbyBiomeCount++;
+                    }
+                }
+            }
+
+            return nearbyBiomeCount >= BiomeNearbyMinTiles;
         }
 
         static int deathTextTimer = 0;
@@ -3083,18 +3248,6 @@ namespace tsorcRevamp
 
 
 
-        private static void DrawNPCsPatch(Terraria.On_Main.orig_DrawNPCs orig, Main self, bool behindTiles)
-        {
-            orig(self, behindTiles);
-            if (NPCs.VanillaChanges.drawingDestroyer)
-            {
-                NPCs.VanillaChanges.drawingDestroyer = false;
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, (Effect)null, Main.GameViewMatrix.TransformationMatrix);
-            }
-        }
-
-
         private static bool AccCheck_ForPlayer_Patch(Terraria.UI.On_ItemSlot.orig_AccCheck_ForPlayer orig, Player player, Item[] items, Item item, int slot)
         {
             if (player == null || !SoulsModeMobility.Enabled(player))
@@ -3302,129 +3455,13 @@ namespace tsorcRevamp
             }
         }
 
-        private static bool HasGuardActionLock(Player player)
+        public static bool HasGuardActionLock(Player player)
         {
             // Flask animations bypass ItemCheck, so they need to explicitly respect both the
             // forced guard-break lockout and a shield that is currently raised.
             return player.HasBuff(ModContent.BuffType<ShieldGuardBreak>())
                 || player.GetModPlayer<tsorcRevampActiveShieldPlayer>().IsBlockingOrRaisingShield;
         }
-
-        public static void TryUseQuickMana(Player player)
-        {
-            if (HasGuardActionLock(player))
-            {
-                return;
-            }
-
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
-            if (modPlayer.SoulsMode && player.statMana < player.statManaMax2 && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0)
-            {
-                if (player == Main.LocalPlayer && !player.mouseInterface && ceruleanFlaskPlayer.CeruleanChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !ceruleanFlaskPlayer.IsDrinking && !player.CCed && !estusPlayer.IsDrinking && !ceruleanFlaskPlayer.IsCeruleanRestoring)
-                {
-                    ceruleanFlaskPlayer.IsDrinking = true;
-                    ceruleanFlaskPlayer.CeruleanDrinkTimer = 0;
-
-                    // Cerulean drinks intentionally apply NO mobility/defense debuffs — drinking for
-                    // mana shouldn't lock the player down. The Chloranthy ring's "trade slowdown for
-                    // vulnerability" mechanic was moved to the Estus drink (see CustomQuickHeal below)
-                    // since healing drinks happen more often in active combat.
-                }
-                return;
-            }
-            if (player.noItems || player.statMana == player.statManaMax2)
-            {
-                return;
-            }
-            Item selectedItem = player.QuickMana_GetItemToUse();
-            if (player.HasItemInInventoryOrOpenVoidBag(ModContent.ItemType<SupremeManaPotion>()))
-            {
-                for (int i = 0; i < player.inventory.Length; i++)
-                {
-                    if (player.inventory[i] != null && player.inventory[i].type == ModContent.ItemType<SupremeManaPotion>())
-                    {
-                        selectedItem = player.inventory[i];
-                    }
-                }
-            }
-            if (selectedItem == null)
-            {
-                selectedItem = new Item();
-                selectedItem.SetDefaults(0);
-            }
-
-            Item[] PotionBagItems = player.GetModPlayer<tsorcRevampPlayer>().PotionBagItems;
-
-            if (PotionBagItems != null)
-            {
-                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
-                {
-                    if (PotionBagItems[i] != null)
-                    {
-                        if (PotionBagItems[i].type != 0 && (player.potionDelay == 0 || !PotionBagItems[i].potion) && ItemLoader.CanUseItem(PotionBagItems[i], player) && (player.GetHealMana(PotionBagItems[i], true) > player.GetHealMana(selectedItem, true)) || PotionBagItems[i].type == ModContent.ItemType<SupremeManaPotion>())
-                        {
-                            selectedItem = PotionBagItems[i];
-                        }
-                    }
-                }
-            }
-
-            UsePotion(selectedItem, player);
-        }
-
-        private static void CustomQuickMana(Terraria.On_Player.orig_QuickMana orig, Player player)
-        {
-            TryUseQuickMana(player);            
-        }
-
-        private static void CustomQuickHeal(Terraria.On_Player.orig_QuickHeal orig, Player player)
-        {
-            if (HasGuardActionLock(player))
-            {
-                return;
-            }
-
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-            tsorcRevampEstusPlayer estusPlayer = player.GetModPlayer<tsorcRevampEstusPlayer>();
-            CeruleanFlaskPlayer ceruleanFlaskPlayer = player.GetModPlayer<CeruleanFlaskPlayer>();
-
-            if (modPlayer.SoulsMode && player.statLife < player.statLifeMax2)
-            {
-                if (player == Main.LocalPlayer && !player.mouseInterface && estusPlayer.EstusChargesCurrent > 0 && player.itemAnimation == 0
-                && !modPlayer.isDodging && !estusPlayer.IsDrinking && !player.CCed && !ceruleanFlaskPlayer.IsDrinking)
-                {
-                    estusPlayer.IsDrinking = true;
-                    estusPlayer.EstusDrinkTimer = 0;
-                }
-                return;
-            }
-
-            if (player.noItems || player.statLife == player.statLifeMax2 || player.potionDelay > 0)
-                return;
-            Item selectedItem = player.QuickHeal_GetItemToUse();
-            if (selectedItem == null)
-            {
-                selectedItem = new Item();
-                selectedItem.SetDefaults(0);
-            }
-            Item[] PotionBagItems = modPlayer.PotionBagItems;
-            if (!player.HasBuff(BuffID.PotionSickness))
-            {
-                for (int i = 0; i < PotionBagUIState.POTION_BAG_SIZE; i++)
-                {
-                    if (PotionBagItems[i] != null && PotionBagItems[i].potion && ItemLoader.CanUseItem(PotionBagItems[i], player) && (selectedItem == null || player.GetHealLife(PotionBagItems[i], true) > player.GetHealLife(selectedItem, true)))
-                    {
-                        selectedItem = PotionBagItems[i];
-                    }
-                }
-
-                UsePotion(selectedItem, player);
-            }
-        }
-
         public static void CheckUseWellFed(Player player, Item[] PotionBagItems)
         {
             bool bestWellFedInPotionBag = false;
@@ -3567,7 +3604,7 @@ namespace tsorcRevamp
         }
 
         //Generic "use item" code. Since items can be any or all of the 3 categories at once, self handles all of it.
-        private static void UsePotion(Item item, Player player)
+        public static void UsePotion(Item item, Player player)
         {
             if (item.UseSound != null)
             {
@@ -4440,369 +4477,18 @@ namespace tsorcRevamp
 
         private static void DestroyerAIRevamp(Terraria.On_NPC.orig_AI_037_Destroyer orig, NPC npc)
         {
-            if (npc.ai[3] > 0f)
-                npc.realLife = (int)npc.ai[3];
+            npc.GetGlobalNPC<NPCs.Bosses.TheDestroyer.TheDestroyer>().RunFight(npc);
+        }
 
-            if (npc.target < 0 || npc.target == 255 || Main.player[npc.target].dead)
-                npc.TargetClosest();
-
-            if (npc.type >= 134 && npc.type <= 136)
+        private static void DestroyerHitEffect(Terraria.On_NPC.orig_VanillaHitEffect orig, NPC npc, int hitDirection, double damage, bool instantKill)
+        {
+            // The vanilla body hit callback releases probes directly. Phase transitions now open the hatches.
+            if (npc.type == NPCID.TheDestroyerBody && npc.life > 0)
             {
-                if (npc.type == 134 || (npc.type != 134 && Main.npc[(int)npc.ai[1]].alpha < 128))
-                {
-                    if (npc.alpha != 0)
-                    {
-                        for (int i = 0; i < 2; i++)
-                        {
-                            int num = Dust.NewDust(new Vector2(npc.position.X, npc.position.Y), npc.width, npc.height, 182, 0f, 0f, 100, default(Color), 2f);
-                            Main.dust[num].noGravity = true;
-                            Main.dust[num].noLight = true;
-                        }
-                    }
-
-                    npc.alpha -= 42;
-                    if (npc.alpha < 0)
-                        npc.alpha = 0;
-                }
-            }
-
-            if (npc.type > 134)
-            {
-                bool flag = false;
-                if (npc.ai[1] <= 0f)
-                    flag = true;
-                else if (Main.npc[(int)npc.ai[1]].life <= 0)
-                    flag = true;
-
-                if (flag)
-                {
-                    //Slightly more dramatic death
-                    for (int j = 0; j < 2; j++)
-                    {
-                        Vector2 dustVel = npc.velocity + Main.rand.NextVector2Circular(14, 14);
-
-                        Dust.NewDustPerfect(npc.Center, DustID.Torch, dustVel, Scale: 6).noGravity = true;
-                        Dust selfDust = Dust.NewDustPerfect(npc.Center, 130, dustVel * 2f, Scale: 3.5f);
-                        selfDust.shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.SolarDye), Main.LocalPlayer);
-                    }
-
-                    npc.life = 0;
-                    npc.HitEffect();
-                    npc.checkDead();
-                }
-            }
-
-
-            //Spawn segments
-            if (Main.netMode != 1)
-            {
-                if (npc.ai[0] == 0f && npc.type == 134)
-                {
-                    npc.ai[3] = npc.whoAmI;
-                    npc.realLife = npc.whoAmI;
-                    int num2 = 0;
-                    int num3 = npc.whoAmI;
-                    int num4 = 80;
-                    for (int j = 0; j <= num4; j++)
-                    {
-                        int num5 = 135;
-                        if (j == num4)
-                            num5 = 136;
-
-                        //Spawn probes
-                        num2 = NPC.NewNPC(npc.GetSource_FromAI(), (int)(npc.position.X + (float)(npc.width / 2)), (int)(npc.position.Y + (float)npc.height), num5, npc.whoAmI);
-                        Main.npc[num2].ai[3] = npc.whoAmI;
-                        Main.npc[num2].realLife = npc.whoAmI;
-                        Main.npc[num2].ai[1] = num3;
-                        Main.npc[num3].ai[0] = num2;
-                        NetMessage.SendData(23, -1, -1, null, num2);
-                        num3 = num2;
-                    }
-                }
-            }
-
-            float num17 = 16f;
-            bool flag2 = false;
-            if (Main.dayTime || Main.player[npc.target].dead)
-            {
-                flag2 = false;
-                npc.velocity.Y += 1f;
-                if ((double)npc.position.Y > Main.worldSurface * 16.0)
-                {
-                    npc.velocity.Y += 1f;
-                    num17 = 32f;
-                }
-
-                if ((double)npc.position.Y > Main.rockLayer * 16.0)
-                {
-                    for (int n = 0; n < 200; n++)
-                    {
-                        if (Main.npc[n].aiStyle == npc.aiStyle)
-                            Main.npc[n].active = false;
-                    }
-                }
-            }
-
-
-            int num12 = (int)(npc.position.X / 16f) - 1;
-            int num13 = (int)((npc.position.X + (float)npc.width) / 16f) + 2;
-            int num14 = (int)(npc.position.Y / 16f) - 1;
-            int num15 = (int)((npc.position.Y + (float)npc.height) / 16f) + 2;
-            if (num12 < 0)
-                num12 = 0;
-
-            if (num13 > Main.maxTilesX)
-                num13 = Main.maxTilesX;
-
-            if (num14 < 0)
-                num14 = 0;
-
-            if (num15 > Main.maxTilesY)
-                num15 = Main.maxTilesY;
-
-            if (!flag2)
-            {
-                Vector2 vector2 = default(Vector2);
-                for (int k = num12; k < num13; k++)
-                {
-                    for (int l = num14; l < num15; l++)
-                    {
-                        if (Main.tile[k, l] != null && ((Main.tile[k, l].HasUnactuatedTile && (Main.tileSolid[Main.tile[k, l].TileType] || (Main.tileSolidTop[Main.tile[k, l].TileType] && Main.tile[k, l].TileFrameY == 0))) || Main.tile[k, l].LiquidAmount > 64))
-                        {
-                            vector2.X = k * 16;
-                            vector2.Y = l * 16;
-                            if (npc.position.X + (float)npc.width > vector2.X && npc.position.X < vector2.X + 16f && npc.position.Y + (float)npc.height > vector2.Y && npc.position.Y < vector2.Y + 16f)
-                            {
-                                flag2 = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!flag2)
-            {
-                if (npc.type != 135 || npc.ai[2] != 1f)
-                    Lighting.AddLight((int)((npc.position.X + (float)(npc.width / 2)) / 16f), (int)((npc.position.Y + (float)(npc.height / 2)) / 16f), 0.3f, 0.1f, 0.05f);
-
-                npc.localAI[1] = 1f;
-                if (npc.type == 134)
-                {
-                    Rectangle rectangle = new Rectangle((int)npc.position.X, (int)npc.position.Y, npc.width, npc.height);
-                    int num16 = 1000;
-                    bool flag3 = true;
-                    if (npc.position.Y > Main.player[npc.target].position.Y)
-                    {
-                        for (int m = 0; m < 255; m++)
-                        {
-                            if (Main.player[m].active)
-                            {
-                                Rectangle rectangle2 = new Rectangle((int)Main.player[m].position.X - num16, (int)Main.player[m].position.Y - num16, num16 * 2, num16 * 2);
-                                if (rectangle.Intersects(rectangle2))
-                                {
-                                    flag3 = false;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (flag3)
-                            flag2 = true;
-                    }
-                }
-            }
-            else
-            {
-                npc.localAI[1] = 0f;
-            }
-
-
-            float num18 = 0.1f;
-            float num19 = 0.15f;
-            Vector2 vector3 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-            float num20 = Main.player[npc.target].position.X + (float)(Main.player[npc.target].width / 2);
-            float num21 = Main.player[npc.target].position.Y + (float)(Main.player[npc.target].height / 2);
-            num20 = (int)(num20 / 16f) * 16;
-            num21 = (int)(num21 / 16f) * 16;
-            vector3.X = (int)(vector3.X / 16f) * 16;
-            vector3.Y = (int)(vector3.Y / 16f) * 16;
-            num20 -= vector3.X;
-            num21 -= vector3.Y;
-            float num22 = (float)Math.Sqrt(num20 * num20 + num21 * num21);
-            if (npc.ai[1] > 0f && npc.ai[1] < (float)Main.npc.Length)
-            {
-                try
-                {
-                    vector3 = new Vector2(npc.position.X + (float)npc.width * 0.5f, npc.position.Y + (float)npc.height * 0.5f);
-                    num20 = Main.npc[(int)npc.ai[1]].position.X + (float)(Main.npc[(int)npc.ai[1]].width / 2) - vector3.X;
-                    num21 = Main.npc[(int)npc.ai[1]].position.Y + (float)(Main.npc[(int)npc.ai[1]].height / 2) - vector3.Y;
-                }
-                catch
-                {
-                }
-
-                npc.rotation = (float)Math.Atan2(num21, num20) + 1.57f;
-                num22 = (float)Math.Sqrt(num20 * num20 + num21 * num21);
-                int num23 = (int)(44f * npc.scale);
-                num22 = (num22 - (float)num23) / num22;
-                num20 *= num22;
-                num21 *= num22;
-                npc.velocity = Vector2.Zero;
-                npc.position.X += num20;
-                npc.position.Y += num21;
                 return;
             }
 
-            if (!flag2)
-            {
-                npc.TargetClosest();
-                npc.velocity.Y += 0.15f;
-                if (npc.velocity.Y > num17)
-                    npc.velocity.Y = num17;
-
-                if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)num17 * 0.4)
-                {
-                    if (npc.velocity.X < 0f)
-                        npc.velocity.X -= num18 * 1.1f;
-                    else
-                        npc.velocity.X += num18 * 1.1f;
-                }
-                else if (npc.velocity.Y == num17)
-                {
-                    if (npc.velocity.X < num20)
-                        npc.velocity.X += num18;
-                    else if (npc.velocity.X > num20)
-                        npc.velocity.X -= num18;
-                }
-                else if (npc.velocity.Y > 4f)
-                {
-                    if (npc.velocity.X < 0f)
-                        npc.velocity.X += num18 * 0.9f;
-                    else
-                        npc.velocity.X -= num18 * 0.9f;
-                }
-            }
-            else
-            {
-                if (npc.soundDelay == 0)
-                {
-                    float num24 = num22 / 40f;
-                    if (num24 < 10f)
-                        num24 = 10f;
-
-                    if (num24 > 20f)
-                        num24 = 20f;
-
-                    npc.soundDelay = (int)num24;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, npc.position);
-                }
-
-                num22 = (float)Math.Sqrt(num20 * num20 + num21 * num21);
-                float num25 = Math.Abs(num20);
-                float num26 = Math.Abs(num21);
-                float num27 = num17 / num22;
-                num20 *= num27;
-                num21 *= num27;
-                if (((npc.velocity.X > 0f && num20 > 0f) || (npc.velocity.X < 0f && num20 < 0f)) && ((npc.velocity.Y > 0f && num21 > 0f) || (npc.velocity.Y < 0f && num21 < 0f)))
-                {
-                    if (npc.velocity.X < num20)
-                        npc.velocity.X += num19;
-                    else if (npc.velocity.X > num20)
-                        npc.velocity.X -= num19;
-
-                    if (npc.velocity.Y < num21)
-                        npc.velocity.Y += num19;
-                    else if (npc.velocity.Y > num21)
-                        npc.velocity.Y -= num19;
-                }
-
-                if ((npc.velocity.X > 0f && num20 > 0f) || (npc.velocity.X < 0f && num20 < 0f) || (npc.velocity.Y > 0f && num21 > 0f) || (npc.velocity.Y < 0f && num21 < 0f))
-                {
-                    if (npc.velocity.X < num20)
-                        npc.velocity.X += num18;
-                    else if (npc.velocity.X > num20)
-                        npc.velocity.X -= num18;
-
-                    if (npc.velocity.Y < num21)
-                        npc.velocity.Y += num18;
-                    else if (npc.velocity.Y > num21)
-                        npc.velocity.Y -= num18;
-
-                    if ((double)Math.Abs(num21) < (double)num17 * 0.2 && ((npc.velocity.X > 0f && num20 < 0f) || (npc.velocity.X < 0f && num20 > 0f)))
-                    {
-                        if (npc.velocity.Y > 0f)
-                            npc.velocity.Y += num18 * 2f;
-                        else
-                            npc.velocity.Y -= num18 * 2f;
-                    }
-
-                    if ((double)Math.Abs(num20) < (double)num17 * 0.2 && ((npc.velocity.Y > 0f && num21 < 0f) || (npc.velocity.Y < 0f && num21 > 0f)))
-                    {
-                        if (npc.velocity.X > 0f)
-                            npc.velocity.X += num18 * 2f;
-                        else
-                            npc.velocity.X -= num18 * 2f;
-                    }
-                }
-                else if (num25 > num26)
-                {
-                    if (npc.velocity.X < num20)
-                        npc.velocity.X += num18 * 1.1f;
-                    else if (npc.velocity.X > num20)
-                        npc.velocity.X -= num18 * 1.1f;
-
-                    if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)num17 * 0.5)
-                    {
-                        if (npc.velocity.Y > 0f)
-                            npc.velocity.Y += num18;
-                        else
-                            npc.velocity.Y -= num18;
-                    }
-                }
-                else
-                {
-                    if (npc.velocity.Y < num21)
-                        npc.velocity.Y += num18 * 1.1f;
-                    else if (npc.velocity.Y > num21)
-                        npc.velocity.Y -= num18 * 1.1f;
-
-                    if ((double)(Math.Abs(npc.velocity.X) + Math.Abs(npc.velocity.Y)) < (double)num17 * 0.5)
-                    {
-                        if (npc.velocity.X > 0f)
-                            npc.velocity.X += num18;
-                        else
-                            npc.velocity.X -= num18;
-                    }
-                }
-            }
-
-            npc.rotation = (float)Math.Atan2(npc.velocity.Y, npc.velocity.X) + 1.57f;
-            if (npc.type != 134)
-                return;
-
-            if (flag2)
-            {
-                if (npc.localAI[0] != 1f)
-                    npc.netUpdate = true;
-
-                npc.localAI[0] = 1f;
-            }
-            else
-            {
-                if (npc.localAI[0] != 0f)
-                    npc.netUpdate = true;
-
-                npc.localAI[0] = 0f;
-            }
-
-            if (((npc.velocity.X > 0f && npc.oldVelocity.X < 0f) || (npc.velocity.X < 0f && npc.oldVelocity.X > 0f) || (npc.velocity.Y > 0f && npc.oldVelocity.Y < 0f) || (npc.velocity.Y < 0f && npc.oldVelocity.Y > 0f)) && !npc.justHit)
-                npc.netUpdate = true;
-
-
-
-
-
+            orig(npc, hitDirection, damage, instantKill);
         }
 
 

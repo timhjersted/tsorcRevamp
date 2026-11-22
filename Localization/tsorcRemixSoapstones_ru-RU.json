@@ -322,7 +322,8 @@
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Миакода: \u0022Рэд, я слышал много слухов о Храме Теней. Он известен своей лабиринтообразной конструкцией, которая простирается за ворота храма, соединяя пещеры, огромное подземное озеро и священные шипастые пропасти...\u0022 ",
@@ -330,6 +331,7 @@
   "tileY": 1121,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -936,7 +938,8 @@
   "tileX": 4089,
   "tileY": 713,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "В пещеры можно попасть, встав у входа и нажав на темноту у себя над головой.",
@@ -952,6 +955,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1041,7 +1045,8 @@
   "tileX": 4189,
   "tileY": 679,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "\u0022Волшебное зеркало... с надписью: Отведи меня к алтарю демонов с тысячей темных душ, чтобы показать мой истинный облик.\u0022",
@@ -1064,6 +1069,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1087,6 +1093,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1125,7 +1132,8 @@
   "tileX": 4234,
   "tileY": 695,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "\u0022Миакода, в своих путешествиях ты когда-нибудь натыкался на Теневой Ключ?\u0022 --NEWLINE  --NEWLINE \u0022До того, как я попал в плен к Скелетрону, я как-то добыл его из глубин Замерзшего океана. До меня также доходили слухи, что Маг Виверн предлагает его тем, кто играет в его довольно запутанную игру, которая проводится в его крепости на вершине гор на востоке...\u0022",
@@ -1147,14 +1155,16 @@
   "tileX": 4244,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Бодхи замирает, когда видит тебя через открытую дверь. затем радостно восклицает: Брат! Ты жив! Я думал, ты умер!  --NEWLINE  --NEWLINE Всё еще в шоке, ты спрашиваешь, а как же Элайджа и наши родители... и Аша!? Они живы!? --NEWLINE  -- О боже, Рэд, нет. Это было ужасно. Они убили отца и мать. Мне пришлось хоронить их вдвоем с тобой. Ты не дышал...... ",
   "tileX": 4247,
   "tileY": 709,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Щелкните правой кнопкой мыши по светящимся зеленым черепам и висящим скелетам, чтобы обнаружить спрятанную добычу.",
@@ -1170,6 +1180,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1178,6 +1189,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1186,6 +1198,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1321,6 +1334,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1329,6 +1343,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1337,6 +1352,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1353,6 +1369,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1368,6 +1385,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1376,6 +1394,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1512,7 +1531,8 @@
   "tileX": 4776,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- Эти ворота охраняют Забытый путь в Моргул-Мелег - --NEWLINE  --NEWLINE Вы достаете свой блокнот и пишете заметку: --NEWLINE  --NEWLINE \u0022Врата ящеров рядом с расплавленным ядром Земли, охраняющие нечто, что я не знаю, как описать... какое-то судно или транспортер.. \u0022 --NEWLINE  --NEWLINE Вы пытаетесь сделать его приблизительный набросок и рисуете башню над ним, ведущую в Забытый город, в качестве ориентира...",
@@ -1534,7 +1554,8 @@
   "tileX": 4808,
   "tileY": 864,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Вы обнаружили Забытый город",
@@ -1549,7 +1570,8 @@
   "tileX": 4837,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Этот мост сделан из раскаленного адского камня.  --NEWLINE  --NEWLINE \u0022Я и забыл, как здесь жарко…\u0022",
@@ -1578,7 +1600,8 @@
   "tileX": 4880,
   "tileY": 863,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "После победы над Скелетроном и отдыхом в ближайшем доме друидов вы возвращаетесь сюда и вглядываетесь в темноту внизу.  --NEWLINE  --NEWLINE Вы думаете, что это, должно быть, путь вперед, но за выступом ничего не видно. Сделав глубокий вдох, вы совершаете прыжок в неизвестность.",
@@ -1593,21 +1616,24 @@
   "tileX": 4905,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "У вас сжимается сердце -- две могилы рядом с твоей безымянны, но, должно быть, они были вырыты во времена твоей смерти. ",
   "tileX": 4915,
   "tileY": 867,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Вы просыпаетесь, кашляя черной засохшей кровью.  --NEWLINE  --NEWLINE Приходя в себя, ваше сердце начинает бешено колотиться, когда вы понимаете, что были похоронены заживо.  --NEWLINE  --NEWLINE Ты пытаешься найти в темноте что-нибудь, что могло бы помочь тебе выбраться, и чувствуешь, как что-то острое вонзается тебе в бок - обломок кирки твоего отца...",
   "tileX": 4919,
   "tileY": 873,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "К ЗАПАДУ \u003C--- --NEWLINE Деревня Пепельных Пиков --NEWLINE  --NEWLINE К ВОСТОКУ---\u003E --NEWLINE Три деревни Племени Орид --NEWLINE Руины Джунглей --NEWLINE Обсидиановый Вулкан --NEWLINE Неизвестно",
@@ -2163,14 +2189,16 @@
   "tileX": 7095,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Миакода: \u0022Ты поймёшь, что Ярость вот-вот придет в бешенство, когда ее тело запылает ярким пламенем. --NEWLINE  --NEWLINE Когда она приходит в бешенство, она исцеляет себя и на короткое время становится намного опаснее. Будьте готовы уклоняться! Мобильность - это ключ к успеху!\u0022",
   "tileX": 7102,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Эти врата были запечатаны Магом виверн, который живет высоко в горах. --NEWLINE  --NEWLINE За этими вратами лежит Замерзший океан, рассказывает Миакода.",
@@ -2186,6 +2214,7 @@
   "tileY": 568,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2217,6 +2246,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2225,6 +2255,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2233,6 +2264,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2241,6 +2273,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2249,6 +2282,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2306,12 +2340,13 @@
   "category": "location"
 }
 {
-  "text": "Пещера скорби. Когда вы проходите дальше, вы слышите, как низкий, раскатистый голос начинает говорить, одновременно везде и нигде, \u0022Вы далеко продвинулись, я очень доволен.\u0022 Внезапно перед вами появляется Король-Пожиратель разума, зависший в воздухе. Вы берете свой меч и бросаетесь на противника, и ваш меч ударяется о силовое поле, защищающее его. ",
+  "text": "- Вы нашли Пещеру Скорби -",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story,location"
+  "category": "location",
+  "locationName": "ПЕЩЕРА СКОРБИ"
 }
 {
   "text": "Аттрайдис разражается глубоким раскатистым смехом. \u0022Рэд,\u0022 говорит он, \u0022ты должен научиться наслаждаться моментом. Разве не эти \u0022маленькие моменты\u0022 делают жизнь такой, какая она есть? Кроме того, я действительно должен поблагодарить вас..\u0022 --NEWLINE  --NEWLINE Рэд: \u0022Хватит предаваться играм, говори, что ты хочешь.\u0022",
@@ -2319,7 +2354,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022Ах, но именно игра, которую я придумал и в которую ты так мастерски играл, произвела на меня такое впечатление.\u0022 Рэд молчит.\u0022 Как печально. Ты до сих пор не понял? Я хотел, чтобы ты убил Аарона. Я испортил его завещание, заставил его предать тебя. Я дал ему камень, которым ты его убил, и сказал именно то, что ему нужно было услышать, чтобы он подумал, что, отдавая его вам, он защищает себя.\u0022",
@@ -2327,7 +2363,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022Но он был заколдован не дважды, а трижды. Один раз, чтобы создать Защитный камень, который я обменял на информацию о местонахождении твоего отца, второй раз, чтобы связать его жизнь с камнем, и третий раз, чтобы высвободить самую мощную силу разрушения, которую когда-либо видел этот мир.\u0022",
@@ -2335,7 +2372,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022Но ты был нужен мне, Рэд. Видишь ли, тьма порождается тьмой, и заклинание, которое удерживало эту армию, оставалось под защитой чистого духа твоего отца. Чтобы сломать печать, воин с чистым духом и невинностью должен был быть развращен жаждой мести.\u0022",
@@ -2343,7 +2381,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022И ты подыграл этому. Всё, что тебе было нужно... Рэд... это немного подтолкнуть.\u0022 На лице Аттрайдиса была настолько зловещая улыбка, что она навсегда впечаталась вам в память.  --NEWLINE \u0022Но я дам тебе шанс, Ред. Посмотрим, сможешь ли ты справиться с этим.\u0022 И с этими словами Аттрайдис исчезает в темной магической энергии, призывая на свое место Скорбь.",
@@ -2351,7 +2390,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity. Who can imagine what could be beyond this world?",
@@ -2360,4 +2400,175 @@
   "textWidth": 320,
   "style": 1,
   "category": "lore"
+}
+{
+  "text": "",
+  "tileX": 291,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 294,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 297,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 300,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 303,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 306,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 319,
+  "tileY": 1367,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4248,
+  "tileY": 713,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4242,
+  "tileY": 709,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4225,
+  "tileY": 699,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4185,
+  "tileY": 655,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4080,
+  "tileY": 713,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4925,
+  "tileY": 860,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4917,
+  "tileY": 854,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4909,
+  "tileY": 854,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 850,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4842,
+  "tileY": 855,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4976,
+  "tileY": 846,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4671,
+  "tileY": 852,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
 }

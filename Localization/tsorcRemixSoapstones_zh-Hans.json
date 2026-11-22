@@ -86,6 +86,7 @@
   "tileY": 1367,
   "textWidth": 660,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -102,6 +103,7 @@
   "tileY": 1367,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -110,6 +112,7 @@
   "tileY": 1367,
   "textWidth": 460,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -125,6 +128,7 @@
   "tileY": 1367,
   "textWidth": 670,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -133,6 +137,7 @@
   "tileY": 1367,
   "textWidth": 740,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -141,6 +146,7 @@
   "tileY": 1367,
   "textWidth": 720,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -149,6 +155,7 @@
   "tileY": 1367,
   "textWidth": 700,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -442,7 +449,8 @@
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 620,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda：\u0022瑞德，我听说过很多关于暗影神庙的传言。 --NEWLINE   --NEWLINE 它以其迷宫般的设计而闻名，一路延伸到神庙的范围之外， --NEWLINE   --NEWLINE 连接了岩浆猩红洞穴、地下河道和腐化地形的尖刺裂缝…\u0022",
@@ -450,6 +458,7 @@
   "tileY": 1121,
   "textWidth": 450,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1145,6 +1154,7 @@
   "tileY": 713,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1161,6 +1171,7 @@
   "tileY": 709,
   "textWidth": 650,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1244,6 +1255,7 @@
   "tileY": 655,
   "textWidth": 150,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1267,6 +1279,7 @@
   "tileY": 713,
   "textWidth": 660,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1290,6 +1303,7 @@
   "tileY": 713,
   "textWidth": 420,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1312,6 +1326,7 @@
   "tileY": 699,
   "textWidth": 330,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1342,6 +1357,7 @@
   "tileY": 709,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1350,6 +1366,7 @@
   "tileY": 713,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1366,6 +1383,7 @@
   "tileY": 1822,
   "textWidth": 580,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1374,6 +1392,7 @@
   "tileY": 1822,
   "textWidth": 750,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1382,6 +1401,7 @@
   "tileY": 1822,
   "textWidth": 530,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1509,6 +1529,7 @@
   "tileY": 1740,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1517,6 +1538,7 @@
   "tileY": 1740,
   "textWidth": 800,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1525,6 +1547,7 @@
   "tileY": 1745,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1541,6 +1564,7 @@
   "tileY": 1745,
   "textWidth": 550,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1556,6 +1580,7 @@
   "tileY": 1745,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1564,6 +1589,7 @@
   "tileY": 1745,
   "textWidth": 540,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1686,6 +1712,7 @@
   "tileY": 852,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1749,6 +1776,7 @@
   "tileY": 855,
   "textWidth": 220,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1788,6 +1816,7 @@
   "tileY": 850,
   "textWidth": 110,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1796,6 +1825,7 @@
   "tileY": 854,
   "textWidth": 400,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1804,6 +1834,7 @@
   "tileY": 854,
   "textWidth": 370,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1812,6 +1843,7 @@
   "tileY": 860,
   "textWidth": 520,
   "style": 1,
+  "retired": true,
   "category": "story,location"
 }
 {
@@ -1834,6 +1866,7 @@
   "tileY": 846,
   "textWidth": 560,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2466,7 +2499,8 @@
   "tileX": 7095,
   "tileY": 1457,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 
 {
@@ -2482,7 +2516,8 @@
   "tileX": 7102,
   "tileY": 1457,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "你拉动拉杆，听到冰层在堡垒深处裂开的声音。",
@@ -2512,6 +2547,7 @@
   "tileY": 568,
   "textWidth": 430,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2550,6 +2586,7 @@
   "tileY": 604,
   "textWidth": 640,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2558,6 +2595,7 @@
   "tileY": 604,
   "textWidth": 720,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2566,6 +2604,7 @@
   "tileY": 604,
   "textWidth": 700,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2574,6 +2613,7 @@
   "tileY": 599,
   "textWidth": 580,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2582,6 +2622,7 @@
   "tileY": 599,
   "textWidth": 600,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2700,12 +2741,13 @@
   "category": "location"
 }
 {
-  "text": "- 悲伤栖息的洞穴 - --NEWLINE   --NEWLINE 当你走进这里，你听到一个低沉洪亮的声音充斥这个地方， --NEWLINE   --NEWLINE 他说：\u0022你做的很好，瑞德，比我计划的还要顺利，我很高兴。\u0022 --NEWLINE   --NEWLINE 突然，阿卓迪斯出现在你面前，在空中盘旋。 --NEWLINE   --NEWLINE 你拿着剑向他冲去，却无法破开保护着他的原力场。",
+  "text": "- 你发现了悲伤栖息的洞穴 -",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 450,
   "style": 1,
-  "category": "story,location"
+  "category": "location",
+  "locationName": "悲伤栖息的洞穴"
 }
 {
   "text": "你在地上发现一张磨损的字条： --NEWLINE   --NEWLINE \u0022密银，一种形成于亘古寒冰中的冰冷矿石，蕴含着强大的魔法特性。 --NEWLINE   --NEWLINE 然而地表那广袤的密银冰层似乎并非自然形成； --NEWLINE   --NEWLINE 或许它是为了阻挡在海洋中蔓延的腐化而创造出的屏障？\u0022",
@@ -2721,7 +2763,8 @@
   "tileY": 1645,
   "textWidth": 360,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022啊，虽然这个精妙的陷阱诡计是我想出来的， --NEWLINE   --NEWLINE 但你像野猪一样一头钻进来横冲直撞，还真是让我印象深刻。\u0022 --NEWLINE   --NEWLINE 瑞德沉默了。 --NEWLINE   --NEWLINE \u0022你还没醒悟吗？我想让你杀死亚伦。我利用他内心的邪念，让他背叛你。 --NEWLINE   --NEWLINE 我给了他能杀死自己的保护石，并告诉了他想要听到的谎言， --NEWLINE   --NEWLINE 这样他就会认为把石头交到你手上，是在保护自己。\u0022",
@@ -2729,7 +2772,8 @@
   "tileY": 1645,
   "textWidth": 540,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022保护石不只被施了两次魔法，还有第三次。 --NEWLINE   --NEWLINE 第一次是为了创造保护石，我用它来换取你父亲的位置， --NEWLINE   --NEWLINE 第二次是为了把亚伦的生命绑定在石头上， --NEWLINE   --NEWLINE 第三次是为了释放世界上有史以来最强大的毁灭力量。\u0022",
@@ -2737,7 +2781,8 @@
   "tileY": 1645,
   "textWidth": 420,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022但我需要你，瑞德。 --NEWLINE   --NEWLINE 你看，邪恶的力量在黑暗中诞生， --NEWLINE   --NEWLINE 而包含这支军队的咒语仍然被你父亲的纯洁精神封印。 --NEWLINE   --NEWLINE 要打破封印，一个纯真的战士必须被复仇的欲望所腐蚀。\u0022",
@@ -2745,7 +2790,8 @@
   "tileY": 1645,
   "textWidth": 420,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022你做得很好，瑞德。你所需要的…只是一点点复仇的诱惑。\u0022 --NEWLINE   --NEWLINE 阿卓迪斯的脸上露出邪恶笑容，深深刻在你的脑海中。 --NEWLINE   --NEWLINE \u0022但我会给你一个机会，瑞德。看看你能不能处理好这个。\u0022 --NEWLINE   --NEWLINE 然后，阿卓迪斯消失在黑暗魔法能量中，召唤悲伤代替他。",
@@ -2753,7 +2799,8 @@
   "tileY": 1645,
   "textWidth": 560,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "- 你发现了深渊之肠 - --NEWLINE   --NEWLINE 一种声音在你脑海中响起：\u0022这种无色的雾气来自深渊。 --NEWLINE   --NEWLINE 从世界间的裂缝渗透进来，那里领域之间的构造非常脆弱。\u0022",
@@ -2770,4 +2817,67 @@
   "textWidth": 640,
   "style": 1,
   "category": "lore"
+}
+{
+  "text": "",
+  "tileX": 4919,
+  "tileY": 873,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4915,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4880,
+  "tileY": 863,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4837,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4808,
+  "tileY": 864,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4776,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
 }

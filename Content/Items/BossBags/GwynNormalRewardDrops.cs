@@ -22,6 +22,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LordGwynHelm>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LordGwynArmor>()));
             notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<LordGwynLeggings>()));
+            notExpertCondition.OnSuccess(ItemDropRule.Common(ModContent.ItemType<BossItems.EmberOfTheFirstDawn>()));
             npcLoot.Add(notExpertCondition);
         }
     }

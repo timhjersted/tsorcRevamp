@@ -86,22 +86,7 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet
             NPC closestNPC = null;
 
             float sqrMaxDetectDistance = maxDetectDistance * maxDetectDistance;
-
-            for (int k = 0; k < Main.maxNPCs; k++)
-            {
-                NPC target = Main.npc[k];
-                if (target.CanBeChasedBy() && target.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered)
-                {
-                    float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
-
-                    if (sqrDistanceToTarget < sqrMaxDetectDistance * 1.25f)
-                    {
-                        sqrMaxDetectDistance = sqrDistanceToTarget;
-                        closestNPC = target;
-                    }
-                    return closestNPC;
-                }
-            }
+            
             for (int k = 0; k < Main.maxNPCs; k++)
             {
                 NPC target = Main.npc[k];

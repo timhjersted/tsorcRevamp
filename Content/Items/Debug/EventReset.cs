@@ -37,10 +37,15 @@ namespace tsorcRevamp.Content.Items.Debug
             tsorcScriptedEvents.InitializeScriptedEvents();
             tsorcScriptedEvents.LoadDynamicEvents();
             tsorcRevampWorld.NewSlain = new System.Collections.Generic.Dictionary<NPCDefinition, int>();
+
+            // Completed triggers are already cleared above; this clears what each scene remembers beyond its trigger.
+            int clearedSceneCount = Systems.CutsceneSystem.ClearSeenScenes();
+            NPCs.Special.StoryCutscenes.ResetProgress();
+
             // Both calls above are silent on success (no exceptions on failure either), so without this the
             // item appeared to do nothing when used. Confirm it actually ran.
             Main.NewText($"World events reset: {tsorcScriptedEvents.ScriptedEventDict.Count} scripted events reinitialized, " +
-                         $"{tsorcScriptedEvents.DynamicEvents.Count} dynamic events reloaded, {clearedCompletedCount} completed dynamic event(s) un-completed, slain-boss tracking cleared.", Microsoft.Xna.Framework.Color.Lime);
+                         $"{tsorcScriptedEvents.DynamicEvents.Count} dynamic events reloaded, {clearedCompletedCount} completed dynamic event(s) un-completed, slain-boss tracking cleared, {clearedSceneCount} watched cutscene(s) reset.", Microsoft.Xna.Framework.Color.Lime);
             return true;
         }
     }

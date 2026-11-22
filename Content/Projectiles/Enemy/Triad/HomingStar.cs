@@ -122,7 +122,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
             timeFactor++;
 
 
-            int? catIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+            int? catIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>());
             if (catIndex != null)
             {
                 if (Main.npc[catIndex.Value].life < Main.npc[catIndex.Value].lifeMax * 2f / 3f)

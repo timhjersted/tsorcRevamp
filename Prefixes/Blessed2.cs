@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.VanillaPrefixEdits;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Prefixes;

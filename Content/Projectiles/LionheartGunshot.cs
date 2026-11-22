@@ -37,22 +37,21 @@ namespace tsorcRevamp.Content.Projectiles
             customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/DeathLaser", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             //customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/HomingStarShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
+        private static readonly Color GunshotBlue = new Color(50, 140, 255);
+
         public override void AI()
         {
             base.AI();
-            Lighting.AddLight(Projectile.Center, Main.hslToRgb((float)(Main.timeForVisualEffects / 100f) % 1, 1, 0.5f).ToVector3());
+            Lighting.AddLight(Projectile.Center, GunshotBlue.ToVector3());
             Timer++;
         }
 
         public override void SetEffectParameters(Effect effect)
         {
-            Color shaderColor = Main.hslToRgb((float)(Main.timeForVisualEffects / 100f) % 1, 1, 0.5f);
-            Color rgbColor = shaderColor;
-
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseTurbulent);
             effect.Parameters["fadeOut"].SetValue(0.5f);
             effect.Parameters["time"].SetValue((float)Main.timeForVisualEffects / 100f);
-            effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
+            effect.Parameters["shaderColor"].SetValue(GunshotBlue.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
 

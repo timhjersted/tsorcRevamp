@@ -321,6 +321,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void SendExtraAI(BinaryWriter writer)
         {
+            base.SendExtraAI(writer);
             writer.Write(BeamNPC.whoAmI);
             writer.Write(IonNPC.whoAmI);
             writer.Write(BuzzsawNPC.whoAmI);
@@ -331,6 +332,7 @@ namespace tsorcRevamp.NPCs.Bosses.PrimeV2
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
+            base.ReceiveExtraAI(reader);
             BeamNPC = Main.npc[reader.ReadInt32()];
             IonNPC = Main.npc[reader.ReadInt32()];
             BuzzsawNPC = Main.npc[reader.ReadInt32()];

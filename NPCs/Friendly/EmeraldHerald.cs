@@ -8,11 +8,14 @@ using Terraria.ModLoader;
 using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -75,7 +78,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.FirstEncounter");
             }
 
-            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax < 12)
             {
                 Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/ashen-one") with { Volume = 0.5f }, NPC.Center);
                 return Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.HasShard");
@@ -127,7 +130,7 @@ namespace tsorcRevamp.NPCs.Friendly
             button = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button1");
 
             // Shard reinforcement takes priority regardless of sequence state.
-            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax < 12)
             {
                 button2 = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.button2v3");
                 return;
@@ -167,20 +170,20 @@ namespace tsorcRevamp.NPCs.Friendly
             }
 
             // Shard reinforcement takes priority at any sequence state.
-            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+            if (player.HasItem(ModContent.ItemType<EstusFlaskShard>()) && player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax < 12)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item37);
                 Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BringShards");
                 int shardIndex = player.FindItem(ModContent.ItemType<EstusFlaskShard>());
-                if (player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax < 12)
+                if (player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax < 12)
                 {
-                    player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax += 1;
+                    player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax += 1;
                     player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax += CeruleanFlaskPlayer.ChargesPerEstusUpgrade;
                     if (player.inventory[shardIndex].stack == 1) player.inventory[shardIndex].TurnToAir();
                     else player.inventory[shardIndex].stack--;
                     if (Main.netMode != NetmodeID.Server)
                     {
-                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax, Color.OrangeRed);
+                        Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.EstusUpgrade") + player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax, Color.OrangeRed);
                         Main.NewText(Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.CeruleanUpgrade") + player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax, Color.RoyalBlue);
                     }
                 }
@@ -235,21 +238,15 @@ namespace tsorcRevamp.NPCs.Friendly
                 modPlayer.ReceivedGift = true;
                 modPlayer.heraldChatState = 8;
 
-                if (modPlayer.BearerOfTheCurse)
+                if (modPlayer.SoulsMode)
                 {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift");
+                    Main.npcChatText = modPlayer.BearerOfTheCurse
+                        ? Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.BotCGift")
+                        : Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.UnkindledGift");
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
+                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<DarkSoulItem>(), 500);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<LifegemItem>(), 10);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<StarlightShardItem>(), 4);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
-                }
-                else if (modPlayer.Unkindled)
-                {
-                    Main.npcChatText = Language.GetTextValue("Mods.tsorcRevamp.NPCs.EmeraldHerald.UnkindledGift");
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<MushroomSkewer>(), 10);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<SoulCoin>(), 100);
-                    player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<LifegemItem>(), 5);
                     player.QuickSpawnItem(player.GetSource_DropAsItem(), ModContent.ItemType<AdventurersCard>());
                 }
                 else

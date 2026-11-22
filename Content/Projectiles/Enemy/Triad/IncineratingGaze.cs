@@ -9,6 +9,7 @@ using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses;
+using tsorcRevamp.NPCs.Bosses.Triad;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
 {
@@ -50,7 +51,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
         public override void AI()
         {
             //If retinazer is not alive, immediately kill the projectile
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>()))
             {
                 Projectile.timeLeft = 0;
                 Projectile.Kill();
@@ -64,7 +65,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
             else
             {
                 //When the projectile is spawned, store whether it was spawned during retinazer's final stand phase or not
-                RetinazerV2 hostRet = (RetinazerV2)Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()).Value].ModNPC;
+                RetinazerV2 hostRet = (RetinazerV2)Main.npc[UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>()).Value].ModNPC;
                 if (!initialized)
                 {
                     if (hostRet.finalStandTimer != 0)
@@ -123,7 +124,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
             }
 
             //Stick to retinazer and rotate to face wherever it is looking            \
-            bool validBoss = Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>();
+            bool validBoss = Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>() || Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>();
             if (Main.npc[(int)Projectile.ai[0]] != null && Main.npc[(int)Projectile.ai[0]].active && validBoss)
             {
                 Projectile.rotation = Main.npc[(int)Projectile.ai[0]].rotation + MathHelper.PiOver2;

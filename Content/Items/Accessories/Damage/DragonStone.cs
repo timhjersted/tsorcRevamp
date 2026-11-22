@@ -173,8 +173,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
         /// <param name="dotBase"></param>
         /// <param name="needsNerf"></param>
         /// <param name="isFire"></param>
+        /// <param name="dragonStoneForbidden">Whether the DoT effect shouldn't be affected by Dragon Stone at all. If true, Dragon Stones buff is not applied to it. </param>
         /// <returns></returns>
-        public static float AddDragonStonePotencyDoT(in NPC npcType, in float dotBase, bool needsNerf = false, bool isFire = true)
+        public static float AddDragonStonePotencyDoT(in NPC npcType, in float dotBase, bool needsNerf = false, bool isFire = true, bool dragonStoneForbidden = false)
         {
             var dragonNpc = npcType.GetGlobalNPC<DragonStoneNPC>();
             bool oiledFirstApplication = dragonNpc.OiledFirstApplication; //use this so entire function stays in same mode
@@ -194,7 +195,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
                     oiledDoTBonus += 25f;
                 }
             }
-            if (!dragonNpc.DragonStoneActive)
+            if (!dragonNpc.DragonStoneActive || dragonStoneForbidden)
             {
                 return oiledDoTBonus;
             }

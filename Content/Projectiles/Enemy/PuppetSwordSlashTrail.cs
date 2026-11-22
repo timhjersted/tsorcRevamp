@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.VFX;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {

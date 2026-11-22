@@ -36,8 +36,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.SpellTome, 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100000);
+            recipe.AddIngredient(ModContent.ItemType<MarilithSoul>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 150000);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

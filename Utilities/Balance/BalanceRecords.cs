@@ -459,6 +459,41 @@ namespace tsorcRevamp.Utilities.Balance
     }
 
     /// <summary>
+    /// Play-time marker, written every 5 minutes of unpaused play and when the player leaves the world. Total play time is the
+    /// sum of playSeconds; activeSeconds leaves out stretches with no input for a minute or more (AFK, game left running).
+    /// </summary>
+    internal sealed class SessionHeartbeat
+    {
+        public string @event = "heartbeat";
+        public int schema = 1;
+        public int loggerRevision = BalanceLog.LoggerRevision;
+        public string session;
+        public string characterTag;
+        public string modVersion;
+
+        /// <summary>Wall-clock time this line was written.</summary>
+        public string at;
+
+        /// <summary>interval | world_exit</summary>
+        public string reason;
+
+        /// <summary>Unpaused game time since the previous heartbeat (or since entering the world), in seconds.</summary>
+        public int playSeconds;
+
+        /// <summary>The part of playSeconds that had player input within the last minute.</summary>
+        public int activeSeconds;
+
+        /// <summary>Souls class right now. The file header records it only once, when the file was created.</summary>
+        public string soulsMode;
+        public int gameMode;
+        public bool hardmode;
+        public bool superHardMode;
+        public int downedBossCount;
+        public int encountersThisSession;
+        public bool inBossFight;
+    }
+
+    /// <summary>
     /// One boss fight. This is the unit of analysis: practical DPS, kill time, and the build that
     /// produced them all live in the same record, so no cross-referencing is needed downstream.
     /// </summary>
@@ -539,6 +574,11 @@ namespace tsorcRevamp.Utilities.Balance
         /// count once). The denominator for the life fractions below.</summary>
         public long bossMaxLifeTotal;
         public int participantCount;
+
+        /// <summary>Distinct names of every participant that has its own life (heads and independent bosses, not linked segments),
+        /// in the order they joined. More than one name means a multi-boss fight: a registry group (Cataluminance with the Twins),
+        /// a spawned form (Serris X), or an unrelated boss the player also hit (a Queen Bee during Dark Cloud).</summary>
+        public List<string> bossesInFight = new();
 
         // Result.
         public string outcome;        // kill | player_death | despawn | abandoned
@@ -673,6 +713,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// swap changes the pool mid-fight.</summary>
         public int maxManaAtEnd;
 
+        /// <summary>Dark Souls in the soul slot when the fight ended. On a kill this is read before the boss's own soul
+        /// drop is picked up, so it shows the hoard the player brought, not the reward.</summary>
+        public int darkSoulsInSlotAtEnd;
+
         // --- Mana Burn (Arcane Sorcery): with stamina under 33%, a Bearer of the Curse holding a magic weapon gets
         // +25% magic damage and +20% magic attack speed for 5 s, at double mana cost and -40% damage resistance.
         // The gear snapshot only says whether the buff was up when the fight began; these say how much of the fight
@@ -699,8 +743,9 @@ namespace tsorcRevamp.Utilities.Balance
     }
 
     /// <summary>Stamina gained from one source over an encounter. Sources are the BalanceLog.StaminaFrom* names:
-    /// regen / regenStanding (regen ticks while standing still, which get x1.5), debtRepaid (regen spent paying off
-    /// overdraw debt instead of filling the bar), cerulean, droplet, abysswalkerPoise, gwynKindling.</summary>
+    /// regen / regenStanding (regen ticks with the standing-still bonus active: x1.25 after 0.5 s still), debtRepaid (regen spent paying off
+    /// overdraw debt instead of filling the bar), cerulean, droplet, abysswalkerPoise, gwynKindling. Item refills pay debt first and
+    /// their amount includes the debt they paid.</summary>
     internal sealed class StaminaGain
     {
         public string source;

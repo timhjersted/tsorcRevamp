@@ -9,6 +9,7 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.VanillaItems.FrozenTurtleShell;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems
@@ -23,6 +24,10 @@ namespace tsorcRevamp.Content.Items.VanillaItems
         public const float TurtleSetResistBonus = 2f;
         public override void SetDefaults(Item item)
         {
+            if (item.type == ItemID.HunterCloak)
+            {
+                item.vanity = false;
+            }
             /*if ((item.type == ItemID.StaffofRegrowth || item.type == ItemID.AcornAxe) && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 item.createTile = -1; //block placing grass, thus allowing use
@@ -90,13 +95,26 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             }
             return true;
         }
-        public override void UpdateEquip(Item item, Player player)
+        public const float HunterCloakCritChance = 3f;
+
+        public override void UpdateAccessory(Item item, Player player, bool hideVisual)
         {
-            base.UpdateEquip(item, player);
+            if (item.type == ItemID.HunterCloak)
+            {
+                player.GetCritChance(DamageClass.Generic) += HunterCloakCritChance;
+            }
         }
 
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (item.type == ItemID.HunterCloak)
+            {
+                int ttindex = tooltips.FindIndex(t => t.Name == "Equipable");
+                if (ttindex != -1)
+                {
+                    tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "CritChance", Language.GetTextValue("CommonItemTooltip.PercentIncreasedCritChance", HunterCloakCritChance)));
+                }
+            }
             if (item.type == ItemID.MechanicalEye)
             {
                 int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
@@ -139,7 +157,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, IceBarrierBuff.IceBarrierResistance)));
                 }
             }
             if (item.type == ItemID.FrozenShield)
@@ -148,7 +166,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
                 if (ttindex != -1)
                 {
                     tooltips.RemoveAt(ttindex);
-                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, 25 + tsorcGlobalBuff.IceBarrierResistBonus)));
+                    tooltips.Insert(ttindex, new TooltipLine(Mod, "ResistanceIceBarrier", LangUtils.GetTextValue("Items.VanillaItems.FrozenTurtleShell", 50, IceBarrierBuff.IceBarrierResistance)));
                 }
             }
             

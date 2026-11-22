@@ -115,17 +115,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
         bool VoidWasOn;
         int VoidRefresh;
 
-        // Arena: a fixed oval, ~103.6 tiles wide by 78 tall, anchored on the spot the boss first spawned (captured in OnSpawn
-        // on the server, then synced). It does NOT restrict the boss, which pursues anyone. In phase 2 a Firefly dust
+        // Arena: a fixed oval, ~103.6 tiles wide by 100 tall, centred on the event ring that spawned the boss (or, from the
+        // summon item, on the summoner; captured on the server, then synced). It does NOT restrict the boss, which pursues anyone. In phase 2 a Firefly dust
         // ring marks the edge, players inside it get sucked into the void, and one who fought inside and then stays
         // who fought inside and then stays outside it gets a fuse: 4s of pull toward the boss, cancelled by returning inside, and after that a fatal drag into its mouth.
         public const float ArenaHalfWidth = 51.796875f * 16f;   // ellipse semi-axes, pixels: 828.75px = the previous 1105px x 0.75
-        public const float ArenaHalfHeight = 39f * 16f;         // 624px = the previous 520px x 1.2
+        public const float ArenaHalfHeight = 50f * 16f;         // 800px (was 624): an oval narrows fast near its top and bottom, which cut off outer platforms
 
-        // The oval's centre sits this far ABOVE the spawn point (-104px), so making the arena 20% taller extends only its
-        // top: the bottom of the ring stays exactly where it was (spawn.Y + 520).
+        // Last-resort fallback for a spawn that is neither an event nor the summon item (e.g. a cheat/debug spawn): the oval's
+        // centre sits this far ABOVE the spawn point, so the bottom of the ring stays at spawn.Y + 520 whatever the height.
         const float ArenaCenterShiftY = 32.5f * 16f - ArenaHalfHeight;
         public Vector2 ArenaCenter;
+        bool _arenaAnchoredToEvent;                    // server/SP only: ArenaCenter has been moved onto the event ring
 
         // True while the phase-2 void should be showing. Recomputed every tick on every machine (AI runs everywhere),
         // so the void buff and the boundary can read it without a packet of their own.
@@ -306,7 +307,18 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 return;
             }
 
-            ArenaCenter = NPC.Center + new Vector2(0f, ArenaCenterShiftY);
+            // Summon item (sandbox worlds): the summoner's position IS the arena centre, like an event ring. In MP the item
+            // goes through vanilla SpawnOnPlayer, which drops the boss at a random off-screen spot, so the boss's own position
+            // is useless there; both paths pass a boss-spawn source that names the summoner.
+            if (source is EntitySource_BossSpawn bossSpawn && bossSpawn.Target is Player summoner)
+            {
+                ArenaCenter = summoner.Center;
+            }
+            else
+            {
+                ArenaCenter = NPC.Center + new Vector2(0f, ArenaCenterShiftY);
+            }
+
             NPC.netUpdate = true;
         }
 
@@ -350,6 +362,16 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             Player player = Main.player[NPC.target];
+
+            // Event spawn: the arena is the event ring itself (centerpoint is in world pixels), not the boss's spawn point.
+            // The event assigns ScriptedEventOwner just AFTER NewNPC returns, i.e. after OnSpawn, so it is picked up here on
+            // the first tick. Server/SP only; clients receive ArenaCenter through ExtraAI.
+            if (!_arenaAnchoredToEvent && Main.netMode != NetmodeID.MultiplayerClient && globalNPC.ScriptedEventOwner != null)
+            {
+                ArenaCenter = globalNPC.ScriptedEventOwner.centerpoint;
+                _arenaAnchoredToEvent = true;
+                NPC.netUpdate = true;
+            }
 
             globalNPC.AttackTelegraphing = false;
             globalNPC.AttackCommitted = false;
@@ -796,6 +818,13 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
                 return;
             }
 
+            // Purple dust off the player that streams all the way into the boss from the first tick out of bounds, thickening
+            // as the clock runs down: 1 a tick on leaving, 5 a tick at the point of no return (grace + fuse = 330 ticks).
+            int ticksOutside = FleeGraceTicks - _fleeGraceTimer + _fleeFuseTimer;
+            float doomProgress = ticksOutside / (float)(FleeGraceTicks + FleeFuseTicks);
+            int suckDustCount = 1 + (int)(4f * doomProgress);
+            SpawnSuckDust(player, suckDustCount);
+
             if (_fleeFuseTimer == 0)
             {
                 _fleeGraceTimer--;
@@ -831,11 +860,6 @@ namespace tsorcRevamp.NPCs.Bosses.VesselOfSouls
             {
                 player.velocity += pullDirection * FleePullPerTick;
             }
-
-            // Purple dust off the player that streams all the way into the boss, thickening as the fuse runs down: 2 a tick
-            // at the start, 5 a tick just before the point of no return.
-            int suckDustCount = 2 + (int)(3f * _fleeFuseTimer / (float)FleeFuseTicks);
-            SpawnSuckDust(player, suckDustCount);
 
             if (_fleeFuseTimer >= FleeFuseTicks)
             {

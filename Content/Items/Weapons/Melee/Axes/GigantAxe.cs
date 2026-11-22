@@ -13,12 +13,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
         public override void SetDefaults()
         {
             Item.rare = ItemRarityID.Purple;
-            Item.damage = 325;
+            Item.damage = 650;
             Item.height = 80;
             Item.knockBack = 9;
             Item.DamageType = DamageClass.Melee;
-            Item.useAnimation = 22;
-            Item.useTime = 22;
+            Item.useAnimation = 44;
+            Item.useTime = 44;
             Item.scale = 1.5f;
             Item.axe = 150 / 5; // Same as Vortex hamaxe
             Item.UseSound = SoundID.Item1;

@@ -11,7 +11,7 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -947,15 +947,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             for (int i = 0; i < _spellCooldowns.Length; i++) _spellCooldowns[i] = reader.ReadInt16();
             if (IsCasting || Phase == AttackPhase.MagicRecovery)
                 DebugAttackLabel = SpellName;
-        }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            if (NPC.AnyNPCs(Type) || !tsorcRevampWorld.SuperHardMode || !(player.ZoneSnow || player.ZoneHallow)) return 0f;
-            float chance = player.ZoneOverworldHeight ? 0.2f : 0.36f;
-            if (player.ZoneSnow && player.ZoneHallow) chance *= 2f;
-            if (Main.bloodMoon) chance *= 2f;
-            return chance;
         }
         public override void OnKill()
         {

@@ -66,7 +66,6 @@ namespace tsorcRevamp.Content.Items.BossItems
             recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>(), 1);
             recipe.AddIngredient(ModContent.ItemType<LichBone>(), 1);
             recipe.AddIngredient(ModContent.ItemType<FieryScale>(), 1);
-            recipe.AddIngredient(ModContent.ItemType<SoulOfBlight>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GhostWyvernSoul>(), 1);
             recipe.AddIngredient(ModContent.ItemType<SoulOfArtorias>(), 1);
             recipe.AddIngredient(ModContent.ItemType<BequeathedSoul>(), 1);

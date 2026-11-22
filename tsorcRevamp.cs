@@ -27,15 +27,12 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using Terraria.UI;
 using tsorcRevamp.Banners;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses;
 using tsorcRevamp.NPCs.Bosses.Death;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
+using tsorcRevamp.NPCs.Bosses.Attraidies;
 using tsorcRevamp.NPCs.Bosses.Okiku.FinalForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.FirstForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
-using tsorcRevamp.NPCs.Bosses.Okiku.ThirdForm;
 using tsorcRevamp.NPCs.Bosses.Pinwheel;
 using tsorcRevamp.NPCs.Bosses.PrimeV2;
 using tsorcRevamp.NPCs.Bosses.Serris;
@@ -43,7 +40,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
-using tsorcRevamp.NPCs.Bosses.OolacileSerpent;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
+using tsorcRevamp.NPCs.Bosses.GreatSerpent;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.NPCs.Enemies;
@@ -75,7 +73,11 @@ using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Runeterra.LudensTempest;
 using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.DragoonSet;
 using tsorcRevamp.Content.Items.Armor.Magic;
+using tsorcRevamp.Content.Items.Armor.Magic.DragonScaleSet;
+using tsorcRevamp.Content.Items.Armor.Magic.MimeticSet;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Lore;
@@ -94,8 +96,14 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol.Projectiles;
 using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Projectiles.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DarkCloud;
@@ -112,7 +120,6 @@ using tsorcRevamp.Content.Projectiles.Summon.Archer;
 using tsorcRevamp.Content.Projectiles.Summon.EtherianWyvern;
 using tsorcRevamp.Content.Projectiles.Summon.Phoenix;
 using tsorcRevamp.Content.Projectiles.Summon.PhotonicDownpour;
-using tsorcRevamp.Content.Projectiles.Summon.Runeterra.CirclingProjectiles;
 using tsorcRevamp.Content.Projectiles.Summon.SamuraiBeetle;
 using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Content.Projectiles.Summon.SunsetQuasar;
@@ -121,8 +128,16 @@ using tsorcRevamp.Content.Projectiles.Summon.TripleThreat;
 using tsorcRevamp.Content.Projectiles.Throwing;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.OverCrit;
 using tsorcRevamp.Textures;
+using tsorcRevamp.NPCs.Bosses.Birds;
+using tsorcRevamp.NPCs.Bosses.Demons;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
+using tsorcRevamp.NPCs.Bosses.Triad;
+using tsorcRevamp.NPCs.Enemies.Archer;
+using tsorcRevamp.NPCs.Invaders;
 using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
 
 namespace tsorcRevamp
@@ -132,7 +147,6 @@ namespace tsorcRevamp
         public class tsorcItemDropRuleConditions
         {
             public static IItemDropRuleCondition SuperHardmodeRule;
-            public static IItemDropRuleCondition AbyssRule;
             public static IItemDropRuleCondition FirstBagRule;
             public static IItemDropRuleCondition CursedRule;
             public static IItemDropRuleCondition FirstBagCursedRule;
@@ -140,6 +154,7 @@ namespace tsorcRevamp
             public static IItemDropRuleCondition NonAdventureModeRule;
             public static IItemDropRuleCondition NonExpertFirstKillRule;
             public static IItemDropRuleCondition DownedSkeletronRule;
+            public static IItemDropRuleCondition DownedSkeletronOrNitoRule;
             public static IItemDropRuleCondition RemixWorldDropCondition;
             public static IItemDropRuleCondition NonRemixWorldDropCondition;
         }
@@ -259,8 +274,8 @@ namespace tsorcRevamp
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
-        internal EstusFlaskUIState EstusFlaskUIState;
-        internal CeruleanFlaskUIState CeruleanFlaskUIState;
+        internal EstusFlaskUI EstusFlaskUIState;
+        internal CeruleanFlaskUI CeruleanFlaskUIState;
         internal UserInterface _estusFlaskUIState; //okay
         internal UserInterface _ceruleanFlaskUIState; //idk what to say
         internal PotionBagUIState PotionUIState;
@@ -377,7 +392,7 @@ namespace tsorcRevamp
             // its own alt-fire can no longer steal the guard (see tsorcRevampActiveShieldPlayer.ComputeBlocking).
             ActiveShieldKey = KeybindLoader.RegisterKeybind(this, "Raise Shield", "None");
 
-            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<SoulCoin>(), 99999L));
+            DarkSoulCustomCurrencyId = CustomCurrencyManager.RegisterCurrency(new DarkSoulCustomCurrency(ModContent.ItemType<DarkSoulItem>(), 999_999L));
 
             BonfireUIState = new BonfireUIState();
             _bonfireUIState = new UserInterface();
@@ -386,11 +401,11 @@ namespace tsorcRevamp
             //if (!Main.dedServ) DarkSoulCounterUIState.Activate();
             _darkSoulCounterUIState = new UserInterface();
 
-            EstusFlaskUIState = new EstusFlaskUIState();
+            EstusFlaskUIState = new EstusFlaskUI();
             //if (!Main.dedServ) EstusFlaskUIState.Activate();
             _estusFlaskUIState = new UserInterface();
 
-            CeruleanFlaskUIState = new CeruleanFlaskUIState();
+            CeruleanFlaskUIState = new CeruleanFlaskUI();
             _ceruleanFlaskUIState = new UserInterface();
 
             PotionUIState = new PotionBagUIState();
@@ -450,9 +465,9 @@ namespace tsorcRevamp
 
             tsorcRevamp Instance = this;
 
-            SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/SpazmatismV2_Head_Boss_2", -1);
-            RetinazerV2.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/RetinazerV2_Head_Boss_2", -1);
-            Cataluminance.secondStageHeadSlot = AddBossHeadTexture("tsorcRevamp/NPCs/Bosses/Cataluminance_Head_Boss_2", -1);
+            SpazmatismV2.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(SpazmatismV2)) + "_Head_Boss_2", -1);
+            RetinazerV2.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(RetinazerV2)) + "_Head_Boss_2", -1);
+            Cataluminance.secondStageHeadSlot = AddBossHeadTexture(UsefulFunctions.RefactorableFilepath(typeof(Cataluminance)) + "_Head_Boss_2", -1);
 
             TheAbyssEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/ScreenFilters/TheAbyssShader", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Filters.Scene["tsorcRevamp:TheAbyss"] = new Filter(new ScreenShaderData(new Terraria.Ref<Effect>(TheAbyssEffect), "TheAbyssShaderPass").UseImage("Images/Misc/noise"), EffectPriority.Low);
@@ -512,7 +527,6 @@ namespace tsorcRevamp
 
             #region tsorcItemDropRuleConditions class
             tsorcItemDropRuleConditions.SuperHardmodeRule = new SuperHardmodeRule();
-            tsorcItemDropRuleConditions.AbyssRule = new WithinTheAbyssRule();
             tsorcItemDropRuleConditions.FirstBagRule = new FirstBagRule();
             tsorcItemDropRuleConditions.CursedRule = new CursedRule();
             tsorcItemDropRuleConditions.FirstBagCursedRule = new FirstBagCursedRule();
@@ -520,6 +534,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = new NonAdventureModeRule();
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = new NonExpertFirstKillRule();
             tsorcItemDropRuleConditions.DownedSkeletronRule = new DownedSkeletronRule();
+            tsorcItemDropRuleConditions.DownedSkeletronOrNitoRule = new DownedSkeletronOrNitoRule();
             #endregion
             //--------
             #region Active Shields Revamp registry
@@ -542,7 +557,7 @@ namespace tsorcRevamp
                 // between the three untouched while softening the pause across the board.
                 { ModContent.ItemType<DragonCrestShield>(),     new ActiveShieldData(24f, 0.35f, 0.87f, 5, 5.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.60f, passiveRegenPenalty: 0.05f) }, // repositioned to mid pre-hardmode
                 { ModContent.ItemType<MythrilBulwark>(),                   new ActiveShieldData(22f, 0.32f, 0.92f, 6, 5.2f) },
-                { ModContent.ItemType<IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 15, 7.0f) },
+                { ModContent.ItemType<IceboundMythrilAegis>(),  new ActiveShieldData(9f,  0.14f, 0.99f, 8, 7.0f) },
 
                 //--- Melee Shield family (stamina) ---
                 { ModContent.ItemType<GazingShield>(),                      new ActiveShieldData(24f, 0.34f, 0.91f, 6, 5.0f) },
@@ -564,7 +579,7 @@ namespace tsorcRevamp
                 // GREATSHIELD archetype (top of the line): a wall of ice — nothing chips through, but you barely move
                 // and recover slowly. The lighter Ankh/Hero shields around it stay leaky-but-nimble by contrast, so
                 // upgrading Frozen → Hero is a side-grade (lose no-chip, gain mobility + utility), not a strict win.
-                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f, passiveResistance: 9f) },
+                { ItemID.FrozenShield,    new ActiveShieldData(15f, 0.23f, 0.90f, 0, 6.0f, ShieldResource.Stamina, chipFactor: 0f, blockRegenDelayMult: 1.45f, passiveRegenPenalty: 0.05f) },
                 { ItemID.HeroShield,      new ActiveShieldData(12f, 0.20f, 0.97f, 0, 6.5f, passiveResistance: 10f) }, // top vanilla shield (Ankh + Frozen + Berserker)
                 // Shield of Cthulhu: early-game right-click block (7% slow, def 2). Its vanilla double-tap dash is
                 // untouched and shows the shield while dashing (see tsorcRevampActiveShieldPlayer.PostUpdate).
@@ -578,12 +593,14 @@ namespace tsorcRevamp
             //(True bosses not in this set push straight through, as intended.)
             BodyBlockableNPCs = new HashSet<int>
             {
-                ModContent.NPCType<NPCs.Enemies.RedKnight>(),
-                ModContent.NPCType<NPCs.Enemies.BlackKnight>(),
-                ModContent.NPCType<NPCs.Bosses.SuperHardMode.GreatRedKnight>(),
+                ModContent.NPCType<NPCs.Invaders.RedKnight>(),
+                ModContent.NPCType<NPCs.Invaders.BlackKnight>(),
+                ModContent.NPCType<NPCs.Invaders.GreatRedKnight>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Gwyn>(),
+                ModContent.NPCType<NPCs.Bosses.Primordial.PrimeGwyn>(),
                 ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(),
-                ModContent.NPCType<NPCs.Bosses.HeroofLumelia>(),
+                ModContent.NPCType<NPCs.Invaders.HeroofLumelia>(),
+                ModContent.NPCType<NPCs.FriendlyPuppets.MirrorInvader>(),
             };
             #endregion
             //--------
@@ -862,6 +879,8 @@ namespace tsorcRevamp
             #region BannedItems list
             BannedItems = new List<int>()
             {
+                ItemID.CandyApple,
+                ItemID.BananaSplit,
                 ItemID.RodofDiscord,
                 ItemID.CorruptionKey,
                 ItemID.CrimsonKey,
@@ -1146,6 +1165,7 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronPrimeBossBag    , BossExtras.SublimeBoneDust    },
                 {   ItemID.PlanteraBossBag          , BossExtras.StaminaVessel      },
                 {   ItemID.GolemBossBag             , BossExtras.DarkSoulsOnly      },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(), BossExtras.DarkSoulsOnly      },
                 {   ItemID.FishronBossBag           , BossExtras.StaminaVessel      },
                 {   ItemID.CultistBossBag           , BossExtras.DarkSoulsOnly      },
                 {   ItemID.MoonLordBossBag          , BossExtras.DarkSoulsOnly      },
@@ -1231,6 +1251,7 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronPrimeBossBag    , NPCID.SkeletronPrime      },      // but it doesn't really matter
                 {   ItemID.PlanteraBossBag          , NPCID.Plantera            },      // while their values are the same
                 {   ItemID.GolemBossBag             , NPCID.Golem               },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(), ModContent.NPCType<NPCs.Bosses.Ornsmough.Smough>() },
                 {   ItemID.FishronBossBag           , NPCID.DukeFishron         },
                 {   ItemID.CultistBossBag           , NPCID.CultistBoss         },
                 {   ItemID.MoonLordBossBag          , NPCID.MoonLordCore        },
@@ -1243,12 +1264,12 @@ namespace tsorcRevamp
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
                 {   ModContent.ItemType<VesselOfSoulsBag>()         , ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()                    },
-                {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<AncientOolacileDemon>()                                        },
+                {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<OolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
                 {   ModContent.ItemType<JungleWyvernBag>()          , ModContent.NPCType<JungleWyvernHead>()                                            },
                 {   ModContent.ItemType<AncestralSpiritBag>()       , ModContent.NPCType<AncestralSpirit>()                                             },
-                {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<AncientDemon>()                                                },
+                {   ModContent.ItemType<AncientDemonBag>()          , ModContent.NPCType<DefiledDemon>()                                                },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , ModContent.NPCType<HeroofLumelia>()                                               },
                 {   ModContent.ItemType<TheRageBag>()               , ModContent.NPCType<TheRage>()                                                     },
                 {   ModContent.ItemType<TheSorrowBag>()             , ModContent.NPCType<TheSorrow>()                                                   },
@@ -1268,12 +1289,12 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<WyvernMageShadowBag>()      , ModContent.NPCType<WyvernMageShadow>()                                            },
                 {   ModContent.ItemType<OolacileSorcererBag>()      , ModContent.NPCType<GrandOccultist>()                                     },
                 {   ModContent.ItemType<ArtoriasBag>()              , ModContent.NPCType<Artorias>()                                                    },
-                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDragonHead>()                                          },
+                {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDrake>()                                               },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
                 {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
-                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Puppets.Marik>()                      },
+                {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Invaders.Marik>()                      },
                 {   ModContent.ItemType<GwynBag>()                  , ModContent.NPCType<Gwyn>()                                                        }
                 #endregion
             };
@@ -1302,6 +1323,10 @@ namespace tsorcRevamp
                 {   ItemID.SkeletronPrimeBossBag    ,   new List<int>()                     },
                 {   ItemID.PlanteraBossBag          ,   new List<int>()                     },
                 {   ItemID.GolemBossBag             ,   new List<int>()
+                                                        {
+                                                            ItemID.Picksaw
+                                                        }                                   },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(),   new List<int>()
                                                         {
                                                             ItemID.Picksaw
                                                         }                                   },
@@ -1360,6 +1385,11 @@ namespace tsorcRevamp
                                                         {
                                                             // CrestOfLife removed — Plantera is optional now, see MindCube.cs
                                                             ItemDropRule.Common(ModContent.ItemType<SoulOfLife>(), 1, 30, 30)
+                                                        }                                                                                },
+                {   ModContent.ItemType<NPCs.Bosses.Ornsmough.OrnsmoughBag>(),   new List<IItemDropRule>()
+                                                        {
+                                                            ItemDropRule.ByCondition(tsorcItemDropRuleConditions.NonAdventureModeRule,
+                                                                                     ItemID.Picksaw, 3)
                                                         }                                                                                },
                 {   ItemID.GolemBossBag             ,   new List<IItemDropRule>()
                                                         {
@@ -1603,7 +1633,10 @@ namespace tsorcRevamp
         {
             NPCID.TheDestroyer,
             NPCID.TheDestroyerBody,
-            NPCID.TheDestroyerTail
+            NPCID.TheDestroyerTail,
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginal>(),
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginalBody>(),
+            ModContent.NPCType<NPCs.Bosses.TheDestroyer.Original.TheDestroyerOriginalTail>()
         };
 
             JungleWyvernSegments = new List<int>()
@@ -1775,6 +1808,13 @@ namespace tsorcRevamp
             ModContent.NPCType<Bonfirefly>(),
             ModContent.NPCType<AbyssPortal>(),
             ModContent.NPCType<AttraidiesApparition>(),
+            ModContent.NPCType<AttraidiesArenaActor>(),
+            ModContent.NPCType<StoryAshaActor>(),
+            ModContent.NPCType<StoryArazActor>(),
+            ModContent.NPCType<StoryWispActor>(),
+            ModContent.NPCType<StoryPropActor>(),
+            ModContent.NPCType<StoryElijahActor>(),
+            ModContent.NPCType<StoryMiakodaActor>(),
             ModContent.NPCType<GwynBossVision>()
             };
             #endregion
@@ -1792,7 +1832,15 @@ namespace tsorcRevamp
                 ModContent.NPCType<NamelessKing>(),
                 ModContent.NPCType<Faraam>(),
                 ModContent.NPCType<AttraidiesFragment>(),
-                ModContent.NPCType<AttraidiesApparition>() // Spawns The Sorrow, then deactivates itself
+                ModContent.NPCType<OldAttraidiesFragment>(),
+                ModContent.NPCType<AttraidiesApparition>(), // Spawns The Sorrow, then deactivates itself
+                ModContent.NPCType<AttraidiesArenaActor>(), // Fades away at the end of the curse scene
+                ModContent.NPCType<StoryAshaActor>(), // Story stand-ins are removed when their scene ends
+                ModContent.NPCType<StoryArazActor>(),
+                ModContent.NPCType<StoryWispActor>(),
+                ModContent.NPCType<StoryPropActor>(),
+                ModContent.NPCType<StoryElijahActor>(),
+                ModContent.NPCType<StoryMiakodaActor>()
             };
             #endregion
 
@@ -1817,7 +1865,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<Necromancer>(),
                 ModContent.NPCType<RedCloudHunter>(),
                 ModContent.NPCType<Assassin>(),
-                ModContent.NPCType<HydrisNecromancer>(),
+                ModContent.NPCType<ElementalNecromancer>(),
                 ModContent.NPCType<CrystalKnight>(),
                 ModContent.NPCType<DarkBloodKnight>(),
                 ModContent.NPCType<DarkKnight>(),
@@ -1843,7 +1891,7 @@ namespace tsorcRevamp
                 ModContent.NPCType<MountedSandsprogMage>(),
                 ModContent.NPCType<SandsprogMage>(),
                 ModContent.NPCType<Necromancer>(),
-                ModContent.NPCType<FallenNecromancer>(),
+                ModContent.NPCType<BoneChaplain>(),
                 ModContent.NPCType<Warlock>(),
                 ModContent.NPCType<DemonSpirit>(),
                 ModContent.NPCType<ShadowMage>(),
@@ -1855,7 +1903,12 @@ namespace tsorcRevamp
                 ModContent.NPCType<Okiku>(),
                 ModContent.NPCType<BrokenOkiku>(),
                 ModContent.NPCType<Attraidies>(),
-                ModContent.NPCType<NPCs.Puppets.Kahlrun>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.FirstForm.OldDarkShogunMask>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.OldDarkDragonMask>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.OldOkiku>(),
+                ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.OldBrokenOkiku>(),
+                ModContent.NPCType<OldAttraidies>(),
+                ModContent.NPCType<NPCs.Invaders.Kahlrun>(),
             };
             #endregion
 
@@ -1929,8 +1982,9 @@ namespace tsorcRevamp
                 NPCID.SkeletronHand,
                 NPCID.SkeletronHead,
                 ModContent.NPCType<UndeadCaster>(),
-                ModContent.NPCType<FallenNecromancer>(),
+                ModContent.NPCType<BoneChaplain>(),
                 ModContent.NPCType<IceSkeleton>(),
+                ModContent.NPCType<SkeletonWarrior>(),
                 ModContent.NPCType<ParasyticWormHead>(),
                 ModContent.NPCType<ParasyticWormBody>(),
                 ModContent.NPCType<ParasyticWormTail>()
@@ -2081,9 +2135,10 @@ namespace tsorcRevamp
                 {ModContent.ItemType<NecromancersShirt>(), NecromancersShirt.MaxMana},
                 {ModContent.ItemType<BlueHerosHat>(), BlueHerosHat.MaxMana},
                 {ModContent.ItemType<DragoonHelmet>(), DragoonHelmet.MaxMana},
-                {ModContent.ItemType<DragoonHelmet2>(), DragoonHelmet2.MaxMana},
+                {ModContent.ItemType<SupremeDragoonHelmet>(), SupremeDragoonHelmet.MaxMana},
                 {ModContent.ItemType<AnkorWatHelmet>(), AnkorWatHelmet.MaxMana},
                 {ModContent.ItemType<DragonScaleHelmet>(), DragonScaleHelmet.MaxMana},
+                {ModContent.ItemType<Content.Items.Armor.Enemy.QuaraHydromancerSet.QuaraHydromancerHeadpiece>(), Content.Items.Armor.Enemy.QuaraHydromancerSet.QuaraHydromancerHeadpiece.MaxMana},
                 {ModContent.ItemType<GenjiGreaves>(), GenjiGreaves.MaxMana},
                 {ModContent.ItemType<MimeticHat>(), MimeticHat.MaxMana},
                 {ModContent.ItemType<ArtoriasOfTheAbyssHelm>(), ArtoriasOfTheAbyssHelm.MaxMana},
@@ -2129,6 +2184,7 @@ namespace tsorcRevamp
             tsorcItemDropRuleConditions.NonAdventureModeRule = null;
             tsorcItemDropRuleConditions.NonExpertFirstKillRule = null;
             tsorcItemDropRuleConditions.DownedSkeletronRule = null;
+            tsorcItemDropRuleConditions.DownedSkeletronOrNitoRule = null;
             toggleDragoonBoots = null;
             reflectionShiftKey = null;
             specialAbility = null;
@@ -2368,39 +2424,6 @@ namespace tsorcRevamp
                         break;
                     }
 
-                case tsorcPacketID.SyncEnemyActivePose:
-                    {
-                        // Server → client: fire a one-shot "active pose" (throw release / magic
-                        // release / etc.) on an enemy that renders via EnemySpriteRenderer.
-                        int npcId = reader.ReadInt32();
-                        byte poseByte = reader.ReadByte();
-                        int heldItemType = reader.ReadInt32();
-                        short duration = reader.ReadInt16();
-                        bool weaponVisible = reader.ReadBoolean();
-                        byte styleByte = reader.ReadByte();
-                        string heldTexturePath = reader.ReadString();
-                        bool hasSpearRot = reader.ReadBoolean();
-                        float spearRot = hasSpearRot ? reader.ReadSingle() : 0f;
-
-                        if (Main.netMode == NetmodeID.MultiplayerClient
-                            && npcId >= 0 && npcId < Main.maxNPCs
-                            && Main.npc[npcId] != null
-                            && Main.npc[npcId].active
-                            && Main.npc[npcId].ModNPC is NPCs.EnemySpriteRendering.IEnemySpriteRendererHost host
-                            && host.SpriteRenderer != null)
-                        {
-                            host.SpriteRenderer.StartActivePose(
-                                (NPCs.EnemySpriteRendering.EnemySpritePose)poseByte,
-                                heldItemType,
-                                duration,
-                                weaponVisible,
-                                (NPCs.EnemySpriteRendering.EnemyHeldItemStyle)styleByte,
-                                string.IsNullOrEmpty(heldTexturePath) ? null : heldTexturePath,
-                                hasSpearRot ? spearRot : null);
-                        }
-                        break;
-                    }
-
                 case tsorcPacketID.DropSouls:
                     {
                         Vector2 position = reader.ReadVector2();
@@ -2424,40 +2447,7 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.SyncPlayerDodgeroll:
                     {
-                        //First, check whether this is a new packet originating from a client who just rolled, or a packet that has been bounced by the server to the other clients
-                        bool bounced = reader.ReadBoolean();
-                        byte who = reader.ReadByte();
-
-                        //If we're a client, go ahead and sync based on it. If we're the server, only sync and bounce it if this is a new packet
-                        if (Main.netMode == NetmodeID.MultiplayerClient || !bounced)
-                        {
-                            //Sync everything
-                            Player player = Main.player[who];
-                            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                            modPlayer.forceDodgeroll = true;
-                            modPlayer.wantedDodgerollDir = reader.ReadSByte();
-                            player.velocity = reader.ReadVector2();
-
-                            //If we're the server in specific, bounce it to the other clients, passing "true" as the bounced flag to ensure this only happens once
-                            if (Main.netMode == NetmodeID.Server)
-                            {
-                                ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                                rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
-                                rollPacket.Write(true);
-                                rollPacket.Write((byte)player.whoAmI);
-                                rollPacket.Write(modPlayer.wantedDodgerollDir);
-                                rollPacket.WriteVector2(player.velocity);
-
-                                //Iterate through all active clients and send it specifically to them
-                                for (int i = 0; i < Main.maxPlayers; i++)
-                                {
-                                    if (Main.player[i].active && i != player.whoAmI)
-                                    {
-                                        rollPacket.Send(i);
-                                    }
-                                }
-                            }
-                        }
+                        tsorcRevampPlayer.ReadDodgerollPacket(reader, whoAmI);
                         break;
                     }
                 case tsorcPacketID.SyncBonfire:
@@ -2511,7 +2501,7 @@ namespace tsorcRevamp
                 case tsorcPacketID.SyncMinionRadius:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
-                        tsorcRevampPlayer modPlayer = Main.player[player].GetModPlayer<tsorcRevampPlayer>();
+                        var modPlayer = Main.player[player].GetModPlayer<RuneterraGauntletPlayer>();
                         modPlayer.MinionCircleRadius = reader.ReadSingle();
                         modPlayer.Turboboost = reader.ReadBoolean();
                         //modPlayer.CursorPosition = reader.ReadVector2();
@@ -2613,6 +2603,14 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.OpenSoulRewardSkull:
+                    {
+                        short tileX = reader.ReadInt16();
+                        short tileY = reader.ReadInt16();
+                        if (Main.netMode == NetmodeID.Server)
+                            Tiles.SoulRewardSkull.TryOpen(tileX, tileY, whoAmI);
+                        break;
+                    }
                 case tsorcPacketID.ReportBlockedAttack:
                     {
                         int npcIndex = reader.ReadInt32();
@@ -2693,15 +2691,15 @@ namespace tsorcRevamp
                         {
                             bool mythrilReflection = perfectParry
                                 && shieldPlayer.activeShieldType == ModContent.ItemType<MythrilBulwark>()
-                                && attackingProjectile.type !=
-                                    ModContent.ProjectileType<HumanoidMeleeHitbox>();
+                                && tsorcRevampActiveShieldPlayer.CanMythrilReflect(attackingProjectile);
                             if (mythrilReflection)
                             {
-                                attackingProjectile.hostile = false;
-                                attackingProjectile.friendly = true;
-                                attackingProjectile.owner = whoAmI;
-                                attackingProjectile.velocity = -attackingProjectile.velocity;
-                                attackingProjectile.netUpdate = true;
+                                // The blocking client already spawned its friendly MythrilReflectedShot. Remove the
+                                // hostile original everywhere: silently here (no Kill(), so it can't explode on the
+                                // shield), and via KillProjectile on the other clients.
+                                attackingProjectile.active = false;
+                                NetMessage.SendData(MessageID.KillProjectile, -1, -1, null,
+                                    attackingProjectile.identity, attackingProjectile.owner);
                             }
                             else tsorcGlobalProjectile.TryBreakOnShieldImpact(attackingProjectile);
                         }
@@ -2775,7 +2773,7 @@ namespace tsorcRevamp
                         bool validTarget = Main.netMode == NetmodeID.Server
                             && npcIndex >= 0 && npcIndex < Main.maxNPCs
                             && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
-                        if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC puppet)
+                        if (validTarget && Main.npc[npcIndex].ModNPC is NPCs.Invaders.PuppetNPC puppet)
                         {
                             puppet.ReportAttackHit();
                         }
@@ -2789,9 +2787,21 @@ namespace tsorcRevamp
                         bool validNpc = Main.netMode == NetmodeID.Server
                             && npcIndex >= 0 && npcIndex < Main.maxNPCs
                             && Main.npc[npcIndex].active && Main.npc[npcIndex].type == npcType;
-                        if (validNpc && Main.npc[npcIndex].ModNPC is NPCs.Puppets.PuppetNPC pierceDasher)
+                        if (validNpc && Main.npc[npcIndex].ModNPC is NPCs.Invaders.PuppetNPC pierceDasher)
                         {
                             pierceDasher.HandlePierceGrabRequest(whoAmI);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.ReportDrakeGrabBite:
+                    {
+                        int drakeIndex = reader.ReadInt16();
+                        int biteSequence = reader.ReadInt32();
+                        if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
+                            && drakeIndex >= 0 && drakeIndex < Main.maxNPCs && Main.npc[drakeIndex].active
+                            && Main.npc[drakeIndex].ModNPC is HellkiteDrake drake)
+                        {
+                            drake.TryGrabPlayer(Main.player[whoAmI], biteSequence);
                         }
                         break;
                     }
@@ -2868,11 +2878,12 @@ namespace tsorcRevamp
                 case tsorcPacketID.ReportMiasmaBuildup:
                     {
                         int buildup = reader.ReadByte();
+                        int procDurationTicks = reader.ReadUInt16();
 
                         if (Main.netMode == NetmodeID.Server && whoAmI >= 0 && whoAmI < Main.maxPlayers
                             && Main.player[whoAmI].active && !Main.player[whoAmI].dead)
                         {
-                            Main.player[whoAmI].GetModPlayer<MiasmaPlayer>().ApplyBuildupAuthoritative(buildup);
+                            Main.player[whoAmI].GetModPlayer<MiasmaPlayer>().ApplyBuildupAuthoritative(buildup, procDurationTicks);
                         }
                         break;
                     }
@@ -2884,11 +2895,12 @@ namespace tsorcRevamp
                         int procSequence = reader.ReadInt32();
                         bool triggered = reader.ReadBoolean();
                         bool hitBurst = reader.ReadBoolean();
+                        int drainTicks = reader.ReadUInt16();
 
                         if (Main.netMode == NetmodeID.MultiplayerClient && playerIndex >= 0 && playerIndex < Main.maxPlayers)
                         {
                             Main.player[playerIndex].GetModPlayer<MiasmaPlayer>()
-                                .ReceiveState(buildup, decayTimer, procSequence, triggered, hitBurst);
+                                .ReceiveState(buildup, decayTimer, procSequence, triggered, hitBurst, drainTicks);
                         }
                         break;
                     }
@@ -2925,6 +2937,80 @@ namespace tsorcRevamp
                         if (playerIndex >= 0 && playerIndex < Main.maxPlayers)
                         {
                             Main.player[playerIndex].GetModPlayer<AcidVenomPlayer>().ReceiveLevel(level, whoAmI);
+                        }
+                        break;
+                    }
+                case tsorcPacketID.DarkrootVineRequest:
+                    {
+                        byte vineAction = reader.ReadByte();
+                        int vineOwner = reader.ReadByte();
+                        int vineIdentity = reader.ReadInt16();
+
+                        bool validSender = whoAmI >= 0 && whoAmI < Main.maxPlayers && Main.player[whoAmI].active;
+                        if (Main.netMode != NetmodeID.Server || !validSender)
+                        {
+                            break;
+                        }
+
+                        // The vine itself validates: latch only while its tip is live and near the sender, strikes only
+                        // from the player it holds.
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile candidate = Main.projectile[i];
+                            bool sameVine = candidate.active && candidate.owner == vineOwner && candidate.identity == vineIdentity;
+
+                            if (!sameVine || candidate.ModProjectile is not Content.Projectiles.Enemy.DarkrootSentrySpells.DarkrootVine vine)
+                            {
+                                continue;
+                            }
+
+                            if (vineAction == Content.Projectiles.Enemy.DarkrootSentrySpells.DarkrootVine.RequestLatch)
+                            {
+                                vine.TryLatch(Main.player[whoAmI]);
+                            }
+                            else
+                            {
+                                vine.RegisterStrike(whoAmI);
+                            }
+
+                            break;
+                        }
+
+                        break;
+                    }
+                case tsorcPacketID.RequestKillHitProjectile:
+                    {
+                        int projectileOwner = reader.ReadByte();
+                        int projectileIdentity = reader.ReadInt16();
+                        int projectileType = reader.ReadInt32();
+
+                        bool validSender = whoAmI >= 0 && whoAmI < Main.maxPlayers && Main.player[whoAmI].active;
+                        if (Main.netMode != NetmodeID.Server || !validSender)
+                        {
+                            break;
+                        }
+
+                        // Kill the server's copy; a server-side Kill broadcasts it, so every other client removes it too.
+                        // Only hostile projectiles near the reporting player (800px allows for ping lag), so a client can't
+                        // delete arbitrary projectiles.
+                        Player sender = Main.player[whoAmI];
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile candidate = Main.projectile[i];
+                            bool sameProjectile = candidate.active && candidate.owner == projectileOwner && candidate.identity == projectileIdentity && candidate.type == projectileType;
+
+                            if (!sameProjectile)
+                            {
+                                continue;
+                            }
+
+                            bool nearSender = candidate.Distance(sender.Center) < 800f;
+                            if (candidate.hostile && nearSender)
+                            {
+                                candidate.Kill();
+                            }
+
+                            break;
                         }
                         break;
                     }
@@ -3067,13 +3153,46 @@ namespace tsorcRevamp
 
                 case tsorcPacketID.RequestFriendlyPuppetSpawn:
                 {
-                    NPCs.FriendlyPuppets.MimicTear.ReceiveSpawnRequest(reader, whoAmI);
+                    NPCs.FriendlyPuppets.SoulMimic.ReceiveSpawnRequest(reader, whoAmI);
                     break;
                 }
 
                 case tsorcPacketID.SyncFriendlyPuppetOwnerState:
                 {
                     NPCs.FriendlyPuppets.MirrorPuppetNPC.ReceiveOwnerState(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.SyncMirrorSummonerClass:
+                {
+                    NPCs.FriendlyPuppets.MirrorSummonerPlayer.ReceiveClass(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.RequestEnemyWhipLatch:
+                {
+                    Content.Projectiles.Enemy.Weapons.EnemyWhipProjectileBase.ReceiveLatchRequest(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.CutsceneSync:
+                {
+                    Systems.CutsceneSystem.ReceivePacket(reader, whoAmI);
+                    break;
+                }
+
+                case tsorcPacketID.UseEmberOfTheFirstDawn:
+                {
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        Content.Items.BossItems.EmberOfTheFirstDawn.ResolveUse(Main.player[whoAmI]);
+                    }
+                    break;
+                }
+
+                case tsorcPacketID.SyncOrnsteinStatic:
+                {
+                    Content.Items.Armor.Enemy.OrnsteinSpellbladePlayer.ReceiveStaticPacket(reader, whoAmI);
                     break;
                 }
 
@@ -3123,7 +3242,7 @@ namespace tsorcRevamp
         {
             for (int npcType = NPCID.Count; npcType < NPCLoader.NPCCount; npcType++)
             {
-                if (NPCLoader.GetNPC(npcType) is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
+                if (NPCLoader.GetNPC(npcType) is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
                 {
                     NPCID.Sets.NeedsExpertScaling[npcType] = true;
                 }
@@ -3208,7 +3327,7 @@ namespace tsorcRevamp
                     );
                 summonersAssociation.Call(
                     "AddMinionInfo",
-                    ModContent.ItemType<BeetleIdol>(),
+                    ModContent.ItemType<BeetleIdolItem>(),
                     ModContent.BuffType<SamuraiBeetleBuff>(),
                     new Dictionary<string, object>()
                     {
@@ -3349,12 +3468,6 @@ namespace tsorcRevamp
                     Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
                     sb.Draw(texture, centered, color);
                 };
-                var HellkiteDragonPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
-                {
-                    Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/HellkiteDragon_Portrait").Value;
-                    Vector2 centered = new Vector2(rect.X + (rect.Width / 2) - (texture.Width / 2), rect.Y + (rect.Height / 2) - (texture.Height / 2));
-                    sb.Draw(texture, centered, color);
-                };
                 var SeathPortrait = (SpriteBatch sb, Rectangle rect, Color color) =>
                 {
                     Texture2D texture = ModContent.Request<Texture2D>("tsorcRevamp/NPCs/Bosses/Boss Checklist Replacement Sprites/Seath_Portrait").Value;
@@ -3383,13 +3496,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.RedKnight),
+                    nameof(NPCs.Invaders.RedKnight),
                     2.02f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.RedKnight>())),
-                    ModContent.NPCType<NPCs.Enemies.RedKnight>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.RedKnight>())),
+                    ModContent.NPCType<NPCs.Invaders.RedKnight>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.RedKnight>(), Language.GetText("Mods.tsorcRevamp.NPCs.RedKnight.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Invaders.RedKnight>(), Language.GetText("Mods.tsorcRevamp.NPCs.RedKnight.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.Items.BossRematchTome.2")
                     }
                     );
@@ -3428,15 +3541,15 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(AncientOolacileDemon),
+                    nameof(OolacileDemon),
                     3.9f, // Tier (look above, for determining where it will display)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientOolacileDemon>())),
-                    ModContent.NPCType<AncientOolacileDemon>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<OolacileDemon>())),
+                    ModContent.NPCType<OolacileDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientOolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientOolacileDemon.DisplayName")),
-                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientOolacileDemonDesc"),
-                        ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientOolacileDemon_Head_Boss"
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<OolacileDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.OolacileDemon.DisplayName")),
+                        ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OolacileDemonDesc"),
+                        ["overrideHeadTextures"] = UsefulFunctions.RefactorableFilepath(typeof(OolacileDemon)) + "_Head_Boss"
                     }
                     );
 
@@ -3501,13 +3614,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(AncientDemon),
+                    nameof(DefiledDemon),
                     6.51f, // Tier (look above, for determining where it will display)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<AncientDemon>())),
-                    ModContent.NPCType<AncientDemon>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<DefiledDemon>())),
+                    ModContent.NPCType<DefiledDemon>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<AncientDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.AncientDemon.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<DefiledDemon>(), Language.GetText("Mods.tsorcRevamp.NPCs.DefiledDemon.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.AncientDemonDesc"),
                         ["overrideHeadTextures"] = "tsorcRevamp/NPCs/Bosses/AncientDemon_Head_Boss"
                     }
@@ -3520,13 +3633,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.IceGigas),
+                    nameof(NPCs.Bosses.Gigas.IceGigas),
                     8.05f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.IceGigas>())),
-                    ModContent.NPCType<NPCs.Enemies.IceGigas>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>())),
+                    ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.IceGigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<HeartOfWinter>()
                     }
@@ -3535,13 +3648,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss",
                     this,
-                    nameof(NPCs.Enemies.Gigas),
+                    nameof(NPCs.Bosses.Gigas.Gigas),
                     11.8f,
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.Gigas>())),
-                    ModContent.NPCType<NPCs.Enemies.Gigas>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>())),
+                    ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Enemies.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>(), Language.GetText("Mods.tsorcRevamp.NPCs.Gigas.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["collectibles"] = ModContent.ItemType<WrathOfGold>()
                     }
@@ -3688,16 +3801,15 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogMiniBoss", // Field Boss
                     this,
-                    nameof(HellkiteDragonHead),
+                    nameof(HellkiteDrake),
                     20.1f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<HellkiteDragonHead>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    new List<int>() { ModContent.NPCType<HellkiteDragonHead>(), ModContent.NPCType<HellkiteDragonBody>(), ModContent.NPCType<HellkiteDragonBody2>(), ModContent.NPCType<HellkiteDragonBody3>(), ModContent.NPCType<HellkiteDragonLegs>(), ModContent.NPCType<HellkiteDragonTail>() },
+                    () => tsorcRevampWorld.BossDefeated(ModContent.NPCType<HellkiteDrake>()),
+                    ModContent.NPCType<HellkiteDrake>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDragonHead>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDragonHead.DisplayName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<HellkiteDrake>(), Language.GetText("Mods.tsorcRevamp.NPCs.HellkiteDrake.DisplayName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.HellkiteDragonDesc"),
-                        ["spawnItems"] = ModContent.ItemType<HellkiteStone>(),
-                        ["customPortrait"] = HellkiteDragonPortrait
+                        ["spawnItems"] = ModContent.ItemType<HellkiteStone>()
                     }
                     );
 
@@ -3898,13 +4010,13 @@ namespace tsorcRevamp
                 bossChecklist.Call(
                     "LogBoss", // Name of the call
                     this,
-                    nameof(NPCs.Puppets.Marik),
+                    nameof(NPCs.Invaders.Marik),
                     21.5f, // Tier (look above)
-                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Puppets.Marik>())), // Downed variable (the one keeping track the boss has been defeated once)
-                    ModContent.NPCType<NPCs.Puppets.Marik>(),
+                    () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Invaders.Marik>())), // Downed variable (the one keeping track the boss has been defeated once)
+                    ModContent.NPCType<NPCs.Invaders.Marik>(),
                     new Dictionary<string, object>()
                     {
-                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Puppets.Marik>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.MarikName")),
+                        ["displayName"] = EncounterPresentationRegistry.GetClassifiedDisplayName(ModContent.NPCType<NPCs.Invaders.Marik>(), Language.GetText("Mods.tsorcRevamp.BossChecklist.MarikName")),
                         ["spawnInfo"] = Language.GetText("Mods.tsorcRevamp.BossChecklist.OptionalMysteryDesc"),
                         ["spawnItems"] = ModContent.ItemType<SoulOfCinderSpawner>()
                     }
@@ -5250,13 +5362,7 @@ namespace tsorcRevamp
         public const byte SpawnNPCLunarTowerStardust = 19;
         public const byte SpawnNPCLunarTowerSolar = 20;
 
-        /// <summary>
-        /// Server → clients: fires a timed "active pose" on an enemy rendered via
-        /// <see cref="NPCs.EnemySpriteRendering.EnemySpriteRenderer"/>. The host
-        /// <see cref="ModNPC"/> must implement <see cref="NPCs.EnemySpriteRendering.IEnemySpriteRendererHost"/>
-        /// so the packet handler can find the renderer.
-        /// </summary>
-        public const byte SyncEnemyActivePose = 21;
+        // 21 was SyncEnemyActivePose (EnemySpriteRenderer, deleted with RedKnightTest).
 
         /// <summary>
         /// Active Shields Revamp: syncs a player's raised-shield state (isBlocking + shield item type)
@@ -5302,8 +5408,8 @@ namespace tsorcRevamp
         /// <summary>Victim client → server: a puppet's Piercing Dash reached this player outside i-frames. Player.immune is not
         /// networked, so only the victim's machine can say whether a roll passed through the dash.</summary>
         public const byte RequestPierceGrab = 40;
-        /// <summary>Owner client → server: spawn my Mimic Tear with this snapshot of my stats (max HP, defense, Estus).
-        /// Estus numbers aren't synced, and clients can't spawn NPCs. See NPCs/FriendlyPuppets/MimicTear.cs.</summary>
+        /// <summary>Owner client → server: spawn my Soul Mimic with this snapshot of my stats (max HP, defense, Estus).
+        /// Estus numbers aren't synced, and clients can't spawn NPCs. See NPCs/FriendlyPuppets/SoulMimic.cs.</summary>
         public const byte RequestFriendlyPuppetSpawn = 41;
         /// <summary>Puppet owner → server → other clients: status flags the server's AI needs (winded, drinking),
         /// plus the streamed pose while the puppet is mid-use, so other players see its swings. MirrorPuppetNPC.cs.</summary>
@@ -5316,6 +5422,26 @@ namespace tsorcRevamp
         public const byte SyncPoisonLevel = 45;
         /// <summary>Owner client → server → other clients: the owner-authoritative acid venom meter value, display only.</summary>
         public const byte SyncAcidVenomLevel = 46;
+        /// <summary>Victim client → server: a server-owned hostile projectile died on my machine right after hitting me. Vanilla only
+        /// broadcasts a kill from the owner, so without this the server and other players keep it flying. tsorcGlobalProjectile.</summary>
+        public const byte RequestKillHitProjectile = 47;
+        /// <summary>Client asks the server to open a pattern-authored soul skull and spawn its fixed reward.</summary>
+        public const byte OpenSoulRewardSkull = 48;
+        /// <summary>Victim client → server: a Darkroot Sentry vine hit me (latch) or I attacked while it holds me (strike).
+        /// Payload: action byte (DarkrootVine.RequestLatch / RequestStrike), projectile owner byte, identity short.</summary>
+        public const byte DarkrootVineRequest = 49;
+        /// <summary>The bitten client reports contact. The Drake validates the bite sequence and selects the hold.</summary>
+        public const byte ReportDrakeGrabBite = 50;
+        /// <summary>Server to clients: a cutscene started or stopped (Systems/CutsceneSystem.cs).</summary>
+        public const byte CutsceneSync = 51;
+        /// <summary>A player's Ornstein Static count changed, so others can draw its sparks.</summary>
+        public const byte SyncOrnsteinStatic = 52;
+        /// <summary>Client to server: this player used the Ember of the First Dawn.</summary>
+        public const byte UseEmberOfTheFirstDawn = 53;
+        /// <summary>Client to server: summoner class eligibility for hostile Soul Mimic rituals.</summary>
+        public const byte SyncMirrorSummonerClass = 54;
+        /// <summary>Victim client to server: latch a server-owned enemy whip that hit this player.</summary>
+        public const byte RequestEnemyWhipLatch = 55;
     }
 
     //config moved to separate file

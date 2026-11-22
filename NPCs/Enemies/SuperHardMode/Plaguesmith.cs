@@ -44,18 +44,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.npcSlots = 7;
             NPC.aiStyle = 0;
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (spawnInfo.Player.ZoneJungle && !spawnInfo.Player.ZoneOverworldHeight && Main.rand.NextBool(25))
-                {
-                    return 1;
-                }
-                else return 0;
-            }
-            else return 0;
-        }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

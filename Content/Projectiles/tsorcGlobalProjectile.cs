@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
 using MiakodaNew = tsorcRevamp.Content.Projectiles.Pets.MiakodaNew;
 
@@ -93,6 +94,14 @@ namespace tsorcRevamp.Content.Projectiles
         public int SourceNPCIndex = -1;
         public int SourceNPCType = -1;
         public AttackDefenseTraits DefenseTraits;
+
+        // MP hit-kill sync. A server-owned hostile projectile that kills itself on hitting a player (Kill(), timeLeft = 2,
+        // penetrate hitting 0) only dies on the victim's machine: vanilla broadcasts a kill only from the owner. The victim
+        // notes the hit tick here; if the projectile dies within HitKillWindowTicks, OnKill asks the server to kill it too.
+        // Projectiles that pierce players never die in that window, so they keep flying everywhere, as designed.
+        const uint HitKillWindowTicks = 5;
+        bool hitLocalPlayer;
+        uint localHitTick;
 
         // Per-projectile poise-damage lever, mirrors tsorcInstancedGlobalItem.WeaponPoiseMultiplier for melee weapons.
         // Multiplies the knockback-derived poise damage THIS projectile deals (see project_poise_stagger_system). Does
@@ -235,6 +244,16 @@ namespace tsorcRevamp.Content.Projectiles
             {
                 SourceNPCIndex = sourceNPC.whoAmI;
                 SourceNPCType = sourceNPC.type;
+
+                // A puppet's guard-pressure finisher (PuppetNPC.EnterPhase) makes everything it fires unblockable:
+                // melee hitboxes, throws and spells alike, with no per-enemy code. Children inherit it below.
+                // Limited to puppets: the old-AI knights tag only their finisher spear themselves.
+                bool puppetFinisher = sourceNPC.ModNPC is NPCs.Invaders.PuppetNPC
+                    && sourceNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>().ActiveAttackBypassesShield;
+                if (puppetFinisher && !projectile.friendly)
+                {
+                    DefenseTraits |= AttackDefenseTraits.BypassesActiveShield;
+                }
             }
 
             // Attribute projectile and child-projectile damage to the item activation that produced it.
@@ -602,21 +621,34 @@ namespace tsorcRevamp.Content.Projectiles
                 projectile.damage = 75;
             }
 
-            //Destroyer shoots true lasers instead of normal projectile lasers
-            //Probe lasers are replaced with true lasers. This is actually an enormous nerf because they were not telegraphed and were hard to see before.
-            if (NPC.AnyNPCs(NPCID.TheDestroyer))
+            if (projectile.type == ProjectileID.PinkLaser && SourceNPCType == NPCID.Probe
+                && SourceNPCIndex >= 0 && SourceNPCIndex < Main.maxNPCs)
             {
-                if (projectile.type == ProjectileID.DeathLaser)
+                NPC probe = Main.npc[SourceNPCIndex];
+                if (probe.active && probe.type == NPCID.Probe)
                 {
-                    projectile.Kill();
-                }
-                if (projectile.type == ProjectileID.PinkLaser)
-                {
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    NPCs.Bosses.TheDestroyer.TheDestroyer probeState = probe.GetGlobalNPC<NPCs.Bosses.TheDestroyer.TheDestroyer>();
+                    if (probeState.IsRevampProbe || probeState.IsLegacyProbe)
                     {
-                        Projectile.NewProjectile(projectile.GetSource_FromThis(), projectile.Center, projectile.velocity, ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0, Main.myPlayer, -2, -1);
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            if (probeState.IsRevampProbe)
+                            {
+                                Projectile.NewProjectile(projectile.GetSource_FromThis(), probe.Center, projectile.velocity,
+                                    ModContent.ProjectileType<Projectiles.Enemy.DestroyerHullLaser>(),
+                                    EnemyDamage.Projectile(NPCs.Bosses.TheDestroyer.TheDestroyer.LaserDamage),
+                                    0f, Main.myPlayer, 60f, SourceNPCIndex, -1f);
+                            }
+                            else
+                            {
+                                Projectile.NewProjectile(projectile.GetSource_FromThis(), probe.Center, projectile.velocity,
+                                    ModContent.ProjectileType<Projectiles.Enemy.EnemyLingeringLaser>(), 40, 0f, Main.myPlayer, -2f, SourceNPCIndex);
+                            }
+                        }
+
+                        projectile.Kill();
+                        return false;
                     }
-                    projectile.Kill();
                 }
             }
 
@@ -677,13 +709,25 @@ namespace tsorcRevamp.Content.Projectiles
                 // minion output as the cost of a single cast, pinning it at the relativePower clamp forever.
                 // Excluding it lets the staff fall back to its own damage value, so a summon is priced like
                 // the single deliberate action it is. Minions still pay their own way just below.
-                // Friendly-puppet (Mimic Tear) projectiles are excluded for the same reason as minions:
+                // Friendly-puppet (Soul Mimic) projectiles are excluded for the same reason as minions:
                 // they are not the player's own output, and the puppet's damage derives from this EMA.
                 bool fromFriendlyPuppet = projectile.GetGlobalProjectile<NPCs.FriendlyPuppets.MirrorPuppetProjectile>().FromMirrorPuppet;
 
                 if (WeaponStaminaSourceItemType > 0 && !WeaponStaminaSourceIsSummon && !fromFriendlyPuppet)
                 {
                     staminaPlayer.RecordWeaponOutputDamage(WeaponStaminaSourceItemType, damageDone);
+                }
+
+                // Step flail stamina drain up to 0.4/frame for 0.5s when a flail (or Heaven's Tear's rain) lands a hit.
+                bool isFlailHit = projectile.aiStyle == ProjAIStyleID.Flail
+                    || projectile.type == ProjectileID.Anchor
+                    || ModdedFlail
+                    || (projectile.type == ProjectileID.RainFriendly
+                        && player.ownedProjectileCounts[ModContent.ProjectileType<Melee.Flails.HeavensTearBall>()] > 0);
+
+                if (isFlailHit && !fromFriendlyPuppet)
+                {
+                    staminaPlayer.flailActiveHitTimer = tsorcRevampStaminaPlayer.FlailActiveHitWindowTicks;
                 }
                 // DISABLED: minions no longer drain stamina. A minion is "cast once, damage forever", so a
                 // per-damage drain is an uncontrollable tax — it scales with how long a fight runs and how many
@@ -779,6 +823,15 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void OnHitPlayer(Projectile projectile, Player target, Player.HurtInfo info)
         {
+            // Runs on the victim's machine. Only a server-owned projectile needs the kill relayed (see HitKillWindowTicks).
+            bool victimIsMe = target.whoAmI == Main.myPlayer;
+            bool ownedByServer = projectile.owner != Main.myPlayer;
+            if (Main.netMode == NetmodeID.MultiplayerClient && projectile.hostile && victimIsMe && ownedByServer)
+            {
+                hitLocalPlayer = true;
+                localHitTick = Main.GameUpdateCount;
+            }
+
             if (IsReflectedRiposte)
             {
                 projectile.penetrate = 1;
@@ -798,6 +851,29 @@ namespace tsorcRevamp.Content.Projectiles
             if (projectile.hostile && info.Damage > 0
                 && SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>())
                 BlightBuildup.Apply(target);
+
+            // Every shot Seath fires builds Frost (Frozen Saw, Frost Blast, Ice Storm + icicles, Frost Wave, Crystal Shards).
+            // Most are shared with other bosses, so key off the synced SourceNPCType. His breath is excluded: it already builds
+            // 1 per tick inside the stream (FrozenDragonsBreath.AI). Runs on the hit player's machine; FrostBuildup.Apply
+            // reports the gain to the server, which owns the meter.
+            bool firedBySeath = SourceNPCType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>();
+            bool isBreath = projectile.type == ModContent.ProjectileType<Enemy.FrozenDragonsBreath>();
+
+            if (projectile.hostile && info.Damage > 0 && firedBySeath && !isBreath)
+            {
+                FrostBuildup.Apply(target, NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead.FrostBuildupPerHit);
+            }
+
+            // Every damaging ice hit from the Ice Gigas or its Frozen Echo / Mirror statues builds Frost. Children inherit
+            // SourceNPCType, so hailstone and pillar shards count too. GigasIceShard is shared with Quara and the Cleric;
+            // the source check keeps those unaffected. Runs on the hit player's machine; Apply reports to the server.
+            bool firedByIceGigas = SourceNPCType == ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>()
+                || SourceNPCType == ModContent.NPCType<NPCs.Bosses.Gigas.FrozenGigasStatue>();
+
+            if (projectile.hostile && info.Damage > 0 && firedByIceGigas)
+            {
+                FrostBuildup.Apply(target, NPCs.Bosses.Gigas.IceGigas.FrostBuildupPerHit);
+            }
 
             // Every shot Plantera fires builds Miasma, keyed off the synced SourceNPCType.
             if (projectile.hostile && info.Damage > 0 && SourceNPCType == NPCID.Plantera)
@@ -898,6 +974,19 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
+            // Died just after hitting me: ask the server to kill its copy so nobody else sees it keep flying. A redundant request
+            // (the server already killed it, e.g. both hit the same tile) finds nothing and is ignored.
+            bool diedFromLocalHit = hitLocalPlayer && Main.GameUpdateCount - localHitTick <= HitKillWindowTicks;
+            if (Main.netMode == NetmodeID.MultiplayerClient && diedFromLocalHit)
+            {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write(tsorcPacketID.RequestKillHitProjectile);
+                packet.Write((byte)projectile.owner);
+                packet.Write((short)projectile.identity);
+                packet.Write(projectile.type);
+                packet.Send();
+            }
+
             if (projectile.type == ProjectileID.Fireball && NPC.AnyNPCs(NPCID.Golem))
             {
                 int Difficulty = 1 + (Main.expertMode ? 1 : 0) + (Main.masterMode ? 1 : 0);

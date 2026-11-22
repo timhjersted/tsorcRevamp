@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing
 {
     public class ZirconRingItem : ModItem
     {
-        public static float PercentMaxLifeIncrease = 20f;
+        public const float PercentMaxLifeIncrease = 33f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PercentMaxLifeIncrease);
         public override void SetStaticDefaults()
         {
@@ -26,11 +26,12 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing
 
         public override void AddRecipes()
         {
+            int cost = 10000 - RubyCrystalItem.SoulCost;
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.CobaltBar, 3);
             recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
             recipe.AddIngredient(ItemID.SoulofNight, 6);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 9000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), cost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

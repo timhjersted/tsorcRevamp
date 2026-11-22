@@ -16,10 +16,13 @@ using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Summon.ShatteredReflection;
 using tsorcRevamp.Systems;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using ManaShield = tsorcRevamp.Content.Items.Accessories.Defensive.Shields.ManaShield;
 using PiercingGaze = tsorcRevamp.Content.Projectiles.Ranged.PiercingGaze;
 
@@ -185,6 +188,21 @@ namespace tsorcRevamp
                 }
             }
 
+            // Grounded wings (Torn Wings / Crippled / Suppressed) stay folded, so it reads that they don't work.
+            // FrameEffects runs after this tick's wing animation, so pinning wingFrame here wins. Frame 0 is the folded
+            // pose for every wing except slot 4, which rests on frame 3 (same exception vanilla makes when it resets wings).
+            if (WingsDisabled)
+            {
+                int foldedWingFrame = 0;
+                if (Player.wings == 4)
+                {
+                    foldedWingFrame = 3;
+                }
+
+                Player.wingFrame = foldedWingFrame;
+                Player.wingFrameCounter = 0;
+            }
+
             if (MiakodaNewBoost)
             {
                 Player.armorEffectDrawShadow = true;
@@ -235,7 +253,7 @@ namespace tsorcRevamp
         // hands the puppet its final held-weapon DrawData so a projectile can redraw the blade over other players.
         public override void TransformDrawData(ref PlayerDrawSet drawInfo)
         {
-            NPCs.Puppets.PuppetNPC.DrawingPuppetFor?.CaptureFinalHeldWeaponDraw(ref drawInfo);
+            NPCs.Invaders.PuppetNPC.DrawingPuppetFor?.CaptureFinalHeldWeaponDraw(ref drawInfo);
         }
 
         //Only one aura can be applied, highest in the enum list takes priority
@@ -321,7 +339,7 @@ namespace tsorcRevamp
             // 1 while dashing, fading to 0 over the afterglow so the whole trail dissolves after the dash ends.
             float afterglow = modPlayer.ghostStepAfterglow / (float)tsorcRevampPlayer.GhostAfterglowFrames;
             int cacheCount = drawInfo.DrawDataCache.Count;
-            Color ghostTint = new Color(200, 225, 255);
+            Color ghostTint = modPlayer.dodgeIsLightningDash ? new Color(255, 225, 140) : new Color(200, 225, 255);
 
             for (int echo = tsorcRevampPlayer.GhostTrailEchoes; echo >= 1; echo--)
             {
@@ -394,7 +412,7 @@ namespace tsorcRevamp
             ModLoader.TryGetMod("tsorcRevamp", out Mod mod);
             if (drawInfo.drawPlayer.HeldItem.ModItem != null)
                 return drawInfo.drawPlayer.HeldItem.ModItem.Mod == mod;
-            else if (drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking)
+            else if (drawInfo.drawPlayer.GetModPlayer<EstusFlaskPlayer>().IsDrinking)
                 return true;
             else if (drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 return true;
@@ -628,7 +646,7 @@ namespace tsorcRevamp
             #endregion
 
             #region estus flask
-            tsorcRevampEstusPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<tsorcRevampEstusPlayer>();
+            EstusFlaskPlayer estusPlayer = drawInfo.drawPlayer.GetModPlayer<EstusFlaskPlayer>();
             if (!estusPlayer.Player.dead)
             {
                 int estusFrameCount = 3;
@@ -679,6 +697,7 @@ namespace tsorcRevamp
                 estusPlayer.IsDrinking = false;
             }
             #endregion
+            
             #region cerulean flask
             CeruleanFlaskPlayer ceruleanFlaskPlayer = drawInfo.drawPlayer.GetModPlayer<CeruleanFlaskPlayer>();
             if (!ceruleanFlaskPlayer.Player.dead)
@@ -1001,192 +1020,6 @@ namespace tsorcRevamp
                     Main.spriteBatch.Draw(meterFull, fullBarDestination, new Rectangle(0, (int)(meterFull.Height * (1 - cursePercentage)), meterFull.Width, meterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                     Main.spriteBatch.Draw(powerfulMeterFull, powerfulFullBarDestination, new Rectangle(0, (int)(powerfulMeterFull.Height * (1 - powerfulCursePercentage)), powerfulMeterFull.Width, powerfulMeterFull.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
                 }
-            }
-            #endregion
-
-            #region Runeterra Gauntlets
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<ScorchingPoint>() && drawPlayer.HeldItem.type != 0)
-            {
-                //1) Get texture
-                Texture2D scorchingPointTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/ScorchingPoint_Hand");
-
-                //2) Get the players hand position
-                Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
-
-                //3) Shift the draw position over a bit so it looks right. Feel free to tune this.
-                Vector2 handOffset = new Vector2(12, 2);
-
-                //Flip it if the player is facing left
-                SpriteEffects effect = SpriteEffects.None;
-                if (drawPlayer.direction == -1)
-                {
-                    effect = SpriteEffects.FlipHorizontally;
-                    handOffset.X *= -1;
-                }
-
-                //If the player is on a pully, offset and rotate the sprite to match
-                float drawRotation = 0;
-                if (drawInfo.drawPlayer.pulley)
-                {
-                    //If their hand is pointed straight up, use these values
-                    if (drawPlayer.pulleyDir == 2)
-                    {
-                        drawRotation = -MathHelper.PiOver2;
-                        handOffset = new Vector2(0, -12);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                        }
-                    }
-                    else
-                    {
-                        //If their hand is angled, use these ones
-                        drawRotation = -MathHelper.PiOver4;
-                        handOffset = new Vector2(10, -10);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                            drawRotation -= MathHelper.PiOver2;
-                            handOffset.X *= -1;
-                        }
-                    }
-                }
-
-                //Add the offset to the position
-                drawPosition += handOffset;
-
-                //3) Set up its sprite sheet source and origin variables
-                Rectangle sourceRectangle = new Rectangle(0, 0, scorchingPointTexture.Width, scorchingPointTexture.Height);
-                Vector2 origin = sourceRectangle.Size() / 2f;
-
-                //4) Call the draw function with all the info
-                drawInfo.DrawDataCache.Add(new DrawData(scorchingPointTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
-            }
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() && drawPlayer.HeldItem.type != 0)
-            {
-                //1) Get texture
-                Texture2D interstellarVesselGauntletTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/InterstellarVesselGauntlet_Hand");
-
-                //2) Get the players hand position
-                Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
-
-                //3) Shift the draw position over a bit so it looks right. Feel free to tune this.
-                Vector2 handOffset = new Vector2(12, 2);
-
-                //Flip it if the player is facing left
-                SpriteEffects effect = SpriteEffects.None;
-                if (drawPlayer.direction == -1)
-                {
-                    effect = SpriteEffects.FlipHorizontally;
-                    handOffset.X *= -1;
-                }
-
-                //If the player is on a pully, offset and rotate the sprite to match
-                float drawRotation = 0;
-                if (drawInfo.drawPlayer.pulley)
-                {
-                    //If their hand is pointed straight up, use these values
-                    if (drawPlayer.pulleyDir == 2)
-                    {
-                        drawRotation = -MathHelper.PiOver2;
-                        handOffset = new Vector2(0, -12);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                        }
-                    }
-                    else
-                    {
-                        //If their hand is angled, use these ones
-                        drawRotation = -MathHelper.PiOver4;
-                        handOffset = new Vector2(10, -10);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                            drawRotation -= MathHelper.PiOver2;
-                            handOffset.X *= -1;
-                        }
-                    }
-                }
-
-                //Add the offset to the position
-                drawPosition += handOffset;
-
-                //3) Set up its sprite sheet source and origin variables
-                Rectangle sourceRectangle = new Rectangle(0, 0, interstellarVesselGauntletTexture.Width, interstellarVesselGauntletTexture.Height);
-                Vector2 origin = sourceRectangle.Size() / 2f;
-
-                //4) Call the draw function with all the info
-                drawInfo.DrawDataCache.Add(new DrawData(interstellarVesselGauntletTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
-            }
-            if (drawPlayer.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>() && drawPlayer.HeldItem.type != 0)
-            {
-                //1) Get texture
-                Texture2D centerOfTheUniverseTexture = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Content/Items/Weapons/Summon/Runeterra/CenterOfTheUniverse_Hand");
-
-                //2) Get the players hand position
-                Vector2 drawPosition = drawPlayer.GetFrontHandPosition(Player.CompositeArmStretchAmount.None, drawPlayer.itemRotation);
-
-                //3) Shift the draw position over a bit so it looks right. Feel free to tune this.
-                Vector2 handOffset = new Vector2(12, 2);
-
-                //Flip it if the player is facing left
-                SpriteEffects effect = SpriteEffects.None;
-                if (drawPlayer.direction == -1)
-                {
-                    effect = SpriteEffects.FlipHorizontally;
-                    handOffset.X *= -1;
-                }
-
-                //If the player is on a pully, offset and rotate the sprite to match
-                float drawRotation = 0;
-                if (drawInfo.drawPlayer.pulley)
-                {
-                    //If their hand is pointed straight up, use these values
-                    if (drawPlayer.pulleyDir == 2)
-                    {
-                        drawRotation = -MathHelper.PiOver2;
-                        handOffset = new Vector2(0, -12);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                        }
-                    }
-                    else
-                    {
-                        //If their hand is angled, use these ones
-                        drawRotation = -MathHelper.PiOver4;
-                        handOffset = new Vector2(10, -10);
-
-                        //And flip it if they're looking left
-                        if (drawPlayer.direction == -1)
-                        {
-                            effect = SpriteEffects.FlipVertically;
-                            drawRotation -= MathHelper.PiOver2;
-                            handOffset.X *= -1;
-                        }
-                    }
-                }
-
-                //Add the offset to the position
-                drawPosition += handOffset;
-
-                //3) Set up its sprite sheet source and origin variables
-                Rectangle sourceRectangle = new Rectangle(0, 0, centerOfTheUniverseTexture.Width, centerOfTheUniverseTexture.Height);
-                Vector2 origin = sourceRectangle.Size() / 2f;
-
-                //4) Call the draw function with all the info
-                drawInfo.DrawDataCache.Add(new DrawData(centerOfTheUniverseTexture, drawPosition - Main.screenPosition, sourceRectangle, Color.White, drawRotation, origin, 1, effect, 0));
             }
             #endregion
         }

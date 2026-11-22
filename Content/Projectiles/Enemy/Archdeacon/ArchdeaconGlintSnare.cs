@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 {
@@ -230,8 +231,33 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
             rise.noGravity = true;
         }
 
+        // Default look: in flight a small comet glint (ArchdeaconGlintComet); planted, the ArchdeaconGlintSnare field.
+        // The field's ellipse is 80% of its quad's width, so the quad is drawn 1.25x the snare width to match the area.
+        // It flashes bright for the first 20t after it snares this client's player.
+        private void DrawShader()
+        {
+            float opacity = 1f - Projectile.alpha / 255f;
+
+            if (!IsField)
+            {
+                float rotation = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation();
+                EnemyVFX.DrawArchdeaconGlintComet(Projectile.Center, rotation, 20f, 0.4f, opacity);
+                return;
+            }
+
+            float pulse = (_localHoldTicks - (SnareHoldTicks - 20)) / 20f;
+            float quadWidth = FieldHalfWidth * 2f / 0.8f;
+            EnemyVFX.DrawArchdeaconGlintSnare(new Vector2(Projectile.Center.X, Projectile.Bottom.Y), quadWidth, opacity, pulse);
+        }
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (!GlintLegacyCommand.UseLegacySprites)
+            {
+                DrawShader();
+                return false;
+            }
+
             Texture2D star = TextureAssets.Projectile[Type].Value;
             float opacity = 1f - Projectile.alpha / 255f;
             Color glow = new Color(ArchdeaconGlintStar.GlintCore.R, ArchdeaconGlintStar.GlintCore.G, ArchdeaconGlintStar.GlintCore.B, 0) * opacity;

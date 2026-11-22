@@ -66,7 +66,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
         {
             Vector3 hslColor1 = Main.rgbToHsl(Color.White);
             Vector3 hslColor2 = Main.rgbToHsl(UsefulFunctions.ColorFromFloat(Projectile.ai[1]));
-            if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+            if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
             {
                 hslColor2 = Main.rgbToHsl(Color.OrangeRed);
             }

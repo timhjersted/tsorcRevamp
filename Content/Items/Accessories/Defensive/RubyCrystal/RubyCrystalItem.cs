@@ -9,6 +9,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal
     public class RubyCrystalItem : ModItem 
     {
         public const int MaxLifeIncrease = 40;
+        public const int SoulCost = 400;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxLifeIncrease);
 
         public override void SetDefaults()
@@ -24,7 +25,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.Ruby, 4);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 1000);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), SoulCost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();
@@ -32,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.RubyCrystal
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
-            player.GetModPlayer<RubyCrystalPlayer>().Equipped =  true;
+            player.statLifeMax2 += MaxLifeIncrease;
         }
     }
 }

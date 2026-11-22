@@ -261,7 +261,7 @@ namespace tsorcRevamp.Systems.SummonerRework
                 NPC enemy = Main.npc[i];
 
                 // ⚠ Do NOT gate this on `enemy.damage > 0`. The mod's puppet/invader enemies (DreadWraith,
-                // Hero of Lumelia, Gwyn, Witchking and the rest of NPCs/Puppets) set NPC.damage = 0 by
+                // Hero of Lumelia, Gwyn, Witchking and the rest of NPCs/Invaders) set NPC.damage = 0 by
                 // design and deal everything through weapon hitboxes and projectiles - so a damage-based
                 // filter would make both Drawn Ire and contact damage inert against the hardest fights in
                 // the game.

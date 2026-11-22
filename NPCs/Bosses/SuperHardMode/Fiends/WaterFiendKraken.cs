@@ -2,9 +2,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
+using Terraria.GameContent.NetModules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -173,11 +175,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             }
 
             #region Projectiles and NPCs
-            if (Main.netMode != NetmodeID.MultiplayerClient && !charging)
+            // Runs on every machine so clients get the plasma-orb charge dust and the fire sounds.
+            // Spawns and the next-volley roll are server-only; projectileTimer/projectileType are synced in SendExtraAI.
+            if (!charging)
             {
                 projectileTimer++;
                 ArmorShaderData dustShader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.MartianArmorDye), Main.LocalPlayer);
-                if (projectileType == 9)
+                if (projectileType == 9 && !Main.dedServ)
                 {
                     for (int j = 0; j < 10; j++)
                     {
@@ -227,20 +231,23 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                         }
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     }
-                    if (projectileType != 9)
+                    // Volley done after 5 shots (7 for plasma orbs): every machine resets the timer; only the server
+                    // rolls the next volley type and pushes it to clients (types 0-5 sharks, 6-8 disrupters, 9 plasma orbs).
+                    int lastShotTick = 4;
+
+                    if (projectileType == 9)
                     {
-                        if (projectileTimer == 4)
-                        {
-                            projectileTimer = -120;
-                            projectileType = Main.rand.Next(10);
-                        }
+                        lastShotTick = 6;
                     }
-                    else
+
+                    if (projectileTimer == lastShotTick)
                     {
-                        if (projectileTimer == 6)
+                        projectileTimer = -120;
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
                         {
-                            projectileTimer = -120;
                             projectileType = Main.rand.Next(10);
+                            NPC.netUpdate = true;
                         }
                     }
                 }
@@ -250,14 +257,27 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             //If low on life, start flooding the chamber constantly
             if (NPC.life < (NPC.lifeMax / 2))
             {
-
                 //Don't start a new flood if it's below the normal water line, to avoid fucking with it as much as possible
                 //(water-line Y is legacy 2000-space; MapTileY shifts it on the expanded world)
-                if (radius != 0 || ((NPC.Center.Y / 16) < ExpandedWorldTransform.MapTileY(1820, 1713) && !UsefulFunctions.IsTileReallySolid(NPC.Center / 16)))
+                bool aboveWaterLine = (NPC.Center.Y / 16) < ExpandedWorldTransform.MapTileY(1820, 1713);
+                bool inOpenSpace = !UsefulFunctions.IsTileReallySolid(NPC.Center / 16);
+
+                // Only the server decides when a flood starts. Clients learn radius went nonzero via ReceiveExtraAI,
+                // then advance it locally each tick so the sweep dust tracks the server's flood front.
+                bool isServerOrSingleplayer = Main.netMode != NetmodeID.MultiplayerClient;
+                bool startNewFlood = radius == 0 && isServerOrSingleplayer && aboveWaterLine && inOpenSpace;
+
+                if (startNewFlood)
+                {
+                    NPC.netUpdate = true;
+                }
+
+                if (radius != 0 || startNewFlood)
                 {
                     radius++;
                     FloodArena();
                 }
+
                 if (radius > 300)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -267,18 +287,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
 
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), projCenter.X, projCenter.Y, 0, 0, ModContent.ProjectileType<InkGeyser>(), geyserDamage, 0f, Main.myPlayer, Target.whoAmI);
                     }
+
                     chamberFlooded = !chamberFlooded;
                     radius = 0;
+                    NPC.netUpdate = true;
                 }
             }
         }
 
+        // Flood front distance in tiles (one per tick, wraps at 300). Synced: clients draw the sweep dust from it.
         float radius = 0;
+        // false = this sweep fills the chamber, true = this sweep drains it. Synced so clients agree on the phase.
         bool chamberFlooded;
         //Rectangle arena = new Rectangle(1557, 1639, 467, 103);
-        List<Vector2> activeTiles;
-        List<Vector2> nextTiles;
+        // Server/singleplayer only: tiles the flood fill writes next tick.
+        List<Point> activeTiles;
         int projType = 0;
+
+        // 4-way flood fill neighbours (tile offsets).
+        static readonly Point[] FloodNeighbourOffsets = { new Point(0, 1), new Point(1, 0), new Point(-1, 0), new Point(0, -1) };
         private void AquaWave()
         {
             if (NPC.Center != ArenaCenter)
@@ -375,7 +402,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                     }
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
-                projType = Main.rand.Next(10);
+                // Server rolls the next shot type and syncs it, so clients' sounds and orb-charge dust match what spawns.
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    projType = Main.rand.Next(10);
+                    NPC.netUpdate = true;
+                }
             }
 
             radius++;
@@ -385,6 +417,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
             {
                 chamberFlooded = !chamberFlooded;
                 radius = 0;
+                NPC.netUpdate = true;
 
                 MoveTimer++;
 
@@ -519,115 +552,132 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 return;
             }
 
-            Vector2 centerOver16 = NPC.Center / 16;
-            //Initialize some things
+            bool isServerOrSingleplayer = Main.netMode != NetmodeID.MultiplayerClient;
+
+            //First tick of a sweep: seed the flood front at the Kraken's tile. Only the server writes tiles.
             if (radius == 1)
             {
-                activeTiles = new List<Vector2>();
-                nextTiles = new List<Vector2>();
-                activeTiles.Add(centerOver16);
-            }
-            //Perform the flooding algorithm
-            else
-            {
-                //Most things here work in vector2s, so declaring these here simplifies calculations below
-                Vector2 up = new Vector2(0, 1);
-                Vector2 right = new Vector2(1, 0);
-                Vector2 left = new Vector2(-1, 0);
-                Vector2 down = new Vector2(0, -1);
+                if (isServerOrSingleplayer)
+                {
+                    activeTiles = new List<Point>();
+                    activeTiles.Add(NPC.Center.ToTileCoordinates());
+                }
 
-                //Pick whether we're flooding or emptying
-                int liquidLevel = 255;
+                return;
+            }
+
+            // Flood fill, server/singleplayer only: set every front tile full (or empty when draining), then queue its
+            // open neighbours that aren't at that level yet as next tick's front. Changed tiles are synced in one batch.
+            if (isServerOrSingleplayer && activeTiles != null)
+            {
+                byte liquidLevel = 255;
+
                 if (chamberFlooded)
                 {
                     liquidLevel = 0;
                 }
 
-                //For every tile on the list
+                List<Point> nextTiles = new List<Point>();
+                HashSet<Point> queuedTiles = new HashSet<Point>();
+                HashSet<int> changedTiles = new HashSet<int>();
+
                 for (int i = 0; i < activeTiles.Count; i++)
                 {
-                    //Set it to full/empty
-                    Main.tile[(int)activeTiles[i].X, (int)activeTiles[i].Y].LiquidAmount = (byte)liquidLevel;
+                    Point tileCoords = activeTiles[i];
 
-                    //And add any adjacent unchanged tiles to the nextTiles list
-                    if (!nextTiles.Contains(activeTiles[i] + up) && Main.tile[(int)(activeTiles[i] + up).X, (int)(activeTiles[i] + up).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + up))
+                    // Capture this area's pre-fight water before the first write lands in it, so it can be put back.
+                    KrakenArenaFloodRestore.SnapshotAround(tileCoords.X, tileCoords.Y);
+
+                    // Type set explicitly: a tile's leftover liquid type must not turn the flood into lava/honey.
+                    Tile tile = Main.tile[tileCoords.X, tileCoords.Y];
+                    tile.LiquidType = LiquidID.Water;
+                    tile.LiquidAmount = liquidLevel;
+
+                    // Packed the way vanilla's liquid net module expects: X in the high 16 bits, Y in the low 16.
+                    int packedCoords = (tileCoords.X << 16) | tileCoords.Y;
+                    changedTiles.Add(packedCoords);
+
+                    for (int j = 0; j < FloodNeighbourOffsets.Length; j++)
                     {
-                        nextTiles.Add(activeTiles[i] + up);
-                    }
-                    if (!nextTiles.Contains(activeTiles[i] + right) && Main.tile[(int)(activeTiles[i] + right).X, (int)(activeTiles[i] + right).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + right))
-                    {
-                        nextTiles.Add(activeTiles[i] + right);
-                    }
-                    if (!nextTiles.Contains(activeTiles[i] + left) && Main.tile[(int)(activeTiles[i] + left).X, (int)(activeTiles[i] + left).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + left))
-                    {
-                        nextTiles.Add(activeTiles[i] + left);
-                    }
-                    if (!nextTiles.Contains(activeTiles[i] + down) && Main.tile[(int)(activeTiles[i] + down).X, (int)(activeTiles[i] + down).Y].LiquidAmount != liquidLevel && !UsefulFunctions.IsTileReallySolid(activeTiles[i] + down))
-                    {
-                        nextTiles.Add(activeTiles[i] + down);
+                        int neighbourX = tileCoords.X + FloodNeighbourOffsets[j].X;
+                        int neighbourY = tileCoords.Y + FloodNeighbourOffsets[j].Y;
+
+                        if (!WorldGen.InWorld(neighbourX, neighbourY, 10))
+                        {
+                            continue;
+                        }
+
+                        bool alreadyAtLevel = Main.tile[neighbourX, neighbourY].LiquidAmount == liquidLevel;
+                        bool isSolid = UsefulFunctions.IsTileReallySolid(neighbourX, neighbourY);
+
+                        if (alreadyAtLevel || isSolid)
+                        {
+                            continue;
+                        }
+
+                        Point neighbour = new Point(neighbourX, neighbourY);
+
+                        if (queuedTiles.Add(neighbour))
+                        {
+                            nextTiles.Add(neighbour);
+                        }
                     }
                 }
 
-                //Push tiles that got queued in nextTiles into activeTiles to be operated on next tick, then wipe it
                 activeTiles = nextTiles;
-                nextTiles = new List<Vector2>();
+                KrakenArenaFloodRestore.SendLiquidChanges(changedTiles);
+            }
 
+            if (Main.dedServ)
+            {
+                return;
+            }
 
-                //Dust effect
-                ArmorShaderData shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
-                for (int i = 0; i < 90; i++)
+            // Sweep dust: four mirrored streams moving at the flood front (radius tiles out from the Kraken).
+            // Velocity ramps up over the first 20 ticks of the sweep. Drawn on every client from the synced radius.
+            ArmorShaderData shader = GameShaders.Armor.GetSecondaryShader((byte)GameShaders.Armor.GetShaderIdFromItemId(ItemID.CyanGradientDye), Main.LocalPlayer);
+            Vector2[] mirrorSigns = { new Vector2(1, 1), new Vector2(-1, 1), new Vector2(1, -1), new Vector2(-1, -1) };
+
+            for (int i = 0; i < 90; i++)
+            {
+                float offset = Main.rand.NextFloat(-720, 0);
+                Vector2 velocity = new Vector2(-16, 0);
+
+                if (radius < 20)
                 {
-                    float offset = Main.rand.NextFloat(-720, 0);
-                    Vector2 velocity = new Vector2(-16, 0);
-                    if (radius < 20)
-                    {
-                        velocity *= radius / 20;
-                    }
-                    Vector2 positionOffset = Vector2.Zero;
-                    positionOffset.X += radius * 16;
-                    positionOffset.X += offset;
-                    positionOffset.Y += offset;
+                    velocity *= radius / 20;
+                }
 
-                    Vector2 offset1 = positionOffset + NPC.Center;
-                    Vector2 offset2 = positionOffset;
-                    offset2.X *= -1;
-                    offset2 += NPC.Center;
-                    Vector2 offset3 = positionOffset;
-                    offset3.Y *= -1;
-                    offset3 += NPC.Center;
-                    Vector2 offset4 = positionOffset;
-                    offset4 *= -1;
-                    offset4 += NPC.Center;
+                Vector2 positionOffset = Vector2.Zero;
+                positionOffset.X += radius * 16;
+                positionOffset.X += offset;
+                positionOffset.Y += offset;
 
-                    if (!UsefulFunctions.IsTileReallySolid(offset1 / 16))
+                for (int j = 0; j < mirrorSigns.Length; j++)
+                {
+                    Vector2 dustPosition = NPC.Center + positionOffset * mirrorSigns[j];
+
+                    if (UsefulFunctions.IsTileReallySolid(dustPosition / 16))
                     {
-                        Dust r = Dust.NewDustPerfect(offset1, 174, velocity, 10, default, 2);
-                        r.noGravity = true;
-                        r.shader = shader;
+                        continue;
                     }
-                    if (!UsefulFunctions.IsTileReallySolid(offset2 / 16))
-                    {
-                        Dust l = Dust.NewDustPerfect(offset2, 174, velocity, 10, default, 2);
-                        l.noGravity = true;
-                        l.shader = shader;
-                    }
-                    if (!UsefulFunctions.IsTileReallySolid(offset3 / 16))
-                    {
-                        Dust r = Dust.NewDustPerfect(offset3, 174, velocity, 10, default, 2);
-                        r.noGravity = true;
-                        r.shader = shader;
-                    }
-                    if (!UsefulFunctions.IsTileReallySolid(offset4 / 16))
-                    {
-                        Dust l = Dust.NewDustPerfect(offset4, 174, velocity, 10, default, 2);
-                        l.noGravity = true;
-                        l.shader = shader;
-                    }
+
+                    Dust sweepDust = Dust.NewDustPerfect(dustPosition, DustID.InfernoFork, velocity, 10, default, 2);
+                    sweepDust.noGravity = true;
+                    sweepDust.shader = shader;
                 }
             }
         }
+        // Server/singleplayer only: MoveIndex/MoveCounter are ai[0]/ai[1], so clients follow through the NPC sync
+        // instead of switching moves on their own (possibly out-of-phase) counters.
         private void NextAttack()
         {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            NPC.netUpdate = true;
             MoveIndex++;
             if (MoveIndex > MoveList.Count)
             {
@@ -698,6 +748,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
         {
             return false;
         }
+
+        // Flood phase sync: the server writes the tiles; clients only need radius (sweep dust) and which way the sweep goes.
+        // Plus the server-rolled shot types and the counters that gate them, so client dust/sounds match what spawns.
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(radius);
+            writer.Write(chamberFlooded);
+            writer.Write(MoveTimer);
+            writer.Write(projectileTimer);
+            writer.Write(projectileType);
+            writer.Write(projType);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            radius = reader.ReadSingle();
+            chamberFlooded = reader.ReadBoolean();
+            MoveTimer = reader.ReadInt32();
+            projectileTimer = reader.ReadSingle();
+            projectileType = reader.ReadSingle();
+            projType = reader.ReadInt32();
+        }
         public override void BossLoot(ref string name, ref int potionType)
         {
             potionType = ItemID.SuperHealingPotion;
@@ -736,6 +808,205 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 7").Type, 1f);
                 Gore.NewGore(NPC.GetSource_Death(), NPC.position, new Vector2((float)Main.rand.Next(-30, 31) * 0.2f, (float)Main.rand.Next(-30, 31) * 0.2f), Mod.Find<ModGore>("Water Fiend Kraken Gore 8").Type, 1f);
             }
+        }
+    }
+
+    /// <summary>
+    /// Puts the Kraken chamber's water back after the fight. Nothing in code defines the chamber's water: its resting
+    /// state is the map as built (a standing pool below the legacy Y 1713 "normal water line"). So before the flood
+    /// first writes in an area, the server snapshots the liquid of the surrounding 3x3 block of 50x50-tile cells.
+    /// When no Kraken is active (killed, despawned, or despawned after a wipe) or no player is alive, every changed
+    /// tile is restored and synced.
+    /// Known gap: water that flows 50+ tiles out of every snapshotted cell is not removed.
+    /// Known gap: a dedicated server shut down mid-fight saves the flood (singleplayer restores on quit).
+    /// </summary>
+    public class KrakenArenaFloodRestore : ModSystem
+    {
+        private const int CellSize = 50;
+
+        // NetLiquidModule packets carry a ushort count at 6 bytes per tile; stay well under the 65535-byte packet limit.
+        private const int MaxTilesPerLiquidPacket = 8000;
+
+        private static readonly Dictionary<Point, LiquidSnapshot> snapshots = new Dictionary<Point, LiquidSnapshot>();
+
+        // Cells whose whole 3x3 neighbourhood is already snapshotted, so the per-tile check is one hash lookup.
+        private static readonly HashSet<Point> coveredCells = new HashSet<Point>();
+
+        private class LiquidSnapshot
+        {
+            public readonly byte[] Amounts = new byte[CellSize * CellSize];
+            public readonly byte[] Types = new byte[CellSize * CellSize];
+        }
+
+        /// <summary>Server/SP: call before writing liquid at this tile. Snapshots any of the 3x3 cells around it not yet captured.</summary>
+        public static void SnapshotAround(int tileX, int tileY)
+        {
+            Point centerCell = new Point(tileX / CellSize, tileY / CellSize);
+
+            if (!coveredCells.Add(centerCell))
+            {
+                return;
+            }
+
+            for (int offsetX = -1; offsetX <= 1; offsetX++)
+            {
+                for (int offsetY = -1; offsetY <= 1; offsetY++)
+                {
+                    Point cell = new Point(centerCell.X + offsetX, centerCell.Y + offsetY);
+
+                    if (snapshots.ContainsKey(cell))
+                    {
+                        continue;
+                    }
+
+                    LiquidSnapshot snapshot = new LiquidSnapshot();
+                    int originX = cell.X * CellSize;
+                    int originY = cell.Y * CellSize;
+
+                    for (int localX = 0; localX < CellSize; localX++)
+                    {
+                        for (int localY = 0; localY < CellSize; localY++)
+                        {
+                            int snapshotTileX = originX + localX;
+                            int snapshotTileY = originY + localY;
+
+                            if (!WorldGen.InWorld(snapshotTileX, snapshotTileY))
+                            {
+                                continue;
+                            }
+
+                            Tile tile = Main.tile[snapshotTileX, snapshotTileY];
+                            int index = localX * CellSize + localY;
+                            snapshot.Amounts[index] = tile.LiquidAmount;
+                            snapshot.Types[index] = (byte)tile.LiquidType;
+                        }
+                    }
+
+                    snapshots.Add(cell, snapshot);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Server only (no-op elsewhere): sends liquid changes to clients through vanilla's NetLiquidModule, the same
+        /// path the liquid sim uses. Coords are packed (X &lt;&lt; 16) | Y. Split into batches to bound packet size.
+        /// </summary>
+        public static void SendLiquidChanges(HashSet<int> packedTileCoords)
+        {
+            if (Main.netMode != NetmodeID.Server || packedTileCoords.Count == 0)
+            {
+                return;
+            }
+
+            HashSet<int> batch = new HashSet<int>();
+
+            foreach (int packedCoords in packedTileCoords)
+            {
+                batch.Add(packedCoords);
+
+                if (batch.Count >= MaxTilesPerLiquidPacket)
+                {
+                    NetLiquidModule.CreateAndBroadcastByChunk(batch);
+                    batch.Clear();
+                }
+            }
+
+            if (batch.Count > 0)
+            {
+                NetLiquidModule.CreateAndBroadcastByChunk(batch);
+            }
+        }
+
+        public override void PostUpdateNPCs()
+        {
+            // Server/SP only: clients receive the restored tiles through SendLiquidChanges.
+            if (Main.netMode == NetmodeID.MultiplayerClient || snapshots.Count == 0)
+            {
+                return;
+            }
+
+            bool krakenActive = NPC.AnyNPCs(ModContent.NPCType<WaterFiendKraken>());
+            bool anyPlayerAlive = false;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active && !Main.player[i].dead)
+                {
+                    anyPlayerAlive = true;
+                    break;
+                }
+            }
+
+            // Fight over: killed, despawned, or a wipe. Put the chamber back.
+            if (!krakenActive || !anyPlayerAlive)
+            {
+                RestoreSnapshots();
+            }
+        }
+
+        // Writes back every tile whose liquid differs from its snapshot, reframes it so the liquid sim settles it, and syncs those tiles.
+        private static void RestoreSnapshots()
+        {
+            HashSet<int> changedTiles = new HashSet<int>();
+
+            foreach (KeyValuePair<Point, LiquidSnapshot> entry in snapshots)
+            {
+                int originX = entry.Key.X * CellSize;
+                int originY = entry.Key.Y * CellSize;
+                LiquidSnapshot snapshot = entry.Value;
+
+                for (int localX = 0; localX < CellSize; localX++)
+                {
+                    for (int localY = 0; localY < CellSize; localY++)
+                    {
+                        int tileX = originX + localX;
+                        int tileY = originY + localY;
+
+                        if (!WorldGen.InWorld(tileX, tileY))
+                        {
+                            continue;
+                        }
+
+                        Tile tile = Main.tile[tileX, tileY];
+                        int index = localX * CellSize + localY;
+                        byte savedAmount = snapshot.Amounts[index];
+                        byte savedType = snapshot.Types[index];
+
+                        bool unchanged = tile.LiquidAmount == savedAmount && (savedAmount == 0 || tile.LiquidType == savedType);
+
+                        if (unchanged)
+                        {
+                            continue;
+                        }
+
+                        tile.LiquidAmount = savedAmount;
+                        tile.LiquidType = savedType;
+                        WorldGen.SquareTileFrame(tileX, tileY);
+
+                        int packedCoords = (tileX << 16) | tileY;
+                        changedTiles.Add(packedCoords);
+                    }
+                }
+            }
+
+            snapshots.Clear();
+            coveredCells.Clear();
+            SendLiquidChanges(changedTiles);
+        }
+
+        // Singleplayer quit mid-fight: restore before the world is written to disk.
+        public override void PreSaveAndQuit()
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+            {
+                RestoreSnapshots();
+            }
+        }
+
+        public override void OnWorldUnload()
+        {
+            snapshots.Clear();
+            coveredCells.Clear();
         }
     }
 }

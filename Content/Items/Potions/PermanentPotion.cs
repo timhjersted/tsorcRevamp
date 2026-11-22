@@ -9,6 +9,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.Potions
@@ -784,8 +785,9 @@ namespace tsorcRevamp.Content.Items.Potions
 
         public override void PotionEffect(Player player)
         {
+            player.GetModPlayer<MaxHealthCalculator>().LifeforceLevel = ApplyScaling(20f);
             player.lifeForce = true;
-            player.statLifeMax2 += player.statLifeMax / 5 / 20 * (int)(ApplyScaling(20));
+            //player.statLifeMax2 += player.statLifeMax / 5 / 20 * (int)(ApplyScaling(20));
         }
     }
 

@@ -177,7 +177,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
-            bool isPuppet = npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling;
+            bool isPuppet = npc.ModNPC is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling;
             float progressScale = ProgressionScaling.LifeScale(npc);
 
             if (isPuppet)
@@ -350,12 +350,12 @@ namespace tsorcRevamp.Systems
             RegisterMod("Gaibon", 4000, 6000);
             RegisterMod("Slogra", 4000, 6000);
             Register(NPCID.SkeletronHead, 8000, 9000);
-            RegisterMod("GravelordNito", 4000, 12000);
-            RegisterMod("AncientOolacileDemon", 4800, 10000);
+            RegisterMod("GravelordNito", 4000, 9000);
+            RegisterMod("OolacileDemon", 4800, 10000);
             RegisterMod("BlackNinja", 6000, 6000); // base raised in BlackNinja.cs (was 1800 -> 6000); registry now keeps it there (was 8000)
             RegisterMod("AncestralSpirit", 11900, 12000);
             RegisterMod("JungleWyvernHead", 22000, 25000);
-            RegisterMod("AncientDemon", 10000, 18000);
+            RegisterMod("DefiledDemon", 10000, 18000);
             RegisterMod("StuddedLeatherWarrior", 4000, 4000); // base raised in StuddedLeatherWarrior.cs (was 2600), so no multiplier
 
             // ---- Hardmode ----
@@ -375,6 +375,9 @@ namespace tsorcRevamp.Systems
             Register(NPCID.TheDestroyer, 202500, 200000);
             Register(NPCID.TheDestroyerBody, 202500, 200000);
             Register(NPCID.TheDestroyerTail, 202500, 200000);
+            RegisterMod("TheDestroyerOriginal", 202500, 200000);
+            RegisterMod("TheDestroyerOriginalBody", 202500, 200000);
+            RegisterMod("TheDestroyerOriginalTail", 202500, 200000);
 
             // The Machine: the fight's real pool is core (35000, set in HandleLife) + six arms of 15000 each, about 125000 in
             // Expert. The 20000 -> 30000 pair is the SetDefaults value the table was built from, so it is x1.5 on all of it.
@@ -394,6 +397,8 @@ namespace tsorcRevamp.Systems
 
             Register(NPCID.Plantera, 67200, 70000);
             Register(NPCID.Golem, 90000, 100000);
+            RegisterMod("Ornstein", 39216, 39216); // authored directly: 50k removed per Master kill (x1.275)
+            RegisterMod("Smough", 47059, 47059);   // authored directly: 60k removed per Master kill
             Register(NPCID.DukeFishron, 169000, 180000);
             Register(NPCID.HallowBoss, 198800, 200000);
 
@@ -411,6 +416,15 @@ namespace tsorcRevamp.Systems
             RegisterMod("BrokenOkiku", 15400, 20000);
             RegisterMod("DarkShogunMask", 75000, 75000); // unchanged
             RegisterMod("Attraidies", 400000, 400000); // unchanged
+
+            // The preserved comparison fight keeps the same values.
+            RegisterMod("OldDamnedSoul", 17250, 35000);
+            RegisterMod("OldShadowDragonHead", 126000, 130000);
+            RegisterMod("OldDarkDragonMask", 24000, 30000);
+            RegisterMod("OldOkiku", 22400, 25000);
+            RegisterMod("OldBrokenOkiku", 15400, 20000);
+            RegisterMod("OldDarkShogunMask", 75000, 75000);
+            RegisterMod("OldAttraidies", 400000, 400000);
 
             // ---- Twins V2 ----
             RegisterMod("RetinazerV2", 90000, 120000);
@@ -431,6 +445,7 @@ namespace tsorcRevamp.Systems
             RegisterMod("Artorias", 250000, 500000);
             RegisterMod("Chaos", 450000, 500000);
             RegisterMod("Gwyn", 750000, 1000000);
+            RegisterMod("PrimeGwyn", 1500000, 1500000); // base already set in PrimeGwyn.cs, so no multiplier
             RegisterMod("HellkiteDragonHead", 650000, 650000); // unchanged
             RegisterMod("WyvernMageShadow", 250000, 250000); // unchanged
             RegisterMod("GhostDragonHead", 600000, 600000); // unchanged; Wyvern Mage Shadow's dragon, the larger part of that fight (segments share the head's life)
@@ -474,6 +489,7 @@ namespace tsorcRevamp.Systems
             Enemy("BasiliskWalker", phm: 400, hm: 800); // fodder / standard; authored 100 / 250
             Enemy("GhostOfAHollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("GhostOfTheForgottenWarrior", phm: 600, hm: 800, shm: 8000); // standard / fodder / standard; authored 100 / 200 / 1000
+            Enemy("SkeletonWarrior", phm: 450, hm: 1000, shm: 6000); // standard / standard; puppet; reassembles once (pile 15%, reform 30%)
             Enemy("HollowWarrior", phm: 300, hm: 600, shm: 6000); // standard; authored 100 / 250 / 1000
             Enemy("OolacileCultist", phm: 600, hm: 5000, shm: 12000); // strong; authored 200 / 450 / 3000; caster, contact damage 0; puppet
             Enemy("TibianAmazon", phm: 500, hm: 1000, shm: 10000); // strong; authored 100 / 250
@@ -481,6 +497,7 @@ namespace tsorcRevamp.Systems
             Enemy("AbandonedStump", phm: 250, hm: 500, shm: 5000); // standard / standard / fodder; authored 120 / 240 / 500
             Enemy("FireLurker", phm: 1000, hm: 2000, shm: 12000); // standard; authored 120 / 250 / 1200
             Enemy("ManHunter", phm: 400, hm: 800, shm: 8000); // standard / fodder / fodder; authored 125 / 250 / 600
+            Enemy("ObsidianGuard", phm: 600, hm: 1200, shm: 10000); // Meteor Temple archer; Expert baselines, shared progress scaling.
             Enemy("GhostOfTheForgottenKnight", phm: 700, hm: 1400, shm: 14000); // standard / fodder / standard; authored 150 / 200 / 1000
             Enemy("BarrowWight", phm: 900, hm: 3500, shm: 18000); // standard / standard / fodder; authored 180 / 180 / 180
             Enemy("AttraidiesIllusion", phm: 500, hm: 5000); // strong; authored 400; caster, contact damage 0; HM HP added when it absorbed the Manifestation; does not spawn in SHM
@@ -494,7 +511,7 @@ namespace tsorcRevamp.Systems
             Enemy("RedCloudHunter", phm: 1500, hm: 3000, shm: 18000); // strong / strong / standard; authored 600 / 700 / 2000
             Enemy("LothricKnight", phm: 2000, hm: 6000, shm: 24000); // strong / elite / strong; authored 750 / 1400 / 2500
             Enemy("LothricSpearKnight", phm: 2000, hm: 4000, shm: 24000); // strong; authored 750 / 1200 / 3000
-            Enemy("Warlock", phm: 1500, hm: 3000); // elite / strong; authored 750 / 1500; caster, contact damage 0
+            Enemy("Warlock", hm: 3000, shm: 12000); // strong; Hardmode-only puppet caster since 2026-11-17; authored 1500; contact damage 0
             Enemy("BlackKnight", phm: 10000, hm: 20000, shm: 40000); // elite / elite / strong; authored 1000 / 2000 / 4000
             Enemy("LothricBlackKnight", phm: 2500, hm: 5000, shm: 30000); // elite / elite / strong; authored 1000 / 1500 / 5000
             Enemy("JungleWyvernJuvenileHead", phm: 3000, hm: 6000, shm: 12000); // strong; authored 1250 / 2500 / 3000; HP set high on purpose: piercing weapons hit every segment
@@ -518,7 +535,7 @@ namespace tsorcRevamp.Systems
             Enemy("DworcAlchemist", phm: 500, hm: 1000); // ? / strong; authored 250 / 500; caster, contact damage 0
             Enemy("Tonberry", hm: 3000, shm: 18000); // strong; authored 1500 / 3500; caster, contact damage 0
             Enemy("ParasyticWormHead", hm: 3000); // elite; authored 1500
-            Enemy("FallenNecromancer", hm: 8000); // elite; authored 4000
+            Enemy("BoneChaplain", hm: 8000); // elite; authored 4000; ex-Fallen Necromancer; support caster, contact damage 0
             Enemy("MarilithSpiritTwin", hm: 20000); // mini-boss; authored 10000
 
             // ---- Enemies that first appear in Super Hardmode (HP shown before the x1.0-1.5 SHM progress scaling, which still applies) ----
@@ -530,42 +547,39 @@ namespace tsorcRevamp.Systems
             Enemy("DarkKnight", shm: 40000); // elite; authored 3000; caster, contact damage 0
             Enemy("AbyssLurker", shm: 20000); // strong; authored 1600
             Enemy("DarkBloodKnight", shm: 40000); // elite; authored 3200; caster, contact damage 0
-            Enemy("HydrisElemental", shm: 10000); // standard; authored 1600
+            Enemy("Elemental", shm: 6000); // authored 1600; also every Elemental Necromancer summon
             Enemy("DworcAbysswalker", shm: 15000); // strong; authored 3500; caster, contact damage 0
-            Enemy("HydrisNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
+            Enemy("ElementalNecromancer", shm: 30000); // strong; authored 3500; caster, contact damage 0
             Enemy("CorruptedElemental", shm: 12000); // standard; authored 2000
             Enemy("CorruptedHornet", shm: 9000); // standard; authored 2000
-            Enemy("GuardianCorruptor", shm: 12000); // standard; authored 2200
             Enemy("IceSkeleton", shm: 7000); // standard; authored 2200
-            Enemy("BarrowWightNemesis", shm: 16000); // strong; authored 2500
+            Enemy("BarrowWightNemesis", shm: 24000); // strong; authored 2500
             Enemy("BasiliskHunter", shm: 18000); // strong; authored 2500
-            Enemy("OolacileSorcerer", shm: 15000); // strong; authored 5500; caster, contact damage 0
+            Enemy("OolacileAcolyte", shm: 15000); // strong; authored 5500; caster, contact damage 0
             Enemy("GhostOfTheDarkmoonKnight", shm: 15000); // strong; authored 3000
             Enemy("Tetsujin", shm: 20000); // strong; authored 3400
-            Enemy("OolacileDemon", shm: 16000); // strong; authored 3500
-            Enemy("SlograII", shm: 24000); // strong; authored 4000
-            Enemy("OolacileKnight", shm: 18000); // strong; authored 5400
-            Enemy("TaurusKnight", shm: 20000); // strong; authored 5400
+            Enemy("DarkrootImp", shm: 16000); // strong; authored 3500
+            Enemy("DarkrootSentry", shm: 18000); // strong; authored 5400
             Enemy("Plaguesmith", shm: 50000); // elite; authored 8250
-            Enemy("AncientDemonOfTheAbyss", shm: 35000); // elite; authored 15000
+            Enemy("AncientDemon", shm: 35000); // elite; authored 15000
             Enemy("Massacre", shm: 90000); // elite; authored 20000
             Enemy("SerpentOfTheAbyssHead", shm: 50000); // elite; authored 24000
             Enemy("GreatBlackKnight", shm: 80000); // mini-boss; authored 50000; caster, contact damage 0
 
             // ---- Events: no natural spawn (placed by the map, summoned by a boss or event, or spawned by another enemy), alphabetical ----
-            Enemy("BarrowWightPhantom", shm: 18000); // standard; authored 1250
+            Enemy("BarrowWightPhantom", shm: 50000); // Witchking summon (phase 2); rebuilt as a puppet, authored 50000
             Enemy("DemonLordApocalypse", phm: 150000); // mini-boss; authored 40000
             Enemy("DestroyerLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
-            Enemy("DiscipleOfAttraidies", phm: 6000); // elite; authored 4500; caster, contact damage 0
             Enemy("FrozenGigasStatue", phm: 5000); // standard; authored 250; caster, contact damage 0
             Enemy("Gigas", phm: 100000, hm: 100000, shm: 400000); // mini-boss; authored 32000 / 32000 / 32000
             Enemy("Hydra", phm: 400000); // mini-boss; authored 100000
             Enemy("IceGigas", phm: 50000, hm: 50000, shm: 350000); // mini-boss; authored 22000 / 22000 / 22000
-            Enemy("KnightOfGwyn", shm: 200000); // elite; authored 25000
-            Enemy("MinotaurMage", phm: 900, hm: 1800, shm: 10800); // standard; authored 155 / 155 / 155
+            Enemy("MinotaurMage", phm: 400, hm: 800, shm: 10800); // standard; authored 155 / 155 / 155
+            Enemy("MirrorInvader", hm: 100000, shm: 300000); // mini-boss (event ring, mid HM); authored 20000; contact damage 0. ESTIMATE: ~1m 25s at the HM 1,187 / ~1m 40s at the SHM ~2,950 reference DPS, before its 3 Estus (+36%)
             Enemy("PrimeLaserProbe", phm: 150, hm: 198, shm: 247); // fodder; authored 75 / 75 / 75
             Enemy("QuaraClutchCrab", phm: 500, hm: 2000, shm: 7200); // standard / standard / fodder; authored 400 / 400 / 400
-            Enemy("QuaraMantassin", phm: 3000); // elite; authored 800
+            Enemy("RoyalKnight", shm: 150000); // elite; authored 25000
+            Enemy("Mantassin", shm: 30000); // elite; authored 3000; caster, contact damage 0, SHM-only spawn
             Enemy("Sahagin", phm: 300, hm: 3000, shm: 18000); // fodder; authored 44 / 44 / 44
             Enemy("SerpentOfTheAbyssBody", shm: 20000); // elite; authored 10000
             Enemy("SerpentOfTheAbyssTail", shm: 20000); // elite; authored 10000
@@ -583,7 +597,6 @@ namespace tsorcRevamp.Systems
             //   LothricBlackKnightOriginal: authored 1000 / 1500 / 5000 (legacy/disabled spawn)
             //   LothricKnightOriginal: authored 750 / 1400 / 2500 (legacy/disabled spawn)
             //   LothricSpearKnightOriginal: authored 750 / 1200 / 3000 (legacy/disabled spawn)
-            //   RedKnightTest: authored 2500 / 2500 / 4000 (legacy/disabled spawn)
             //   RingedKnightOriginal: authored 400 / 800 / 2500 (legacy/disabled spawn)
             // Projectile-like helpers, critters and one-hit spawns (HP of 20 or less). Not registered.
             //   CosmicCrystalLizard: authored 18
@@ -595,7 +608,6 @@ namespace tsorcRevamp.Systems
             //   ObsidianJellyfish: authored 4 / 6 / 6
             //   PinwheelFireball: authored 1
             //   ResentfulSeedling: authored 14
-            //   ViciousSpit: authored 1
             //   KhaiosTransitionOrb: authored 1
             //   OwlCompanion: authored 1
             //   OwlFireDiveCompanion: authored 1
@@ -1016,7 +1028,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
-            if (npc.ModNPC is NPCs.Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
+            if (npc.ModNPC is NPCs.Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling)
             {
                 return;
             }

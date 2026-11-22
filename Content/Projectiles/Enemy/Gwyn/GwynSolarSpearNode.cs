@@ -14,6 +14,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
     ///Spears Volley (a few near Gwyn) and the Sunlight Spear Storm (a dozen, in waves).
     ///ai[0] = telegraph ticks before firing.
     ///ai[1] = 1 for the Storm's terrain-charge/rebound spear; 0 for the ordinary Volley spear.
+    ///ai[2] = spear speed (px/tick); 0 for the default.
     ///</summary>
     class GwynSolarSpearNode : ModProjectile
     {
@@ -21,6 +22,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
         const float SpearSpeed = 12f;
 
         int TelegraphTicks => (int)Projectile.ai[0] > 0 ? (int)Projectile.ai[0] : 20;
+        float LaunchSpeed => Projectile.ai[2] > 0f ? Projectile.ai[2] : SpearSpeed;
         int Timer => (int)Projectile.localAI[0];
 
         public override void SetStaticDefaults()
@@ -85,7 +87,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
                     Vector2 dir = target != null && !target.dead
                         ? (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY)
                         : Vector2.UnitY;
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dir * SpearSpeed,
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, dir * LaunchSpeed,
                         ModContent.ProjectileType<GwynSunlightSpear>(), Projectile.damage, 3f, Projectile.owner,
                         Projectile.ai[1] > 0f ? GwynSunlightSpear.StormOutboundState : GwynSunlightSpear.RegularState);
                 }

@@ -19,7 +19,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // PreDraw fades over the last FadeTicks; damage ends when the fade starts.
         const int FadeTicks = 5;
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

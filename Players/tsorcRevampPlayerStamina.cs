@@ -7,14 +7,16 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.Utilities.Balance;
 
@@ -108,6 +110,7 @@ namespace tsorcRevamp
         /// </summary>
         public float staminaResourceGainMult = 1;
         public float staminaResourceGain;
+        internal float UnrestrictedStaminaRegenGain { get; private set; }
         internal float staminaResourceRegenTimer = 0f;
         public static readonly Color RestoreStaminaResource = new Color(20, 100, 20); // We can use this for CombatText, if you create an item that replenishes exampleResourceCurrent.
 
@@ -238,7 +241,7 @@ namespace tsorcRevamp
         public void RecordWeaponOutputDamage(int itemType, int damageDone)
         {
             // Hits a mirror puppet lands through a borrowed ItemCheck are not the player's output; counting
-            // them would let the Mimic Tear (whose damage derives from this EMA) feed back into itself.
+            // them would let the Soul Mimic (whose damage derives from this EMA) feed back into itself.
             if (NPCs.FriendlyPuppets.MirrorPuppetSwap.Active)
             {
                 return;
@@ -535,10 +538,10 @@ namespace tsorcRevamp
             }
             else if (soulsPlayer.Unkindled)
             {
-                // Base 1.85 against 0.85 cost; experimental 2.15 against 1.0 cost. Lower raw regen than BotC, but
-                // the cheaper swings mean Unkindled recovers net faster than BotC at both tiers - on purpose:
+                // Base 2.3 (raised from 2.0) against 0.85 cost; experimental 2.15 against 1.0 cost. Matches BotC's
+                // raw regen while keeping cheaper swings, so Unkindled recovers net faster than BotC - on purpose:
                 // waiting for stamina to refill is the part that feels bad, so Unkindled leans "recovers fast".
-                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 1.85f;
+                staminaResourceRegenRate = experimentalStaminaValues ? 2.15f : 2.3f;
             }
             else
             {
@@ -557,20 +560,21 @@ namespace tsorcRevamp
         }
 
         //const float BoomerangDrainPerFrame = 0.6f;
-        const float HeldProjectileDrainPerFrame = 1f;
         /// <summary>
-        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Both classes
-        /// currently share 60 (1 second); BotC has its own constant so the two can be tuned apart.
+        /// Ticks regeneration stays paused after any stamina expenditure (Souls classes only). Unkindled 45
+        /// (0.75 seconds); BotC 60 (1 second), so pausing between swings forgives the harder mode less.
+        /// (2026-11: Unkindled cut from 60; BotC briefly tried at 75, then returned to 60.)
         ///
         /// Tuning note: the delay is a flat cost, so it eats a larger share of the recovery for whichever
         /// class has the higher regen rate. Giving BotC a shorter pause is the lever if its fast-recovery
         /// identity ever feels muted.
         /// </summary>
-        internal const int StaminaRegenDelayTicks = 60;
+        internal const int StaminaRegenDelayTicks = 45;
         internal const int StaminaRegenDelayTicksBotC = 60;
 
         /// <summary>
-        /// Regen pause applied when a hit is absorbed by a raised shield — 1.5x the ordinary spend delay.
+        /// Regen pause applied when a hit is absorbed by a raised shield — ~1.33x the ordinary spend delay for both
+        /// classes (Unkindled 60 vs 45, BotC 80 vs 60), so neither pays proportionally more to block.
         ///
         /// Blocking a hit is a heavier commitment than a swing: the shield-down window between an enemy's
         /// spaced shots was long enough to refill everything the block cost, which is what made the
@@ -581,22 +585,34 @@ namespace tsorcRevamp
         /// rather than a multiple of the base, so raising the base can silently invert the relationship — and
         /// since PauseStaminaRegen takes the max, a block penalty shorter than a swing's disappears entirely.
         ///
-        /// 1.5x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
+        /// ~1.33x rather than the original 2x because the base doubled. Straight doubling would put an ordinary
         /// block at 2 full seconds, and a greatshield (up to 1.75x on top) at 3.5 — long enough that a single
-        /// block, with no regen while the guard is up, would decide a fight on its own.
+        /// block, with no regen while the guard is up, would decide a fight on its own. (2026-11: was 90 for both
+        /// at 1.5x; now 60 Unkindled / 80 BotC, ~1.33x the spend delays of 45 / 60.)
         /// </summary>
-        internal const int BlockStaminaRegenDelayTicks = 90;
-        internal const int BlockStaminaRegenDelayTicksBotC = 90;
+        internal const int BlockStaminaRegenDelayTicks = 60;
+        internal const int BlockStaminaRegenDelayTicksBotC = 80;
 
         internal int staminaRegenDelayTimer;
         private float _staminaLastFrame;
+
+        /// <summary>Regen multiplier while standing still, once the player has been still for StationaryRegenDelayTicks.</summary>
+        public const float StationaryRegenMult = 1.25f;
+
+        /// <summary>Ticks of zero velocity before the standing-still bonus starts (30 = half a second).</summary>
+        public const int StationaryRegenDelayTicks = 30;
+
+        private int stationaryTicks;
+
+        /// <summary>True while the standing-still regen bonus applies. Also how the balance log tells standing regen apart.</summary>
+        private bool StationaryRegenActive => stationaryTicks >= StationaryRegenDelayTicks;
 
         /// <summary>Ordinary post-spend regen pause for this player's class.</summary>
         internal int SpendRegenDelay => Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
             ? StaminaRegenDelayTicksBotC
             : StaminaRegenDelayTicks;
 
-        /// <summary>Post-block regen pause for this player's class (1.5x the ordinary one).</summary>
+        /// <summary>Post-block regen pause for this player's class (~1.33x the ordinary one).</summary>
         internal int BlockRegenDelay => Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
             ? BlockStaminaRegenDelayTicksBotC
             : BlockStaminaRegenDelayTicks;
@@ -639,9 +655,9 @@ namespace tsorcRevamp
                 return;
             }
 
-            // Balance log: regen while standing still is logged apart because it carries the x1.5 stationary bonus.
+            // Balance log: regen with the standing-still bonus active is logged apart (it carries the StationaryRegenMult bonus).
             string regenSource = BalanceLog.StaminaFromRegen;
-            if (Player.velocity == Vector2.Zero)
+            if (StationaryRegenActive)
             {
                 regenSource = BalanceLog.StaminaFromRegenStanding;
             }
@@ -666,6 +682,30 @@ namespace tsorcRevamp
             float roomInBar = Math.Max(0f, staminaResourceMax2 - staminaResourceCurrent);
             BalanceLog.RecordStaminaGained(Player, regenSource, Math.Min(gain, roomInBar));
             staminaResourceCurrent += gain;
+        }
+
+        /// <summary>
+        /// Stamina restored by an item or effect (droplets, set bonuses). Pays off overdraw debt first and only the rest fills
+        /// the bar, clamped to max, so a refill can't skip the debt lockout. Logs the real gain (debt paid + bar filled) to the
+        /// balance log under <paramref name="logSource"/>. Returns that gain.
+        /// </summary>
+        public float RestoreStamina(float amount, string logSource)
+        {
+            if (amount <= 0f)
+            {
+                return 0f;
+            }
+
+            float debtPaid = Math.Min(staminaDebt, amount);
+            staminaDebt -= debtPaid;
+
+            float leftover = amount - debtPaid;
+            float barBefore = staminaResourceCurrent;
+            staminaResourceCurrent = Math.Min(staminaResourceCurrent + leftover, staminaResourceMax2);
+
+            float gained = debtPaid + (staminaResourceCurrent - barBefore);
+            BalanceLog.RecordStaminaGained(Player, logSource, gained);
+            return gained;
         }
 
         internal void PauseStaminaRegen(int ticks)
@@ -730,20 +770,33 @@ namespace tsorcRevamp
             }
         }
 
-        const float SpecialHeldProjectileDrainPerFrame = 0.6f;
+        const float HeldProjectileDrainPerFrame = 0.5f;
+        const float SpecialHeldProjectileDrainPerFrame = 0.4f;
         const float FlailDrainPerFrame = 0.2f;
-        const float YoyoDrainPerFrame = 0.3f;
+        const float FlailActiveHitDrainPerFrame = 0.4f;
+        internal const int FlailActiveHitWindowTicks = 30;
+        internal int flailActiveHitTimer = 0;
+        const float YoyoDrainPerFrame = 0.25f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.
         private void UpdateResource()
         {
+            // Puppets share class/gear recovery, but not the owner's held-weapon suppression, shield penalty,
+            // or stationary bonus. Capture the gain before those per-actor modifiers below.
+            UnrestrictedStaminaRegenGain = staminaResourceGainMult * staminaResourceRegenRate;
+
             var staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
             var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
             //Main.NewText("Stamina: " + staminaResourceCurrent + "/" + staminaResourceMax2);
             //Main.NewText("Stamina regen rate: " + staminaResourceRegenRate);
             //Main.NewText("Stamina regen gain mult: " + staminaResourceGainMult);
             //Main.NewText("Timer: " + staminaResourceRegenTimer);
+
+            if (flailActiveHitTimer > 0)
+            {
+                flailActiveHitTimer--;
+            }
 
             for (int p = 0; p < 1000; p++) //To-do add a check before this making this loop only run if there are actually any projectiles in the array
             {
@@ -777,11 +830,6 @@ namespace tsorcRevamp
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= BoomerangDrainPerFrame;
                         break;
                     }*/
-                    if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) 
-                        && staminaPlayer.staminaResourceCurrent < staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
-                    {
-                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), ManaBurn.Duration * 60);
-                    }
 
                     if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].type == ProjectileID.VortexBeater
                         || Main.projectile[p].type == ProjectileID.Celeb2Weapon || Main.projectile[p].type == ProjectileID.FlyingKnife))
@@ -813,7 +861,8 @@ namespace tsorcRevamp
                         || Main.projectile[p].type == ProjectileID.Anchor || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
 
                     {
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= FlailDrainPerFrame * mult;
+                        float flailDrain = flailActiveHitTimer > 0 ? FlailActiveHitDrainPerFrame : FlailDrainPerFrame;
+                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= flailDrain * mult;
                         Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
                         if (staminaResourceCurrent < 1)
                         {
@@ -855,9 +904,21 @@ namespace tsorcRevamp
 
 
             staminaResourceGain = staminaResourceGainMult * staminaResourceRegenRate; //Apply our multiplier to our base regen rate
+
+            // Standing-still bonus: only after StationaryRegenDelayTicks of zero velocity, so tapping still between moves
+            // doesn't earn it. Was x1.5 from the first still tick until 2026-10-18.
             if (Player.velocity == Vector2.Zero)
             {
-                staminaResourceGain *= 1.5f;
+                stationaryTicks++;
+            }
+            else
+            {
+                stationaryTicks = 0;
+            }
+
+            if (StationaryRegenActive)
+            {
+                staminaResourceGain *= StationaryRegenMult;
             }
 
             // A raised shield retains only a fraction of normal stamina recovery. The existing post-block delay
@@ -895,19 +956,22 @@ namespace tsorcRevamp
             // A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
             if (Player.whoAmI == Main.myPlayer && staminaRegenDelayTimer <= 0)
             {
-                bool isDrinkingFlask = Player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking
+                bool isDrinkingFlask = Player.GetModPlayer<EstusFlaskPlayer>().IsDrinking
                     || Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking;
 
                 //no stamina regen during a roll/swordspin/using an item/drinking a flask, for balance? Yes
                 if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping && !isDrinkingFlask)
                 {
+                    // Minion staves do not consume stamina on swing and should not pause stamina regen mid-swing.
+                    bool swingingStaminaItem = Player.itemAnimation != 0 && Player.HeldItem.DamageType != DamageClass.Summon;
+
                     if (!Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
                     {
                         // Unkindled no longer regenerates while swinging either, matching Bearer of the
                         // Curse. Classic keeps regenerating unconditionally — it pays no weapon stamina,
                         // so gating it would only punish dodge rolls.
                         bool blockedByAttacking = Player.GetModPlayer<tsorcRevampPlayer>().Unkindled
-                            && Player.itemAnimation != 0;
+                            && swingingStaminaItem;
 
                         if (!blockedByAttacking && staminaResourceRegenTimer > 3)
                         {
@@ -915,13 +979,16 @@ namespace tsorcRevamp
                             staminaResourceRegenTimer = 0;
                         }
                     }
-                    else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && Player.itemAnimation == 0 && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
+                    else if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && !swingingStaminaItem && staminaResourceCurrent <= minionStaminaCap) //Bearer of the Curse doesn't regen stamina while using items
                     {
                         if (staminaResourceRegenTimer > 3)
                         {
                             ApplyRegenTick(staminaResourceGain);
 
-                            if (staminaResourceCurrent > minionStaminaCap) { staminaResourceCurrent = minionStaminaCap; }
+                            if (staminaResourceCurrent > minionStaminaCap)
+                            {
+                                staminaResourceCurrent = minionStaminaCap;
+                            }
 
                             staminaResourceRegenTimer = 0;
                         }
@@ -982,6 +1049,8 @@ namespace tsorcRevamp
                 if (item.damage <= 0 && item.type != ItemID.CoinGun) return;
                 if (item.ammo != AmmoID.None) return; //ammo does not consume stamina
                 if (item.type == ItemID.EoCShield) return;
+                // Its own tooltip reports all three swing prices and the per-rotation price.
+                if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>()) return;
                 StringBuilder tipToAdd = new();
                 // Checked against WeaponClassifiedTools directly, NOT UsesOutputBasedWeaponCost — that
                 // function now only distinguishes CoinGun from everything else, so it can't be used to

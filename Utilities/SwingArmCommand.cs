@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Utilities
 {
@@ -130,9 +130,16 @@ namespace tsorcRevamp.Utilities
                         PuppetAttackTelemetry.EndSession("logging-disabled");
                     else if (!wasLogging && PuppetNPC.SwingDebugLog)
                         PuppetAttackTelemetry.StartSession("logging-enabled");
+                    // Telemetry also needs the DebugMode config, so say so instead of silently reporting OFF after "on".
+                    string debugModeNote = "";
+                    if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+                    {
+                        debugModeNote = " - turn on DebugMode in the mod config to record";
+                    }
+
                     caller.Reply(
                         $"Puppet attack telemetry: {(PuppetNPC.SwingDebugLog ? "ON (automatic)" : "OFF")} " +
-                        $"(Logs/{PuppetAttackTelemetry.FileName})",
+                        $"(Logs/{PuppetAttackTelemetry.FileName}){debugModeNote}",
                         PuppetNPC.SwingDebugLog ? Color.Lime : Color.Gray);
                     break;
 

@@ -1,0 +1,69 @@
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.NPCs.Bosses.Okiku.SecondForm
+{
+    public class OldShadowDragonTail : ModNPC
+    {
+        public override void SetStaticDefaults()
+        {
+            NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers()
+            {
+                Hide = true
+            };
+            NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, value);
+            NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
+        }
+        public override void SetDefaults()
+        {
+            NPC.value = 0;
+            NPC.width = 12;
+            NPC.height = 12;
+            NPC.aiStyle = 6;
+            NPC.damage = 80;
+            NPC.defense = 20;
+            NPC.boss = true;
+            NPC.noGravity = true;
+            NPC.noTileCollide = true;
+            NPC.lifeMax = 91000000;
+            NPC.HitSound = SoundID.NPCHit1;
+            NPC.DeathSound = SoundID.NPCDeath8;
+            NPC.knockBackResist = 0f;
+            DrawOffsetY = 50;
+            NPC.dontCountMe = true;
+            bodyTypes = new int[] {
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonLegs>(),
+            ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody>(),
+            ModContent.NPCType<OldShadowDragonLegs>(), ModContent.NPCType<OldShadowDragonBody>(), ModContent.NPCType<OldShadowDragonBody2>(), ModContent.NPCType<OldShadowDragonBody3>()
+            };
+        }
+        public static int[] bodyTypes;
+
+
+        public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
+        {
+            return false;
+        }
+        public override void AI()
+        {
+            tsorcRevampGlobalNPC.AIWorm(NPC, ModContent.NPCType<OldShadowDragonHead>(), bodyTypes, ModContent.NPCType<OldShadowDragonTail>(), 25, 0.8f, 16f, 0.33f, true, false, true, false, false);
+
+            if (Main.rand.NextBool(3))
+            {
+                int dust = Dust.NewDust(new Vector2(base.NPC.position.X, base.NPC.position.Y), base.NPC.width, base.NPC.height, 62, 0f, 0f, 100, Color.White, 2f);
+                Main.dust[dust].noGravity = true;
+            }
+        }
+
+        // Comparison fight: skipping the kill transaction means no loot, potions, defeated flag or world progression.
+        public override bool PreKill()
+        {
+            return false;
+        }
+    }
+}

@@ -38,12 +38,12 @@ namespace tsorcRevamp.Content.Items.Armor.Ranged
         }
         public override void UpdateArmorSet(Player player)
         {
-            player.GetModPlayer<Shunpo>().HasShunpo = true;
+            player.GetModPlayer<ShunpoPlayer>().HasShunpo = true;
             player.ammoCost75 = true;
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            var modPlayer = Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>();
+            var modPlayer = Main.LocalPlayer.GetModPlayer<ShunpoPlayer>();
             modPlayer.ShunpoTooltip(tooltips);
         }
         public override void AddRecipes()

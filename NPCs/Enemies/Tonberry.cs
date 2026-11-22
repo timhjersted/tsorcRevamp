@@ -54,27 +54,6 @@ namespace tsorcRevamp.NPCs.Enemies
         int throwingKnifeDamage = 9999;
 
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player P = spawnInfo.Player;
-            bool InGrayLayer = spawnInfo.SpawnTileY >= Main.rockLayer && spawnInfo.SpawnTileY < (Main.maxTilesY - 200) * 16;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-
-            if (spawnInfo.Water) return 0f;
-
-            if (Main.hardMode && !FrozenOcean && Main.rand.NextBool(200)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneDungeon && Main.rand.NextBool(30)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && P.ZoneJungle && Main.rand.NextBool(75)) return 1;
-
-            if (tsorcRevampWorld.SuperHardMode && Main.rand.NextBool(100)) return 1;
-
-            return 0;
-        }
-        #endregion
-
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1f, 0.07f, 0.5f, lavaJumping: true, canDodgeroll: false, canPounce: false);

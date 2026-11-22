@@ -1,24 +1,24 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 
 namespace tsorcRevamp.Content.Items
 {
+    // Legacy item. Shops now take Dark Souls directly, so a Soul Coin is only ever a stand-in for SoulsPerCoin Dark Souls.
+    // The class stays because ~45 loot tables, bags and events still drop it and old saves still hold it:
+    // a spawned coin becomes Dark Souls on the spot, and any coin that reaches a player is moved into the soul slot.
     class SoulCoin : BaseRarityItem
     {
-        public override void SetStaticDefaults()
-        {
-            /* Tooltip.SetDefault("A mysterious coin formed out of dark souls" +
-                "\nUsed as a currency among certain merchants"); */
-            //Main.RegisterItemAnimation(item.type, new DrawAnimationVertical(4, 8));
+        public const int SoulsPerCoin = 5;
 
-        }
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SoulsPerCoin);
 
         public override void SetDefaults()
         {
@@ -28,30 +28,57 @@ namespace tsorcRevamp.Content.Items
             Item.value = 1;
             Item.rare = ItemRarityID.Lime;
             DarkSoulRarity = 12;
-            Item.consumable = true; 
-            Item.shoot = ModContent.ProjectileType<SoulCoinProj>(); 
-            Item.ammo = AmmoID.Coin;
-            // Still usable by Coin Gun, but picked up into the main inventory for shop currency.
-            Item.notAmmo = true;
         }
 
-        public override void UpdateInventory(Player player)
+        // Adds coin.stack * SoulsPerCoin Dark Souls to the player's soul slot and empties the coin.
+        // Callers: pickup, inventory arrival (e.g. taken from a chest) and the world-entry sweep. Returns the souls added.
+        public static int ConvertToSoulSlot(Player player, Item coin)
         {
-            bool hasCoinGun = player.HasItem(ItemID.CoinGun);
+            int soulsAdded = coin.stack * SoulsPerCoin;
+            coin.TurnToAir();
 
-            if (hasCoinGun)
+            Item soulSlotItem = player.GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item;
+            if (soulSlotItem.IsAir || soulSlotItem.type != ModContent.ItemType<DarkSoulItem>())
             {
-                Item.damage = 45;
-			    Item.shootSpeed = 1.8f; 
-                Item.DamageType = DamageClass.Ranged;
+                player.GetModPlayer<tsorcRevampPlayer>().SoulSlot.Item = new Item(ModContent.ItemType<DarkSoulItem>(), soulsAdded);
             }
             else
             {
-                Item.damage = 0; 
-                Item.shootSpeed = 0f; 
+                soulSlotItem.stack += soulsAdded;
             }
+
+            return soulsAdded;
         }
-        
+
+        // Every drop path (NPC loot, bags, QuickSpawnItem, events) goes through Item.NewItem, which calls OnSpawn
+        // before the server broadcasts the item, so clients only ever receive the Dark Souls.
+        public override void OnSpawn(IEntitySource source)
+        {
+            int soulCount = Item.stack * SoulsPerCoin;
+            Item.SetDefaults(ModContent.ItemType<DarkSoulItem>());
+            Item.stack = soulCount;
+        }
+
+        // Fallback for a coin that was never spawned through NewItem (e.g. sitting in a world chest from an old save).
+        public override bool OnPickup(Player player)
+        {
+            int soulsAdded = ConvertToSoulSlot(player, Item);
+            SoundEngine.PlaySound(SoundID.Grab, player.Center);
+            PopupText.NewText(PopupTextContext.RegularItemPickup, new Item(ModContent.ItemType<DarkSoulItem>(), soulsAdded), soulsAdded);
+            return false;
+        }
+
+        // Catches coins that land in the inventory without a pickup, such as ones taken out of a chest.
+        public override void UpdateInventory(Player player)
+        {
+            if (player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            ConvertToSoulSlot(player, Item);
+        }
+
         public override bool GrabStyle(Player player)
         {
             Vector2 vectorItemToPlayer = player.Center - Item.Center;
@@ -60,11 +87,10 @@ namespace tsorcRevamp.Content.Items
             return true;
         }
 
-        public override bool CanPickup(Player player)
+        // Converted on pickup, so it never needs inventory room.
+        public override bool ItemSpace(Player player)
         {
-            // Also gate contact pickup, so a full inventory doesn't repeatedly attempt pickup.
-            // Use Terraria's capacity check to include stack room and an enabled Void Bag.
-            return player.ItemSpace(Item).CanTakeItem;
+            return true;
         }
 
         public override void GrabRange(Player player, ref int grabRange)
@@ -81,28 +107,6 @@ namespace tsorcRevamp.Content.Items
                     line2.OverrideColor = BaseColor.RarityExample;
                 }
             }
-        }
-
-        public override bool OnPickup(Player player)
-        {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.CoinPickup with { Volume = 0.8f }, player.Center);
-            return true;
-        }
-
-        public override void AddRecipes()
-        {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 5);
-
-            recipe.Register();
-
-            Recipe recipe2 = CreateRecipe(10);
-            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50);
-            recipe2.Register();
-
-            Recipe recipe3 = CreateRecipe(100);
-            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 500);
-            recipe3.Register();
         }
 
         int itemframe = 0;

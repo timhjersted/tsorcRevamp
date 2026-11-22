@@ -9,7 +9,6 @@ using Terraria.Utilities;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
-using tsorcRevamp.Content.Items.Accessories.Defensive.CovenantOfArtorias;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.BossItems;
@@ -64,7 +63,7 @@ namespace tsorcRevamp.NPCs.Friendly
 
         public override void PostAI()
         {
-            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.TheSorrow>())))
+            if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheSorrow>())))
             {
                 //Legacy 2000-space; mapped on the expanded world (identity elsewhere). Runs every tick once the
                 //condition is met, so an un-shifted value here would silently re-pin her home each frame.
@@ -233,93 +232,87 @@ namespace tsorcRevamp.NPCs.Friendly
 
             shop.Add(new Item(ModContent.ItemType<OldChainCoif>())
             {
-                shopCustomPrice = 25,
+                shopCustomPrice = 450,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<OldChainArmor>())
             {
-                shopCustomPrice = 50,
+                shopCustomPrice = 450,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<OldChainGreaves>())
             {
-                shopCustomPrice = 33,
+                shopCustomPrice = 450,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.Bottle)
             {
-                shopCustomPrice = 3,
+                shopCustomPrice = 15,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ItemID.BottledWater)
             {
-                shopCustomPrice = 3,
+                shopCustomPrice = 15,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<CosmicWatch>())
             {
-                shopCustomPrice = 5,
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<BossRematchTome>())
             {
-                shopCustomPrice = 5,
+                shopCustomPrice = 40,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<Darksign>())
             {
-                shopCustomPrice = 5,
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<MastersScroll>())
             {
-                shopCustomPrice = 5,
+                shopCustomPrice = 25,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             });
 
             shop.Add(new Item(ModContent.ItemType<EnergyStrikeScroll>())
             {
-                shopCustomPrice = 4000,
+                shopCustomPrice = 45000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, Condition.DownedPlantera);
-
-            shop.Add(new Item(ModContent.ItemType<CovenantOfArtoriasItem>())
-            {
-                shopCustomPrice = 4000,
-                shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
-            }, new Condition("", () => tsorcRevampWorld.SuperHardMode));
 
             if (ModLoader.TryGetMod("ThoriumMod", out Mod thorium))
             {
                 shop.Add(new Item(thorium.Find<ModItem>("VampireGland").Type)
                 {
-                    shopCustomPrice = 1800,
+                    shopCustomPrice = 9000,
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.Hardmode);
 
                 shop.Add(new Item(thorium.Find<ModItem>("CrystalWave").Type)
                 {
-                    shopCustomPrice = 1000,
+                    shopCustomPrice = 5000,
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.Hardmode);
 
                 shop.Add(new Item(thorium.Find<ModItem>("HowToSpeakWhaleABiography").Type)
                 {
-                    shopCustomPrice = 1500,
+                    shopCustomPrice = 7500,
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.Hardmode);
 
                 shop.Add(new Item(thorium.Find<ModItem>("NanoClamCane").Type)
                 {
-                    shopCustomPrice = 800,
+                    shopCustomPrice = 4000,
                     shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                 }, Condition.DownedEowOrBoc); 
             }

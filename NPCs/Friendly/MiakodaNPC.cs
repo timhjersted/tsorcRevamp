@@ -22,6 +22,8 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
+using tsorcRevamp.NPCs.Bosses.Birds;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -642,7 +644,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 }
             }
             // Golem baby
-            else if (!BossDefeated(NPCID.Golem))
+            else if (!NPC.downedGolemBoss)
             {
                 // The player has likely defeated plantera at this point, but if they haven't they need to now.
                 if (!BossDefeated(NPCID.Plantera))

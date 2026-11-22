@@ -67,8 +67,6 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampAIs.EvasiveOnHit(NPC, projectile.DamageType == DamageClass.Melee);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
         public override void AI()
         {
             NPC.TargetClosest(true);

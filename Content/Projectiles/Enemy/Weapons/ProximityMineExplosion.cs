@@ -1,7 +1,9 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -65,6 +67,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D sprite = TextureAssets.Projectile[Type].Value;
+            Rectangle frame = sprite.Frame(1, Main.projFrames[Type], 0, Projectile.frame, 0, 0);
+            // The painted burst fills the top-left 50x50 of each 52x52 frame.
+            Vector2 origin = new Vector2(25f);
+            Main.EntitySpriteDraw(sprite, Projectile.Center - Main.screenPosition, frame, Color.White,
+                Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            return false;
+        }
+
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
             => target.AddBuff(BuffID.OnFire, 6 * 60);
     }

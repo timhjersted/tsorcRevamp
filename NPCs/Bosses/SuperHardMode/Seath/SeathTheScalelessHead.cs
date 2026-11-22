@@ -10,6 +10,7 @@ using Terraria.ModLoader.Config;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
+using tsorcRevamp.Content.Items.Accessories.Ranged.BlueTearstoneRing;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -40,7 +41,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
             NPC.damage = 150;
-            NPC.defense = 120;
+            NPC.defense = 90;
             NPC.HitSound = SoundID.NPCHit6;//6 is werewolf, 7 is the worst, generic hit sound evvarrr, 13, 21 worth trying
             NPC.DeathSound = SoundID.Item119;//good dragon death sound
             NPC.lifeMax = 475000;
@@ -73,23 +74,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
         bool secondCrystalSpawned = false;
         bool finalCrystalsSpawned = false;
         float customspawn1;
-        // Frost meter gain (FrostBuildup, meter caps at 100) per contact hit from the head or body; replaced the old Curse buildup.
-        public const int FrostBuildupPerHit = 40;
-
-        // Frost meter gain per hit from Seath's thrown projectiles (Frozen Saw, Ice Storm ball + icicles, Massive Crystal Shards).
-        public const int ProjectileFrostBuildupPerHit = 30;
-
-        // Several of those projectiles are shared with other bosses (Dark Cloud, Wyvern Mage, Disciple of Attraidies...), so only
-        // shots whose source chain traces back to Seath's head build Frost. Runs on the hit player's machine.
-        public static void ApplyProjectileFrost(Projectile projectile, Player target)
-        {
-            int sourceNPCType = projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
-
-            if (sourceNPCType == ModContent.NPCType<SeathTheScalelessHead>())
-            {
-                FrostBuildup.Apply(target, ProjectileFrostBuildupPerHit);
-            }
-        }
+        // Frost meter gain (FrostBuildup, meter caps at 100) per hit from ANY Seath damage source: contact from every segment
+        // and the Primordial Crystals, plus every projectile he fires except the breath (tsorcGlobalProjectile.OnHitPlayer, by SourceNPCType).
+        public const int FrostBuildupPerHit = 25;
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -27,10 +28,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
     [AutoloadBossHead]
 
     //Current bugs:
-    // - Clones will spawn without line of sight. It happens when the player is near the top of the arena. To circumvent this I tried spawning the clones at the
-    //      start of CreateClones() elsewhere and then teleporting them to the arena at the end of CreateClones(), but this leads to the same problem.
-    // - When summoned with Boss Rematch Tome, Pinwheel spawns in the ceiling. I assume there is always a set distance between player and boss, but I don't know where
-    //      this is to try and adjust it.
+    // (Fixed: clones spawning without line of sight - GenerateTeleportPosition passed tile coords to the pixel-space Collision.CanHit.
+    //  Fixed: spawning in the ceiling from the Boss Rematch Tome - BossSelectVisuals spawned every boss 400px above the player.)
     // - There is sometimes some jankiness with pinwheel sliding/moving when it shouldnt.
     // - Sometimes pinwheels CreateClones() animation plays weirdly, still happens rarely despite my best efforts. 
     // - Pinwheel takes damage from sword slashes when NPC.dontTakeDamage is set to true. It doesn't take damage from projectiles of any sort though. I don't know how
@@ -95,6 +94,24 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
         int moveCount = 0; //How many moves perforned, used in conjuntion with movesBeforeTeleport
         float damageModifier = 1; //Multiplicator for damage, changed based on phase
 
+        //Teleport bookkeeping is decided on the server only (AttackTransition / ExecuteQueuedTeleport), but clients read it to drive
+        //the fade-out before a warp and the fade-in after one. base sends MoveIndex + transition timers first.
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(moveCount);
+            writer.Write(movesBeforeTeleport);
+            writer.Write(justTeleported);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            moveCount = reader.ReadInt32();
+            movesBeforeTeleport = reader.ReadInt32();
+            justTeleported = reader.ReadBoolean();
+        }
+
         public override bool PreAI()
         {
             if (NPC.ai[3] == 1)
@@ -118,27 +135,87 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 NPC.value = 0;
                 NPC.boss = false;
                 despawnHandler = new NPCDespawnHandler(null, Color.Black, 6);
+                //Clone HP follows the same New Enemy Balance multipliers as the real boss's two life bars
+                //(bar 1 via LifeMultiplier, bar 2 via PhaseLifeMultiplier), so the clone:boss ratio holds with the toggle on.
                 if (Phase == 0) //This allows us to bring current hp down to 200 as soon as it spawns
                 {
-                    NPC.lifeMax = (int)(200 * HealthScale);
+                    NPC.lifeMax = EnemyBalance.ScaleLife(NPC.type, (int)(200 * HealthScale));
 
                     if (!cloneSpawned)
                     {
-                        NPC.life = (int)(200 * HealthScale);
+                        NPC.life = NPC.lifeMax;
                         cloneSpawned = true;
                     }
                 }
                 if (Phase >= 1)
                 {
-                    NPC.lifeMax = (int)(400 * HealthScale);
+                    NPC.lifeMax = (int)(400 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2));
 
                     if (!cloneSpawned)
                     {
-                        NPC.life = (int)(400 * HealthScale);
+                        NPC.life = NPC.lifeMax;
                         cloneSpawned = true;
                     }
                 }
             }
+
+            //Fade in/out for teleports, intro and death. Runs here rather than in PreDraw because AI gates invulnerability and
+            //movement on it: PreDraw never runs on a dedicated server (opacity stuck at 0 = permanently invulnerable) or while off-screen.
+            //It runs before the early returns below so it ticks during death and phase transitions too, exactly as the draw call did.
+            #region Opacity
+
+            bool teleportFadeOut = introFinished && !justTeleported && attackTransitionTimeRemaining > 0 && attackTransitionTimeRemaining <= 30 && moveCount >= movesBeforeTeleport;
+            bool cloneSplitFadeOut = MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer > 190 && MoveTimer <= 220;
+            bool arenaWarpWindow = phaseTransitionTimeRemaining > phaseTransitionDuration - 90 && Phase == 1;
+
+            //Grouping kept identical to the old one-line condition: the arena-warp exception only ever applied to the clone split.
+            if (teleportFadeOut || (cloneSplitFadeOut && !arenaWarpWindow))
+            {
+                opacityTimer--;
+            }
+            if (opacityTimer < 30 && justTeleported)
+            {
+                opacityTimer++;
+            }
+
+            //"Death" during the phase 1 transition: fade out, warp to the arena centre at -110, fade back in
+            if (phaseTransitionTimeRemaining < phaseTransitionDuration - 80 && phaseTransitionTimeRemaining >= phaseTransitionDuration - 110)
+            {
+                opacityTimer--;
+            }
+            if (phaseTransitionTimeRemaining == phaseTransitionDuration - 110)
+            {
+                opacityTimer = 0;
+            }
+            if (phaseTransitionTimeRemaining < phaseTransitionDuration - 110 && phaseTransitionTimeRemaining >= phaseTransitionDuration - 140)
+            {
+                opacityTimer++;
+            }
+
+            opacityTimer = Math.Clamp(opacityTimer, 0, 30);
+            opacity = opacityTimer / 30.0;
+
+            //The intro fades in over 40 ticks for the boss, 30 for clones (their introDuration)
+            if (introTimer < introDuration && !isClone)
+            {
+                opacity = introTimer / 40.0;
+            }
+            if (introTimer < introDuration && isClone)
+            {
+                opacity = introTimer / 30.0;
+            }
+
+            //Death fade over the second half of the death animation
+            if (deathAnimationProgress > deathAnimationDuration / 2)
+            {
+                opacity = 2 - deathAnimationProgress / 90.0;
+            }
+            if (deathAnimationProgress > deathAnimationDuration / 2 && Phase == 6 && !isClone)
+            {
+                opacity = 2 - deathAnimationProgress / 150.0;
+            }
+
+            #endregion
 
             if (Phase >= 1)
             {
@@ -167,206 +244,114 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == 0 && introTimer > 1)
                 {
-                    if (isClone) //Clones losing lanterns
+                    //Phases 1-5 each own one lantern break, at an unscaled life threshold of the REAL boss.
+                    //Clones read the real boss's life so every Pinwheel sheds the same lantern at the same moment.
+                    int lanternThreshold = 0;
+                    List<Vector2> breakingLanterns = new List<Vector2>();
+
+                    switch (Phase)
                     {
-                        if (Main.npc[mainBossIndex].life < (int)(4100 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 1)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternMiddleLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++; //Use this rather than NextPhase() because I don-t want to set MoveTimer back to 0
-                        }
-                        if (Main.npc[mainBossIndex].life < (int)(3700 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 2)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternBottomRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
-                        }
-                        if (Main.npc[mainBossIndex].life < (int)(3300 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 3)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternBottomLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
-                        }
-                        if (Main.npc[mainBossIndex].life < (int)(2900 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 4)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternMiddleRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            attackTransitionDuration = 140;
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
-                        }
-                        if (Main.npc[mainBossIndex].life < (int)(2500 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 5 && NPC.life > 1)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.life > 1)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternTopLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                    Dust.NewDustDirect(lanternTopRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            attackTransitionDuration = 180;
-                            phaseTransitionDuration = 400;
-                            NextPhase();
-                        }
+                        case 1:
+                            lanternThreshold = 4100;
+                            breakingLanterns.Add(lanternMiddleLeft);
+                            break;
+                        case 2:
+                            lanternThreshold = 3700;
+                            breakingLanterns.Add(lanternBottomRight);
+                            break;
+                        case 3:
+                            lanternThreshold = 3300;
+                            breakingLanterns.Add(lanternBottomLeft);
+                            break;
+                        case 4:
+                            lanternThreshold = 2900;
+                            breakingLanterns.Add(lanternMiddleRight);
+                            break;
+                        case 5:
+                            lanternThreshold = 2500;
+                            breakingLanterns.Add(lanternTopLeft);
+                            breakingLanterns.Add(lanternTopRight);
+                            break;
                     }
 
-                    else //Main boss losing lanterns
+                    int bossLife = NPC.life;
+                    if (isClone)
                     {
-                        if (NPC.life < (int)(4100 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 1)
+                        bossLife = Main.npc[mainBossIndex].life;
+                    }
+
+                    int scaledThreshold = (int)(lanternThreshold * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2));
+                    bool dyingClone = isClone && NPC.life <= 1;
+
+                    //A dying clone still keeps pace with lanterns 1-4, but must not enter the phase 6 transition.
+                    bool lanternBreaks = lanternThreshold > 0 && bossLife < scaledThreshold;
+                    if (Phase == 5 && dyingClone)
+                    {
+                        lanternBreaks = false;
+                    }
+
+                    if (lanternBreaks)
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
+
+                        //The first lantern's embers pop more upward (-1 max Y speed instead of -0.5)
+                        float slowestRise = -0.5f;
+                        if (Phase == 1)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternMiddleLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -1f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
+                            slowestRise = -1f;
                         }
-                        if (NPC.life < (int)(3700 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 2)
+
+                        foreach (Vector2 lantern in breakingLanterns)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            //Shatter dust on every machine (it used to sit inside the server gate, so MP clients never saw it)
+                            if (!Main.dedServ)
                             {
                                 for (int i = 0; i < 30; i++)
                                 {
-                                    Dust.NewDustDirect(lanternBottomRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
+                                    Dust.NewDustDirect(lantern, 8, 10, DustID.Torch, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
                                 }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
                             }
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
+
+                            //Spilled greek fire from the lantern's centre (+4,+5 is the middle of its 8x10 socket)
+                            if (Main.netMode != NetmodeID.MultiplayerClient && !dyingClone)
+                            {
+                                Vector2 spillPoint = lantern + new Vector2(4, 5);
+                                int[] greekFireTypes = { ProjectileID.GreekFire1, ProjectileID.GreekFire2, ProjectileID.GreekFire3, ProjectileID.GreekFire3 };
+
+                                foreach (int greekFireType in greekFireTypes)
+                                {
+                                    Vector2 spillVelocity = new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, slowestRise));
+                                    Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), spillPoint, spillVelocity, greekFireType, 18, 0, Main.myPlayer, 0, 0);
+                                }
+                            }
                         }
-                        if (NPC.life < (int)(3300 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 3)
+
+                        if (Phase < 5)
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            if (Phase == 4)
                             {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternBottomLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternBottomLeft, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
+                                attackTransitionDuration = 140;
                             }
+
                             phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
+                            Phase++; //Not NextPhase(): lantern losses must not reset MoveTimer mid-attack
                         }
-                        if (NPC.life < (int)(2900 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 4)
+                        else
                         {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternMiddleRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternMiddleRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
-                            attackTransitionDuration = 140;
-                            phaseTransitionTimeRemaining = phaseTransitionDuration;
-                            Phase++;
-                        }
-                        if (NPC.life < (int)(2500 * HealthScale * EnemyBalance.PhaseLifeMultiplier(NPC.type, 2)) && Phase == 5)
-                        {
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item89 with { Volume = 1.2f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Shatter with { Volume = 1f, PitchVariance = 0.2f, MaxInstances = 10 }, NPC.Center);
-                            if (Main.netMode != NetmodeID.MultiplayerClient)
-                            {
-                                for (int i = 0; i < 30; i++)
-                                {
-                                    Dust.NewDustDirect(lanternTopLeft, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                    Dust.NewDustDirect(lanternTopRight, 8, 10, 6, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 50, default(Color), Main.rand.NextFloat(1, 1.5f));
-                                }
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopLeft + new Vector2(4, 5), new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire1, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire2, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), lanternTopRight, new Vector2(Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-1.5f, -0.5f)), ProjectileID.GreekFire3, 18, 0, Main.myPlayer, 0, 0);
-                            }
                             attackTransitionDuration = 180;
                             phaseTransitionDuration = 400;
-                            deathAnimationDuration = 250;
+                            if (!isClone)
+                            {
+                                deathAnimationDuration = 250;
+                            }
+
                             NextPhase();
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            NPC.netUpdate = true;
                         }
                     }
                 }
@@ -445,6 +430,11 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             if (!isClone && NPC.CountNPCS(ModContent.NPCType<Pinwheel>()) < 3 && NPC.ai[0] != 0 && attackTransitionTimeRemaining == 30 && Phase == 0) //If there are less than 3 Pinwheels and it wasn-t about to spawn clones anyway. Check transition time so as not to interrupt current attack
             {
                 MoveIndex = PinwheelAttackID.CreateClonesID; //Then spawn clones, while not skipping what attack was coming next anyway
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
             }
             else if (!isClone && NPC.CountNPCS(ModContent.NPCType<Pinwheel>()) < 3 && MoveIndex != PinwheelAttackID.CreateClonesID && Phase >= 1) //Same as previous phase but will interrupt attacks, causing clones to respawn sooner
             {
@@ -481,8 +471,8 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             //Create a new function for every move of your boss, and then add them to this list alongside the duration of the attack
             MoveList = new List<BossMove>
             {
-                new BossMove(CreateClones, 220, id : PinwheelAttackID.CreateClonesID), //Always plays twice at the start, not what I want. However I skip one.
-                new BossMove(VolcanicEruption, 370, id : PinwheelAttackID.VolcanicEruptionID), //Move in index 1 of this list doesn't run till in second movepool loop, hence skipping move several times for clones
+                new BossMove(CreateClones, 220, id : PinwheelAttackID.CreateClonesID), //Index 0 always opens the fight
+                new BossMove(VolcanicEruption, 370, id : PinwheelAttackID.VolcanicEruptionID),
                 new BossMove(Flamethrower, 420, id : PinwheelAttackID.FlamethrowerID),
                 new BossMove(BouncingFireball, 180, id: PinwheelAttackID.BouncingFireballID),
                 new BossMove(KillableFireball, 150, id: PinwheelAttackID.KillableFireballID),
@@ -612,7 +602,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     }
                 }
 
-                if (MoveTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient) //Shoot bouncing fireball
+                if (MoveTimer == 90) //Shoot bouncing fireball
                 {                        
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
 
@@ -674,79 +664,39 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             Vector2 shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 6);
             if (Phase >= 1) shootSpeed = UsefulFunctions.Aim(new Vector2(NPC.Center.X - 5, NPC.Center.Y - 30), Target.Center, 8);
 
-            if (MoveTimer == 90) //Shoot killable Gaibon fireballs
-            {                    
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
-
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                {
-                    if (Phase < 6 || Phase == 6)
-                    {
-                        NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 5 || Phase == 6)
-                    {
-                        NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 4 || Phase == 6)
-                    {
-                        NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 6 || Phase == 6)
-                    {
-                        NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 2 || Phase == 6)
-                    {
-                        NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 3 || Phase == 6)
-                    {
-                        NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                }
-            }
-
-            if (MoveTimer == 120) //Shoot killable Gaibon fireballs
+            if (MoveTimer == 90 || MoveTimer == 120) //Shoot killable Gaibon fireballs, one per lantern still lit
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    if (Phase < 6 || Phase == 6)
-                    {
-                        NPC shot1 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopLeft.X, (int)lanternTopLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot1.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
+                    //Lanterns break one per phase 2-5 (top pair last); phase 6 relights all six with shadowflame
+                    List<Vector2> litLanterns = new List<Vector2>();
+                    litLanterns.Add(lanternTopLeft);
+                    litLanterns.Add(lanternTopRight);
                     if (Phase < 5 || Phase == 6)
                     {
-                        NPC shot2 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleRight.X, (int)lanternMiddleRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot2.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                        litLanterns.Add(lanternMiddleRight);
                     }
                     if (Phase < 4 || Phase == 6)
                     {
-                        NPC shot3 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomLeft.X, (int)lanternBottomLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot3.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
-                    }
-                    if (Phase < 6 || Phase == 6)
-                    {
-                        NPC shot4 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternTopRight.X, (int)lanternTopRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot4.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                        litLanterns.Add(lanternBottomLeft);
                     }
                     if (Phase < 2 || Phase == 6)
                     {
-                        NPC shot5 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternMiddleLeft.X, (int)lanternMiddleLeft.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot5.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                        litLanterns.Add(lanternMiddleLeft);
                     }
                     if (Phase < 3 || Phase == 6)
                     {
-                        NPC shot6 = NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lanternBottomRight.X, (int)lanternBottomRight.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y);
-                        shot6.damage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+                        litLanterns.Add(lanternBottomRight);
+                    }
+
+                    //Damage rides in ai[3]: NPC.damage isn't synced, and contact damage is checked on the hit player's client
+                    int fireballDamage = (int)(DamageNumbers["KillableFireballDamage"] * damageModifier);
+
+                    foreach (Vector2 lantern in litLanterns)
+                    {
+                        NPC.NewNPCDirect(NPC.GetSource_FromThis(), (int)lantern.X, (int)lantern.Y, projectileType, 0, 0, shootSpeed.X, shootSpeed.Y, fireballDamage);
                     }
                 }
             }
@@ -806,7 +756,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
         public void CreateClones() //Creates two clones at the end of the move near the player
         {
-            if (isClone || NPC.CountNPCS(ModContent.NPCType<Pinwheel>()) >= 5 && MoveTimer < 3)
+            if (isClone || (NPC.CountNPCS(ModContent.NPCType<Pinwheel>()) >= 5 && MoveTimer < 3))
             {
                 justSkippedMove = true;
                 NextMove();
@@ -814,13 +764,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             NPC.noGravity = true;
             NPC.velocity = Vector2.Zero;
 
-            if (MoveTimer == 0) //Get spawn and teleport locations ready at the start of the attack to allow time to sync
+            if (MoveTimer == 0)
             {
                 cloneTimer = 0;
                 cloneOffset = 0;
-                cloneSpawnLocation1 = GenerateTeleportPosition(NPC, 50, true); //Choose a random location for 1 of the clones to spawn at
-                cloneSpawnLocation2 = GenerateTeleportPosition(NPC, 50, true); //Choose a random location for the other clone to spawn at
-                QueueTeleport(NPC, 50, true, 200); //Choose a location for main boss to teleport to
             }
             if (MoveTimer == 1) //A sad attempt at fixing weirdly drawn clones. It worked I think, why.
             {
@@ -836,10 +783,16 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 NPC.dontTakeDamage = true;
             }
-            if (MoveTimer == 220) //Spawn clones at the chosen random location and teleport main boss away
+            if (MoveTimer == 220) //Spawn clones at random spots around the player and teleport main boss away
             {
+                //Server-only: it owns the clone spawns, and the warp reaches clients through the synced position + TeleportTelegraph.
+                //Spots are picked now rather than at MoveTimer 0, so they're checked against where the player stands after the 220-tick wind-up.
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
+                    cloneSpawnLocation1 = GenerateTeleportPosition(NPC, 50, true);
+                    cloneSpawnLocation2 = GenerateTeleportPosition(NPC, 50, true);
+                    QueueTeleport(NPC, 50, true, 200);
+
                     if (cloneSpawnLocation1.HasValue)
                     {
                         int cloneLeft = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation1.Value.X, (int)cloneSpawnLocation1.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
@@ -850,9 +803,11 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         int cloneRight = NPC.NewNPC(NPC.GetSource_FromThis(), (int)cloneSpawnLocation2.Value.X, (int)cloneSpawnLocation2.Value.Y + 70, ModContent.NPCType<Pinwheel>(), 0, 0, 0, Phase, 1);
                         Main.npc[cloneRight].boss = false;
                     }
+
+                    ExecuteQueuedTeleport(NPC);
+                    NPC.netUpdate = true;
                 }
-              
-                ExecuteQueuedTeleport(NPC);
+
                 justTeleported = true;
                 justSkippedMove = true; //This makes it so that the boss and new clones all attack at the same time once the move ends, except when they're skipping using BlindingPulse in first phase
                 moveCount = 0;
@@ -871,19 +826,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
             {
                 if (MoveTimer > 120 && MoveTimer < 250 && MoveTimer % rightSideShotDelay == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(0.5f, 3f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(0.5f, 3f), Main.rand.NextFloat(-5.5f, -1.5f)), ModContent.ProjectileType<PinwheelBallOfFire>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
                     shot1.timeLeft = 360;
-                    shot1.hostile = true;
-                    shot1.friendly = false;
                     if (Phase == 1) shot1.timeLeft = 480;
                 }
 
                 if (MoveTimer > 120 && MoveTimer < 250 && (MoveTimer - 15) % leftSideShotDelay == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(-3f, -0.5f), Main.rand.NextFloat(-5.5f, -1.5f)), ProjectileID.BallofFire, (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
+                    Projectile shot1 = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), new Vector2(NPC.Center.X - 5, NPC.Center.Y - 140), new Vector2(Main.rand.NextFloat(-3f, -0.5f), Main.rand.NextFloat(-5.5f, -1.5f)), ModContent.ProjectileType<PinwheelBallOfFire>(), (int)(DamageNumbers["VolcanicEruptionDamage"] * damageModifier), 0, Main.myPlayer, 0, 0);
                     shot1.timeLeft = 360;
-                    shot1.hostile = true;
-                    shot1.friendly = false;
                     if (Phase >= 1) shot1.timeLeft = 480;
                 }
             }
@@ -997,15 +948,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 NPC.noGravity = false;
             }
 
-            if (introTimer == 40)
-            {
-                NextMove(); //Skip first move of main boss, which would have been a duplicate CreateClones()
-            }
-
+            //Clones skip the opening CreateClones (move 0) and start on the queued random move instead.
+            //The real boss keeps move 0, so it opens the fight by splitting.
             if (introTimer == 30 && isClone)
             {
-                NextMove();
-                NextMove();
                 NextMove();
             }
 
@@ -1065,25 +1011,37 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         }
                     }
 
+                    //One copy per player, dropped instanced: in MP each player sees and picks up only their own copy.
+                    //These used to be loose Item.NewItem drops (one per player), so whoever got there first took everyone's.
                     if (deathAnimationProgress == deathAnimationDuration && Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
-                        {
-                            if (Main.expertMode || Main.masterMode)
-                            {
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<PinwheelBag>(), 1, false, -1);
-                            }
-                            else
-                            {
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<WingedSpear>(), 1, false, -1);
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<WandOfFire2>(), 1, false, -1);
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheChild>(), 1, false, -1);
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheFather>(), 1, false, -1);
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<MaskOfTheMother>(), 1, false, -1);
-                                Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<EstusRing>(), 1, false, -1);
+                        Vector2 dropPosition = NPC.Center + new Vector2(-18, 24);
+                        List<int> drops = new List<int>();
 
-                            }
+                        if (Main.expertMode || Main.masterMode)
+                        {
+                            drops.Add(ModContent.ItemType<PinwheelBag>());
                         }
+                        else
+                        {
+                            drops.Add(ModContent.ItemType<WingedSpear>());
+                            drops.Add(ModContent.ItemType<WandOfFire2>());
+                            drops.Add(ModContent.ItemType<MaskOfTheChild>());
+                            drops.Add(ModContent.ItemType<MaskOfTheFather>());
+                            drops.Add(ModContent.ItemType<MaskOfTheMother>());
+                            drops.Add(ModContent.ItemType<EstusRing>());
+                        }
+
+                        //interactionRequired false: players who only fought the clones never "interacted" with this NPC.
+                        //DropItemInstanced also zeroes NPC.value (vanilla puts the coins in the bag), and the Dark Souls drop reads it.
+                        float soulValue = NPC.value;
+
+                        foreach (int dropType in drops)
+                        {
+                            NPC.DropItemInstanced(dropPosition, Vector2.One, dropType, 1, false);
+                        }
+
+                        NPC.value = soulValue;
                     }
                     base.HandleDeath();
                 }
@@ -1116,11 +1074,14 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                 QueueTeleport(NPC, 50, true, 200);
             }
 
-            if (attackTransitionTimeRemaining <= 1 && introFinished && moveCount >= movesBeforeTeleport && NPC.life > 1)
+            //Server decides the warp; clients get the new position, moveCount, movesBeforeTeleport and justTeleported from the sync.
+            //Clients used to run this too, with their own Main.rand roll for movesBeforeTeleport, so they warped on different attacks.
+            if (attackTransitionTimeRemaining <= 1 && introFinished && moveCount >= movesBeforeTeleport && NPC.life > 1 && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 ExecuteQueuedTeleport(NPC);
                 moveCount = 0;
                 justTeleported = true;
+                NPC.netUpdate = true;
             }
         }
 
@@ -1147,7 +1108,16 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == phaseTransitionDuration - 110) //Teleport "dead" Pinwheel to arena centre floor
                 {
-                    NPC.Center = ExpandedWorldTransform.MapWorld(new Vector2(4139f, 933f) * 16);
+                    //Only when this is the adventure map's arena: on any other world (or summoned elsewhere with the Rematch Tome)
+                    //that tile is arbitrary terrain, so it stays put. 1600px = 100 tiles, generous for anywhere inside the arena.
+                    Vector2 arenaCentre = ExpandedWorldTransform.MapWorld(new Vector2(4139f, 933f) * 16);
+                    bool inAdventureArena = tsorcRevampWorld.CustomMap && !tsorcRevampWorld.RemixMap && NPC.Distance(arenaCentre) < 1600f;
+
+                    if (inAdventureArena)
+                    {
+                        NPC.Center = arenaCentre;
+                    }
+
                     justTeleported = true;
 
                     if (Main.netMode == NetmodeID.Server)
@@ -1158,10 +1128,11 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
                 if (phaseTransitionTimeRemaining == phaseTransitionDuration - 240 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    for (int i = 0; i < Main.CurrentFrameFlags.ActivePlayersCount; i++)
-                    {
-                        Item.NewItem(NPC.GetSource_FromThis(), NPC.Center + new Vector2(-18, 24), ModContent.ItemType<RingOfFavorAndProtection>(), 1, false, -1);
-                    }
+                    //Instanced so each player gets their own ring (was one loose drop per player, first come first served).
+                    //Same NPC.value restore and no-interaction rule as the death drops in HandleDeath.
+                    float soulValue = NPC.value;
+                    NPC.DropItemInstanced(NPC.Center + new Vector2(-18, 24), Vector2.One, ModContent.ItemType<RingOfFavorAndProtection>(), 1, false);
+                    NPC.value = soulValue;
                 }
 
                 if (phaseTransitionTimeRemaining < phaseTransitionDuration - 300 && phaseTransitionTimeRemaining > phaseTransitionDuration - 1000)
@@ -2284,48 +2255,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                     if (Phase == 6) spriteBatch.Draw(shadowflameTexture, NPC.position - Main.screenPosition + new Vector2(cloneOffset, 0), new Rectangle(0, NPC.frame.Y, 198, 234), Color.LightYellow * 0.5f, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
                 }
             }
-            /*if (!isClone)
-            {
-                Main.NewText("opacityTimer is " + opacityTimer + " attackTransTimeRem is " + attackTransitionTimeRemaining + " attacksBeforeTP " + movesBeforeTeleport);
-            }*/
-            if (introFinished && !justTeleported && ((attackTransitionTimeRemaining > 0 && attackTransitionTimeRemaining <= 30) && moveCount >= movesBeforeTeleport) || (MoveIndex == PinwheelAttackID.CreateClonesID && MoveTimer > 190 && MoveTimer <= 220) && !(phaseTransitionTimeRemaining > phaseTransitionDuration - 90 && Phase == 1))
-            {
-                opacityTimer--;
-            }
-            if (opacityTimer < 30 && justTeleported)
-            {
-                opacityTimer++;
-            }
-            if (opacityTimer > 30)
-            {
-                opacityTimer = 30;
-            }
-            if (opacityTimer < 0)
-            {
-                opacityTimer = 0;
-            }
-
-            opacity = (double)opacityTimer / (double)30;
-            if (introTimer < introDuration && !isClone) { opacity = (double)introTimer / (double)40; }
-            if (introTimer < introDuration && isClone) { opacity = (double)introTimer / (double)30; }
-
-            //Death opacity
-            if (deathAnimationProgress > deathAnimationDuration / 2) { opacity = ((double)deathAnimationProgress / (double)90) * -1 + 2; }
-            if (deathAnimationProgress > deathAnimationDuration / 2 && Phase == 6 && !isClone) { opacity = ((double)deathAnimationProgress / (double)150) * -1 + 2; }
-
-
-            //"Death" during phase transition opacity for teleport to arena center
-            if (phaseTransitionTimeRemaining < phaseTransitionDuration - 80 && phaseTransitionTimeRemaining >= phaseTransitionDuration - 110) { opacityTimer--; }
-            if (phaseTransitionTimeRemaining == phaseTransitionDuration - 110) { opacityTimer = 0; }
-            if (phaseTransitionTimeRemaining < phaseTransitionDuration - 110 && phaseTransitionTimeRemaining >= phaseTransitionDuration - 140) { opacityTimer++; }
-            /*if (phaseTransitionTimeRemaining <= phaseTransitionDuration - 140 && phaseTransitionTimeRemaining > phaseTransitionDuration - 1000) 
-            { 
-                opacityTimer = 30;
-                opacity = 1;
-            }*/
-
-
-            //Draw main boss texture
+            //Draw main boss texture (opacity is simulated in AI's Opacity region)
             Main.EntitySpriteDraw(texture, NPC.position - Main.screenPosition, new Rectangle(0, NPC.frame.Y, 198, 234), lightColor * (float)opacity, NPC.rotation, new Vector2(69, 75), NPC.scale, SpriteEffects.None, 0);
 
             if (introTimer < 1) return true; //This has to be done so that Boss Rematch Tome has a sprite to display for pinwheel
@@ -2703,8 +2633,15 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                             continue;
                         }
 
-                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
-                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        //If it requires line of sight and the spot can't see the player, skip to the next try.
+                        //Collision.CanHit works in PIXELS; this used to pass tile coords, so the check tested a point near the world's
+                        //top-left corner and passed or failed at random (clones landing on top of the arena roof). Eye point = 70px
+                        //above the floor tile, the same offset newPosition uses below, so it's roughly the boss's chest.
+                        Vector2 eyePoint = new Vector2((int)teleportTarget.X * 16, ((int)teleportTarget.Y + y) * 16 - 70);
+                        Vector2 playerCenter = Main.player[npc.target].Center;
+                        bool canSeePlayer = Collision.CanHit(eyePoint, 2, 2, playerCenter, 2, 2) && Collision.CanHitLine(eyePoint, 2, 2, playerCenter, 2, 2);
+
+                        if (requireLineofSight && !canSeePlayer)
                         {
                             //Main.NewText("Fail 3");
                             continue;
@@ -2721,8 +2658,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         Vector2 newPosition = Vector2.Zero;
                         newPosition.X = ((int)teleportTarget.X * 16 - npc.width / 2); //Center npc at target
                         newPosition.Y = (((int)teleportTarget.Y + y) * 16 - 70); //Subtract 75, not npc.height from y so block is under feet (because of the way its drawn)
-                        npc.TargetClosest(true);
-                        npc.netUpdate = true;
+                        //No TargetClosest here: targeting belongs to despawnHandler.TargetAndDespawn; picking a spot shouldn't retarget the boss.
                         //Main.NewText(newPosition.X + " " + newPosition.Y);
                         return newPosition;
                     }
@@ -2804,6 +2740,10 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
 
             movesBeforeTeleport = DecideMovesBeforeTeleport(Main.npc[npc.whoAmI]);
             npc.Center = globalNPC.TeleportTelegraph;
+
+            //Consume the destination. Otherwise a later QueueTeleport that finds no valid spot leaves this one in place,
+            //and the next warp jumps back to an old position that may be nowhere near the player any more.
+            globalNPC.TeleportTelegraph = Vector2.Zero;
         }
 
         #endregion

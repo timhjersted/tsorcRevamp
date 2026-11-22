@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Enums;
+using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.FriendlyPuppets;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -41,14 +43,14 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override bool PreDraw(ref Color lightColor)
         {
-            //Get the premultiplied, properly transparent texture
-            Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MasterBuster];
-
             if (IsAtMaxCharge)
             {
-                DrawLaser(Main.spriteBatch, texture, Main.player[Projectile.owner].Center,
+                Texture2D texture = TransparentTextureHandler.TransparentTextures[TransparentTextureHandler.TransparentTextureType.MasterBuster];
+                Vector2 origin = MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+                DrawLaser(Main.spriteBatch, texture, origin,
                     Projectile.velocity, 10, Projectile.damage, -1.57f, 1f, 2000f, Color.White, (int)MOVE_DISTANCE);
             }
+
             return false;
         }
 
@@ -81,59 +83,104 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if (!IsAtMaxCharge) return false;
+            if (!IsAtMaxCharge)
+            {
+                return false;
+            }
 
-            Player player = Main.player[Projectile.owner];
-            Vector2 unit = Projectile.velocity;
+            Vector2 origin = MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+            Vector2 end = origin + Projectile.velocity * Distance;
             float point = 0f;
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), player.Center,
-                player.Center + unit * Distance, 22, ref point);
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin, end, 22, ref point);
         }
 
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            Projectile.position = player.Center + Projectile.velocity * MOVE_DISTANCE;
-            Projectile.timeLeft = 2;
+            MirrorPuppetProjectile tag = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            bool fromPuppet = tag.FromMirrorPuppet;
+            bool localOwner = Projectile.owner == Main.myPlayer;
 
-            UpdatePlayer(player);
-            ChargeLaser(player);
-
-            if (Charge < MAX_CHARGE) return;
-
-            SetLaserPosition(player);
-            SpawnDusts(player);
-            CastLights();
-            if (Main.GameUpdateCount % 8 == 0)
+            // Remote puppet beams follow the synced NPC. Only the firing client has the puppet's input and mana.
+            if (localOwner || !fromPuppet)
             {
-                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), player.Center);
+                bool puppetReleased = fromPuppet && (!MirrorPuppetSwap.Active || !player.controlUseItem);
+
+                if (puppetReleased || !player.channel)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+
+                Item weapon = player.HeldItem;
+
+                if (Main.GameUpdateCount % 10 == 0 && !player.CheckMana(weapon, weapon.mana, pay: true, blockQuickMana: fromPuppet))
+                {
+                    Projectile.Kill();
+                    return;
+                }
+
+                UpdatePlayer(player, fromPuppet);
             }
 
+            if (fromPuppet && tag.GetFiringPuppet(Projectile) == null)
+            {
+                return;
+            }
+
+            // Draw the puppet beam in the projectile pass. The player keeps its held-projectile layer.
+            Projectile.hide = !fromPuppet;
+            Vector2 origin = MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+            Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
+            Projectile.timeLeft = 2;
+            Charge = MAX_CHARGE;
+            Distance = 2000f;
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            SpawnDusts(origin);
+            CastLights();
+
+            if (Main.GameUpdateCount % 8 == 0)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), origin);
+            }
         }
 
-        private void SpawnDusts(Player player)
+        private void SpawnDusts(Vector2 origin)
         {
-            Vector2 unit = Projectile.velocity * -1;
-            Vector2 dustPos = player.Center + Projectile.velocity;
-            for (int i = 0; i < 2; ++i)
-            {
+            Vector2 chargePosition = origin + Projectile.velocity * (MOVE_DISTANCE - 20f) - new Vector2(10f, 10f);
+            Vector2 chargeVelocity = Projectile.velocity * 0.5f;
+            Dust chargeDust = Dust.NewDustDirect(chargePosition, 20, 20, DustID.Electric, chargeVelocity.X, chargeVelocity.Y);
+            chargeDust.velocity = Main.rand.NextVector2CircularEdge(2.7f, 2.7f);
+            chargeDust.noGravity = true;
+            chargeDust.scale = Main.rand.Next(10, 20) * 0.05f;
 
-                float num1 = Projectile.velocity.ToRotation() + (Main.rand.NextBool(2) ? -1.0f : 1.0f) * 1.57f;
-                float num2 = (float)(Main.rand.NextDouble() * 0.8f + 1.0f);
-                Vector2 dustVel = new Vector2((float)Math.Cos(num1) * num2, (float)Math.Sin(num1) * num2);
-                Dust dust = Main.dust[Dust.NewDust(dustPos, 0, 0, 226, dustVel.X, dustVel.Y)];
+            Vector2 dustPosition = origin + Projectile.velocity;
+
+            for (int i = 0; i < 2; i++)
+            {
+                float side = Main.rand.NextBool() ? -1f : 1f;
+                Vector2 dustVelocity = Projectile.velocity.RotatedBy(side * MathHelper.PiOver2);
+                dustVelocity *= Main.rand.NextFloat(1f, 1.8f);
+                Dust dust = Dust.NewDustDirect(dustPosition, 0, 0, DustID.Electric, dustVelocity.X, dustVelocity.Y);
                 dust.noGravity = true;
                 dust.scale = 1.2f;
-                Dust.NewDustDirect(Main.player[Projectile.owner].Center, 0, 0, 45,
-                    -unit.X * Distance, -unit.Y * Distance, 255, Color.White, 10.0f);
+                Vector2 beamEndVelocity = Projectile.velocity * Distance;
+                Dust.NewDustDirect(origin, 0, 0, DustID.ManaRegeneration, beamEndVelocity.X, beamEndVelocity.Y, 255, Color.White, 10f);
             }
 
             for (int j = 0; j < 100; j++)
             {
                 if (Main.rand.NextBool(5))
                 {
+                    Vector2 alongBeam = origin + Projectile.velocity * (Distance * j / 100f);
                     Vector2 offset = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(8));
-                    Dust dust = Main.dust[Dust.NewDust((player.Center + (Projectile.velocity * (Distance * (float)(j / 100f)))) + offset - Vector2.One * 4f, 8, 8, 111, 0.0f, 0.0f, 125, Color.LightBlue, 2f)];
+                    Vector2 spawnPosition = alongBeam + offset - Vector2.One * 4f;
+                    Dust dust = Dust.NewDustDirect(spawnPosition, 8, 8, DustID.HallowSpray, 0f, 0f, 125, Color.LightBlue, 2f);
                     dust.velocity = Vector2.Zero;
                     dust.noGravity = true;
                     dust.rotation = Projectile.rotation;
@@ -141,72 +188,32 @@ namespace tsorcRevamp.Content.Projectiles
             }
         }
 
-        private void SetLaserPosition(Player player)
+        private void UpdatePlayer(Player player, bool fromPuppet)
         {
-            Distance = 2000f;
-        }
-
-        private void ChargeLaser(Player player)
-        {
-            if (!player.channel)
-            {
-                Projectile.Kill();
-            }
-            else
-            {
-                // Do we still have enough mana? If not, we kill the projectile because we cannot use it anymore
-                if (Main.GameUpdateCount % 10 < 1 && !player.CheckMana(player.inventory[player.selectedItem].mana, true))
-                {
-                    Projectile.Kill();
-                }
-                Vector2 offset = Projectile.velocity;
-                offset *= MOVE_DISTANCE - 20;
-                Vector2 pos = player.Center + offset - new Vector2(10, 10);
-                if (Charge < MAX_CHARGE)
-                {
-                    Charge++;
-                }
-                int chargeFact = (int)(Charge / 20f);
-                Vector2 dustVelocity = Vector2.UnitX * 18f;
-                dustVelocity = dustVelocity.RotatedBy(Projectile.rotation - 1.57f);
-                Vector2 spawnPos = Projectile.Center + dustVelocity;
-                for (int k = 0; k < chargeFact + 1; k++)
-                {
-                    Vector2 spawn = spawnPos + ((float)Main.rand.NextDouble() * 6.28f).ToRotationVector2() * (12f - chargeFact * 2);
-                    Dust dust = Main.dust[Dust.NewDust(pos, 20, 20, 226, Projectile.velocity.X / 2f, Projectile.velocity.Y / 2f)];
-                    dust.velocity = Vector2.Normalize(spawnPos - spawn) * 1.5f * (10f - chargeFact * 2f) / 10f;
-                    dust.noGravity = true;
-                    dust.scale = Main.rand.Next(10, 20) * 0.05f;
-                }
-            }
-        }
-
-        private void UpdatePlayer(Player player)
-        {
-            // Multiplayer support here, only run this code if the client running it is the owner of the projectile
             if (Projectile.owner == Main.myPlayer)
             {
-                Vector2 diff = Main.MouseWorld - player.Center;
-                diff.Normalize();
-                Projectile.velocity = diff;
+                Vector2 aim = Main.MouseWorld - player.Center;
+                Projectile.velocity = aim.SafeNormalize(Projectile.velocity);
                 Projectile.direction = Main.MouseWorld.X > player.position.X ? 1 : -1;
                 Projectile.netUpdate = true;
             }
-            float targetrotation = (float)Math.Atan2(((Main.mouseY + Main.screenPosition.Y) - player.position.Y), ((Main.mouseX + Main.screenPosition.X) - player.position.X));
-            float m = (float)Math.Cos(targetrotation) * 560;
-            float n = (float)Math.Sin(targetrotation) * 560;
-            player.velocity.X -= m / 1250f;
-            player.velocity.Y -= n / 1000f;
-            if (player.velocity.X > 32) player.velocity.X = 32;
-            if (player.velocity.X < -32) player.velocity.X = -32;
-            if (player.velocity.Y > 32) player.velocity.Y = 32;
-            if (player.velocity.Y < -32) player.velocity.Y = -32;
-            int dir = Projectile.direction;
-            player.ChangeDir(dir); // Set player direction to where we are shooting
-            player.heldProj = Projectile.whoAmI; // Update player's held projectile
-            player.itemTime = 2; // Set item time to 2 frames while we are used
-            player.itemAnimation = 2; // Set item animation time to 2 frames while we are used
-            player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * dir, Projectile.velocity.X * dir); // Set the item rotation to where we are shooting
+
+            Vector2 recoilAim = Main.MouseWorld - player.position;
+            Vector2 recoilDirection = recoilAim.SafeNormalize(Projectile.velocity);
+            player.velocity.X = Math.Clamp(player.velocity.X - recoilDirection.X * 560f / 1250f, -32f, 32f);
+            player.velocity.Y = Math.Clamp(player.velocity.Y - recoilDirection.Y * 560f / 1000f, -32f, 32f);
+            int facing = Projectile.direction;
+            player.ChangeDir(facing);
+
+            if (!fromPuppet)
+            {
+                player.heldProj = Projectile.whoAmI;
+            }
+
+            player.itemTime = 2;
+            player.itemAnimation = 2;
+            Vector2 itemDirection = Projectile.velocity * facing;
+            player.itemRotation = itemDirection.ToRotation();
         }
 
         private void CastLights()

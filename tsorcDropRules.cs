@@ -100,13 +100,6 @@ namespace tsorcRevamp
         public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMRepeatKill");
     }
 
-    public class WithinTheAbyssRule : IItemDropRuleCondition, IProvideItemConditionDescription
-    {
-        public bool CanDrop(DropAttemptInfo info) => info.player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss;
-        public bool CanShowItemDropInUI() => true;
-        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.AbyssOnly");
-    }
-
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
         public virtual bool CanDrop(DropAttemptInfo info)
@@ -140,9 +133,14 @@ namespace tsorcRevamp
 
     public class FirstBossKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
     {
+        readonly bool requireBoss;
+
+        // Existing boss rewards keep their default gate; ordinary enemies can share the saved slain history.
+        public FirstBossKillRule(bool requireBoss = true) => this.requireBoss = requireBoss;
+
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && info.npc.boss;
+            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type)) && (!requireBoss || info.npc.boss);
         }
 
         public bool CanShowItemDropInUI() => true;
@@ -196,11 +194,31 @@ namespace tsorcRevamp
         public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletron");
     }
 
+    public class DownedSkeletronOrNitoRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        // Gravelord Nito stands in Skeletron's progression slot; his kill is recorded in tsorcRevampWorld.NewSlain.
+        public virtual bool CanDrop(DropAttemptInfo info)
+        {
+            if (NPC.downedBoss3)
+            {
+                return true;
+            }
+
+            int nitoType = ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>();
+            return tsorcRevampWorld.BossDefeated(nitoType);
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public virtual string GetConditionDescription() => LangUtils.GetTextValue("DropRules.DownedSkeletronOrNito");
+    }
+
     public class RemixWorldDropCondition : IItemDropRuleCondition
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return tsorcRevampWorld.CheckForRemixMap();
+            // Saved flag, not the live tile signature: the Primordial world converts the tiles that signature reads.
+            return tsorcRevampWorld.RemixMap;
         }
 
         public bool CanShowItemDropInUI()
@@ -218,7 +236,7 @@ namespace tsorcRevamp
     {
         public virtual bool CanDrop(DropAttemptInfo info)
         {
-            return !tsorcRevampWorld.CheckForRemixMap();
+            return !tsorcRevampWorld.RemixMap;
         }
 
         public bool CanShowItemDropInUI()

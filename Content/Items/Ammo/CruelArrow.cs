@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(30);
             recipe.AddIngredient(ItemID.WoodenArrow, 30);
             recipe.AddIngredient(ItemID.IronBar, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 15); //480 DS per 1000, I think that's fair. 
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60); // 2 Dark Souls per arrow
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

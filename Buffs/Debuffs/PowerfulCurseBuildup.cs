@@ -50,17 +50,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 
                 modPlayer.PowerfulCurseLevel = 0; // Reset to 0
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.75f, Pitch = -0.35f, PitchVariance = 0.1f }, player.Center);
-                player.AddBuff(ModContent.BuffType<Invincible>(), 5 * 60); 
-                player.AddBuff(ModContent.BuffType<Strength>(), 120 * 60); 
-                player.AddBuff(ModContent.BuffType<GreenBlossom>(), 120 * 60); 
-                player.AddBuff(ModContent.BuffType<CrimsonDrain>(), 1 * 60); 
-                player.AddBuff(BuffID.Clairvoyance, 120 * 60);
-
-                for (int i = 0; i < 50; i++)
-                {
-                    var dust = Dust.NewDustDirect(player.position, player.width, player.height, DustID.VilePowder, Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2.5f, 2.5f), 200, Color.Violet, Main.rand.NextFloat(2f, 5f));
-                    dust.noGravity = true;
-                }
+                // No trigger buffs (Invincible, Strength, Green Blossom, Clairvoyance, Crimson Drain removed 2026-10-18): the
+                // curse is the whole effect. A plum burst marks the moment instead.
+                CurseBuildup.SpawnCurseBurst(player, powerful: true);
             }
         }
 

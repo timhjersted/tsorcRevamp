@@ -1,0 +1,126 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Armor.DragoonSet;
+using tsorcRevamp.Content.Items.Materials;
+using tsorcRevamp.Content.Items.Materials.Souls;
+using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Materials.Titanite;
+
+namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
+{
+    [AutoloadEquip(EquipType.Head)]
+    public class SupremeDragoonHelmet : ModItem
+    {
+        public const int MaxMana = 200;
+        public const float ManaCost = 17f;
+        public const int ManaRegen = 11;
+        public const float CritChance = 32f;
+        public const float LifeRegen = 3f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen / 2f);
+        public override void SetStaticDefaults()
+        {
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 18;
+            Item.height = 12;
+            Item.defense = 15;
+            Item.rare = ItemRarityID.Expert;
+            Item.value = PriceByRarity.fromItem(Item);
+        }
+
+        public override void UpdateEquip(Player player)
+        {
+            player.statManaMax2 += MaxMana;
+            player.manaCost -= ManaCost / 100f;
+            player.manaRegenBonus += ManaRegen;
+            player.pStone = true;
+            player.lifeRegen += (int)LifeRegen;
+        }
+ 
+        public override bool IsArmorSet(Item head, Item body, Item legs)
+        {
+            return body.type == ModContent.ItemType<SupremeDragoonArmor>() && legs.type == ModContent.ItemType<SupremeDragoonGreaves>();
+        }
+
+        public override void UpdateArmorSet(Player player)
+        {
+            player.GetModPlayer<SupremeDragoonCloakPlayer>().Equipped = true;
+            player.GetCritChance(DamageClass.Generic) += CritChance;
+            
+            player.lavaImmune = true;
+            player.fireWalk = true;
+            player.breath = 9999999;
+            player.waterWalk = true;
+            player.noKnockback = true;
+
+            player.ignoreWater = true;
+            player.GetModPlayer<tsorcRevampPlayer>().IceGripOnly = true;
+        }
+        public override void ArmorSetShadows(Player player)
+        {
+            player.armorEffectDrawShadow = true;
+        }
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            RasterizerState OverflowHiddenRasterizerState = new RasterizerState
+            {
+                CullMode = CullMode.None,
+                ScissorTestEnable = true
+            };
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+            Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Item[Item.type];
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offsetPositon = Vector2.UnitY.RotatedBy(MathHelper.PiOver2 * i) * 3;
+                spriteBatch.Draw(texture, position + offsetPositon, null, Color.White, 0, origin, scale, SpriteEffects.None, 0);
+            }
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.AnisotropicClamp, DepthStencilState.None, OverflowHiddenRasterizerState, null, Main.UIScaleMatrix);
+
+            return true;
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe4 = CreateRecipe();
+            recipe4.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe4.AddIngredient(ItemID.CharmofMyths);
+            recipe4.AddIngredient(ModContent.ItemType<BewitchedTitanite>(), 1);
+            recipe4.AddIngredient(ModContent.ItemType<SoulOfOccultist>(), 1);
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 54000);
+            recipe4.AddTile(TileID.DemonAltar);
+            recipe4.Register();
+
+            Recipe recipe3 = CreateRecipe();
+            recipe3.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe3.AddIngredient(ItemID.CharmofMyths);
+            recipe3.AddIngredient(ModContent.ItemType<FieryScale>(), 1);
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 54000);
+            recipe3.AddTile(TileID.DemonAltar);
+            recipe3.Register();
+
+            Recipe recipe2 = CreateRecipe();
+            recipe2.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe2.AddIngredient(ItemID.CharmofMyths);
+            recipe2.AddIngredient(ModContent.ItemType<LichBone>(), 1);
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 54000);
+            recipe2.AddTile(TileID.DemonAltar);
+            recipe2.Register();
+
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ModContent.ItemType<DragoonHelmet>());
+            recipe.AddIngredient(ItemID.CharmofMyths);
+            recipe.AddIngredient(ModContent.ItemType<KrakenFlesh>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 54000);
+            recipe.AddTile(TileID.DemonAltar);
+            recipe.Register();
+        }
+    }
+}

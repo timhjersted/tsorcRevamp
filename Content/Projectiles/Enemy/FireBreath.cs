@@ -44,7 +44,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         // Everything else is a faithful port: constant velocity, the 60-tick timeLeft clamp (callers
         // pass 3000), and the same 8-tick warm-up + 0.25/0.5/0.75/1.0 scale ramp.
         //
-        // NOTE: this projectile is SHARED. AncientDemon, AncientOolacileDemon, AncientDemonOfTheAbyss,
+        // NOTE: this projectile is SHARED. DefiledDemon, OolacileDemon, AncientDemon,
         // SoulOfCinder, DemonLordApocalypse, Massacre, TaurusKnight, the GreatSerpent (SerpentAI) and
         // the shared fire-teleport burst (tsorcRevampAIs.SpawnFireTeleportBurst) all fire it, so this
         // change is intentionally mod-wide.

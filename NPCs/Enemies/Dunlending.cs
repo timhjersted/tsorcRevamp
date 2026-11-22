@@ -6,8 +6,6 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
-using static tsorcRevamp.oSpawnHelper;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -81,43 +79,6 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void AI()
         {
             tsorcRevampAIs.FighterAI(NPC, 1.5f, 0.05f, canPounce: false);
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            if (spawnInfo.SpawnTileY < 1000) return 0f;
-
-            var p = spawnInfo.Player;
-
-            float chance = 0;
-
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-
-
-            if (p.ZoneOverworldHeight)
-            {
-                if (Main.dayTime) chance = 0.067f;
-                else chance = 0.125f;
-            }
-            if (oUnderSurfaceByTile(p) || oUndergroundByTile(p) || oCavernByTile(p))
-            {
-                if (!spawnInfo.Player.ZoneCorrupt && !spawnInfo.Player.ZoneCrimson) chance = 0.0835f;
-            }
-            if (Main.hardMode)
-            {
-                return chance /= 2;
-            }
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                return chance /= 0;
-            }
-            return chance;
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

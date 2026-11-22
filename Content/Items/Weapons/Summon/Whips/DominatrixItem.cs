@@ -12,8 +12,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Whips
     public class DominatrixItem : ModItem
     {
         public const int ThornDmgScaling = 35;
+        public const int ThornArmorPen = 10;
         public const int BaseDmg = 21;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ThornDmgScaling);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ThornDmgScaling,  ThornArmorPen);
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;  //journey mode lmao

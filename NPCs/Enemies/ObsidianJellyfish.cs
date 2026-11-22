@@ -38,30 +38,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 80;
             }
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            bool TropicalOcean = spawnInfo.Player.position.X < 3600 && spawnInfo.Water;
-            float chance = 0;
-
-            if (Main.hardMode && TropicalOcean && spawnInfo.Player.ZoneJungle) return 0.045f;
-
-            if (!Main.hardMode /*|| ModWorld.superHardmode*/)
-            {
-                if ((spawnInfo.Water && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson)) && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
-                {
-                    chance = .35f;
-                }
-            }
-
-            if (Main.hardMode /*|| ModWorld.superHardmode*/)
-            {
-                if ((spawnInfo.Water && (spawnInfo.Player.ZoneMeteor || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneDungeon)) && (spawnInfo.Player.ZoneRockLayerHeight || spawnInfo.Player.ZoneDirtLayerHeight || spawnInfo.Player.ZoneOverworldHeight)) //I've added dirt layer as otherwise they would be practically non-existent on the tsorc map
-                {
-                    chance = .45f;
-                }
-            }
-            return chance;
-        }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

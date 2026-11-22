@@ -66,7 +66,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
             if (Mode == Mode_Orbit)
             {
                 NPC parent = ParentIndex >= 0 && ParentIndex < Main.maxNPCs ? Main.npc[ParentIndex] : null;
-                if (parent == null || !parent.active || parent.type != ModContent.NPCType<NPCs.Enemies.Gigas>())
+                if (parent == null || !parent.active || parent.type != ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>())
                 {
                     Detach(Mode_Homing);
                 }

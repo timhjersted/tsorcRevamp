@@ -33,7 +33,12 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void AI()
         {
-            //Main.NewText(NPC.damage);
+            //Spawner's contact damage, passed in ai[3] because NPC.damage set after NewNPC never reaches clients
+            if (NPC.ai[3] > 0)
+            {
+                NPC.damage = (int)NPC.ai[3];
+            }
+
             NPC.velocity.X = NPC.ai[1];
             NPC.velocity.Y = NPC.ai[2];
 

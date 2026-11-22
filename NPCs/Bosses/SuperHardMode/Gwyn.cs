@@ -20,7 +20,8 @@ using tsorcRevamp.Content.Projectiles.Enemy.Gwyn;
 using tsorcRevamp.Content.Projectiles.Melee.Broadswords;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 
 // NOTE: the folder is Gwyn/, but the namespace stays flat (…SuperHardMode) — a namespace segment
@@ -215,7 +216,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         // The combo phases only. ActiveMeleeComboName is never cleared when a combo ends, so these
         // checks stop stale names from leaking per-combo arcs into later one-shot melee attacks.
-        bool ComboSwinging(string name) =>
+        protected bool ComboSwinging(string name) =>
             ActiveMeleeComboName == name
             && (Phase == AttackPhase.MeleeComboTelegraph
                 || Phase == AttackPhase.MeleeComboAttack
@@ -247,7 +248,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         bool FlurryRecoveryWalking =>
             Phase == AttackPhase.MeleeComboRecovery
             && ActiveMeleeComboName == WrathFlurryName
-            && PhaseTimer <= FlurryFinalRecoveryTicks - MeleeRecoveryLingerTicks;
+            && PhaseTimer <= FlurryRecoveryTotalTicks - MeleeRecoveryLingerTicks;
 
         protected override bool WeaponSheathed => FlurryRecoveryWalking;
 
@@ -270,12 +271,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         // Settle raised early, then spend most of the tell lowering into the rising cut.
                         return 0.35f;
                     }
+                    if (LordsVerdictSwinging)
+                    {
+                        // Raise over the first 25 ticks; GetLogicalWindupOppositeEnd turns the rest into a hold.
+                        int verdictTelegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(LordsVerdictTelegraphTicks * ComboTelegraphMultiplier));
+                        return LordsVerdictRaiseTicks / (float)verdictTelegraphTicks;
+                    }
                     return base.LogicalWindupSettleFraction;
                 }
 
                 int telegraphTicks = Math.Max(MinComboTelegraphTicks, (int)(FlurryTelegraphTicks * ComboTelegraphMultiplier));
                 return FlurryWindupRaiseTicks / (float)telegraphTicks;
             }
+        }
+
+        // Lord's Verdict holds the raised pose once it is reached, mirroring the giant sword forming above him.
+        protected override float GetLogicalWindupOppositeEnd(ComboMotion motion, float attackStart, float oppositeEnd)
+        {
+            if (LordsVerdictSwinging)
+            {
+                return attackStart;
+            }
+            return base.GetLogicalWindupOppositeEnd(motion, attackStart, oppositeEnd);
         }
 
         // The flurry's leaps carry the sword overhead through the air and swing when the player is
@@ -375,7 +392,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (CinderfallSwinging && motion == ComboMotion.GroundSlam)
+            if ((CinderfallSwinging || LordsVerdictSwinging) && motion == ComboMotion.GroundSlam)
             {
                 startRotation = RefinedRaisedPose;
                 endRotation = CinderfallLoweredPose;
@@ -424,7 +441,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Fully reactive: ReactiveComboIndex reads the player's live dodge/launch/flank state each
         // time a combo starts and picks the counter, falling back to the weighted roll otherwise.
         // Flash colors are the Lord of Cinder's fire — orange bread & butter, red heavy commits.
-        const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
+        protected const int CB_CLEAVE = 0, CB_UNDEROVER = 1, CB_LEAP = 2, CB_SLIDE = 3, CB_SPIN = 4,
                   CB_CINDERFALL = 5, CB_GUILLOTINE = 6, CB_BACKHAND = 7, CB_THREEHIT = 8,
                   CB_ROLLCATCH = 9, CB_FLURRY = 10, CB_PURSUIT = 11, CB_JUDGMENT = 12,
                   CB_RIPOSTE = 13,
@@ -435,14 +452,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // helper in MeleeComboSystem: leaving it off produced SwingEaseStyle.Linear (enum value 0),
         // i.e. constant angular velocity with no ease-in or ease-out, which is what made every one
         // of Gwyn's swings start and stop dead rather than wind up and settle.
-        static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f,
+        protected static MeleeComboStep GS(ComboMotion m, int tel, int atk, int pause, float dmg = 1f, float reach = 1f, float push = 0f,
                                  SwingEaseStyle ease = SwingEaseStyle.Smooth)
             => new MeleeComboStep { Motion = m, TelegraphTicks = tel, AttackTicks = atk, PostStepPause = pause, DamageMult = dmg, ReachMult = reach, ForwardPushMult = push, Ease = ease };
 
-        const string UnderOverName = "Under-Over";
+        protected const string UnderOverName = "Under-Over";
         const string CinderingLeapName = "Cindering Leap";
-        const string CinderfallName = "Cinderfall";
-        const string ThreeHitName = "3-Hit";
+        protected const string CinderfallName = "Cinderfall";
+        protected const string ThreeHitName = "3-Hit";
         // 3-Hit forward push (x TopSpeed) for cuts 2 and 3, and the surge either becomes when the
         // target has left reach at the pause. Shared by the table and ModifyNextMeleeComboStep.
         const float ThreeHitSecondPush = 0.95f;
@@ -458,11 +475,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Strikes 25% faster, recoveries and pauses 25% shorter. Tells are untouched: they are the
         // player's read. Applied per activation in CustomizeMeleeCombo, and baked into the V2 clips'
         // half-health pool twins because a client resolves a V2 clip by pool index.
-        const float HalfHealthStrikeSpeedMult = 1.25f;
-        const float HalfHealthRecoveryMult = 0.75f;
+        protected const float HalfHealthStrikeSpeedMult = 1.25f;
+        protected const float HalfHealthRecoveryMult = 0.75f;
         // A shortened pause never brings the next live window within 30 ticks of the last one ending:
         // a late roll's 8-tick no-roll gap sits 22-30 ticks after it (attack-timing-design §2 rule 3).
-        const int MinTicksBetweenLiveWindows = 30;
+        protected const int MinTicksBetweenLiveWindows = 30;
         // Hit-confirm follow-up: one more rising cut after a string ender, only if the ender connected,
         // 40% of the time. The 18t pause keeps a hit on the ender's last live tick 40+ ticks before
         // the follow-up goes live (worst case, 3-Hit's half-health ender: 24t left + 18 = 42), so the
@@ -490,18 +507,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Default sword-language poses: a safe raised start and an end close to the player's own
         // straight-down broadsword finish. Their 3.91-rad (224-degree) envelope leaves about 180
         // degrees live once a Weighted swing is disarmed below 30% of peak speed.
-        const float RefinedRaisedPose = -1.62f;
-        const float RefinedLoweredPose = 2.29f;
+        protected const float RefinedRaisedPose = -1.62f;
+        protected const float RefinedLoweredPose = 2.29f;
         // Cinderfall is the signature heavy: 233 degrees of envelope / about 187 degrees live.
         const float CinderfallLoweredPose = 2.45f;
         // A landing-timed LeapSlam is armed across its whole ten-tick downswing, so this endpoint is
         // 185 degrees from the carried pose instead of using the wider Weighted-swing envelope.
         const float CinderingLeapImpactPose = 1.61f;
-        const float RefinedArmedSpeedShare = 0.30f;
+        protected const float RefinedArmedSpeedShare = 0.30f;
 
         /// <summary>Authored sword swing with cubic acceleration, an exponential harmless settle,
         /// and a hit window that closes once blade speed drops below 30% of peak.</summary>
-        static MeleeComboStep WeightedSwordSwing(
+        protected static MeleeComboStep WeightedSwordSwing(
             ComboMotion motion, int telegraph, int easeInTicks, int easeOutTicks, float decay,
             int pause, float damage, float reach, float push)
         {
@@ -527,14 +544,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // ── Wrath Flurry tuning ─────────────────────────────────────────────────
-        const string WrathFlurryName = "Wrath Flurry";
+        protected const string WrathFlurryName = "Wrath Flurry";
         // The two poses every swipe runs between (185° apart): blade past vertical behind the head,
         // and low-forward 47° below level. Also the leaps' carry and impact. See ModifyMeleeArcEndpoints.
         const float FlurryRaisedPose = -1.62f;
         const float FlurryLoweredPose = 1.61f;
         // Authored telegraph; x1.15 ComboTelegraphMultiplier = 44 ticks on screen. The first 25 are a
         // slow ease up into the raised pose (LogicalWindupSettleFraction), the rest drop to the start.
-        const int FlurryTelegraphTicks = 39;
+        protected const int FlurryTelegraphTicks = 39;
         const int FlurryWindupRaiseTicks = 25;
         // Each swipe: speed builds for 10 ticks, peaks, then decays exponentially for 45 onto the
         // next swipe's start. Decay 7 puts the 185° arc's peak near 19°/tick; the settle is down to
@@ -583,7 +600,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Swipe forward drive (x TopSpeed, held for the whole 55t step). 0.8 = ~2.1px/t, ~115px per
         // swipe; a swipe that starts with the player out of reach surges at 1.7 = ~4.4px/t, ~240px
         // (5.4px/t in Wrath). Its 18t live window still loses to a roll away (~110px), by design.
-        const float FlurrySwipePush = 0.8f;
+        protected const float FlurrySwipePush = 0.8f;
         const float FlurrySwipeSurgePush = 1.7f;
         // The finale leap: TopSpeed x 3.4 forward cap (8.8px/t, 10.9 in Wrath) over ~63t aloft reaches
         // ~550-690px (the base 1.7 capped it near 280), led 18t, 20% ascent tracking.
@@ -593,12 +610,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // are the planted landing beat, then the sword is put away and he walks forward at this
         // fraction of TopSpeed.
         const int FlurryFinalRecoveryTicks = 180;
+        // The recovery this fight's Flurry actually plays; the landing beat and sheathed walk key off it.
+        protected virtual int FlurryRecoveryTotalTicks => FlurryFinalRecoveryTicks;
+        // First step that is the finale leap, so the miss-pursuit never runs in front of it.
+        protected virtual int FlurryFinaleStepIndex => FlurryPursuitFirstFinaleStepIndex;
         const float FlurryRecoveryWalkSpeedMult = 0.35f;
 
         /// <summary>One Wrath Flurry swipe on the Weighted ease. Armed through the ease-in and the
         /// part of the exponential settle still above FlurryArmedSpeedShare of top speed - the
         /// speed is v*e^(-decay*p), so that lasts ln(1/share)/decay of the ease-out.</summary>
-        static MeleeComboStep FlurrySwipe(ComboMotion motion, int telegraph, float dmg, float reach, float push)
+        protected static MeleeComboStep FlurrySwipe(ComboMotion motion, int telegraph, float dmg, float reach, float push)
         {
             int attackTicks = FlurrySwipeEaseIn + FlurrySwipeEaseOut;
             MeleeComboStep step = GS(motion, telegraph, attackTicks, FlurrySwipePause, dmg, reach, push, SwingEaseStyle.Weighted);
@@ -614,12 +635,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         /// <summary>A Wrath Flurry leap slam: carried in the raised swipe pose (LeapSlamCarryRotation),
         /// swung in the air when the player is in reach, else on the landing. 90 ticks is only the
         /// timeout, as for every authored LeapSlam; the step really ends on landing.</summary>
-        static MeleeComboStep FlurryLeap(int pause, float dmg)
+        protected static MeleeComboStep FlurryLeap(int pause, float dmg)
         {
             MeleeComboStep step = GS(ComboMotion.LeapSlam, 0, 90, pause, dmg, 1.2f);
             step.LeapStrikeRange = FlurryLeapStrikeRange;
             return step;
         }
+
+        // ── Lord's Verdict tuning (below half health) ───────────────────────────
+        // His overhead slam into the floor, mirrored by a giant gold copy of his sword above him
+        // (GwynLordsVerdictBlade) that lands flat in front of him. Both strike together; the timing
+        // sheet is on the pool entry.
+        protected const string LordsVerdictName = "Lord's Verdict";
+        const int LordsVerdictTelegraphTicks = 39;    // x1.15 = 44 on screen
+        const int LordsVerdictRaiseTicks = 25;        // of the 44: ease up into the cocked pose, then hold
+        const int LordsVerdictSlamTicks = 18;         // must match GwynLordsVerdictBlade.SlamTicks
+        const int LordsVerdictStopTicks = 2;          // the blade stops dead in the floor
+        const float LordsVerdictStopDecay = 8f;
+        const int LordsVerdictRecoveryTicks = 62;
+        const int LordsVerdictCooldown = 600;
+        const float LordsVerdictBladeDamage = 1.3f;
+        const float LordsVerdictBladeReach = 1.14f;   // under 1.15, so no fire crescent: the giant sword is the reach
+        const float LordsVerdictGiantDamage = 2f;
+        // Both swords land on Gwyn's floor height, so a target above or below it can't be hit; don't start it then.
+        const float LordsVerdictMaxHeightGap = 64f;
+
+        bool LordsVerdictSwinging => ComboSwinging(LordsVerdictName);
+        bool _lordsVerdictConjured;   // server only: the giant sword was spawned for this combo
+
+        /// <summary>Read by GwynLordsVerdictBlade: hold over him while this is true.</summary>
+        internal bool LordsVerdictTelegraphing =>
+            ActiveMeleeComboName == LordsVerdictName && Phase == AttackPhase.MeleeComboTelegraph;
+
+        /// <summary>Read by GwynLordsVerdictBlade: the first tick this is true starts its slam, in step with his.</summary>
+        internal bool LordsVerdictStriking =>
+            ActiveMeleeComboName == LordsVerdictName && Phase == AttackPhase.MeleeComboAttack;
+
+        /// <summary>Prime Gwyn Phase II+: the impact also sends a ground wave outward from the giant sword's tip.</summary>
+        protected virtual bool LordsVerdictTipWave => false;
 
         // Complete grounded strikes use the single-clock runtime. Movement attacks and linked
         // strings stay on MeleeCombo because their locomotion and continuation are the behavior.
@@ -722,11 +775,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             int activeTicks = (int)Math.Round(clip.ActiveTicks / HalfHealthStrikeSpeedMult);
             int recoveryTicks = (int)Math.Round(clip.RecoveryTicks * HalfHealthRecoveryMult);
+            return RetimedClip(clip, clip.Name, clip.WindupTicks, activeTicks, recoveryTicks);
+        }
 
+        /// <summary>A copy of a V2 clip with new stage lengths. Poses, aim rules and fractional hit
+        /// windows carry over, so the live window scales with activeTicks.</summary>
+        protected static PuppetAttackClip RetimedClip(
+            PuppetAttackClip clip, string name, int windupTicks, int activeTicks, int recoveryTicks)
+        {
             return new PuppetAttackClip(
-                name: clip.Name,
+                name: name,
                 pose: clip.Pose,
-                windupTicks: clip.WindupTicks,
+                windupTicks: windupTicks,
                 activeTicks: activeTicks,
                 recoveryTicks: recoveryTicks,
                 oppositeWindupRotation: clip.OppositeWindupRotation,
@@ -944,9 +1004,37 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             new MeleeCombo { Name = SkyLungeName, BaseWeight = 50, Preferred = ComboRangeBand.Any,
                 InitialFlashColor = Color.Gold, CooldownAfterUse = 0, RecoveryTicks = 28,
                 Steps = new[] { WeightedSwordSwing(ComboMotion.HorizontalSweep, 32, 10, 40, 7f, 0, 1.2f, 1.45f, 0f) } },
+            // 22 — Lord's Verdict timing sheet (half health only; the giant sword is GwynLordsVerdictBlade)
+            // Poses -1.62 -> 2.45 rad (Cinderfall's floor end): 233° slam into the floor. Tell 39 authored =
+            // 44t on screen: 25t raise, then a hold while the giant sword forms above him (glint at 34).
+            // Strike: 18t cubic ease-in to the floor + 2t stop, armed the whole step (HitWindowEnd 0), in step
+            // with the giant sword's 18t quarter-circle slam. The giant stays live 16t on the floor, so no spot
+            // is covered for more than ~20t. Recovery 62t: landed-pose hold, then a 48t punish window after the
+            // floor band goes dead. Damage 1.3x (his blade) and 2x (the giant). No follow-up.
+            new MeleeCombo { Name = LordsVerdictName, BaseWeight = 40, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Gold, CooldownAfterUse = LordsVerdictCooldown, RecoveryTicks = LordsVerdictRecoveryTicks,
+                HeavyCommit = true, HyperArmor = true,
+                Steps = new[] {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.GroundSlam,
+                        TelegraphTicks = LordsVerdictTelegraphTicks,
+                        AttackTicks = LordsVerdictSlamTicks + LordsVerdictStopTicks,
+                        PostStepPause = 0,
+                        DamageMult = LordsVerdictBladeDamage,
+                        ReachMult = LordsVerdictBladeReach,
+                        ForwardPushMult = 0f,
+                        Ease = SwingEaseStyle.Weighted,
+                        EaseInTicks = LordsVerdictSlamTicks,
+                        EaseOutTicks = LordsVerdictStopTicks,
+                        EaseOutDecay = LordsVerdictStopDecay,
+                        HitWindowEnd = 0f,
+                    },
+                } },
         };
 
         protected override MeleeCombo[] MeleeComboPoolOverride => GwynCombos;
+        protected static MeleeCombo[] BaseComboPool => GwynCombos;
 
         ///<summary>Fully reactive combo pick: read the player's live state and answer it. Falls
         ///through to the weighted roll (returns -1) when no specific read applies, or when the
@@ -1089,7 +1177,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         static bool Ready(int[] ready, int idx) => idx >= 0 && idx < ready.Length && ready[idx] > 0;
 
         /// <summary>The pool index of a V2 combo at the current health: its half-health twin below 50%.</summary>
-        int HealthVariant(int comboIndex)
+        protected virtual int HealthVariant(int comboIndex)
         {
             if (!HalfHealthMovesUnlocked)
             {
@@ -1129,17 +1217,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
             // Exactly one of each V2 pair is eligible: the half-health twin below 50%, the original above.
-            if (combo.RuntimeV2Clip != null)
+            if (combo.RuntimeV2Clip != null && !IsV2ClipEligible(combo.RuntimeV2Clip))
             {
-                bool halfHealthTwin = combo.RuntimeV2Clip == CleaveHalfV2
-                    || combo.RuntimeV2Clip == GuillotineHalfV2
-                    || combo.RuntimeV2Clip == JudgmentGuillotineHalfV2
-                    || combo.RuntimeV2Clip == RiposteCounterHalfV2
-                    || combo.RuntimeV2Clip == BackhandHalfV2;
-                if (halfHealthTwin != HalfHealthMovesUnlocked)
-                {
-                    return false;
-                }
+                return false;
             }
             // The aerial moves start only from TickAerialEngagement, and only the staged one. No other
             // combo may start while the engagement is running.
@@ -1176,6 +1256,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 return HalfHealthMovesUnlocked;
             }
+            // Lord's Verdict: both swords land on his floor height, so only start it grounded, with the
+            // target on roughly that level.
+            if (combo.Name == LordsVerdictName)
+            {
+                Player verdictTarget = Main.player[NPC.target];
+                bool grounded = NPC.velocity.Y == 0f;
+                float heightGap = Math.Abs(verdictTarget.Bottom.Y - NPC.Bottom.Y);
+                return HalfHealthMovesUnlocked && grounded && heightGap <= LordsVerdictMaxHeightGap;
+            }
             if (combo.Name == CinderingLeapName || combo.Name == "Roll-Catch")
             {
                 return distance <= 300f;
@@ -1185,6 +1274,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return distance <= 260f;
             }
             return true;
+        }
+
+        /// <summary>Which timing twin of a V2 clip may be picked right now.</summary>
+        protected virtual bool IsV2ClipEligible(PuppetAttackClip clip)
+        {
+            bool halfHealthTwin = clip == CleaveHalfV2
+                || clip == GuillotineHalfV2
+                || clip == JudgmentGuillotineHalfV2
+                || clip == RiposteCounterHalfV2
+                || clip == BackhandHalfV2;
+            return halfHealthTwin == HalfHealthMovesUnlocked;
         }
 
         // Server-authoritative, movement-only pursuit inserted into the normal inter-step pause.
@@ -1216,7 +1316,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             if (comboName == WrathFlurryName
-                && nextStepIndex < FlurryPursuitFirstFinaleStepIndex
+                && nextStepIndex < FlurryFinaleStepIndex
                 && (ActiveMeleeComboMotion == ComboMotion.UnderhandArc
                     || ActiveMeleeComboMotion == ComboMotion.OverheadArc))
             {
@@ -1280,6 +1380,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         int _hitConfirmStepIndex = -1;  // index of the appended follow-up in the active combo, or -1 (server only)
+        protected int HitConfirmStepIndex => _hitConfirmStepIndex;
         int _delayedSwingHoldTicks;     // synced; rolled in OnMeleeComboStarted, spent in AI
         bool _delayedSwingGlinted;
         int _estusPunishTimer;          // server only
@@ -1302,7 +1403,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             }
 
             combo.HyperArmor = true;
-            if (combo.RuntimeV2Clip != null || combo.Name == WrathFlurryName || combo.Steps == null)
+            // Lord's Verdict is half-health only and its strike is timed to the giant sword's slam, so it keeps its own timing.
+            if (combo.RuntimeV2Clip != null || combo.Name == WrathFlurryName || combo.Name == LordsVerdictName || combo.Steps == null)
             {
                 return;
             }
@@ -1313,22 +1415,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
                 if (step.Ease == SwingEaseStyle.Weighted && step.EaseOutDecay > 0f)
                 {
-                    // Scale both ramps so peak speed rises 25% and the hit window keeps its share of the swing.
-                    step.EaseInTicks = Math.Max(3, (int)Math.Round(step.EaseInTicks / HalfHealthStrikeSpeedMult));
-                    step.EaseOutTicks = Math.Max(6, (int)Math.Round(step.EaseOutTicks / HalfHealthStrikeSpeedMult));
-                    step.AttackTicks = step.EaseInTicks + step.EaseOutTicks;
-
-                    float armedSettleTicks = step.EaseOutTicks * (float)Math.Log(1f / RefinedArmedSpeedShare) / step.EaseOutDecay;
-                    step.HitWindowEnd = (step.EaseInTicks + armedSettleTicks) / step.AttackTicks;
-
-                    if (step.PostStepPause > 0)
-                    {
-                        int liveTicks = (int)Math.Ceiling(step.HitWindowEnd * step.AttackTicks);
-                        int tailTicks = step.AttackTicks - liveTicks;
-                        int scaledPause = (int)Math.Round(step.PostStepPause * HalfHealthRecoveryMult);
-                        int minimumPause = Math.Max(1, MinTicksBetweenLiveWindows - tailTicks);
-                        step.PostStepPause = Math.Max(scaledPause, minimumPause);
-                    }
+                    RescaleWeightedStep(ref step, HalfHealthStrikeSpeedMult, HalfHealthRecoveryMult);
                 }
                 else if (step.Motion == ComboMotion.GroundSlam)
                 {
@@ -1367,6 +1454,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 HitConfirmDamage, HitConfirmReach, HitConfirmPush);
             combo.Steps = extendedSteps;
             _hitConfirmStepIndex = enderIndex + 1;
+        }
+
+        /// <summary>Speeds a Weighted swing up by strikeMult: both ramps shrink, so peak speed rises by
+        /// that factor and the hit window keeps its share. The pause shrinks by pauseMult but never
+        /// brings the next live window inside MinTicksBetweenLiveWindows of this one ending.</summary>
+        protected static void RescaleWeightedStep(ref MeleeComboStep step, float strikeMult, float pauseMult)
+        {
+            step.EaseInTicks = Math.Max(3, (int)Math.Round(step.EaseInTicks / strikeMult));
+            step.EaseOutTicks = Math.Max(6, (int)Math.Round(step.EaseOutTicks / strikeMult));
+            step.AttackTicks = step.EaseInTicks + step.EaseOutTicks;
+
+            float armedSettleTicks = step.EaseOutTicks * (float)Math.Log(1f / RefinedArmedSpeedShare) / step.EaseOutDecay;
+            step.HitWindowEnd = (step.EaseInTicks + armedSettleTicks) / step.AttackTicks;
+
+            if (step.PostStepPause > 0)
+            {
+                int liveTicks = (int)Math.Ceiling(step.HitWindowEnd * step.AttackTicks);
+                int tailTicks = step.AttackTicks - liveTicks;
+                int scaledPause = (int)Math.Round(step.PostStepPause * pauseMult);
+                int minimumPause = Math.Max(1, MinTicksBetweenLiveWindows - tailTicks);
+                step.PostStepPause = Math.Max(scaledPause, minimumPause);
+            }
         }
 
         void TickFlurryPursuit()
@@ -1681,6 +1790,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // spawn point once and measuring from there gives a fixed, learnable arena boundary, the
         // same contract Artorias uses for its ring (see Artorias.OnSpawn / _ringCenter).
         const float RainOfDeathRange = 600f;   // distance from the ARENA CENTRE, not from Gwyn
+        protected virtual float RainOfDeathStartRange => RainOfDeathRange;
         const int BaseRainOfDeathDamage = 77;  // the old herosArrowDamage
         //One orb every 12 ticks = 10 per 2 seconds; every 8 ticks (15 per 2s) once Wrath ignites.
         const int RainIntervalTicks = 12;
@@ -1742,9 +1852,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         const int TooEarlyDamage = 10000;
         const float ProximityDebuffRange = 700f;
 
-        int RainOfDeathDamage => TooEarly ? TooEarlyDamage : BaseRainOfDeathDamage;
+        int RainOfDeathDamage => TooEarly ? TooEarlyDamage : ScaleAttackDamage(BaseRainOfDeathDamage);
 
-        bool TooEarly =>
+        protected virtual bool TooEarly =>
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Artorias>())) ||
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Seath.SeathTheScalelessHead>())) ||
             !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<EarthFiendLich>())) ||
@@ -1756,7 +1866,47 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         float cowardGraceTimer = 90;
         bool announcedCoward;
 
-        bool HalfHealthMovesUnlocked => NPC.life <= NPC.lifeMax * 0.50f;
+        protected virtual bool HalfHealthMovesUnlocked => NPC.life <= NPC.lifeMax * 0.50f;
+
+        // Tuning seams for variants of this fight. Each default leaves Gwyn's own numbers unchanged.
+        protected virtual int ScaleCooldown(int ticks) => ticks;
+        protected virtual int ScaleAttackDamage(int baseDamage) => baseDamage;
+        // Summoned casts ask before starting and report when they do, so a variant can space them out.
+        protected virtual bool SummonedCastAllowed => true;
+        protected virtual void OnSummonedCastStarted(int busyTicks) { }
+        protected virtual void OnFlashStepFinished(Player target) { }
+        protected virtual void OnFinalDeath()
+        {
+            tsorcRevampWorld.InitiateTheEnd();
+            Systems.CreditsRoll.StartAfterGwyn();
+        }
+
+        /// <summary>True while any bespoke set-piece owns the boss.</summary>
+        protected bool SetPieceRunning => _stormTimer > 0 || _plungeTimer > 0 || _riposteTimer > 0
+            || _advanceTimer > 0 || _gravityTimer > 0 || _judgmentTeleportTimer > 0
+            || _spearJumpActive || _flurryPursuitActive;
+
+        /// <summary>Drops every bespoke set-piece so a scripted phase change can take over at once.
+        /// Pair with OnStagger, which clears the shared combo machine.</summary>
+        protected void ClearSetPieces()
+        {
+            _stormTimer = 0;
+            _gravityTimer = 0;
+            _advanceTimer = 0;
+            _riposteTimer = 0;
+            _riposteCounterPending = false;
+            _judgmentTeleportTimer = 0;
+            _judgmentPending = 0;
+            _spearJumpActive = false;
+            _spearFollowupsRemaining = 0;
+            _plungeTimer = 0;
+            _plungePhase = 0;
+            _aerialPhase = AerialPhase.None;
+            _aerialTimer = 0;
+            ResetFlurryPursuit(releasePause: false);
+            Flight?.RequestLand();
+            NPC.noGravity = false;
+        }
 
         NPCDespawnHandler despawnHandler;
 
@@ -1872,6 +2022,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             writer.Write((byte)Math.Clamp(_aerialMovesDone, 0, byte.MaxValue));
             writer.WriteVector2(_aerialDashVelocity);
             writer.Write((byte)Math.Clamp(_delayedSwingHoldTicks, 0, byte.MaxValue));
+            writer.Write(_flashStepCount);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1913,6 +2064,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             _aerialMovesDone = reader.ReadByte();
             _aerialDashVelocity = reader.ReadVector2();
             _delayedSwingHoldTicks = reader.ReadByte();
+
+            // The teleport is decided on the server, so a changed count is the client's cue for its burst.
+            byte receivedFlashStepCount = reader.ReadByte();
+            if (receivedFlashStepCount != _flashStepCount)
+            {
+                _flashStepCount = receivedFlashStepCount;
+                FlashBurst(NPC.Center);
+            }
+
             if (!wasPursuitAirborne && _flurryPursuitAirborne && !Main.dedServ)
             {
                 SpawnFlurryPursuitDust(12, 1.65f);
@@ -2062,7 +2222,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 Player drinker = Main.player[NPC.target];
                 bool drinking = drinker.active && !drinker.dead
-                    && drinker.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking;
+                    && drinker.GetModPlayer<EstusFlaskPlayer>().IsDrinking;
                 bool inPunishRange = NPC.Distance(drinker.Center) <= EstusPunishRange;
                 if (!drinking)
                 {
@@ -2128,7 +2288,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         int _attackLabelTimer;
         ///<summary>Announce the named attack to the DebugMode HUD for the given duration.</summary>
-        void SetAttackLabel(string name, int ticks = 90)
+        protected void SetAttackLabel(string name, int ticks = 90)
         {
             DebugAttackLabel = name;
             _attackLabelTimer = ticks;
@@ -2139,7 +2299,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // faster and attacking more (TopSpeed/Acceleration/MeleeComboChance above key off _wrathActive;
         // the summon cooldowns shrink), and the base combo core already weights the Wrath Flurry chain
         // up as HP drops. The First Flame, given fully.
-        bool _wrathActive;
+        protected bool _wrathActive;
 
         void TickWrath()
         {
@@ -2510,16 +2670,26 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float dist = NPC.Distance(player.Center);
             if (!player.dead && player.active && dist > 300f && dist < 1000f && Main.rand.NextBool(90))
             {
-                _flashStepCd = 420 + Main.rand.Next(240);
+                _flashStepCd = ScaleCooldown(420 + Main.rand.Next(240));
                 SetAttackLabel("Flash Step", 40);
-                FlashBurst(NPC.Center);
                 float destX = player.Center.X - player.direction * 70f; // reappear just behind the player
-                NPC.Bottom = new Vector2(destX, player.Bottom.Y);
-                NPC.direction = player.Center.X > NPC.Center.X ? 1 : -1;
-                NPC.spriteDirection = NPC.direction;
-                FlashBurst(NPC.Center);
-                NPC.netUpdate = true;
+                FlashStepTo(new Vector2(destX, player.Bottom.Y), player);
+                OnFlashStepFinished(player);
             }
+        }
+
+        byte _flashStepCount; // synced; each change plays the arrival burst on clients
+
+        /// <summary>Server only: teleports him to a standing point and turns him to face the target.</summary>
+        protected void FlashStepTo(Vector2 bottom, Player target)
+        {
+            FlashBurst(NPC.Center);
+            NPC.Bottom = bottom;
+            NPC.direction = target.Center.X > NPC.Center.X ? 1 : -1;
+            NPC.spriteDirection = NPC.direction;
+            FlashBurst(NPC.Center);
+            _flashStepCount++;
+            NPC.netUpdate = true;
         }
 
         void FlashBurst(Vector2 pos)
@@ -2592,7 +2762,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float outboundDistance = Vector2.Distance(origin, target.Center)
                 + GwynGreatswordBoomerang.TargetOvershoot;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<GwynGreatswordBoomerang>(), BoomerangDamage,
+                ModContent.ProjectileType<GwynGreatswordBoomerang>(), ScaleAttackDamage(BoomerangDamage),
                 6f, Main.myPlayer, NPC.whoAmI, outboundDistance);
         }
 
@@ -2645,7 +2815,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             bool facingAway = System.Math.Sign(NPC.Center.X - player.Center.X) != player.direction;
             if (!player.dead && player.active && facingAway && dist > 380f && dist < 1100f && Main.rand.NextBool(100))
             {
-                _judgmentCd = 700 + Main.rand.Next(300);
+                _judgmentCd = ScaleCooldown(700 + Main.rand.Next(300));
                 SetAttackLabel("Judgment from Behind", 200);
                 _judgmentOriginCenter = NPC.Center;
                 float destX = player.Center.X - player.direction * 90f; //their blind side
@@ -3018,7 +3188,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             if (TryFindRiposteVortexPosition(player, impact, out Vector2 output))
             {
-                int damage = RiposteReflectedDamage;
+                int damage = ScaleAttackDamage(RiposteReflectedDamage);
                 float returnSpeed = Math.Max(incoming.velocity.Length(), 14f);
                 // Preserve the player's original projectile and visuals, but make its later release
                 // hostile, wall-piercing, and owned by its obvious 60-tick output telegraph.
@@ -3219,6 +3389,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         int _stormCd = 420;
         int _stormTimer;
         const int StormNodeDamage = 40;
+        const int StormFirstWaveTick = 60;
+        const float StormNodeRadius = 340f;
+        protected virtual int StormWaveCount => 3;
+        protected virtual int StormWaveIntervalTicks => 45;
+        protected virtual int StormNodesPerWave => 4;
+        protected virtual float StormSpearSpeed => 12f;
 
         void TickSpearStorm()
         {
@@ -3227,19 +3403,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 _stormTimer++;
                 Player player = Main.player[NPC.target];
 
-                //Sequenced waves of 4 nodes ringing the player, offset per wave
-                if (Main.netMode != NetmodeID.MultiplayerClient && !player.dead
-                    && (_stormTimer == 60 || _stormTimer == 105 || _stormTimer == 150))
+                //Sequenced waves of nodes ringing the player, offset per wave
+                int stormWaveClock = _stormTimer - StormFirstWaveTick;
+                int stormWave = stormWaveClock / StormWaveIntervalTicks;
+                bool stormWaveDue = stormWaveClock >= 0
+                    && stormWaveClock % StormWaveIntervalTicks == 0
+                    && stormWave < StormWaveCount;
+                if (Main.netMode != NetmodeID.MultiplayerClient && !player.dead && stormWaveDue)
                 {
-                    int wave = _stormTimer == 60 ? 0 : _stormTimer == 105 ? 1 : 2;
                     SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f, Pitch = 0.3f }, player.Center);
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < StormNodesPerWave; i++)
                     {
-                        float ang = MathHelper.ToRadians(wave * 30f) + MathHelper.PiOver2 * i;
-                        Vector2 pos = player.Center + ang.ToRotationVector2() * 340f;
+                        float ang = MathHelper.ToRadians(stormWave * 30f) + MathHelper.TwoPi / StormNodesPerWave * i;
+                        Vector2 pos = player.Center + ang.ToRotationVector2() * StormNodeRadius;
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                            ModContent.ProjectileType<GwynSolarSpearNode>(), StormNodeDamage, 2f, Main.myPlayer,
-                            22f, 1f); // ai[1]: Storm spears rebound once after a 90t terrain charge
+                            ModContent.ProjectileType<GwynSolarSpearNode>(), ScaleAttackDamage(StormNodeDamage), 2f, Main.myPlayer,
+                            22f, 1f, StormSpearSpeed); // ai[1]: Storm spears rebound once after a 90t terrain charge
                     }
                 }
                 //Radiance while he hangs aloft
@@ -3261,9 +3440,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _stormTimer = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        _stormCd = _wrathActive
-                            ? 660 + Main.rand.Next(240)
-                            : 900 + Main.rand.Next(300);
+                        int stormCooldown = 900 + Main.rand.Next(300);
+                        if (_wrathActive)
+                        {
+                            stormCooldown = 660 + Main.rand.Next(240);
+                        }
+                        _stormCd = ScaleCooldown(stormCooldown);
                         NPC.netUpdate = true;
                     }
                 }
@@ -3286,8 +3468,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Player target = Main.player[NPC.target];
             float dist = NPC.Distance(target.Center);
             int stormRoll = _wrathActive ? 65 : 90;
-            if (!target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(stormRoll))
+            if (SummonedCastAllowed && !target.dead && target.active && dist > 250f && dist < 1000f && Main.rand.NextBool(stormRoll))
             {
+                OnSummonedCastStarted(240);
                 _stormTimer = 1;
                 SetAttackLabel("Sunlight Spear Storm", 240);
                 SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.9f, Pitch = -0.3f }, NPC.Center);
@@ -3358,7 +3541,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _gravityTimer = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        _gravityCd = 800 + Main.rand.Next(300);
+                        _gravityCd = ScaleCooldown(800 + Main.rand.Next(300));
                         NPC.netUpdate = true;
                     }
                 }
@@ -3450,7 +3633,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _advanceTimer = 0;
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        _advanceCd = 900 + Main.rand.Next(300);
+                        _advanceCd = ScaleCooldown(900 + Main.rand.Next(300));
                         NPC.netUpdate = true;
                     }
                 }
@@ -3687,7 +3870,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             NPC.noGravity = false;
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                _plungeCd = 480 + Main.rand.Next(240);
+                _plungeCd = ScaleCooldown(480 + Main.rand.Next(240));
                 NPC.netUpdate = true;
             }
         }
@@ -3816,15 +3999,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 bool freePhase = Phase == AttackPhase.Idle
                     || Phase == AttackPhase.CasualStroll
                     || Phase == AttackPhase.ClosingDistance;
-                bool setPieceRunning = _stormTimer > 0 || _plungeTimer > 0 || _riposteTimer > 0
-                    || _advanceTimer > 0 || _gravityTimer > 0 || _judgmentTeleportTimer > 0
-                    || _spearJumpActive || _flurryPursuitActive;
                 bool canTakeOff = Flight != null
                     && !Flight.IsAirborne
                     && Flight.CooldownRemaining <= 0
                     && NPC.velocity.Y == 0f;
                 bool triggered = _aerialTriggerMeter >= AerialTriggerTicks && _aerialCd <= 0;
-                if (!triggered || !freePhase || setPieceRunning || !canTakeOff)
+                if (!triggered || !freePhase || SetPieceRunning || !canTakeOff)
                 {
                     return;
                 }
@@ -4124,11 +4304,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         int RollAerialCooldown()
         {
+            int cooldown = AerialCooldownTicks + Main.rand.Next(AerialCooldownRandomTicks);
             if (HalfHealthMovesUnlocked)
             {
-                return AerialCooldownTicksHalfHealth + Main.rand.Next(AerialCooldownRandomTicksHalfHealth);
+                cooldown = AerialCooldownTicksHalfHealth + Main.rand.Next(AerialCooldownRandomTicksHalfHealth);
             }
-            return AerialCooldownTicks + Main.rand.Next(AerialCooldownRandomTicks);
+            return ScaleCooldown(cooldown);
         }
 
         ///<summary>World Y of the first solid tile BOTTOM above the point (scanning up), or -1 if none
@@ -4175,13 +4356,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Player player = Main.player[NPC.target];
-            if (!player.dead && player.active && NPC.Distance(player.Center) > 400f && Main.rand.NextBool(160))
+            if (SummonedCastAllowed && !player.dead && player.active && NPC.Distance(player.Center) > 400f && Main.rand.NextBool(160))
             {
-                _firestormCd = 900 + Main.rand.Next(300);
+                OnSummonedCastStarted(150);
+                _firestormCd = ScaleCooldown(900 + Main.rand.Next(300));
                 SetAttackLabel("Firestorm", 190);
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.RainsDeath"), 235, 130, 40);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<GwynFirestorm>(), 0, 0f, Main.myPlayer, FirestormDamage, 150f);
+                    ModContent.ProjectileType<GwynFirestorm>(), 0, 0f, Main.myPlayer, ScaleAttackDamage(FirestormDamage), 150f);
             }
         }
 
@@ -4203,15 +4385,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Player player = Main.player[NPC.target];
-            if (!player.dead && player.active && Main.rand.NextBool(220))
+            if (SummonedCastAllowed && !player.dead && player.active && Main.rand.NextBool(220))
             {
-                _descentCd = 1500 + Main.rand.Next(600);
+                OnSummonedCastStarted(120);
+                _descentCd = ScaleCooldown(1500 + Main.rand.Next(600));
                 SetAttackLabel("Descent of the Sun", 130);
                 UsefulFunctions.BroadcastText(LangUtils.GetTextValue("NPCs.Gwyn.Fury"), 255, 200, 60);
                 Vector2 spawn = new Vector2(player.Center.X, player.Center.Y - 640f);
+                int descentDamage = ScaleAttackDamage(DescentDamage);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, Vector2.Zero,
-                    ModContent.ProjectileType<GwynDescentMeteor>(), DescentDamage, 0f,
-                    Main.myPlayer, DescentDamage, player.Center.X, ArenaCenter.Y);
+                    ModContent.ProjectileType<GwynDescentMeteor>(), descentDamage, 0f,
+                    Main.myPlayer, descentDamage, player.Center.X, ArenaCenter.Y);
             }
         }
 
@@ -4236,6 +4420,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             base.OnMeleeComboStarted(combo);
             _swordArcSpawnedForStep = false;
+            _lordsVerdictConjured = false;
             ResetFlurryPursuit(releasePause: false);
             _aerialStrikeElapsed = -1;
 
@@ -4246,6 +4431,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 && combo.HeavyCommit
                 && combo.RuntimeV2Clip == null
                 && combo.Name != WrathFlurryName
+                && combo.Name != LordsVerdictName   // the giant sword's glint is its own tell
                 && combo.Steps != null
                 && combo.Steps.Length > 0
                 && combo.Steps[0].TelegraphTicks >= DelayedSwingMinTelegraph
@@ -4319,6 +4505,25 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
             base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+
+            // Lord's Verdict: the server conjures the giant sword on the tell's first tick; it forms above him
+            // and follows his combo from there.
+            bool verdictStart = combo.Name == LordsVerdictName && !_lordsVerdictConjured && Main.netMode != NetmodeID.MultiplayerClient;
+            if (verdictStart)
+            {
+                _lordsVerdictConjured = true;
+                int giantDamage = (int)(MeleeDamage * LordsVerdictGiantDamage);
+                float tipWaveFlag = 0f;
+                if (LordsVerdictTipWave)
+                {
+                    tipWaveFlag = 1f;
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+                    ModContent.ProjectileType<Content.Projectiles.Enemy.Gwyn.GwynLordsVerdictBlade>(), giantDamage, 6f,
+                    Main.myPlayer, NPC.whoAmI, tipWaveFlag);
+            }
+
             if (combo.Name != CinderfallName || Main.dedServ)
             {
                 return;
@@ -4829,14 +5034,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             Vector2 origin = PuppetHandPosition;
             Vector2 vel = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f)) * 15f;
             Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<GwynLightningSpear>(), LightningSpearDamage, 4f, Main.myPlayer);
+                ModContent.ProjectileType<GwynLightningSpear>(), ScaleAttackDamage(LightningSpearDamage), 4f, Main.myPlayer);
 
             _spearThrowsThisJump++;
             if (_spearThrowsThisJump == 1)
             {
                 //Below half health, the signature cast is a guaranteed 3-4 throw sequence. Before
                 //that breakpoint it retains the lighter 1-2 throw pattern.
-                _spearFollowupsRemaining = NPC.life <= NPC.lifeMax * 0.50f
+                _spearFollowupsRemaining = HalfHealthMovesUnlocked
                     ? Main.rand.Next(2, 4)
                     : (Main.rand.NextBool(2) ? 1 : 0);
             }
@@ -4852,7 +5057,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int  NovaBlastHoldTicks => 20;
         protected override int  NovaRecoveryTicks  => 45;
 
-        bool _nova75, _nova45, _nova20;
+        static readonly float[] GwynNovaHealthThresholds = { 0.75f, 0.45f, 0.20f };
+        // Health fractions, highest first; each fires one Cinder Nova the first time it is crossed.
+        protected virtual float[] NovaHealthThresholds => GwynNovaHealthThresholds;
+        int _novaThresholdsFired;
         int _novaPointBlankCd;
 
         protected override bool ShouldTriggerNova()
@@ -4862,14 +5070,17 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return false;
             }
             float frac = (float)NPC.life / NPC.lifeMax;
-            if (frac <= 0.75f && !_nova75) { _nova75 = true; return true; }
-            if (frac <= 0.45f && !_nova45) { _nova45 = true; return true; }
-            if (frac <= 0.20f && !_nova20) { _nova20 = true; return true; }
+            float[] thresholds = NovaHealthThresholds;
+            if (_novaThresholdsFired < thresholds.Length && frac <= thresholds[_novaThresholdsFired])
+            {
+                _novaThresholdsFired++;
+                return true;
+            }
             //Point-blank greed punish, on its own cooldown
             if (_novaPointBlankCd > 0) { _novaPointBlankCd--; return false; }
             if (NPC.Distance(Main.player[NPC.target].Center) < 140f && Main.rand.NextBool(240))
             {
-                _novaPointBlankCd = 600;
+                _novaPointBlankCd = ScaleCooldown(600);
                 return true;
             }
             return false;
@@ -4913,10 +5124,10 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<GwynCinderNova>(), NovaDamage, 10f, Main.myPlayer, 840f);
+                ModContent.ProjectileType<GwynCinderNova>(), ScaleAttackDamage(NovaDamage), 10f, Main.myPlayer, 840f);
         }
 
-        const int NovaDamage = 60;
+        protected const int NovaDamage = 60;
 
         // ── Sunlight Spears Volley (mid-range answer) ────────────────────────────
         // Base AbyssShard template: a short raise, then a sequence of "fire events". Each event drops
@@ -4931,7 +5142,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override int   AbyssShardTelegraphTicks   => 25;
 
         const int SunlightSpearDamage = 40;
-        const int SpearVolleyEvents = 3;
+        const float SpearVolleyNodeSpacing = 110f;
+        protected virtual int SpearVolleyEvents => 3;
+        protected virtual int SpearVolleyNodesPerEvent => 2;
 
         protected override int NextAbyssShardDelay(int completedFireIndex)
             => completedFireIndex < SpearVolleyEvents - 1 ? 14 : -1;
@@ -4945,13 +5158,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
             Player target = Main.player[NPC.target];
-            //Two orbs per event, arced above the player and spread horizontally by event index
-            for (int i = 0; i < 2; i++)
+            //Orbs arced above the player, centred on the event and spread horizontally by event index
+            int nodeCount = SpearVolleyNodesPerEvent;
+            for (int i = 0; i < nodeCount; i++)
             {
-                float spreadX = (fireIndex - 1) * 90f + (i == 0 ? -55f : 55f);
+                float nodeOffset = (i - (nodeCount - 1) * 0.5f) * SpearVolleyNodeSpacing;
+                float spreadX = (fireIndex - 1) * 90f + nodeOffset;
                 Vector2 pos = target.Center + new Vector2(spreadX, -220f - Main.rand.NextFloat(40f));
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
-                    ModContent.ProjectileType<GwynSolarSpearNode>(), SunlightSpearDamage, 2f, Main.myPlayer, 20f);
+                    ModContent.ProjectileType<GwynSolarSpearNode>(), ScaleAttackDamage(SunlightSpearDamage), 2f, Main.myPlayer, 20f);
             }
         }
 
@@ -5040,7 +5255,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             float speed = MathHelper.Lerp(baseGraspSpeed, baseGraspSpeed * 2f, distanceFactor);
             Vector2 vel = UsefulFunctions.Aim(origin, target.Center, speed);
             int graspIndex = Projectile.NewProjectile(NPC.GetSource_FromThis(), origin, vel,
-                ModContent.ProjectileType<GwynFlameGrasp>(), GraspDamage, 8f, Main.myPlayer, NPC.whoAmI);
+                ModContent.ProjectileType<GwynFlameGrasp>(), ScaleAttackDamage(GraspDamage), 8f, Main.myPlayer, NPC.whoAmI);
             tsorcGlobalProjectile.SetDefenseTraits(
                 graspIndex, AttackDefenseTraits.BypassesActiveShield);
         }
@@ -5138,7 +5353,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            if (Vector2.Distance(player.Center, ArenaCenter) <= RainOfDeathRange)
+            if (Vector2.Distance(player.Center, ArenaCenter) <= RainOfDeathStartRange)
             {
                 //Reset rather than freeze, so re-crossing the boundary always gets a full interval
                 //of grace instead of an orb the instant a player clips the edge.
@@ -5224,7 +5439,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 3, UsefulFunctions.ColorToFloat(Color.Orange));
 
             }
-            tsorcRevampWorld.InitiateTheEnd();
+            OnFinalDeath();
         }
         #endregion
     }

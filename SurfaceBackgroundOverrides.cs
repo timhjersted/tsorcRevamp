@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -29,19 +28,8 @@ namespace tsorcRevamp
         public const int ForestTreeVariantStyle3 = 12;
         public const int GroundScanDepth = 200;
 
-        // Tiles that mark ground as belonging to a specific biome rather than plain forest. Used to
-        // tell "flying above a special biome, out of vanilla's detection range" (keep the sticky
-        // style) apart from "actually standing over neutral dirt/stone ground" (a real forest).
-        private static readonly HashSet<ushort> SpecialBiomeSurfaceTiles = new HashSet<ushort>
-        {
-            TileID.CorruptGrass, TileID.Ebonstone, TileID.Ebonsand, TileID.CorruptSandstone, TileID.CorruptHardenedSand, TileID.CorruptIce,
-            TileID.CrimsonGrass, TileID.Crimstone, TileID.Crimsand, TileID.CrimsonSandstone, TileID.CrimsonHardenedSand, TileID.FleshIce,
-            TileID.HallowedGrass, TileID.Pearlstone, TileID.Pearlsand, TileID.HallowSandstone, TileID.HallowHardenedSand, TileID.HallowedIce,
-            TileID.Sand, TileID.Sandstone, TileID.HardenedSand,
-            TileID.SnowBlock, TileID.IceBlock, TileID.BreakableIce,
-            TileID.JungleGrass, TileID.Mud,
-            TileID.MushroomGrass,
-        };
+        private const int ForestProbeColumnsPerSide = 2;
+        private const int ForestProbeSpacing = 4;
 
         private static int stickyBiomeStyle = DefaultSurfaceBackgroundStyle;
 
@@ -124,44 +112,58 @@ namespace tsorcRevamp
                 return;
             }
 
-            int centerTileX = (int)((Main.screenPosition.X + Main.screenWidth / 2f) / 16f);
-            int centerTileY = (int)((Main.screenPosition.Y + Main.screenHeight / 2f) / 16f);
+            if (stickyBiomeStyle == DefaultSurfaceBackgroundStyle)
+            {
+                return;
+            }
 
-            if (IsNearNeutralGround(centerTileX, centerTileY))
+            var centerTile = Main.LocalPlayer.Center.ToTileCoordinates();
+            if (IsOverForestTerrain(centerTile.X, centerTile.Y))
             {
                 stickyBiomeStyle = DefaultSurfaceBackgroundStyle;
                 return;
             }
 
-            if (stickyBiomeStyle != DefaultSurfaceBackgroundStyle)
-            {
-                style = stickyBiomeStyle;
-            }
+            style = stickyBiomeStyle;
         }
 
-        // Scans straight down from the screen center, bounded by the surface line so we never peek
-        // into a biome's underground stone. A neutral tile (dirt/stone/forest grass) confirms real
-        // ground-level forest; a special-biome tile or nothing solid within range means we're still
-        // over/above a different biome, or too high to tell, so the sticky style is left alone.
-        private static bool IsNearNeutralGround(int centerTileX, int centerTileY)
+        private static bool IsOverForestTerrain(int centerTileX, int centerTileY)
         {
-            if (centerTileX < 0 || centerTileX >= Main.maxTilesX)
-            {
-                return false;
-            }
-
+            int scanTopY = Math.Max(0, centerTileY);
             int scanBottomY = (int)Math.Min(Main.worldSurface, centerTileY + GroundScanDepth);
+            int forestColumns = 0;
 
-            for (int y = Math.Max(0, centerTileY); y <= scanBottomY; y++)
+            // Confirm a forest transition with three of five nearby surface hits. Empty columns,
+            // buildings, and other biome tiles leave the remembered background in place.
+            for (int offset = -ForestProbeColumnsPerSide; offset <= ForestProbeColumnsPerSide; offset++)
             {
-                Tile tile = Main.tile[centerTileX, y];
+                int x = centerTileX + offset * ForestProbeSpacing;
 
-                if (!tile.HasTile || tile.IsActuated || !Main.tileSolid[tile.TileType])
+                if (x < 0 || x >= Main.maxTilesX)
                 {
                     continue;
                 }
 
-                return !SpecialBiomeSurfaceTiles.Contains(tile.TileType);
+                for (int y = scanTopY; y <= scanBottomY; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+
+                    if (!tile.HasTile || tile.IsActuated || !Main.tileSolid[tile.TileType])
+                    {
+                        continue;
+                    }
+
+                    if (tile.TileType is TileID.Grass or TileID.Dirt or TileID.Stone)
+                    {
+                        forestColumns++;
+                        if (forestColumns > ForestProbeColumnsPerSide)
+                        {
+                            return true;
+                        }
+                    }
+
+                    break;
+                }
             }
 
             return false;

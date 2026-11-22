@@ -40,7 +40,9 @@ namespace tsorcRevamp.NPCs
         // Upper bound on the per-NPC NavSearchRadius span window. Raised 50->80 so a same-room player
         // a bit over 50 tiles away is still reachable by A* (the old 50 cap caused "no-goal-span" ->
         // no plan -> dumb-chase wedged on a ledge). Smaller per-NPC NavSearchRadius still = dumber+cheaper.
-        private const int ScanRadiusX = 80;
+        // Raised 80->120 for the Hero of Lumelia's artillery archers, who plan across ~100 tiles of arena. The window is
+        // +/- radius around the NPC (xMin..xMax in Replan), and only NPCs that set a NavSearchRadius above 80 are affected.
+        private const int ScanRadiusX = 120;
         private const int ScanRadiusY = 48;
         // Normal free-fall / platform-drop budget. Pursuit may descend farther toward the target's
         // elevation when the full body and landing validate; patrol keeps its shallow safety budget.
@@ -230,6 +232,42 @@ namespace tsorcRevamp.NPCs
                 || (nav.Plan != null && nav.PlanIndex < nav.Plan.Count);
         }
 
+        // Explicit handoff for the opt-in giant controller. Keep failed-edge memory, but never
+        // resume a takeoff column, airborne drift, or step timer belonging to the previous floor.
+        internal static void ResetStableHeavyRoute(NPC npc)
+        {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().StableHeavyNavigation == null) return;
+            NavState nav = GetState(npc);
+            if (nav.PlatformPassActive || nav.BeastPhasing) npc.noTileCollide = false;
+            if (nav.RopeEngaged) npc.noGravity = false;
+            nav.Plan = null;
+            nav.PlanIndex = nav.StepTimer = nav.CommitFrames = nav.ReplanCooldown = 0;
+            nav.AirCommitTimer = nav.AirCommitDirX = nav.ShaftEscapeDir = 0;
+            nav.CommittedLaunchVx = 0f;
+            nav.JumpFiredThisStep = false;
+            nav.PlatformPassActive = nav.BeastPhasing = nav.RopeEngaged = nav.RopeDismounting = nav.RopeDirLatched = false;
+            nav.AlignStallFrames = nav.StepNoMoveFrames = nav.StuckGiveUpFrames = nav.NoPathStrikes = 0;
+            nav.PursuitStallFrames = nav.HardStuckFrames = nav.HardStuckStrikes = 0;
+            nav.PursuitBestDist = float.MaxValue;
+            nav.AlignLastX = nav.MoveCheckX = nav.StuckCheckX = nav.HardStuckCheckX = npc.Center.X;
+            nav.PlanGraceFrames = PlanGraceDuration;
+            nav.NoAStarPath = false;
+            nav.LastPlanResult = "heavy-route-reset";
+            nav.LastTelemetryPlan = "none";
+        }
+
+        internal static bool IsStableHeavyLandingFailed(NPC npc, int x, int feetY)
+            => States.TryGetValue(npc.whoAmI, out NavState nav) && nav.OwnerType == npc.type
+                && BadEdgePenalty(x, feetY, nav.BadEdgeTargets) >= FailedEdgeCost;
+
+        internal static void RememberStableHeavyFailure(NPC npc, Vector2 landingPosition)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient) return;
+            int x = (int)((landingPosition.X + npc.width * 0.5f) / TileF);
+            int feetY = (int)Math.Round((landingPosition.Y + npc.height) / TileF) - 1;
+            RememberFailedStep(GetState(npc), npc, x, feetY, (int)Main.GameUpdateCount + 120);
+        }
+
         /// <summary>
         /// Returns the last result for the optional movement waypoint supplied to <see cref="Run"/>.
         /// Ordinary player-pursuit callers never enter waypoint mode and always report <see cref="SmartFighter4WaypointStatus.None"/>.
@@ -379,6 +417,7 @@ namespace tsorcRevamp.NPCs
             }
             _minSurfaceWidth = globalNPC.MinSurfaceWidth; // beast flat-ground gate for IsStandableTile this frame (0 = off)
             _maxSurfaceStep = globalNPC.MaxSurfaceStep;   // tolerated footprint unevenness (Deerclops-clip failsafe)
+            _stableHeavyTerrain = globalNPC.StableHeavyNavigation != null;
             // Headroom: beasts (MinSurfaceWidth > 0) require their full sprite height of clearance; others keep the
             // old fixed 3 tiles. Auto-derived from the sprite so a tall beast won't path into a too-short space.
             _clearanceHeight = globalNPC.MinSurfaceWidth > 0 ? Math.Max(3, (int)Math.Ceiling(npc.height / 16f)) : 3;
@@ -855,7 +894,8 @@ namespace tsorcRevamp.NPCs
                         {
                             // Retries exhausted: blink out if this enemy has a recovery teleport, else disengage.
                             nav.NoPathStrikes = 0;
-                            bool nearbyRecovery = globalNPC.CanTeleport
+                            bool nearbyRecovery = !globalNPC.SuppressAutoTeleportThisFrame
+                                && globalNPC.CanTeleport
                                 && globalNPC.TeleportStyle == TeleportStyle.RecoveryOnly
                                 && globalNPC.TeleportCooldownTimer == 0
                                 && (globalNPC.RecoveryTeleportMaxRange <= 0f
@@ -868,7 +908,7 @@ namespace tsorcRevamp.NPCs
                                     NavBehavior.ForceDisengage(npc, globalNPC);
                                 }
                             }
-                            else
+                            else if (!globalNPC.SuppressAutoTeleportThisFrame)
                             {
                                 NavBehavior.ForceDisengage(npc, globalNPC);
                             }
@@ -966,7 +1006,56 @@ namespace tsorcRevamp.NPCs
                                 || (globalNPC.TeleportCooldownTimer == 0
                                     && (globalNPC.RecoveryTeleportMaxRange <= 0f
                                         || npc.Distance(player.Center) <= globalNPC.RecoveryTeleportMaxRange));
-                            if (globalNPC.CanTeleport && recoveryInRange)
+
+                            // Not stuck, just standing: target in sight, feet within 2 tiles of ours, at most 30 tiles
+                            // away, and every column between has floor at our feet row (or one below) and a clear body.
+                            // Holding position there (kiting, waiting out a cooldown) is not a reason to blink or give up.
+                            float feetDiff = Math.Abs(npc.Bottom.Y - player.Bottom.Y);
+                            float horizontalTiles = Math.Abs(player.Center.X - npc.Center.X) / TileF;
+                            bool openWalkToTarget = los && feetDiff <= 2f * TileF && horizontalTiles <= 30f;
+                            if (openWalkToTarget)
+                            {
+                                int floorRow = (int)(npc.Bottom.Y / TileF);
+                                int bodyTiles = (int)Math.Ceiling(npc.height / TileF);
+                                int startColumn = (int)(npc.Center.X / TileF);
+                                int endColumn = (int)(player.Center.X / TileF);
+                                int columnStep = Math.Sign(endColumn - startColumn);
+                                for (int column = startColumn; column != endColumn; column += columnStep)
+                                {
+                                    Tile floorTile = Main.tile[column, floorRow];
+                                    Tile dipTile = Main.tile[column, floorRow + 1];
+                                    bool floorHere = UsefulFunctions.IsTileReallySolid(column, floorRow)
+                                        || (floorTile.HasTile && Main.tileSolidTop[floorTile.TileType]);
+                                    bool dipFloor = UsefulFunctions.IsTileReallySolid(column, floorRow + 1)
+                                        || (dipTile.HasTile && Main.tileSolidTop[dipTile.TileType]);
+
+                                    bool bodyClear = true;
+                                    for (int row = floorRow - bodyTiles; row < floorRow; row++)
+                                    {
+                                        if (UsefulFunctions.IsTileReallySolid(column, row))
+                                        {
+                                            bodyClear = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if ((!floorHere && !dipFloor) || !bodyClear)
+                                    {
+                                        openWalkToTarget = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Aggressive teleporters also wait out their cooldown here instead of blinking every 4s window.
+                            bool aggressiveOnCooldown = globalNPC.TeleportStyle == TeleportStyle.Aggressive
+                                && globalNPC.TeleportCooldownTimer > 0;
+
+                            if (openWalkToTarget || (globalNPC.CanTeleport && aggressiveOnCooldown))
+                            {
+                                nav.LastPlanResult = $"hard-stuck ignored x={nav.HardStuckCheckX / TileF:F1} openWalk={openWalkToTarget} tpCooldown={globalNPC.TeleportCooldownTimer}";
+                            }
+                            else if (globalNPC.CanTeleport && recoveryInRange)
                             {
                                 // Use the same robust reacquire search as the navigation FSM: a wider
                                 // radius, a legal sightline near the target, and normal charge/cooldown
@@ -974,14 +1063,15 @@ namespace tsorcRevamp.NPCs
                                 // reset this detector, and repeated the exact blocked/drop loop forever.
                                 // Recovery-only teleports are server-authoritative; clients wait for
                                 // the resulting NPC sync instead of independently disengaging.
-                                if (globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
-                                    || Main.netMode != NetmodeID.MultiplayerClient)
+                                if (!globalNPC.SuppressAutoTeleportThisFrame
+                                    && (globalNPC.TeleportStyle != TeleportStyle.RecoveryOnly
+                                        || Main.netMode != NetmodeID.MultiplayerClient))
                                 {
                                     if (!tsorcRevampAIs.TryTeleportReacquire(npc, globalNPC))
                                         NavBehavior.ForceDisengage(npc, globalNPC);
                                 }
                             }
-                            else
+                            else if (!globalNPC.SuppressAutoTeleportThisFrame)
                             {
                                 NavBehavior.ForceDisengage(npc, globalNPC);
                             }
@@ -1033,7 +1123,8 @@ namespace tsorcRevamp.NPCs
                         // while it can technically throw at the player. A four-second failure to get
                         // even two tiles closer is a genuine traversal failure, so blink to a legal
                         // re-acquire point instead of restarting the same hill-loop.
-                        if (aggressiveTeleportRecovery
+                        if (!globalNPC.SuppressAutoTeleportThisFrame
+                            && aggressiveTeleportRecovery
                             && globalNPC.TeleportCountdown == 0
                             && globalNPC.TeleportAppearanceTimer == 0
                             && globalNPC.TeleportChargesRemaining > 0
@@ -1070,7 +1161,7 @@ namespace tsorcRevamp.NPCs
             // (single block, skinny pillar, low overhang) instead of being stopped or forced to jump by it. While
             // phasing it runs with noTileCollide + the feet pinned to the entry floor; real walls (wider than the
             // cap) are NOT phased — A* still routes around/over them. Takes the place of the auto-step this frame.
-            bool beastPhasing = globalNPC.RequiresFlatGround && TryBeastPhase(nav, npc, globalNPC);
+            bool beastPhasing = globalNPC.RequiresFlatGround && !_stableHeavyTerrain && TryBeastPhase(nav, npc, globalNPC);
 
             // Vanilla-style smooth auto-step: glide over <=1-tile bumps/half-blocks via gfxOffY (no jump),
             // exactly how the player and vanilla walkers move. Runs after the action sets velocity, only
@@ -1078,13 +1169,14 @@ namespace tsorcRevamp.NPCs
             // (noTileCollide), where stepping up would cancel the intended descent. Replaces 1-tile hops.
             if (!beastPhasing && !npc.noGravity && !npc.noTileCollide)
             {
-                UsefulFunctions.AutoStepUp(npc);
+                if (_stableHeavyTerrain) GigasTerrainNavigation.StepAndSettle(npc);
+                else UsefulFunctions.AutoStepUp(npc);
             }
 
             // Phase 3: a beast sinks its sprite to follow the ground under it (drawn on top), so its overhang clips
             // into a slope/hill instead of floating. Cosmetic gfxOffY offset; physics still rests on the core. Plus a
             // light nudge so a near-stationary beast doesn't park its body floating off a cliff edge.
-            if (globalNPC.RequiresFlatGround && !beastPhasing)
+            if (globalNPC.RequiresFlatGround && !beastPhasing && !_stableHeavyTerrain)
             {
                 ApplyBeastGroundSink(npc, globalNPC);
                 ApplyBeastAntiFloat(npc, globalNPC);
@@ -1527,6 +1619,7 @@ namespace tsorcRevamp.NPCs
         {
             tsorcRevampGlobalNPC pg = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             _planningNpc = npc;
+            _stableHeavyTerrain = pg.StableHeavyNavigation != null;
             _planWalkSpeed = Math.Max(topSpeed, 0.1f);
             _planGravity = npc.gravity > 0f ? npc.gravity : 0.3f;
             _planJumpCeil = Math.Max(pg.MaxJumpPower, 5f);
@@ -1546,6 +1639,7 @@ namespace tsorcRevamp.NPCs
         // Tolerated footprint unevenness for the beast gate (set per-frame from globalNPC.MaxSurfaceStep). 1 = a foot may dip
         // one tile into a step (the Deerclops-clip failsafe); 0 = strictly flat. Only used when _minSurfaceWidth > 0.
         private static int _maxSurfaceStep = 1;
+        private static bool _stableHeavyTerrain;
         // Required vertical headroom in tiles for the body clearance check (HasBodyClearanceAtRow). Default 3 (the
         // old fixed value); for beasts it's auto-derived from sprite height in Run, so a tall beast won't path
         // into a space too short for it.
@@ -1921,6 +2015,7 @@ namespace tsorcRevamp.NPCs
                         int landingWidth = b.RightX - b.LeftX + 1;
                         int tightPenalty = landingWidth <= 2 ? 15 : 0;
                         int badPenalty = BadEdgePenalty(landX, b.Y, badEdges);
+                        if (_stableHeavyTerrain && badPenalty >= FailedEdgeCost) continue;
                         int baseCost = kind == EdgeKind.JumpUp ? 5 + dy * 2 : 5 + absDx;
                         a.Edges.Add(new Edge(b, kind, baseCost + wrongDirPenalty + tightPenalty + badPenalty, launchX, landX));
                     }
@@ -3837,6 +3932,16 @@ namespace tsorcRevamp.NPCs
                 reason = $"vx={npc.velocity.X:F2}";
                 return true;
             }
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().StableHeavyNavigation is GigasTerrainNavigation heavy)
+            {
+                // The same server-owned controller now owns planned, local and perch-recovery
+                // jumps. Clients wait for its arc snapshot; they never choose a separate launch.
+                bool launched = heavy.TryPlannedJump(npc, step.TargetX, step.TargetY, jumpCeil,
+                    NavigationJumpSpeed(npc, topSpeed, boostCeil));
+                action = launched ? "heavy-plan-launch" : "heavy-plan-wait";
+                reason = $"target=({step.TargetX},{step.TargetY}) validated-flat-landing";
+                return true;
+            }
             // Physics-based arc (SF4): solve the exact jump from npc.gravity + jump limits.
             int rise = feetY - step.TargetY;          // positive = rising; negative = target below
 
@@ -4170,6 +4275,11 @@ namespace tsorcRevamp.NPCs
 
         private static bool TryShaftEscape(NavState nav, NPC npc, Player player, float jumpCeil, float topSpeed, float acceleration, out string action, out string reason)
         {
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().StableHeavyNavigation != null)
+            {
+                action = reason = "";
+                return false; // Giants need a committed flat landing, never a blind vertical escape.
+            }
             action = "";
             reason = "";
             if (player.Center.Y >= npc.Center.Y - 2f * TileF)
@@ -4229,6 +4339,21 @@ namespace tsorcRevamp.NPCs
             int feetY = GetFeetTileY(npc);
             float maxLaunchVx = NavigationJumpSpeed(npc, topSpeed, boostCeil);
             int obstacleHeight = GetObstacleHeight(frontX, feetY);
+            if (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().StableHeavyNavigation is GigasTerrainNavigation heavy)
+            {
+                int heavyDrop = GetDropDepth(frontX, feetY, 6);
+                if (obstacleHeight > 1 || (heavyDrop >= 2 && !allowCliffDrop))
+                {
+                    bool launched = heavy.TryLocalJump(npc, direction, jumpCeil, maxLaunchVx);
+                    if (!launched) npc.velocity.X *= 0.4f;
+                    action = launched ? "heavy-local-launch" : "heavy-local-blocked";
+                    reason = $"obstacle={obstacleHeight} drop={heavyDrop} requires-clear-flat-landing";
+                    return true;
+                }
+                // A one-tile bump is handled by bounded step/sprite settling, never a local hop.
+                action = reason = "";
+                return false;
+            }
             // obstacleHeight == 1 (a single-tile step) is now handled by the smooth AutoStepUp glide during the walk,
             // so we only JUMP for obstacles 2+ tiles tall. This is why the enemy no longer mini-hops over
             // every little bump.
@@ -4768,8 +4893,12 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
+                if (_stableHeavyTerrain)
+                    lands.Sort((left, right) => GigasTerrainNavigation.IsFlatLanding(_planningNpc, right, b.Y + 1, 4)
+                        .CompareTo(GigasTerrainNavigation.IsFlatLanding(_planningNpc, left, b.Y + 1, 4)));
                 foreach (int landCol in lands)
                 {
+                    if (_stableHeavyTerrain && !GigasTerrainNavigation.IsFlatLanding(_planningNpc, landCol, b.Y + 1)) continue;
                     int adx = Math.Abs(landCol - launchCol);
                     // The executor drops for near-vertical descents; solid floors cannot be dropped through.
                     if (dy < 0 && adx <= 1 && IsNavigationSolid(launchCol, a.Y + 1)
@@ -5131,6 +5260,13 @@ namespace tsorcRevamp.NPCs
         private static void LogFrame(NPC npc, Player player, NavState nav, bool grounded, bool los,
             bool attack, string action, string reason)
         {
+            // Developer diagnostic only, like the [fsm] nav log: without this every player reopened the log file several
+            // times a second per SF4 enemy and built the full diagnostic string each time.
+            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            {
+                return;
+            }
+
             tsorcRevampGlobalNPC globalNPC = npc.GetGlobalNPC<tsorcRevampGlobalNPC>();
             int now = (int)Main.GameUpdateCount;
             // Sample finer while on/working a rope so fast vibration & phasing are actually captured between lines.

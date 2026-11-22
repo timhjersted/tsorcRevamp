@@ -21,7 +21,6 @@ namespace tsorcRevamp.Buffs
         }
 
         public const float EnduranceResistBonus = 1f;
-        public const float IceBarrierResistBonus = 8f;
         public const float SolarDR = 25f;
         public const float BeetleDR = 18f;
         public override void Update(int type, Player player, ref int buffIndex)
@@ -37,11 +36,6 @@ namespace tsorcRevamp.Buffs
             if (type == BuffID.Endurance)
             {
                 player.endurance += EnduranceResistBonus / 100f;
-            }
-
-            if (type == BuffID.IceBarrier)
-            {
-                player.endurance += IceBarrierResistBonus / 100f;
             }
 
             if (type == BuffID.AmmoReservation)
@@ -91,21 +85,11 @@ namespace tsorcRevamp.Buffs
                 player.endurance += BeetleDR * 3f / 100f;
             }
         }
-
-        public override void Update(int type, NPC npc, ref int buffIndex)
-        {
-        }
-
         public override void ModifyBuffText(int type, ref string buffName, ref string tip, ref int rare)
         {
             if (type == BuffID.Endurance)
             {
                 tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 10 + EnduranceResistBonus);
-            }
-
-            if (type == BuffID.IceBarrier)
-            {
-                tip = LangUtils.GetTextValue("CommonItemTooltip.DRStat", 25 + IceBarrierResistBonus);
             }
 
             if (type == BuffID.Warmth)

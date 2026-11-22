@@ -84,6 +84,27 @@ namespace tsorcRevamp.Content.Items.Weapons
                 {
                     Projectile.NewProjectileDirect(source, position, velocity, ModContent.ProjectileType<LionheartGunshot>(), damage, knockback);
                 }
+
+                if (!Main.dedServ)
+                {
+                    Vector2 aimDir = velocity.SafeNormalize(Vector2.UnitX * player.direction);
+                    Vector2 muzzlePos = position + (aimDir * 42f);
+
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 dustVel = aimDir.RotatedByRandom(0.32f) * Main.rand.NextFloat(2.5f, 7f);
+                        Dust flash = Dust.NewDustPerfect(muzzlePos, DustID.GemSapphire, dustVel, 80, default, Main.rand.NextFloat(1.0f, 1.4f));
+                        flash.noGravity = true;
+                    }
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector2 sparkVel = aimDir.RotatedByRandom(0.75f) * Main.rand.NextFloat(1f, 3f);
+                        Dust spark = Dust.NewDustPerfect(muzzlePos, DustID.BlueTorch, sparkVel, 60, default, 1.1f);
+                        spark.noGravity = true;
+                    }
+                }
+
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item82 with { Volume = 0.2f});
             }
             else

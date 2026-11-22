@@ -26,6 +26,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             Item.crit = 10;
             Item.width = 14;
             Item.height = 28;
+            Item.scale = 0.75f;
             Item.useTime = 60;
             Item.useAnimation = 60;
             Item.useStyle = ItemUseStyleID.Shoot;

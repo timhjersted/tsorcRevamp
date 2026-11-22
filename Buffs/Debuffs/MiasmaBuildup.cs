@@ -31,15 +31,17 @@ namespace tsorcRevamp.Buffs.Debuffs
         /// <summary>
         /// Adds Miasma buildup from a hit. The victim client reports it in multiplayer; the server
         /// owns the threshold check and the resulting Miasma drain.
+        /// <paramref name="procDurationTicks"/> is how long the drain lasts if THIS hit fills the meter
+        /// (0 = the standard <see cref="Miasma.DurationTicks"/>).
         /// </summary>
-        public static void Apply(Player player, int buildup = DefaultBuildupPerHit)
+        public static void Apply(Player player, int buildup = DefaultBuildupPerHit, int procDurationTicks = 0)
         {
             if (player == null || !player.active || player.dead || buildup <= 0)
             {
                 return;
             }
 
-            player.GetModPlayer<MiasmaPlayer>().RequestBuildup(buildup);
+            player.GetModPlayer<MiasmaPlayer>().RequestBuildup(buildup, procDurationTicks);
         }
     }
 }

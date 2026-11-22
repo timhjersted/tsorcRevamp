@@ -1,0 +1,88 @@
+using Terraria;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+
+namespace tsorcRevamp.Content.Items.Armor
+{
+    [AutoloadEquip(EquipType.Head, EquipType.Face)]
+    public class MaskOfTheFather : ModItem
+    {
+        public override string Texture => "tsorcRevamp/Content/Items/Armor/Enemy/MaskOfTheFather";
+
+        public static float Dmg = 14f;
+        public static float CritDmgIncrease = 15f;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, CritDmgIncrease);
+
+        public override void SetStaticDefaults()
+        {
+            ArmorIDs.Head.Sets.DrawHatHair[Item.headSlot] = true;
+
+            int faceSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Face);
+            ArmorIDs.Face.Sets.PreventHairDraw[faceSlot] = true;
+            ArmorIDs.Face.Sets.OverrideHelmet[faceSlot] = true;
+        }
+
+        public override void SetDefaults()
+        {
+            Item.defense = 8;
+            Item.accessory = true;
+            Item.width = 34;
+            Item.height = 48;
+            Item.rare = ItemRarityID.Green;
+            Item.value = PriceByRarity.fromItem(Item);
+        }
+
+        public override void UpdateEquip(Player player)
+        {
+            ApplyMaskEffects(player);
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            // Defense is only active when equipped in head armor slot
+            player.statDefense -= Item.defense;
+
+            // Head armor mask takes priority; don't stack if equipped simultaneously
+            if (PinwheelMaskHelper.IsPinwheelMask(player.armor[0]))
+            {
+                return;
+            }
+
+            ApplyMaskEffects(player);
+        }
+
+        private void ApplyMaskEffects(Player player)
+        {
+            var modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            if (modPlayer.equippedPinwheelMask)
+            {
+                return;
+            }
+            modPlayer.equippedPinwheelMask = true;
+
+            player.GetDamage(DamageClass.Generic) += Dmg / 100f;
+            modPlayer.MaskOfTheFather = true;
+        }
+
+        public override bool CanEquipAccessory(Player player, int slot, bool modded)
+        {
+            if (!PinwheelMaskHelper.CanEquipAccessory(player, slot, modded))
+            {
+                return false;
+            }
+
+            return base.CanEquipAccessory(player, slot, modded);
+        }
+
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (!PinwheelMaskHelper.CanAccessoryBeEquippedWith(equippedItem, incomingItem))
+            {
+                return false;
+            }
+
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
+    }
+}

@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.ModLoader;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 
 namespace tsorcRevamp.Utilities
 {
@@ -86,8 +86,8 @@ namespace tsorcRevamp.Utilities
 
             PuppetSpriteExporterSystem.Queue(selected, outputDirectory);
             caller.Reply(
-                $"Queued {selected.Count * 2} portrait exports ({selected.Count} puppets). " +
-                $"One PNG will be written per frame to: {outputDirectory}",
+                $"Queued {selected.Count * 2} portrait exports ({selected.Count} puppets), plus a boss head icon " +
+                $"(<Name>_Head_Boss.png) cropped from each idle portrait. One export per frame, to: {outputDirectory}",
                 Color.LightGreen);
         }
 
@@ -118,6 +118,10 @@ namespace tsorcRevamp.Utilities
     {
         private const int RenderTargetSize = 512;
         private const int CropPadding = 2;
+
+        /// <summary>Boss head icon (map / boss bar / Boss Checklist) outline colour; the icon itself is the top square of the
+        /// idle portrait (SaveHeadIcon).</summary>
+        private static readonly Color HeadIconOutline = new Color(20, 20, 24);
 
         private sealed class ExportJob
         {
@@ -236,7 +240,9 @@ namespace tsorcRevamp.Utilities
                 NPC npc = new NPC { whoAmI = 0 };
                 npc.SetDefaults(job.NpcType);
                 if (npc.ModNPC is not PuppetNPC puppet)
+                {
                     throw new InvalidOperationException($"NPC type {job.NpcType} is not a PuppetNPC.");
+                }
 
                 Vector2 screenPosition = new Vector2(
                     (renderTarget.Width - npc.width) * 0.5f,
@@ -244,7 +250,9 @@ namespace tsorcRevamp.Utilities
                 Vector2 worldPosition = Main.screenPosition + screenPosition;
 
                 if (!puppet.DrawExportPose(worldPosition, job.WithPrimaryWeapon))
+                {
                     throw new InvalidOperationException("No primary weapon is configured.");
+                }
 
                 spriteBatch.End();
                 exportBatchStarted = false;
@@ -252,16 +260,28 @@ namespace tsorcRevamp.Utilities
                 RestoreTargets(device, previousTargets);
                 targetsRestored = true;
 
-                string suffix = job.WithPrimaryWeapon ? "PrimaryWeapon" : "Idle";
-                string filename = $"{SanitizeFileName(job.Name)}_{suffix}.png";
-                SaveCropped(renderTarget, Path.Combine(outputDirectory, filename));
+                string suffix = job.WithPrimaryWeapon ? "_PrimaryWeapon" : string.Empty;
+                string filename = $"{SanitizeFileName(job.Name)}{suffix}.png";
+                SaveCropped(renderTarget, Path.Combine(outputDirectory, filename), out Color[] croppedPixels, out int croppedWidth, out int croppedHeight);
+
+                // The idle pose also yields the boss head icon, named as tModLoader expects (<Class>_Head_Boss).
+                if (!job.WithPrimaryWeapon)
+                {
+                    string headFilename = $"{SanitizeFileName(job.Name)}_Head_Boss.png";
+                    SaveHeadIcon(croppedPixels, croppedWidth, croppedHeight, Path.Combine(outputDirectory, headFilename));
+                }
             }
             finally
             {
                 if (exportBatchStarted)
+                {
                     spriteBatch.End();
+                }
+
                 if (!targetsRestored)
+                {
                     RestoreTargets(device, previousTargets);
+                }
 
                 // PostDrawInterface expects the cursor/UI sprite batch to remain active for the
                 // tooltip and mouse layers that Terraria draws immediately after this hook.
@@ -284,7 +304,9 @@ namespace tsorcRevamp.Utilities
                 device.SetRenderTargets(previousTargets);
         }
 
-        private static void SaveCropped(RenderTarget2D renderTarget, string path)
+        /// <summary>Writes the render trimmed to its visible pixels (+CropPadding), and hands the trimmed image back for
+        /// the head icon.</summary>
+        private static void SaveCropped(RenderTarget2D renderTarget, string path, out Color[] cropped, out int croppedWidth, out int croppedHeight)
         {
             int width = renderTarget.Width;
             int height = renderTarget.Height;
@@ -321,9 +343,9 @@ namespace tsorcRevamp.Utilities
             maxX = Math.Min(width - 1, maxX + CropPadding);
             maxY = Math.Min(height - 1, maxY + CropPadding);
 
-            int croppedWidth = maxX - minX + 1;
-            int croppedHeight = maxY - minY + 1;
-            Color[] cropped = new Color[croppedWidth * croppedHeight];
+            croppedWidth = maxX - minX + 1;
+            croppedHeight = maxY - minY + 1;
+            cropped = new Color[croppedWidth * croppedHeight];
             for (int y = 0; y < croppedHeight; y++)
             {
                 Array.Copy(
@@ -334,10 +356,60 @@ namespace tsorcRevamp.Utilities
                     croppedWidth);
             }
 
-            using Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, croppedWidth, croppedHeight);
-            texture.SetData(cropped);
+            WritePng(cropped, croppedWidth, croppedHeight, path);
+        }
+
+        /// <summary>
+        /// Boss head icon: the top square of the trimmed idle portrait — side = the portrait's width (its height if that is
+        /// smaller), so a 32x48 idle gives a 32x32 icon of the head and shoulders at 1x. The portrait's 2-px crop padding
+        /// leaves room for a 1-px dark outline (4-neighbour) so it reads on the map; the cut edge at the bottom gets none.
+        /// </summary>
+        private static void SaveHeadIcon(Color[] idlePixels, int idleWidth, int idleHeight, string path)
+        {
+            int iconWidth = Math.Min(idleWidth, idleHeight);
+            int iconHeight = iconWidth;
+            int leftOffset = (idleWidth - iconWidth) / 2;
+            Color[] icon = new Color[iconWidth * iconHeight];
+
+            for (int y = 0; y < iconHeight; y++)
+            {
+                Array.Copy(idlePixels, y * idleWidth + leftOffset, icon, y * iconWidth, iconWidth);
+            }
+
+            // Outline: every empty pixel touching an opaque one. Read from a copy so new outline pixels don't spread.
+            Color[] body = (Color[])icon.Clone();
+
+            for (int y = 0; y < iconHeight; y++)
+            {
+                for (int x = 0; x < iconWidth; x++)
+                {
+                    if (body[y * iconWidth + x].A > 0)
+                    {
+                        continue;
+                    }
+
+                    bool touchesLeft = x > 0 && body[y * iconWidth + x - 1].A > 0;
+                    bool touchesRight = x < iconWidth - 1 && body[y * iconWidth + x + 1].A > 0;
+                    bool touchesUp = y > 0 && body[(y - 1) * iconWidth + x].A > 0;
+                    bool touchesDown = y < iconHeight - 1 && body[(y + 1) * iconWidth + x].A > 0;
+
+                    if (touchesLeft || touchesRight || touchesUp || touchesDown)
+                    {
+                        icon[y * iconWidth + x] = HeadIconOutline;
+                    }
+                }
+            }
+
+            WritePng(icon, iconWidth, iconHeight, path);
+        }
+
+        /// <summary>Callers: the portrait crop and the head icon.</summary>
+        private static void WritePng(Color[] pixels, int pixelWidth, int pixelHeight, string path)
+        {
+            using Texture2D texture = new Texture2D(Main.graphics.GraphicsDevice, pixelWidth, pixelHeight);
+            texture.SetData(pixels);
             using FileStream stream = File.Create(path);
-            texture.SaveAsPng(stream, croppedWidth, croppedHeight);
+            texture.SaveAsPng(stream, pixelWidth, pixelHeight);
         }
 
         private static string SanitizeFileName(string name)

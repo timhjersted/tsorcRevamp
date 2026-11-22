@@ -289,7 +289,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Main.EntitySpriteDraw(
                     pixel,
                     Projectile.Bottom - Main.screenPosition,
-                    null,
+                    new Rectangle(0, 0, 1, 1),
                     Color.OrangeRed * pulse,
                     0f,
                     new Vector2(0.5f),
@@ -300,7 +300,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                     Main.EntitySpriteDraw(
                         pixel,
                         Projectile.Bottom + new Vector2(direction * 20f, -5f) - Main.screenPosition,
-                        null,
+                        new Rectangle(0, 0, 1, 1),
                         Color.Gold * pulse,
                         direction * 0.65f,
                         new Vector2(0.5f),
@@ -325,7 +325,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Main.EntitySpriteDraw(
                     pixel,
                     position,
-                    null,
+                    new Rectangle(0, 0, 1, 1),
                     Color.Lerp(Color.OrangeRed, Color.Gold, progress) * (0.82f * life),
                     0f,
                     new Vector2(0.5f),
@@ -370,7 +370,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 Main.EntitySpriteDraw(
                     pixel,
                     baseWorld - Main.screenPosition,
-                    null,
+                    new Rectangle(0, 0, 1, 1),
                     tongueColor,
                     lean,
                     new Vector2(0.5f, 1f), // pivot at the tongue's OWN base, not its center, so it sways from its root

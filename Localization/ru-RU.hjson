@@ -82,6 +82,7 @@ Mods: {
 					[c/6cac6c:+{1}% stamina recovery speed]
 					''' */
 				// Armored: "[c/6cac6c:+{0} resistance]"
+				// Warding: "[c/9b6263:-{0}% movement speed]"
 				// Jagged: "[c/6cac6c:+{0} flat crit damage]"
 				/* Spiked:
 					'''
@@ -414,6 +415,7 @@ Mods: {
 			// FrostDeathReason: "{0} shattered from frost"
 			// BlightDeathReason: "{0} was consumed by blight"
 			// MiasmaDeathReason: "{0} could not survive the miasma"
+			// VoidDeathReason: "{0} was swallowed by the Void"
 			BotC1: Режим Носителя проклятия можно отключить в любой момент...
 			BotC2: Режим Носителя проклятия предназначен для опытных игроков.
 			BotC3: Попробуйте прочитать описание Тёмного знака
@@ -428,6 +430,227 @@ Mods: {
 			Marilith: Некоторых мощных атак можно избежать только при помощи переката!
 			ChloranthyRingTip: Кольцо Хлорантии значительно улучшает ваш перекат, позволяя ещё больше уклоняться...
 			Tip: "Совет: "
+		}
+
+		Cutscenes: {
+			Speakers: {
+				Voice: ???
+				Attraidies: Аттрайдис
+				Red: Рэд
+				Asha: Аша
+				Araz: Араз
+				Bodhi: Бодхи
+				Aaron: Аарон
+				Elijah: Элайджа
+				Miakoda: Миакода
+			}
+
+			UI: {
+				Next: Далее
+				Skip: Пропустить
+			}
+
+			Curse.Taunt: Рэд, ты самонадеянный глупец. Было забавно играть с тобой, но тебе следовало послушать Араза.
+			Arrival.Red: Что ж, Аттрайдис, покончим с этим.
+
+			Sorrow: {
+				Line01: Ты далеко продвинулся, Рэд. Я очень доволен.
+				Line02: Знаешь, я действительно должен тебя поблагодарить.
+				Line03: Хватит игр, Аттрайдис. Говори, что хотел.
+				Line04: Ах, но именно игра, которую я придумал и в которую ты так мастерски сыграл, произвела на меня такое впечатление.
+				Line05: Ты до сих пор не понял? Я хотел, чтобы ты убил Аарона.
+				Line06: Я подчинил его волю, заставил его предать тебя. Я дал ему камень, которым ты его убил...
+				Line07: ...и я сказал ему именно то, что ему нужно было услышать, чтобы он думал, что защищает себя, отдавая его тебе.
+				Line08: Но он был заколдован не дважды, а трижды.
+				Line09: Один раз, чтобы создать Защитный камень, который я обменял на сведения о местонахождении твоего отца. Второй раз, чтобы связать его жизнь с камнем.
+				Line10: И третий раз, чтобы высвободить самую мощную силу разрушения, которую когда-либо видел этот мир.
+				Line11: Но ты был нужен мне, Рэд. Видишь ли, тьма питается тьмой.
+				Line12: Заклинание, удерживавшее эту армию, оставалось запертым чистым духом твоего отца.
+				Line13: Чтобы сломать печать, воин с чистым духом и невинностью должен был быть развращён жаждой мести.
+				Line14: И ты подыграл мне. Ты подыграл мне.
+				Line15: Всё, что тебе было нужно... Рэд... это небольшой толчок.
+				Line16: Но я дам тебе шанс, Рэд. Посмотрим, справишься ли ты с этим.
+			}
+
+			ThroughGate: {
+				Line01: Это ты, Аша?
+				Line02: О, Рэд, слава Богу! Я здесь! Я знала, что ты придёшь... Я чувствовала тебя.
+				Line03: Аша, я так сильно тебя люблю! Я вытащу тебя отсюда.
+			}
+
+			Reunion: {
+				Line01: Что они с тобой сделали?
+				Line02: Когда я отказалась сказать, где меч твоего отца, Аттрайдис пытал меня несколько дней.
+				Line03: В конце концов он сдался и оставил меня здесь. Не знаю, почему он меня не убил. Но слава Богу. Как же хорошо тебя видеть.
+				Line04: Давай выбираться отсюда. Я отведу тебя туда, где ты будешь в безопасности.
+				Line05: Что ты собираешься делать?
+				Line06: Я убью его.
+				Line07: Пытаясь найти тебя, я совершил ужасное. Я должен искупить вину перед отцом и исцелить землю от порчи, которую помог выпустить Аттрайдису.
+				Line08: Что ты сделал?
+				Line09: Аттрайдис сыграл со всеми нами. Но это неважно. Я сделал то, что считал нужным, чтобы спасти тебя.
+				Line10: Я верю тебе, Рэд. Сердце болит при мысли, что ты снова уйдёшь, едва найдя меня, но я должна верить, что ты вернёшься.
+				Line11: Я вернусь, и мы наконец сможем жить в мире.
+				Line12: Когда мы выберемся на поверхность, я отведу тебя на острова на западе и вернусь туда, когда покончу с Аттрайдисом.
+				Line12Remix: Когда мы выберемся на поверхность, я отведу тебя в тропики на западе и вернусь туда, когда покончу с Аттрайдисом.
+				Line13: Хорошо, Рэд. Но сначала тебе нужно узнать, где найти меч и священные доспехи твоего отца.
+				Line14: Помнишь затопленный железный рудник у нашей старой деревни? Они за земляной стеной, отмеченной блоком зелёного хлорофита.
+				Line14Remix: Они давно хранятся в корнях Древа Древних, а вход находится в его листве, у дома Дриады.
+				Line15: За ней находится печать из чистого хлорофита, которую сможет сломать только Дракс.
+				Line15Remix: Путь запечатан чистым хлорофитом, который сможет сломать только Дракс.
+				Line16: Хорошо, пошли.
+			}
+
+			Wisp: {
+				Line01: Рэд, это ты? Это я, Араз! Я был старым другом твоего отца.
+				Line02: Аттрайдис взял меня в плен вскоре после набега на деревню твоей семьи. Я заточён здесь, внизу, под воротами!
+				Line03: Я вытащу тебя оттуда, держись!
+			}
+
+			Counsel: {
+				Line01: Араз, ты можешь мне помочь? С тех пор как тебя схватили, всё стало намного хуже.
+				Line02: С тех пор как я убил предателя, выдавшего нас Аттрайдису, мир наводнили ещё более могучие звери и демоны.
+				Line03: Порча распространяется всё дальше и быстрее. Я не знаю, как её остановить.
+				Line04: Это действительно серьёзно, Рэд. Я почувствовал неладное. Открылся портал из другого, куда более адского мира.
+				Line05: Я видел это место во снах. Легенда гласит, что демоны того мира когда-то владели этими землями, пока их не изгнали в великой войне Катаклизма.
+				Line06: Думаю, они вернулись на земли, которыми когда-то правили. Одного из них, Ярость, ты уже победил. Но впереди ещё шестеро.
+				Line06NoRage: Думаю, они вернулись на земли, которыми когда-то правили. Их семеро.
+				Line07: Скорбь, Охотник, Разрушитель, Механизм, Триада и забытый Голем. Тебе придётся сразиться с каждым, чтобы ослабить Аттрайдиса настолько, чтобы убить его.
+				Line08: С осколком от каждого из этих семи богов ты сможешь создать катализатор, достаточно сильный, чтобы защитить тебя от его мощи.
+				Line09: Не ходи к нему без него, Рэд.
+				Line10: Спасибо, Араз. Я принял последствия своих поступков в тот миг, когда отнял жизнь Аарона. Я верну мир этим землям, даже ценой последнего вздоха.
+				Line11: Удачи, друг мой. В тебе куда больше стойкости твоего отца, чем ты думаешь.
+				Line12: Прежде чем ты уйдёшь, покажи мне гребень, оставшийся от Ярости. Каждый гребень должен скрывать загадку вроде этой, ведущую к следующему.
+				Line13: Эта скрыта магией, но я её разгадал. Иди на восток, к Замёрзшему океану. Скорбь ждёт... Удачи!
+				Line13Remix: Я вижу, что вскоре твой путь ляжет к Замёрзшему океану на востоке. Скорбь ждёт... Удачи!
+				Line13NoRage: Иди на восток, к Замёрзшему океану. Скорбь ждёт... Удачи!
+			}
+
+			Credits: {
+				Title: История Красного Облака
+				Thanks: Спасибо за игру.
+				ReplayHint: Используйте, чтобы вновь пережить финал
+			}
+
+			Homecoming: {
+				Line01: Брат! Ты жив! Я думал, ты умер!
+				Line02: А как же Элайджа и наши родители... и Аша!? Они живы!?
+				Line03: О боже, Рэд, нет. Это было ужасно. Они убили отца и мать.
+				Line04: Мне пришлось хоронить их вместе с тобой, совсем одному. Ты не дышал...
+				Line05: Об Элайдже и твоей жене я ничего не знаю. Я бросился домой, когда увидел дым в долине. Их нигде не было.
+				Line06: Я нашёл только тебя и наших родителей. Деревенские разведчики видели, что войско ушло на восток...
+				Line07: Значит, есть шанс, что они живы.
+				Line08: Отец рассказывал нам истории об Аттрайдисе... Я не верил...
+				Line09: ...Я не позволю ему разрушить мир, за который наш отец отдал жизнь.
+				Line10: Желаю тебе удачи, брат. Ты всегда был самым искусным в боевых искусствах.
+				Line11: С повреждённым нервом в ноге я бы только мешал тебе в пути.
+				Line12: У меня здесь есть еда и припасы. Прошу, бери всё, что нужно...
+				Line13: Перед уходом стоит исследовать и горные пещеры на западе.
+				Line14: Спасибо, брат. Я буду думать о тебе.
+			}
+
+			Well: {
+				Line01: Этот свет...
+				Line02: Отец!
+				Line03: Пора выдвигаться...
+			}
+
+			Idol: {
+				Line01: Рэд! Говорили, что тебя убили!
+				Line02: Знаю, я и сам не могу в это поверить. Я просто рад, что тебя не было у нас, когда они напали. Почти вся моя семья...
+				Line03: Я знаю, Рэд. Не могу поверить в то, что они сделали... Это...
+				Line04: Это был Король Пожирателей Разума. Он наконец отомстил... и думал, что убил и меня...
+				Line05: Я уже собрал доспехи, оружие и еду и скоро отправлюсь в путь.
+				Line06: Что ж... понимаю. Желаю тебе удачи, Рэд. Это кажется невозможным, но...
+				Line07: Возьми это! Он всегда защищал меня. Возможно, защитит и тебя.
+			}
+
+			ElijahRescue: {
+				Line01: Рэд, слава богу! Это ты! Вытащи меня отсюда.
+				Line02: Когда армия Аттрайдиса напала, они взяли меня в плен. Они ищут меч нашего отца.
+				Line03: Они избивали меня, пока не убедились, что я ничего не знаю, и оставили гнить здесь. Но Рэд!..
+				Line04: Твоя жена Аша... Она жива.
+				Line05: Они забрали её с собой, когда оставили меня здесь, и она нужна им живой, если они надеются найти меч твоего отца.
+				Line06: Аша знает, где наш отец оставил свой меч?
+				Line07: Когда он увидел, что они приближаются, он сказал ей и велел нам обоим бежать, но разведчики схватили нас прежде, чем мы добрались до леса. У нас не было ни единого шанса.
+				Line08: Они думают, что она слаба и что её ещё можно сломить, но мы с тобой знаем: она никогда не расскажет Королю-Пожирателю Разума, даже если они лишат её жизни.
+				Line09: Я только надеюсь, что ты найдёшь её раньше, чем они это поймут.
+				Line10: Но, Рэд, я должен сказать тебе ещё кое-что. Твой друг Аарон... он предал всех нас.
+				Line11: Он стоял рядом с Королём-Пожирателем Разума, когда меня привезли сюда. Должно быть, он сказал ему, где найти нас и нашего отца.
+				Line12: Никто в деревне не знает, что он работает на Короля-Пожирателя Разума.
+				Line13: Мне противно думать, что он живёт там, наверху, со своими новыми богатствами и смеётся, зная, что я наверняка мёртв, а его тайна в безопасности.
+				Line14: Не знаю, что сказать, Рэд. Пока он жив... Прости.
+				Line15: Думаю, ты знаешь, что должен сделать.
+				Line16: Но убить Аарона будет нелегко. Он ожидает прямого нападения и наверняка защитил себя какой-то могущественной магией.
+				Line17: Не дай ему ничего заподозрить. Если сможешь придумать что-то обходное... Я просто не знаю что...
+				Line18: Но хватит разговоров. Иди. Скорее! Я сам доберусь обратно.
+				Line19: За окном моей камеры находится зверь, охраняющий этот забытый город. Укради его силу, и у тебя может появиться шанс.
+				Line20: Я видел, чем стал Аттрайдис. Со времён нашего отца он стал намного могущественнее.
+				Line21: Он общается с... неестественными небесными существами.
+				Line22: Когда вернёшься в деревню, найди мне там жильё, и я смогу перековывать твои предметы за золото.
+			}
+
+			FireTemple: {
+				Line01: Книга древних заклинаний...
+				Line02: Эта комната заброшена. Если обезопасить её, здесь можно переночевать.
+				Line03: Тогда я проведу вечер за чтением этого тома древней магии.
+				Line04: Защитные идолы и чары...
+				Line05: И особенно одно заклинание... Вудуистская мимикрия.
+				Line06: Заклинание, накладываемое на объект и дарующее неуязвимость.
+				Line07: Одарённые маги редко прибегают к такой магии, ведь ценой этой силы становится жизнь, связанная с объектом.
+				Line08: Уничтожь объект, и убьёшь зачарованного.
+				Line09: Идол, который дал мне Аарон... от него исходит та же сила.
+				Line10: Но ведь он наверняка знал?
+				Line11: Что-то здесь странно, но решение слишком блестящее, и оно было у меня с самого начала.
+				Line12: Похоже, разрушить этот камень будет не так-то просто...
+			}
+
+			ShadowRumors: {
+				Line01: Рэд, я слышал много слухов о Храме Теней.
+				Line02: Он известен своим лабиринтом, что простирается за ворота храма, соединяя пещеры, огромное подземное озеро и священные пропасти с шипами...
+				Line02Remix: Он известен своим лабиринтом, что простирается за ворота храма, соединяя пещеры, водные пути и осквернённые пропасти с шипами...
+				Line03: Храбрец, однажды выбравшийся отсюда живым, сказал мне, что есть ТРИ скрытых пути...
+				Line04: Один на поверхности озера, один в пещере ужасов, и ещё один почти у входа, здесь, но не совсем.
+				Line04Remix: Один на поверхности водных путей храма, один в пещере ужасов, и ещё один почти у входа, здесь, но не совсем.
+				Line05: Я не знаю, что она имела в виду...
+			}
+
+			DesertPaths: {
+				Line01: В загадке на гребне воды говорилось, что нужно искать пепельный туман, подсвеченный фиолетовым сиянием... Это должно привести нас к Охотнику.
+				Line02: Но... люди, жившие когда-то под этой пустыней, оставили свитки, намекающие на множество тайн.
+				Line03: Они говорили о скрытой тропе в пустыне, ведущей к древнему существу по имени Серрис.
+				Line04: Здешние люди использовали технологию Серриса, чтобы перекрыть один из путей к Храму Теней... но такие слухи могут свести с ума.
+				Line05: Возможно, нам стоит сосредоточиться на поисках Охотника.
+				Line06: Но в конечном счёте решать тебе. Я буду служить тебе до самого конца...
+			}
+
+			RageWarning: {
+				Line01: Рэд, тебе следует кое-что знать о Ярости и подобных ей птицах: когда им наносят раны слишком быстро, они приходят в ярость.
+				Line02: У каждой птицы своя защита, но в этой фазе все они смертоноснее. Помни об этом.
+				Line03: Как часто говорил мой отец, иногда отступление, даже на миг, лучший способ продвинуться вперёд.
+				Line04: Ты поймёшь, что Ярость вот-вот придёт в бешенство, когда её тело запылает ярким пламенем.
+				Line05: В бешенстве она исцеляет себя и на короткое время становится намного опаснее. Будь готов уклоняться! Подвижность решает всё!
+			}
+
+			BuriedAlive.Line01: Что-то острое... обломок кирки моего отца.
+
+			UnmarkedGraves: {
+				Line01: Ещё две могилы... безымянные. Должно быть, их вырыли вместе с моей.
+				Line01Remix: Ещё одна могила... безымянная. Должно быть, её вырыли вместе с моей.
+				Line02: Память возвращается...
+				Line03: На деревню напали и подожгли её...
+				Line04: Армия под знаком Аттрайдиса, Короля-Пожирателя Разума.
+				Line05: Нужно добраться до дома. Может быть, кто-то выжил.
+			}
+
+			WhatRemains: {
+				Line01: Мои записи... мои картины... всё уничтожено.
+				Line02: Аша... тебя больше нет.
+				Line03: Какой смысл можно найти в этой жизни?
+				Line04: Эта короткая жизнь в поисках простых удовольствий, небольшого комфорта, любви, еды и безопасности?
+				Line05: Эта привязанность к успеху и одобрению?
+				Line06: Теперь всё это не имеет значения. Всё это я оставляю позади, оставляю сгореть дотла.
+				Line07: Никого из моей семьи здесь нет... но, возможно, они добрались до деревни.
+			}
 		}
 
 		Events: {
@@ -446,8 +669,8 @@ Mods: {
 			LichKing: Король-лич пробуждается!
 			Hunter: Охота начинается...
 			Rage: Ярость пробуждается!
-			AncientDemon: Что ты ожидал найти здесь, человек?... Твоя гордыня тебя погубит...
-			AncientOolacileDemon: Ты глупый человек... жалкое высокомерие...
+			DefiledDemon: Что ты ожидал найти здесь, человек?... Твоя гордыня тебя погубит...
+			OolacileDemon: Ты глупый человек... жалкое высокомерие...
 			GoblinSummoner1: Ты самонадеян, Рэд. Как же ты глуп, раз пришёл сюда...
 			GoblinSummoner2: Думаешь, ты умный, Рэд?
 			BloodBossEvent1: Кровавый угорь приближается, чтобы сожрать тебя...
@@ -458,7 +681,7 @@ Mods: {
 			WingTrio: Крылатое трио снова объединились, чтобы сразиться с вами!
 			SandstormElementalEvent: Призван могущественный элементаль!
 			Dutchman: Летучий голландец вторгается в тропики!
-			DiscipleOfAttraidiesEvent: Вам противостоит могущественный маг из армии Аттрайдиса
+			AttraidiesIllusionRemixEvent: Вам противостоит могущественный маг из армии Аттрайдиса
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: Король Слизней появляется!
@@ -501,6 +724,7 @@ Mods: {
 			// EnragedQB: An angry Queen Bee appears!
 			HellkiteDragon: На деревню совершено нападение! Адский дракон прибыл чтобы покормиться...
 			RemixHellkiteDragon: Адский дракон прибыл чтобы покормиться...
+			PrimeGwyn: Изначальный Гвин, Первый Повелитель, нисходит навстречу первому рассвету!
 			ThunderBird: Великая Громовая Птица пробуждается!
 			QueenJellyfish: Королева Медуз заметила вас в озере...
 			Viscount: Виконт жаждет крови!
@@ -541,6 +765,9 @@ Mods: {
 				'''
 			PerSecond: /в секунду
 			DarkSouls: Тёмные души
+			ShopDarkSoulPrice: "[c/00FF50:{0} {1} {2}][i:{3}]"
+			ShopDarkSoulOwned: "[c/9A9A9A:(у вас {0})]"
+			SoulCoinsConverted: Монеты души больше не используются: ваши монеты души ({0}) превратились в тёмные души ({1})
 			Soapstone: Если вы чувствуете, что заблудились, ищите тёмные места на своей карте. Секреты и проходы есть почти в каждом направлении
 			BonfireLit: Костер зажжён, точка возрождения установлена!
 			BonfireTP: Откройте мини-карту, чтобы мгновенно телепортироваться к любому костру в мире.
@@ -611,6 +838,7 @@ Mods: {
 			SpawnRemoved: Точка возрождения удалена!
 			AccessPiggyBank: Доступ к Копилке
 			AccessSafe: Доступ к сейфу
+			// BonfireTravel: Travel
 			// AccuracyHit: Hit! {0}%
 			// AccuracyMiss: Miss! {0}%
 			Rebound: Отскок!
@@ -632,6 +860,8 @@ Mods: {
 			TPToBonfire: Телепортироваться к костру
 			NoTPCombat: Невозможно телепортироваться во время боя!
 			NoTPBoss: Невозможно телепортироваться, пока босс жив!
+			// TPNeedBonfire: Rest at a bonfire to travel
+			// HardmodeBonfireWarpNotice: The bonfires' bond has weakened. You can now only travel between bonfires while resting at one.
 			AbyssalFissure: Трещина бездны
 			DropSouls1: "Выпавшие "
 			DropsSouls2: души
@@ -647,7 +877,6 @@ Mods: {
 			// NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			// NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			// NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
-			AbyssOnly: "[c/ff9999: Выпадает только если экипирован ковенант Арториаса]"
 			FirstBagOnly: "[c/ff9999: Выпадает только из первого открытого особого мешка босса]"
 			BotCOnly: "[c/ff9999: Выпадает только в том случае, если игрок является носителем Проклятия]"
 			FirstBagBotCOnly: "[c/ff9999: Выпадает только из первого открытого особого мешка босса, пока игрок является Носителем проклятия]"
@@ -656,6 +885,7 @@ Mods: {
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Выпадает только при первом убийстве вне режима эксперта]"
 			DownedSkeletron: "[c/ff9999:Выпадает после победы над Скелетроном]"
+			// DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
 			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
@@ -703,7 +933,7 @@ Mods: {
 			LeonhardDesc: Исследуйте подвесной мост между заснеженными вершинами гор.
 			VesselOfSoulsDesc: Отправляйтесь в леденящие душу глубины Храма Земли, где бьют фонтаны.
 			PinwheelDesc: Найдите Катакомбы Утопленников под входом в деревню.
-			AncientOolacileDemonDesc: В легендах упоминается лес Олачиль...
+			OolacileDemonDesc: В легендах упоминается лес Олачиль...
 			SlograAndGaibonName: Слогра и Гайбон
 			SlograAndGaibonDesc: Найден в глубинах Храма Метеора.
 			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
@@ -717,10 +947,10 @@ Mods: {
 			SerrisDesc: ???
 			DeathDesc: ???
 			AttraidiesName: Аттрайдис
-			AttraidiesDesc: Соберите все гребни, чтобы создать Куб разума.
+			AttraidiesDesc: Соберите все гребни, чтобы создать Куб разума. На карте приключений принесите его на арену Аттрайдиса. В других мирах используйте его для призыва.
 			RealAttraidiesName: Аттрайдис (настоящий)
 			RealAttraidiesDesc: Используйте реликвию Иллюзии истязателя разума, выпавшую из иллюзии Аттрайдиса.
-			HellkiteDragonDesc: Летает на гигантском магматическом небесном острове, расположенным над западными дюнами
+			HellkiteDragonDesc: В суперхардмоде охотится на открытой местности к востоку от деревни.
 			// OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc: Ищите врата яхщеров в Великой пропасти.
 			EarthFiendLichDesc: Ищите древний храм к западу от Пепельной пещеры.
@@ -743,6 +973,39 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				// Ruby: Can be used to craft a healthy crystal
+				/* SquireHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* SquirePlating:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* SquireGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@2}
+					''' */
+				/* ValhallaKnightHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					''' */
+				/* ValhallaKnightBreastplate:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					''' */
+				/* ValhallaKnightGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					''' */
 				LockedCrates: "[c/383838:Проклят] свирепым [c/009400:охотником]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -923,11 +1186,6 @@ Mods: {
 				// CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Подбор звёзд маны восстанавливает только {0}% от максимального количества маны [c/6d8827:носителя проклятия]
 				MagicCuffsBotC: Восстанавливает только {0}% урона, полученного [c/6d8827:носителем проклятия] до смягчения, в виде маны
-				/* CoinGun:
-					'''
-					[c/ffbf00:Can also use soul coins as ammo]
-					[c/ffbf00:Soul coins pierce once]
-					''' */
 			}
 
 			AbandonedStumpBanner: {
@@ -942,7 +1200,7 @@ Mods: {
 
 			AncientDemonOfTheAbyssBanner: {
 				DisplayName: Знамя древнего демона бездны
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemon.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
@@ -1045,11 +1303,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
 			}
 
-			DiscipleOfAttraidiesBanner: {
-				DisplayName: Знамя ученика Аттрайдиса
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
-			}
-
 			DungeonMageBanner: {
 				DisplayName: Знамя мага темницы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DungeonMage.DisplayName}"
@@ -1105,24 +1358,24 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			GuardianCorruptorBanner: {
-				DisplayName: Знамя стража-искажателя
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
-			}
-
-			HydrisElementalBanner: {
+			ElementalBanner: {
 				DisplayName: Знамя элементаля Гидриса
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Elemental.DisplayName}"
 			}
 
-			HydrisNecromancerBanner: {
+			ElementalNecromancerBanner: {
 				DisplayName: Знамя некроманта Гидрис
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ElementalNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
 				DisplayName: Знамя ледяного скелета
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
+			}
+
+			SkeletonWarriorBanner: {
+				// DisplayName: "{$NPCs.SkeletonWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				// Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SkeletonWarrior.DisplayName}"
 			}
 
 			JungleSentreeBanner: {
@@ -1155,6 +1408,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
 
+			ObsidianGuardBanner: {
+				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
+			}
+
 			ManOfWarBanner: {
 				DisplayName: Знамя человека войны
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManOfWar.DisplayName}"
@@ -1175,9 +1433,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			FallenNecromancerBanner: {
+			BoneChaplainBanner: {
 				DisplayName: Знамя падшего некроманта
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BoneChaplain.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -1185,19 +1443,19 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
-			OolacileDemonBanner: {
-				DisplayName: Знамя демона Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
+			DarkrootImpBanner: {
+				DisplayName: Знамя беса Тёмных корней
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
-			OolacileKnightBanner: {
-				DisplayName: Знамя рыцаря Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
+			DarkrootSentryBanner: {
+				DisplayName: Знамя стража Тёмных корней
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootSentry.DisplayName}"
 			}
 
-			OolacileSorcererBanner: {
-				DisplayName: Знамя колдуна Олачиля
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
+			OolacileAcolyteBanner: {
+				DisplayName: Знамя послушника Колдуна Бездны
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileAcolyte.DisplayName}"
 			}
 
 			ParaspriteBanner: {
@@ -1240,11 +1498,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
-			SlograIIBanner: {
-				DisplayName: Знамя Слогры
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
-			}
-
 			SnowOwlBanner: {
 				DisplayName: Знамя снежной совы
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
@@ -1256,8 +1509,8 @@ Mods: {
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: Знамя рыцаря-тельца
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
+				DisplayName: Знамя Калича
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Caliche.DisplayName}"
 			}
 
 			TetsujinBanner: {
@@ -1507,17 +1760,12 @@ Mods: {
 
 			CovenantOfArtoriasItem: {
 				// DisplayName: Covenant of Artorias
-				/* Tooltip:
-					'''
-					{$CommonItemTooltip.VanityFunction}
-					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
-					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
-					''' */
+				// Tooltip: '''[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					'''
 			}
 
-			DarkCloak: {
-				DisplayName: Тёмный плащ
-				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
+			DarkCloakItem: {
+				// DisplayName: Dark Cloak
+				// Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
 
 			GreyWolfRing: {
@@ -1544,13 +1792,13 @@ Mods: {
 					'''
 			}
 
-			LightCloak: {
-				DisplayName: Плащ светлости
-				Tooltip:
+			LightCloakItem: {
+				// DisplayName: Light Cloak
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.LifeRegen}
 					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
-					'''
+					''' */
 			}
 
 			ManaShield: {
@@ -1565,15 +1813,15 @@ Mods: {
 					'''
 			}
 
-			MythrilGlove: {
-				DisplayName: Мифриловая перчатка
-				Tooltip:
+			MythrilGloveItem: {
+				// DisplayName: Mythril Glove
+				/* Tooltip:
 					'''
-					Дает дополнительную защиту и сопротивление, зависящие от здоровья:
-					Увеличивает защиту на 5 и сопротивление на 8 в любое время.
-					Увеличивает защиту на 10 и сопротивление на 16 при уровне здоровья ниже 66%.
-					Увеличивает защиту на 16 и сопротивление на 32 при уровне здоровья ниже 33%.
-					'''
+					Grants bonus defense and resistance based on health:
+					Increase defense by {0} and resistance by {1} at all times
+					Increase defense by {2} and resistance by {3} below {4}% health
+					Increase defense by {5} and resistance by {6} below {7}% health
+					''' */
 			}
 
 			ProtectRing: {
@@ -1629,7 +1877,7 @@ Mods: {
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					Immunity to Blackout, Obstructed, Freezing and Acid Venom
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					''' */
 				// Keybind1: "Press "
 				// Keybind2: " to massively increase life regen and damage taken temporarily"
@@ -1640,14 +1888,14 @@ Mods: {
 				// Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
-			DragoonCloak: {
-				DisplayName: Плащ драгуна
-				Tooltip:
+			DragoonCloakItem: {
+				// DisplayName: Dragoon Cloak
+				/* Tooltip:
 					'''
-					Объединяет эффекты Тёмного, Светлого и Теневого Плаща в один всемогущий защитный плащ.
-					Жизненный порог для усиления эффектов равен {0}%
-					Для сохранения эффективности каждого плаща было использовано большое количество Тёмных Душ.
-					'''
+					Combines the effects of the Dark, Light and Shadowmoon Cloak into one all-powerful protective cloak.
+					Life Threshold for empowered effects is {0}%
+					A large amount of Dark Souls were used to preserve each cloak's potency.
+					''' */
 			}
 
 			EnchantedMoonCharm: {
@@ -1817,15 +2065,15 @@ Mods: {
 					'''
 			}
 
-			DuskCrownRing: {
-				DisplayName: Кольцо с сумеречной короной
-				Tooltip:
+			DuskCrownRingItem: {
+				// DisplayName: Dusk Crown Ring
+				/* Tooltip:
 					'''
-					Это волшебное кольцо в форме короны было подарено принцессе Даск из Олачиля при её рождении.
+					This magic crown-shaped ring was granted to Princess Dusk of Oolacile upon her birth.
 					[c/ffbf00:{$CommonItemTooltip.PercentIncreasedMagicDamage}]
 					[c/ffbf00:{$CommonItemTooltip.LifeRegen@1}]
-					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] При снятии кольца ваш предыдущий максимальный уровень здоровья восстанавливается
-					'''
+					[c/ffbf00:{$CommonItemTooltip.BadMaxLife@2}.] Your previous max HP is restored when the ring is removed.
+					''' */
 			}
 
 			GoldenHairpin: {
@@ -1842,12 +2090,11 @@ Mods: {
 			}
 
 			IceboundMythrilAegis: {
-				DisplayName: Скованная льдом Мифриловая Эгида
+				DisplayName: Скованная льдом Эгида
 				Tooltip:
 					'''
-					Наследует эффекты Мифрилового оплота, Щита Анха и Ледяного щита
+					Наследует эффекты Щита Анха и Ледяного щита
 					Немного замедляет ваш перекат
-					Перекат сквозь врага может наложить некоторые дебаффы, к которым этот предмет даёт иммунитет
 					'''
 			}
 
@@ -1932,14 +2179,14 @@ Mods: {
 					'''
 			}
 
-			HerosCrest: {
-				DisplayName: Герб героя
-				Tooltip:
+			HerosCrestItem: {
+				// DisplayName: Hero's Crest
+				/* Tooltip:
 					'''
-					постоянно увеличивает наносимый урон и шанс критического удара на {0}%,
-					Максимальное здоровье на {1} и удачу на 0.{0}
-					"Доказательство достижений героя"
-					'''
+					Permanently increases damage dealt and crit chance by {0}%,
+					maximum life by {1} and Luck by 0.{0}
+					"Proof of the hero's accomplishments"
+					''' */
 			}
 
 			AquamarineRing: {
@@ -2240,6 +2487,11 @@ Mods: {
 				Tooltip: Уменьшает получаемый урон
 			}
 
+			DevDefenseRing: {
+				// DisplayName: Dev Defense Ring
+				// Tooltip: For developer testing only
+			}
+
 			AbyssArrow: {
 				DisplayName: Стрела бездны
 				Tooltip: Накладывает инферно бездны
@@ -2325,6 +2577,22 @@ Mods: {
 					'''
 			}
 
+			ArtoriasHelmet: {
+				DisplayName: Шлем Арториаса
+				Tooltip:
+					'''
+					Зачарованный шлем Арториаса.
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				/* TooltipSetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increase additional {0}x melee damage while dodgerolling
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.AggroBoost}
+					''' */
+			}
+
 			ArtoriasArmor: {
 				DisplayName: Доспехи Арториаса
 				Tooltip:
@@ -2343,15 +2611,6 @@ Mods: {
 					Зачарованные доспехи Арториаса.
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					'''
-			}
-
-			ArtoriasHelmet: {
-				DisplayName: Шлем Арториаса
-				Tooltip:
-					'''
-					Зачарованный шлем Арториаса.
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2547,43 +2806,43 @@ Mods: {
 					'''
 			}
 
-			DragoonHelmet2: {
-				DisplayName: Шлем Верховного драгуна
-				Tooltip:
+			SupremeDragoonHelmet: {
+				// DisplayName: Supreme Dragoon Helmet
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					Даёт эффект философского камня
+					Grants Philosopher's Stone effect
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}Гармонирует с четырьмя стихиями: огнём, водой, землёй и воздухом
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
-					'''
+					''' */
 			}
 
-			DragoonArmor2: {
-				DisplayName: Доспехи верховного драгуна
-				Tooltip:
+			SupremeDragoonArmor: {
+				// DisplayName: Supreme Dragoon Armor
+				/* Tooltip:
 					'''
-					Обновлённый вариант легендарной брони драгуна.
-					Ты - повелитель всех сил, защитник Земли, Герой нашего времени.
-					Сила драгунского плаща воплощена в его нагрудной части с синим покрытием.
-					Эффективность эффектов плаща драгуна составляет {0}% при том же жизненном пороге
+					A reforged upgrade to the legendary Dragoon Armor.
+					You are a master of all forces, the protector of Earth, the Hero of the age.
+					The powers of the Dragoon Cloak are embedded within its blue-plated chest piece.
+					The potency of the Dragoon Cloak effects is {0}%, with the same life threshold
 					{$CommonItemTooltip.PercentIncreasedDamage@2}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@3}
-					'''
+					''' */
 			}
 
-			DragoonGreaves2: {
-				DisplayName: Поножи верховного драгуна
-				Tooltip:
+			SupremeDragoonGreaves: {
+				// DisplayName: Supreme Dragoon Greaves
+				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					Обеспечивает дополнительный двойной прыжок и эффект блестящего красного воздушного шара
+					Grants an extra double jump and Shiny Red Balloon effect
 					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
 					{$CommonItemTooltip.MaxStamina@2}
 					{$CommonItemTooltip.StaminaRegen@3}
-					'''
+					''' */
 			}
 
 			HollowSoldierBreastplate: {
@@ -2838,6 +3097,28 @@ Mods: {
 					Это знаменитый звёздный шлем.
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.Melee.FlatDmg@1}
+					A Gi will also proc this set bonus
+					''' */
+			}
+
+			BlackBeltHairStyle: {
+				DisplayName: Прическа с черным поясом
+				Tooltip:
+					'''
+					Вы - мастер искусства дзен, вы едины с Дао
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.DefenseCap@2}
+					Resistance is converted into movement speed(1 : {3})
+					''' */
 			}
 
 			BlackBeltGiPants: {
@@ -2854,15 +3135,6 @@ Mods: {
 					{$CommonItemTooltip.LifeRegen@3}
 					{$CommonItemTooltip.DefenseCap@2}
 					Сопротивление преобразуется в скорость передвижения (1 : {4}).
-					'''
-			}
-
-			BlackBeltHairStyle: {
-				DisplayName: Прическа с черным поясом
-				Tooltip:
-					'''
-					Вы - мастер искусства дзен, вы едины с Дао
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2885,15 +3157,12 @@ Mods: {
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeThreshold@2}Сопротивление, обеспечиваемое комплектом, удваивается
 					'''
-			}
-
-			CrystalGreaves: {
-				DisplayName: Кристальные поножи
-				Tooltip:
+				/* TooltipSetBonus:
 					'''
-					Ослепительные доспехи, вырезанные из кристалла
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.LifeThreshold@2}Resistance provided by the set is doubled
+					''' */
 			}
 
 			CrystalSightedHelmet: {
@@ -2905,6 +3174,22 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeThreshold@2}Скорость ближнего боя, обеспечиваемая набором, удваивается
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@3}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
+					''' */
+			}
+
+			CrystalGreaves: {
+				DisplayName: Кристальные поножи
+				Tooltip:
+					'''
+					Ослепительные доспехи, вырезанные из кристалла
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					'''
 			}
 
@@ -2933,6 +3218,13 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: Шлем Тёмного рыцаря
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.HolyDodge}
+					Defense and Resistance are not affected by this
+					Small chance to regain life from melee strikes while Holy Dodge is active
+					''' */
 			}
 
 			ArtoriasOfTheAbyssArmor: {
@@ -3009,6 +3301,21 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			FighterHairStyle: {
+				DisplayName: Причёска бойца
+				Tooltip:
+					'''
+					Мастер ближнего боя
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+
+					''' */
+			}
+
 			FighterBreastplate: {
 				DisplayName: Нагрудник бойца
 				Tooltip:
@@ -3030,14 +3337,16 @@ Mods: {
 					'''
 			}
 
-			FighterHairStyle: {
-				DisplayName: Причёска бойца
-				Tooltip:
+			MagmaHelmet: {
+				DisplayName: Магматический шлем
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
 					'''
-					Мастер ближнего боя
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
-					'''
+					{$CommonItemTooltip.DRStat@1}
+					Hitting burning enemies ignites them
+					Ignited enemies take {0} more damage each hit and burn horribly
+					Cannot be set on fire
+					''' */
 			}
 
 			MagmaBreastplate: {
@@ -3058,11 +3367,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
-			}
-
-			MagmaHelmet: {
-				DisplayName: Магматический шлем
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			ShadowCloakGreaves: {
@@ -3090,11 +3394,6 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaBottoms: {
-				DisplayName: Штаны Теневого Ниндзя
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
 			ShadowNinjaMask: {
 				DisplayName: Маска Теневого Ниндзя
 				Tooltip:
@@ -3105,6 +3404,13 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					''' */
 			}
 
 			ShadowNinjaTop: {
@@ -3112,9 +3418,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
-			AbyssalNinjaTop: {
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
-				DisplayName: Верх ниндзя бездны
+			ShadowNinjaBottoms: {
+				DisplayName: Штаны Теневого Ниндзя
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			AbyssalNinjaMask: {
@@ -3128,6 +3434,18 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@4}
 					'''
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					''' */
+			}
+
+			AbyssalNinjaTop: {
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				DisplayName: Верх ниндзя бездны
 			}
 
 			AbyssalNinjaBottoms: {
@@ -3333,21 +3651,32 @@ Mods: {
 				DisplayName: Доспехи Смоуга
 				Tooltip:
 					'''
+					Увеличивает максимальное здоровье на {2}
+					Активные щиты тратят на {3}% меньше выносливости при блоке
 					Увеличивает эффективность щита с драконьим гребнем
-					Бонус набора: снижает скорость всех атак на {0}% мультипликативно, но гарантирует критические удары.
+					{$CommonItemTooltip.SetBonus}снижает скорость всех атак на {0}% мультипликативно, но гарантирует критические удары
 					Урон от критических ударов снижен на {1}%
 					Также увеличивает затраты маны на {0}%
+					Каждый {4}-й удар по одному врагу становится сокрушительным и наносит на {5}% больше урона по стойкости
 					'''
 			}
 
 			SmoughGreaves: {
 				DisplayName: Поножи Смоуга
-				Tooltip: Уменьшает ловкость при перекатах
+				Tooltip:
+					'''
+					{$CommonItemTooltip.NoKnockback}
+					Уменьшает ловкость при перекатах
+					'''
 			}
 
 			SmoughHelmet: {
 				DisplayName: Шлем Смоуга
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Снижает получаемый урон на {1}%
+					'''
 			}
 
 			SnarbolaxArmor: {
@@ -3706,6 +4035,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
+			OrnsmoughBag: {
+				DisplayName: Мешок с сокровищами (Орнштейн и Смоуг)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
 			SoulOfCinderBag: {
 				// DisplayName: Treasure Bag (Marik)
 				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
@@ -3974,7 +4308,7 @@ Mods: {
 
 			HellkiteStone: {
 				DisplayName: Адский камень
-				Tooltip: Вызывает Адского дракона с неба...
+				Tooltip: Призывает Адского дракона ночью...
 				WrongTime: Ничего не происходит... Повторите попытку ночью.
 			}
 
@@ -4051,6 +4385,23 @@ Mods: {
 				Summon: "Грохот грома сотрясает землю под вами... "
 			}
 
+			EmberOfTheFirstDawn: {
+				DisplayName: Уголь Первого Рассвета
+				Tooltip:
+					'''
+					Камень старше самого Пламени, ещё тёплый от утра, которого не видело ни одно живое существо.
+					Используйте, чтобы вернуть миру изначальный облик и вновь призвать первый рассвет.
+					'''
+				Warning: Это нельзя отменить.
+				AlreadyReturned: Эпоха первого рассвета уже вернулась.
+				AgeBegins: Мир возвращается в изначальную эпоху.
+				Summon: Изначальный Гвин восстаёт навстречу первому рассвету!
+				TooFar: Уголь призовёт своего повелителя только там, где вы сражались с Гвином.
+				Confirm: Уголь разгорается в вашей руке. Используйте его снова, чтобы отпустить.
+				Return: Уголь возвращает вас к первому рассвету.
+				NoReturnPoint: Здесь Уголь не находит рассвета, к которому мог бы вас вернуть.
+			}
+
 			LostScrollOfGwyn: {
 				DisplayName: Потерянный свиток Гвина
 				Tooltip:
@@ -4071,6 +4422,13 @@ Mods: {
 					Это оно. Последняя битва. 
 					[c/ffbf00:Чтобы найти светлые и тёмные осколки, необходимые для его создания в режиме приключений... Ищите Темную башню Аттрайдиса.]
 					[c/00ffd4:Если вы играете на ремикс карте, вам также следует найти древнее дерево в джунглях]
+					'''
+				AdventureTooltip:
+					'''
+					Защищает ваш разум от проклятия Аттрайдиса
+					Держите его при себе или наденьте в слот аксессуара либо украшения, затем войдите на его арену, чтобы сразиться с ним
+					Это оно. Последняя битва.
+					[c/ffbf00:Чтобы найти светлые и тёмные осколки, необходимые для его создания в режиме приключений... Ищите Темную башню Аттрайдиса.]
 					'''
 			}
 
@@ -4204,14 +4562,14 @@ Mods: {
 				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
-				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    7  [PHM] Oolacile Demon        (Bosses/OolacileDemon)               — modded
 				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
 				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
 				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
 				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
 				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
 				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
-				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   14  [PHM] Defiled Demon          (Bosses/DefiledDemon)                — modded
 				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
 				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
 				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
@@ -4228,7 +4586,7 @@ Mods: {
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
 				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
-				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   31  [SHM] Hellkite Drake         (Bosses/SuperHardMode/HellkiteDrake/HellkiteDrake) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
 				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
 				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
@@ -4257,7 +4615,7 @@ Mods: {
 				4: "{$BossChecklist.PinwheelDesc}"
 				5: Загляните поглубже в Храм Порчи или исследуйте слухи о багровом цвете на поверхности.
 				6: Где-то к востоку от пропасти горы Аразиум.
-				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				7: "{$BossChecklist.OolacileDemonDesc}"
 				8: Исследуйте тропический лес племени Орид, к востоку от вашего сгоревшего дома.
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: Личинки есть повсюду - от руин в джунглях до Забытых городов.
@@ -4279,7 +4637,7 @@ Mods: {
 				26: Куда ведёт телепорт из Великой пирамиды?
 				27: Голем контролирует силовое поле парящего острова над деревней.
 				28: На вершинах двух пиков Аразиума они смотрят на небо над головой и Великую пропасть внизу.
-				29: Создайте 8 гребней из осколков, найденных на вершине башни Аттраидис.
+				29: Создайте Куб разума из гребней и осколков, найденных на вершине башни Аттрайдиса. На карте приключений принесите его на его арену.
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
@@ -4480,9 +4838,9 @@ Mods: {
 					Лечащие предметы действуют вполовину слабее; восстановление маны снижено вне костров.
 					Оружие расходует выносливость. Часть потерянного здоровья можно вернуть, поражая врагов. +1 слот для аксессуаров.
 
-					[c/dd3333:Носитель проклятия]: все особенности Неугасшего плюс механики боевых классов, и на {0}% больше душ.
+					[c/dd3333:Носитель проклятия]: все особенности Неугасшего плюс механики боевых классов.
 					Оружие расходует больше выносливости, но она восстанавливается быстрее. Зелья лечения не действуют. Восстановление маны
-					полностью отключено вне костров, а смерть отнимает {1}% максимального здоровья до тех пор, пока душа не будет возвращена.
+					полностью отключено вне костров, а смерть отнимает {0}% максимального здоровья до тех пор, пока душа не будет возвращена.
 
 					[c/aaaaaa:Классический]: без фляг. Ванильные системы лечения, щитов и магии Terraria.
 
@@ -4665,7 +5023,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					''' */
@@ -4991,7 +5349,7 @@ Mods: {
 				DisplayName: Ящик с монетами души
 				Tooltip:
 					'''
-					Ящик, содержащий 1000 монет души
+					Ящик, содержащий тёмные души: {0}
 					Выдается как возмещение за предмет, которого больше не существует
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -5764,14 +6122,23 @@ Mods: {
 				Tooltip:
 					'''
 					Таинственная монета, созданная из тёмных душ
-					Используется в качестве валюты у некоторых торговцев
+					При подборе превращается в тёмные души: {0}
 					'''
-				Plural: Монеты души
 			}
 
 			SoulOfArtorias: {
 				DisplayName: Душа Арториаса
 				Tooltip: Сущность Арториаса из Бездны.
+			}
+
+			SoulOfOrnstein: {
+				DisplayName: Душа Орнштейна
+				Tooltip: Сущность Драконоборца Орнштейна.
+			}
+
+			SoulOfSmough: {
+				DisplayName: Душа Смоуга
+				Tooltip: Сущность палача Смоуга.
 			}
 
 			SoulOfCinder: {
@@ -5810,11 +6177,8 @@ Mods: {
 
 			StaminaVessel: {
 				DisplayName: Сосуд выносливости
-				Tooltip:
-					'''
-					Навсегда увеличивает максимальную выносливость на 5
-					Выносливость достигает максимума после употребления {0} сосудов
-					'''
+				Tooltip: Навсегда увеличивает максимальную выносливость на {0}
+				MaxVessels: Выносливость достигает максимума после употребления {0} сосудов
 				UsedCounter: "Всего употреблено: "
 			}
 
@@ -6556,6 +6920,17 @@ Mods: {
 					'''
 			}
 
+			GrandOolacileAxe: {
+				// DisplayName: Grand Oolacile Axe
+				/* Tooltip:
+					'''
+					The abyss-forged great axe-maul of the Grand Occultist
+					Every {0}rd swing is an overhead Dark Judgment slam dealing {1}% more damage and unleashing an abyssal shockwave
+					Tap Right-Click to hurl the axe, erupting Destined Death flames on impact and sticking into the ground until retrieved with an underhand catch swing
+					Hold Right-Click ({2} mana) to channel Staff-Axe Weave, firing fans of {3} homing magic Oolacile dark bolts
+					''' */
+			}
+
 			AncientFireSword: {
 				DisplayName: Древний огненный меч
 				Tooltip:
@@ -6578,6 +6953,25 @@ Mods: {
 			CalciumBlade: {
 				DisplayName: Кальциевое лезвие
 				Tooltip: "'Лезвие из заострённой кости'"
+			}
+
+			GravelordSword: {
+				// DisplayName: Gravelord Sword
+				/* Tooltip:
+					'''
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
+					The slam deals {0}x damage
+					''' */
+			}
+
+			RoyalGreatsword: {
+				// DisplayName: Royal Greatsword
+				/* Tooltip:
+					'''
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
+					The slam deals {0}x damage
+					An old royal blade, worn by Blaidd's battles
+					''' */
 			}
 
 			CoralSword: {
@@ -7460,8 +7854,8 @@ Mods: {
 				/* Tooltip:
 					'''
 					Summons a Soul Mimic: a liquid-metal copy of you
-					It fights with the weapon you are holding and those in hotbar slots 1 and 2
-					It has your health, defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
+					It copies your hotbar weapons when summoned and picks one that can reach its target
+					It has {3} times your max health, your defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
 					Takes all your summoner slots, up to {0}
 					Lasts {1} minutes, then dissolves
 					Cannot be used again for {2} minutes (resets on death)
@@ -7636,34 +8030,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					"Эта ржавчина почти заразна"
-					'''
-			}
-
-			Galeforce: {
-				DisplayName: Сила Галактики
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Вызывает волшебный лук, который стреляет магическими стрелами в направлении вашего курсора
-					'''
-			}
-
-			Typhoon: {
-				DisplayName: Тайфун
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Призывает адский лук, который стреляет пылающими стрелами в направлении вашего курсора
-					Применяет адский огонь
-					'''
-			}
-
-			CaiusPyre: {
-				DisplayName: Погребальный костёр Кая
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Вызывает огненный разлом, который стреляет огненными шарами в направлении вашего курсора
 					'''
 			}
 
@@ -8160,6 +8526,20 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
+			StormrazorItem: {
+				// DisplayName: Stormrazor
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					[c/f7b10f:Moving and attacking will grant charges,]
+					[c/f7b10f:when fully charged the next melee attack will consume the charges to:]
+					[c/f7b10f:deal {3} extra damage(2x on crits) and]
+					[c/f7b10f:grant you {4}% movement speed({$CommonItemTooltip.SecondDuration@5})]
+					''' */
+			}
+
 			SteraksGageItem: {
 				// DisplayName: Steraks Gage
 				/* Tooltip:
@@ -8170,6 +8550,18 @@ Mods: {
 					[c/8b0000:Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})]
 					''' */
 				// Bonus: Currently granting {0}% based on the current held weapon
+			}
+
+			BlackCleaverItem: {
+				// DisplayName: Black Cleaver
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					Increases ranged attack speed by {1}%
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					[c/e34444:Ranged attacks apply a stacking debuff up to {3} times({$CommonItemTooltip.SecondDuration@4})]
+					[c/e34444:Each stack reduces the targets defense by {5}]
+					''' */
 			}
 
 			InfinityEdgeItem: {
@@ -8194,13 +8586,37 @@ Mods: {
 					''' */
 			}
 
+			LiandrysTormentItem: {
+				// DisplayName: Liandrys Torment
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					[c/1bf5f2:Dealing magic damage applies a damage over time debuff for {5} seconds]
+					[c/1bf5f2:This debuff deals at least {4} damage or {3}% of the targets max life per second]
+					''' */
+			}
+
+			ImperialMandateItem: {
+				// DisplayName: Imperial Mandate
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@1}
+					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage({$CommonItemTooltip.Cooldown@3})]
+					''' */
+			}
+
 			GoredrinkerItem: {
 				// DisplayName: Goredrinker
 				/* Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
+					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@3})]
 					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit
@@ -8271,6 +8687,17 @@ Mods: {
 			PortlyPlateHelmet: {
 				DisplayName: Массивный пластинчатый шлем
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat@5}
+					{$CommonItemTooltip.LifeRegen}
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
+					Allows you to damage enemies by rolling through them
+					{3} melee damage
+					{4}% critical strike chance
+					Insane knockback
+					''' */
 			}
 
 			PortlyPlateChestplate: {
@@ -8281,13 +8708,6 @@ Mods: {
 					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeRegen@1}
 					{$CommonItemTooltip.NoKnockback}
 					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.LifeRegen@3}
-					'''
-				SetBonus:
-					'''
-					Позволяет вам наносить урон врагам, перекатываясь через них
-					{0} урон в ближнем бою
-					{1}% шанс крит. удара
-					Безумное отбрасывание
 					'''
 			}
 
@@ -8814,9 +9234,10 @@ Mods: {
 				/* Tooltip:
 					'''
 					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
-					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
-					When the wearer is below 50% life, activates his natural defenses and gains a buff
-					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
+					Based on your used weapon, grants a temporary buff to two other classes on-hit.
+					Buffs can only be procced by and go towards Melee, Ranged or Magic classes.
+					[c/00ffd4:Buff increases critical strike chance by {1}%]
+					({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown})
 					''' */
 			}
 
@@ -8996,19 +9417,424 @@ Mods: {
 				// Tooltip: "'The essence of a shadow warrior claimed by the Abyss'"
 			}
 
-			RedKnightTestHelmet: {
+			RedKnightHelmet: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Helmet
+				// DisplayName: Red Knight Helmet
 			}
 
-			RedKnightTestGreaves: {
+			RedKnightGreaves: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Greaves
+				// DisplayName: Red Knight Greaves
 			}
 
-			RedKnightTestBreastplate: {
+			BlackKnightHelmet: {
 				// Tooltip: ""
-				// DisplayName: Red Knight Test Breastplate
+				// DisplayName: Black Knight Helmet
+			}
+
+			BlackKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Black Knight Breastplate
+			}
+
+			BlackKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Black Knight Greaves
+			}
+
+			DarkmoonKnightHelmet: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Helmet
+			}
+
+			DarkmoonKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Breastplate
+			}
+
+			DarkmoonKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Darkmoon Knight Greaves
+			}
+
+			DarkrootHalberd: {
+				DisplayName: Алебарда Тёмных корней
+				Tooltip:
+					'''
+					Тяжёлое древковое оружие стражей Тёмных корней
+					ЛКМ: удар сверху, удар снизу, затем выпад вперёд
+					Удерживайте ПКМ для круговых взмахов; при отпускании завершает текущий оборот
+					'''
+				Stamina: Выносливость: {0} / {1} / {2} за удар; {2} за полный оборот
+			}
+
+			DarkrootSentryHelmet: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Helmet
+			}
+
+			DarkrootSentryBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Breastplate
+			}
+
+			DarkrootSentryGreaves: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Sentry Greaves
+			}
+
+			SentientHead: {
+				// DisplayName: Sentient Helm
+				// Tooltip: Grows stronger with the damage you deal
+				/* Tooltip0:
+					'''
+					Total damage dealt: {0}
+					Current damage increase: {1}%
+					''' */
+				/* TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Grants Crimson Armors Set Bonus and
+					{$CommonItemTooltip.LifeRegen@1}
+					''' */
+			}
+
+			SentientTorso: {
+				// DisplayName: Sentient Cuirass
+				// Tooltip: Grows tougher by remembering damage endured
+				/* Tooltip0:
+					'''
+					Total damage taken: {0}
+					Current resistance bonus: {1}
+					''' */
+			}
+
+			SentientLegs: {
+				// DisplayName: Sentient Greaves
+				// Tooltip: Grows swifter with the distance you travel
+				/* Tooltip0:
+					'''
+					Total distance traveled: {0}
+					Current movement speed increase: {1}%
+					''' */
+			}
+
+			SkeletonHeadpiece: {
+				// DisplayName: Skeleton Skull
+				// Tooltip: ""
+			}
+
+			SkeletonRibcage: {
+				// DisplayName: Skeleton Rib Cage
+				// Tooltip: ""
+			}
+
+			SkeletonLegBones: {
+				// DisplayName: Skeleton Leg Bones
+				// Tooltip: ""
+			}
+
+			BasiliskHeadpiece: {
+				// DisplayName: Basilisk Headpiece
+				// Tooltip: ""
+			}
+
+			BasiliskCarapace: {
+				// DisplayName: Basilisk Carapace
+				// Tooltip: ""
+			}
+
+			BasiliskGreaves: {
+				// DisplayName: Basilisk Greaves
+				// Tooltip: ""
+			}
+
+			FireLurkerHeadpiece: {
+				// DisplayName: Fire Lurker Headpiece
+				// Tooltip: ""
+			}
+
+			FireLurkerHide: {
+				// DisplayName: Fire Lurker Hide
+				// Tooltip: ""
+			}
+
+			FireLurkerLegs: {
+				// DisplayName: Fire Lurker Legs
+				// Tooltip: ""
+			}
+
+			ElementalNecromancerHeadpiece: {
+				// DisplayName: Elemental Necromancer Crown
+				// Tooltip: ""
+			}
+
+			ElementalNecromancerRobe: {
+				// DisplayName: Elemental Necromancer Robe
+				// Tooltip: ""
+			}
+
+			ElementalNecromancerBoots: {
+				// DisplayName: Elemental Necromancer Boots
+				// Tooltip: ""
+			}
+
+			ElementalHeadpiece: {
+				// DisplayName: Elemental Head
+				// Tooltip: ""
+			}
+
+			ElementalBreastplate: {
+				// DisplayName: Elemental Breastplate
+				// Tooltip: ""
+			}
+
+			ElementalGreaves: {
+				// DisplayName: Elemental Greaves
+				// Tooltip: ""
+			}
+
+			WarlockHeadpiece: {
+				// DisplayName: Warlock Headpiece
+				// Tooltip: ""
+			}
+
+			WarlockRobe: {
+				// DisplayName: Warlock Robe
+				// Tooltip: ""
+			}
+
+			WarlockBoots: {
+				// DisplayName: Warlock Boots
+				// Tooltip: ""
+			}
+
+			TibianAmazonHeadpiece: {
+				// DisplayName: Tibian Amazon Headpiece
+				// Tooltip: ""
+			}
+
+			TibianAmazonTunic: {
+				// DisplayName: Tibian Amazon Tunic
+				// Tooltip: ""
+			}
+
+			TibianAmazonBoots: {
+				// DisplayName: Tibian Amazon Boots
+				// Tooltip: ""
+			}
+
+			TibianValkyrieHeadpiece: {
+				// DisplayName: Tibian Valkyrie Headpiece
+				// Tooltip: ""
+			}
+
+			TibianValkyrieBreastplate: {
+				// DisplayName: Tibian Valkyrie Breastplate
+				// Tooltip: ""
+			}
+
+			TibianValkyrieGreaves: {
+				// DisplayName: Tibian Valkyrie Greaves
+				// Tooltip: ""
+			}
+
+			DworcShamanHeadpiece: {
+				// DisplayName: Dworc Shaman Headpiece
+				// Tooltip: ""
+			}
+
+			DworcShamanBreastplate: {
+				// DisplayName: Dworc Shaman Breastplate
+				// Tooltip: ""
+			}
+
+			DworcShamanGreaves: {
+				// DisplayName: Dworc Shaman Greaves
+				// Tooltip: ""
+			}
+
+			NecromancerHood: {
+				// DisplayName: Necromancer Hood
+				// Tooltip: ""
+			}
+
+			NecromancerRobe: {
+				// DisplayName: Necromancer Robe
+				// Tooltip: ""
+			}
+
+			NecromancerBoots: {
+				// DisplayName: Necromancer Boots
+				// Tooltip: ""
+			}
+
+			HydromancerSoul: {
+				// DisplayName: Hydromancer Soul
+				// Tooltip: "'The essence of a Quara tide-caller, still damp to the touch'"
+			}
+
+			QuaraHydromancerHeadpiece: {
+				// DisplayName: Quara Hydromancer Crest
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					''' */
+				/* TooltipSetBonus:
+					'''
+					Tidecaller: melee hits soak enemies, making them Wet for {0} seconds
+					Magic hits on Wet enemies deal {1}% more damage and restore {2} mana
+					Magic hits make your next melee swing {3}% faster for up to {4} seconds
+					''' */
+			}
+
+			QuaraHydromancerBreastplate: {
+				// DisplayName: Quara Hydromancer Body
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					''' */
+			}
+
+			QuaraHydromancerGreaves: {
+				// DisplayName: Quara Hydromancer Legs
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants the ability to swim
+					''' */
+			}
+
+			ManhunterHat: {
+				// DisplayName: Manhunter Hat
+				// Tooltip: ""
+			}
+
+			ManhunterJerkin: {
+				// DisplayName: Manhunter Jerkin
+				// Tooltip: ""
+			}
+
+			ManhunterBoots: {
+				// DisplayName: Manhunter Boots
+				// Tooltip: ""
+			}
+
+			GreatBlackKnightHelm: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Helm
+			}
+
+			RoyalKnightHelmet: {
+				// DisplayName: Royal Knight Helmet
+				// Tooltip: ""
+			}
+
+			OrnsteinHead: {
+				DisplayName: Львиный шлем Орнштейна
+				Tooltip:
+					'''
+					Увеличивает шанс критического удара в ближнем бою и магией на {0}%
+					Увеличивает максимальный запас маны на {1}
+					'''
+			}
+
+			OrnsteinBody: {
+				DisplayName: Доспехи Орнштейна
+				Tooltip:
+					'''
+					Увеличивает урон в ближнем бою и магией на {0}%
+					Удары в ближнем бою восстанавливают {1} маны
+					{$CommonItemTooltip.SetBonus}Ток клинка чар
+					Удары в ближнем бою накапливают статику (до {2} зарядов), которая исчезает через {3} сек. после последнего такого удара
+					Следующее заклинание тратит всю статику и наносит на {4}% больше магического урона за заряд
+					Каждый заряд также выпускает молнию во врага в пределах {5} блоков, нанося {6}% урона заклинания
+					Попадания магией дают заряженный клинок на {7} сек.: следующий удар в ближнем бою выпускает молнию с {8}% его урона
+					Получение урона сбрасывает статику и заряженный клинок
+					Перекат становится рывком. За {9} маны это рывок-молния, наносящий {10} урона и накапливающий статику
+					'''
+			}
+
+			OrnsteinLegs: {
+				DisplayName: Поножи Орнштейна
+				Tooltip:
+					'''
+					Увеличивает скорость передвижения на {0}%
+					Увеличивает скорость ближнего боя на {1}%
+					'''
+			}
+
+			RoyalKnightBreastplate: {
+				// DisplayName: Royal Knight Breastplate
+				// Tooltip: ""
+			}
+
+			RoyalKnightGreaves: {
+				// DisplayName: Royal Knight Greaves
+				// Tooltip: ""
+			}
+
+			GreatBlackKnightArmor: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Armor
+			}
+
+			GreatBlackKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Great Black Knight Greaves
+			}
+
+			BarrowWightPhantomHelm: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Helm
+			}
+
+			BarrowWightPhantomArmor: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Armor
+			}
+
+			BarrowWightPhantomShroud: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Phantom Shroud
+			}
+
+			ForgottenWarriorHelm: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Helm
+			}
+
+			ForgottenWarriorArmor: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Armor
+			}
+
+			ForgottenWarriorGreaves: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Warrior Greaves
+			}
+
+			ForgottenKnightHelmet: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Helmet
+			}
+
+			ForgottenKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Breastplate
+			}
+
+			ForgottenKnightGreaves: {
+				// Tooltip: ""
+				// DisplayName: Forgotten Knight Greaves
+			}
+
+			RedKnightBreastplate: {
+				// Tooltip: ""
+				// DisplayName: Red Knight Breastplate
 			}
 
 			EnemyDebugTome: {
@@ -9051,6 +9877,11 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			EnemyDworcStaff: {
+				// DisplayName: Dworc Staff
+				// Tooltip: ""
+			}
+
 			EnemyForgottenRuneAxe: {
 				// DisplayName: Enemy Forgotten Rune Axe
 				// Tooltip: ""
@@ -9068,6 +9899,11 @@ Mods: {
 
 			EnemyTaintedBow: {
 				// DisplayName: Enemy Tainted Bow
+				// Tooltip: ""
+			}
+
+			EnemyRoyalThunderBow: {
+				// DisplayName: Royal Thunder Bow
 				// Tooltip: ""
 			}
 
@@ -9120,7 +9956,14 @@ Mods: {
 
 			ArtoriasGreatsword: {
 				// DisplayName: Artorias Greatsword
-				// Tooltip: ""
+				/* Tooltip:
+					'''
+					Tap: alternating overhead and rising cuts, opening opposite your last swing; each cut throws an abyss crescent for {0} mana
+					Crescents deal {1}% of the sword's damage as magic damage and fly {2} tiles
+					The combo ends in a slam for {3}x damage
+					Hold: forward-flip leap toward the cursor (up to {4} tiles) that slams for {6}x damage
+					and sends a wall of abyss smoke {5} tiles along the ground each way
+					''' */
 			}
 
 			EnemyGreatFireAxe: {
@@ -9132,7 +9975,7 @@ Mods: {
 				// DisplayName: Sword Of Lord Gwyn
 				/* Tooltip:
 					'''
-					Tap left click: slash with the First Flame
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Tap right click: spend {1} mana on a rising flame dash
 					Hold right click: spend {2} mana on Cinder Nova
@@ -9141,7 +9984,7 @@ Mods: {
 				/* AdvancedTooltip:
 					'''
 					Aim at or above a point 3 tiles below your feet:
-					Tap left click: slash with the First Flame
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Aim more than 3 tiles below your feet:
 					Tap left click: spend {1} mana on a rising flame dash
@@ -9169,9 +10012,39 @@ Mods: {
 				// DisplayName: Purple Gem Staff
 			}
 
+			ArchdeaconStaff: {
+				// Tooltip: ""
+				// DisplayName: Archdeacon Staff
+			}
+
 			OolacileCultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Oolacile Cultist Staff
+			}
+
+			QuaraHydromancerStaff: {
+				// Tooltip: ""
+				// DisplayName: Quara Hydromancer Staff
+			}
+
+			BlackBlade: {
+				// Tooltip: ""
+				// DisplayName: Black Blade
+			}
+
+			GreatRoyalHalberd: {
+				// Tooltip: ""
+				// DisplayName: Great Royal Halberd
+			}
+
+			OrnsteinSpear: {
+				DisplayName: Копьё Орнштейна
+				Tooltip: Удерживайте правую кнопку мыши для зарядки выпада, затем отпустите для рывка к курсору. При полной зарядке первая поражённая цель проводит молнию вдоль линии удара.
+			}
+
+			SmoughGreatHammer: {
+				DisplayName: Большой молот Смоуга
+				Tooltip: Нажмите правую кнопку мыши, чтобы подпрыгнуть и ударить молотом о землю. В воздухе атака переходит в падение. От удара по земле расходятся волны.
 			}
 
 			EnemyBeastClaw: {
@@ -9179,9 +10052,34 @@ Mods: {
 				// DisplayName: Beast Claw
 			}
 
+			EnemyBarrowWightSword: {
+				// Tooltip: ""
+				// DisplayName: Barrow Wight Sword
+			}
+
+			EnemyDarkrootHalberd: {
+				// Tooltip: ""
+				// DisplayName: Darkroot Halberd
+			}
+
+			EnemyIceSkeletonSpear: {
+				// Tooltip: ""
+				// DisplayName: Rime Spear
+			}
+
+			EnemySkeletonCutlass: {
+				// Tooltip: ""
+				// DisplayName: Skeleton Cutlass
+			}
+
 			EnemyOccultistStaff: {
 				// Tooltip: ""
 				// DisplayName: Grand Oolacile Staff
+			}
+
+			EnemyOolacileAcolyteStaff: {
+				Tooltip: ""
+				DisplayName: Посох послушника Олачиля
 			}
 
 			EnemyOccultistAxe: {
@@ -9204,6 +10102,16 @@ Mods: {
 				// Tooltip: ""
 			}
 
+			TaurusGreathammer: {
+				// DisplayName: Taurus Greathammer
+				// Tooltip: ""
+			}
+
+			TaurusEarthTridentProp: {
+				// DisplayName: Earth Trident
+				// Tooltip: ""
+			}
+
 			EnemyProximityMine: {
 				// DisplayName: Enemy Proximity Mine
 				// Tooltip: ""
@@ -9216,6 +10124,108 @@ Mods: {
 
 			EnemyPoisonBow: {
 				// DisplayName: Enemy Poison Bow
+				// Tooltip: ""
+			}
+
+			CaiusPyreItem: {
+				// DisplayName: Caius' Pyre
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a fiery rift which shoots fireballs towards your cursor
+					''' */
+			}
+
+			GaleforceItem: {
+				// DisplayName: Galeforce
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a magical bow which shoots magic arrows towards your cursor
+					''' */
+			}
+
+			TyphoonItem: {
+				// DisplayName: Typhoon
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hellish bow which shoots flaming arrows towards your cursor
+					Applies hellfire
+					''' */
+			}
+
+			XBowItem: {
+				// DisplayName: X-Bow
+				/* Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a mystical crossbow which shoots piercing arrows towards your cursor at high speed
+					''' */
+			}
+
+			ShadowSickleItem: {
+				// DisplayName: Shadow Sickle
+				/* Tooltip:
+					'''
+					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+					Uses mana to slash hit enemys multiple times over time on-hit
+					Refunds {0} mana on-hit with the Sickle
+					''' */
+			}
+
+			BeetleIdolItem: {
+				// DisplayName: Beetle Idol
+				/* Tooltip:
+					'''
+					Summons a Samurai Beetle to fight for you
+					Performs a [c/FF00FF:Shocking Slash] every third hit
+					There can only be one
+					''' */
+			}
+
+			EnemyEphemeralAxe: {
+				// DisplayName: Enemy Ephemeral Axe
+				// Tooltip: ""
+			}
+
+			EnemyAbyssalNinjaSword: {
+				// DisplayName: Enemy Abyssal Ninja Sword
+				// Tooltip: ""
+			}
+
+			EnemyGildedIronSpear: {
+				// Tooltip: ""
+				// DisplayName: Enemy Gilded Iron Spear
+			}
+
+			EnemyGildedDualBladedAxe: {
+				// Tooltip: ""
+				// DisplayName: Enemy Gilded Dual Bladed Axe
+			}
+
+			EnemyTibianAmazonKnife: {
+				// DisplayName: Enemy Tibian Amazon Knife
+				// Tooltip: ""
+			}
+
+			EnemyManhunterBow: {
+				// DisplayName: Enemy Manhunter Bow
+				// Tooltip: ""
+			}
+
+			EnemyAssassinBow: {
+				// DisplayName: Enemy Assassin Bow
+				// Tooltip: ""
+			}
+
+			EnemyRedCloudHunterBow: {
+				// DisplayName: Enemy Red Cloud Hunter Bow
+				// Tooltip: ""
+			}
+
+			EnemyWarlockStaff: {
+				// DisplayName: Enemy Warlock Staff
 				// Tooltip: ""
 			}
 		}
@@ -9309,9 +10319,11 @@ Mods: {
 				/* Description:
 					'''
 					The Abyss has taken hold of you.
-					Weakened: reduced melee damage, speed, and defense
 					Defense reduced by 30%
-					Torn Wings: you cannot fly
+					8% reduced attack speed
+					Reduced movement speed
+					Torn Wings: disables wing flight, gliding, rocket boots, and jump boosts
+					Prevents positive life regeneration
 					''' */
 			}
 
@@ -9411,6 +10423,15 @@ Mods: {
 					''' */
 			}
 
+			MadnessMarked: {
+				DisplayName: Метка безумия
+				Description:
+					'''
+					Ваше безумие больше не угасает.
+					Безумие послушника накапливается быстрее.
+					'''
+			}
+
 			Madness: {
 				// DisplayName: Madness
 				/* Description:
@@ -9489,7 +10510,8 @@ Mods: {
 				/* Description:
 					'''
 					A dark force is dampening your speed
-					and ability to float or defy gravity here.
+					and ability to fly, ride or defy gravity here.
+					Disables fall damage immunity from equipment.
 					''' */
 			}
 
@@ -9498,9 +10520,14 @@ Mods: {
 				Description: Ты не можешь летать!
 			}
 
+			TreacherousTerrain: {
+				// DisplayName: Treacherous Terrain
+				// Description: The footing here is too treacherous to ride a mount
+			}
+
 			DestinedDeath: {
 				// DisplayName: Destined Death
-				// Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
+				// Description: Maximum life is reduced by {0}% on hit (up to {1}%). At {1}% loss, you gain {2}% increased damage.
 			}
 
 			Tired: {
@@ -10151,6 +11178,16 @@ Mods: {
 				// Description: Your next melee or magic hit releases an abyss counterattack
 			}
 
+			OrnsteinStatic: {
+				DisplayName: Статика
+				Description: Зарядов: {0}. Следующее заклинание наносит на {1}% больше урона и выпускает молнии
+			}
+
+			OrnsteinChargedEdge: {
+				DisplayName: Заряженный клинок
+				Description: Следующий удар в ближнем бою выпускает молнию
+			}
+
 			ArtoriasAbysswalkerPoiseCooldown: {
 				// DisplayName: Abyssal Poise Cooldown
 				// Description: Dodge through danger again after this runs out
@@ -10270,12 +11307,12 @@ Mods: {
 				// Description: The Archer Spirit will shoot down your enemies!
 			}
 
-			MimicTearBuff: {
+			SoulMimicBuff: {
 				// DisplayName: Soul Mimic
 				// Description: Your reflection fights beside you until its time runs out. Cancel this to dismiss it.
 			}
 
-			MimicTearCooldown: {
+			SoulMimicCooldown: {
 				// DisplayName: Soul Mimic Recovery
 				// Description: The Mimic Rune cannot be used again yet. Clears on death.
 			}
@@ -10401,6 +11438,11 @@ Mods: {
 					Ваша природная защита активирована!
 					Она даёт +4 к регенерации здоровья, 12 ед. защиты, 15% урона и 20% скорости передвижения
 					'''
+			}
+
+			TrinityCooldown: {
+				// DisplayName: Spellblade Cooldown
+				// Description: You can't proc Spellblade again until this runs out
 			}
 
 			WitchkingScreamCooldown: {
@@ -10551,11 +11593,67 @@ Mods: {
 				// DisplayName: Null Sprite Dissolving
 				// Description: Mods.tsorcRevamp.Buffs.NullSpriteDissolving.Description
 			}
+
+			LiandrysTormentBurn: {
+				// DisplayName: Liandrys Torment Burn
+				// Description: Mods.tsorcRevamp.Buffs.LiandrysTormentBurn.Description
+			}
+
+			StormrazorEnergy: {
+				// DisplayName: Stormrazor Energy
+				// Description: Charging up for an energized strike!
+			}
+
+			StormrazorEnergized: {
+				// DisplayName: Stormrazor Energized
+				// Description: Charged up!
+			}
+
+			BlackCleaverDebuff: {
+				// DisplayName: Black Cleaver Debuff
+				// Description: Mods.tsorcRevamp.Buffs.BlackCleaverDebuff.Description
+			}
+
+			ImperialMandateCooldown: {
+				// DisplayName: Imperial Mandate Cooldown
+				// Description: Mods.tsorcRevamp.Buffs.ImperialMandateCooldown.Description
+			}
+
+			ImperialMandateMark: {
+				// DisplayName: Imperial Mandate Mark
+				// Description: Mods.tsorcRevamp.Buffs.ImperialMandateMark.Description
+			}
 		}
 
 		Projectiles: {
+			OrnsteinLightning.DisplayName: Молния Орнштейна
+			// DworcFlask.DisplayName: Dworc Flask
+			// DworcFireFlame.DisplayName: Lingering Fire
+			// DworcStormRing.DisplayName: Abyss Storm
+			// DworcPoisonBolt.DisplayName: Poison Strike
+			// DworcPoisonImpact.DisplayName: Poison Strike
+			// DworcAbyssBolt.DisplayName: Abyss Poison Strike
+			// DworcAbyssImpact.DisplayName: Abyss Poison Strike
+			// DworcSpiritExplosion.DisplayName: Spirit Rupture
+			// DworcSuppressionBurst.DisplayName: Azure Suppression
+			// DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
+			// DarkmoonCrescent.DisplayName: Moonlight Crescent
+			// DarkmoonVigilController.DisplayName: Darkmoon Vigil
+			// DarkmoonSliver.DisplayName: Moonlight Sliver
+			// DarkrootThorn.DisplayName: Darkroot Thorn
+			// DarkrootRoot.DisplayName: Darkroot Root
+			// DarkrootVine.DisplayName: Briar Lash
+			// IceSkeletonRimeShard.DisplayName: Lance of Rime
+			// DarkmoonExplosion.DisplayName: Moonlight Rupture
 			// BloodKnightArrow.DisplayName: Blood Arrow
 			// BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
+			// WitchkingVoidFlame.DisplayName: Void Flame
+			// WitchkingFireWall.DisplayName: Hellfire Wall
+			// WitchkingDeathSkull.DisplayName: Unmaking Skull
+			// WitchkingMaceWhip.DisplayName: Witchking's Mace
+			// WitchkingGrondMace.DisplayName: Grond's Toll
+			// WitchkingVoidShockwave.DisplayName: Void Shockwave
+			// WitchkingBlightMire.DisplayName: Blight Mire
 			// BloodKnightRainArrow.DisplayName: Blood Rain Arrow
 			// PurpleSkull.DisplayName: Purple Skull
 			// VesselGravityWell.DisplayName: Gravity Well
@@ -10706,6 +11804,15 @@ Mods: {
 			EnemySpellMeteor.DisplayName: Вражеское заклинание "Метеор"
 			// IllusionVenomField.DisplayName: Venom Field
 			// IllusionVenomOrb.DisplayName: Venom Orb
+			// ArchdeaconGlintStar.DisplayName: Glintstone Star
+			// MantassinGlintNail.DisplayName: Glintstone Nail
+			// MantassinMicrocosm.DisplayName: Fleeting Microcosm
+			// MantassinCherishingArc.DisplayName: Cherishing Light
+			// MantassinRune.DisplayName: Glintstone Sigil
+			// ArchdeaconGlintOrb.DisplayName: Glintstone Orb
+			// ArchdeaconGlintSnare.DisplayName: Glintstone Snare
+			// ArchdeaconGlintRune.DisplayName: Glintstone Rune
+			// ArchdeaconGlintLance.DisplayName: Glintstone Lance
 			EnemySpellPoisonStorm.DisplayName: Вражеское заклинание Ядовитый шторм
 			EnemySpellPoisonStormBall.DisplayName: Вражеское заклинание "Великий ядовитый ударный шар"
 			EnemySpellSuddenDeathBall.DisplayName: Вражеское заклинание "Шар внезапной смерти"
@@ -10765,6 +11872,7 @@ Mods: {
 			DarkLaser.DisplayName: Имя лазера по умолчанию
 			DarkLaserHost.DisplayName: Хозяин темного лазера
 			EnemyAttraidiesBlackFire.DisplayName: Черный огонь
+			AttraidiesCurseBolt.DisplayName: Проклятие Аттрайдиса
 			EnemyBlackFireVisual.DisplayName: Черный огонь
 			EnemySuddenDeathBall.DisplayName: Внезапный смертельный шар
 			EnemySuddenDeathStrike.DisplayName: Внезапный смертельный удар
@@ -11036,6 +12144,9 @@ Mods: {
 			FetidExhaust.DisplayName: Ядовитая струя
 			ForgottenPearlSpearProj.DisplayName: Забытое жемчужное копье
 			PilgrimSpontoonProj.DisplayName: Забытое древковое оружие
+			OrnsteinSpearProj.DisplayName: Копьё Орнштейна
+			OrnsteinSpearLunge.DisplayName: Выпад драконоборца
+			SmoughHammerSlam.DisplayName: Землетрясение палача
 			ForgottenRadiantLanceProj.DisplayName: Забытое Лучезарное копье
 			GaeBolgProj.DisplayName: Гаэ Болг
 			HiRyuuSpearProj.DisplayName: Привет, Рюу, Копье
@@ -11133,6 +12244,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: След самонаводящейся ракеты
 			ExplosionFlash.DisplayName: Вспышка взрыва
 			FriendlyIonBomb.DisplayName: Дружественная ионная бомба
+			MythrilReflectedShot.DisplayName: Отражённый снаряд
 			PhotonicDownpourProjectile.DisplayName: Фотонный ливень
 			PhotonicDownpourLaser.DisplayName: Фотонный ливневый лазер
 			LanceBeamLaser.DisplayName: Лазерный луч копья
@@ -11320,7 +12432,6 @@ Mods: {
 			// SanguinisProj.DisplayName: Sanguinis Proj
 			// DragoonRocket.DisplayName: Dragoon Rocket
 			// Ichorthrower.DisplayName: Ichorthrower
-			// SoulCoinProj.DisplayName: Soul Coin Proj
 			// ChaosBlackFire.DisplayName: Chaos Black Fire
 			// ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			// ChaosFireball.DisplayName: Chaos Fireball
@@ -11382,6 +12493,7 @@ Mods: {
 			// BasiliskHypnoticDisrupter.DisplayName: Hypnotic Disrupter
 			// BasiliskShifterBreath.DisplayName: Curse Breath
 			// BasiliskHunterBreath.DisplayName: Curse Breath
+			// HollowSpearmanThrownSpear.DisplayName: Throwing Spear
 			// FireLurkerMeteor.DisplayName: Fire Lurker Meteor
 			// FireLurkerFlameOrb.DisplayName: Fire Lurker Flame Orb
 			// EnemyCaltrop.DisplayName: Enemy Caltrop
@@ -11407,6 +12519,16 @@ Mods: {
 			// OccultistStarBig.DisplayName: Occultist Star Big
 			// OccultistAbyssRing.DisplayName: Abyss Ring
 			// OccultistMagicRing.DisplayName: Occultist Magic Ring
+			AcolyteShriekRing.DisplayName: Вопль
+			AbyssDropPortal.DisplayName: Портал бездны
+			MadnessMote.DisplayName: Искра безумия
+			MadnessEye.DisplayName: Глаз безумия
+			MadnessScrawl.DisplayName: Безумные письмена
+			AcolyteHallucination.DisplayName: Галлюцинация
+			MarkGlyph.DisplayName: Метка безумия
+			MirrorEcho.DisplayName: Зеркало безумия
+			MadnessThread.DisplayName: Колыбель для кошки
+			MadnessClock.DisplayName: Часы безумия
 			// AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			// AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			// AbyssSlash.DisplayName: Abyss Slash
@@ -11422,6 +12544,7 @@ Mods: {
 			// GreatBlackKnightFlailEmber.DisplayName: Great Black Knight Flail Ember
 			// GreatBlackKnightFlailEmberLingering.DisplayName: Great Black Knight Flail Ember Lingering
 			// GreatBlackKnightFlailPulse.DisplayName: Great Black Knight Flail Pulse
+			// GreatBlackKnightSkyfallBurst.DisplayName: Great Black Knight Skyfall Burst
 			// ArtoriasAbyssTendril.DisplayName: Artorias Abyss Tendril
 			// HomingAbyssOrb.DisplayName: Homing Abyss Orb
 			// ArtoriasChargeNova.DisplayName: Artorias Charge Nova
@@ -11494,7 +12617,8 @@ Mods: {
 			// EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 			// RunePrison.DisplayName: Rune Prison
 			// FirstRunePrison.DisplayName: First Rune Prison
-			// CinderRainDrop.DisplayName: Cinder Rain Drop
+			// DestinedDeathBreath.DisplayName: Destined Death Breath
+			// BlightBreath.DisplayName: Blight Breath
 			// KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
 			// OolacileFireBolt.DisplayName: Oolacile Fire Bolt
 			// OolacileFirePatch.DisplayName: Oolacile Fire Patch
@@ -11551,6 +12675,9 @@ Mods: {
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			// UlhanUnholyArrow.DisplayName: Unholy Arrow
+			// RoyalThunderArrow.DisplayName: Thunder Arrow
+			// WardenLightning.DisplayName: Warden Lightning
+			ObsidianGuardArrow.DisplayName: Обсидиановая стрела
 			// UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			// UlhanFireExplosion.DisplayName: Fire Explosion
 			// AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
@@ -11576,6 +12703,15 @@ Mods: {
 			DeathSpawnWarning.DisplayName: Предупреждение о появлении
 			DeathLaserWarning.DisplayName: Предупреждающий луч Смерти
 			// CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
+			// TaurusQuakeShockwave.DisplayName: Quake Shockwave
+			// TaurusJavelin.DisplayName: Earth Trident
+			// TaurusSandCloud.DisplayName: Sand Cloud
+			// TaurusBrimstoneFlame.DisplayName: Brimstone Flame
+			// BlaiddSuppressionFlask.DisplayName: Azure Suppression Flask
+			// BlaiddSuppressionBurst.DisplayName: Azure Suppression
+			// BlaiddDiscardedShield.DisplayName: Discarded Shield
+			// BlaiddMoonWave.DisplayName: Moonlight Wave
+			// BlaiddMoonlightCrescent.DisplayName: Moonlight Crescent
 			// ProximityMine.DisplayName: Proximity Mine
 			// ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			// ProximityMineRocket.DisplayName: Proximity Mine Rocket
@@ -11583,10 +12719,88 @@ Mods: {
 			// EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			// StardustDelivery.DisplayName: Stardust Delivery
 			// ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
+			// ShadowNinjaPoisonCloud.DisplayName: Shadow Ninja Poison Cloud
+			// ShadowSmokeCaltrop.DisplayName: Smoke Caltrop
+			// ShadowSmokeCloud.DisplayName: Smoke Cloud
 			// ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 			// ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
 			// MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			// EaterToxicOoze.DisplayName: Eater Toxic Ooze
+			// MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
+			// DarkrootImpAcid.DisplayName: Darkroot Imp Acid
+			// DarkrootImpAcidPool.DisplayName: Darkroot Imp Acid Pool
+			// DarkrootImpBreath.DisplayName: Darkroot Imp Breath
+			// DemonBreath.DisplayName: Demon Breath
+			// DemonFireball.DisplayName: Demon Fireball
+			// DemonSpiritSkull.DisplayName: Demon Spirit Skull
+			// DemonDoomOrb.DisplayName: Doom Orb
+			// DemonGraspWave.DisplayName: Death's Grasp
+			// PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
+			// AshenLordDragon.DisplayName: Ashen Lord Dragon
+			// ASOL13Dragon.DisplayName: A S O L13 Dragon
+			// BarrowWightBreath.DisplayName: Barrow Wight Breath
+			// BarrowWightStrike.DisplayName: Barrow Wight Strike
+			// CursedDragonPoisonFlask.DisplayName: Cursed Dragon Poison Flask
+			// ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
+			// ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
+			// GigasFrostBurst.DisplayName: Gigas Frost Burst
+			// AbyssalMeridianSeam.DisplayName: Abyssal Meridian Seam
+			// AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
+			// AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
+			// DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
+			// GreatswordSwing.DisplayName: Greatsword Swing
+			// ArtoriasGreatswordLeap.DisplayName: Artorias Greatsword Leap
+			// ArtoriasGreatswordSlash.DisplayName: Artorias Greatsword Slash
+			// ArtoriasGreatswordSmokeWave.DisplayName: Artorias Greatsword Smoke Wave
+			// SwordOfLordGwynSlamLightning.DisplayName: Sword Of Lord Gwyn Slam Lightning
+			// DarkrootHalberdRoot.DisplayName: Darkroot Halberd Root
+			// ArtoriasBladeSlash.DisplayName: Artorias Blade Slash
+			// DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
+			// IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
+			// HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			// HellkiteDrakeDeathFlame.DisplayName: Destined Death Flame
+			// HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
+			// HellkiteDrakeGust.DisplayName: Hellkite Drake Wing Gust
+			// HellkiteDrakeDestinedBreath.DisplayName: Destined Death Breath
+			// HellkiteDrakeLongDestinedBreath.DisplayName: Destined Death Breath
+			// HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
+			// TibianAmazonKnife.DisplayName: Tibian Amazon Knife
+			// TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
+			// WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
+			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
+			// BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
+			// LurkerClawStrike.DisplayName: Lurker Claw Strike
+			// BoneChaplainBlightFlame.DisplayName: Bone Chaplain Blight Flame
+			// ElementalEruptionColumn.DisplayName: Elemental Eruption Column
+			// ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
+			// BoneRemains.DisplayName: Bone Remains
+			// DestroyerHullLaser.DisplayName: Destroyer Hull Laser
+			// DestroyerMawBeam.DisplayName: Destroyer Maw Beam
+			// DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
+			// DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
+			// CinderRainController.DisplayName: Cinder Rain Controller
+			// CinderShadowRift.DisplayName: Cinder Shadow Rift
+			// PrimordialEruptionBomb.DisplayName: Primordial Eruption Bomb
+			// LargeConsecratedLight.DisplayName: Large Consecrated Light
+			// WarlockBeam.DisplayName: Warlock Beam
+			// WarlockBurst.DisplayName: Warlock Burst
+			// WarlockCollapsePoint.DisplayName: Warlock Collapse Point
+			// WarlockCrossfireBeam.DisplayName: Warlock Crossfire Beam
+			// WarlockCrossfirePrism.DisplayName: Warlock Crossfire Prism
+			// WarlockEnergyBolt.DisplayName: Warlock Energy Bolt
+			// WarlockOrreryOrb.DisplayName: Warlock Orrery Orb
+			// WarlockWallPrism.DisplayName: Warlock Wall Prism
+			// WarlockWardRing.DisplayName: Warlock Ward Ring
+			// ManHunterLobArrow.DisplayName: Man Hunter Lob Arrow
+			// GwynLordsVerdictBlade.DisplayName: Gwyn Lords Verdict Blade
+			// GrandOolacileAxeController.DisplayName: Grand Oolacile Axe Controller
+			// GrandOolacileDarkBolt.DisplayName: Grand Oolacile Dark Bolt
+			// GrandOolacileDestinedBurst.DisplayName: Grand Oolacile Destined Burst
+			// GrandOolacileFlameColumn.DisplayName: Grand Oolacile Flame Column
+			// GrandOolacileFlameField.DisplayName: Grand Oolacile Flame Field
+			// GrandOolacileJudgmentWave.DisplayName: Grand Oolacile Judgment Wave
+			// GrandOolacileThrownAxe.DisplayName: Grand Oolacile Thrown Axe
+			// GrandOolacileJudgmentBlaze.DisplayName: Grand Oolacile Judgment Blaze
 		}
 
 		NPCs: {
@@ -11601,6 +12815,9 @@ Mods: {
 			Mechanic.GivenName: Аша
 			Wizard.GivenName: Араз
 			TheDestroyer.HullGlow: Корпус Разрушителя начинает яростно светиться...
+			TheDestroyerOriginal.DisplayName: Старый Разрушитель
+			TheDestroyerOriginalBody.DisplayName: Старый Разрушитель
+			TheDestroyerOriginalTail.DisplayName: Старый Разрушитель
 			SkeletronPrime.Warning: ПРЕДУПРЕЖДЕНИЕ: мощность лазера перенаправлена......
 
 			AncestralSpirit: {
@@ -11615,7 +12832,12 @@ Mods: {
 			}
 
 			PillarsForcefield: Где-то в небе рушится огромный небесный барьер......
-			SHM.BossDeath: Портал в Бездну расширяется, а её обитатели становятся сильнее...
+
+			SHM: {
+				BossDeath: Портал в Бездну расширяется, а её обитатели становятся сильнее...
+				// OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
+			}
+
 			Player.AllDied: Все игроки были побеждены хотя бы один раз!
 			BossOutOfRange: Начинаешь терять интерес, возвращайся в бой!
 			SolarPillar: Башня солнца возвращается к полной силе...
@@ -11637,12 +12859,12 @@ Mods: {
 			LunaticCultist.DespawnHandler: Культист получил ещё одну жертву...
 			MoonLord.DespawnHandler: Не осталось никого, кто мог бы воспрепятствовать гневу Лунного Лорда...
 
-			AncientDemon: {
+			DefiledDemon: {
 				DisplayName: Древний демон
 				DespawnHandler: Древний демон решает проявить к вам милосердие...
 			}
 
-			AncientOolacileDemon: {
+			OolacileDemon: {
 				DisplayName: Древний демон Олачиля
 				DespawnHandler: Древний демон Олачиля решает проявить милосердие...
 			}
@@ -11762,6 +12984,20 @@ Mods: {
 				HallowDarker: Тьма распространяется по Священным Пещерам...
 			}
 
+			OldDarkShogunMask.DisplayName: (Старая версия) Король-истязатель разума
+			OldAttraidiesShield.DisplayName: (Старая версия) Щит Аттрайдиса
+			OldDamnedSoul.DisplayName: (Старая версия) Проклятая душа
+			OldDarkDragonMask.DisplayName: (Старая версия) Аттрайдис
+			OldShadowDragonHead.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody2.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonBody3.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonLegs.DisplayName: (Старая версия) Теневой дракон
+			OldShadowDragonTail.DisplayName: (Старая версия) Теневой дракон
+			OldOkiku.DisplayName: (Старая версия) Иллюзия истязателя разума
+			OldBrokenOkiku.DisplayName: (Старая версия) Иллюзия истязателя разума
+			OldAttraidies.DisplayName: (Старая версия) Аттрайдис
+			OldAttraidiesFragment.DisplayName: (Старая версия) Фрагмент Аттрайдиса
 			AttraidiesFragment.DisplayName: Фрагмент Аттрайдиса
 			AttraidiesMimic.DisplayName: Аттрайдис
 			DamnedSoul.DisplayName: Проклятая душа
@@ -11883,6 +13119,12 @@ Mods: {
 				FinalShadowWave: Тень мага виверн погружает вас во тьму!
 				GhostDragonDead: Дерзай, если хочешь, Рэд...
 				Condition: Уходит, если виверна мертва
+			}
+
+			PrimeGwyn: {
+				DisplayName: Изначальный Гвин, Первый Повелитель
+				SecondPhase: Первое Пламя отвечает своему повелителю!
+				FirstDawn: Первый рассвет встаёт над безжизненным миром!
 			}
 
 			Gwyn: {
@@ -12008,6 +13250,13 @@ Mods: {
 
 			AbyssPortal.DisplayName: Трещина бездны
 			AttraidiesApparition.DisplayName: Аттрайдис
+			AttraidiesArenaActor.DisplayName: Аттрайдис
+			StoryAshaActor.DisplayName: Аша
+			StoryArazActor.DisplayName: Араз
+			StoryWispActor.DisplayName: Огонёк
+			StoryPropActor.DisplayName: Реквизит сцены
+			StoryElijahActor.DisplayName: Элайджа
+			StoryMiakodaActor.DisplayName: Миакода
 			Faraam.DisplayName: Фараам
 			GwynBossVision.DisplayName: Видение босса Гвина
 			LeonhardPhase1.DisplayName: ???
@@ -12035,6 +13284,7 @@ Mods: {
 				Draw: Вы слышите, как натягивается лук...
 				Steps: Вы слышите шаги...
 				Hunt: За вами ведётся охота...
+				// Vanished: The assassin has vanished...
 			}
 
 			AttraidiesIllusion: {
@@ -12057,13 +13307,13 @@ Mods: {
 			DemonElemental.DisplayName: Демонический элементаль
 			DemonSpirit.DisplayName: Дух демона
 			DestroyerLaserProbe.DisplayName: Лазерный зонд
-			DiscipleOfAttraidies.DisplayName: Ученик Аттрайдиса
 			DungeonMage.DisplayName: Маг подземелья
 			Dunlending.DisplayName: Дунэлиндец
 			DworcFleshhunter.DisplayName: Дворк-охотник за плотью
 			DworcVenomsniper.DisplayName: Дворк ядовитый снайпер
 			DworcAlchemist.DisplayName: Дворк алхимик
 			DworcVoodooShaman.DisplayName: Дворк шаман
+			// ShamanSpirit.DisplayName: Shaman Spirit
 			FirebombHollow.DisplayName: Пустой подрывник
 			FireLurker.DisplayName: Огненный луркер
 			GaibonFireball.DisplayName: Огненный шар Гайбона
@@ -12097,11 +13347,17 @@ Mods: {
 			LothricKnight.DisplayName: Рыцарь Лотрика
 			LothricSpearKnight.DisplayName: Копейщик Лотрика
 			ManHunter.DisplayName: Охотник за людьми
+
+			ObsidianGuard: {
+				DisplayName: Обсидиановый страж
+				BestiaryDescription: Храмовые стражи в доспехах из вулканического стекла. Их терпеливые тетивы умолкают, лишь когда нарушитель оказывается в пределах досягаемости копья.
+			}
+
 			MarilithSeeker.DisplayName: Искатель Марилит
 			MarilithSpiritTwin.DisplayName: Духовный близнец Марилит
 			MutantToad.DisplayName: Жаба-мутант
 			Necromancer.DisplayName: Некромант
-			FallenNecromancer.DisplayName: Падший некромант
+			BoneChaplain.DisplayName: Падший некромант
 			ObsidianJellyfish.DisplayName: Обсидиановая медуза
 			Parasprite.DisplayName: Параспрайт
 			// Locust.DisplayName: Locust
@@ -12123,7 +13379,7 @@ Mods: {
 			StoneGolem.DisplayName: Каменный голем
 			DworcAbysswalker.DisplayName: Дворк-Странник бездны
 
-			AncientDemonOfTheAbyss: {
+			AncientDemon: {
 				DisplayName: Древний демон Бездны
 				DespawnHandler: Демон бездны поглотил тебя своей плотью...
 			}
@@ -12146,50 +13402,46 @@ Mods: {
 				// DespawnHandler: The Great Red Knight stands victorious...
 			}
 
-			// GreatRedKnightTest.DisplayName: Great Red Knight Test
-			GuardianCorruptor.DisplayName: Страж искажатель
-			HydrisElemental.DisplayName: Элементаль Гидриса
-			HydrisNecromancer.DisplayName: Некромант Гидрис
+			Elemental.DisplayName: Элементаль Гидриса
+			ElementalNecromancer.DisplayName: Некромант Гидрис
 			IceSkeleton.DisplayName: Ледяной скелет
+			// SkeletonWarrior.DisplayName: Skeleton Warrior
 
-			KnightOfGwyn: {
-				DisplayName: Рыцарь Гвина
-				DespawnHandler: Рыцарь Гвина одерживает победу...
-				Protection: Рыцарь Гвина защищён магическим барьером. Только Старший Шаман знает, как его разрушить!
-				Open: Рыцарь Гвина открывает бездну!
+			RoyalKnight: {
+				DisplayName: Королевский рыцарь
+				DespawnHandler: Королевский рыцарь одерживает победу...
 			}
 
+			Ornstein: {
+				DisplayName: Драконоборец Орнштейн
+				DespawnHandler: Орнштейн возвращается на свой пост...
+			}
+
+			Smough: {
+				DisplayName: Палач Смоуг
+				DespawnHandler: Смоуг утаскивает свой молот обратно во тьму...
+			}
+
+			CutsceneGolem.DisplayName: "{$NPCName.Golem}"
 			ManOfWar.DisplayName: Человек войны
-			OolacileDemon.DisplayName: Эфемерный демон Олачиля
+			DarkrootImp.DisplayName: Бес Тёмных корней
+			DarkrootSentry.DisplayName: Страж Тёмных корней
 
-			OolacileKnight: {
-				DisplayName: Рыцарь Олачиля
-				Intent: Древний воин пришёл, чтобы изгнать вас из жизни...
-				Hunt: На вас объявлена охота...
-			}
-
-			OolacileSorcerer: {
-				DisplayName: Колдун Олачия
-				Defeated: Колдун Олачия был повержен...
+			OolacileAcolyte: {
+				DisplayName: Послушник Колдуна Бездны
+				Defeated: Послушник Колдуна Бездны повержен...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: Змей бездны
 			SerpentOfTheAbyssHead.DisplayName: Змей бездны
 			SerpentOfTheAbyssTail.DisplayName: Змей бездны
-			SlograII.DisplayName: Слогра
-
-			TaurusKnight: {
-				DisplayName: Рыцарь-Телец
-				Nearby: Рыцарь-Телец уже близко...
-			}
-
+			Caliche.DisplayName: Калич, опозоренный чемпион
 			Tetsujin.DisplayName: Тецудзин
 			VampireBat.DisplayName: Летучая мышь-вампир
 			TibianAmazon.DisplayName: Тибианский амазон
 			TibianValkyrie.DisplayName: Тибианская валькирия
 			Tonberry.DisplayName: Тонберри
 			UndeadCaster.DisplayName: Заклинатель нежити
-			ViciousSpit.DisplayName: Злобный плевок
 
 			Warlock: {
 				DisplayName: Варлок
@@ -12320,7 +13572,7 @@ Mods: {
 				Luck: Удачи.
 				Gift: Если вам когда-нибудь понадобится ещё, вы можете поджарить немного на огне костра. Прощай.
 				BotCGift: Носитель Проклятия, эти камни жизни и осколки Звёздного света, без сомнения, окажут неоценимую помощь в вашем путешествии. Прощай.
-				// UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
+				// UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems and Starlight Shards — may they sustain you on the road ahead. Farewell.
 				EasterEgg: Носитель... Искать... Искать... Чтобы не...
 				button1: Благославление
 				button2v1: Получить знания...
@@ -13253,14 +14505,15 @@ Mods: {
 			// StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
 			// Blaidd.DisplayName: Blaidd
 			// ShadowNinja.DisplayName: Shadow Ninja
+			// ShadowNinjaShade.DisplayName: Shadow Self
 			// BlackNinja.DisplayName: Black Ninja
 			// Kahlrun.DisplayName: Kahlrun of Falstrók
 			// TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			// TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
-			// RedKnightTest.DisplayName: Red Knight Test
 			// TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			// TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			// DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			// DemonLordPrototype.DisplayName: Demon Lord Prototype
 			// Eland.DisplayName: Eland
 			// EvilEye.DisplayName: Evil Eye
 			// Gigas.DisplayName: Holy Gigas
@@ -13273,13 +14526,18 @@ Mods: {
 
 			// VesselWatcher.DisplayName: Strange Eye
 			// Hydra.DisplayName: Hydra
-			// IceGigas.DisplayName: Ice Gigas
+
+			IceGigas: {
+				// DisplayName: Ice Gigas
+				// DespawnHandler: The Ice Gigas sinks back into the frozen silence...
+			}
+
 			// FrozenGigasStatue.DisplayName: Frozen Echo
 			// SpellboundGhoul.DisplayName: Spellbound Ghoul
 			// Massacre.DisplayName: Juggernaut
 			// MinotaurMage.DisplayName: Minotaur Mage
 			// Plaguesmith.DisplayName: Plaguesmith
-			// QuaraMantassin.DisplayName: Quara Mantassin
+			// Mantassin.DisplayName: Mantassin
 			// QuaraPincher.DisplayName: Quara Pincher
 			// QuaraClutchCrab.DisplayName: Clutch Crab
 			// Sahagin.DisplayName: Sahagin
@@ -13389,9 +14647,17 @@ Mods: {
 			DeathReaper.DisplayName: Слуга Смерти
 			// DeathSickleWeapon.DisplayName: Death Sickle Weapon
 			// MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
-			// MimicTear.DisplayName: Soul Mimic
+			// SoulMimic.DisplayName: Soul Mimic
 			// MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			// MirrorInvader.DisplayName: Soul Mimic
 			// HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
+
+			HellkiteDrake: {
+				DisplayName: Адский дракон
+				DespawnHandler: Адский дракон настиг свою добычу...
+			}
+
+			HellkiteDrakeHitbox.DisplayName: Адский дракон
 		}
 
 		Prefixes: {
@@ -13423,6 +14689,7 @@ Mods: {
 			BonfireCheckpoint.MapEntry: Костёр-сохранение
 			FlameJet.MapEntry: Струя пламени
 			SoapstoneTile.MapEntry: Сообщение на белом знаке
+			// VoidLavaMapTile.MapEntry: Void
 			SoulSkellyL.MapEntry: Скелет души
 			SoulSkellyR.MapEntry: Скелет души
 			SoulSkellyWall1.MapEntry: Скелет души
@@ -13438,6 +14705,8 @@ Mods: {
 			}
 
 			SoulSkullR.MapEntry: Скелет души
+			// BraveWarriorSoulSkull.MapEntry: Brave Warrior Soul Skull
+			// ProudKnightSoulSkull.MapEntry: Proud Knight Soul Skull
 		}
 
 		Keybinds: {
@@ -13581,16 +14850,6 @@ Mods: {
 						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
 						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
 						Turn off to keep the original health values. Defaults to On.
-						''' */
-				}
-
-				NewSpawnBalance: {
-					// Label: New Enemy Spawns
-					/* Tooltip:
-						'''
-						Uses the central spawn registry (Systems/EnemySpawns) for the enemies listed in it instead of each enemy's own spawn rules.
-						Overall spawn frequency is still capped by player health. Created as a toggle for A/B comparisons.
-						Turn off to keep the original spawn rules. Defaults to On.
 						''' */
 				}
 
@@ -14128,7 +15387,7 @@ Mods: {
 
 			SlayerHellkiteDragon: {
 				// FriendlyName: Dragon Slayer
-				// Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+				// Description: Defeat the Hellkite Drake, a fiery beast hunting near the Village.
 			}
 
 			SlayerKraken: {

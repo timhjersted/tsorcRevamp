@@ -20,7 +20,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const float RiseDrag = 0.985f;       // per tick: the initial upward shove bleeds off into a slow drift
         const float HitRadius = 34f;         // px at full size; the drawn cloud is 2x this across
         const float DrawSize = 96f;
-        const int WeightOfShadowTicks = 480; // 8 seconds
+        internal const int WeightOfShadowTicks = 480; // 8 seconds
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 

@@ -20,6 +20,8 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.UI;
 
 namespace tsorcRevamp.Content.Items
@@ -36,12 +38,104 @@ namespace tsorcRevamp.Content.Items
         public static List<int> torchList;
         public static List<int> hasSoulRecipe;
 
+        // Vanilla teleporters the Curse blocks in Souls Mode from the start of the game (the Magic Mirror only from
+        // Hardmode, below). Only USE is blocked: the Cell Phone / Shellphone info displays still work from the inventory.
+        // Every Shellphone mode is its own item type, so all four are listed.
+        static readonly HashSet<int> SoulsModeCursedTeleporters = new HashSet<int>
+        {
+            ItemID.IceMirror,
+            ItemID.CellPhone,
+            ItemID.Shellphone,
+            ItemID.ShellphoneSpawn,
+            ItemID.ShellphoneOcean,
+            ItemID.ShellphoneHell,
+        };
+
+        /// <summary>The Curse blocks this teleport item for this player: the always-cursed set in Souls Mode, plus the
+        /// Magic Mirror once the world is in Hardmode (Superhardmode included).</summary>
+        static bool IsCursedTeleporter(Item item, Player player)
+        {
+            bool soulsMode = player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
+
+            if (!soulsMode)
+            {
+                return false;
+            }
+
+            bool alwaysCursed = SoulsModeCursedTeleporters.Contains(item.type);
+            bool hardmodeMirror = item.type == ItemID.MagicMirror && Main.hardMode;
+            return alwaysCursed || hardmodeMirror;
+        }
+
+        public override void OnSpawn(Item item, IEntitySource source)
+        {
+            // Vanilla converts Hearts into Candy Apples after checking NPCLoader.blockLoot.
+            // Filter the final NPC loot type here, before Item.NewItem broadcasts it to clients.
+            if (Main.netMode != NetmodeID.MultiplayerClient && item.type == ItemID.CandyApple
+                && source is EntitySource_Loot loot && loot.Entity is NPC)
+            {
+                item.TurnToAir();
+            }
+        }
+
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ShimmerTransformToItem[ItemID.LunarHook] = ItemID.LunarHook;
         }
+
+        public override bool AltFunctionUse(Item item, Player player)
+        {
+            // Sentries don't have a buff icon to right-click away. If a sentry weapon has no right-click action
+            // of its own, let right-click dismiss any active sentries it spawned.
+            if (item.sentry && item.shoot > ProjectileID.None)
+            {
+                bool hasCustomAltUse = item.ModItem != null && item.ModItem.AltFunctionUse(player);
+                if (!hasCustomAltUse && player.ownedProjectileCounts[item.shoot] > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public override bool CanUseItem(Item item, Player player)
         {
+            // Right-clicking a sentry weapon without its own alt-fire despawns its active sentries immediately
+            // before mana or weapon stamina is spent.
+            if (player.altFunctionUse == 2 && item.sentry && item.shoot > ProjectileID.None)
+            {
+                bool hasCustomAltUse = item.ModItem != null && item.ModItem.AltFunctionUse(player);
+                if (!hasCustomAltUse)
+                {
+                    if (player.whoAmI == Main.myPlayer)
+                    {
+                        for (int i = 0; i < Main.maxProjectiles; i++)
+                        {
+                            Projectile proj = Main.projectile[i];
+                            if (proj.active && proj.owner == player.whoAmI && proj.type == item.shoot)
+                            {
+                                proj.Kill();
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            // The Curse blocks vanilla teleporters in Souls Mode (see IsCursedTeleporter); use the player attempting it.
+            if (IsCursedTeleporter(item, player))
+            {
+                if (player.whoAmI == Main.myPlayer)
+                {
+                    string curseMessage = Language.GetTextValue("Mods.tsorcRevamp.Items.GreatMagicMirror.BotCDisabled");
+                    Main.NewText(curseMessage, Color.OrangeRed);
+                }
+
+                return false;
+            }
+
             if (item.type == ItemID.MagicMirror || item.type == ItemID.RecallPotion)
             {
                 if (tsorcRevampWorld.BossAlive)
@@ -51,6 +145,14 @@ namespace tsorcRevamp.Content.Items
                 }
             }
             if (item.type == ItemID.Picksaw && !tsorcRevampWorld.SuperHardMode && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
+            {
+                return false;
+            }
+
+            // Suppressed / Treacherous Terrain block mounts outright. mountType is -1 on every non-mount item; QuickMount
+            // goes through this hook too. Anything already ridden is thrown off in tsorcRevampPlayer.PostUpdateEquips.
+            bool isMountItem = item.mountType != -1;
+            if (isMountItem && player.GetModPlayer<tsorcRevampPlayer>().MountsDisabled)
             {
                 return false;
             }
@@ -65,7 +167,7 @@ namespace tsorcRevamp.Content.Items
             {
                 return false;
             }
-            if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 return false;
             }
@@ -78,13 +180,13 @@ namespace tsorcRevamp.Content.Items
             {
                 if (!Main.dayTime)
                 {
-                    if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>()))
+                    if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>()) && !NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>()))
                     {
                         //Triad
                         UsefulFunctions.BroadcastText(Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MechanicalEye.OnUseText1"), Color.MediumPurple);
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Cataluminance>());
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X, (int)player.Center.Y - 1000, ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X - 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>());
+                        NPC.NewNPCDirect(item.GetSource_FromThis(), (int)player.Center.X + 1500, (int)player.Center.Y, ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
                         Projectile.NewProjectileDirect(player.GetSource_ItemUse(item), player.Center, Vector2.Zero, ModContent.ProjectileType<Projectiles.VFX.BossDeath>(), 0, 0, player.whoAmI, 0, UsefulFunctions.ColorToFloat(Color.White));
 
                     }
@@ -128,7 +230,7 @@ namespace tsorcRevamp.Content.Items
 
             if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
             {
-                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking || player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
+                if ((player.GetModPlayer<tsorcRevampPlayer>().isDodging && !player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging) || player.GetModPlayer<EstusFlaskPlayer>().IsDrinking || player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                 {
                     return false;
                 }
@@ -186,7 +288,7 @@ namespace tsorcRevamp.Content.Items
             // Cannot equip wings until the hunter has been defeated unless you're in debug mode.
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !player.HasItem(ModContent.ItemType<DebugTome>()) && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
-                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     return false;
                 }
@@ -196,37 +298,6 @@ namespace tsorcRevamp.Content.Items
                 }
             }
             return base.CanEquipAccessory(item, player, slot, modded);
-        }
-
-        // Suppressed vertical nerf: runs after the wing's own VerticalWingSpeeds (ModItem hook first, then globals),
-        // so it can only lower the values. Gated on supersonicLevel like the run-speed clamp, so a harness paired with
-        // a vanilla wing is capped too and un-suppressed players are untouched.
-        public override void VerticalWingSpeeds(Item item, Player player, ref float ascentWhenFalling, ref float ascentWhenRising, ref float maxCanAscendMultiplier, ref float maxAscentMultiplier, ref float constantAscend)
-        {
-            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-
-            if (!modPlayer.Suppressed || modPlayer.supersonicLevel == 0)
-            {
-                return;
-            }
-
-            float fallingCap = SoulsModeMobility.SuppressedAscentWhenFalling;
-            float risingCap = SoulsModeMobility.SuppressedAscentWhenRising;
-            float maxAscentCap = SoulsModeMobility.SuppressedMaxAscentMultiplier;
-            float constantCap = SoulsModeMobility.SuppressedConstantAscend;
-
-            if (modPlayer.supersonicLevel == SoulsModeMobility.WingsOfSeathLevel)
-            {
-                fallingCap = SoulsModeMobility.SuppressedAscentWhenFallingSeath;
-                risingCap = SoulsModeMobility.SuppressedAscentWhenRisingSeath;
-                maxAscentCap = SoulsModeMobility.SuppressedMaxAscentMultiplierSeath;
-                constantCap = SoulsModeMobility.SuppressedConstantAscendSeath;
-            }
-
-            ascentWhenFalling = System.Math.Min(ascentWhenFalling, fallingCap);
-            ascentWhenRising = System.Math.Min(ascentWhenRising, risingCap);
-            maxAscentMultiplier = System.Math.Min(maxAscentMultiplier, maxAscentCap);
-            constantAscend = System.Math.Min(constantAscend, constantCap);
         }
 
         public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
@@ -256,6 +327,12 @@ namespace tsorcRevamp.Content.Items
         public static int[] badPrefixes = { 7, 8, 9, 10, 11, 13, 14, 22, 23, 24, 29, 30, 31, 39, 40, 41, 47, 48, 49, 50, 56 };
         public override void ModifyTooltips(Item item, List<TooltipLine> tooltips)
         {
+            if (IsCursedTeleporter(item, Main.LocalPlayer))
+            {
+                string curseMessage = Language.GetTextValue("Mods.tsorcRevamp.Items.GreatMagicMirror.BotCDisabled");
+                tooltips.Add(new TooltipLine(Mod, "HardmodeMirrorCurse", curseMessage));
+            }
+
             if (item.ModItem != null && item.ModItem.Mod == Mod)
             {
                 try
@@ -314,9 +391,22 @@ namespace tsorcRevamp.Content.Items
                 int activePlayers = 0;
                 for (int i = 0; i < Main.maxPlayers; i++)
                 {
-                    if (Main.player[i].active) activePlayers++;
+                    if (Main.player[i].active)
+                    {
+                        activePlayers++;
+                    }
                 }
-                int gain = activePlayers >= 4 ? 20 : (activePlayers >= 2 ? 15 : 10);
+
+                int gain = 10;
+                if (activePlayers >= 4)
+                {
+                    gain = 20;
+                }
+                else if (activePlayers >= 2)
+                {
+                    gain = 15;
+                }
+
 
                 // Find the vanilla "permanently increases maximum life" line and rewrite the number.
                 // Falls back to appending a new line if the vanilla one isn't found (other mods etc.).
@@ -362,7 +452,7 @@ namespace tsorcRevamp.Content.Items
 
             if (item.wingSlot < ArmorIDs.Wing.Sets.Stats.Length && item.wingSlot > 0 && !ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
             {
-                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type != ItemID.CreativeWings && item.type != ItemID.AngelWings && item.type != ItemID.DemonWings && item.type != ItemID.HarpyWings && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
@@ -421,7 +511,7 @@ namespace tsorcRevamp.Content.Items
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.Cursed")));
                 }
-                if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+                if (item.type == ItemID.QueenSlimeMountSaddle && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
                 {
                     tooltips.Add(new TooltipLine(ModContent.GetInstance<tsorcRevamp>(), "Disabled", Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.WingsDisabled")));
                 }
@@ -1057,7 +1147,7 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool CanRightClick(Item item)
         {
-            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 return false;
             }

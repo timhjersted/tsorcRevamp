@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Items.BossItems
         public override bool? UseItem(Player player)
         {
             bool zoneJ = player.ZoneJungle;
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheHunter>()))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>()))
             {
                 return false;
             }
@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.BossItems
             }
             else
             {
-                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.TheHunter>());
+                NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>());
             }
             return true;
         }

@@ -31,8 +31,8 @@ namespace tsorcRevamp.NPCs
                 return false;
             }
 
-            return GetActiveGuardPressureSequenceStacks(npc) >= GuardPressureMaxBlocks
-                || (BlockedRecently >= GuardPressureMaxBlocks && BlockedRecentlyByPlayer == npc.target);
+            return GetActiveGuardPressureSequenceStacks(npc) >= GuardPressureFinisherBlocks
+                || (BlockedRecently >= GuardPressureFinisherBlocks && BlockedRecentlyByPlayer == npc.target);
         }
 
         internal void SetActiveAttackDefenseTraits(NPC npc, AttackDefenseTraits traits)
@@ -154,8 +154,8 @@ namespace tsorcRevamp.NPCs
         }
 
         /// <summary>
-        /// Ends the snapshot after a completed attack sequence. Stacks one through three remain banked until decay;
-        /// a four-stack sequence consumes the bank and creates the player's stationary punish window.
+        /// Ends the snapshot after a completed attack sequence. Stacks below GuardPressureFinisherBlocks remain banked
+        /// until decay; a finisher sequence consumes the bank and creates the player's stationary punish window.
         /// </summary>
         internal int CompleteGuardPressureSequence(NPC npc)
         {
@@ -168,7 +168,7 @@ namespace tsorcRevamp.NPCs
             bool hadSnapshot = GuardPressureSequenceStacks > 0;
             CancelGuardPressureSequenceSnapshot();
 
-            if (completedStacks >= GuardPressureMaxBlocks)
+            if (completedStacks >= GuardPressureFinisherBlocks)
             {
                 ClearGuardPressure(npc);
                 GuardPressureRecoveryTimer = Math.Max(GuardPressureRecoveryTimer, GuardPressureRecoveryTicks);

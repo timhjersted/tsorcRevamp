@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     ///
     /// Same shape as <see cref="EnemyTaintedArrow"/> (aiStyle 1 / WoodenArrowFriendly AIType) with
     /// the vanilla arrow's own sprite and the ShadowFlame debuff on hit — matching how vanilla 495
-    /// applies BuffID.ShadowFlame, and how AncientOolacileDemon already inflicts it on players.
+    /// applies BuffID.ShadowFlame, and how OolacileDemon already inflicts it on players.
     /// </summary>
     public class EnemyShadowflameArrow : ModProjectile
     {

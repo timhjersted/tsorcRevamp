@@ -11,8 +11,10 @@ using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 using tsorcRevamp.Systems.Conqueror;
 using tsorcRevamp.Systems.Electrocute;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.Utilities;
 
@@ -21,9 +23,8 @@ namespace tsorcRevamp.Content.Items
 
     public class Darksign : ModItem
     {
-        public static float BotCSoulDropAmplifier = 20f;
         public static float BotCMaxHPLossPercentage = 20f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCSoulDropAmplifier, BotCMaxHPLossPercentage);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(BotCMaxHPLossPercentage);
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ItemNoGravity[Item.type] = true; // Makes item float in world.
@@ -89,8 +90,8 @@ namespace tsorcRevamp.Content.Items
         }
         public override bool? UseItem(Player player) // Won't consume item without this
         {
-            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<tsorcRevampEstusPlayer>().EstusChargesMax - tsorcRevampEstusPlayer.DefaultEstusChargesMax) * CeruleanFlaskPlayer.ChargesPerEstusUpgrade) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
-            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<tsorcRevampEstusPlayer>().EstusHealthGain - tsorcRevampEstusPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanChargesMax = ((player.GetModPlayer<EstusFlaskPlayer>().EstusChargesMax - EstusFlaskPlayer.DefaultEstusChargesMax) * CeruleanFlaskPlayer.ChargesPerEstusUpgrade) + CeruleanFlaskPlayer.DefaultCeruleanChargesMax;
+            player.GetModPlayer<CeruleanFlaskPlayer>().CeruleanManaGain = player.GetModPlayer<EstusFlaskPlayer>().EstusHealthGain - EstusFlaskPlayer.DefaultEstusHealthGain + CeruleanFlaskPlayer.DefaultCeruleanManaGain;
             return true;
         }
         public override void UseStyle(Player player, Rectangle rectangle)

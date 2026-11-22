@@ -41,8 +41,25 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             soundVolume = 1f;
         }
+        /// <summary>
+        /// Useful for resetting fields.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="buffIndex"></param>
+        public virtual void DoStuffOnLastTick(Player player, ref int buffIndex)
+        {
+            
+        }
+        public virtual void DoStuffOnLastTick(NPC npc, ref int buffIndex)
+        {
+            
+        }
         public override void Update(Player player, ref int buffIndex)
         {
+            if (player.buffTime[buffIndex] <= 0)
+            {
+                DoStuffOnLastTick(player, ref buffIndex);
+            }
             if (player.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);
@@ -62,6 +79,10 @@ namespace tsorcRevamp.Buffs.Debuffs
         }
         public override void Update(NPC npc, ref int buffIndex)
         {
+            if (npc.buffTime[buffIndex] <= 0)
+            {
+                DoStuffOnLastTick(npc, ref buffIndex);
+            }
             if (npc.buffTime[buffIndex] <= 0 && PlaysSoundOnLastTick)
             {
                 LastTickSoundsSettings(out float soundVolume);

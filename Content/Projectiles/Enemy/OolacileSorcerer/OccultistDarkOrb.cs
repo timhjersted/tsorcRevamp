@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.OolacileSorcerer
 {

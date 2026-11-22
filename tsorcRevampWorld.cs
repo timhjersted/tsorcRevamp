@@ -28,8 +28,10 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Runeterra;
+using tsorcRevamp.NPCs.Bosses.Birds;
 
 namespace tsorcRevamp
 {
@@ -42,6 +44,8 @@ namespace tsorcRevamp
         public static bool IllusionWandOfFrostGiven;
         public static bool SuperHardMode;
         public static bool TheEnd;
+        // Set for good by the Ember of the First Dawn: Super Hardmode without the Abyss, after Gwyn's death.
+        public static bool PrimordialAge;
         public static bool CustomMap;
         public static bool OnlyAdventureMap;
         public static bool RemixMap;
@@ -63,6 +67,8 @@ namespace tsorcRevamp
         public static bool EnteredFloodedMachineTemple;
         public static bool EnteredPyramid;
         public static bool TalkedToShaman;
+        /// <summary>The full Ornstein and Smough intro plays once per world; later attempts use the short entrance.</summary>
+        public static bool OrnsmoughIntroSeen;
 
         public static List<string> CompletedDynamicEvents = new List<string>();
 
@@ -131,51 +137,6 @@ namespace tsorcRevamp
             }
         }
 
-        public class AbyssWorldState
-        {
-            public bool bloodMoon = false;
-            public int moonPhase = 0;
-            public bool dayTime = false;
-            public double time = 0.0;
-            public bool stored = false;
-
-            public void StoreWorldState(bool bloodMoon, int moonPhase, bool dayTime, double time)
-            {
-                if (stored)
-                {
-                    return;
-                }
-
-                this.bloodMoon = bloodMoon;
-                this.moonPhase = moonPhase;
-                this.dayTime = dayTime;
-                this.time = time;
-                stored = true;
-            }
-
-            public void RevertWorldState()
-            {
-                if (!stored)
-                {
-                    return;
-                }
-
-                Main.bloodMoon = bloodMoon;
-                Main.moonPhase = moonPhase;
-                Main.dayTime = dayTime;
-                Main.time = time;
-                stored = false;
-
-                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
-                {
-                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-            }
-        }
-
-        public static AbyssWorldState beforeAbyss;
-
         public override void OnWorldLoad()
         {
             DownedBetsy = false;
@@ -184,6 +145,7 @@ namespace tsorcRevamp
             IllusionWandOfFrostGiven = false;
             SuperHardMode = false;
             TheEnd = false;
+            PrimordialAge = false;
             CustomMap = false;
             OnlyAdventureMap = false;
             RemixMap = false;
@@ -195,6 +157,7 @@ namespace tsorcRevamp
             EnteredFloodedMachineTemple = false;
             EnteredPyramid = false;
             TalkedToShaman = false;
+            OrnsmoughIntroSeen = false;
             //Slain = new Dictionary<int, int>();
             LitBonfireList = new List<Vector2>();
             boundShaders = new List<string>();
@@ -215,7 +178,6 @@ namespace tsorcRevamp
             PendingDroppedSoulStacks = new();
             PendingDroppedSoulOwnerNames = new();
             BossIDsAndCoordinatesInternal = null;
-            beforeAbyss = new();
             DwarvenContractsGiven = 0;
             PopulatePairedBosses();
         }
@@ -234,6 +196,8 @@ namespace tsorcRevamp
             }
             if (TheEnd)
                 world_state.Add("TheEnd");
+            if (PrimordialAge)
+                world_state.Add("PrimordialAge");
             if (CustomMap)
                 world_state.Add("CustomMap");
             if (RemixMap)
@@ -258,6 +222,8 @@ namespace tsorcRevamp
                 world_state.Add("EnteredPyramid");
             if (TalkedToShaman)
                 world_state.Add("TalkedToShaman");
+            if (OrnsmoughIntroSeen)
+                world_state.Add("OrnsmoughIntroSeen");
 
             if (DownedBetsy)
             {
@@ -294,19 +260,21 @@ namespace tsorcRevamp
 
         public override void LoadWorldData(TagCompound tag)
         {
-            LoadSlain(tag);
             tsorcScriptedEvents.LoadScriptedEvents(tag);
             CompletedDynamicEvents = tag.GetList<string>("CompletedDynamicEvents").ToList();
 
             IList<string> downedList = tag.GetList<string>("downed");
             DownedBetsy = downedList.Contains("DownedBetsy");
             isHellkiteDragonDead = downedList.Contains("isHellkiteDragonDead");
+            LoadSlain(tag);
             isOolacileSerpentDead = downedList.Contains("isOolacileSerpentDead");
             IllusionWandOfFrostGiven = downedList.Contains("IllusionWandOfFrostGiven");
 
             IList<string> worldStateList = tag.GetList<string>("world_state");
             SuperHardMode = worldStateList.Contains("SuperHardMode");
+            OrnsmoughIntroSeen = worldStateList.Contains("OrnsmoughIntroSeen");
             TheEnd = worldStateList.Contains("TheEnd");
+            PrimordialAge = worldStateList.Contains("PrimordialAge");
             ForceSandbox = worldStateList.Contains("ForceSandbox");
             CustomMap = !ForceSandbox && worldStateList.Contains("CustomMap");
             RemixMap = !ForceSandbox && worldStateList.Contains("RemixMap");
@@ -373,7 +341,7 @@ namespace tsorcRevamp
                 {
                     if (Main.tile[1365, 280].HasTile && Main.tile[1365, 280].IsActuated)
                     {
-                        NPCs.Bosses.Okiku.FinalForm.Attraidies.ActuateAttraidiesArena();
+                        NPCs.Bosses.Attraidies.Attraidies.ActuateAttraidiesArena();
                     }
                 }
             }
@@ -501,12 +469,34 @@ namespace tsorcRevamp
             {
                 NewSlain.Remove(oldOccultistKey);
 
-                NPCDefinition newOccultistKey = new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>());
+                NPCDefinition newOccultistKey = new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>());
 
                 if (!NewSlain.ContainsKey(newOccultistKey))
                 {
                     NewSlain.Add(newOccultistKey, oldOccultistValue);
                 }
+            }
+
+            // Preserve the renamed sentry's hunt progression in existing worlds, including saves containing both names.
+            NPCDefinition oldSentryKey = new NPCDefinition("tsorcRevamp", "OolacileKnight");
+            if (NewSlain.TryGetValue(oldSentryKey, out int oldSentryCount))
+            {
+                NewSlain.Remove(oldSentryKey);
+                NPCDefinition sentryKey = new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.DarkrootSentry>());
+                NewSlain.TryGetValue(sentryKey, out int sentryCount);
+                NewSlain[sentryKey] = Math.Max(sentryCount, oldSentryCount);
+            }
+
+            // The Drake inherits the Dragon's progression slot, including first-kill rewards already earned.
+            NPCDefinition dragonKey = new NPCDefinition(ModContent.NPCType<HellkiteDragonHead>());
+            NPCDefinition drakeKey = new NPCDefinition(ModContent.NPCType<HellkiteDrake>());
+            NewSlain.TryGetValue(dragonKey, out int dragonCount);
+            NewSlain.TryGetValue(drakeKey, out int drakeCount);
+            if (dragonCount > 0 || drakeCount > 0 || isHellkiteDragonDead)
+            {
+                NewSlain.Remove(dragonKey);
+                NewSlain[drakeKey] = Math.Max(1, Math.Max(dragonCount, drakeCount));
+                isHellkiteDragonDead = true;
             }
         }
 
@@ -523,6 +513,7 @@ namespace tsorcRevamp
                 //height+GUID check can't be trusted; the server's verdict is authoritative.
                 writer.Write(ExpandedAdventure);
                 writer.Write(SuperHardMode);
+                writer.Write(PrimordialAge);
                 writer.WriteVector2(AbyssPortalLocation);
 
                 //Storing it in an int32 just so its exact type is guranteed, since that does matter
@@ -564,6 +555,7 @@ namespace tsorcRevamp
             bool priorExpandedAdventure = ExpandedAdventure;
             ExpandedAdventure = reader.ReadBoolean();
             SuperHardMode = reader.ReadBoolean();
+            PrimordialAge = reader.ReadBoolean();
             AbyssPortalLocation = reader.ReadVector2();
 
             // MP CLIENT FIX: PreUpdatePlayers' first-tick init computes ExpandedAdventure locally via
@@ -1223,6 +1215,99 @@ namespace tsorcRevamp
             }
         }
 
+        // Full 2x2 TEdit markers: slime/slime above pink/pink gives a Proud Knight soul,
+        // and pink/pink above slime/slime gives a Brave Warrior soul. Their reward is encoded
+        // in the resulting tile type, so no coordinate entry is needed.
+        private static void ConvertSoulRewardSkullMarkers()
+        {
+            for (int x = 1; x < Main.maxTilesX - 1; x++)
+            {
+                for (int y = 1; y < Main.maxTilesY - 1; y++)
+                {
+                    Tile topLeft = Main.tile[x, y];
+                    if (!topLeft.HasTile || (topLeft.TileType != TileID.SlimeBlock && topLeft.TileType != TileID.PinkSlimeBlock))
+                        continue;
+
+                    Tile topRight = Main.tile[x + 1, y];
+                    Tile bottomLeft = Main.tile[x, y + 1];
+                    Tile bottomRight = Main.tile[x + 1, y + 1];
+                    ushort otherType = topLeft.TileType == TileID.SlimeBlock ? TileID.PinkSlimeBlock : TileID.SlimeBlock;
+                    if (!topRight.HasTile || topRight.TileType != topLeft.TileType
+                        || !bottomLeft.HasTile || bottomLeft.TileType != otherType
+                        || !bottomRight.HasTile || bottomRight.TileType != otherType)
+                        continue;
+
+                    ushort skullType = (ushort)(topLeft.TileType == TileID.SlimeBlock
+                        ? ModContent.TileType<Tiles.ProudKnightSoulSkull>()
+                        : ModContent.TileType<Tiles.BraveWarriorSoulSkull>());
+                    for (int dx = 0; dx < 2; dx++)
+                    {
+                        for (int dy = 0; dy < 2; dy++)
+                        {
+                            Tile part = Main.tile[x + dx, y + dy];
+                            part.TileType = skullType;
+                            part.TileFrameX = (short)(dx * 18);
+                            part.TileFrameY = (short)(dy * 18);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remove the retired Wasp Gun skull from both fresh and already-converted adventure maps.
+        // Its cache coordinate is in legacy 2000-tile world space.
+        private static void RemoveWaspGunSoulSkull()
+        {
+            Point position = ExpandedWorldTransform.MapTile(5832, 1531);
+            int x = position.X;
+            int y = position.Y;
+            if (!WorldGen.InWorld(x + 1, y + 1)) return;
+
+            Tile topLeft = Main.tile[x, y];
+            ushort skullLeft = (ushort)ModContent.TileType<Tiles.SoulSkullL>();
+            ushort skullRight = (ushort)ModContent.TileType<Tiles.SoulSkullR>();
+            bool isSkull = topLeft.HasTile && (topLeft.TileType == skullLeft || topLeft.TileType == skullRight)
+                && topLeft.TileFrameX % 36 == 0 && topLeft.TileFrameY == 0;
+            if (isSkull)
+            {
+                for (int dx = 0; dx < 2 && isSkull; dx++)
+                {
+                    for (int dy = 0; dy < 2; dy++)
+                    {
+                        Tile part = Main.tile[x + dx, y + dy];
+                        if (!part.HasTile || part.TileType != topLeft.TileType
+                            || part.TileFrameX != topLeft.TileFrameX + dx * 18 || part.TileFrameY != dy * 18)
+                        {
+                            isSkull = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (isSkull)
+            {
+                for (int dx = 0; dx < 2; dx++)
+                    for (int dy = 0; dy < 2; dy++)
+                        Main.tile[x + dx, y + dy].ClearTile();
+            }
+            else
+            {
+                Tile bottomLeft = Main.tile[x, y + 1];
+                Tile bottomRight = Main.tile[x + 1, y + 1];
+                bool isMarker = bottomLeft.HasTile && bottomRight.HasTile
+                    && ((bottomLeft.TileType == TileID.SlimeBlock && bottomRight.TileType == TileID.PinkSlimeBlock)
+                        || (bottomLeft.TileType == TileID.PinkSlimeBlock && bottomRight.TileType == TileID.SlimeBlock));
+                if (!isMarker) return;
+
+                bottomLeft.ClearTile();
+                bottomRight.ClearTile();
+            }
+
+            if (Main.netMode == NetmodeID.Server)
+                NetMessage.SendTileSquare(-1, x + 1, y + 1, 4);
+        }
+
         public static void BuildSoapstones()
         {
             string jsonPath = "tsorcRevamp/Localization/tsorcSoapstones_" + Language.ActiveCulture.Name + ".json";
@@ -1472,8 +1557,14 @@ namespace tsorcRevamp
                     Microsoft.Xna.Framework.Point retired = sign.expandedOnly
                         ? new Microsoft.Xna.Framework.Point(sign.tileX, sign.tileY)
                         : ExpandedWorldTransform.MapTile(sign.tileX, sign.tileY);
-                    if (TileUtils.TryGetTileEntityAs(retired.X, retired.Y, out SoapstoneTileEntity _))
+                    if (TileUtils.TryGetTileEntityAs(retired.X, retired.Y, out SoapstoneTileEntity retiredEntity))
                     {
+                        // A sign this save has already read means its replacement scene must not play later.
+                        if (retiredEntity.read)
+                        {
+                            NPCs.Special.StoryCutscenes.NoteRetiredSignRead(sign.tileX, sign.tileY);
+                        }
+
                         WorldGen.KillTile(retired.X, retired.Y, noItem: true);
                         retiredSignCount++;
                     }
@@ -2097,6 +2188,7 @@ namespace tsorcRevamp
                     //Stuff that should only be done by either a solo player or the server
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
+                        RemoveWaspGunSoulSkull();
 
                         if (Main.worldID == VariousConstants.CUSTOM_MAP_WORLD_ID)
                         {
@@ -2104,6 +2196,10 @@ namespace tsorcRevamp
                             PlaceModdedTiles();
                             //ReadSoapstonesIntoJson();
                         }
+
+                        // These markers are identified by their block pattern rather than map coordinates.
+                        // Check on every adventure-world load so markers added to an existing map also convert.
+                        ConvertSoulRewardSkullMarkers();
 
                         if (!ModContent.GetInstance<tsorcRevampConfig>().DisableSoapstones)
                         {
@@ -2378,40 +2474,9 @@ namespace tsorcRevamp
                 tsorcScriptedEvents.ScriptedEventCheck();
             }
 
-            bool charm = false;
-            foreach (Player player in Main.ActivePlayers)
-            {
-                if (player.GetModPlayer<tsorcRevampPlayer>().EnterTheAbyss)
-                {
-                    charm = true;
-                    break;
-                }
-            }
-            if (charm)
-            {
-                beforeAbyss.StoreWorldState(Main.bloodMoon, Main.moonPhase, Main.dayTime, Main.time);
-
-                Main.bloodMoon = false;
-                Main.moonPhase = 0;
-                Main.dayTime = false;
-                Main.time = 16240.0;
-
-                if (Main.GlobalTimeWrappedHourly % 120 == 0 && Main.netMode != NetmodeID.SinglePlayer)
-                {
-                    //globaltime always ticks up unless the player is in camera mode, and lets be honest: who uses camera mode? 
-                    NetMessage.SendData(MessageID.WorldData);
-                }
-            }
-            // Revert back to whatever time it was before the ring was equipped.
-            // This does nothing if nothing was stored
-            else 
-            {
-                beforeAbyss.RevertWorldState();
-            }
-            
             if (!Main.dedServ)
             {
-                if (SuperHardMode)
+                if (SuperHardMode && !PrimordialAge)
                 {
                     for (int i = 0; i < TextureAssets.Moon.Length; i++)
                     {
@@ -2421,7 +2486,7 @@ namespace tsorcRevamp
                     TextureAssets.Sun2 = SHMSun2;
                     TextureAssets.Sun3 = SHMSun3;
                 }
-                if (TheEnd)
+                if (TheEnd || PrimordialAge)
                 { //super hardmode and the end are mutually exclusive, so there won't be any "z-fighting", but this still feels silly
                     TextureAssets.Sun = VanillaSun1;
                     TextureAssets.Sun2 = VanillaSun2;
@@ -2485,14 +2550,14 @@ namespace tsorcRevamp
                 }
             }
 
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheRage>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()))
             {
                 if (Filters.Scene[TheRage.FilterID] != null && Filters.Scene[TheRage.FilterID].Active)
                 {
                     Filters.Scene[TheRage.FilterID].Deactivate();
                 }
             }
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.TheSorrow>()))
+            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>()))
             {
                 if (Filters.Scene[TheSorrow.FilterID] != null && Filters.Scene[TheSorrow.FilterID].Active)
                 {
@@ -2520,6 +2585,12 @@ namespace tsorcRevamp
         //Called upon the death of Gwyn, Lord of Cinder. Disables both hardmode and superhardmode, and sets the world state to "The End".
         public static void InitiateTheEnd()
         {
+            // A Gwyn rematch must not undo the Ember's permanent Super Hardmode.
+            if (PrimordialAge)
+            {
+                return;
+            }
+
             Color c = new Color(255f, 255f, 60f);
             if (tsorcRevampWorld.SuperHardMode)
             {
@@ -2534,10 +2605,32 @@ namespace tsorcRevamp
             Main.hardMode = false;
             tsorcRevampWorld.SuperHardMode = false;
             tsorcRevampWorld.TheEnd = true;
+            Systems.AbyssWorldSystem.RestoreDawn();
 
             //		Main.NewText("You have vanquished the final guardian of the Abyss...");
             //		Main.NewText("The kiln of the First Flame has been ignited!");
             //		//Main.NewText("Congratulations, you have inherited the fire of this world. You will forever be known as the hero of the age.");  
+        }
+
+        /// <summary>Server or single player, once per world: returns Super Hardmode permanently. The Abyss stays
+        /// gone because Gwyn is already dead and the Abyss systems check this flag.</summary>
+        public static void EnterPrimordialAge()
+        {
+            if (PrimordialAge || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+
+            PrimordialAge = true;
+            Main.hardMode = true;
+            SuperHardMode = true;
+            TheEnd = false;
+            UsefulFunctions.BroadcastText(LangUtils.GetTextValue("Items.EmberOfTheFirstDawn.AgeBegins"), 255, 190, 90);
+
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.WorldData);
+            }
         }
 
         //Runs a double check on whether or not the world is the custom map.
@@ -2657,7 +2750,7 @@ namespace tsorcRevamp
         //Gwyn
 
         //5 optional:
-        //Hellkite Dragon
+        //Hellkite Drake
         //Witchking
         //Oolicale Sorcerer
         //Chaos
@@ -2785,52 +2878,52 @@ namespace tsorcRevamp
         public static Dictionary<int, Vector2> PreHardmodeBossIDs = new Dictionary<int, Vector2>
         {
             { ModContent.NPCType<NPCs.Special.LeonhardPhase1>(), new Vector2(3366, 356) },
-            { ModContent.NPCType<NPCs.Enemies.RedKnight>(), new Vector2(3304, 500) },
+            { ModContent.NPCType<NPCs.Invaders.RedKnight>(), new Vector2(3304, 500) },
             { ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>(), new Vector2(3900, 1140) },
             { ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>(), new Vector2(4139f, 933) },
             { NPCID.EyeofCthulhu, new Vector2(3900, 1140) },
             { NPCID.BrainofCthulhu, new Vector2(3044, 904) },
             { NPCID.EaterofWorldsHead, new Vector2(3633, 1010) },
-            { ModContent.NPCType<NPCs.Bosses.AncientOolacileDemon>(), new Vector2(5634, 990) },
+            { ModContent.NPCType<NPCs.Bosses.Demons.OolacileDemon>(), new Vector2(5634, 990) },
             { NPCID.KingSlime, new Vector2(6011, 1128) },
             { ModContent.NPCType<NPCs.Bosses.Slogra>(), new Vector2(6227, 1281) },
             { NPCID.QueenBee, new Vector2(5084, 1479) },
             { NPCID.SkeletronHead, new Vector2(4979, 1404) },
             { NPCID.Deerclops, new Vector2(4049, 166) },
             { ModContent.NPCType<NPCs.Bosses.JungleWyvern.JungleWyvernHead>(), new Vector2(4330, 1740) },
-            { ModContent.NPCType<NPCs.Bosses.AncientDemon>(), new Vector2(5313, 1819) },
+            { ModContent.NPCType<NPCs.Bosses.Demons.DefiledDemon>(), new Vector2(5313, 1819) },
             { NPCID.WallofFlesh, new Vector2(3398, 1827) },
         };
 
         public static Dictionary<int, Vector2> HardmodeBossIDs = new Dictionary<int, Vector2>
         {
             { NPCID.QueenSlimeBoss, new Vector2(7114, 1386) },
-            { ModContent.NPCType<NPCs.Bosses.TheRage>(), new Vector2(7000, 1850) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheRage>(), new Vector2(7000, 1850) },
             { ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), new Vector2(7192, 347) },
-            { ModContent.NPCType<NPCs.Bosses.TheSorrow>(), new Vector2(8236, 1650) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>(), new Vector2(8236, 1650) },
             { ModContent.NPCType<NPCs.Bosses.Serris.SerrisX>(), new Vector2(1098, 962) },
             { ModContent.NPCType<NPCs.Bosses.Death.Death>(), new Vector2(1076, 545) },
-            { ModContent.NPCType<NPCs.Bosses.TheHunter>(), new Vector2(295, 1515) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>(), new Vector2(295, 1515) },
             { NPCID.TheDestroyer, new Vector2(2109, 856) },
             { ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>(), new Vector2(5066, 1056) },
             { NPCID.Plantera, new Vector2(5828, 1746) },
             { NPCID.Golem, new Vector2(6792, 1628) },
             { NPCID.HallowBoss, new Vector2(4468, 351) },
-            { ModContent.NPCType<NPCs.Bosses.Cataluminance>(), new Vector2(2884, 240) },
-            { ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>(), new Vector2(1401, 307) },
+            { ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>(), new Vector2(2884, 240) },
+            { ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>(), new Vector2(1401, 307) },
         };
 
         public static Dictionary<int, Vector2> SHMBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>(), new Vector2(4182, 626) },
+            { ModContent.NPCType<HellkiteDrake>(), new Vector2(4360, 656) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2483, 1796) },
-            { ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
+            { ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>(), new Vector2(1040, 1865) },
             { NPCID.MoonLordCore, new Vector2(5408, 584) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>(), new Vector2(1814, 1711) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(318, 1909) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(3233, 1741) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Blight>(), new Vector2(8174, 867) },
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(6722, 1906) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), new Vector2(6722, 1906) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>(), new Vector2(5342, 1694) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Seath.SeathTheScalelessHead>(), new Vector2(7745, 1583) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), new Vector2(6432, 247) },
@@ -2853,7 +2946,7 @@ namespace tsorcRevamp
         
         public static Dictionary<int, Vector2> RemixSHMBossIDs = new Dictionary<int, Vector2>
         {
-            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>(), new Vector2(8234, 1875) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), new Vector2(8234, 1875) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2490, 1804) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>(), new Vector2(305, 1923) },
             { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.EarthFiendLich>(), new Vector2(3152, 1696) },

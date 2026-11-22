@@ -65,15 +65,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
                     player.HealEffect(modifiers.GetDamage(modifiers.SourceDamage.ApplyTo(Item.damage) / 10, true));
                 }
             }
-            if (target.type == ModContent.NPCType<NPCs.Enemies.SuperHardMode.GuardianCorruptor>())
-            {
-                //please *DO* use this on a guardian corruptor!
-                modifiers.DamageVariationScale *= 0;
-                modifiers.Defense *= 0;
-                modifiers.SourceDamage *= 0;
-                modifiers.FlatBonusDamage += 500000000f;
-                modifiers.SetCrit(); //let it crit!
-            }
             if (target.type == ModContent.NPCType<NPCs.Enemies.Basilisk.BasiliskWalker>())
             {
                 modifiers.SourceDamage *= 2;

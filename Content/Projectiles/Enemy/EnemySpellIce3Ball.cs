@@ -44,9 +44,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // Ice 3 is also cast by Shadow Mage and Marik; only shots traced back to The Sorrow build Frost.
             int sourceNPCType = Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType;
 
-            if (sourceNPCType == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+            if (sourceNPCType == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
             {
-                Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.TheSorrow.FrostBuildupPerHit);
+                Buffs.Debuffs.FrostBuildup.Apply(target, NPCs.Bosses.Birds.TheSorrow.FrostBuildupPerHit);
             }
         }
 

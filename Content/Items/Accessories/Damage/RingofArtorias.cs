@@ -8,7 +8,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
     {   
         public static float Dmg = 7f;
         public static int ArmorPen = 7;
-        public float PositiveCurseStatBoost = 34f;
+        public float PositiveCurseStatBoost = 20f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ArmorPen, PositiveCurseStatBoost);
         public override void SetStaticDefaults()
         {

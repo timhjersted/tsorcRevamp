@@ -6,6 +6,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
+using tsorcRevamp.NPCs.FriendlyPuppets;
 
 namespace tsorcRevamp.Content.Projectiles.Ranged
 {
@@ -58,50 +59,55 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
         bool rapid = false;
         public override void AI()
         {
-            if (IsAtMaxCharge && !Main.dedServ)
+            if (IsAtMaxCharge && !Main.dedServ && Main.GameUpdateCount % 8 == 0)
             {
-                if (Main.GameUpdateCount % 8 == 0)
-                {
-                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), Projectile.Center);
-                }
+                Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/MasterBuster"), Projectile.Center);
             }
-            if (Main.player[Projectile.owner].active)
-            {
-                Projectile.Center = Main.player[Projectile.owner].Center;
 
-                if (Main.myPlayer == Projectile.owner)
-                {
-                    Projectile.velocity = -Vector2.Normalize(Main.player[Projectile.owner].Center - Main.MouseWorld);
-                    Projectile.rotation = MathHelper.Pi + Projectile.velocity.ToRotation();
-                    int dir = 1;
-                    if (Projectile.velocity.X < 0)
-                    {
-                        dir = -1;
-                    }
-                    Main.player[Projectile.owner].ChangeDir(dir);
+            Player owner = Main.player[Projectile.owner];
 
-                    Main.player[Projectile.owner].itemRotation = Projectile.rotation;
-                    if (dir == 1)
-                    {
-                        Main.player[Projectile.owner].itemRotation += MathHelper.Pi;
-                    }
-                }
-
-
-
-                LineDust = true;
-                LaserDust = DustID.OrangeTorch;
-                if (targetPlayer == null)
-                {
-                    targetPlayer = Main.player[(int)Projectile.ai[0]];
-                }
-            }
-            else
+            if (!owner.active)
             {
                 Projectile.Kill();
+                return;
+            }
+
+            Projectile.Center = GetOrigin();
+            bool fromPuppet = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet;
+
+            if (Projectile.owner == Main.myPlayer && (!fromPuppet || MirrorPuppetSwap.Active))
+            {
+                Vector2 aim = Main.MouseWorld - Projectile.Center;
+                Vector2 direction = aim.SafeNormalize(Projectile.velocity);
+
+                if (fromPuppet && direction != Projectile.velocity)
+                {
+                    Projectile.netUpdate = true;
+                }
+
+                Projectile.velocity = direction;
+                Projectile.rotation = MathHelper.Pi + Projectile.velocity.ToRotation();
+                int facing = Projectile.velocity.X < 0f ? -1 : 1;
+                owner.ChangeDir(facing);
+
+                owner.itemRotation = Projectile.rotation;
+
+                if (facing == 1)
+                {
+                    owner.itemRotation += MathHelper.Pi;
+                }
+            }
+
+            LineDust = true;
+            LaserDust = DustID.OrangeTorch;
+
+            if (targetPlayer == null)
+            {
+                targetPlayer = Main.player[(int)Projectile.ai[0]];
             }
 
             base.AI();
+
             if (Charge == MaxCharge - 1)
             {
                 LaserSize = 0;
@@ -117,7 +123,7 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
 
         public override Vector2 GetOrigin()
         {
-            return Main.player[Projectile.owner].Center;
+            return MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
         }
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {

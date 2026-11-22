@@ -110,7 +110,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri.Bases
                 float sqrDistanceToTarget = Vector2.DistanceSquared(target.Center, Projectile.Center);
 
                 // Prioritize charmed NPCs first
-                if (target.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered && sqrDistanceToTarget < sqrCharmedDetectDistance)
+                if (target.GetGlobalNPC<RuneterraOrbNPC>().Sundered && sqrDistanceToTarget < sqrCharmedDetectDistance)
                 {
                     closestNPC = target;
                     break;

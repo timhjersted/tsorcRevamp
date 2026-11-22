@@ -21,18 +21,16 @@ using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Accessories;
 using tsorcRevamp.Buffs.Armor;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Other;
-using tsorcRevamp.Content.Items.Accessories.Summon.Goredrinker;
 using tsorcRevamp.Content.Items.Ammo;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.ArtoriasSet;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
 using tsorcRevamp.Content.Items.Armor.Summon;
@@ -57,6 +55,9 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -65,9 +66,9 @@ using tsorcRevamp.Content.Projectiles.Magic;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Pets;
 using tsorcRevamp.Content.Projectiles.Ranged;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Systems;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
@@ -242,6 +243,7 @@ namespace tsorcRevamp
             tag.Add("BonfiresCrafted", BonfiresCrafted);
             tag.Add("BearerOfTheCurse", BearerOfTheCurse);
             tag.Add("Unkindled", Unkindled);
+            tag.Add("HardmodeWarpNoticeShown", HardmodeWarpNoticeShown);
             tag.Add("soulSlot", ItemIO.Save(SoulSlot.Item));
             tag.Add("rightClickSlot", ItemIO.Save(RightClickSlot.Item));
             tag.Add("Curse", CurseActive);
@@ -260,6 +262,7 @@ namespace tsorcRevamp
             tag.Add("powerfulCurseDmg", powerfulCurseDamageBonus);
             tag.Add("powerfulCurseAtkSpd", powerfulCurseAttackSpeedBonus);
             tag.Add("powerfulCurseMoveSpd", powerfulCurseMovementSpeedBonus);
+            tag.Add("CurseRollVersion", CurseRollVersion);
             tag.Add("SoulVessel", SoulVessel);
             tag.Add("DeathTextIndex", currentDeathTextIndex);
             tag.Add("StartingClass", (int)startingClass);
@@ -350,6 +353,7 @@ namespace tsorcRevamp
             appliedStartingClassStats = tag.GetBool("AppliedStartingClassStats");
             appliedStartingClassStatsVersion = tag.ContainsKey("AppliedStartingClassStatsVersion") ? tag.GetInt("AppliedStartingClassStatsVersion") : (appliedStartingClassStats ? 1 : 0);
             BearerOfTheCurse = tag.GetBool("BearerOfTheCurse");
+            HardmodeWarpNoticeShown = tag.GetBool("HardmodeWarpNoticeShown");
             if (tag.ContainsKey("Unkindled"))
             {
                 Unkindled = tag.GetBool("Unkindled");
@@ -417,6 +421,23 @@ namespace tsorcRevamp
             powerfulCurseDamageBonus = tag.GetFloat("powerfulCurseDmg");
             powerfulCurseAttackSpeedBonus = tag.GetFloat("powerfulCurseAtkSpd");
             powerfulCurseMovementSpeedBonus = tag.GetFloat("powerfulCurseMoveSpd");
+
+            // A curse rolled under older rules (missing key = version 1) is rerolled once, so removed boons (defense, life
+            // regen) and the pre-halving resistance don't live on in old saves.
+            int savedCurseRollVersion = tag.ContainsKey("CurseRollVersion") ? tag.GetInt("CurseRollVersion") : 1;
+            if (savedCurseRollVersion < CurseRollVersion)
+            {
+                if (CurseActive)
+                {
+                    CalculateCurseStats(false);
+                }
+
+                if (powerfulCurseActive)
+                {
+                    CalculateCurseStats(true);
+                }
+            }
+
             SoulVessel = tag.GetInt("SoulVessel");
 
             if(tag.ContainsKey("DeathTextIndex"))
@@ -587,14 +608,6 @@ namespace tsorcRevamp
             {
                 Player.ClearBuff(ModContent.BuffType<Rejuvenation>());
                 Player.AddBuff(ModContent.BuffType<RejuvenationCooldown>(), 40 * 60);
-            }
-            if (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2>()))
-            {
-                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldown>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
-            }
-            if (Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>() && !Main.player[Main.myPlayer].HasBuff(ModContent.BuffType<ScoutsBoost2Omega>()))
-            {
-                Player.AddBuff(ModContent.BuffType<ScoutsBoostCooldownOmega>(), ToxicShot.ScoutsBoostOnHitCooldown * 60);
             }
         }
 
@@ -875,6 +888,17 @@ namespace tsorcRevamp
             //you died sound
             Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/DarkSouls/you-died") with { Volume = 0.4f });
 
+            // Play the Warrior's line on a confirmed kill. PreKill credits his projectiles to his NPC slot,
+            // which Terraria carries in the death packet so nearby clients can play the positional sound.
+            int killerIndex = damageSource.SourceNPCIndex;
+            if (!Main.dedServ && killerIndex >= 0 && killerIndex < Main.maxNPCs)
+            {
+                NPC killer = Main.npc[killerIndex];
+                if (killer is { active: true, life: > 0, ModNPC: StuddedLeatherWarrior })
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/im-sorry"), killer.Center);
+                }
+            }
 
             bool onePlayerAlive = false;
             for (int i = 0; i < Main.maxPlayers; i++)
@@ -1199,11 +1223,7 @@ namespace tsorcRevamp
 
             tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
             float staminaRestored = staminaPlayer.staminaResourceMax2 * ArtoriasOfTheAbyssHelm.PoiseStaminaRestore / 100f;
-            float staminaBefore = staminaPlayer.staminaResourceCurrent;
-            staminaPlayer.staminaResourceCurrent = MathHelper.Clamp(staminaPlayer.staminaResourceCurrent + staminaRestored, 0, staminaPlayer.staminaResourceMax2);
-
-            float staminaGained = staminaPlayer.staminaResourceCurrent - staminaBefore;
-            Utilities.Balance.BalanceLog.RecordStaminaGained(Player, Utilities.Balance.BalanceLog.StaminaFromAbysswalkerPoise, staminaGained);
+            staminaPlayer.RestoreStamina(staminaRestored, Utilities.Balance.BalanceLog.StaminaFromAbysswalkerPoise);
 
             if (Main.myPlayer == Player.whoAmI)
             {
@@ -1246,7 +1266,7 @@ namespace tsorcRevamp
             }
             if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (modifiers.DamageType == DamageClass.Melee || modifiers.DamageType == DamageClass.MeleeNoSpeed))
             {
-                modifiers.FinalDamage += ArtoriasArmor.DmgMultWhileRolling;
+                modifiers.FinalDamage += ArtoriasHelmet.DmgMultWhileRolling;
             }
             if (CanSpendArtoriasAbysswalkerPoise(modifiers.DamageType))
             {
@@ -1332,7 +1352,7 @@ namespace tsorcRevamp
             }
             if (CanUseItemsWhileDodging && !ArtoriasAbysswalker && isDodging && (proj.type == ProjectileID.NebulaBlaze2) && Player.HeldItem.type == ModContent.ItemType<YianBlade>())
             {
-                modifiers.FinalDamage -= ArtoriasArmor.DmgMultWhileRolling;
+                modifiers.FinalDamage -= ArtoriasHelmet.DmgMultWhileRolling;
             }
             if (((proj.type == ProjectileID.MoonlordArrow) || (proj.type == ProjectileID.MoonlordArrowTrail)) && Player.HeldItem.type == ModContent.ItemType<CernosPrime>())
             {
@@ -1361,10 +1381,6 @@ namespace tsorcRevamp
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            if (MagmaArmor && (target.HasBuff(BuffID.OnFire) || target.HasBuff(BuffID.OnFire3)))
-            {
-                target.AddBuff(ModContent.BuffType<Ignited>(), 5 * 60);
-            }
             SpendArtoriasAbysswalkerPoise(target, hit);
             if (PhoenixSkull && Player.HasBuff(ModContent.BuffType<PhoenixRebirthBuff>()) && (int)(Content.Items.Accessories.Defensive.PhoenixSkull.LifeSteal * damageDone / 100f) > 0)
             {
@@ -1570,19 +1586,6 @@ namespace tsorcRevamp
         {
         }
 
-        public void ShunpoTooltip(List<TooltipLine> tooltips)
-        {
-            var ShunpoKeybind = tsorcRevamp.Shunpo.GetAssignedKeys();
-            string ShunpoString = ShunpoKeybind.Count > 0 ? ShunpoKeybind[0] : LangUtils.GetTextValue("Keybinds.Shunpo.DisplayName") + LangUtils.GetTextValue("CommonItemTooltip.NotBound");
-            string ArmorSetBonusKeybind = LangUtils.GetTextValue(Main.ReversedUpDownArmorSetBonuses ? "CommonItemTooltip.UpKeybind" : "CommonItemTooltip.DownKeybind") ;
-            int ttindex1 = tooltips.FindIndex(t => t.Name == "Tooltip3");
-            if (ttindex1 != -1)
-            {
-                tooltips.RemoveAt(ttindex1);
-                tooltips.Insert(ttindex1, new TooltipLine(Mod, "Keybind", ArmorSetBonusKeybind 
-                    + Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.ShunpoKeybind1") + ShunpoString + LangUtils.GetTextValue("CommonItemTooltip.ShunpoKeybind2")));
-            }
-        }
 
 
         public override void ProcessTriggers(TriggersSet triggersSet)
@@ -1601,7 +1604,7 @@ namespace tsorcRevamp
             }
 
             // Guard against the toggle firing while typing into the Storage search bar (default key is 'T').
-            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat)
+            if (tsorcRevamp.StorageKey.JustPressed && !Main.blockInput && !Main.drawingPlayerChat && !Systems.CutsceneSystem.FreezesPlayers)
             {
                 ToggleStorage();
             }
@@ -1626,108 +1629,6 @@ namespace tsorcRevamp
                         ReflectionShiftState.Y = 1;
                     }
                 }
-            }
-
-
-            if (tsorcRevamp.specialAbility.JustReleased)
-            {
-
-                #region Scouts Boost & Nuclear Mushrooms
-                if (!player.HasBuff(ModContent.BuffType<ScoutsBoost2Cooldown>()) && (Player.HeldItem.type == ModContent.ItemType<ToxicShot>() | Player.HeldItem.type == ModContent.ItemType<AlienGun>()))
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2>(), ToxicShot.ScoutsBoost2Duration * 60);
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Cooldown>(), ToxicShot.ScoutsBoost2Cooldown * 60);
-                }
-                if (!(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !player.HasBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
-                {
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2Omega>(), ToxicShot.ScoutsBoost2Duration * 60);
-                    player.AddBuff(ModContent.BuffType<ScoutsBoost2CooldownOmega>(), ToxicShot.ScoutsBoost2Cooldown * 60);
-                }
-                if ((Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && !Player.HasBuff(ModContent.BuffType<NuclearMushroomCooldown>()) && Player.HeldItem.type == ModContent.ItemType<OmegaSquadRifle>())
-                {
-                    if (Main.myPlayer == player.whoAmI)
-                    {
-                        Projectile Shroom = Projectile.NewProjectileDirect(Projectile.GetSource_None(), Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<NuclearMushroom>(), player.GetWeaponDamage(player.HeldItem), player.GetWeaponKnockback(player.HeldItem), Main.myPlayer);
-                    }
-                    Player.AddBuff(ModContent.BuffType<NuclearMushroomCooldown>(), OmegaSquadRifle.ShroomCooldown * 60);
-                }
-                #endregion
-
-
-                #region Turboboost
-                bool holdingControlsAndOrSummonWeapon = (player.HasItem(ModContent.ItemType<InterstellarVesselGauntlet>()) || player.HasItem(ModContent.ItemType<CenterOfTheUniverse>())) 
-                                                        && (player.HeldItem.DamageType == DamageClass.SummonMeleeSpeed || player.HeldItem.DamageType == DamageClass.Summon);
-                bool hasBuff = player.HasBuff(ModContent.BuffType<InterstellarCommander>()) || Player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                bool hasBoost = player.HasBuff(ModContent.BuffType<Turboboost>())
-                                          || player.HasBuff(ModContent.BuffType<TurboboostUniversal>());
-                bool hasCooldown = player.HasBuff(ModContent.BuffType<TurboboostCooldown>())
-                                   || player.HasBuff(ModContent.BuffType<TurboboostUniversalCooldown>());
-                
-                if (holdingControlsAndOrSummonWeapon && hasBuff && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
-                    && !hasBoost && !hasCooldown && TurboboostControlsCooldown < 0)
-                {
-                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                    
-                    if (!hasCenterOfTheUniverse)
-                    {
-                        player.AddBuff(ModContent.BuffType<Turboboost>(), RuneterraGauntlets.BoostDuration * 60);
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/InterstellarVessel/BoostActivation") with { Volume = InterstellarVesselGauntlet.SoundVolume });
-                    }
-
-                    if (hasCenterOfTheUniverse)
-                    {
-                        player.AddBuff(ModContent.BuffType<TurboboostUniversal>(), RuneterraGauntlets.BoostDuration * 60);
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/Runeterra/Summon/CenterOfTheUniverse/BoostActivation") with { Volume = CenterOfTheUniverse.SoundVolume });
-                    }
-                }
-                else if (holdingControlsAndOrSummonWeapon && hasBuff 
-                         && !(Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) && hasBoost)
-                {
-                    bool hasCenterOfTheUniverse = player.HasBuff(ModContent.BuffType<CenterOfTheUniverseBuff>());
-                    
-                    if (!hasCenterOfTheUniverse)
-                    {
-                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<Turboboost>());
-                        Buffs.Runeterra.Summon.Turboboost.OnRemoval(buffIndex, player);
-                        player.DelBuff(buffIndex);
-                    }
-
-                    if (hasCenterOfTheUniverse)
-                    {
-                        int buffIndex = player.FindBuffIndex(ModContent.BuffType<TurboboostUniversal>());
-                        Buffs.Runeterra.Summon.TurboboostUniversal.OnRemoval(buffIndex, player);
-                        player.DelBuff(buffIndex);
-                    }
-                }
-                #endregion
-
-            }
-
-
-
-            if (tsorcRevamp.specialAbility.Current && (Main.keyState.IsKeyDown(Keys.LeftAlt) || Main.keyState.IsKeyDown(Keys.RightAlt)) 
-                                                   && (Player.HeldItem.type == ModContent.ItemType<ScorchingPoint>() 
-                                                       || Player.HeldItem.type == ModContent.ItemType<InterstellarVesselGauntlet>() 
-                                                       || Player.HeldItem.type == ModContent.ItemType<CenterOfTheUniverse>()))
-            {
-                if (player.direction == 1)
-                {
-                    MinionCircleRadius -= 1.5f;
-                    if (MinionCircleRadius < MinimumMinionCircleRadius)
-                    {
-                        MinionCircleRadius = MinimumMinionCircleRadius;
-                    }
-                }
-                else
-                {
-                    MinionCircleRadius += 1.5f;
-                    if (MinionCircleRadius > MaximumMinionCircleRadius)
-                    {
-                        MinionCircleRadius = MaximumMinionCircleRadius;
-                    }
-                }
-                Dust.NewDustDirect(Player.Center, 10, 10, DustID.FlameBurst, 0.5f, 0.5f, 0, Color.Firebrick, 0.5f);
-                TurboboostControlsCooldown = 61; //so you don't accidentally activate Interstellar Boost when you jsut wanted to adjust the circle radius
             }
         }
 
@@ -2117,6 +2018,33 @@ namespace tsorcRevamp
                 }
 
                 MoveStartingPickaxeToFirstSlot();
+            }
+
+            // Soul Coins are retired: shops take Dark Souls now. Move any coins in the inventory, cursor and the
+            // four banks into the soul slot at SoulCoin.SoulsPerCoin each. Nothing left means nothing happens,
+            // so this is safe to run on every world entry. Runs on the owning client; the slot syncs via SyncSoulSlot.
+            int coinType = ModContent.ItemType<SoulCoin>();
+            int coinsConverted = 0;
+            int soulsFromCoins = 0;
+            Item[][] coinContainers = { Player.inventory, Player.bank.item, Player.bank2.item, Player.bank3.item, Player.bank4.item, new[] { Main.mouseItem } };
+
+            foreach (Item[] container in coinContainers)
+            {
+                foreach (Item containerItem in container)
+                {
+                    if (containerItem.type != coinType)
+                    {
+                        continue;
+                    }
+
+                    coinsConverted += containerItem.stack;
+                    soulsFromCoins += SoulCoin.ConvertToSoulSlot(Player, containerItem);
+                }
+            }
+
+            if (coinsConverted > 0)
+            {
+                Main.NewText(LangUtils.GetTextValue("UI.SoulCoinsConverted", coinsConverted.ToString("N0"), soulsFromCoins.ToString("N0")), Color.LightGreen);
             }
         }
 

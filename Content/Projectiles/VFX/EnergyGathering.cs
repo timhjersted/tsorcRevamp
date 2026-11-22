@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -71,20 +72,20 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             {
                 float minVelocity = 15;
                 float maxVelocity = 30;
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                 {
                     //The rage fight is already chaotic as fuck, these lessen that very slightly
                     trailWidth = 35;
                     Projectile.timeLeft = 130;
                     speed = 1.2f;
                 }
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                 {
                     trailWidth = 35;
                     Projectile.timeLeft = 130;
                     speed = 1f;
                 }
-                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                if (Main.npc[(int)Projectile.ai[0]].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                 {
                     Projectile.timeLeft = 130;
                     speed = 1.15f;
@@ -159,6 +160,18 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             effect.Parameters["slashCenter"].SetValue(shaderColor.ToVector4());
             effect.Parameters["slashEdge"].SetValue(shaderColor.ToVector4());
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
+
+            // Slash.fx pixelates its UVs with PixelGrid (block count across the strip, then its reciprocal).
+            // Unset it reads as zero, collapsing every UV to 0 and drawing nothing. Same 2px-block maths as Slash.cs.
+            const float pixelBlockSize = 2f;
+            Vector2 pixelGridSize = new Vector2(
+                Math.Max(trailCurrentLength / pixelBlockSize, 1f),
+                Math.Max((WidthFunction(0f) * 2f) / pixelBlockSize, 1f));
+            effect.Parameters["PixelGrid"].SetValue(new Vector4(
+                pixelGridSize.X,
+                pixelGridSize.Y,
+                1f / pixelGridSize.X,
+                1f / pixelGridSize.Y));
         }
 
         public override bool PreDraw(ref Color lightColor)

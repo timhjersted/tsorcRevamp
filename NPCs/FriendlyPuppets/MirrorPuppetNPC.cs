@@ -10,7 +10,10 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Movement;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.PlayerEffects;
+using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Utilities._Extensions;
 using tsorcRevamp.Content.Projectiles;
 
 namespace tsorcRevamp.NPCs.FriendlyPuppets
@@ -44,6 +47,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>The puppet's own per-use state, loaded into the owner for the duration of each swap.</summary>
         internal MirrorPuppetUseState UseState;
+        private Item _useWeapon;
 
         /// <summary>The puppet's own stamina pool. Max/regen are copied from the owner; spending happens
         /// through the owner's real stamina code while the pool is swapped in.</summary>
@@ -55,6 +59,21 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>The puppet's own mana pool (max = the owner's statManaMax2). Weapons spend it through the
         /// owner's real mana code while it's swapped into owner.statMana. Owner-client only.</summary>
         internal int ManaCurrent;
+        internal virtual bool UsesFixedCombatResources => false;
+
+        protected void CancelNativeUse()
+        {
+            _useWeapon = null;
+            _clockTracking = false;
+            _hasPreviousBlade = false;
+            HasStrikeSweep = false;
+            UseState = new MirrorPuppetUseState
+            {
+                Direction = NPC.direction,
+                HeldProj = -1,
+                HeldProjIdentity = -1
+            };
+        }
         private int _manaRegenDelay;
         private float _manaRegenCount;
 
@@ -66,7 +85,32 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         protected abstract Item ActiveWeapon { get; }
 
         /// <summary>Read access for the projectile-AI swap, which runs outside this class.</summary>
-        internal Item CurrentWeapon => ActiveWeapon;
+        internal Item CurrentWeapon => _useWeapon ?? ActiveWeapon;
+
+        internal bool HasAttachedWeapon
+        {
+            get
+            {
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile projectile = Main.projectile[i];
+
+                    if (!projectile.active || projectile.owner != OwnerIndex)
+                    {
+                        continue;
+                    }
+
+                    MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+                    if (tag.FromMirrorPuppet && tag.PuppetNpcIndex == NPC.whoAmI && tag.AttachedWeapon)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         /// <summary>
         /// Owner-client only, once per tick. Return true to hold "use" this tick and set where it aims.
@@ -115,6 +159,12 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// </summary>
         internal void RunOwnerTick(Player owner)
         {
+            if (!NPC.active || owner.dead)
+            {
+                CancelNativeUse();
+                return;
+            }
+
             EnsureDisplayClone(owner);
 
             tsorcRevampStaminaPlayer ownerStamina = owner.GetModPlayer<tsorcRevampStaminaPlayer>();
@@ -123,10 +173,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             {
                 StaminaCurrent = ownerStamina.staminaResourceMax2;
                 ManaCurrent = owner.statManaMax2;
+
+                if (UsesFixedCombatResources)
+                {
+                    StaminaCurrent = 200f;
+                    ManaCurrent = 200;
+                }
                 StaminaInitialized = true;
             }
 
-            // Captured BEFORE the subclass hook so stamina it spends there (the Mimic Tear's dodge roll) also
+            // Captured BEFORE the subclass hook so stamina it spends there (the Soul Mimic's dodge roll) also
             // counts as "spent this tick" and pauses regen, exactly like a weapon swing.
             float staminaBefore = StaminaCurrent;
 
@@ -140,7 +196,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             // Decide (owner's real cursor is still in place here), then run the borrowed ItemCheck.
-            Item weapon = ActiveWeapon;
+            bool useInProgress = UseState.ItemAnimation > 0 || HasAttachedWeapon;
+
+            if (!useInProgress || _useWeapon == null)
+            {
+                Item selectedWeapon = ActiveWeapon;
+
+                if (!ReferenceEquals(_useWeapon, selectedWeapon))
+                {
+                    UseState.LastVisualizedItem = selectedWeapon;
+                    UseState.HeldProj = -1;
+                    UseState.HeldProjIdentity = -1;
+                    UseState.Channel = false;
+                    UseState.CompositeFrontArm.enabled = false;
+                    UseState.CompositeBackArm.enabled = false;
+                }
+
+                _useWeapon = selectedWeapon;
+            }
+
+            Item weapon = CurrentWeapon;
             bool hasWeapon = weapon != null && !weapon.IsAir;
             Vector2 aimWorld = NPC.Center + new Vector2(NPC.direction * 100f, 0f);
             bool wantsUse = false;
@@ -159,11 +234,44 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             else
             {
                 _clockTracking = false;
-                HasStrikeHitbox = false;
+                HasStrikeSweep = false;
+                _hasPreviousBlade = false;
                 CurrentMeleeSegment = MeleeClockSegment.None;
             }
 
             AfterWeaponUse(owner, weapon);
+
+            // Hostile encounter resources must survive host/class changes. Friendly summons retain player regen.
+            if (UsesFixedCombatResources)
+            {
+                if (ManaCurrent < manaBefore)
+                {
+                    _manaRegenDelay = 90;
+                }
+                else if (_manaRegenDelay > 0)
+                {
+                    _manaRegenDelay--;
+                }
+                else
+                {
+                    ManaCurrent = Math.Min(200, ManaCurrent + 2);
+                }
+
+                if (StaminaCurrent < staminaBefore)
+                {
+                    _staminaRegenDelay = 45;
+                }
+                else if (_staminaRegenDelay > 0)
+                {
+                    _staminaRegenDelay--;
+                }
+                else if (UseState.ItemAnimation == 0 && !HasAttachedWeapon)
+                {
+                    StaminaCurrent = Math.Min(200f, StaminaCurrent + 2f);
+                }
+
+                return;
+            }
 
             // Mana regen mirrors the owner: the puppet regenerates at the owner's CURRENT vanilla regen rate, and
             // only while the owner's own regen is running — so the mod's class rules (Bearer of the Curse pinned
@@ -210,7 +318,41 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 if (_staminaRegenTimer >= StaminaRegenTickInterval)
                 {
                     _staminaRegenTimer = 0;
-                    StaminaCurrent = Math.Min(ownerStamina.staminaResourceMax2, StaminaCurrent + ownerStamina.staminaResourceGain);
+                    float regenGain = GetStaminaRegenGain(owner);
+                    StaminaCurrent = Math.Min(ownerStamina.staminaResourceMax2, StaminaCurrent + regenGain);
+                }
+            }
+        }
+
+        // Finalize after projectiles update so held swords supply this frame's hands and item position.
+        internal void RefreshOwnerPose()
+        {
+            if (DisplayClone == null)
+            {
+                return;
+            }
+
+            Item weapon = CurrentWeapon;
+            bool hasWeapon = weapon != null && !weapon.IsAir;
+            int heldIndex = UseState.HeldProj;
+
+            if (heldIndex >= 0)
+            {
+                bool heldValid = heldIndex < Main.maxProjectiles
+                    && Main.projectile[heldIndex].active
+                    && Main.projectile[heldIndex].owner == OwnerIndex
+                    && Main.projectile[heldIndex].identity == UseState.HeldProjIdentity;
+
+                if (heldValid)
+                {
+                    MirrorPuppetProjectile tag = Main.projectile[heldIndex].GetGlobalProjectile<MirrorPuppetProjectile>();
+                    heldValid = tag.FromMirrorPuppet && tag.PuppetNpcIndex == NPC.whoAmI;
+                }
+
+                if (!heldValid)
+                {
+                    UseState.HeldProj = -1;
+                    UseState.HeldProjIdentity = -1;
                 }
             }
 
@@ -227,6 +369,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             DisplayClone.itemTime = UseState.ItemTime;
             DisplayClone.itemTimeMax = UseState.ItemTimeMax;
             DisplayClone.itemRotation = UseState.ItemRotation;
+            UseState.ItemLocation = NPC.position + UseState.ItemLocationOffset;
             DisplayClone.itemLocation = UseState.ItemLocation;
             DisplayClone.itemWidth = UseState.ItemWidth;
             DisplayClone.itemHeight = UseState.ItemHeight;
@@ -236,8 +379,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             DisplayClone.channel = UseState.Channel;
             DisplayClone.PlayerFrame();
             DecorateDisplayClone(DisplayClone);
-
-            SendOwnerStateIfNeeded();
+            UseState.BodyFrame = DisplayClone.bodyFrame;
         }
 
         // ── Eased melee clock (design §12.6) ────────────────────────────────────────────────────────
@@ -274,17 +416,61 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Owner side: drive swing/thrust melee on the eased clock instead of the native one.</summary>
         protected virtual bool UsesEasedMeleeClock => false;
 
+        // Optional encounter-owned clock, using the same Weighted curve as the source invader.
+        // The item still advances every native pose and runs its original effects in actor context.
+        protected virtual Invaders.MeleeComboStep? AuthoredMeleeStep => null;
+
+        private Invaders.MeleeComboStep? _clockAuthoredStep;
+
         /// <summary>Owner side: write one tModLoader log line per tracked swing (the test dummy's A/B readout).</summary>
         protected virtual bool LogsMeleeClock => false;
+
+        /// <summary>Owner side: while true and a use is in progress, the borrowed ItemCheck is not run at all (0 runs), so
+        /// the weapon's real pose holds exactly where the last run left it. The hostile layer's tell: it starts a use and
+        /// holds its first pose (weapon raised / pointed) before letting it play.</summary>
+        protected virtual bool HoldUsePose => false;
+
+        /// <summary>Owner side: every use the borrowed ItemCheck has started, any weapon (itemAnimation rising in a run).
+        /// The hostile layer diffs it to count the uses in a burst.</summary>
+        internal int UsesStartedTotal { get; private set; }
+
+        /// <summary>Whether the host's own attack speed (class speed + ModPlayer multipliers) applies to this puppet's
+        /// uses. The hostile layer turns it off so its weapons run at item speed whoever hosts it (§12.12 step 3 gap).</summary>
+        internal virtual bool UsesOwnerAttackSpeed => true;
+
+        /// <summary>Whether every ammo weapon fires <see cref="MirrorPuppetSwap.BasicAmmoFor"/> (the cheapest non-homing ammo of
+        /// its type) instead of whatever the host carries. The hostile layer turns it on: host-independent, never the
+        /// host's homing bullets, and a weapon works even when the host has no ammo for it (§12.9 Flintlock fallback).</summary>
+        internal virtual bool UsesBasicAmmo => false;
+
+        /// <summary>Called from MirrorPuppetGlobalItem.CanShoot during this puppet's swap. False = vanilla skips the shot
+        /// before ApplyItemTime, so itemTime stays 0 and the shot can still happen on a later run of the same use.</summary>
+        internal virtual bool AllowSwapShot()
+        {
+            return true;
+        }
 
         /// <summary>Owner side: which part of the current swing/thrust use the pose is in. None when not mid-use or
         /// for weapons the clock doesn't shape. The future hostile damage path arms hits only in Strike.</summary>
         internal MeleeClockSegment CurrentMeleeSegment { get; private set; }
 
-        /// <summary>Owner side, rebuilt every tick: the melee hitbox (world coords) of this tick's Strike-segment runs.
-        /// Only the hostile layer uses it (victim-side player hits); vanilla NPC hits are separate.</summary>
-        internal Rectangle StrikeHitbox;
-        internal bool HasStrikeHitbox;
+        /// <summary>
+        /// Owner side, rebuilt every tick: the blade's sweep during this tick's Strike-segment runs, as two grip→tip
+        /// segments in world coords — where the blade was when the sweep began (the last pose before this tick's first
+        /// strike run) and where it is now. The hostile layer tests players against everything swept between them.
+        /// Built from the DRAWN pose (<see cref="ComputeHeldBlade"/>), not vanilla's melee rectangle: vanilla builds that
+        /// rectangle in fixed stages of the swing and ignores the broadsword rework's rotation, so it jumped around.
+        /// </summary>
+        internal Vector2 StrikeSweepStartHilt;
+        internal Vector2 StrikeSweepStartTip;
+        internal Vector2 StrikeSweepEndHilt;
+        internal Vector2 StrikeSweepEndTip;
+        internal bool HasStrikeSweep;
+
+        // The blade after the previous run of the current use, so a sweep can start from the pose before it.
+        private bool _hasPreviousBlade;
+        private Vector2 _previousBladeHilt;
+        private Vector2 _previousBladeTip;
 
         private int _ownerTickCount;
         private int _lastLiveEndTick = int.MinValue / 2;
@@ -305,6 +491,31 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private bool _clockLiveStarted;
         private int _clockFirstShotRealTick;
         private int _clockFirstShotNative;
+
+        /// <summary>
+        /// The held weapon's blade as vanilla DRAWS it (PlayerDrawLayers.DrawPlayer_27_HeldItem): the sprite sits at
+        /// <paramref name="itemLocation"/>, rotated by <paramref name="itemRotation"/>, with its origin at the bottom
+        /// corner on the hand side (bottom-left facing right; bottom-right facing left, the sprite flipped). For a swing
+        /// the blade runs from that grip corner to the opposite top corner; for a thrust (useStyle 3) it points straight
+        /// out from the grip along the facing. Frame size, not item.width/height, so it matches the art. Client only
+        /// (needs the texture): the host's strike sweep, and every client's tell dust (HostileMirrorPuppetNPC).
+        /// </summary>
+        internal static void ComputeHeldBlade(Item weapon, Vector2 itemLocation, float itemRotation, int direction, float drawScale, out Vector2 hilt, out Vector2 tip)
+        {
+            Main.instance.LoadItem(weapon.type);
+            Rectangle frame = Main.player[Main.myPlayer].GetItemDrawFrame(weapon.type);
+            int facing = direction == 0 ? 1 : direction;
+
+            Vector2 gripToTip = new Vector2(facing * frame.Width, -frame.Height);
+
+            if (weapon.useStyle == ItemUseStyleID.Thrust)
+            {
+                gripToTip = new Vector2(facing * frame.Width, 0f);
+            }
+
+            hilt = itemLocation;
+            tip = itemLocation + (gripToTip * drawScale).RotatedBy(itemRotation);
+        }
 
         /// <summary>The weapons the eased clock shapes: real swing/thrust melee (the blade IS the hitbox). Held-projectile
         /// melee (spears, yoyos, flails), whips and channelled weapons run their own timers in projectile AI (§12.5).</summary>
@@ -331,7 +542,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private void RunWeaponClock(Player owner, Item weapon, bool wantsUse, Vector2 aimWorld)
         {
             _ownerTickCount++;
-            HasStrikeHitbox = false;
+            HasStrikeSweep = false;
+
+            // Held pose (the hostile tell): no run this tick, and the eased schedule's real-tick count doesn't advance,
+            // so the swing resumes as if the hold never happened. Only the item location moves, to stay on the body.
+            bool holdingPose = HoldUsePose && UseState.ItemAnimation > 0;
+
+            if (holdingPose)
+            {
+                UseState.ItemLocation = NPC.position + UseState.ItemLocationOffset;
+                return;
+            }
+
             int runs = 1;
 
             if (_clockTracking)
@@ -364,7 +586,26 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 }
 
                 int nativeDone = _clockNativeLength - UseState.ItemAnimation;
+
+                if (_clockAuthoredStep.HasValue)
+                {
+                    Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                    float poseProgress = Utilities.SwingEase.ApplyWeighted(0f, 1f, realTick,
+                        step.AttackTicks, step.EaseInTicks, step.EaseOutTicks, step.EaseOutDecay);
+                    nativeTarget = (int)Math.Floor(poseProgress * (_clockNativeLength - 1));
+
+                    if (realTick >= step.AttackTicks)
+                    {
+                        nativeTarget = _clockNativeLength;
+                    }
+                }
+
                 runs = Math.Clamp(nativeTarget - nativeDone, 0, MaxItemChecksPerTick);
+
+                if (_clockAuthoredStep.HasValue)
+                {
+                    runs = Math.Clamp(nativeTarget - nativeDone, 0, 16);
+                }
             }
 
             for (int run = 0; run < runs; run++)
@@ -394,29 +635,58 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 bool shotThisRun = MirrorPuppetSwap.ProjectilesSpawned > shotsBefore;
 
-                // Strike hitbox: the run's hitbox counts only if the pose it was built from is in the Strike segment
-                // (native n in [ease-in end, strike end)). Two runs in one tick union into one swept box.
-                bool runHitboxInStrike = false;
+                // Strike sweep: the blade as DRAWN after this run (grip→tip from the pose the swap just copied out).
+                // The run counts as a strike only if vanilla would attack with it (MeleeEffects fired) and its pose is
+                // in the Strike segment (native n in [ease-in end, strike end)). A tick's sweep starts from the blade
+                // before its first strike run — the previous run's pose — so two runs in a tick, or a fast swing,
+                // become one continuous sweep instead of jumps.
+                bool midUse = _clockTracking && UseState.ItemAnimation > 0;
+                bool runIsStrike = false;
+                Vector2 bladeHilt = Vector2.Zero;
+                Vector2 bladeTip = Vector2.Zero;
 
-                if (MirrorPuppetSwap.HasCapturedMeleeHitbox && _clockTracking && UseState.ItemAnimation > 0)
+                if (midUse)
                 {
                     int runNativeProgress = _clockNativeLength - UseState.ItemAnimation;
-                    runHitboxInStrike = runNativeProgress >= _clockEaseInEnd && runNativeProgress < _clockStrikeEnd;
+                    bool poseInStrike = runNativeProgress >= _clockEaseInEnd && runNativeProgress < _clockStrikeEnd;
+
+                    if (_clockAuthoredStep.HasValue)
+                    {
+                        Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                        poseInStrike = _clockRealTicks >= step.EaseInTicks * 0.55f
+                            && _clockRealTicks <= step.AttackTicks * step.HitWindowEnd;
+                    }
+
+                    runIsStrike = MirrorPuppetSwap.HasCapturedMeleeHitbox && poseInStrike;
+                    float drawScale = DisplayClone.GetAdjustedItemScale(weapon);
+                    ComputeHeldBlade(weapon, UseState.ItemLocation, UseState.ItemRotation, UseState.Direction, drawScale, out bladeHilt, out bladeTip);
                 }
 
-                if (runHitboxInStrike && HasStrikeHitbox)
+                if (runIsStrike)
                 {
-                    StrikeHitbox = Rectangle.Union(StrikeHitbox, MirrorPuppetSwap.CapturedMeleeHitbox);
+                    if (!HasStrikeSweep)
+                    {
+                        StrikeSweepStartHilt = _hasPreviousBlade ? _previousBladeHilt : bladeHilt;
+                        StrikeSweepStartTip = _hasPreviousBlade ? _previousBladeTip : bladeTip;
+                        HasStrikeSweep = true;
+                    }
+
+                    StrikeSweepEndHilt = bladeHilt;
+                    StrikeSweepEndTip = bladeTip;
                 }
-                else if (runHitboxInStrike)
-                {
-                    StrikeHitbox = MirrorPuppetSwap.CapturedMeleeHitbox;
-                    HasStrikeHitbox = true;
-                }
+
+                _hasPreviousBlade = midUse;
+                _previousBladeHilt = bladeHilt;
+                _previousBladeTip = bladeTip;
 
                 // A use timer can only go UP by a use starting (ItemCheck otherwise only counts it down).
                 bool useStarted = UseState.ItemAnimation > animationBefore;
                 bool useEnded = UseState.ItemAnimation == 0;
+
+                if (useStarted)
+                {
+                    UsesStartedTotal++;
+                }
 
                 if (_clockTracking && (useStarted || useEnded))
                 {
@@ -457,6 +727,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 {
                     _clockTracking = true;
                     _clockEased = UsesEasedMeleeClock;
+                    _clockAuthoredStep = AuthoredMeleeStep;
                     _clockItemName = weapon.Name;
                     _clockNativeLength = Math.Max(1, UseState.ItemAnimationMax);
                     _clockEaseInEnd = (int)Math.Round(_clockNativeLength * EaseInNativeFraction);
@@ -498,13 +769,22 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             int nativeProgress = _clockNativeLength - UseState.ItemAnimation;
+            bool beforeStrike = nativeProgress < _clockEaseInEnd;
+            bool withinStrike = nativeProgress < _clockStrikeEnd;
 
-            if (nativeProgress < _clockEaseInEnd)
+            if (_clockAuthoredStep.HasValue)
+            {
+                Invaders.MeleeComboStep step = _clockAuthoredStep.Value;
+                beforeStrike = _clockRealTicks < step.EaseInTicks * 0.55f;
+                withinStrike = _clockRealTicks <= step.AttackTicks * step.HitWindowEnd;
+            }
+
+            if (beforeStrike)
             {
                 CurrentMeleeSegment = MeleeClockSegment.EaseIn;
                 _clockEaseInCount++;
             }
-            else if (nativeProgress < _clockStrikeEnd)
+            else if (withinStrike)
             {
                 CurrentMeleeSegment = MeleeClockSegment.Strike;
                 _clockStrikeCount++;
@@ -530,16 +810,229 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
         }
 
+        // ── Body helpers shared by the Soul Mimic and the mirror invader (server side) ─────────────────
+        // Moved here from SoulMimic.cs unchanged when the invader became their second user (design §12.12 step 5).
+
+        // Engagement bands per weapon kind (pixels): where it likes to stand, and the furthest it will attack from.
+        internal const float SpearLikePreferred = 80f;
+        internal const float SpearLikeMaximum = 220f;
+        internal const float WhipPreferred = 90f;
+        internal const float WhipMaximum = 170f;
+        internal const float RangedPreferred = 280f;
+        internal const float RangedMaximum = 640f;
+        internal const float SwordBeamMaximum = 400f;
+
+        // The roll's numbers ARE the player's: tsorcRevampPlayer.DodgeTimeMax (0.37 s = 22 ticks, immune throughout),
+        // DodgeDefaultCooldown (30 ticks), dodgeSpeed (8 px/tick for the first half, then decay).
+        internal static readonly int RollTicks = (int)(tsorcRevampPlayer.DodgeTimeMax * 60f);
+        internal static readonly int RollCooldownTicks = (int)tsorcRevampPlayer.DodgeDefaultCooldown;
+        internal const float RollSpeed = 8f;
+        /// <summary>Per-tick velocity kept during the second half of the roll (the player's coast-and-decay tail).</summary>
+        internal const float RollTailRetention = 0.88f;
+        /// <summary>The player's roll pivots about this point of the 20x42 body (tsorcRevampPlayer: fullRotationOrigin).</summary>
+        internal static readonly Vector2 RollRotationOrigin = new Vector2(11f, 22f);
+
+        /// <summary>Roll look-ahead: the roll covers about 8 tiles; a wall inside the first 2 means no room; ground must
+        /// exist within 3 tiles below the feet all the way along, or it's a ledge.</summary>
+        private const int RollPathTiles = 8;
+        private const int RollMinClearTiles = 2;
+        private const int RollLedgeDropTiles = 3;
+
+        /// <summary>A projectile is a threat if its closest approach within this many ticks passes inside
+        /// (its half-size + EvadeBodyRadius) of the puppet. 20 ticks ≈ one roll's worth of warning.</summary>
+        internal const float EvadeLookaheadTicks = 20f;
+        internal const float EvadeBodyRadius = 26f;
+
+        /// <summary>
+        /// The most urgent incoming projectile: one whose closest approach in the next EvadeLookaheadTicks passes
+        /// through the body. Solved in the puppet's frame: relative position + relative velocity, closest approach at
+        /// t = -(r·v)/(v·v). <paramref name="fromPlayers"/> false = enemy shots (hostile; the Soul Mimic); true = player
+        /// shots (friendly, player-owned, not a mirror puppet's own; the invader).
+        /// </summary>
+        protected bool FindIncomingProjectile(bool fromPlayers, out float ticksToClosestApproach, out Vector2 threatVelocity, out Vector2 threatOrigin)
+        {
+            bool threatFound = false;
+            ticksToClosestApproach = EvadeLookaheadTicks;
+            threatVelocity = Vector2.Zero;
+            threatOrigin = NPC.Center;
+
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.damage <= 0)
+                {
+                    continue;
+                }
+
+                bool dangerous = projectile.hostile;
+
+                if (fromPlayers)
+                {
+                    bool puppetShot = projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet;
+                    dangerous = projectile.friendly && !projectile.hostile && projectile.owner < Main.maxPlayers && !puppetShot;
+                }
+
+                if (!dangerous)
+                {
+                    continue;
+                }
+
+                Vector2 relativePosition = projectile.Center - NPC.Center;
+                Vector2 relativeVelocity = projectile.velocity - NPC.velocity;
+                float relativeSpeedSquared = relativeVelocity.LengthSquared();
+
+                // Stationary hazards (auras, lingering fields) have no approach to dodge.
+                if (relativeSpeedSquared < 0.25f)
+                {
+                    continue;
+                }
+
+                float ticksToClosest = -Vector2.Dot(relativePosition, relativeVelocity) / relativeSpeedSquared;
+
+                if (ticksToClosest < 0f || ticksToClosest >= ticksToClosestApproach)
+                {
+                    continue;
+                }
+
+                Vector2 closestOffset = relativePosition + relativeVelocity * ticksToClosest;
+                float hitRadius = Math.Max(projectile.width, projectile.height) * 0.5f + EvadeBodyRadius;
+
+                if (closestOffset.Length() > hitRadius)
+                {
+                    continue;
+                }
+
+                threatFound = true;
+                ticksToClosestApproach = ticksToClosest;
+                threatVelocity = relativeVelocity;
+                threatOrigin = projectile.Center;
+            }
+
+            return threatFound;
+        }
+
+        /// <summary>
+        /// Where a puppet likes to stand with this weapon and the furthest it will attack from (pixels).
+        /// Melee swing reach is measured from the item's sprite; everything that fires gets a ranged band.
+        /// </summary>
+        internal static void GetEngagementRange(Item item, out float preferred, out float maximum)
+        {
+            bool shootsWhip = item.shoot > ProjectileID.None && ProjectileID.Sets.IsAWhip[item.shoot];
+
+            if (shootsWhip)
+            {
+                preferred = WhipPreferred;
+                maximum = WhipMaximum;
+                return;
+            }
+
+            bool isMelee = item.DamageType.CountsAsClass(DamageClass.Melee);
+            bool firesProjectile = item.shoot > ProjectileID.None;
+
+            // Spears, yoyos, flails, boomerangs: melee damage, but the hit comes from a projectile, not the swing.
+            if (isMelee && item.noMelee && firesProjectile)
+            {
+                preferred = SpearLikePreferred;
+                maximum = SpearLikeMaximum;
+                return;
+            }
+
+            if (isMelee && !item.noMelee)
+            {
+                // Swing reach ≈ the sprite's diagonal at its use scale, plus a little for the hitbox edge.
+                float spriteDiagonal = (float)Math.Sqrt(item.width * item.width + item.height * item.height) * item.scale;
+                preferred = spriteDiagonal * 0.6f;
+                maximum = spriteDiagonal + 16f;
+
+                // Sword beams and similar: still prefers to stand close, but can attack from further out.
+                if (firesProjectile)
+                {
+                    maximum = SwordBeamMaximum;
+                }
+
+                return;
+            }
+
+            preferred = RangedPreferred;
+            maximum = RangedMaximum;
+        }
+
+        /// <summary>
+        /// Whether a roll in <paramref name="direction"/> stays on solid ground. Walks the roll's ~8-tile path column by
+        /// column: a wall at body height within the first RollMinClearTiles means there's no room (false); a wall
+        /// further on just ends the roll early (true); a column with no ground within RollLedgeDropTiles below the
+        /// feet is a ledge (false). Platforms count as ground, not as walls.
+        /// </summary>
+        protected bool IsRollPathSafe(int direction)
+        {
+            int startTileX = (int)(NPC.Center.X / 16f);
+            int feetTileY = (int)((NPC.Bottom.Y - 1f) / 16f);
+
+            for (int step = 1; step <= RollPathTiles; step++)
+            {
+                int tileX = startTileX + direction * step;
+
+                // World edge: nothing to stand on out there.
+                if (tileX < 1 || tileX >= Main.maxTilesX - 1 || feetTileY < 3)
+                {
+                    return false;
+                }
+
+                // Body rows above the feet row (the feet row itself may be a 1-tile step, which it rolls up).
+                bool wallAtChest = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 1));
+                bool wallAtHead = UsefulFunctions.IsTileReallySolid(new Vector2(tileX, feetTileY - 2));
+
+                if (wallAtChest || wallAtHead)
+                {
+                    return step > RollMinClearTiles;
+                }
+
+                bool groundBelow = false;
+
+                for (int drop = 0; drop <= RollLedgeDropTiles; drop++)
+                {
+                    int checkY = feetTileY + drop;
+
+                    if (checkY < 0 || checkY >= Main.maxTilesY)
+                    {
+                        continue;
+                    }
+
+                    Tile floorTile = Main.tile[tileX, checkY];
+                    bool isPlatform = floorTile.HasUnactuatedTile && TileID.Sets.Platforms[floorTile.TileType];
+
+                    if (UsefulFunctions.IsTileReallySolid(tileX, checkY) || isPlatform)
+                    {
+                        groundBelow = true;
+                        break;
+                    }
+                }
+
+                if (!groundBelow)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         /// <summary>Owner-client only, once per tick before the attack decision. For owner-side state such as
         /// the mimic's Cerulean drinking (its mana pool lives on the owner's client).</summary>
         protected virtual void UpdateOwnerSide(Player owner)
         {
         }
 
-        /// <summary>Owner-client only, right after this tick's weapon use (segment and <see cref="StrikeHitbox"/> are
+        /// <summary>Owner-client only, right after this tick's weapon use (segment and the StrikeSweep* fields are
         /// current), before the owner-state packet is written. The hostile layer's host-side melee hit test.</summary>
         protected virtual void AfterWeaponUse(Player owner, Item weapon)
         {
+        }
+
+        protected virtual float GetStaminaRegenGain(Player owner)
+        {
+            return owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGain;
         }
 
         /// <summary>Whether the borrowed ItemCheck may land vanilla melee hits as the owner (on NPCs and PvP players).
@@ -592,6 +1085,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 return;
             }
 
+            // Whose look to copy: LookSourceIndex (the invader's triggering player) when that player is in the world,
+            // else the owner. "owner" is re-pointed so everything below reads the look source.
+            int lookIndex = LookSourceIndex;
+            bool lookIndexValid = lookIndex >= 0 && lookIndex < Main.maxPlayers && Main.player[lookIndex].active;
+
+            if (lookIndexValid)
+            {
+                owner = Main.player[lookIndex];
+            }
+
             Player clone = new Player();
             clone.active = true;
             clone.whoAmI = 0;
@@ -609,6 +1112,20 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             clone.underShirtColor = owner.underShirtColor;
             clone.pantsColor = owner.pantsColor;
             clone.shoeColor = owner.shoeColor;
+
+            // The owner's actual equipment items, not just the slot numbers: vanilla PlayerFrame re-derives head/body/
+            // legs from armor[0..2] (vanity 10..12 overriding) and re-runs UpdateVisibleAccessories from armor[3..19]
+            // EVERY call, so a clone with empty armor[] was stripped to plain clothes on its first frame. Copies, so the
+            // clone never shares an Item with the owner; hidden-accessory toggles come along so hidden stays hidden.
+            for (int slot = 0; slot < clone.armor.Length && slot < owner.armor.Length; slot++)
+            {
+                clone.armor[slot] = owner.armor[slot].Clone();
+            }
+
+            for (int slot = 0; slot < clone.hideVisibleAccessory.Length && slot < owner.hideVisibleAccessory.Length; slot++)
+            {
+                clone.hideVisibleAccessory[slot] = owner.hideVisibleAccessory[slot];
+            }
 
             clone.head = owner.head;
             clone.body = owner.body;
@@ -662,9 +1179,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             clone.direction = NPC.direction == 0 ? 1 : NPC.direction;
             UseState.Direction = clone.direction;
             UseState.HeldProj = -1;
+            UseState.HeldProjIdentity = -1;
 
             DisplayClone = clone;
         }
+
+        /// <summary>The player whose look (armor, dyes, skin) the display clone copies. Default: the owner. The mirror
+        /// invader copies its triggering player even while another player hosts its swap (§12.2).</summary>
+        protected virtual int LookSourceIndex => OwnerIndex;
 
         /// <summary>Once, when the clone is built: the subclass's look on top of the owner's real one
         /// (the Soul Mimic's Reflective Obsidian shell). Default: a true copy.</summary>
@@ -672,8 +1194,24 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         {
         }
 
+        /// <summary>True while the body is rising out of or sinking into the ground (drawn behind tiles, so the ground hides
+        /// the buried part). Hunter vision (detectCreature: Hunter Potion, the shields' Watchful passive) makes vanilla
+        /// draw behind-tiles NPCs AFTER the solid tiles; MethodSwaps.Main_DoDraw_Tiles_Solid draws these puppets before
+        /// the tiles instead, and sets <see cref="DrawnBeforeSolidTiles"/> so vanilla's later pass skips them.</summary>
+        internal virtual bool StaysBehindSolidTiles => false;
+
+        /// <summary>Set by the Hunter workaround after it drew this puppet; the next PreDraw (vanilla's own behind-tiles
+        /// pass, the same frame) clears it and draws nothing.</summary>
+        internal bool DrawnBeforeSolidTiles;
+
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
+            if (DrawnBeforeSolidTiles)
+            {
+                DrawnBeforeSolidTiles = false;
+                return false;
+            }
+
             bool ownerIndexValid = OwnerIndex >= 0 && OwnerIndex < Main.maxPlayers;
 
             if (!ownerIndexValid)
@@ -715,7 +1253,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return false;
         }
 
-        /// <summary>Offset the clone is drawn at (the Mimic Tear's rise out of its pool). Position only — the
+        /// <summary>Offset the clone is drawn at (the Soul Mimic's rise out of its pool). Position only — the
         /// NPC's hitbox doesn't move.</summary>
         protected virtual Vector2 DisplayDrawOffset => Vector2.Zero;
 
@@ -749,8 +1287,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         // Remote (non-owner) copy of the owner's streamed pose.
         private bool _remotePoseActive;
+        internal bool HasReceivedOwnerState;
         private int _remoteDirection;
         private int _remoteItemType;
+        private int _remoteItemPrefix;
         private Item _remoteItem;
         private int _remoteItemAnimation;
         private int _remoteItemAnimationMax;
@@ -759,16 +1299,38 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private int _remoteBodyFrameY;
         private Player.CompositeArmData _remoteFrontArm;
         private Player.CompositeArmData _remoteBackArm;
-        private int _remoteHeldProjIndex = -1;
+        private int _remoteHeldProjIdentity = -1;
 
-        /// <summary>
-        /// Non-owner clients: projectile index → (puppet NPC index + 1) for held projectiles a puppet is holding,
-        /// so their AI can run attached to the puppet instead of the owner (see MirrorPuppetSwapSystem).
-        /// </summary>
-        internal static readonly int[] RemoteHeldProjectilePuppet = new int[Main.maxProjectiles];
+        internal int FindOwnedProjectile(int identity)
+        {
+            if (identity < 0)
+            {
+                return -1;
+            }
+
+            // Vanilla held projectiles can omit NeedsUUID, so the UUID lookup table alone is insufficient.
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.owner != OwnerIndex || projectile.identity != identity)
+                {
+                    continue;
+                }
+
+                MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+                if (tag.FromMirrorPuppet && tag.PuppetNpcIndex == NPC.whoAmI)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
 
         /// <summary>Owner client, multiplayer only: stream status + pose (see <see cref="OwnerStateHeartbeatTicks"/>).</summary>
-        private void SendOwnerStateIfNeeded()
+        internal void SendOwnerStateIfNeeded()
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
@@ -792,6 +1354,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             BinaryWriter payload = new BinaryWriter(payloadStream);
             payload.Write(OwnerFlags);
             payload.Write(poseActive);
+            payload.Write(StaminaCurrent);
+            payload.Write(ManaCurrent);
 
             if (poseActive)
             {
@@ -799,13 +1363,16 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Vector2 locationOffset = clone.itemLocation - NPC.position;
                 int heldProjIdentity = -1;
 
-                if (UseState.HeldProj >= 0 && UseState.HeldProj < Main.maxProjectiles && Main.projectile[UseState.HeldProj].active)
+                if (UseState.HeldProj >= 0 && UseState.HeldProj < Main.maxProjectiles
+                    && Main.projectile[UseState.HeldProj].active
+                    && Main.projectile[UseState.HeldProj].identity == UseState.HeldProjIdentity)
                 {
                     heldProjIdentity = Main.projectile[UseState.HeldProj].identity;
                 }
 
                 payload.Write((sbyte)clone.direction);
                 payload.Write(clone.inventory[0].type);
+                payload.Write(clone.inventory[0].prefix);
                 payload.Write((short)clone.itemAnimation);
                 payload.Write((short)clone.itemAnimationMax);
                 payload.Write(clone.itemRotation);
@@ -819,6 +1386,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 payload.Write((byte)clone.compositeBackArm.stretch);
                 payload.Write(clone.compositeBackArm.rotation);
                 payload.Write(heldProjIdentity);
+                payload.Write(UseState.Channel);
+                payload.Write(UseState.PreviousControlUseItem);
+                payload.Write(UseState.AimWorld.X);
+                payload.Write(UseState.AimWorld.Y);
             }
 
             WriteOwnerExtras(payload);
@@ -875,24 +1446,27 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         private void ApplyOwnerState(byte[] payloadBytes)
         {
             BinaryReader payload = new BinaryReader(new MemoryStream(payloadBytes));
+            HasReceivedOwnerState = true;
             OwnerFlags = payload.ReadByte();
             bool poseActive = payload.ReadBoolean();
+            StaminaCurrent = payload.ReadSingle();
+            ManaCurrent = payload.ReadInt32();
+            StaminaInitialized = true;
 
-            // Forget the previous held-projectile mapping; a new one is set below if the pose still holds one.
-            bool hadHeldProj = _remoteHeldProjIndex >= 0 && _remoteHeldProjIndex < Main.maxProjectiles;
-
-            if (hadHeldProj && RemoteHeldProjectilePuppet[_remoteHeldProjIndex] == NPC.whoAmI + 1)
-            {
-                RemoteHeldProjectilePuppet[_remoteHeldProjIndex] = 0;
-            }
-
-            _remoteHeldProjIndex = -1;
+            _remoteHeldProjIdentity = -1;
             _remotePoseActive = poseActive;
+            UseState.HeldProj = -1;
+            UseState.HeldProjIdentity = -1;
+            UseState.Channel = false;
+            UseState.PreviousControlUseItem = false;
+            UseState.ItemAnimation = 0;
+            UseState.ItemTime = 0;
 
             if (poseActive)
             {
                 _remoteDirection = payload.ReadSByte();
                 _remoteItemType = payload.ReadInt32();
+                _remoteItemPrefix = payload.ReadByte();
                 _remoteItemAnimation = payload.ReadInt16();
                 _remoteItemAnimationMax = payload.ReadInt16();
                 _remoteItemRotation = payload.ReadSingle();
@@ -906,22 +1480,28 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 bool backEnabled = payload.ReadBoolean();
                 Player.CompositeArmStretchAmount backStretch = (Player.CompositeArmStretchAmount)payload.ReadByte();
                 float backRotation = payload.ReadSingle();
-                int heldProjIdentity = payload.ReadInt32();
+                _remoteHeldProjIdentity = payload.ReadInt32();
+                UseState.HeldProjIdentity = _remoteHeldProjIdentity;
+                UseState.Channel = payload.ReadBoolean();
+                UseState.PreviousControlUseItem = payload.ReadBoolean();
+                float aimX = payload.ReadSingle();
+                float aimY = payload.ReadSingle();
+                UseState.AimWorld = new Vector2(aimX, aimY);
 
                 _remoteFrontArm = new Player.CompositeArmData(frontEnabled, frontStretch, frontRotation);
                 _remoteBackArm = new Player.CompositeArmData(backEnabled, backStretch, backRotation);
 
-                if (heldProjIdentity >= 0)
-                {
-                    int projectileIndex = Projectile.GetByUUID(OwnerIndex, heldProjIdentity);
-                    bool projectileIndexValid = projectileIndex >= 0 && projectileIndex < Main.maxProjectiles;
-
-                    if (projectileIndexValid)
-                    {
-                        _remoteHeldProjIndex = projectileIndex;
-                        RemoteHeldProjectilePuppet[projectileIndex] = NPC.whoAmI + 1;
-                    }
-                }
+                UseState.Direction = _remoteDirection;
+                UseState.ItemAnimation = _remoteItemAnimation;
+                UseState.ItemAnimationMax = _remoteItemAnimationMax;
+                UseState.ItemTime = _remoteItemAnimation > 0 ? 2 : 0;
+                UseState.ItemRotation = _remoteItemRotation;
+                UseState.ItemLocation = NPC.position + _remoteItemLocationOffset;
+                UseState.ItemLocationOffset = _remoteItemLocationOffset;
+                UseState.CompositeFrontArm = _remoteFrontArm;
+                UseState.CompositeBackArm = _remoteBackArm;
+                UseState.BodyFrame = Main.player[OwnerIndex].bodyFrame;
+                UseState.BodyFrame.Y = _remoteBodyFrameY;
             }
 
             ReadOwnerExtras(payload);
@@ -930,13 +1510,14 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Non-owner clients: copy the owner's streamed pose onto the clone after PlayerFrame.</summary>
         private void ApplyRemotePose(Player clone)
         {
-            if (_remoteItem == null || _remoteItem.type != _remoteItemType)
+            if (_remoteItem == null || _remoteItem.type != _remoteItemType || _remoteItem.prefix != _remoteItemPrefix)
             {
                 _remoteItem = new Item();
 
                 if (_remoteItemType > 0)
                 {
                     _remoteItem.SetDefaults(_remoteItemType);
+                    _remoteItem.Prefix(_remoteItemPrefix);
                 }
             }
 
@@ -951,7 +1532,8 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             clone.bodyFrame.Y = _remoteBodyFrameY;
             clone.compositeFrontArm = _remoteFrontArm;
             clone.compositeBackArm = _remoteBackArm;
-            clone.heldProj = _remoteHeldProjIndex;
+            // Resolve on every draw, since the pose may arrive before the projectile's spawn packet.
+            clone.heldProj = FindOwnedProjectile(_remoteHeldProjIdentity);
         }
     }
 
@@ -971,14 +1553,17 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public int ToolTime;
         public float ItemRotation;
         public Vector2 ItemLocation;
+        public Vector2 ItemLocationOffset;
         public int ItemWidth;
         public int ItemHeight;
         public bool Channel;
         public int HeldProj;
+        public int HeldProjIdentity;
         public int ItemUsesThisAnimation;
         public Item LastVisualizedItem;
         public Player.CompositeArmData CompositeFrontArm;
         public Player.CompositeArmData CompositeBackArm;
+        public Rectangle BodyFrame;
 
         /// <summary>Last tick's "use" input, so non-autoReuse weapons see a release between uses.</summary>
         public bool PreviousControlUseItem;
@@ -993,6 +1578,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// in by reference. Shared with the owner, a puppet's swing start would wipe the owner's cooldowns (letting the
         /// owner's swing re-hit) and every extra ItemCheck would tick them down again. Null until the first swap.</summary>
         public int[] MeleeNpcHitCooldown;
+
+        public int[] OwnedProjectileCounts;
+        public GreatswordComboPlayer.ComboState GreatswordCombo;
+        public bool GreatswordComboInitialized;
     }
 
     /// <summary>
@@ -1013,14 +1602,82 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>The puppet whose use is running (for projectile tagging / debugging).</summary>
         public static MirrorPuppetNPC Current;
 
+        // Real owner state while a swap is active: RunPuppetProjectileDamage restores these around Projectile.Damage
+        // so hostile puppet projectiles test collision against the real player's position instead of the puppet's.
+        internal static Player SwappedOwner;
+        internal static Vector2 SwappedOwnerRealPosition;
+        internal static Vector2 SwappedOwnerRealVelocity;
+        internal static int SwappedOwnerRealDirection;
+        internal static bool SwappedOwnerVelocityMutated;
+
         /// <summary>Running count of projectiles spawned inside a swap (MirrorPuppetProjectile.OnSpawn). The melee clock
         /// diffs it around each run to log where in a swing a sword beam fires.</summary>
         public static int ProjectilesSpawned;
 
-        /// <summary>The melee hitbox vanilla built during the current run (MirrorPuppetGlobalItem.MeleeEffects receives
-        /// the final itemRectangle). The melee clock clears it before each run and keeps it only for Strike runs.</summary>
-        public static Rectangle CapturedMeleeHitbox;
+        /// <summary>True when vanilla would have attacked with the current run (MirrorPuppetGlobalItem.MeleeEffects only
+        /// fires then). The melee clock clears it before each run and uses it to decide whether the run is a strike;
+        /// the strike's SHAPE comes from the drawn blade (ComputeHeldBlade), not vanilla's rectangle.</summary>
         public static bool HasCapturedMeleeHitbox;
+
+        /// <summary>The first of vanilla's four ammo slots (54-57), which PickAmmo searches before the rest.</summary>
+        private const int FirstAmmoSlot = 54;
+
+        // Ammo type (AmmoID) -> the basic ammo item a hostile puppet fires (null = none exists). Built lazily.
+        private static readonly System.Collections.Generic.Dictionary<int, Item> BasicAmmoByAmmoId = new System.Collections.Generic.Dictionary<int, Item>();
+
+        /// <summary>
+        /// The cheapest (lowest value, then lowest type) ammo item of <paramref name="ammoId"/> whose projectile isn't on
+        /// vanilla's homing list (CultistIsResistantTo): Musket Ball for bullets, Wooden Arrow for arrows, and so on, modded
+        /// ammo types included. A full stack, cached; null when no such item exists. Callers: the swap (hostile puppets'
+        /// ammo), the invader's loadout filter and HostileMirrorPuppetNPC.EffectiveShotSpeed.
+        /// </summary>
+        internal static Item BasicAmmoFor(int ammoId)
+        {
+            if (BasicAmmoByAmmoId.TryGetValue(ammoId, out Item cached))
+            {
+                return cached;
+            }
+
+            Item cheapest = null;
+
+            foreach (Item candidate in ContentSamples.ItemsByType.Values)
+            {
+                if (candidate.ammo != ammoId)
+                {
+                    continue;
+                }
+
+                bool shootsHoming = candidate.shoot > ProjectileID.None
+                    && candidate.shoot < ProjectileID.Sets.CultistIsResistantTo.Length
+                    && ProjectileID.Sets.CultistIsResistantTo[candidate.shoot];
+
+                if (shootsHoming)
+                {
+                    continue;
+                }
+
+                bool cheaper = cheapest == null
+                    || candidate.value < cheapest.value
+                    || (candidate.value == cheapest.value && candidate.type < cheapest.type);
+
+                if (cheaper)
+                {
+                    cheapest = candidate;
+                }
+            }
+
+            Item basicAmmo = null;
+
+            if (cheapest != null)
+            {
+                basicAmmo = new Item();
+                basicAmmo.SetDefaults(cheapest.type);
+                basicAmmo.stack = basicAmmo.maxStack;
+            }
+
+            BasicAmmoByAmmoId[ammoId] = basicAmmo;
+            return basicAmmo;
+        }
 
         // Player.ItemUsesThisAnimation has a private setter; restoring it needs reflection.
         private static readonly Action<Player, int> SetItemUsesThisAnimation = CreateItemUsesSetter();
@@ -1053,6 +1710,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public int ReuseDelay;
             public int AttackCD;
             public int ToolTime;
+            public int AltFunctionUse;
             public float ItemRotation;
             public Vector2 ItemLocation;
             public int ItemWidth;
@@ -1067,11 +1725,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public Rectangle HeadFrame;
             public bool ControlUseItem;
             public bool ReleaseUseItem;
+            public bool ControlLeft;
+            public bool ControlRight;
+            public int Grappling0;
             public bool ControlUseTile;
             public bool ReleaseUseTile;
             public bool MouseInterface;
             public int StatLife;
             public int StatMana;
+            public int StatManaMax;
             public float ManaRegenDelay;
             public bool Immune;
             public bool ImmuneNoBlink;
@@ -1080,9 +1742,18 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             public int[] BuffType;
             public int[] BuffTime;
             public float StaminaCurrent;
+            public bool IsDodging;
+            public bool IsSwordflipping;
             public int StaminaOldItemAnimation;
             public int[] MeleeNpcHitCooldown;
+            public int[] OwnedProjectileCounts;
+            public GreatswordComboPlayer.ComboState GreatswordCombo;
             public Vector2 BroadswordMouseWorld;
+            public float? ForcedItemRotation;
+            public PlayerFrames? ForcedHeadFrame;
+            public PlayerFrames? ForcedBodyFrame;
+            public PlayerFrames? ForcedLegFrame;
+            public Item FirstAmmoSlotItem;
             public int MouseX;
             public int MouseY;
             public bool MouseLeft;
@@ -1105,6 +1776,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.ReuseDelay = owner.reuseDelay;
                 snapshot.AttackCD = owner.attackCD;
                 snapshot.ToolTime = owner.toolTime;
+                snapshot.AltFunctionUse = owner.altFunctionUse;
                 snapshot.ItemRotation = owner.itemRotation;
                 snapshot.ItemLocation = owner.itemLocation;
                 snapshot.ItemWidth = owner.itemWidth;
@@ -1119,11 +1791,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.HeadFrame = owner.headFrame;
                 snapshot.ControlUseItem = owner.controlUseItem;
                 snapshot.ReleaseUseItem = owner.releaseUseItem;
+                snapshot.ControlLeft = owner.controlLeft;
+                snapshot.ControlRight = owner.controlRight;
+                snapshot.Grappling0 = owner.grappling[0];
                 snapshot.ControlUseTile = owner.controlUseTile;
                 snapshot.ReleaseUseTile = owner.releaseUseTile;
                 snapshot.MouseInterface = owner.mouseInterface;
                 snapshot.StatLife = owner.statLife;
                 snapshot.StatMana = owner.statMana;
+                snapshot.StatManaMax = owner.statManaMax2;
                 snapshot.ManaRegenDelay = owner.manaRegenDelay;
                 snapshot.Immune = owner.immune;
                 snapshot.ImmuneNoBlink = owner.immuneNoBlink;
@@ -1132,9 +1808,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 snapshot.BuffType = (int[])owner.buffType.Clone();
                 snapshot.BuffTime = (int[])owner.buffTime.Clone();
                 snapshot.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                snapshot.IsDodging = owner.GetModPlayer<tsorcRevampPlayer>().isDodging;
+                snapshot.IsSwordflipping = owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping;
                 snapshot.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
                 snapshot.MeleeNpcHitCooldown = owner.meleeNPCHitCooldown;
+                snapshot.OwnedProjectileCounts = owner.ownedProjectileCounts;
+                snapshot.GreatswordCombo = owner.GetModPlayer<GreatswordComboPlayer>().CaptureCombo();
                 snapshot.BroadswordMouseWorld = owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld;
+                snapshot.ForcedItemRotation = owner.GetModPlayer<PlayerItemRotation>().ForcedItemRotation;
+                PlayerAnimations animations = owner.GetModPlayer<PlayerAnimations>();
+                snapshot.ForcedHeadFrame = animations.ForcedHeadFrame;
+                snapshot.ForcedBodyFrame = animations.ForcedBodyFrame;
+                snapshot.ForcedLegFrame = animations.ForcedLegFrame;
+                snapshot.FirstAmmoSlotItem = owner.inventory[FirstAmmoSlot];
                 snapshot.MouseX = Main.mouseX;
                 snapshot.MouseY = Main.mouseY;
                 snapshot.MouseLeft = Main.mouseLeft;
@@ -1158,6 +1844,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.reuseDelay = ReuseDelay;
                 owner.attackCD = AttackCD;
                 owner.toolTime = ToolTime;
+                owner.altFunctionUse = AltFunctionUse;
                 owner.itemRotation = ItemRotation;
                 owner.itemLocation = ItemLocation;
                 owner.itemWidth = ItemWidth;
@@ -1172,11 +1859,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.headFrame = HeadFrame;
                 owner.controlUseItem = ControlUseItem;
                 owner.releaseUseItem = ReleaseUseItem;
+                owner.controlLeft = ControlLeft;
+                owner.controlRight = ControlRight;
+                owner.grappling[0] = Grappling0;
                 owner.controlUseTile = ControlUseTile;
                 owner.releaseUseTile = ReleaseUseTile;
                 owner.mouseInterface = MouseInterface;
                 owner.statLife = StatLife;
                 owner.statMana = StatMana;
+                owner.statManaMax2 = StatManaMax;
                 owner.manaRegenDelay = ManaRegenDelay;
                 owner.immune = Immune;
                 owner.immuneNoBlink = ImmuneNoBlink;
@@ -1185,9 +1876,19 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Array.Copy(BuffType, owner.buffType, BuffType.Length);
                 Array.Copy(BuffTime, owner.buffTime, BuffTime.Length);
                 owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = StaminaCurrent;
+                owner.GetModPlayer<tsorcRevampPlayer>().isDodging = IsDodging;
+                owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping = IsSwordflipping;
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = StaminaOldItemAnimation;
                 owner.meleeNPCHitCooldown = MeleeNpcHitCooldown;
+                owner.ownedProjectileCounts = OwnedProjectileCounts;
+                owner.GetModPlayer<GreatswordComboPlayer>().RestoreCombo(GreatswordCombo);
                 owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld = BroadswordMouseWorld;
+                owner.GetModPlayer<PlayerItemRotation>().ForcedItemRotation = ForcedItemRotation;
+                PlayerAnimations animations = owner.GetModPlayer<PlayerAnimations>();
+                animations.ForcedHeadFrame = ForcedHeadFrame;
+                animations.ForcedBodyFrame = ForcedBodyFrame;
+                animations.ForcedLegFrame = ForcedLegFrame;
+                owner.inventory[FirstAmmoSlot] = FirstAmmoSlotItem;
                 Main.mouseX = MouseX;
                 Main.mouseY = MouseY;
                 Main.mouseLeft = MouseLeft;
@@ -1197,16 +1898,15 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         /// <summary>
         /// Runs <paramref name="body"/> with the owner temporarily "being" <paramref name="puppet"/>: holding
-        /// <paramref name="weapon"/>, standing at the puppet, aiming at <paramref name="aimWorld"/>. Owner client only.
-        /// Two callers: the puppet's per-tick ItemCheck (<see cref="MirrorPuppetNPC.RunOwnerTick"/>) and the AI of
-        /// projectiles the puppet owns (<see cref="MirrorPuppetSwapSystem"/>) — held-projectile weapons (Phantasm,
-        /// spears, yoyos, channelled guns) re-read <c>Main.player[owner]</c> every tick, so their AI needs the same swap.
+        /// <paramref name="weapon"/>, standing at the puppet, aiming at <paramref name="aimWorld"/>.
+        /// The owner runs ItemCheck and captures gameplay state. Projectile updates, cleanup and draws on other
+        /// peers borrow the synced pose without copying their results back into the owner's state.
         /// Slot 0 of the owner's inventory temporarily holds the puppet's weapon (ItemCheck reads the held item from the
         /// inventory) — the finally block guarantees the player's real item goes back even if a weapon's hook throws.
         /// </summary>
-        public static void RunAsPuppet(Player owner, MirrorPuppetNPC puppet, Item weapon, bool wantsUse, Vector2 aimWorld, Action body)
+        public static void RunAsPuppet(Player owner, MirrorPuppetNPC puppet, Item weapon, bool wantsUse, Vector2 aimWorld, Action body, bool captureUseState = true)
         {
-            if (owner.whoAmI != Main.myPlayer || owner.dead || Active)
+            if (Active)
             {
                 return;
             }
@@ -1216,6 +1916,11 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
             Active = true;
             Current = puppet;
+            SwappedOwner = owner;
+            SwappedOwnerRealPosition = ownerState.Position;
+            SwappedOwnerRealVelocity = ownerState.Velocity;
+            SwappedOwnerRealDirection = ownerState.Direction;
+            SwappedOwnerVelocityMutated = false;
 
             try
             {
@@ -1223,7 +1928,7 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 // Position: ItemCheck places itemLocation, hitboxes, projectiles, sounds and dust relative
                 // to the player, so moving the owner onto the puppet is what makes all of those land there.
                 owner.position = puppet.NPC.Bottom - new Vector2(owner.width * 0.5f, owner.height);
-                owner.velocity = Vector2.Zero;
+                owner.velocity = puppet.NPC.velocity;
                 owner.direction = useState.Direction == 0 ? 1 : useState.Direction;
                 owner.gravDir = 1f;
                 owner.selectedItem = 0;
@@ -1236,12 +1941,55 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.reuseDelay = useState.ReuseDelay;
                 owner.attackCD = useState.AttackCD;
                 owner.toolTime = useState.ToolTime;
+                owner.altFunctionUse = 0;
                 owner.itemRotation = useState.ItemRotation;
-                owner.itemLocation = useState.ItemLocation;
+                owner.itemLocation = puppet.NPC.position + useState.ItemLocationOffset;
                 owner.itemWidth = useState.ItemWidth;
                 owner.itemHeight = useState.ItemHeight;
                 owner.channel = useState.Channel;
-                owner.heldProj = useState.HeldProj;
+                owner.heldProj = -1;
+                owner.compositeFrontArm = useState.CompositeFrontArm;
+                owner.compositeBackArm = useState.CompositeBackArm;
+
+                // The projectile spawn can precede the first pose stream. Give remote held weapons
+                // their initial use timers until the owner's actual pose and release state arrive.
+                bool awaitingOwnerState = owner.whoAmI != Main.myPlayer && !puppet.HasReceivedOwnerState;
+
+                if (awaitingOwnerState)
+                {
+                    owner.itemAnimation = Math.Max(2, weapon.useAnimation);
+                    owner.itemAnimationMax = owner.itemAnimation;
+                    owner.itemTime = Math.Max(2, weapon.useTime);
+                    owner.itemTimeMax = owner.itemTime;
+                    owner.channel = weapon.channel;
+                }
+
+                if (useState.BodyFrame.Height > 0)
+                {
+                    owner.bodyFrame = useState.BodyFrame;
+                }
+                owner.GetModPlayer<PlayerItemRotation>().ForcedItemRotation = null;
+                PlayerAnimations animations = owner.GetModPlayer<PlayerAnimations>();
+                animations.ForcedHeadFrame = null;
+                animations.ForcedBodyFrame = null;
+                animations.ForcedLegFrame = null;
+
+                int heldIndex = puppet.FindOwnedProjectile(useState.HeldProjIdentity);
+
+                if (heldIndex >= 0 && heldIndex < Main.maxProjectiles)
+                {
+                    Projectile held = Main.projectile[heldIndex];
+                    MirrorPuppetProjectile tag = held.GetGlobalProjectile<MirrorPuppetProjectile>();
+                    bool matches = held.active && held.owner == owner.whoAmI
+                        && held.identity == useState.HeldProjIdentity
+                        && tag.FromMirrorPuppet && tag.PuppetNpcIndex == puppet.NPC.whoAmI;
+
+                    if (matches)
+                    {
+                        owner.heldProj = heldIndex;
+                    }
+                }
+
                 SetItemUsesThisAnimation(owner, useState.ItemUsesThisAnimation);
 
                 if (useState.MeleeNpcHitCooldown == null)
@@ -1251,6 +1999,42 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
                 owner.meleeNPCHitCooldown = useState.MeleeNpcHitCooldown;
 
+                // Projectiles share the real network owner, but weapon limits belong to each actor. Rebuild
+                // the puppet's cache from its tags so the owner's active sword cannot block an autonomous attack.
+                if (useState.OwnedProjectileCounts == null || useState.OwnedProjectileCounts.Length != owner.ownedProjectileCounts.Length)
+                {
+                    useState.OwnedProjectileCounts = new int[owner.ownedProjectileCounts.Length];
+                }
+
+                Array.Clear(useState.OwnedProjectileCounts, 0, useState.OwnedProjectileCounts.Length);
+
+                for (int i = 0; i < Main.maxProjectiles; i++)
+                {
+                    Projectile projectile = Main.projectile[i];
+
+                    if (!projectile.active || projectile.owner != owner.whoAmI)
+                    {
+                        continue;
+                    }
+
+                    MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+                    if (tag.FromMirrorPuppet && tag.PuppetNpcIndex == puppet.NPC.whoAmI)
+                    {
+                        useState.OwnedProjectileCounts[projectile.type]++;
+                    }
+                }
+
+                owner.ownedProjectileCounts = useState.OwnedProjectileCounts;
+
+                if (!useState.GreatswordComboInitialized)
+                {
+                    useState.GreatswordCombo.LastCut = GreatswordCut.Slam;
+                    useState.GreatswordComboInitialized = true;
+                }
+
+                owner.GetModPlayer<GreatswordComboPlayer>().RestoreCombo(useState.GreatswordCombo);
+
                 // Use input: hold while wanted; "release" whenever last tick wasn't held, so
                 // non-autoReuse weapons can start a new use. Tile/right-click input is always off.
                 owner.controlUseItem = wantsUse;
@@ -1258,6 +2042,13 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 owner.controlUseTile = false;
                 owner.releaseUseTile = false;
                 owner.mouseInterface = false;
+
+                // Facing leak: ItemCheck_StartActualUse turns the player by their left/right keys when the weapon is
+                // useTurnOnAnimationStart or the player is grappling (grappling[0] > -1, which also resets the pulley).
+                // The puppet has no keys and no hook, so it keeps its own facing (useState.Direction, loaded above).
+                owner.controlLeft = false;
+                owner.controlRight = false;
+                owner.grappling[0] = -1;
                 Main.mouseLeft = wantsUse;
                 Main.mouseLeftRelease = !useState.PreviousControlUseItem;
 
@@ -1267,14 +2058,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 Main.mouseY = (int)(aimWorld.Y - Main.screenPosition.Y);
                 owner.GetModPlayer<BroadswordReworkPlayer>().MouseWorld = aimWorld;
 
+                // Basic ammo (hostile puppets): vanilla's PickAmmo searches the ammo slots 54-57 first, so the basic ammo in
+                // slot 54 is always the one chosen. Never consumed (CanConsumeAmmo is off in a swap); restored after.
+                if (puppet.UsesBasicAmmo && weapon.useAmmo > 0)
+                {
+                    Item basicAmmo = BasicAmmoFor(weapon.useAmmo);
+
+                    if (basicAmmo != null)
+                    {
+                        owner.inventory[FirstAmmoSlot] = basicAmmo;
+                    }
+                }
+
                 // Stamina and mana: the puppet's own pools, charged by the owner's real per-item cost code.
                 // (Both are restored to the owner's values by the snapshot afterwards.)
                 owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent = puppet.StaminaCurrent;
+                bool puppetRolling = puppet is SoulMimic mimic && mimic.State == SoulMimic.MimicState.Rolling;
+                owner.GetModPlayer<tsorcRevampPlayer>().isDodging = puppetRolling;
+                owner.GetModPlayer<tsorcRevampPlayer>().isSwordflipping = false;
                 owner.statMana = puppet.ManaCurrent;
+
+                if (puppet.UsesFixedCombatResources)
+                {
+                    owner.statManaMax2 = 200;
+                }
                 owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation = useState.StaminaOldItemAnimation;
 
                 // ── Run ───────────────────────────────────────────────────────────────────────
                 body();
+
+                if (!captureUseState)
+                {
+                    return;
+                }
 
                 // ── Copy the result back to the puppet ────────────────────────────────────────
                 useState.Direction = owner.direction;
@@ -1287,23 +2103,55 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
                 useState.ToolTime = owner.toolTime;
                 useState.ItemRotation = owner.itemRotation;
                 useState.ItemLocation = owner.itemLocation;
+                useState.ItemLocationOffset = owner.itemLocation - puppet.NPC.position;
                 useState.ItemWidth = owner.itemWidth;
                 useState.ItemHeight = owner.itemHeight;
                 useState.Channel = owner.channel;
                 useState.HeldProj = owner.heldProj;
+                useState.HeldProjIdentity = -1;
+
+                if (owner.heldProj >= 0 && owner.heldProj < Main.maxProjectiles)
+                {
+                    Projectile held = Main.projectile[owner.heldProj];
+                    MirrorPuppetProjectile tag = held.GetGlobalProjectile<MirrorPuppetProjectile>();
+                    bool belongsToPuppet = held.active && held.owner == owner.whoAmI
+                        && tag.FromMirrorPuppet && tag.PuppetNpcIndex == puppet.NPC.whoAmI;
+
+                    if (belongsToPuppet)
+                    {
+                        useState.HeldProjIdentity = held.identity;
+                    }
+                    else
+                    {
+                        useState.HeldProj = -1;
+                    }
+                }
                 useState.ItemUsesThisAnimation = owner.ItemUsesThisAnimation;
                 useState.LastVisualizedItem = owner.lastVisualizedSelectedItem;
                 useState.CompositeFrontArm = owner.compositeFrontArm;
                 useState.CompositeBackArm = owner.compositeBackArm;
+                useState.BodyFrame = owner.bodyFrame;
                 useState.PreviousControlUseItem = wantsUse;
                 useState.AimWorld = aimWorld;
                 useState.StaminaOldItemAnimation = owner.GetModPlayer<tsorcRevampPlayer>().oldItemAnimation;
-                puppet.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                useState.GreatswordCombo = owner.GetModPlayer<GreatswordComboPlayer>().CaptureCombo();
+                if (!puppet.UsesFixedCombatResources)
+                {
+                    puppet.StaminaCurrent = owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+                }
                 puppet.ManaCurrent = owner.statMana;
             }
             finally
             {
                 ownerState.Restore(owner);
+
+                if (SwappedOwnerVelocityMutated)
+                {
+                    owner.velocity = SwappedOwnerRealVelocity;
+                }
+
+                SwappedOwner = null;
+                SwappedOwnerVelocityMutated = false;
                 Active = false;
                 Current = null;
             }
@@ -1361,113 +2209,219 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public override void Load()
         {
             On_NetMessage.SendData += FilterSwapPackets;
-            On_Projectile.AI += RunPuppetProjectileAI;
+            On_Projectile.Update += RunPuppetProjectileUpdate;
+            On_Projectile.Damage += RunPuppetProjectileDamage;
+            On_Projectile.Kill += RunPuppetProjectileKill;
+            On_Main.DrawProj += DrawPuppetProjectile;
+            On_Player.UpdateProjectileCaches += ExcludePuppetProjectileCounts;
         }
 
-        /// <summary>
-        /// Held-projectile weapons (Phantasm, spears, yoyos, channelled guns) re-attach to <c>Main.player[owner]</c>,
-        /// check <c>player.channel</c> and aim at the mouse inside their AI every tick. For a projectile the puppet owns,
-        /// that AI runs inside the same swap as the puppet's ItemCheck, so it follows the puppet instead of the player.
-        /// Wraps <see cref="Projectile.AI"/> (PreAI + AI + PostAI) so the restore can't be skipped.
-        /// </summary>
-        private static void RunPuppetProjectileAI(On_Projectile.orig_AI orig, Projectile projectile)
+        public override void PostUpdateProjectiles()
         {
-            bool ownedByLocalPlayer = projectile.owner == Main.myPlayer && !Main.dedServ;
-
-            // ── Other clients: a held projectile the owner's pose stream says a puppet is holding ──
-            // Its AI here only needs to stay attached to the puppet for display, so a light swap of the owner's
-            // position/facing/use flags is enough (the real swap only exists on the owner's client).
-            int remotePuppetSlot = 0;
-
-            if (!ownedByLocalPlayer && !Main.dedServ)
+            if (Main.dedServ)
             {
-                remotePuppetSlot = MirrorPuppetNPC.RemoteHeldProjectilePuppet[projectile.whoAmI];
+                return;
             }
 
-            if (remotePuppetSlot > 0)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
-                NPC remotePuppetNpc = Main.npc[remotePuppetSlot - 1];
-                Player remoteOwner = Main.player[projectile.owner];
-                // Projectile indices get reused, so also require the same owner as the puppet.
-                bool remotePuppetValid = remotePuppetNpc.active
-                    && remotePuppetNpc.ModNPC is MirrorPuppetNPC remotePuppet
-                    && remotePuppet.OwnerIndex == projectile.owner;
+                NPC npc = Main.npc[i];
 
-                if (!remotePuppetValid)
+                if (npc.active && npc.ModNPC is MirrorPuppetNPC puppet && puppet.OwnerIndex == Main.myPlayer)
                 {
-                    MirrorPuppetNPC.RemoteHeldProjectilePuppet[projectile.whoAmI] = 0;
-                    orig(projectile);
+                    puppet.RefreshOwnerPose();
+                    puppet.SendOwnerStateIfNeeded();
+                }
+            }
+        }
+
+        private static void ExcludePuppetProjectileCounts(On_Player.orig_UpdateProjectileCaches orig, Player player, int playerIndex)
+        {
+            orig(player, playerIndex);
+
+            // Vanilla counts every projectile with this network owner. Remove puppet shots from the real
+            // player's weapon limits; RunAsPuppet installs a separate cache while each puppet acts.
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+
+                if (!projectile.active || projectile.owner != playerIndex)
+                {
+                    continue;
+                }
+
+                if (projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet)
+                {
+                    player.ownedProjectileCounts[projectile.type]--;
+                }
+            }
+        }
+
+        // Damage, tile cutting and timeout/OnKill run after AI. Keep the same firing actor installed
+        // for the whole update so those hooks cannot read or change the real player's weapon state.
+        private static void RunPuppetProjectileUpdate(On_Projectile.orig_Update orig, Projectile projectile, int index)
+        {
+            // Vanilla calls Update on all 1000 slots every tick. A never-used slot is a bare new Projectile() with no
+            // globals, so GetGlobalProjectile threw KeyNotFoundException for each one: hundreds of exceptions per tick.
+            if (!projectile.active || !projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag))
+            {
+                orig(projectile, index);
+                return;
+            }
+
+            if (!tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
+            {
+                orig(projectile, index);
+                return;
+            }
+
+            MirrorPuppetNPC puppet = tag.GetFiringPuppet(projectile);
+            Item weapon = tag.SourceWeapon;
+            MirrorPuppetNPC sourcePuppet = tag.LastFiringPuppet;
+
+            if (sourcePuppet != null && sourcePuppet.OwnerIndex != projectile.owner)
+            {
+                projectile.Kill();
+                return;
+            }
+
+            if (puppet == null)
+            {
+                // A spawn can reach an observer before its NPC does. Wait invisibly for up to
+                // 60 updates on that peer, then remove a held weapon whose actor never arrived.
+                bool awaitingSpawn = tag.LastFiringPuppet == null && projectile.owner != Main.myPlayer;
+
+                if (awaitingSpawn && tag.MissingPuppetUpdates < 60)
+                {
+                    tag.MissingPuppetUpdates++;
                     return;
                 }
 
-                Vector2 savedPosition = remoteOwner.position;
-                Vector2 savedVelocity = remoteOwner.velocity;
-                int savedDirection = remoteOwner.direction;
-                int savedItemAnimation = remoteOwner.itemAnimation;
-                int savedItemTime = remoteOwner.itemTime;
-                bool savedChannel = remoteOwner.channel;
-                int savedHeldProj = remoteOwner.heldProj;
-
-                try
+                if (tag.AttachedWeapon || tag.LastFiringPuppet == null)
                 {
-                    remoteOwner.position = remotePuppetNpc.Bottom - new Vector2(remoteOwner.width * 0.5f, remoteOwner.height);
-                    remoteOwner.velocity = remotePuppetNpc.velocity;
-                    remoteOwner.direction = remotePuppetNpc.direction == 0 ? 1 : remotePuppetNpc.direction;
-                    remoteOwner.itemAnimation = Math.Max(2, remoteOwner.itemAnimation);
-                    remoteOwner.itemTime = Math.Max(2, remoteOwner.itemTime);
-                    remoteOwner.channel = true;
-                    remoteOwner.heldProj = projectile.whoAmI;
-                    orig(projectile);
-                }
-                finally
-                {
-                    remoteOwner.position = savedPosition;
-                    remoteOwner.velocity = savedVelocity;
-                    remoteOwner.direction = savedDirection;
-                    remoteOwner.itemAnimation = savedItemAnimation;
-                    remoteOwner.itemTime = savedItemTime;
-                    remoteOwner.channel = savedChannel;
-                    remoteOwner.heldProj = savedHeldProj;
+                    projectile.Kill();
+                    return;
                 }
 
+                puppet = tag.LastFiringPuppet;
+            }
+
+            if (puppet == null || weapon == null || weapon.IsAir)
+            {
+                orig(projectile, index);
                 return;
             }
 
-            int puppetIndex = -1;
-
-            if (ownedByLocalPlayer && !MirrorPuppetSwap.Active)
-            {
-                puppetIndex = projectile.GetGlobalProjectile<MirrorPuppetProjectile>().PuppetNpcIndex;
-            }
-
-            bool puppetIndexValid = puppetIndex >= 0 && puppetIndex < Main.maxNPCs;
-            MirrorPuppetNPC puppet = null;
-
-            if (puppetIndexValid && Main.npc[puppetIndex].active)
-            {
-                puppet = Main.npc[puppetIndex].ModNPC as MirrorPuppetNPC;
-            }
-
-            if (puppet == null || puppet.OwnerIndex != projectile.owner)
-            {
-                orig(projectile);
-                return;
-            }
-
-            Item weapon = puppet.CurrentWeapon;
-            Player owner = Main.player[projectile.owner];
-
-            // RunAsPuppet refuses to swap a dead owner, and would then skip the body — the AI must still run.
-            if (weapon == null || weapon.IsAir || owner.dead)
-            {
-                orig(projectile);
-                return;
-            }
-
-            // Same input the puppet's ItemCheck used this tick, so channel stays held while it's attacking.
+            Player owner = Main.player[puppet.OwnerIndex];
+            bool localOwner = projectile.owner == Main.myPlayer && !Main.dedServ;
+            bool capturePose = localOwner && ReferenceEquals(weapon, puppet.CurrentWeapon);
             bool wantsUse = puppet.UseState.PreviousControlUseItem;
             Vector2 aimWorld = puppet.UseState.AimWorld;
-            MirrorPuppetSwap.RunAsPuppet(owner, puppet, weapon, wantsUse, aimWorld, () => orig(projectile));
+            MirrorPuppetSwap.RunAsPuppet(owner, puppet, weapon, wantsUse, aimWorld,
+                () => orig(projectile, index), capturePose);
+        }
+
+        private static void RunPuppetProjectileDamage(On_Projectile.orig_Damage orig, Projectile projectile)
+        {
+            if (!MirrorPuppetSwap.Active || MirrorPuppetSwap.SwappedOwner == null
+                || !projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag) || !tag.HostileToPlayers)
+            {
+                orig(projectile);
+                return;
+            }
+
+            // Projectile.Update runs inside RunAsPuppet with owner.position moved onto the puppet. Restore the real
+            // player's position/velocity during Damage() so hostile projectiles hit the real player (not at the puppet).
+            Player owner = MirrorPuppetSwap.SwappedOwner;
+            Vector2 puppetPosition = owner.position;
+            Vector2 puppetVelocity = owner.velocity;
+            int puppetDirection = owner.direction;
+
+            projectile.hostile = true;
+            projectile.friendly = false;
+
+            owner.position = MirrorPuppetSwap.SwappedOwnerRealPosition;
+            owner.velocity = MirrorPuppetSwap.SwappedOwnerRealVelocity;
+            owner.direction = MirrorPuppetSwap.SwappedOwnerRealDirection;
+
+            try
+            {
+                orig(projectile);
+            }
+            finally
+            {
+                if (owner.velocity != MirrorPuppetSwap.SwappedOwnerRealVelocity)
+                {
+                    MirrorPuppetSwap.SwappedOwnerRealVelocity = owner.velocity;
+                    MirrorPuppetSwap.SwappedOwnerVelocityMutated = true;
+                }
+
+                owner.position = puppetPosition;
+                owner.velocity = puppetVelocity;
+                owner.direction = puppetDirection;
+            }
+        }
+
+        private static void RunPuppetProjectileKill(On_Projectile.orig_Kill orig, Projectile projectile)
+        {
+            // Same guard as RunPuppetProjectileUpdate: a slot that never ran SetDefaults has no globals.
+            if (!projectile.TryGetGlobalProjectile(out MirrorPuppetProjectile tag))
+            {
+                orig(projectile);
+                return;
+            }
+
+            if (!tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
+            {
+                orig(projectile);
+                return;
+            }
+
+            MirrorPuppetNPC puppet = tag.GetFiringPuppet(projectile) ?? tag.LastFiringPuppet;
+            Item weapon = tag.SourceWeapon;
+
+            if (puppet == null || weapon == null || weapon.IsAir)
+            {
+                orig(projectile);
+                return;
+            }
+
+            Player owner = Main.player[puppet.OwnerIndex];
+            bool capturePose = projectile.owner == Main.myPlayer && !Main.dedServ
+                && ReferenceEquals(weapon, puppet.CurrentWeapon);
+            MirrorPuppetSwap.RunAsPuppet(owner, puppet, weapon, false, puppet.UseState.AimWorld,
+                () => orig(projectile), capturePose);
+        }
+
+        private static void DrawPuppetProjectile(On_Main.orig_DrawProj orig, Main self, int index)
+        {
+            Projectile projectile = Main.projectile[index];
+            MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+
+            if (!tag.FromMirrorPuppet || MirrorPuppetSwap.Active)
+            {
+                orig(self, index);
+                return;
+            }
+
+            MirrorPuppetNPC puppet = tag.GetFiringPuppet(projectile);
+            Item weapon = tag.SourceWeapon;
+
+            if (puppet == null && !tag.AttachedWeapon)
+            {
+                puppet = tag.LastFiringPuppet;
+            }
+
+            if (puppet == null || weapon == null || weapon.IsAir)
+            {
+                return;
+            }
+
+            // Spear chains and custom holdout draws read Main.player[owner] at draw time as well.
+            // The draw borrows the pose without advancing or copying back any gameplay state.
+            Player owner = Main.player[puppet.OwnerIndex];
+            MirrorPuppetSwap.RunAsPuppet(owner, puppet, weapon, puppet.UseState.PreviousControlUseItem,
+                puppet.UseState.AimWorld, () => orig(self, index), captureUseState: false);
         }
 
         private static void FilterSwapPackets(On_NetMessage.orig_SendData orig, int msgType, int remoteClient, int ignoreClient, NetworkText text, int number, float number2, float number3, float number4, int number5, int number6, int number7)
@@ -1526,11 +2480,10 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void MeleeEffects(Item item, Player player, Rectangle hitbox)
         {
-            // The final melee hitbox of this ItemCheck (called from ItemCheck_EmitUseVisuals, only when vanilla would
-            // attack with it). The melee clock decides whether it counts as a strike.
+            // Called from ItemCheck_EmitUseVisuals only when vanilla would attack this run — that's the signal we need.
+            // The rectangle itself is not used (it ignores the drawn blade; see MirrorPuppetNPC.StrikeSweep*).
             if (MirrorPuppetSwap.Active)
             {
-                MirrorPuppetSwap.CapturedMeleeHitbox = hitbox;
                 MirrorPuppetSwap.HasCapturedMeleeHitbox = true;
             }
         }
@@ -1559,6 +2512,39 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             return true;
         }
 
+        public override bool CanShoot(Item item, Player player)
+        {
+            if (!MirrorPuppetSwap.Active || MirrorPuppetSwap.Current == null)
+            {
+                return true;
+            }
+
+            return MirrorPuppetSwap.Current.AllowSwapShot();
+        }
+
+        public override float UseSpeedMultiplier(Item item, Player player)
+        {
+            bool cancelOwnerSpeed = MirrorPuppetSwap.Active && MirrorPuppetSwap.Current != null && !MirrorPuppetSwap.Current.UsesOwnerAttackSpeed;
+
+            if (!cancelOwnerSpeed)
+            {
+                return 1f;
+            }
+
+            // TotalUseSpeedMultiplier = PlayerLoader x ItemLoader (this hook included) x the class attack speed, so
+            // dividing out the two player parts leaves item speed (other GlobalItems' item-specific multipliers stay).
+            float ownerPlayerHooks = PlayerLoader.UseSpeedMultiplier(player, item);
+            float ownerClassSpeed = player.GetWeaponAttackSpeed(item);
+            float ownerSpeed = ownerPlayerHooks * ownerClassSpeed;
+
+            if (ownerSpeed <= 0f)
+            {
+                return 1f;
+            }
+
+            return 1f / ownerSpeed;
+        }
+
         public override bool CanConsumeAmmo(Item weapon, Item ammo, Player player)
         {
             if (MirrorPuppetSwap.Active)
@@ -1583,8 +2569,71 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         public bool FromMirrorPuppet;
 
         /// <summary>NPC index of the puppet this projectile belongs to, or -1. Lets its AI run inside that puppet's
-        /// swap. Local to the owner's client (OnSpawn only runs where the projectile was created).</summary>
+        /// swap. Set on spawn and synced with the projectile.</summary>
         public int PuppetNpcIndex = -1;
+        private Item _sourceWeapon;
+        private int _sourceWeaponType;
+        private int _sourceWeaponPrefix;
+        private MirrorPuppetNPC _firingPuppet;
+        internal int MissingPuppetUpdates;
+        internal MirrorPuppetNPC LastFiringPuppet => _firingPuppet;
+
+        // Held swords and holdouts expire with their actor. Ordinary shots can finish their flight.
+        internal bool AttachedWeapon;
+
+        internal Item SourceWeapon
+        {
+            get
+            {
+                if (_sourceWeapon == null && _sourceWeaponType > ItemID.None)
+                {
+                    _sourceWeapon = new Item();
+                    _sourceWeapon.SetDefaults(_sourceWeaponType);
+                    _sourceWeapon.Prefix(_sourceWeaponPrefix);
+                }
+
+                return _sourceWeapon;
+            }
+        }
+
+        /// <summary>
+        /// Where a projectile's owner VISUALLY is: the puppet's centre for a projectile a mirror puppet owns, otherwise
+        /// the owning player's centre. Owner-anchored effects use the synced puppet index to find
+        /// the same origin on every peer.
+        /// </summary>
+        public static Vector2 GetOwnerVisualCenter(Projectile projectile)
+        {
+            MirrorPuppetProjectile tag = projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            MirrorPuppetNPC puppet = tag.GetFiringPuppet(projectile);
+
+            if (puppet != null)
+            {
+                return puppet.NPC.Center;
+            }
+
+            return tag.FromMirrorPuppet ? projectile.Center : Main.player[projectile.owner].Center;
+        }
+
+        internal MirrorPuppetNPC GetFiringPuppet(Projectile projectile)
+        {
+            int puppetIndex = PuppetNpcIndex;
+            bool puppetIndexValid = FromMirrorPuppet && puppetIndex >= 0 && puppetIndex < Main.maxNPCs;
+
+            if (puppetIndexValid)
+            {
+                NPC npc = Main.npc[puppetIndex];
+
+                if (npc.active && npc.ModNPC is MirrorPuppetNPC puppet && puppet.OwnerIndex == projectile.owner
+                    && (_firingPuppet == null || ReferenceEquals(puppet, _firingPuppet)))
+                {
+                    _firingPuppet = puppet;
+                    MissingPuppetUpdates = 0;
+                    return puppet;
+                }
+            }
+
+            return null;
+        }
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
@@ -1623,11 +2672,23 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             if (spawnedDuringSwap && MirrorPuppetSwap.Current != null)
             {
                 PuppetNpcIndex = MirrorPuppetSwap.Current.NPC.whoAmI;
+                _firingPuppet = MirrorPuppetSwap.Current;
+                _sourceWeapon = Main.player[MirrorPuppetSwap.Current.OwnerIndex].HeldItem;
             }
             else if (parentIsTagged)
             {
                 PuppetNpcIndex = parentTag.PuppetNpcIndex;
+                _firingPuppet = parentTag._firingPuppet;
+                _sourceWeapon = parentTag.SourceWeapon;
             }
+
+            if (_sourceWeapon != null)
+            {
+                _sourceWeaponType = _sourceWeapon.type;
+                _sourceWeaponPrefix = _sourceWeapon.prefix;
+            }
+
+            AttachedWeapon = projectile.ownerHitCheck;
 
             bool isHealProjectile = projectile.type == ProjectileID.VampireHeal || projectile.type == ProjectileID.SpiritHeal;
 
@@ -1668,8 +2729,41 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
         /// <summary>Per-hit cap as a fraction of the victim's max HP, from the firing weapon's weight (§12.4).</summary>
         public float HitCapFraction;
 
+        public override bool PreAI(Projectile projectile)
+        {
+            if (HostileToPlayers)
+            {
+                projectile.hostile = true;
+                projectile.friendly = false;
+            }
+
+            return true;
+        }
+
+        public override bool? CanHitNPC(Projectile projectile, NPC target)
+        {
+            if (HostileToPlayers)
+            {
+                return false;
+            }
+
+            return null;
+        }
+
         public override void PostAI(Projectile projectile)
         {
+            // Discover held projectiles after their own AI assigns heldProj. A late network spawn packet
+            // therefore carries the attachment even when no pose packet has reached the observer yet.
+            bool runningForPuppet = MirrorPuppetSwap.Active && FromMirrorPuppet
+                && MirrorPuppetSwap.Current?.NPC.whoAmI == PuppetNpcIndex
+                && MirrorPuppetSwap.Current.OwnerIndex == projectile.owner;
+
+            if (runningForPuppet && !AttachedWeapon && Main.player[projectile.owner].heldProj == projectile.whoAmI)
+            {
+                AttachedWeapon = true;
+                projectile.netUpdate = true;
+            }
+
             // hostile/friendly are NOT synced by vanilla and some AIs rewrite them, so every machine re-asserts the
             // flip each tick. PostAI runs right before Projectile.Damage in the same update.
             if (HostileToPlayers)
@@ -1681,18 +2775,48 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
 
         public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
         {
+            // Puppet index for EVERY puppet projectile (friendly too): other clients need it to draw owner-anchored VFX on
+            // the puppet (GetOwnerVisualCenter); for hostile ones it also names the killer on the victim's client.
+            bitWriter.WriteBit(FromMirrorPuppet);
+
+            if (FromMirrorPuppet)
+            {
+                binaryWriter.Write((short)PuppetNpcIndex);
+                binaryWriter.Write7BitEncodedInt(_sourceWeaponType);
+                binaryWriter.Write7BitEncodedInt(_sourceWeaponPrefix);
+                bitWriter.WriteBit(AttachedWeapon);
+            }
+
             bitWriter.WriteBit(HostileToPlayers);
 
             if (HostileToPlayers)
             {
-                // The puppet index lets the victim's client name the killer; the cap travels as whole percent.
-                binaryWriter.Write((short)PuppetNpcIndex);
+                // The cap travels as whole percent.
                 binaryWriter.Write((byte)Math.Round(HitCapFraction * 100f));
             }
         }
 
         public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
         {
+            bool fromMirrorPuppet = bitReader.ReadBit();
+
+            if (fromMirrorPuppet)
+            {
+                FromMirrorPuppet = true;
+                PuppetNpcIndex = binaryReader.ReadInt16();
+                int weaponType = binaryReader.Read7BitEncodedInt();
+                int weaponPrefix = binaryReader.Read7BitEncodedInt();
+                AttachedWeapon = bitReader.ReadBit();
+
+                if (_sourceWeaponType != weaponType || _sourceWeaponPrefix != weaponPrefix)
+                {
+                    _sourceWeapon = null;
+                }
+
+                _sourceWeaponType = weaponType;
+                _sourceWeaponPrefix = weaponPrefix;
+            }
+
             bool hostileToPlayers = bitReader.ReadBit();
 
             if (!hostileToPlayers)
@@ -1701,8 +2825,6 @@ namespace tsorcRevamp.NPCs.FriendlyPuppets
             }
 
             HostileToPlayers = true;
-            FromMirrorPuppet = true;
-            PuppetNpcIndex = binaryReader.ReadInt16();
             HitCapFraction = binaryReader.ReadByte() / 100f;
             projectile.hostile = true;
             projectile.friendly = false;

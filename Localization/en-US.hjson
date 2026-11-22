@@ -82,6 +82,7 @@ Mods: {
 					[c/6cac6c:+{1}% stamina recovery speed]
 					'''
 				Armored: "[c/6cac6c:+{0} resistance]"
+				Warding: "[c/9b6263:-{0}% movement speed]"
 				Jagged: "[c/6cac6c:+{0} flat crit damage]"
 				Spiked:
 					'''
@@ -415,6 +416,7 @@ Mods: {
 			FrostDeathReason: "{0} shattered from frost"
 			BlightDeathReason: "{0} was consumed by blight"
 			MiasmaDeathReason: "{0} could not survive the miasma"
+			VoidDeathReason: "{0} was swallowed by the Void"
 			BotC1: Bearer of the Curse mode can be disabled at any time...
 			BotC2: Bearer of the Curse mode is intended for experienced players
 			BotC3: Try reading the Darksign's description
@@ -429,6 +431,227 @@ Mods: {
 			Marilith: Some powerful attacks can only be avoided by dodgerolling!
 			ChloranthyRingTip: The Chloranthy Ring massively improves your dodgeroll, allowing even more evasion...
 			Tip: "Tip: "
+		}
+
+		Cutscenes: {
+			Speakers: {
+				Voice: ???
+				Attraidies: Attraidies
+				Red: Red
+				Asha: Asha
+				Araz: Araz
+				Bodhi: Bodhi
+				Aaron: Aaron
+				Elijah: Elijah
+				Miakoda: Miakoda
+			}
+
+			UI: {
+				Next: Next
+				Skip: Skip
+			}
+
+			Curse.Taunt: Red, you arrogant fool. It's been fun toying with you, but you should have listened to Araz.
+			Arrival.Red: Alright Attraidies, let's end this.
+
+			Sorrow: {
+				Line01: You've come far, Red. I'm quite pleased.
+				Line02: You know, I really should thank you.
+				Line03: Enough games, Attraidies. Say what you will.
+				Line04: Ah, but it is the game that I set up, and which you played so masterfully, that has me so impressed.
+				Line05: You haven't realized by now? I wanted you to kill Aaron.
+				Line06: I corrupted his will, got him to betray you. I gave him the stone which you used to kill him...
+				Line07: ...and I told him precisely what he needed to hear so that he'd think he'd be protecting himself by giving it to you.
+				Line08: But it was not just enchanted twice, but three times.
+				Line09: Once to create the Protection Stone, which I traded for the knowledge of your father's location. Twice to tie his life to the stone.
+				Line10: And a third time, to unleash the most powerful force of destruction this world has ever seen.
+				Line11: But I needed you, Red. You see, darkness thrives on darkness.
+				Line12: The spell that contained this army remained locked by the pure spirit of your father.
+				Line13: To break the seal, a warrior of pure spirit and innocence had to be corrupted by the lust for vengeance.
+				Line14: And you played right into it. You played right into it.
+				Line15: All you needed... Red... was a little push.
+				Line16: But I'll give you a chance, Red. See if you can handle this.
+			}
+
+			ThroughGate: {
+				Line01: Is that you, Asha?
+				Line02: Oh Red, thank God! I'm here! I knew you were coming... I could feel you.
+				Line03: Asha, I love you so much! I'm going to get you out of here.
+			}
+
+			Reunion: {
+				Line01: What did they do to you?
+				Line02: When I refused to tell them where your father's sword was, Attraidies tortured me for several days.
+				Line03: He finally gave up and left me here. I don't know why he didn't kill me. But thank God. It's so good to see you.
+				Line04: Let's get you out of here. I'll take you somewhere you can be safe.
+				Line05: What are you going to do?
+				Line06: I'm going to kill him.
+				Line07: In my quest to find you, I've done a terrible thing. I have to make right by my father and heal the Earth of this corruption I helped Attraidies unleash.
+				Line08: What did you do?
+				Line09: Attraidies has played all of us. But it doesn't matter. I did what I thought I needed to save you.
+				Line10: I believe you, Red. My heart aches to think of you leaving again after finding me, but I have to trust you'll come back to me.
+				Line11: I will come back, and we will finally be able to live in peace.
+				Line12: When we get to the surface, I'll take you to the islands to the West, and I will return there when Attraidies is finished.
+				Line12Remix: When we get to the surface, I'll take you to the tropics to the West, and I will return there when Attraidies is finished.
+				Line13: Okay, Red. But first, you need to know where to find your father's sword and Hallowed armor.
+				Line14: Do you remember the flooded Iron Mine near our old village? They lie beyond a dirt wall, marked by a block of green Chlorophyte.
+				Line14Remix: They have long been kept in the roots of the Old One's Tree, and the entrance is in the leaves of the tree, at the Dryad's house.
+				Line15: Past that is a seal of pure Chlorophyte that only the Drax could break.
+				Line15Remix: The path is sealed with pure Chlorophyte that only the Drax could break.
+				Line16: Okay, let's go.
+			}
+
+			Wisp: {
+				Line01: Red, is that you? It's me, Araz! I was an old friend of your father.
+				Line02: Attraidies took me captive shortly after the raid on your family's village. I'm imprisoned down here, below the gates!
+				Line03: I'm going to get you out of there, hold on!
+			}
+
+			Counsel: {
+				Line01: Araz, can you help me? Since you were captured, things have gotten so much worse.
+				Line02: Ever since I killed the snitch who gave us up to Attraidies, the world has been flooded with even more powerful beasts and demons.
+				Line03: The corruption is spreading farther and faster across the land. I don't know how I can stop it.
+				Line04: This is grave indeed, Red. I could sense something had happened. A portal was opened from another, far more hellish world.
+				Line05: I have seen this place in my dreams. Legend says demons from that world once claimed these lands, before they were banished in the great war of the Cataclysm.
+				Line06: I believe they have returned to the lands they once ruled. You have already defeated one, The Rage. But six more await.
+				Line06NoRage: I believe they have returned to the lands they once ruled. Seven of them await.
+				Line07: The Sorrow, The Hunter, The Destroyer, The Machine, the Triad, and the forgotten Golem. You'll have to brave each of them to weaken Attraidies' power enough to kill him.
+				Line08: With a shard from each of these seven gods, you can craft a catalyst strong enough to shield you from his power.
+				Line09: Do not go to him without it, Red.
+				Line10: Thank you, Araz. I accepted the karma of my actions the moment I took Aaron's life. I will bring peace back to these lands, even by my last breath.
+				Line11: Good luck, my friend. You've taken on your father's hardy spirit more than you know.
+				Line12: Before you go, let me see the crest The Rage dropped. Each crest should hide a riddle like this one, leading you to another.
+				Line13: This one is hidden by magic, but I've figured it out. Head East to the Frozen Ocean. The Sorrow awaits... Good luck!
+				Line13Remix: I can see your future will have you traveling to the Frozen Ocean to the East soon. The Sorrow awaits... Good luck!
+				Line13NoRage: Head East to the Frozen Ocean. The Sorrow awaits... Good luck!
+			}
+
+			Credits: {
+				Title: The Story of Red Cloud
+				Thanks: Thank you for playing.
+				ReplayHint: Use to relive the ending
+			}
+
+			Homecoming: {
+				Line01: Brother! You're alive! I thought you were dead!
+				Line02: But what about Elijah, and our parents... and Asha!? Are they alive!?
+				Line03: Oh god, Red, no. It was terrible. They killed father and mother.
+				Line04: I had to bury them alone with you. You weren't breathing...
+				Line05: Elijah and your wife, I don't know. I rushed home when I saw the smoke in the valley. They were nowhere in sight.
+				Line06: I only found you and our parents. Village scouts who saw the attack said the army headed East...
+				Line07: Then there's still a chance they're alive.
+				Line08: Father told us stories about Attraidies... I didn't believe...
+				Line09: ...I will not let him destroy the peace our father gave his life to protecting.
+				Line10: I wish you luck, brother. You were always the most skilled in the arts of combat.
+				Line11: With the nerve damage in my leg, I would simply hinder your path.
+				Line12: I have food and supplies here. Please take what you need...
+				Line13: The mountain caverns to the West may be worth exploring before you set out as well.
+				Line14: Thank you, brother. You will be in my thoughts.
+			}
+
+			Well: {
+				Line01: That light...
+				Line02: Father!
+				Line03: It's time to head out..
+			}
+
+			Idol: {
+				Line01: Red! They said you were killed!
+				Line02: I know, I can't believe it either. I'm just glad you weren't visiting when they attacked. Almost all of my family...
+				Line03: I know, Red. I can't believe what they did... It's...
+				Line04: It was the Mindflayer King. He finally got his revenge... and he thought he killed me too...
+				Line05: I've already gathered my armor, weapons and food, and will soon depart.
+				Line06: Well... I see. I'll wish you luck, Red. It seems impossible, but...
+				Line07: Take this! It's always protected me. Perhaps it can protect you too.
+			}
+
+			ElijahRescue: {
+				Line01: Red, thank god! It's you! Get me out of here.
+				Line02: When Attraidies' army attacked, they took me captive. They're looking for our father's sword.
+				Line03: They beat me until they seemed convinced I didn't know and left me here to rot. But Red!...
+				Line04: Your wife Asha... She's alive.
+				Line05: They took her with them when they left me here, and they'll need her alive if they ever hope to find your father's sword.
+				Line06: Asha knows where our father laid his sword to rest?
+				Line07: When he saw them approaching he told her, and told us both to flee, but scouts captured us before we got to the forest. We didn't have a chance.
+				Line08: They think she's weak and they can still break her, but you and I know she'll never tell the Mindflayer King, even if they take her life.
+				Line09: I only hope you can find her before they realize this.
+				Line10: But Red, there's one last thing I need to tell you. Your friend Aaron... he's betrayed all of us.
+				Line11: He was standing beside the Mindflayer King when they took me here. He must have told him where to find us and our father.
+				Line12: No one in the village knows he's working with the Mindflayer King.
+				Line13: It disgusts me to think of him living up there with his new found riches, laughing, knowing that I must surely be dead and his secret is safe.
+				Line14: I don't know what to say, Red. As long as he remains alive... I'm sorry.
+				Line15: I think you know what you have to do.
+				Line16: Killing Aaron though, it won't be easy. He'll be expecting a direct attack and has surely taken on some powerful magic to protect himself.
+				Line17: Do not let him become suspicious. If you can think of something indirect... I just don't know what...
+				Line18: But enough talk. Go now. Hurry! I can make it back alright.
+				Line19: Past my cell window is the beast that guards this forgotten city. Steal its power and you may stand a chance.
+				Line20: I've seen what Attraidies has become. He has grown considerably more powerful since our father's time.
+				Line21: He communes with... unnatural celestial entities.
+				Line22: When you next return to the village, give me a place to stay there, and I can reforge your items for gold.
+			}
+
+			FireTemple: {
+				Line01: A book of ancient spells...
+				Line02: This room has been abandoned. If we secure it, we can rest here for the night.
+				Line03: Then I'll spend the evening reading through this tome of old magic.
+				Line04: Protection Idols and Enchantments...
+				Line05: And one spell in particular... Voodoo Mimicry.
+				Line06: An enchantment upon an object that grants the gift of invincibility.
+				Line07: Such magic is rarely used among gifted mages, as the price of such power is that one's life becomes tied to the object.
+				Line08: Destroy the object and you kill the enchanted.
+				Line09: The idol Aaron gave me... it's emanating the same force.
+				Line10: But surely he would have known?
+				Line11: Something seems odd, but the solution is too brilliant, and it has been in my possession since the beginning.
+				Line12: Destroying this stone may not prove so easy...
+			}
+
+			ShadowRumors: {
+				Line01: Red, I've heard many rumors about the Shadow Temple.
+				Line02: It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, a great underground lake and hallowed spike chasms...
+				Line02Remix: It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, waterways and corrupted spike chasms...
+				Line03: A brave soul, who once escaped this place alive, told me there are THREE hidden shortcuts...
+				Line04: One on the surface of the lake, one in a cave of horrors, and another almost near the entrance, here, but not quite.
+				Line04Remix: One on the surface of the temple waterways, one in a cave of horrors, and another almost near the entrance, here, but not quite.
+				Line05: I do not know what she meant...
+			}
+
+			DesertPaths: {
+				Line01: The puzzle on the water crest we obtained said to look for an ashen fog, illuminated by a violet glow... That should lead us to The Hunter.
+				Line02: But... the people who once lived beneath this desert left behind scrolls alluding to many secrets.
+				Line03: They spoke of a hidden path in the desert that leads to an ancient being known as Serris.
+				Line04: Serris technology was used by the people here to block one of the paths to the Shadow Temple... but such rumors could lead to madness.
+				Line05: Perhaps we should stay focused on finding the Hunter.
+				Line06: Ultimately, though, it is up to you. I will be of service to you until the very end...
+			}
+
+			RageWarning: {
+				Line01: Red, there's something you should know about The Rage, and other birds like its kind: when they are harmed too quickly, they are known to enrage.
+				Line02: Each bird has evolved a different defense, but all of them are more lethal in this phase. Be mindful of this.
+				Line03: As my father often told me, sometimes retreating, even for a moment, is the best way to advance.
+				Line04: You will know the Rage is about to enrage when its body glows brightly with fire.
+				Line05: When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!
+			}
+
+			BuriedAlive.Line01: Something sharp... a broken shard of Father's pickaxe.
+
+			UnmarkedGraves: {
+				Line01: Two more graves... unmarked. They must have been dug when mine was.
+				Line01Remix: One more grave... unmarked. It must have been dug when mine was.
+				Line02: It's coming back to me...
+				Line03: The village, raided and set ablaze...
+				Line04: An army wearing the sigil of Attraidies, the Mindflayer King.
+				Line05: I have to get to the house. Someone may have survived.
+			}
+
+			WhatRemains: {
+				Line01: My writings... my paintings... all of it destroyed.
+				Line02: Asha... you're gone.
+				Line03: What meaning can be found in this life?
+				Line04: This short life seeking simple pleasures, a little comfort, love, food and security?
+				Line05: This attachment to success and approval?
+				Line06: None of it matters now. All of this I leave behind, left to burn to ashes.
+				Line07: None of my family is here... but perhaps they made it to the village.
+			}
 		}
 
 		Events: {
@@ -447,8 +670,8 @@ Mods: {
 			LichKing: The Lich King awakens!
 			Hunter: The hunt begins...
 			Rage: The Rage awakens!
-			AncientDemon: What did you expect to find here human?... Your hubris will be your undoing...
-			AncientOolacileDemon: You foolish human... pitiful arrogance...
+			DefiledDemon: What did you expect to find here human?... Your hubris will be your undoing...
+			OolacileDemon: You foolish human... pitiful arrogance...
 			GoblinSummoner1: You're arrogant, Red. You were a fool to come here...
 			GoblinSummoner2: You think you're clever, Red?
 			BloodBossEvent1: A Blood Eel is coming to devour you...
@@ -459,7 +682,7 @@ Mods: {
 			WingTrio: The Three Wings have united again, ready to fight you!
 			SandstormElementalEvent: A powerful elemental is summoned!
 			Dutchman: A flying Dutchman invades the tropics!
-			DiscipleOfAttraidiesEvent: A powerful mage from the Atraidies army confronts you!
+			AttraidiesIllusionRemixEvent: A powerful mage from the Atraidies army confronts you!
 			IceGolemWyvern: !!!
 			IceGolem: !
 			KingSlime: King Slime appears!
@@ -500,8 +723,9 @@ Mods: {
 			LothricAmbush2: Ambush!
 			DualSandsprogAmbush1: Ambush!
 			EnragedQB: An angry Queen Bee appears!
-			HellkiteDragon: The village is under attack! A Hellkite Dragon has come to feed...
-			RemixHellkiteDragon: A Hellkite Dragon has come to feed...
+			HellkiteDragon: The village is under attack! A Hellkite Drake has come to feed...
+			RemixHellkiteDragon: A Hellkite Drake has come to feed...
+			PrimeGwyn: Prime Gwyn, the First Lord, descends to meet the first dawn!
 			ThunderBird: The Grand Thunder Bird appears!
 			QueenJellyfish: The Queen Jellyfish has spotted you in the lake...
 			Viscount: Viscount is bloodthirsty!
@@ -542,6 +766,9 @@ Mods: {
 				'''
 			PerSecond: / second
 			DarkSouls: Dark Souls
+			ShopDarkSoulPrice: "[c/00FF50:{0} {1} {2}][i:{3}]"
+			ShopDarkSoulOwned: "[c/9A9A9A:(you have {0})]"
+			SoulCoinsConverted: Soul Coins are no longer used: your {0} Soul Coins became {1} Dark Souls
 			Soapstone: If you feel lost, seek the dark places on your map. There are secrets and paths in almost every direction
 			BonfireLit: Bonfire lit, spawn point set!
 			BonfireTP: Open your minimap to instantly teleport to any bonfire in the world
@@ -612,6 +839,7 @@ Mods: {
 			SpawnRemoved: Spawn point removed!
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
+			BonfireTravel: Travel
 			AccuracyHit: Hit! {0}%
 			AccuracyMiss: Miss! {0}%
 			Rebound: Rebound!
@@ -633,6 +861,8 @@ Mods: {
 			TPToBonfire: Teleport to Bonfire Checkpoint
 			NoTPCombat: Can not teleport while in combat!
 			NoTPBoss: Can not teleport while a boss is alive!
+			TPNeedBonfire: Rest at a bonfire to travel
+			HardmodeBonfireWarpNotice: The bonfires' bond has weakened. You can now only travel between bonfires while resting at one.
 			AbyssalFissure: Abyssal Fissure
 			DropSouls1: "Dropping "
 			DropsSouls2: souls
@@ -648,7 +878,6 @@ Mods: {
 			NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
-			AbyssOnly: "[c/ff9999: Only drops while The Covenant of Artorias is equipped]"
 			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag]"
 			BotCOnly: "[c/ff9999: Only drops when the player is Unkindled or a Bearer of the Curse]"
 			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is Unkindled or a Bearer of the Curse]"
@@ -657,6 +886,7 @@ Mods: {
 			FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
 			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
+			DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
 			IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
 		}
 
@@ -704,7 +934,7 @@ Mods: {
 			LeonhardDesc: Explore the suspension bridge between snow-topped mountains.
 			VesselOfSoulsDesc: Seek the chilling depths of the Earth Temple, where the fountains pool their waters.
 			PinwheelDesc: Seek the Path of the Drowned under the village entrance.
-			AncientOolacileDemonDesc: Legends mention the Oolacile Forest...
+			OolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
 			GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
@@ -718,10 +948,10 @@ Mods: {
 			SerrisDesc: ???
 			DeathDesc: ???
 			AttraidiesName: Attraidies
-			AttraidiesDesc: Gather all the Crests in order to craft the Mind Cube.
+			AttraidiesDesc: Gather all the Crests to craft the Mind Cube. On the Adventure map, carry it into his arena. Elsewhere, use it to summon him.
 			RealAttraidiesName: Attraidies (Real)
 			RealAttraidiesDesc: Use the Mindflayer Illusion Relic dropped by Attraidies' illusion.
-			HellkiteDragonDesc: Often sighted roaming the skies above the Village, searching for its next feast.
+			HellkiteDragonDesc: Hunts on the open ground east of the Village in Super Hardmode.
 			OptionalMysteryDesc: Some mysteries can only be discovered through exploration.
 			WaterFiendKrakenDesc:
 				'''
@@ -770,12 +1000,45 @@ Mods: {
 				'''
 			MarikName: Marik of the Smoldering Bog
 			MarikDesc: A fading champion awaits. In sandbox worlds, use the Soul of Marik spawner.
-			GwynName: Gwyn, Lord of Cinder
+			GwynName: Gwyn, Lord of the First Dawn
 			GwynDesc: Seek the tomb below the Western Ocean.
 		}
 
 		Items: {
 			VanillaItems: {
+				Ruby: Can be used to craft a healthy crystal
+				SquireHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					'''
+				SquirePlating:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					'''
+				SquireGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@2}
+					'''
+				ValhallaKnightHelm:
+					'''
+					{$CommonItemTooltip.IncreasesMaxSentriesBy}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					{$CommonItemTooltip.PercentIncreasedSummonDamage@2}
+					'''
+				ValhallaKnightBreastplate:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.IncreasesMaxMinionsBy@1}
+					'''
+				ValhallaKnightGreaves:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.CritChance@1}
+					'''
 				LockedCrates: "[c/383838:Cursed] by a ferocious [c/009400:Hunter]"
 				ObsidianSkinPotion: "{$CommonItemTooltip.Limited}"
 				SuspiciousLookingEye:
@@ -947,8 +1210,8 @@ Mods: {
 					'''
 				LargeAmber: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
 				RemixLargeDiamond: "[c/ffbf00:A symbol resembling the entrance to an abandoned temple under a hill is carved into it]"
-				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Dragon has been defeated
-				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Dragon has been defeated
+				VulnerabilityHex: Deals more damage and applies a vulnerability hex if Hellkite Drake has been defeated
+				IncinerationHex: Deals more damage and applies a incineration hex if Hellkite Drake has been defeated
 				MartianBuff: Deals more damage and electrocutes enemies if the Martians have been defeated
 				StarinaBottle: Increases mana regen by 10 and decreases mana regen delay by 50%
 				ManaRegenerationBand: Increases mana regen by 30 and decreases mana regen delay by 100%
@@ -956,11 +1219,6 @@ Mods: {
 				CeruleanManaRegenerationPotion: Increases Cerulean Flask restoration time by {0}%
 				CelestialMagnetBotC: Mana Star pickups restore {0}% of the [c/6d8827:Bearer of the Curse's] maximum mana
 				MagicCuffsBotC: Restores {0}% of pre-mitigation damage taken by the [c/6d8827:Bearer of the Curse] as mana
-				CoinGun:
-					'''
-					[c/ffbf00:Can also use soul coins as ammo]
-					[c/ffbf00:Soul coins pierce once]
-					'''
 			}
 
 			AbandonedStumpBanner: {
@@ -974,8 +1232,8 @@ Mods: {
 			}
 
 			AncientDemonOfTheAbyssBanner: {
-				DisplayName: "{$NPCs.AncientDemonOfTheAbyss.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemonOfTheAbyss.DisplayName}"
+				DisplayName: "{$NPCs.AncientDemon.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.AncientDemon.DisplayName}"
 			}
 
 			ArchdeaconBanner: {
@@ -1078,11 +1336,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DemonSpirit.DisplayName}"
 			}
 
-			DiscipleOfAttraidiesBanner: {
-				DisplayName: "{$NPCs.DiscipleOfAttraidies.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DiscipleOfAttraidies.DisplayName}"
-			}
-
 			DungeonMageBanner: {
 				DisplayName: "{$NPCs.DungeonMage.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DungeonMage.DisplayName}"
@@ -1138,24 +1391,24 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GreatRedKnight.DisplayName}"
 			}
 
-			GuardianCorruptorBanner: {
-				DisplayName: "{$NPCs.GuardianCorruptor.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.GuardianCorruptor.DisplayName}"
+			ElementalBanner: {
+				DisplayName: "{$NPCs.Elemental.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Elemental.DisplayName}"
 			}
 
-			HydrisElementalBanner: {
-				DisplayName: "{$NPCs.HydrisElemental.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisElemental.DisplayName}"
-			}
-
-			HydrisNecromancerBanner: {
-				DisplayName: "{$NPCs.HydrisNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.HydrisNecromancer.DisplayName}"
+			ElementalNecromancerBanner: {
+				DisplayName: "{$NPCs.ElementalNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ElementalNecromancer.DisplayName}"
 			}
 
 			IceSkeletonBanner: {
 				DisplayName: "{$NPCs.IceSkeleton.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.IceSkeleton.DisplayName}"
+			}
+
+			SkeletonWarriorBanner: {
+				DisplayName: "{$NPCs.SkeletonWarrior.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SkeletonWarrior.DisplayName}"
 			}
 
 			JungleSentreeBanner: {
@@ -1188,6 +1441,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManHunter.DisplayName}"
 			}
 
+			ObsidianGuardBanner: {
+				DisplayName: "{$NPCs.ObsidianGuard.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianGuard.DisplayName}"
+			}
+
 			ManOfWarBanner: {
 				DisplayName: "{$NPCs.ManOfWar.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ManOfWar.DisplayName}"
@@ -1208,9 +1466,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Necromancer.DisplayName}"
 			}
 
-			FallenNecromancerBanner: {
-				DisplayName: "{$NPCs.FallenNecromancer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.FallenNecromancer.DisplayName}"
+			BoneChaplainBanner: {
+				DisplayName: "{$NPCs.BoneChaplain.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.BoneChaplain.DisplayName}"
 			}
 
 			ObsidianJellyfishBanner: {
@@ -1218,19 +1476,19 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ObsidianJellyfish.DisplayName}"
 			}
 
-			OolacileDemonBanner: {
-				DisplayName: "{$NPCs.OolacileDemon.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileDemon.DisplayName}"
+			DarkrootImpBanner: {
+				DisplayName: "{$NPCs.DarkrootImp.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootImp.DisplayName}"
 			}
 
-			OolacileKnightBanner: {
-				DisplayName: "{$NPCs.OolacileKnight.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileKnight.DisplayName}"
+			DarkrootSentryBanner: {
+				DisplayName: "{$NPCs.DarkrootSentry.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.DarkrootSentry.DisplayName}"
 			}
 
-			OolacileSorcererBanner: {
-				DisplayName: "{$NPCs.OolacileSorcerer.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileSorcerer.DisplayName}"
+			OolacileAcolyteBanner: {
+				DisplayName: "{$NPCs.OolacileAcolyte.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.OolacileAcolyte.DisplayName}"
 			}
 
 			ParaspriteBanner: {
@@ -1273,11 +1531,6 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.ShadowMage.DisplayName}"
 			}
 
-			SlograIIBanner: {
-				DisplayName: "{$NPCs.SlograII.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SlograII.DisplayName}"
-			}
-
 			SnowOwlBanner: {
 				DisplayName: "{$NPCs.SnowOwl.DisplayName}{$CommonItemTooltip.Banner}"
 				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.SnowOwl.DisplayName}"
@@ -1289,8 +1542,8 @@ Mods: {
 			}
 
 			TaurusKnightBanner: {
-				DisplayName: "{$NPCs.TaurusKnight.DisplayName}{$CommonItemTooltip.Banner}"
-				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.TaurusKnight.DisplayName}"
+				DisplayName: "{$NPCs.Caliche.DisplayName}{$CommonItemTooltip.Banner}"
+				Tooltip: "{$CommonItemTooltip.BannerBonus}{$NPCs.Caliche.DisplayName}"
 			}
 
 			TetsujinBanner: {
@@ -1383,10 +1636,11 @@ Mods: {
 				Tooltip:
 					'''
 					To close the seal to the Abyss, you must defeat 6 lords of The Abyss:
-					Artorias, The Blight, The Wyvern Mage Shadow, Seath the Scaleless, and Chaos.
-					With a lord soul from each of these beings,
-					you will be able to summon the final lord: Gwyn, Lord of Cinder.
-					To craft the summoning item for each lord, you will need to return to eight familiar places
+					Water Fiend Kraken, Earth Fiend Lich, Fire Fiend Marilith, Artorias, The Wyvern Mage Shadow, and Seath the Scaleless.
+					Combine 1 Kraken Flesh, 1 Lich Bone, 1 Fiery Scale, 1 Soul of the Ghost Wyvern,
+					1 Soul of Artorias, and 1 Bequeathed Lord Soul Shard at a Demon Altar to craft the Lost Scroll of Gwyn.
+					Use the scroll to summon Gwyn, Lord of the First Dawn.
+					To craft the summoning item for each lord, you will need to return to seven familiar places
 					and collect a unique item dropped from an enemy you will find there: The Western Ocean, the Underground,
 					the Corruption, the Jungle, the Dungeon, the Underworld and the Eastern Ocean.
 					'''
@@ -1522,8 +1776,8 @@ Mods: {
 				Tooltip:
 					'''
 					The rare gem called tearstone has the uncanny ability to sense imminent death.
-					{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1} and
-					{$CommonItemTooltip.DRStat@2}
+					Increases the damage dealt by ranged projectiles based on how long they travel for.
+					Caps at {0}% and takes {1} seconds to reach the maximum.
 					'''
 			}
 
@@ -1541,15 +1795,10 @@ Mods: {
 
 			CovenantOfArtoriasItem: {
 				DisplayName: Covenant of Artorias
-				Tooltip:
-					'''
-					{$CommonItemTooltip.VanityFunction}
-					[c/ffbf00:Allows you to safely enter The Abyss when worn. Remove the ring to escape from The Abyss!]
-					[c/ffbf00:The Abyss pervades the entire world, like a mirror of our own, but dangerous foes are far more numerous in this realm.]
-					'''
+				Tooltip: '''[c/ffbf00:Grants protection from the harmful effects of The Abyss when equipped.]					'''
 			}
 
-			DarkCloak: {
+			DarkCloakItem: {
 				DisplayName: Dark Cloak
 				Tooltip: "[c/ffbf00:{$CommonItemTooltip.LifeThreshold}{$CommonItemTooltip.IncreasesDefenseBy@1}]"
 			}
@@ -1559,10 +1808,10 @@ Mods: {
 				Tooltip:
 					'''
 					A great ring, resonating with the abyss, which gives you a will of steel.
-					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRing.DisplayName} immunities
+					Inherits {$Items.RingOfClarity.DisplayName} and {$Items.WolfRingItem.DisplayName} immunities
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeRegen@2}
 					{$CommonItemTooltip.IncreasesMaxLifeByPercent@3}
@@ -1578,7 +1827,7 @@ Mods: {
 					'''
 			}
 
-			LightCloak: {
+			LightCloakItem: {
 				DisplayName: Light Cloak
 				Tooltip:
 					'''
@@ -1599,14 +1848,14 @@ Mods: {
 					'''
 			}
 
-			MythrilGlove: {
+			MythrilGloveItem: {
 				DisplayName: Mythril Glove
 				Tooltip:
 					'''
 					Grants bonus defense and resistance based on health:
-					Increase defense by 6 and resistance by 10 at all times
-					Increase defense by 11 and resistance by 18 below 66% health
-					Increase defense by 18 and resistance by 34 below 33% health
+					Increase defense by {0} and resistance by {1} at all times
+					Increase defense by {2} and resistance by {3} below {4}% health
+					Increase defense by {5} and resistance by {6} below {7}% health
 					'''
 			}
 
@@ -1663,7 +1912,7 @@ Mods: {
 					Press Wolf Ring to massively increase life regen and damage taken temporarily
 					Removes the life regen if hit during the effect and puts it on a long cooldown
 					Immunity to Blackout, Obstructed, Freezing and Acid Venom
-					{$CommonItemTooltip.IncreasesDefenseBy} within the Abyss
+					{$CommonItemTooltip.IncreasesDefenseBy} while the world is under the influence of the Abyss
 					'''
 				Keybind1: "Press "
 				Keybind2: " to massively increase life regen and damage taken temporarily"
@@ -1674,7 +1923,7 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.IncreasesMaxLifeByPercent}"
 			}
 
-			DragoonCloak: {
+			DragoonCloakItem: {
 				DisplayName: Dragoon Cloak
 				Tooltip:
 					'''
@@ -1853,7 +2102,7 @@ Mods: {
 					'''
 			}
 
-			DuskCrownRing: {
+			DuskCrownRingItem: {
 				DisplayName: Dusk Crown Ring
 				Tooltip:
 					'''
@@ -1879,12 +2128,11 @@ Mods: {
 			}
 
 			IceboundMythrilAegis: {
-				DisplayName: Icebound Mythril Aegis
+				DisplayName: Icebound Aegis
 				Tooltip:
 					'''
-					Inherits Mythril Bulwark, Ankh Shield and Frozen Shield effects
+					Inherits Ankh Shield and Frozen Shield effects
 					Slows down your dodgeroll slightly
-					Rolling through an enemy may inflict some debuffs this item grants immunity to
 					'''
 			}
 
@@ -1969,7 +2217,7 @@ Mods: {
 					'''
 			}
 
-			HerosCrest: {
+			HerosCrestItem: {
 				DisplayName: Hero's Crest
 				Tooltip:
 					'''
@@ -2277,6 +2525,11 @@ Mods: {
 				Tooltip: Grants damage reduction
 			}
 
+			DevDefenseRing: {
+				DisplayName: Dev Defense Ring
+				Tooltip: For developer testing only
+			}
+
 			AbyssArrow: {
 				DisplayName: Abyssal Arrow
 				Tooltip: Inflicts Abyssal Inferno
@@ -2362,15 +2615,28 @@ Mods: {
 					'''
 			}
 
+			ArtoriasHelmet: {
+				DisplayName: Artorias Helmet
+				Tooltip:
+					'''
+					Enchanted helmet of Artorias.
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
+					'''
+				TooltipSetBonus:
+					'''
+					Allows you to use items while dodgerolling
+					Increase additional {0}x melee damage while dodgerolling
+					{$CommonItemTooltip.DRStat@1}
+					{$CommonItemTooltip.AggroBoost}
+					'''
+			}
+
 			ArtoriasArmor: {
 				DisplayName: Artorias Armor
 				Tooltip:
 					'''
 					Enchanted armor of Artorias of the Abyss.
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}Allows you to use items while dodgerolling
-					Increase additional {1}x melee damage while dodgerolling
-					{$CommonItemTooltip.AggroBoost}
 					'''
 			}
 
@@ -2381,15 +2647,6 @@ Mods: {
 					Enchanted armor of Artorias.
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed@1}
-					'''
-			}
-
-			ArtoriasHelmet: {
-				DisplayName: Artorias Helmet
-				Tooltip:
-					'''
-					Enchanted helmet of Artorias.
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
 			}
 
@@ -2586,7 +2843,7 @@ Mods: {
 					'''
 			}
 
-			DragoonHelmet2: {
+			SupremeDragoonHelmet: {
 				DisplayName: Supreme Dragoon Helmet
 				Tooltip:
 					'''
@@ -2600,7 +2857,7 @@ Mods: {
 					'''
 			}
 
-			DragoonArmor2: {
+			SupremeDragoonArmor: {
 				DisplayName: Supreme Dragoon Armor
 				Tooltip:
 					'''
@@ -2613,7 +2870,7 @@ Mods: {
 					'''
 			}
 
-			DragoonGreaves2: {
+			SupremeDragoonGreaves: {
 				DisplayName: Supreme Dragoon Greaves
 				Tooltip:
 					'''
@@ -2855,8 +3112,6 @@ Mods: {
 					'''
 					A lost prince's armor.
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.Melee.FlatDmg@1}
-					A Gi will also proc this set bonus
 					'''
 			}
 
@@ -2876,22 +3131,11 @@ Mods: {
 					It is the famous Helmet of the Stars.
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
-			}
-
-			BlackBeltGiPants: {
-				DisplayName: Black Belt Gi Pants
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
-			BlackBeltGiTop: {
-				DisplayName: Black Belt Gi Top
-				Tooltip:
+				TooltipSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
-					{$CommonItemTooltip.LifeRegen@3}
-					{$CommonItemTooltip.DefenseCap@2}
-					Resistance is converted into movement speed(1 : {4})
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.Melee.FlatDmg@1}
+					A Gi will also proc this set bonus
 					'''
 			}
 
@@ -2902,6 +3146,23 @@ Mods: {
 					You are a master of the zen arts, at one with the Tao
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
+					{$CommonItemTooltip.LifeRegen@1}
+					{$CommonItemTooltip.DefenseCap@2}
+					Resistance is converted into movement speed(1 : {3})
+					'''
+			}
+
+			BlackBeltGiPants: {
+				DisplayName: Black Belt Gi Pants
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+			}
+
+			BlackBeltGiTop: {
+				DisplayName: Black Belt Gi Top
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			CrystalArmor: {
@@ -2919,9 +3180,28 @@ Mods: {
 					'''
 					Dazzling armor cut from crystal
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
 					{$CommonItemTooltip.DRStat@1}
 					{$CommonItemTooltip.LifeThreshold@2}Resistance provided by the set is doubled
+					'''
+			}
+
+			CrystalSightedHelmet: {
+				DisplayName: Crystal Sighted Helmet
+				Tooltip:
+					'''
+					Dazzling armor cut from crystal
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.CritDmg}
+					{$CommonItemTooltip.DRStat@3}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
 					'''
 			}
 
@@ -2934,27 +3214,12 @@ Mods: {
 					'''
 			}
 
-			CrystalSightedHelmet: {
-				DisplayName: Crystal Sighted Helmet
-				Tooltip:
-					'''
-					Dazzling armor cut from crystal
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.CritDmg@3}
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
-					{$CommonItemTooltip.LifeThreshold@2}Melee Speed provided by the set is doubled
-					'''
-			}
-
 			DarkKnightArmor: {
 				DisplayName: Dark Knight Armor
 				Tooltip:
 					'''
 					One of the fiercest armors for melee warriors
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.HolyDodge}
-					Defense is not affected by this
-					Small chance to regain life from melee strikes while Holy Dodge is active
 					'''
 			}
 
@@ -2971,6 +3236,13 @@ Mods: {
 			DarkKnightHelmet: {
 				DisplayName: Dark Knight Helmet
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+					{$CommonItemTooltip.HolyDodge}
+					Defense and Resistance are not affected by this
+					Small chance to regain life from melee strikes while Holy Dodge is active
+					'''
 			}
 
 			ArtoriasOfTheAbyssArmor: {
@@ -3047,15 +3319,27 @@ Mods: {
 				Tooltip: ""
 			}
 
+			FighterHairStyle: {
+				DisplayName: Fighter Hair Style
+				Tooltip:
+					'''
+					Adept at close combat
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat}
+
+					'''
+			}
+
 			FighterBreastplate: {
 				DisplayName: Fighter Breastplate
 				Tooltip:
 					'''
 					Adept at close combat
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.TitaniumBonus}
-					{$CommonItemTooltip.ShunpoKeybind1}Shunpo{$CommonItemTooltip.ShunpoKeybind2}
-					{$CommonItemTooltip.ShunpoCD@1}
 					'''
 			}
 
@@ -3068,25 +3352,21 @@ Mods: {
 					'''
 			}
 
-			FighterHairStyle: {
-				DisplayName: Fighter Hair Style
-				Tooltip:
+			MagmaHelmet: {
+				DisplayName: Magma Helmet
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
 					'''
-					Adept at close combat
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.DRStat@1}
+					Hitting burning enemies ignites them
+					Ignited enemies take {0} more damage each hit and burn horribly
+					Cannot be set on fire
 					'''
 			}
 
 			MagmaBreastplate: {
 				DisplayName: Magma Breastplate
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					Set bonus: Hitting burning enemies ignites them
-					Ignited enemies take {1} more damage each hit and burn horribly
-					Cannot be set on fire
-					'''
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			MagmaGreaves: {
@@ -3096,11 +3376,6 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
 					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
 					'''
-			}
-
-			MagmaHelmet: {
-				DisplayName: Magma Helmet
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
 			}
 
 			ShadowCloakGreaves: {
@@ -3128,19 +3403,14 @@ Mods: {
 					'''
 			}
 
-			ShadowNinjaBottoms: {
-				DisplayName: Shadow Ninja Bottoms
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
-			}
-
 			ShadowNinjaMask: {
 				DisplayName: Shadow Ninja Mask
-				Tooltip:
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@2}
-					Resistance is converted into movement speed(1 : {4})
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@1}
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
 					{$CommonItemTooltip.LifeRegen@3}
 					'''
 			}
@@ -3150,9 +3420,9 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
-			AbyssalNinjaTop: {
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
-				DisplayName: Abyssal Ninja Top
+			ShadowNinjaBottoms: {
+				DisplayName: Shadow Ninja Bottoms
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
 			}
 
 			AbyssalNinjaMask: {
@@ -3161,11 +3431,19 @@ Mods: {
 					'''
 					{$CommonItemTooltip.PercentIncreasedMeleeCritChance}
 					{$CommonItemTooltip.PercentIncreasedMeleeDamage@1}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.DefenseCap@3}
-					Resistance is converted into movement speed(1 : {5})
-					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
-					{$CommonItemTooltip.LifeRegen@4}
 					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DefenseCap}
+					Resistance is converted into movement speed(1 : {1})
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.LifeRegen@3}
+					'''
+			}
+
+			AbyssalNinjaTop: {
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
+				DisplayName: Abyssal Ninja Top
 			}
 
 			AbyssalNinjaBottoms: {
@@ -3371,21 +3649,32 @@ Mods: {
 				DisplayName: Smough's Armor
 				Tooltip:
 					'''
+					Increases maximum life by {2}
+					Active shields cost {3}% less stamina to block
 					Increases the effectiveness of the Dragon Crest Shield
-					Set Bonus: Decreases all attack speed by {0}% multiplicatively but guarantees critical hits
+					{$CommonItemTooltip.SetBonus}Decreases all attack speed by {0}% multiplicatively but guarantees critical hits
 					Critical strike damage is reduced by {1}%
 					Also increases mana costs by {0}%
+					Every {4}th hit on the same enemy is a Crushing Blow, dealing {5}% more poise damage
 					'''
 			}
 
 			SmoughGreaves: {
 				DisplayName: Smough's Greaves
-				Tooltip: Decreases dodgeroll agility
+				Tooltip:
+					'''
+					{$CommonItemTooltip.NoKnockback}
+					Decreases dodgeroll agility
+					'''
 			}
 
 			SmoughHelmet: {
 				DisplayName: Smough's Helmet
-				Tooltip: "{$CommonItemTooltip.PercentIncreasedDamage}"
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Reduces damage taken by {1}%
+					'''
 			}
 
 			SnarbolaxArmor: {
@@ -3697,8 +3986,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Ice cold to the touch, it glows with enchanted power
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -3743,7 +4030,12 @@ Mods: {
 			}
 
 			GwynBag: {
-				DisplayName: Treasure Bag (Gwyn, Lord of Cinder)
+				DisplayName: Treasure Bag (Gwyn, Lord of the First Dawn)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OrnsmoughBag: {
+				DisplayName: Treasure Bag (Ornstein & Smough)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3758,7 +4050,7 @@ Mods: {
 			}
 
 			HellkiteBag: {
-				DisplayName: Treasure Bag (Hellkite Dragon)
+				DisplayName: Treasure Bag (Hellkite Drake)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -3861,7 +4153,7 @@ Mods: {
 					[c/00ffd4:It's true use may reveal itself in time...or at a particular location deep underground...]
 					'''
 				Summon: "A Gate has been opened. The Great Wall has passed into this dimension!... "
-				BotCOnly: "[c/ffbf00:Offers a {0}% damage boost]{$CommonItemTooltip.ForBotCOnly} when equipped."
+				BotCOnly: "[c/ffbf00:Offers a {0}% damage boost] in Souls Mode when equipped."
 			}
 
 			AbysmalStone: {
@@ -3877,9 +4169,8 @@ Mods: {
 				DisplayName: Blight Stone
 				Tooltip:
 					'''
-					Summons The Blight, one of the seven guardians of The Abyss.
-					You must fight this battle on the surface.
-					The Blight cannot be fought with the Covenant of Artorias ring equipped.
+					Summons The Blight, a guardian of the Abyss.
+					Must be used on the surface, outside a Blood Moon.
 					'''
 				Angery: '''"You will be destroyed"'''
 			}
@@ -4015,7 +4306,7 @@ Mods: {
 
 			HellkiteStone: {
 				DisplayName: Hellkite Stone
-				Tooltip: Summons a Hellkite Dragon from the sky...
+				Tooltip: Summons the Hellkite Drake at night...
 				WrongTime: Nothing happens... Retry at night.
 			}
 
@@ -4092,13 +4383,30 @@ Mods: {
 				Summon: "A rumbling thunder shakes the ground below you... "
 			}
 
+			EmberOfTheFirstDawn: {
+				DisplayName: Ember of the First Dawn
+				Tooltip:
+					'''
+					A Stone older than the Flame, still warm from a morning no living thing has seen.
+					Use to return the world to its primordial form and bring forth the first dawn once more.					
+					'''
+				Warning: This cannot be undone.
+				AlreadyReturned: The age of the first dawn has already returned.
+				AgeBegins: The world returns to its primordial age.
+				Summon: Prime Gwyn rises to meet the first dawn!
+				TooFar: The Ember will only call its lord where Gwyn was fought.
+				Confirm: The Ember burns hotter in your hand. Use it again to let it go.
+				Return: The Ember carries you back to the first dawn.
+				NoReturnPoint: The Ember finds no dawn to return you to here.
+			}
+
 			LostScrollOfGwyn: {
 				DisplayName: Lost Scroll of Gwyn
 				Tooltip:
 					'''
-					Used to summon Gwyn, Lord of Cinder. 
-					Gwyn may prove impossible to defeat unless you have defeated 7 guardians of the Abyss:
-					Artorias, Seath, the Lich King, Kraken, Marilith, the Blight, and the Wyvern Mage Shadow. 
+					Used to summon Gwyn, Lord of the First Dawn.
+					Gwyn may prove impossible to defeat unless you have defeated 6 guardians of the Abyss:
+					Water Fiend Kraken, Earth Fiend Lich, Fire Fiend Marilith, Artorias, the Wyvern Mage Shadow, and Seath the Scaleless.
 					Only the true warrior of the age will survive this fight. 
 					'''
 				Summon: "Defeat me, and you shall inherit the fire of this world... "
@@ -4112,6 +4420,13 @@ Mods: {
 					This is it. The final battle. 
 					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
 					[c/00ffd4:If you are in the Remix map, you should also look for the Old One's Tree in the jungle...]
+					'''
+				AdventureTooltip:
+					'''
+					Shields your mind from the curse of Attraidies
+					Carry it or wear it in an accessory or vanity slot, then enter his arena to face him
+					This is it. The final battle.
+					[c/ffbf00:To find the light and dark shards needed to craft this in adventure mode... Seek the Dark Tower of Attraidies.]
 					'''
 			}
 
@@ -4246,14 +4561,14 @@ Mods: {
 				//    4  [PHM] Pinwheel               (Bosses/Pinwheel)                    — modded, optional major
 				//    5  [PHM] Brain of Cthulhu       (VanillaChanges.cs)                  — vanilla
 				//    6  [PHM] Eater of Worlds        (VanillaChanges.cs)                  — vanilla
-				//    7  [PHM] Ancient Oolacile Demon (Bosses/AncientOolacileDemon)        — modded
+				//    7  [PHM] Oolacile Demon        (Bosses/OolacileDemon)               — modded
 				//    8  [PHM] King Slime             (VanillaChanges.cs)                  — vanilla
 				//    9  [PHM] Slogra (+ Gaibon)      (Bosses/Slogra)                      — modded
 				//   10  [PHM] Queen Bee              (VanillaChanges.cs)                  — vanilla
 				//   11  [PHM] Skeletron             (VanillaChanges.cs)                   — vanilla
 				//   12  [PHM] Deerclops              (VanillaChanges.cs)                  — vanilla
 				//   13  [PHM] Jungle Wyvern          (Bosses/JungleWyvern/JungleWyvernHead) — modded
-				//   14  [PHM] Ancient Demon          (Bosses/AncientDemon)                — modded
+				//   14  [PHM] Defiled Demon          (Bosses/DefiledDemon)                — modded
 				//   15  [PHM] Wall of Flesh          (VanillaChanges.cs)                  — vanilla
 				//   16  [HM]  Queen Slime            (VanillaChanges.cs)                  — vanilla
 				//   17  [HM]  The Rage               (Bosses/TheRage)                     — modded
@@ -4270,7 +4585,7 @@ Mods: {
 				//   28  [HM]  Cataluminance          (Bosses/Cataluminance)               — modded
 				//   29  [HM]  Attraidies hidden phases (not shown as their own Tome entry)
 				//   30  [HM]  Attraidies (Real)      (Bosses/Okiku/FinalForm/Attraidies)  — modded
-				//   31  [SHM] Hellkite Dragon        (Bosses/SuperHardMode/HellkiteDragon/HellkiteDragonHead) — modded
+				//   31  [SHM] Hellkite Drake         (Bosses/SuperHardMode/HellkiteDrake/HellkiteDrake) — modded
 				//   32  [SHM] Witchking              (Bosses/SuperHardMode/Witchking)     — modded
 				//   33  [SHM] Moon Lord              (VanillaChanges.cs, MoonLordFreeEye) — vanilla
 				//   34  [SHM] Water Fiend Kraken     (Bosses/SuperHardMode/Fiends/WaterFiendKraken)   — modded
@@ -4299,7 +4614,7 @@ Mods: {
 				4: "{$BossChecklist.PinwheelDesc}"
 				5: Delve deep inside the Corruption Temple, or investigate rumours about crimson on the surface, to the East.
 				6: Seek the Corruption Temple, East of the Arazium Mountain Chasm.
-				7: "{$BossChecklist.AncientOolacileDemonDesc}"
+				7: "{$BossChecklist.OolacileDemonDesc}"
 				8: Explore the Rainforest of the Orid Tribe, East of your burned house. Gold temple ruins hide a secret.
 				9: "{$BossChecklist.SlograAndGaibonDesc}"
 				10: From the Underground Jungle Ruins to the Forgotten City, Larvas are everywhere.
@@ -4329,7 +4644,7 @@ Mods: {
 				26: Where does the Teleporter of the Great Pyramid lead to?
 				27: Golem controls the forcefield of the floating island high above Ashen Peak village.
 				28: Atop the Twin Peaks of Arazium, find the temple mouth that gazes at the sky above and the Great Chasm Below.
-				29: Craft the 8 Crests with shards found at the top of Attraidies' Dark Tower.
+				29: Craft the Mind Cube from the Crests and the shards found at the top of Attraidies' Dark Tower. On the Adventure map, carry it into his arena.
 				30: "{$BossChecklist.RealAttraidiesDesc}"
 				31: "{$BossChecklist.HellkiteDragonDesc}"
 				32: "{$BossChecklist.WitchkingDesc}"
@@ -4523,9 +4838,9 @@ Mods: {
 					Mana regen is suppressed but the stat affects mana regain speed when using your Cerulean flask.
 					Weapons use stamina. Lost health can be briefly recovered by hiting enemies. Gain +1 accessory slot.
 
-					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics, and {0}% more souls.
+					[c/dd3333:Bearer of the Curse]: All Unkindled features plus combat class mechanics.
 					Weapons drain more stamina but stamina regens faster. Healing potions don't work. Mana regen is
-					disabled outside bonfires, and dying costs {1}% max HP until your soul is recovered.
+					disabled outside bonfires, and dying costs {0}% max HP until your soul is recovered.
 
 					[c/aaaaaa:Classic]: No flasks. Vanilla Terraria healing, shield and magic systems.
 
@@ -4708,7 +5023,7 @@ Mods: {
 					'''
 					Unkindled: the default. Flasks, stamina on weapons, active shields and an extra accesory slot.
 					Bearer of the Curse: everything above, plus an additional combat mechanic for each weapon class,
-					{0}% more souls and a different stamina tempo, with stricter limits on healing & mana regen.
+					a different stamina tempo, with stricter limits on healing & mana regen.
 					Classic: vanilla healing, shields and magic, with no flask interface or stamina-based weapons.
 					Left-click the Darksign to switch, and right-click it to read your class mechanic.				
 					'''
@@ -4869,12 +5184,7 @@ Mods: {
 
 			FlameOfTheAbyss: {
 				DisplayName: Flame of the Abyss
-				Tooltip:
-					'''
-					A persistent flame that can cause incineration from the abyss 
-					[c/ffbf00:Only dropped by fallen souls in the abyss]
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
-					'''
+				Tooltip: "A persistent flame that can cause incineration from the abyss "
 			}
 
 			ForgottenIceBowScroll: {
@@ -5034,7 +5344,7 @@ Mods: {
 				DisplayName: Soul Coin Crate
 				Tooltip:
 					'''
-					A crate containing 1000 soul coins
+					A crate containing {0} Dark Souls
 					Given as weregild for an item that no longer exists
 					{$CommonItemTooltip.RightClickToOpen}
 					'''
@@ -5799,8 +6109,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					Radiating heat, it shimmers with forbidden magic
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -5809,14 +6117,23 @@ Mods: {
 				Tooltip:
 					'''
 					A mysterious coin formed out of dark souls
-					Used as a currency among certain merchants
+					Turns into {0} Dark Souls when picked up
 					'''
-				Plural: Soul Coins
 			}
 
 			SoulOfArtorias: {
 				DisplayName: Soul of Artorias
 				Tooltip: "'The essence of Artorias of the Abyss'"
+			}
+
+			SoulOfOrnstein: {
+				DisplayName: Soul of Ornstein
+				Tooltip: "'The essence of Ornstein the Dragonslayer'"
+			}
+
+			SoulOfSmough: {
+				DisplayName: Soul of Smough
+				Tooltip: "'The essence of Smough the Executioner'"
 			}
 
 			SoulOfCinder: {
@@ -5843,6 +6160,11 @@ Mods: {
 				Tooltip: "'The essence of pure discord'"
 			}
 
+			MarilithSoul: {
+				DisplayName: Marilith Soul
+				Tooltip: "'The essence of Fire Fiend Marilith'"
+			}
+
 			SoulOfLife: {
 				DisplayName: Soul of Life
 				Tooltip: "'The essence of growth, deeply connected to the Earth'"
@@ -5855,11 +6177,8 @@ Mods: {
 
 			StaminaVessel: {
 				DisplayName: Stamina Vessel
-				Tooltip:
-					'''
-					Permanently increases max stamina by 5
-					Stamina maxes out after consuming {0}
-					'''
+				Tooltip: Permanently increases max stamina by {0}
+				MaxVessels: Stamina maxes out after consuming {0}
 				UsedCounter: "Consumed so far: "
 			}
 
@@ -5880,12 +6199,11 @@ Mods: {
 				Tooltip: This item is from the future, and its text is obscured. You will have to progress further in your adventure to reveal it...
 				Obscured:
 					'''
-					As the burning remains of the Mindflayer King lay before you, you look up and out to the horizon.
-					You feel relieved, but notice your heart is still not at peace. Attraidies was known for his games.
-					Even in death you suspect his sway over the world has not ended.
-					You remember the magic spell that he put on Aaron and wonder if he cast the same spell on himself...
-					[c/00ffd4:Looking down, you notice a drill lying in the ashes, still hot to the touch...]
-					[c/ffbf00:Congratulations on beating the game! We hope you enjoyed it!- Tim Hjersted & the Revamp Team]
+					As the burning remains of Attraidies settle before you, you wait for the weight upon the world to lift.
+					Instead, the horizon darkens. One by one, the last colors of daylight disappear.
+					Attraidies has left you one final game. 
+					[c/00ffd4:Among the ashes lies a drill capable of breaking the strongest gates, still hot to the touch.]
+					Seek the Shaman Elder beyond the Western Sea. There may yet be a way to bring back the dawn.
 					'''
 			}
 
@@ -6591,6 +6909,17 @@ Mods: {
 					'''
 			}
 
+			GrandOolacileAxe: {
+				DisplayName: Grand Oolacile Axe
+				Tooltip:
+					'''
+					The abyss-forged great axe-maul of the Grand Occultist
+					Every {0}rd swing is an overhead Dark Judgment slam dealing {1}% more damage and unleashing an abyssal shockwave
+					Tap Right-Click to hurl the axe, erupting Destined Death flames on impact and sticking into the ground until retrieved with an underhand catch swing
+					Hold Right-Click ({2} mana) to channel Staff-Axe Weave, firing fans of {3} homing magic Oolacile dark bolts
+					'''
+			}
+
 			AncientFireSword: {
 				DisplayName: Ancient Fire Sword
 				Tooltip:
@@ -6613,6 +6942,25 @@ Mods: {
 			CalciumBlade: {
 				DisplayName: Calcium Blade
 				Tooltip: "'A blade of sharpened bone'"
+			}
+
+			GravelordSword: {
+				DisplayName: Gravelord Sword
+				Tooltip:
+					'''
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
+					The slam deals {0}x damage
+					'''
+			}
+
+			RoyalGreatsword: {
+				DisplayName: Royal Greatsword
+				Tooltip:
+					'''
+					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
+					The slam deals {0}x damage
+					An old royal blade, worn by Blaidd's battles
+					'''
 			}
 
 			CoralSword: {
@@ -7235,6 +7583,7 @@ Mods: {
 				DisplayName: Glaive Beam
 				Tooltip:
 					'''
+					Uses Tesla Bolts for ammo
 					A legendary weapon of war from beyond the stars
 					Fabled to cut entire ships in half with a single blast
 					'''
@@ -7494,8 +7843,8 @@ Mods: {
 				Tooltip:
 					'''
 					Summons a Soul Mimic: a liquid-metal copy of you
-					It fights with the weapon you are holding and those in hotbar slots 1 and 2
-					It has your health, defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
+					It copies your hotbar weapons when summoned and picks one that can reach its target
+					It has {3} times your max health, your defense, stamina and mana, drinks its own Estus and Cerulean, and dodge rolls
 					Takes all your summoner slots, up to {0}
 					Lasts {1} minutes, then dissolves
 					Cannot be used again for {2} minutes (resets on death)
@@ -7638,7 +7987,7 @@ Mods: {
 					'''
 					Strike enemies to plant thorns in them
 					Thorns are released by enemies hit by summons
-					Thorns scale with {0}% whip damage
+					Thorns scale with {0}% whip damage and have {1} armor penetration
 					{$CommonItemTooltip.Whips}
 					'''
 			}
@@ -7671,34 +8020,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					'This rust is almost infectious'
-					'''
-			}
-
-			Galeforce: {
-				DisplayName: Galeforce
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a magical bow which shoots magic arrows towards your cursor
-					'''
-			}
-
-			Typhoon: {
-				DisplayName: Typhoon
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a hellish bow which shoots flaming arrows towards your cursor
-					Applies hellfire
-					'''
-			}
-
-			CaiusPyre: {
-				DisplayName: Caius' Pyre
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a fiery rift which shoots fireballs towards your cursor
 					'''
 			}
 
@@ -7745,8 +8066,6 @@ Mods: {
 					'''
 					A rare and valuable ore
 					A solid white surface, it casts an eerie purple shadow
-					More common in the abyss
-					[c/00ffd4:To enter the Abyss, equip the Covenant of Artorias.]
 					'''
 			}
 
@@ -8023,6 +8342,7 @@ Mods: {
 					[c/adff2f:Nuclear Mushroom] needs {10} seconds to arm itself after being dropped({$CommonItemTooltip.Cooldown@11})
 					The explosion resulting from the [c/adff2f:Nuclear Mushroom] deals massive damage and applies an even stronger [c/adff2f:Radiation]
 					[c/adff2f:Radiation] applied from the [c/adff2f:Nuclear Mushroom's] explosion stacks with that of [c/ba55d3:Radioactive Darts]
+					You can store up to {12} [c/adff2f:Nuclear Mushrooms] at a time
 					[c/00ffff:Blinding Laser] deals {4}x damage, multiplied by {5} again while using Seeds as ammunition({$CommonItemTooltip.Cooldown@6})
 					[c/00ffff:Blinding Laser] gains {7}% bonus critical strike chance and {8}% max health damage on-hit, up to {9}
 					[c/ba55d3:Radiation] applied by [c/ba55d3:Radioactive Darts] scales with ranged damage and critical strike chance
@@ -8197,6 +8517,20 @@ Mods: {
 				StackGained: "{0} / 10"
 			}
 
+			StormrazorItem: {
+				DisplayName: Stormrazor
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMeleeSpeed@2}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					[c/f7b10f:Moving and attacking will grant charges,]
+					[c/f7b10f:when fully charged the next melee attack will consume the charges to:]
+					[c/f7b10f:deal {3} extra damage(2x on crits) and]
+					[c/f7b10f:grant you {4}% movement speed({$CommonItemTooltip.SecondDuration@5})]
+					'''
+			}
+
 			SteraksGageItem: {
 				DisplayName: Steraks Gage
 				Tooltip:
@@ -8207,6 +8541,18 @@ Mods: {
 					[c/8b0000:Heals you for {4} life when life goes below {3}%({$CommonItemTooltip.Cooldown@5})]
 					'''
 				Bonus: Currently granting {0}% based on the current held weapon
+			}
+
+			BlackCleaverItem: {
+				DisplayName: Black Cleaver
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedRangedDamage}
+					Increases ranged attack speed by {1}%
+					{$CommonItemTooltip.IncreasesMaxLifeBy@2}
+					[c/e34444:Ranged attacks apply a stacking debuff up to {3} times({$CommonItemTooltip.SecondDuration@4})]
+					[c/e34444:Each stack reduces the targets defense by {5}]
+					'''
 			}
 
 			InfinityEdgeItem: {
@@ -8231,13 +8577,37 @@ Mods: {
 					'''
 			}
 
+			LiandrysTormentItem: {
+				DisplayName: Liandrys Torment
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
+					{$CommonItemTooltip.IncreasesMaxManaBy@2}
+					[c/1bf5f2:Dealing magic damage applies a damage over time debuff for {5} seconds]
+					[c/1bf5f2:This debuff deals at least {4} damage or {3}% of the targets max life per second]
+					'''
+			}
+
+			ImperialMandateItem: {
+				DisplayName: Imperial Mandate
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@1}
+					[c/ffbc12:Minion and sentry hits apply a mark({$CommonItemTooltip.SecondDuration@4})]
+					[c/ffbc12:Hit the tagged enemy with a whip to deal {2}% of their current life as bonus damage({$CommonItemTooltip.Cooldown@3})]
+					'''
+			}
+
 			GoredrinkerItem: {
 				DisplayName: Goredrinker
 				Tooltip:
 					'''
 					{$CommonItemTooltip.PercentIncreasedSummonDamage}
+					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
-					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@2})]
+					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@3})]
 					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit
@@ -8308,24 +8678,22 @@ Mods: {
 			PortlyPlateHelmet: {
 				DisplayName: Portly Plate Helmet
 				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeCritChance}"
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.DRStat@5}
+					{$CommonItemTooltip.LifeRegen}
+					{$CommonItemTooltip.NoKnockback}
+					{$CommonItemTooltip.LifeThreshold@1}{$CommonItemTooltip.LifeRegen@2}
+					Allows you to damage enemies by rolling through them
+					{3} melee damage
+					{4}% critical strike chance
+					Insane knockback
+					'''
 			}
 
 			PortlyPlateChestplate: {
 				DisplayName: Portly Plate Chestplate
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.LifeRegen@1}
-					{$CommonItemTooltip.NoKnockback}
-					{$CommonItemTooltip.LifeThreshold@2}{$CommonItemTooltip.LifeRegen@3}
-					'''
-				SetBonus:
-					'''
-					Allows you to damage enemies by rolling through them
-					{0} melee damage
-					{1}% critical strike chance
-					Insane knockback
-					'''
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedMeleeDamage}"
 			}
 
 			PortlyPlateGreaves: {
@@ -8775,7 +9143,7 @@ Mods: {
 
 			DivineBallista: {
 				DisplayName: Divine Ballista
-				Tooltip: ""
+				Tooltip: Uses Bolts for ammo
 			}
 
 			SupremeDragoonLash: {
@@ -8869,9 +9237,10 @@ Mods: {
 				Tooltip:
 					'''
 					[c/ffbf00:You feel the power of the 3 Wings and the elements within you]
-					Inflicts acid venom, has a chance to freeze nearby enemies, and gains rapid healing for a small duration upon taking damage
-					When the wearer is below 50% life, activates his natural defenses and gains a buff
-					[c/00ffd4:The buff grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed]
+					Based on your used weapon, grants a temporary buff to two other classes on-hit.
+					Buffs can only be procced by and go towards Melee, Ranged or Magic classes.
+					[c/00ffd4:Buff increases critical strike chance by {1}%]
+					({$CommonItemTooltip.SecondDuration@2}, {$CommonItemTooltip.Cooldown})
 					'''
 			}
 
@@ -9050,19 +9419,426 @@ Mods: {
 				Tooltip: "'The essence of a shadow warrior claimed by the Abyss'"
 			}
 
-			RedKnightTestHelmet: {
+			RedKnightHelmet: {
 				Tooltip: ""
-				DisplayName: Red Knight Test Helmet
+				DisplayName: Red Knight Helmet
 			}
 
-			RedKnightTestGreaves: {
+			RedKnightGreaves: {
 				Tooltip: ""
-				DisplayName: Red Knight Test Greaves
+				DisplayName: Red Knight Greaves
 			}
 
-			RedKnightTestBreastplate: {
+			BlackKnightHelmet: {
 				Tooltip: ""
-				DisplayName: Red Knight Test Breastplate
+				DisplayName: Black Knight Helmet
+			}
+
+			BlackKnightBreastplate: {
+				Tooltip: ""
+				DisplayName: Black Knight Breastplate
+			}
+
+			BlackKnightGreaves: {
+				Tooltip: ""
+				DisplayName: Black Knight Greaves
+			}
+
+			DarkmoonKnightHelmet: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Helmet
+			}
+
+			DarkmoonKnightBreastplate: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Breastplate
+			}
+
+			DarkmoonKnightGreaves: {
+				Tooltip: ""
+				DisplayName: Darkmoon Knight Greaves
+			}
+
+			DarkrootHalberd: {
+				DisplayName: Darkroot Halberd
+				Tooltip:
+					'''
+					A heavy polearm of the Darkroot sentries
+					Left click: overhand, underhand, then a forward thrust
+					Hold left click to charge with the spear drawn back; release to dash up to {2} tiles toward the cursor for {3}x damage
+					Hold right click to sweep continuously; release to carry the rotation into a ground slam
+					The slam erupts a root under the strongest enemy within {0} tiles that keeps striking for {1}x damage
+					'''
+				Stamina: Stamina: {0} / {1} / {2} per combo strike; {2} per full rotation
+			}
+
+			DarkrootSentryHelmet: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Helmet
+			}
+
+			DarkrootSentryBreastplate: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Breastplate
+			}
+
+			DarkrootSentryGreaves: {
+				Tooltip: ""
+				DisplayName: Darkroot Sentry Greaves
+			}
+
+			SentientHead: {
+				DisplayName: Sentient Helm
+				Tooltip: Grows stronger with the damage you deal
+				Tooltip0:
+					'''
+					Total damage dealt: {0}
+					Current damage increase: {1}%
+					'''
+				TooltipSetBonus:
+					'''
+					{$CommonItemTooltip.PercentIncreasedDamage}
+					Grants Crimson Armors Set Bonus and
+					{$CommonItemTooltip.LifeRegen@1}
+					'''
+			}
+
+			SentientTorso: {
+				DisplayName: Sentient Cuirass
+				Tooltip: Grows tougher by remembering damage endured
+				Tooltip0:
+					'''
+					Total damage taken: {0}
+					Current resistance bonus: {1}
+					'''
+			}
+
+			SentientLegs: {
+				DisplayName: Sentient Greaves
+				Tooltip: Grows swifter with the distance you travel
+				Tooltip0:
+					'''
+					Total distance traveled: {0}
+					Current movement speed increase: {1}%
+					'''
+			}
+
+			SkeletonHeadpiece: {
+				DisplayName: Skeleton Skull
+				Tooltip: ""
+			}
+
+			SkeletonRibcage: {
+				DisplayName: Skeleton Rib Cage
+				Tooltip: ""
+			}
+
+			SkeletonLegBones: {
+				DisplayName: Skeleton Leg Bones
+				Tooltip: ""
+			}
+
+			BasiliskHeadpiece: {
+				DisplayName: Basilisk Headpiece
+				Tooltip: ""
+			}
+
+			BasiliskCarapace: {
+				DisplayName: Basilisk Carapace
+				Tooltip: ""
+			}
+
+			BasiliskGreaves: {
+				DisplayName: Basilisk Greaves
+				Tooltip: ""
+			}
+
+			FireLurkerHeadpiece: {
+				DisplayName: Fire Lurker Headpiece
+				Tooltip: ""
+			}
+
+			FireLurkerHide: {
+				DisplayName: Fire Lurker Hide
+				Tooltip: ""
+			}
+
+			FireLurkerLegs: {
+				DisplayName: Fire Lurker Legs
+				Tooltip: ""
+			}
+
+			ElementalNecromancerHeadpiece: {
+				DisplayName: Elemental Necromancer Crown
+				Tooltip: ""
+			}
+
+			ElementalNecromancerRobe: {
+				DisplayName: Elemental Necromancer Robe
+				Tooltip: ""
+			}
+
+			ElementalNecromancerBoots: {
+				DisplayName: Elemental Necromancer Boots
+				Tooltip: ""
+			}
+
+			ElementalHeadpiece: {
+				DisplayName: Elemental Head
+				Tooltip: ""
+			}
+
+			ElementalBreastplate: {
+				DisplayName: Elemental Breastplate
+				Tooltip: ""
+			}
+
+			ElementalGreaves: {
+				DisplayName: Elemental Greaves
+				Tooltip: ""
+			}
+
+			WarlockHeadpiece: {
+				DisplayName: Warlock Headpiece
+				Tooltip: ""
+			}
+
+			WarlockRobe: {
+				DisplayName: Warlock Robe
+				Tooltip: ""
+			}
+
+			WarlockBoots: {
+				DisplayName: Warlock Boots
+				Tooltip: ""
+			}
+
+			TibianAmazonHeadpiece: {
+				DisplayName: Tibian Amazon Headpiece
+				Tooltip: ""
+			}
+
+			TibianAmazonTunic: {
+				DisplayName: Tibian Amazon Tunic
+				Tooltip: ""
+			}
+
+			TibianAmazonBoots: {
+				DisplayName: Tibian Amazon Boots
+				Tooltip: ""
+			}
+
+			TibianValkyrieHeadpiece: {
+				DisplayName: Tibian Valkyrie Headpiece
+				Tooltip: ""
+			}
+
+			TibianValkyrieBreastplate: {
+				DisplayName: Tibian Valkyrie Breastplate
+				Tooltip: ""
+			}
+
+			TibianValkyrieGreaves: {
+				DisplayName: Tibian Valkyrie Greaves
+				Tooltip: ""
+			}
+
+			DworcShamanHeadpiece: {
+				DisplayName: Dworc Shaman Headpiece
+				Tooltip: ""
+			}
+
+			DworcShamanBreastplate: {
+				DisplayName: Dworc Shaman Breastplate
+				Tooltip: ""
+			}
+
+			DworcShamanGreaves: {
+				DisplayName: Dworc Shaman Greaves
+				Tooltip: ""
+			}
+
+			NecromancerHood: {
+				DisplayName: Necromancer Hood
+				Tooltip: ""
+			}
+
+			NecromancerRobe: {
+				DisplayName: Necromancer Robe
+				Tooltip: ""
+			}
+
+			NecromancerBoots: {
+				DisplayName: Necromancer Boots
+				Tooltip: ""
+			}
+
+			HydromancerSoul: {
+				DisplayName: Hydromancer Soul
+				Tooltip: "'The essence of a Quara tide-caller, still damp to the touch'"
+			}
+
+			QuaraHydromancerHeadpiece: {
+				DisplayName: Quara Hydromancer Crest
+				Tooltip:
+					'''
+					{$CommonItemTooltip.IncreasesMaxManaBy}
+					{$CommonItemTooltip.PercentIncreasedMeleeCritChance@1}
+					{$CommonItemTooltip.PercentIncreasedMagicCritChance@1}
+					'''
+				TooltipSetBonus:
+					'''
+					Tidecaller: melee hits soak enemies, making them Wet for {0} seconds
+					Magic hits on Wet enemies deal {1}% more damage and restore {2} mana
+					Magic hits make your next melee swing {3}% faster for up to {4} seconds
+					'''
+			}
+
+			QuaraHydromancerBreastplate: {
+				DisplayName: Quara Hydromancer Body
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMeleeDamage}
+					{$CommonItemTooltip.PercentIncreasedMagicDamage}
+					'''
+			}
+
+			QuaraHydromancerGreaves: {
+				DisplayName: Quara Hydromancer Legs
+				Tooltip:
+					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
+					Grants the ability to swim
+					'''
+			}
+
+			ManhunterHat: {
+				DisplayName: Manhunter Hat
+				Tooltip: ""
+			}
+
+			ManhunterJerkin: {
+				DisplayName: Manhunter Jerkin
+				Tooltip: ""
+			}
+
+			ManhunterBoots: {
+				DisplayName: Manhunter Boots
+				Tooltip: ""
+			}
+
+			GreatBlackKnightHelm: {
+				Tooltip: ""
+				DisplayName: Great Black Knight Helm
+			}
+
+			RoyalKnightHelmet: {
+				DisplayName: Royal Knight Helmet
+				Tooltip: ""
+			}
+
+			OrnsteinHead: {
+				DisplayName: Ornstein's Lion Helm
+				Tooltip:
+					'''
+					Increases melee and magic critical strike chance by {0}%
+					Increases maximum mana by {1}
+					'''
+			}
+
+			OrnsteinBody: {
+				DisplayName: Ornstein's Armor
+				Tooltip:
+					'''
+					Increases melee and magic damage by {0}%
+					Melee hits restore {1} mana
+					{$CommonItemTooltip.SetBonus}Spellblade Current
+					Melee hits build Static, up to {2} stacks, which fade {3} seconds after your last melee hit
+					Your next magic cast spends all Static for {4}% more magic damage per stack
+					Each stack also fires a lightning arc at an enemy within {5} tiles for {6}% of the spell's damage
+					Magic hits grant Charged Edge for {7} seconds: your next melee hit fires a lightning bolt for {8}% of its damage
+					Taking a hit clears Static and Charged Edge
+					Your dodge roll becomes a dash. With {9} mana it becomes a Lightning Dash, dealing {10} damage and building Static
+					'''
+			}
+
+			OrnsteinLegs: {
+				DisplayName: Ornstein's Leggings
+				Tooltip:
+					'''
+					Increases movement speed by {0}%
+					Increases melee speed by {1}%
+					'''
+			}
+
+			RoyalKnightBreastplate: {
+				DisplayName: Royal Knight Breastplate
+				Tooltip: ""
+			}
+
+			RoyalKnightGreaves: {
+				DisplayName: Royal Knight Greaves
+				Tooltip: ""
+			}
+
+			GreatBlackKnightArmor: {
+				Tooltip: ""
+				DisplayName: Great Black Knight Armor
+			}
+
+			GreatBlackKnightGreaves: {
+				Tooltip: ""
+				DisplayName: Great Black Knight Greaves
+			}
+
+			BarrowWightPhantomHelm: {
+				Tooltip: ""
+				DisplayName: Barrow Wight Phantom Helm
+			}
+
+			BarrowWightPhantomArmor: {
+				Tooltip: ""
+				DisplayName: Barrow Wight Phantom Armor
+			}
+
+			BarrowWightPhantomShroud: {
+				Tooltip: ""
+				DisplayName: Barrow Wight Phantom Shroud
+			}
+
+			ForgottenWarriorHelm: {
+				Tooltip: ""
+				DisplayName: Forgotten Warrior Helm
+			}
+
+			ForgottenWarriorArmor: {
+				Tooltip: ""
+				DisplayName: Forgotten Warrior Armor
+			}
+
+			ForgottenWarriorGreaves: {
+				Tooltip: ""
+				DisplayName: Forgotten Warrior Greaves
+			}
+
+			ForgottenKnightHelmet: {
+				Tooltip: ""
+				DisplayName: Forgotten Knight Helmet
+			}
+
+			ForgottenKnightBreastplate: {
+				Tooltip: ""
+				DisplayName: Forgotten Knight Breastplate
+			}
+
+			ForgottenKnightGreaves: {
+				Tooltip: ""
+				DisplayName: Forgotten Knight Greaves
+			}
+
+			RedKnightBreastplate: {
+				Tooltip: ""
+				DisplayName: Red Knight Breastplate
 			}
 
 			EnemyDebugTome: {
@@ -9105,6 +9881,11 @@ Mods: {
 				Tooltip: ""
 			}
 
+			EnemyDworcStaff: {
+				DisplayName: Dworc Staff
+				Tooltip: ""
+			}
+
 			EnemyForgottenRuneAxe: {
 				DisplayName: Enemy Forgotten Rune Axe
 				Tooltip: ""
@@ -9122,6 +9903,11 @@ Mods: {
 
 			EnemyTaintedBow: {
 				DisplayName: Enemy Tainted Bow
+				Tooltip: ""
+			}
+
+			EnemyRoyalThunderBow: {
+				DisplayName: Royal Thunder Bow
 				Tooltip: ""
 			}
 
@@ -9174,7 +9960,14 @@ Mods: {
 
 			ArtoriasGreatsword: {
 				DisplayName: Artorias Greatsword
-				Tooltip: ""
+				Tooltip:
+					'''
+					Tap: alternating overhead and rising cuts, opening opposite your last swing; each cut throws an abyss crescent for {0} mana
+					Crescents deal {1}% of the sword's damage as magic damage and fly {2} tiles
+					The combo ends in a slam for {3}x damage
+					Hold: forward-flip leap toward the cursor (up to {4} tiles) that slams for {6}x damage
+					and sends a wall of abyss smoke {5} tiles along the ground each way
+					'''
 			}
 
 			EnemyGreatFireAxe: {
@@ -9186,7 +9979,7 @@ Mods: {
 				DisplayName: Sword Of Lord Gwyn
 				Tooltip:
 					'''
-					Tap left click: slash with the First Flame
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Tap right click: spend {1} mana on a rising flame dash
 					Hold right click: spend {2} mana on Cinder Nova
@@ -9195,7 +9988,7 @@ Mods: {
 				AdvancedTooltip:
 					'''
 					Aim at or above a point 3 tiles below your feet:
-					Tap left click: slash with the First Flame
+					Tap left click: a First Flame combo of alternating cuts whose final slam calls down lightning
 					Hold left click: spend {0} mana on a Sunlight Spear
 					Aim more than 3 tiles below your feet:
 					Tap left click: spend {1} mana on a rising flame dash
@@ -9233,14 +10026,64 @@ Mods: {
 				DisplayName: Oolacile Cultist Staff
 			}
 
+			QuaraHydromancerStaff: {
+				Tooltip: ""
+				DisplayName: Quara Hydromancer Staff
+			}
+
+			BlackBlade: {
+				Tooltip: ""
+				DisplayName: Black Blade
+			}
+
+			GreatRoyalHalberd: {
+				Tooltip: ""
+				DisplayName: Great Royal Halberd
+			}
+
+			OrnsteinSpear: {
+				DisplayName: Ornstein's Spear
+				Tooltip: Hold right-click to charge Dragonslayer's Lunge and release to thrust toward the cursor. At full charge, the first enemy hit conducts a bolt down the thrust line.
+			}
+
+			SmoughGreatHammer: {
+				DisplayName: Smough's Great Hammer
+				Tooltip: Right-click for Executioner's Quake. Hop into a slam from the ground or plunge from midair, sending shockwaves along the floor.
+			}
+
 			EnemyBeastClaw: {
 				Tooltip: ""
 				DisplayName: Beast Claw
 			}
 
+			EnemyBarrowWightSword: {
+				Tooltip: ""
+				DisplayName: Barrow Wight Sword
+			}
+
+			EnemyDarkrootHalberd: {
+				Tooltip: ""
+				DisplayName: Darkroot Halberd
+			}
+
+			EnemyIceSkeletonSpear: {
+				Tooltip: ""
+				DisplayName: Rime Spear
+			}
+
+			EnemySkeletonCutlass: {
+				Tooltip: ""
+				DisplayName: Skeleton Cutlass
+			}
+
 			EnemyOccultistStaff: {
 				Tooltip: ""
 				DisplayName: Grand Oolacile Staff
+			}
+
+			EnemyOolacileAcolyteStaff: {
+				Tooltip: ""
+				DisplayName: Acolyte's Oolacile Staff
 			}
 
 			EnemyOccultistAxe: {
@@ -9263,6 +10106,16 @@ Mods: {
 				Tooltip: ""
 			}
 
+			TaurusGreathammer: {
+				DisplayName: Taurus Greathammer
+				Tooltip: ""
+			}
+
+			TaurusEarthTridentProp: {
+				DisplayName: Earth Trident
+				Tooltip: ""
+			}
+
 			EnemyProximityMine: {
 				DisplayName: Enemy Proximity Mine
 				Tooltip: ""
@@ -9275,6 +10128,108 @@ Mods: {
 
 			EnemyPoisonBow: {
 				DisplayName: Enemy Poison Bow
+				Tooltip: ""
+			}
+
+			CaiusPyreItem: {
+				DisplayName: Caius' Pyre
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a fiery rift which shoots fireballs towards your cursor
+					'''
+			}
+
+			GaleforceItem: {
+				DisplayName: Galeforce
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a magical bow which shoots magic arrows towards your cursor
+					'''
+			}
+
+			TyphoonItem: {
+				DisplayName: Typhoon
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a hellish bow which shoots flaming arrows towards your cursor
+					Applies hellfire
+					'''
+			}
+
+			XBowItem: {
+				DisplayName: X-Bow
+				Tooltip:
+					'''
+					{$CommonItemTooltip.Sentry}
+					Summons a mystical crossbow which shoots piercing arrows towards your cursor at high speed
+					'''
+			}
+
+			ShadowSickleItem: {
+				DisplayName: Shadow Sickle
+				Tooltip:
+					'''
+					A curiously simple but deadly weapon - its short reach seems to be its only weakness.
+					Uses mana to slash hit enemys multiple times over time on-hit
+					Refunds {0} mana on-hit with the Sickle
+					'''
+			}
+
+			BeetleIdolItem: {
+				DisplayName: Beetle Idol
+				Tooltip:
+					'''
+					Summons a Samurai Beetle to fight for you
+					Performs a [c/FF00FF:Shocking Slash] every third hit
+					There can only be one
+					'''
+			}
+
+			EnemyEphemeralAxe: {
+				DisplayName: Enemy Ephemeral Axe
+				Tooltip: ""
+			}
+
+			EnemyAbyssalNinjaSword: {
+				DisplayName: Enemy Abyssal Ninja Sword
+				Tooltip: ""
+			}
+
+			EnemyGildedIronSpear: {
+				Tooltip: ""
+				DisplayName: Enemy Gilded Iron Spear
+			}
+
+			EnemyGildedDualBladedAxe: {
+				Tooltip: ""
+				DisplayName: Enemy Gilded Dual Bladed Axe
+			}
+
+			EnemyTibianAmazonKnife: {
+				DisplayName: Enemy Tibian Amazon Knife
+				Tooltip: ""
+			}
+
+			EnemyManhunterBow: {
+				DisplayName: Enemy Manhunter Bow
+				Tooltip: ""
+			}
+
+			EnemyAssassinBow: {
+				DisplayName: Enemy Assassin Bow
+				Tooltip: ""
+			}
+
+			EnemyRedCloudHunterBow: {
+				DisplayName: Enemy Red Cloud Hunter Bow
+				Tooltip: ""
+			}
+
+			EnemyWarlockStaff: {
+				DisplayName: Enemy Warlock Staff
 				Tooltip: ""
 			}
 		}
@@ -9368,9 +10323,11 @@ Mods: {
 				Description:
 					'''
 					The Abyss has taken hold of you.
-					Weakened: reduced melee damage, speed, and defense
 					Defense reduced by 30%
-					Torn Wings: you cannot fly
+					8% reduced attack speed
+					Reduced movement speed
+					Torn Wings: disables wing flight, gliding, rocket boots, and jump boosts
+					Prevents positive life regeneration
 					'''
 			}
 
@@ -9386,7 +10343,7 @@ Mods: {
 
 			CowardsAffliction: {
 				DisplayName: Coward's Affliction
-				Description: Do not flee from the Lord of Cinder.
+				Description: Do not flee from the Lord of the First Dawn.
 			}
 
 			Crippled: {
@@ -9470,6 +10427,15 @@ Mods: {
 					'''
 			}
 
+			MadnessMarked: {
+				DisplayName: Marked by Madness
+				Description:
+					'''
+					Your Madness no longer fades.
+					The acolyte's Madness builds up faster.
+					'''
+			}
+
 			Madness: {
 				DisplayName: Madness
 				Description:
@@ -9548,7 +10514,8 @@ Mods: {
 				Description:
 					'''
 					A dark force is dampening your speed
-					and ability to float or defy gravity here.
+					and ability to fly, ride or defy gravity here.
+					Disables fall damage immunity from equipment.
 					'''
 			}
 
@@ -9557,9 +10524,14 @@ Mods: {
 				Description: You cannot fly!
 			}
 
+			TreacherousTerrain: {
+				DisplayName: Treacherous Terrain
+				Description: The footing here is too treacherous to ride a mount
+			}
+
 			DestinedDeath: {
 				DisplayName: Destined Death
-				Description: Maximum life is reduced by 10% on hit (up to 60%). At 60% loss, you gain 15% increased damage.
+				Description: Maximum life is reduced by {0}% on hit (up to {1}%). At {1}% loss, you gain {2}% increased damage.
 			}
 
 			Tired: {
@@ -9862,7 +10834,7 @@ Mods: {
 
 			NuclearMushroomCooldown: {
 				DisplayName: Nuclear Mushroom Cooldown
-				Description: You cannot deploy another Nuclear Mushroom until this runs out
+				Description: A Nuclear Mushroom is recharging
 			}
 
 			RadioactiveBlindingLaserCooldown: {
@@ -10210,6 +11182,16 @@ Mods: {
 				Description: Your next melee or magic hit releases an abyss counterattack
 			}
 
+			OrnsteinStatic: {
+				DisplayName: Static
+				Description: "{0} stacks: your next magic cast deals {1}% more damage and fires lightning arcs"
+			}
+
+			OrnsteinChargedEdge: {
+				DisplayName: Charged Edge
+				Description: Your next melee hit fires a lightning bolt
+			}
+
 			ArtoriasAbysswalkerPoiseCooldown: {
 				DisplayName: Abyssal Poise Cooldown
 				Description: Dodge through danger again after this runs out
@@ -10329,12 +11311,12 @@ Mods: {
 				Description: The Archer Spirit will shoot down your enemies!
 			}
 
-			MimicTearBuff: {
+			SoulMimicBuff: {
 				DisplayName: Soul Mimic
 				Description: Your reflection fights beside you until its time runs out. Cancel this to dismiss it.
 			}
 
-			MimicTearCooldown: {
+			SoulMimicCooldown: {
 				DisplayName: Soul Mimic Recovery
 				Description: The Mimic Rune cannot be used again yet. Clears on death.
 			}
@@ -10454,12 +11436,13 @@ Mods: {
 			}
 
 			TrinityBuff: {
-				DisplayName: Natural Defenses
-				Description:
-					'''
-					Your natural defenses have been activated!
-					Grants +4 life regeneration, 12 defense, 15% damage and 20% movement speed 
-					'''
+				DisplayName: Spellblade
+				Description: Your crit chance is greatly increased
+			}
+
+			TrinityCooldown: {
+				DisplayName: Spellblade Cooldown
+				Description: You can't proc Spellblade again until this runs out
 			}
 
 			WitchkingScreamCooldown: {
@@ -10610,11 +11593,67 @@ Mods: {
 				DisplayName: Null Sprite Dissolving
 				Description: Mods.tsorcRevamp.Buffs.NullSpriteDissolving.Description
 			}
+
+			LiandrysTormentBurn: {
+				DisplayName: Liandrys Torment Burn
+				Description: Mods.tsorcRevamp.Buffs.LiandrysTormentBurn.Description
+			}
+
+			StormrazorEnergy: {
+				DisplayName: Stormrazor Energy
+				Description: Charging up for an energized strike!
+			}
+
+			StormrazorEnergized: {
+				DisplayName: Stormrazor Energized
+				Description: Charged up!
+			}
+
+			BlackCleaverDebuff: {
+				DisplayName: Black Cleaver Debuff
+				Description: Mods.tsorcRevamp.Buffs.BlackCleaverDebuff.Description
+			}
+
+			ImperialMandateCooldown: {
+				DisplayName: Imperial Mandate Cooldown
+				Description: Mods.tsorcRevamp.Buffs.ImperialMandateCooldown.Description
+			}
+
+			ImperialMandateMark: {
+				DisplayName: Imperial Mandate Mark
+				Description: Mods.tsorcRevamp.Buffs.ImperialMandateMark.Description
+			}
 		}
 
 		Projectiles: {
+			OrnsteinLightning.DisplayName: Ornstein Lightning
+			DworcFlask.DisplayName: Dworc Flask
+			DworcFireFlame.DisplayName: Lingering Fire
+			DworcStormRing.DisplayName: Abyss Storm
+			DworcPoisonBolt.DisplayName: Poison Strike
+			DworcPoisonImpact.DisplayName: Poison Strike
+			DworcAbyssBolt.DisplayName: Abyss Poison Strike
+			DworcAbyssImpact.DisplayName: Abyss Poison Strike
+			DworcSpiritExplosion.DisplayName: Spirit Rupture
+			DworcSuppressionBurst.DisplayName: Azure Suppression
+			DarkmoonShadowShot.DisplayName: Darkmoon Shadow Shot
+			DarkmoonCrescent.DisplayName: Moonlight Crescent
+			DarkmoonVigilController.DisplayName: Darkmoon Vigil
+			DarkmoonSliver.DisplayName: Moonlight Sliver
+			DarkrootThorn.DisplayName: Darkroot Thorn
+			DarkrootRoot.DisplayName: Darkroot Root
+			DarkrootVine.DisplayName: Briar Lash
+			IceSkeletonRimeShard.DisplayName: Lance of Rime
+			DarkmoonExplosion.DisplayName: Moonlight Rupture
 			BloodKnightArrow.DisplayName: Blood Arrow
 			BloodKnightDarkHarvestWhip.DisplayName: Dark Harvest
+			WitchkingVoidFlame.DisplayName: Void Flame
+			WitchkingFireWall.DisplayName: Hellfire Wall
+			WitchkingDeathSkull.DisplayName: Unmaking Skull
+			WitchkingMaceWhip.DisplayName: Witchking's Mace
+			WitchkingGrondMace.DisplayName: Grond's Toll
+			WitchkingVoidShockwave.DisplayName: Void Shockwave
+			WitchkingBlightMire.DisplayName: Blight Mire
 			BloodKnightRainArrow.DisplayName: Blood Rain Arrow
 			PurpleSkull.DisplayName: Purple Skull
 			VesselGravityWell.DisplayName: Gravity Well
@@ -10766,6 +11805,10 @@ Mods: {
 			IllusionVenomField.DisplayName: Venom Field
 			IllusionVenomOrb.DisplayName: Venom Orb
 			ArchdeaconGlintStar.DisplayName: Glintstone Star
+			MantassinGlintNail.DisplayName: Glintstone Nail
+			MantassinMicrocosm.DisplayName: Fleeting Microcosm
+			MantassinCherishingArc.DisplayName: Cherishing Light
+			MantassinRune.DisplayName: Glintstone Sigil
 			ArchdeaconGlintOrb.DisplayName: Glintstone Orb
 			ArchdeaconGlintSnare.DisplayName: Glintstone Snare
 			ArchdeaconGlintRune.DisplayName: Glintstone Rune
@@ -10829,6 +11872,7 @@ Mods: {
 			DarkLaser.DisplayName: DefaultLaserName
 			DarkLaserHost.DisplayName: Dark Laser Host
 			EnemyAttraidiesBlackFire.DisplayName: Black Fire
+			AttraidiesCurseBolt.DisplayName: Curse of Attraidies
 			EnemyBlackFireVisual.DisplayName: Black Fire
 			EnemySuddenDeathBall.DisplayName: Sudden Death Ball
 			EnemySuddenDeathStrike.DisplayName: Sudden Death Strike
@@ -11100,6 +12144,9 @@ Mods: {
 			FetidExhaust.DisplayName: Noxious Jet
 			ForgottenPearlSpearProj.DisplayName: Forgotten Pearl Spear
 			PilgrimSpontoonProj.DisplayName: Forgotten Polearm
+			OrnsteinSpearProj.DisplayName: Ornstein's Spear
+			OrnsteinSpearLunge.DisplayName: Dragonslayer's Lunge
+			SmoughHammerSlam.DisplayName: Executioner's Quake
 			ForgottenRadiantLanceProj.DisplayName: Forgotten Radiant Lance
 			GaeBolgProj.DisplayName: Gae Bolg
 			HiRyuuSpearProj.DisplayName: Hi Ryuu Spear
@@ -11197,6 +12244,7 @@ Mods: {
 			HomingMissileTrail.DisplayName: Homing Missile Trail
 			ExplosionFlash.DisplayName: Explosion Flash
 			FriendlyIonBomb.DisplayName: Friendly Ion Bomb
+			MythrilReflectedShot.DisplayName: Reflected Shot
 			PhotonicDownpourProjectile.DisplayName: Photonic Downpour
 			PhotonicDownpourLaser.DisplayName: Photonic Downpour Laser
 			LanceBeamLaser.DisplayName: Lance Beam Laser
@@ -11384,7 +12432,6 @@ Mods: {
 			SanguinisProj.DisplayName: Sanguinis Proj
 			DragoonRocket.DisplayName: Dragoon Rocket
 			Ichorthrower.DisplayName: Ichorthrower
-			SoulCoinProj.DisplayName: Soul Coin Proj
 			ChaosBlackFire.DisplayName: Chaos Black Fire
 			ChaosBlackFirelet.DisplayName: Chaos Black Firelet
 			ChaosFireball.DisplayName: Chaos Fireball
@@ -11472,6 +12519,16 @@ Mods: {
 			OccultistStarBig.DisplayName: Occultist Star Big
 			OccultistAbyssRing.DisplayName: Abyss Ring
 			OccultistMagicRing.DisplayName: Occultist Magic Ring
+			AcolyteShriekRing.DisplayName: Shriek
+			AbyssDropPortal.DisplayName: Abyss Portal
+			MadnessMote.DisplayName: Madness Mote
+			MadnessEye.DisplayName: Eye of Madness
+			MadnessScrawl.DisplayName: Mad Scrawl
+			AcolyteHallucination.DisplayName: Hallucination
+			MarkGlyph.DisplayName: Mark of Madness
+			MirrorEcho.DisplayName: Mirror of Madness
+			MadnessThread.DisplayName: Cat's Cradle
+			MadnessClock.DisplayName: Madness Clock
 			AbyssTeleportBlast.DisplayName: Abyss Teleport Blast
 			AbyssTeleportMistLinger.DisplayName: Abyss Teleport Mist Linger
 			AbyssSlash.DisplayName: Abyss Slash
@@ -11487,6 +12544,7 @@ Mods: {
 			GreatBlackKnightFlailEmber.DisplayName: Great Black Knight Flail Ember
 			GreatBlackKnightFlailEmberLingering.DisplayName: Great Black Knight Flail Ember Lingering
 			GreatBlackKnightFlailPulse.DisplayName: Great Black Knight Flail Pulse
+			GreatBlackKnightSkyfallBurst.DisplayName: Great Black Knight Skyfall Burst
 			ArtoriasAbyssTendril.DisplayName: Artorias Abyss Tendril
 			HomingAbyssOrb.DisplayName: Homing Abyss Orb
 			ArtoriasChargeNova.DisplayName: Artorias Charge Nova
@@ -11559,7 +12617,8 @@ Mods: {
 			EnemyAncientBloodLanceProj.DisplayName: Enemy Ancient Blood Lance Proj
 			RunePrison.DisplayName: Rune Prison
 			FirstRunePrison.DisplayName: First Rune Prison
-			CinderRainDrop.DisplayName: Cinder Rain Drop
+			DestinedDeathBreath.DisplayName: Destined Death Breath
+			BlightBreath.DisplayName: Blight Breath
 			KahlrunFarronDart.DisplayName: Kahlrun Farron Dart
 			OolacileFireBolt.DisplayName: Oolacile Fire Bolt
 			OolacileFirePatch.DisplayName: Oolacile Fire Patch
@@ -11616,6 +12675,9 @@ Mods: {
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
 			UlhanUnholyArrow.DisplayName: Unholy Arrow
+			RoyalThunderArrow.DisplayName: Thunder Arrow
+			WardenLightning.DisplayName: Warden Lightning
+			ObsidianGuardArrow.DisplayName: Obsidian Arrow
 			UlhanExplosiveArrow.DisplayName: Explosive Arrow
 			UlhanFireExplosion.DisplayName: Fire Explosion
 			AncientFireAxeThrown.DisplayName: Owl's Greataxe Thrown
@@ -11641,6 +12703,15 @@ Mods: {
 			DeathSpawnWarning.DisplayName: Death Spawn Warning
 			DeathLaserWarning.DisplayName: Death Laser Warning
 			CrystalKnightFrostWave.DisplayName: Crystal Knight Frost Wave
+			TaurusQuakeShockwave.DisplayName: Quake Shockwave
+			TaurusJavelin.DisplayName: Earth Trident
+			TaurusSandCloud.DisplayName: Sand Cloud
+			TaurusBrimstoneFlame.DisplayName: Brimstone Flame
+			BlaiddSuppressionFlask.DisplayName: Azure Suppression Flask
+			BlaiddSuppressionBurst.DisplayName: Azure Suppression
+			BlaiddDiscardedShield.DisplayName: Discarded Shield
+			BlaiddMoonWave.DisplayName: Moonlight Wave
+			BlaiddMoonlightCrescent.DisplayName: Moonlight Crescent
 			ProximityMine.DisplayName: Proximity Mine
 			ProximityMineExplosion.DisplayName: Proximity Mine Explosion
 			ProximityMineRocket.DisplayName: Proximity Mine Rocket
@@ -11648,10 +12719,88 @@ Mods: {
 			EssenceThiefDelivery.DisplayName: Essence Thief Delivery
 			StardustDelivery.DisplayName: Stardust Delivery
 			ShadowNinjaPoisonArrow.DisplayName: Shadow Ninja Poison Arrow
+			ShadowNinjaPoisonCloud.DisplayName: Shadow Ninja Poison Cloud
+			ShadowSmokeCaltrop.DisplayName: Smoke Caltrop
+			ShadowSmokeCloud.DisplayName: Smoke Cloud
 			ShadowNinjaStarProj.DisplayName: Shadow Ninja Star Proj
 			ArtoriasCurseCloud.DisplayName: Artorias Curse Cloud
 			MiasmaBreathPuff.DisplayName: Miasma Breath Puff
 			EaterToxicOoze.DisplayName: Eater Toxic Ooze
+			MinotaurFloorFlame.DisplayName: Minotaur Floor Flame
+			DarkrootImpAcid.DisplayName: Darkroot Imp Acid
+			DarkrootImpAcidPool.DisplayName: Darkroot Imp Acid Pool
+			DarkrootImpBreath.DisplayName: Darkroot Imp Breath
+			DemonBreath.DisplayName: Demon Breath
+			DemonFireball.DisplayName: Demon Fireball
+			DemonSpiritSkull.DisplayName: Demon Spirit Skull
+			DemonDoomOrb.DisplayName: Doom Orb
+			DemonGraspWave.DisplayName: Death's Grasp
+			PinwheelBallOfFire.DisplayName: Pinwheel Ball Of Fire
+			AshenLordDragon.DisplayName: Ashen Lord Dragon
+			ASOL13Dragon.DisplayName: A S O L13 Dragon
+			BarrowWightBreath.DisplayName: Barrow Wight Breath
+			BarrowWightStrike.DisplayName: Barrow Wight Strike
+			CursedDragonPoisonFlask.DisplayName: Cursed Dragon Poison Flask
+			ForgottenKnightSpear.DisplayName: Forgotten Knight Spear
+			ForgottenWarriorRecallAxe.DisplayName: Forgotten Warrior Recall Axe
+			GigasFrostBurst.DisplayName: Gigas Frost Burst
+			AbyssalMeridianSeam.DisplayName: Abyssal Meridian Seam
+			AbyssalNinjaBolt.DisplayName: Abyssal Ninja Bolt
+			AbyssalNinjaStar.DisplayName: Abyssal Ninja Star
+			DarkrootHalberdHeld.DisplayName: Darkroot Halberd Held
+			GreatswordSwing.DisplayName: Greatsword Swing
+			ArtoriasGreatswordLeap.DisplayName: Artorias Greatsword Leap
+			ArtoriasGreatswordSlash.DisplayName: Artorias Greatsword Slash
+			ArtoriasGreatswordSmokeWave.DisplayName: Artorias Greatsword Smoke Wave
+			SwordOfLordGwynSlamLightning.DisplayName: Sword Of Lord Gwyn Slam Lightning
+			DarkrootHalberdRoot.DisplayName: Darkroot Halberd Root
+			ArtoriasBladeSlash.DisplayName: Artorias Blade Slash
+			DarkmoonDeathCloud.DisplayName: Darkmoon Death Cloud
+			IceGigasHalberdHitbox.DisplayName: Ice Gigas Halberd Hitbox
+			HellkiteDrakeAttack.DisplayName: Hellkite Drake Attack
+			HellkiteDrakeDeathFlame.DisplayName: Destined Death Flame
+			HellkiteDrakeFlame.DisplayName: Hellkite Drake Flame
+			HellkiteDrakeGust.DisplayName: Hellkite Drake Wing Gust
+			HellkiteDrakeDestinedBreath.DisplayName: Destined Death Breath
+			HellkiteDrakeLongDestinedBreath.DisplayName: Destined Death Breath
+			HellkiteDrakeLongFlame.DisplayName: Hellkite Drake Flame
+			TibianAmazonKnife.DisplayName: Tibian Amazon Knife
+			TibianValkyrieJavelin.DisplayName: Tibian Valkyrie Javelin
+			WitchkingHellfireFlame.DisplayName: Witchking Hellfire Flame
+			KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
+			BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
+			LurkerClawStrike.DisplayName: Lurker Claw Strike
+			BoneChaplainBlightFlame.DisplayName: Bone Chaplain Blight Flame
+			ElementalEruptionColumn.DisplayName: Elemental Eruption Column
+			ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
+			BoneRemains.DisplayName: Bone Remains
+			DestroyerHullLaser.DisplayName: Destroyer Hull Laser
+			DestroyerMawBeam.DisplayName: Destroyer Maw Beam
+			DestroyerRepairBeam.DisplayName: Destroyer Repair Beam
+			DestroyerProbeExplosion.DisplayName: Destroyer Probe Explosion
+			CinderRainController.DisplayName: Cinder Rain Controller
+			CinderShadowRift.DisplayName: Cinder Shadow Rift
+			PrimordialEruptionBomb.DisplayName: Primordial Eruption Bomb
+			LargeConsecratedLight.DisplayName: Large Consecrated Light
+			WarlockBeam.DisplayName: Warlock Beam
+			WarlockBurst.DisplayName: Warlock Burst
+			WarlockCollapsePoint.DisplayName: Warlock Collapse Point
+			WarlockCrossfireBeam.DisplayName: Warlock Crossfire Beam
+			WarlockCrossfirePrism.DisplayName: Warlock Crossfire Prism
+			WarlockEnergyBolt.DisplayName: Warlock Energy Bolt
+			WarlockOrreryOrb.DisplayName: Warlock Orrery Orb
+			WarlockWallPrism.DisplayName: Warlock Wall Prism
+			WarlockWardRing.DisplayName: Warlock Ward Ring
+			ManHunterLobArrow.DisplayName: Man Hunter Lob Arrow
+			GwynLordsVerdictBlade.DisplayName: Gwyn Lords Verdict Blade
+			GrandOolacileAxeController.DisplayName: Grand Oolacile Axe Controller
+			GrandOolacileDarkBolt.DisplayName: Grand Oolacile Dark Bolt
+			GrandOolacileDestinedBurst.DisplayName: Grand Oolacile Destined Burst
+			GrandOolacileFlameColumn.DisplayName: Grand Oolacile Flame Column
+			GrandOolacileFlameField.DisplayName: Grand Oolacile Flame Field
+			GrandOolacileJudgmentWave.DisplayName: Grand Oolacile Judgment Wave
+			GrandOolacileThrownAxe.DisplayName: Grand Oolacile Thrown Axe
+			GrandOolacileJudgmentBlaze.DisplayName: Grand Oolacile Judgment Blaze
 		}
 
 		NPCs: {
@@ -11666,6 +12815,9 @@ Mods: {
 			Mechanic.GivenName: Asha
 			Wizard.GivenName: Araz
 			TheDestroyer.HullGlow: The Destroyer's hull begins glowing fiercely...
+			TheDestroyerOriginal.DisplayName: Old Destroyer
+			TheDestroyerOriginalBody.DisplayName: Old Destroyer
+			TheDestroyerOriginalTail.DisplayName: Old Destroyer
 			SkeletronPrime.Warning: WARNING: Laser power redirected......
 
 			AncestralSpirit: {
@@ -11680,7 +12832,12 @@ Mods: {
 			}
 
 			PillarsForcefield: A great celestial barrier collapses somewhere in the sky......
-			SHM.BossDeath: The portal to The Abyss widens, and its denizens grow stronger...
+
+			SHM: {
+				BossDeath: The portal to the Abyss narrows, bringing the world closer to dawn, but the foes who remain grow stronger.
+				OptionalBossDeath: The portal to the Abyss narrows, but the foes who remain grow stronger.
+			}
+
 			Player.AllDied: All players have been defeated at least once!
 			BossOutOfRange: begins to lose interst, return to the fight!
 			SolarPillar: The Solar Pillar returns to full strength...
@@ -11702,14 +12859,14 @@ Mods: {
 			LunaticCultist.DespawnHandler: The cultist has gained another sacrifice...
 			MoonLord.DespawnHandler: Nobody remains to impede the Moon Lord's wrath...
 
-			AncientDemon: {
+			DefiledDemon: {
 				DisplayName: Defiled Demon of the Forgotten City
-				DespawnHandler: The defiled Demon of the Forgotten City decides to show you mercy ...
+				DespawnHandler: The Defiled Demon of the Forgotten City decides to show you mercy ...
 			}
 
-			AncientOolacileDemon: {
-				DisplayName: Ancient Oolacile Demon
-				DespawnHandler: The ancient Oolacile Demon decides to show mercy ...
+			OolacileDemon: {
+				DisplayName: Oolacile Demon
+				DespawnHandler: The Oolacile Demon decides to show mercy ...
 			}
 
 			Cataluminance: {
@@ -11827,6 +12984,20 @@ Mods: {
 				HallowDarker: Darkness spreads through the Hallowed Caves...
 			}
 
+			OldDarkShogunMask.DisplayName: Old Mindflayer King
+			OldAttraidiesShield.DisplayName: Old Attraidies Shield
+			OldDamnedSoul.DisplayName: Old Damned Soul
+			OldDarkDragonMask.DisplayName: Old Attraidies, Second Form
+			OldShadowDragonHead.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody2.DisplayName: Old Shadow Dragon
+			OldShadowDragonBody3.DisplayName: Old Shadow Dragon
+			OldShadowDragonLegs.DisplayName: Old Shadow Dragon
+			OldShadowDragonTail.DisplayName: Old Shadow Dragon
+			OldOkiku.DisplayName: Old Mindflayer Illusion
+			OldBrokenOkiku.DisplayName: Old Mindflayer Illusion
+			OldAttraidies.DisplayName: Old Attraidies
+			OldAttraidiesFragment.DisplayName: Old Attraidies Fragment
 			AttraidiesFragment.DisplayName: Attraidies Fragment
 			AttraidiesMimic.DisplayName: Attraidies
 			DamnedSoul.DisplayName: Damned Soul
@@ -11950,9 +13121,15 @@ Mods: {
 				Condition: Drops if his wyvern is dead
 			}
 
+			PrimeGwyn: {
+				DisplayName: Prime Gwyn, the First Lord
+				SecondPhase: The First Flame answers its lord!
+				FirstDawn: The first dawn breaks over a world without life!
+			}
+
 			Gwyn: {
-				DisplayName: Gwyn, Lord of Cinder
-				DespawnHandler: You have fallen before the Lord of Cinder...
+				DisplayName: Gwyn, Lord of the First Dawn
+				DespawnHandler: You have fallen before the Lord of the First Dawn...
 				SwordShattered: Gwyn's sword has shattered! Gwyn's defenses have been weakened!
 				RainOfDeath: Gwyn's rain of death has strengthened!
 				Fury: Gwyn's fury increases!
@@ -12073,6 +13250,13 @@ Mods: {
 
 			AbyssPortal.DisplayName: Abyssal Fissure
 			AttraidiesApparition.DisplayName: Attraidies
+			AttraidiesArenaActor.DisplayName: Attraidies
+			StoryAshaActor.DisplayName: Asha
+			StoryArazActor.DisplayName: Araz
+			StoryWispActor.DisplayName: Wisp
+			StoryPropActor.DisplayName: Story Prop
+			StoryElijahActor.DisplayName: Elijah
+			StoryMiakodaActor.DisplayName: Miakoda
 			Faraam.DisplayName: Faraam
 			GwynBossVision.DisplayName: Gwyn Boss Vision
 			LeonhardPhase1.DisplayName: ???
@@ -12100,6 +13284,7 @@ Mods: {
 				Draw: You hear a bow draw...
 				Steps: You hear foot steps...
 				Hunt: You are being hunted...
+				Vanished: The assassin has vanished...
 			}
 
 			AttraidiesIllusion: {
@@ -12122,13 +13307,13 @@ Mods: {
 			DemonElemental.DisplayName: Demon Elemental
 			DemonSpirit.DisplayName: Demon Spirit
 			DestroyerLaserProbe.DisplayName: Laser Probe
-			DiscipleOfAttraidies.DisplayName: Disciple of Attraidies
 			DungeonMage.DisplayName: Dungeon Mage
 			Dunlending.DisplayName: Dunlending
 			DworcFleshhunter.DisplayName: Dworc Fleshhunter
 			DworcVenomsniper.DisplayName: Dworc Venomsniper
 			DworcAlchemist.DisplayName: Dworc Alchemist
 			DworcVoodooShaman.DisplayName: Dworc Shaman
+			ShamanSpirit.DisplayName: Shaman Spirit
 			FirebombHollow.DisplayName: Firebomb Hollow
 			FireLurker.DisplayName: Fire Lurker
 			GaibonFireball.DisplayName: Gaibon Fireball
@@ -12162,17 +13347,23 @@ Mods: {
 			LothricKnight.DisplayName: Lothric Knight
 			LothricSpearKnight.DisplayName: Lothric Spear Knight
 			ManHunter.DisplayName: Man Hunter
+
+			ObsidianGuard: {
+				DisplayName: Obsidian Guard
+				BestiaryDescription: Temple sentries clad in volcanic glass. Their patient bowstrings fall silent only when an intruder comes within spear's reach.
+			}
+
 			MarilithSeeker.DisplayName: Marilith Seeker
 			MarilithSpiritTwin.DisplayName: Marilith Spirit Twin
 			MutantToad.DisplayName: Mutant Toad
 			Necromancer.DisplayName: Necromancer
-			FallenNecromancer.DisplayName: Fallen Necromancer
+			BoneChaplain.DisplayName: Bone Chaplain
 			ObsidianJellyfish.DisplayName: Obsidian Jellyfish
 			Parasprite.DisplayName: Parasprite
 			Locust.DisplayName: Locust
 			PrimeLaserProbe.DisplayName: Laser Probe
 			QuaraHydromancer.DisplayName: Quara Hydromancer
-			RedCloudHunter.DisplayName: Red Cloud Hunter
+			RedCloudHunter.DisplayName: Cloud Hunter
 
 			RedKnight: {
 				DisplayName: Red Knight
@@ -12188,8 +13379,8 @@ Mods: {
 			StoneGolem.DisplayName: Stone Golem
 			DworcAbysswalker.DisplayName: Dworc Abysswalker
 
-			AncientDemonOfTheAbyss: {
-				DisplayName: Great Demon of the Abyss
+			AncientDemon: {
+				DisplayName: Ancient Demon of the Abyss
 				DespawnHandler: A demon of the abyss has absorbed you into its flesh ...
 			}
 
@@ -12211,50 +13402,46 @@ Mods: {
 				DespawnHandler: The Great Red Knight stands victorious...
 			}
 
-			GreatRedKnightTest.DisplayName: Great Red Knight Test
-			GuardianCorruptor.DisplayName: Guardian Corruptor
-			HydrisElemental.DisplayName: Hydris Elemental
-			HydrisNecromancer.DisplayName: Hydris Necromancer
+			Elemental.DisplayName: Elemental
+			ElementalNecromancer.DisplayName: Elemental Necromancer
 			IceSkeleton.DisplayName: Adept of Seath
+			SkeletonWarrior.DisplayName: Skeleton Warrior
 
-			KnightOfGwyn: {
-				DisplayName: Knight of Gwyn
-				DespawnHandler: Knight of Gwyn stands victorious...
-				Protection: Knight of Gwyn is protected by a magical barrier. Only the Shaman Elder knows how to break it!
-				Open: Knight of Gwyn opens the abyss!
+			RoyalKnight: {
+				DisplayName: Royal Knight
+				DespawnHandler: The Royal Knight stands victorious...
 			}
 
+			Ornstein: {
+				DisplayName: Dragon Slayer Ornstein
+				DespawnHandler: Ornstein returns to his watch...
+			}
+
+			Smough: {
+				DisplayName: Executioner Smough
+				DespawnHandler: Smough drags his hammer back into the dark...
+			}
+
+			CutsceneGolem.DisplayName: "{$NPCName.Golem}"
 			ManOfWar.DisplayName: Man of War
-			OolacileDemon.DisplayName: Ephemeral Oolacile Demon
+			DarkrootImp.DisplayName: Darkroot Imp
+			DarkrootSentry.DisplayName: Darkroot Sentry
 
-			OolacileKnight: {
-				DisplayName: Oolacile Knight
-				Intent: An ancient warrior has come to banish you from existence...
-				Hunt: You are being hunted...
-			}
-
-			OolacileSorcerer: {
-				DisplayName: Oolacile Sorcerer
-				Defeated: The sorcerer of Oolacile has been defeated...
+			OolacileAcolyte: {
+				DisplayName: Acolyte of Grand Occultist
+				Defeated: The acolyte of the Grand Occultist has been defeated...
 			}
 
 			SerpentOfTheAbyssBody.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssHead.DisplayName: Serpent of the Abyss
 			SerpentOfTheAbyssTail.DisplayName: Serpent of the Abyss
-			SlograII.DisplayName: Slogra
-
-			TaurusKnight: {
-				DisplayName: Taurus Knight
-				Nearby: A Taurus Knight is close...
-			}
-
+			Caliche.DisplayName: Caliche, the Disgraced Champion
 			Tetsujin.DisplayName: Tetsujin
 			VampireBat.DisplayName: Vampire Bat
 			TibianAmazon.DisplayName: Tibian Amazon
 			TibianValkyrie.DisplayName: Tibian Valkyrie
 			Tonberry.DisplayName: Tonberry
 			UndeadCaster.DisplayName: Undead Caster
-			ViciousSpit.DisplayName: Vicious Spit
 
 			Warlock: {
 				DisplayName: Warlock
@@ -12385,7 +13572,7 @@ Mods: {
 				Luck: Good luck.
 				Gift: If you ever need more, you may roast some over the flames of a bonfire. Farewell.
 				BotCGift: Bearer of the Curse, these lifegems and Starlight Shards will no doubt prove to be invaluable on your journey. Farewell.
-				UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems — may they sustain you on the road ahead. Farewell.
+				UnkindledGift: Unkindled one, your fire still smolders. Take these lifegems and Starlight Shards — may they sustain you on the road ahead. Farewell.
 				EasterEgg: Bearer... Seek... Seek... Lest...
 				button1: Bless
 				button2v1: Seek knowledge...
@@ -13007,14 +14194,16 @@ Mods: {
 					The ancestors tell me that the portal can be closed, but
 					you must first defeat the 3 Elemental Fiends: one of
 					[c/2f8ee0:Water], one of [c/fcff00:Earth], and one of [c/f53d0a:Fire].
-					You must also defeat 4 more lords of the Abyss:
-					[c/ffbf00:Artorias], [c/00ffd4:Blight], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					You must also defeat 3 more lords of the Abyss:
+					[c/ffbf00:Artorias], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					The fall of each of these six lords will bring the world closer to dawn, but the curse will remain until Gwyn is defeated.
+					The [c/ffbf00:Covenant of Artorias] can protect you from the curse, but it cannot dispel the world's darkness.
 					'''
 				AdvModeSHMQuote2:
 					'''
 					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
 					to face the final lord, who has tended the flame of the Abyss since the world began.
-					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of the First Dawn].
 					Gwyn's old tomb is buried somewhere beneath the Western sea, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
@@ -13022,7 +14211,7 @@ Mods: {
 					'''
 					My heart despairs for you, Red. It will not be easy. But if you succeed, you will have the strength
 					to face the final lord, who has tended the flame of the Abyss since the world began.
-					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of Cinder].
+					To the ancestors, he was known as [c/ff6618:Gwyn, Lord of the First Dawn].
 					Gwyn's old tomb is buried somewhere in the Eternal Reef, but he will surely kill you
 					if you have not yet gathered the strength obtained from the other lords of the Abyss.
 					'''
@@ -13055,16 +14244,19 @@ Mods: {
 				AdvModeSHMQuote5: Good luck, Red.
 				SandboxSHMQuote1:
 					'''
-					To close the seal to the Abyss, you must defeat the 5 lords of The Abyss:
-					[c/ffbf00:Artorias], [c/00ffd4:The Blight], [c/aa00ff:The Wyvern Mage Shadow],
-					[c/fcff00:Chaos], and [c/18ffe2:Seath the Scaleless].
-					With a lord soul from each of these beings you will be able to summon the final lord -
-					[c/ff6618:Gwyn, Lord of Cinder].
+					To close the seal to the Abyss, you must defeat the 6 lords of The Abyss:
+					[c/2f8ee0:Water Fiend Kraken], [c/fcff00:Earth Fiend Lich], [c/f53d0a:Fire Fiend Marilith],
+					[c/ffbf00:Artorias], [c/aa00ff:The Wyvern Mage Shadow], and [c/18ffe2:Seath the Scaleless].
+					Combine 1 Kraken Flesh, 1 Lich Bone, 1 Fiery Scale, 1 Soul of the Ghost Wyvern,
+					1 Soul of Artorias, and 1 Bequeathed Lord Soul Shard at a Demon Altar to craft the [c/ffbf00:Lost Scroll of Gwyn].
+					Use the scroll to summon [c/ff6618:Gwyn, Lord of the First Dawn].
+					Each of these six lords you defeat will bring the world closer to dawn. Only Gwyn's death can end the curse.
+					The [c/ffbf00:Covenant of Artorias] can protect you from the curse, but it cannot dispel the world's darkness.
 					'''
 				SandboxSHMQuote2:
 					'''
 					To craft the summoning item for each
-					lord, you will need to return to eight familiar places
+					lord, you will need to return to seven familiar places
 					and collect a unique item from an enemy you will find there:
 					[c/424bf5:The Western Ocean], [c/888888:The Underground], [c/b942f5:The Corruption],
 					[c/42f56c:The Jungle], [c/6642f5:The Dungeon], [c/eb4034:The Underworld], and [c/42f2f5:The Eastern Ocean].
@@ -13074,7 +14266,7 @@ Mods: {
 					Defeating [c/ffbf00:Artorias], however, will not be possible without a little knowledge.
 					To find him, you must seek out the [c/383838:Witchking] and restore the dark ring he drops.
 					He will sometimes appear at night, and more often deeper\nunderground, especially in dungeons.
-					The most assured way to find him, however, is to enter the Abyss yourself using the Covanent of Artorias ring.
+					The Covenant of Artorias offers protection from the curse while you search.
 					'''
 				SandboxSHMQuote4:
 					'''
@@ -13317,14 +14509,15 @@ Mods: {
 			StuddedLeatherWarrior.DisplayName: Studded Leather Warrior
 			Blaidd.DisplayName: Blaidd
 			ShadowNinja.DisplayName: Shadow Ninja
+			ShadowNinjaShade.DisplayName: Shadow Self
 			BlackNinja.DisplayName: Black Ninja
 			Kahlrun.DisplayName: Kahlrun of Falstrók
 			TibianValkyrieSmart.DisplayName: Tibian Valkyrie Smart
 			TibianValkyrieFighter2.DisplayName: Tibian Valkyrie Fighter2
-			RedKnightTest.DisplayName: Red Knight Test
 			TibianValkyrieNav.DisplayName: Tibian Valkyrie Nav
 			TibianValkyrieSmart3.DisplayName: Tibian Valkyrie Smart3
 			DemonLordApocalypse.DisplayName: Demon Lord Apocalypse
+			DemonLordPrototype.DisplayName: Demon Lord Prototype
 			Eland.DisplayName: Eland
 			EvilEye.DisplayName: Evil Eye
 			Gigas.DisplayName: Holy Gigas
@@ -13337,13 +14530,18 @@ Mods: {
 
 			VesselWatcher.DisplayName: Strange Eye
 			Hydra.DisplayName: Hydra
-			IceGigas.DisplayName: Ice Gigas
+
+			IceGigas: {
+				DisplayName: Ice Gigas
+				DespawnHandler: The Ice Gigas sinks back into the frozen silence...
+			}
+
 			FrozenGigasStatue.DisplayName: Frozen Echo
 			SpellboundGhoul.DisplayName: Spellbound Ghoul
 			Massacre.DisplayName: Juggernaut
 			MinotaurMage.DisplayName: Minotaur Mage
 			Plaguesmith.DisplayName: Plaguesmith
-			QuaraMantassin.DisplayName: Quara Mantassin
+			Mantassin.DisplayName: Mantassin
 			QuaraPincher.DisplayName: Quara Pincher
 			QuaraClutchCrab.DisplayName: Clutch Crab
 			Sahagin.DisplayName: Sahagin
@@ -13453,9 +14651,17 @@ Mods: {
 			DeathReaper.DisplayName: Death Servant
 			DeathSickleWeapon.DisplayName: Death Sickle Weapon
 			MimicSwapTestDummy.DisplayName: Mimic Swap Test Dummy
-			MimicTear.DisplayName: Soul Mimic
+			SoulMimic.DisplayName: Soul Mimic
 			MirrorInvaderTestDummy.DisplayName: Hostile Mirror Test Dummy
+			MirrorInvader.DisplayName: Soul Mimic
 			HostileMirrorPuppetNPC.DeathMessage: "{0} was cut down by {1}."
+
+			HellkiteDrake: {
+				DisplayName: Hellkite Drake
+				DespawnHandler: The Hellkite Drake claims its prey...
+			}
+
+			HellkiteDrakeHitbox.DisplayName: Hellkite Drake
 		}
 
 		Prefixes: {
@@ -13487,6 +14693,7 @@ Mods: {
 			BonfireCheckpoint.MapEntry: Bonfire Checkpoint
 			FlameJet.MapEntry: Flame Jet
 			SoapstoneTile.MapEntry: Soapstone Message
+			VoidLavaMapTile.MapEntry: Void
 			SoulSkellyL.MapEntry: Soul Skelly
 			SoulSkellyR.MapEntry: Soul Skelly
 			SoulSkellyWall1.MapEntry: Soul Skelly
@@ -13502,6 +14709,8 @@ Mods: {
 			}
 
 			SoulSkullR.MapEntry: Soul Skull
+			BraveWarriorSoulSkull.MapEntry: Brave Warrior Soul Skull
+			ProudKnightSoulSkull.MapEntry: Proud Knight Soul Skull
 		}
 
 		Keybinds: {
@@ -13645,16 +14854,6 @@ Mods: {
 						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
 						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
 						Turn off to keep the original health values. Defaults to On.
-						'''
-				}
-
-				NewSpawnBalance: {
-					Label: New Enemy Spawns
-					Tooltip:
-						'''
-						Uses the central spawn registry (Systems/EnemySpawns) for the enemies listed in it instead of each enemy's own spawn rules.
-						Overall spawn frequency is still capped by player health. Created as a toggle for A/B comparisons.
-						Turn off to keep the original spawn rules. Defaults to On.
 						'''
 				}
 
@@ -14192,7 +15391,7 @@ Mods: {
 
 			SlayerHellkiteDragon: {
 				FriendlyName: Dragon Slayer
-				Description: Defeat the Hellkite Dragon, a fiery beast of the abyss roaming above the village.
+				Description: Defeat the Hellkite Drake, a fiery beast hunting near the Village.
 			}
 
 			SlayerKraken: {

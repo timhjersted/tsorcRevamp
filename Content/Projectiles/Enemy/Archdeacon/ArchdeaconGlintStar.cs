@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Projectiles.Enemy.Triad;
+using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 {
@@ -321,6 +322,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 
         public override bool PreDraw(ref Color lightColor)
         {
+            if (!GlintLegacyCommand.UseLegacySprites)
+            {
+                DrawShader();
+                return false;
+            }
+
             float opacity = 1f - Projectile.alpha / 255f;
             Vector2 drawCenter = Projectile.Center - Main.screenPosition;
             // Alpha 0 = additive glow.
@@ -372,6 +379,36 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Archdeacon
 
             Main.EntitySpriteDraw(cometTexture, drawCenter, null, glow, Projectile.rotation, headOrigin, cometScale, SpriteEffects.None, 0);
             return false;
+        }
+
+        // Default look: the ArchdeaconGlintComet shader. Hanging = a bare glint (tail 0) that grows in over 12t and
+        // flares over the last 8t before launch; in flight the tail grows to full over the first 10t.
+        private void DrawShader()
+        {
+            float opacity = 1f - Projectile.alpha / 255f;
+            float rotation = Projectile.velocity.SafeNormalize(Vector2.UnitY).ToRotation();
+            float height = 24f;
+            if (IsComet)
+            {
+                height = 40f;
+            }
+
+            if (!Launched)
+            {
+                float growth = MathHelper.Clamp(Age / 12f, 0f, 1f);
+                float twinkle = 0.85f + 0.15f * (float)Math.Sin(Age * 0.5f);
+                float flare = 1f;
+                if (HangTicks - Age < 8)
+                {
+                    flare = 1.4f;
+                }
+
+                EnemyVFX.DrawArchdeaconGlintComet(Projectile.Center, rotation, height * growth * twinkle * flare, 0f, growth);
+                return;
+            }
+
+            float tailLength = MathHelper.Clamp(FlightAge / 10f, 0f, 1f);
+            EnemyVFX.DrawArchdeaconGlintComet(Projectile.Center, rotation, height, tailLength, opacity);
         }
 
         public override void OnKill(int timeLeft)

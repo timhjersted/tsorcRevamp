@@ -16,7 +16,12 @@ using tsorcRevamp.NPCs.Enemies.GhostFighter;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Friendly;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Enemies.Archer;
+using tsorcRevamp.NPCs.Enemies.Hollow;
+using tsorcRevamp.NPCs.Enemies.Knight;
+using tsorcRevamp.NPCs.Enemies.Lothric;
+using tsorcRevamp.NPCs.Bosses.Demons;
 
 namespace tsorcRevamp.Banners
 {
@@ -71,6 +76,23 @@ namespace tsorcRevamp.Banners
             yield return new Item(dropItem);
         }
 
+        public override void SetDrawPositions(int tileX, int tileY, ref int width, ref int offsetY, ref int height,
+            ref short tileFrameX, ref short tileFrameY)
+        {
+            // Obsidian Guard permanently shares the armored-wraith banner art, with its own placement style and buff.
+            // Remap only the draw frame; the stored style 92 still resolves the Guard's item and NPC type.
+            if (tileFrameX / 18 == 92)
+            {
+                tileFrameX = 2 * 18;
+            }
+
+            // PLACEHOLDER: the Skeleton Warrior (style 93) has no column in the sheet yet; draw the Ice Skeleton's (75).
+            if (tileFrameX / 18 == 93)
+            {
+                tileFrameX = 75 * 18;
+            }
+        }
+
         public override void NearbyEffects(int i, int j, bool closer)
         {
             if (closer)
@@ -97,13 +119,6 @@ namespace tsorcRevamp.Banners
 
 
     #region Banner Classes
-
-    public class GuardianCorruptorBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 0;
-
-        public override int NPCType => ModContent.NPCType<GuardianCorruptor>();
-    }
 
     public class CloudBatBanner : EnemyBanner
     {
@@ -259,12 +274,8 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<DemonSpirit>();
     }
 
-    public class DiscipleOfAttraidiesBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 24;
-
-        public override int NPCType => ModContent.NPCType<DiscipleOfAttraidies>();
-    }
+    // PlaceStyle 24 was the Disciple of Attraidies banner (enemy deleted 2026-10-21). Left unused on purpose: placed
+    // copies in old worlds stay inert, and no other banner's style shifts.
 
     public class DungeonMageBanner : EnemyBanner
     {
@@ -378,11 +389,12 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<Necromancer>();
     }
 
-    public class FallenNecromancerBanner : EnemyBanner
+    [LegacyName("FallenNecromancerBanner")]
+    public class BoneChaplainBanner : EnemyBanner
     {
         public override int PlaceStyle => 46;
 
-        public override int NPCType => ModContent.NPCType<FallenNecromancer>();
+        public override int NPCType => ModContent.NPCType<BoneChaplain>();
     }
 
     public class ParaspriteBanner : EnemyBanner
@@ -494,7 +506,7 @@ namespace tsorcRevamp.Banners
     {
         public override int PlaceStyle => 62;
 
-        public override int NPCType => ModContent.NPCType<AncientDemonOfTheAbyss>();
+        public override int NPCType => ModContent.NPCType<AncientDemon>();
     }
 
     public class BarrowWightNemesisBanner : EnemyBanner
@@ -560,18 +572,18 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<HollowWarrior>();
     }
 
-    public class HydrisElementalBanner : EnemyBanner
+    public class ElementalBanner : EnemyBanner
     {
         public override int PlaceStyle => 73;
 
-        public override int NPCType => ModContent.NPCType<HydrisElemental>();
+        public override int NPCType => ModContent.NPCType<Elemental>();
     }
 
-    public class HydrisNecromancerBanner : EnemyBanner
+    public class ElementalNecromancerBanner : EnemyBanner
     {
         public override int PlaceStyle => 74;
 
-        public override int NPCType => ModContent.NPCType<HydrisNecromancer>();
+        public override int NPCType => ModContent.NPCType<ElementalNecromancer>();
     }
 
     public class IceSkeletonBanner : EnemyBanner
@@ -588,39 +600,35 @@ namespace tsorcRevamp.Banners
         public override int NPCType => ModContent.NPCType<ManOfWar>();
     }
 
-    public class OolacileDemonBanner : EnemyBanner
+    [LegacyName("OolacileDemonBanner")]
+    public class DarkrootImpBanner : EnemyBanner
     {
         public override int PlaceStyle => 77;
 
-        public override int NPCType => ModContent.NPCType<OolacileDemon>();
+        public override int NPCType => ModContent.NPCType<DarkrootImp>();
     }
 
-    public class OolacileKnightBanner : EnemyBanner
+    [LegacyName("OolacileKnightBanner")]
+    public class DarkrootSentryBanner : EnemyBanner
     {
         public override int PlaceStyle => 78;
 
-        public override int NPCType => ModContent.NPCType<OolacileKnight>();
+        public override int NPCType => ModContent.NPCType<DarkrootSentry>();
     }
 
-    public class OolacileSorcererBanner : EnemyBanner
+    [LegacyName("OolacileSorcererBanner")]
+    public class OolacileAcolyteBanner : EnemyBanner
     {
         public override int PlaceStyle => 79;
 
-        public override int NPCType => ModContent.NPCType<OolacileSorcerer>();
-    }
-
-    public class SlograIIBanner : EnemyBanner
-    {
-        public override int PlaceStyle => 80;
-
-        public override int NPCType => ModContent.NPCType<SlograII>();
+        public override int NPCType => ModContent.NPCType<OolacileAcolyte>();
     }
 
     public class TaurusKnightBanner : EnemyBanner
     {
         public override int PlaceStyle => 81;
 
-        public override int NPCType => ModContent.NPCType<TaurusKnight>();
+        public override int NPCType => ModContent.NPCType<Caliche>();
     }
 
     public class TetsujinBanner : EnemyBanner
@@ -691,6 +699,24 @@ namespace tsorcRevamp.Banners
         public override int PlaceStyle => 91;
 
         public override int NPCType => ModContent.NPCType<RingedKnight>();
+    }
+
+    public class ObsidianGuardBanner : EnemyBanner
+    {
+        public override int PlaceStyle => 92;
+
+        public override int NPCType => ModContent.NPCType<ObsidianGuard>();
+
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(ArmoredWraithBanner));
+    }
+
+    // PLACEHOLDER sprite (copy of IceSkeletonBanner) - replace with bespoke art, and give style 93 its own column in
+    // EnemyBannerTile.png (until then the placed banner borrows the Ice Skeleton's; see SetDrawPositions).
+    public class SkeletonWarriorBanner : EnemyBanner
+    {
+        public override int PlaceStyle => 93;
+
+        public override int NPCType => ModContent.NPCType<SkeletonWarrior>();
     }
     #endregion
 }

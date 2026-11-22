@@ -32,6 +32,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Minotaur
             {
                 Projectile.velocity.Y = 12f;
             }
+            Projectile.rotation = Projectile.velocity.ToRotation();
+            if (Main.dedServ) return;
 
             int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0f, 0f, 80, default, 1.3f);
             Main.dust[dust].noGravity = true;
@@ -51,12 +53,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Minotaur
 
         public override void OnKill(int timeLeft)
         {
+            if (Main.dedServ) return;
             for (int i = 0; i < 8; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(2.5f, 2.5f);
                 int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, vel.X, vel.Y - 1f, 80, default, 1.2f);
                 Main.dust[dust].noGravity = true;
             }
+        }
+
+        public override bool PreDraw(ref Color lightColor) => false;
+        public override void PostDraw(Color lightColor)
+        {
+            MinotaurFireVFX.Draw(Projectile.Center, new Vector2(18f, 26f),
+                MathHelper.Clamp(Projectile.timeLeft / 15f, 0f, 1f) * 0.8f,
+                Projectile.identity * 0.17f, Projectile.rotation - MathHelper.PiOver2);
         }
     }
 }

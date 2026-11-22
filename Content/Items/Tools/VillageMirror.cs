@@ -32,9 +32,9 @@ namespace tsorcRevamp.Content.Items.Tools
         }
         public override bool CanUseItem(Player player)
         {
-            // BotC-only restriction (mirrors GreatMagicMirror): the Curse blocks free-form teleport home.
-            // Unkindled and Classic both use this normally.
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            // Souls-mode restriction: the Curse blocks free-form teleport home for Unkindled and BotC alike.
+            // Stricter than GreatMagicMirror, which stays BotC-only. Classic uses this normally.
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 if (player.whoAmI == Main.myPlayer)
                 {
@@ -61,7 +61,7 @@ namespace tsorcRevamp.Content.Items.Tools
         }
         public override void UseStyle(Player player, Rectangle rectangle)
         {
-            // BotC bypass dropped — they can't reach this branch anymore (CanUseItem blocks them above).
+            // Souls-mode bypass dropped — they can't reach this branch anymore (CanUseItem blocks them above).
             // Only the warp-location sanity check matters here.
             if (checkWarpLocation(player.GetModPlayer<tsorcRevampPlayer>().townWarpX, player.GetModPlayer<tsorcRevampPlayer>().townWarpY))
             {
@@ -119,9 +119,9 @@ namespace tsorcRevamp.Content.Items.Tools
 
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            // BotC tier: warn the player the mirror won't function for them (same message as GreatMagicMirror).
+            // Souls modes: warn the player the mirror won't function for them (same message as GreatMagicMirror).
             Player player = Main.LocalPlayer;
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
             {
                 int ttindex = tooltips.FindLastIndex(t => t.Mod == "Terraria" && t.Name != "ItemName" && t.Name != "Social" && t.Name != "SocialDesc" && !t.Name.Contains("Prefix"));
                 if (ttindex != -1)

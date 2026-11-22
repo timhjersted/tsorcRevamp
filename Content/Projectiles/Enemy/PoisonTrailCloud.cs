@@ -12,7 +12,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     {
         // Dust-only (hide = true below) - reuse the shared invisible placeholder rather than new art,
         // same convention as ArtoriasAbyssBlast.cs/BlindingPulse.cs.
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public const int MinSize = 48; // 3 tiles
 

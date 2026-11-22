@@ -9,8 +9,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 {
     /// <summary>
-    /// Large custom flaming scythe used by Death's weak attack 2. Only the vanilla
-    /// FlamingScythe texture is borrowed; movement, collision and glow are custom.
+    /// Cinder Rend: eight 318x252 frames of an open fire wisp, spinning about its frame center.
+    /// The native-size texture replaces the old 3x-enlarged art without changing collision or motion.
     /// </summary>
     class DeathFlamingScythe : ModProjectile
     {
@@ -28,14 +28,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         const int StraightFadeOutTicks = 10;
         const int StraightLifetimeTicks = 8 * 60;
         const float ThrowDistance = 800f;
+        internal const int AnimationFrames = 8;
+        internal const int AnimationFrameTicks = 6;
+        internal const float TextureResolutionScale = 3f;
+
+        // Keep the original 80% bounds of the 106 × 84 vanilla sprite available on dedicated servers.
+        internal const int HitboxWidth = 84;
+        internal const int HitboxHeight = 67;
 
         MovementMode Mode => (MovementMode)(int)Projectile.ai[2];
 
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.FlamingScythe;
-        // Placeholder sprite: vanilla Flaming Scythe projectile art.
-
         public override void SetStaticDefaults()
         {
+            Main.projFrames[Type] = AnimationFrames;
+
             // The visual is much larger than the reduced hitbox, so keep it drawing near screen edges.
             ProjectileID.Sets.DrawScreenCheckFluff[Type] = 500;
         }
@@ -43,9 +49,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         public override void SetDefaults()
         {
             Projectile.scale = 3f;
-            Texture2D texture = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-            Projectile.width = (int)(texture.Width * 0.8f);
-            Projectile.height = (int)(texture.Height * 0.8f);
+            Projectile.width = HitboxWidth;
+            Projectile.height = HitboxHeight;
             Projectile.hostile = true;
             Projectile.friendly = false;
             Projectile.tileCollide = false;
@@ -77,11 +82,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         public override void AI()
         {
             Projectile.localAI[0]++;
+
             if (Projectile.localAI[0] % 30f == 0f)
             {
                 Projectile.netUpdate = true;
             }
+
             int age = (int)Projectile.localAI[0];
+            Projectile.frame = age / AnimationFrameTicks % AnimationFrames;
+
             if (Mode == MovementMode.Straight)
             {
                 TickStraight(age);
@@ -93,14 +102,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 
             if (age <= OutboundTicks)
             {
-                float t = age / (float)OutboundTicks;
-                float eased = 1f - (1f - t) * (1f - t);
+                float progress = age / (float)OutboundTicks;
+                float eased = 1f - (1f - progress) * (1f - progress);
                 Projectile.Center = origin + direction * ThrowDistance * eased;
             }
             else if (age <= OutboundTicks + ReturnTicks)
             {
-                float t = (age - OutboundTicks) / (float)ReturnTicks;
-                float eased = t * t;
+                float progress = (age - OutboundTicks) / (float)ReturnTicks;
+                float eased = progress * progress;
                 Projectile.Center = origin + direction * ThrowDistance * (1f - eased);
             }
             else
@@ -143,19 +152,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[ProjectileID.FlamingScythe].Value;
-            Vector2 origin = texture.Size() / 2f;
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
+            Rectangle frame = texture.Frame(1, AnimationFrames, 0, Projectile.frame);
+            Vector2 origin = frame.Size() / 2f;
+            float drawScale = Projectile.scale / TextureResolutionScale;
             Vector2 position = Projectile.Center - Main.screenPosition;
             Color glowColor = new Color(255, 120, 35);
             float opacity = 1f - Projectile.alpha / 255f;
 
             for (int i = 3; i >= 1; i--)
             {
-                float scale = Projectile.scale * (1f + i * 0.18f);
+                float scale = drawScale * (1f + i * 0.18f);
                 Main.EntitySpriteDraw(
                     texture,
                     position,
-                    null,
+                    frame,
                     glowColor * (0.10f * i * opacity),
                     Projectile.rotation,
                     origin,
@@ -167,11 +178,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
             Main.EntitySpriteDraw(
                 texture,
                 position,
-                null,
+                frame,
                 lightColor * opacity,
                 Projectile.rotation,
                 origin,
-                Projectile.scale,
+                drawScale,
                 SpriteEffects.None,
                 0f);
             return false;

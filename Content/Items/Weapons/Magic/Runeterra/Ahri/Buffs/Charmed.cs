@@ -1,6 +1,7 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri.Bases;
 using tsorcRevamp.NPCs;
 using tsorcRevamp.Systems;
 
@@ -17,7 +18,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri.Buffs
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.GetGlobalNPC<tsorcRevampGlobalNPC>().Sundered = true;
+            npc.GetGlobalNPC<RuneterraOrbNPC>().Sundered = true;
             Dust.NewDust(npc.VisualPosition, npc.width, npc.height, DustID.PinkFairy, 0, 0, 0, default, 0.5f);
         }
     }

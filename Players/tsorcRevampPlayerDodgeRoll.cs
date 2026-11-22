@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
@@ -15,9 +16,13 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Textures;
 using Freezethrower = tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers.Freezethrower;
 using GhostStepItem = tsorcRevamp.Content.Items.Accessories.Mobility.GhostStep;
+using OrnsteinBody = tsorcRevamp.Content.Items.Armor.Enemy.OrnsteinBody;
+using OrnsteinSpellbladePlayer = tsorcRevamp.Content.Items.Armor.Enemy.OrnsteinSpellbladePlayer;
 
 namespace tsorcRevamp
 {
@@ -86,10 +91,19 @@ namespace tsorcRevamp
         /// spikes from becoming the roll's base speed. Replaces the old SoulsModeMobility global run cap.</summary>
         public const float RollMaxCarrySpeed = 10f;
 
+        // Include a fraction of a pixel so discrete movement clears a three-tile ledge.
+        private const float DodgeFlipHeight = 3f * 16f + 0.25f;
+        private const float DodgeDownwardBoost = 3f;
+        private const int DodgeGroundProbeDepth = 2;
+
         private bool perfectDodgeTriggered;
+        private sbyte wantedDodgerollVerticalDir;
+        private sbyte syncedDodgerollFacing;
+        private Vector2 syncedDodgerollVelocity;
+        private bool dodgeLiftStartedOnGround;
 
         /// <summary>Stamina one dodge roll costs this player right now: 30 base, x1.25 while Tired, less the Artorias
-        /// Abysswalker reduction. Shared with the Mimic Tear, whose rolls are charged to its own pool at this rate.</summary>
+        /// Abysswalker reduction. Shared with the Soul Mimic, whose rolls are charged to its own pool at this rate.</summary>
         public float RollStaminaCost
         {
             get
@@ -134,6 +148,11 @@ namespace tsorcRevamp
         public float dodgeDuration = 0.37f;
         /// <summary>Latched at roll start so unequipping mid-dash can't change the profile halfway through.</summary>
         public bool dodgeIsGhostStep;
+        /// <summary>Latched at roll start: this Ghost Step dash was paid for as Ornstein's Lightning Dash. The owner decides and sends it.</summary>
+        public bool dodgeIsLightningDash;
+        /// <summary>Latched at roll start: tiles this dash travels beyond the roll it replaces.</summary>
+        private int dodgeDashExtraTiles;
+        private bool syncedDodgerollLightning;
         /// <summary>Frames of trail left to draw. Held at GhostAfterglowFrames while dashing, then counts down so the echoes fade.</summary>
         public int ghostStepAfterglow;
 
@@ -146,6 +165,8 @@ namespace tsorcRevamp
 
         // Full-speed dash covers this fraction of the duration; the rest is the stop / momentum hand-off (still invulnerable).
         private const float GhostDashFraction = 0.8f;
+        private const int LightningDashStartDust = 18;
+        private const int LightningDashEndDust = 10;
         // Per-frame velocity multiplier for the "no key held" stop. 0.3 leaves under 1px/frame after 3 frames.
         private const float GhostStopDecay = 0.3f;
         private const float GhostStopSnapSpeed = 0.5f;
@@ -257,16 +278,24 @@ namespace tsorcRevamp
                 tsorcRevampStaminaPlayer modPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
                 var arcanePlayer = Player.GetModPlayer<ArcaneSorceryPlayer>();
                 
-                
                 float mult = Player.GetModPlayer<tsorcRevampPlayer>().WeaponStaminaMult(Player.HeldItem);
                 int scaledUseAnimation = (int)(item.useAnimation / Player.GetAttackSpeed(item.DamageType));
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
 
-                if (Player.HasBuff(ModContent.BuffType<ArcaneSorcery>()) &&
-                    modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
+                // The held halberd pays once per committed strike/rotation; ItemCheck must not charge its channel too.
+                if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>())
+                    return true;
+
+                if ((Player.HasBuff(ModContent.BuffType<ArcaneSorcery>())) &&
+                    ((modPlayer.staminaResourceCurrent <= modPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f)
+                    || Player.HasBuff(ModContent.BuffType<ManaBurn>())))
                 {
+                    if (!Player.HasBuff(ModContent.BuffType<ManaBurn>()) && Player.itemAnimation > 0)
+                    {
+                        Player.AddBuff(ModContent.BuffType<ManaBurn>(), ManaBurn.Duration * 60);
+                    }
                     return true;
                 }
 
@@ -315,7 +344,7 @@ namespace tsorcRevamp
                     return true;
                 }
 
-                else if (item.damage <= 1 || item.type == ModContent.ItemType<GlaiveBeam>() || item.type == ModContent.ItemType<ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
+                else if (item.damage <= 1 || item.type == ModContent.ItemType<ArcaneLightrifle>() || item.DamageType == DamageClass.Summon)
                 {
                     return true;
                 }
@@ -354,15 +383,71 @@ namespace tsorcRevamp
             return true;
         }
 
-        public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false)
+        public void QueueDodgeroll(float wantTime, sbyte direction, bool force = false, sbyte verticalDirection = 0)
         {
             wantsDodgerollTimer = wantTime;
             wantedDodgerollDir = direction;
+            wantedDodgerollVerticalDir = verticalDirection;
 
             if (force)
             {
                 dodgeCooldown = 0;
             }
+        }
+
+        internal static void ReadDodgerollPacket(BinaryReader reader, int sender)
+        {
+            bool fromServer = reader.ReadBoolean();
+            int playerIndex = reader.ReadByte();
+            bool isServer = Main.netMode == NetmodeID.Server;
+
+            if (playerIndex >= Main.maxPlayers || (isServer && (fromServer || playerIndex != sender)) || (!isServer && !fromServer))
+            {
+                return;
+            }
+
+            sbyte horizontalDirection = reader.ReadSByte();
+            sbyte verticalDirection = reader.ReadSByte();
+            sbyte facing = reader.ReadSByte();
+            Vector2 startVelocity = reader.ReadVector2();
+            bool lightningDash = reader.ReadBoolean();
+
+            if (horizontalDirection < -1 || horizontalDirection > 1 || verticalDirection < -1 || verticalDirection > 1
+                || (horizontalDirection == 0 && verticalDirection == 0) || (facing != -1 && facing != 1)
+                || !float.IsFinite(startVelocity.X) || !float.IsFinite(startVelocity.Y))
+            {
+                return;
+            }
+
+            Player player = Main.player[playerIndex];
+            tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+            modPlayer.wantedDodgerollDir = horizontalDirection;
+            modPlayer.wantedDodgerollVerticalDir = verticalDirection;
+            modPlayer.syncedDodgerollFacing = facing;
+            modPlayer.syncedDodgerollVelocity = startVelocity;
+            modPlayer.syncedDodgerollLightning = lightningDash;
+            modPlayer.forceDodgeroll = true;
+
+            if (isServer)
+            {
+                modPlayer.SendDodgerollPacket(horizontalDirection, verticalDirection, facing, startVelocity, lightningDash);
+            }
+        }
+
+        private void SendDodgerollPacket(sbyte horizontalDirection, sbyte verticalDirection, sbyte facing, Vector2 startVelocity, bool lightningDash)
+        {
+            bool isServer = Main.netMode == NetmodeID.Server;
+            ModPacket rollPacket = Mod.GetPacket();
+            rollPacket.Write(tsorcPacketID.SyncPlayerDodgeroll);
+            rollPacket.Write(isServer);
+            rollPacket.Write((byte)Player.whoAmI);
+            rollPacket.Write(horizontalDirection);
+            rollPacket.Write(verticalDirection);
+            rollPacket.Write(facing);
+            rollPacket.WriteVector2(startVelocity);
+            rollPacket.Write(lightningDash);
+            int ignoredClient = isServer ? Player.whoAmI : -1;
+            rollPacket.Send(ignoreClient: ignoredClient);
         }
 
         /// <summary>
@@ -479,15 +564,21 @@ namespace tsorcRevamp
         {
             bool isLocal = Player.whoAmI == Main.myPlayer;
 
-            if (isLocal && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
+            if (isLocal && !Systems.CutsceneSystem.FreezesPlayers && wantsDodgerollTimer <= 0f && tsorcRevamp.DodgerollKey.JustPressed && !Player.mouseInterface
                 // > 0, not > 30: the roll now follows the same rule as every other action — you may act with any
                 // stamina at all, and overdrawing banks the shortfall as debt you must repay before acting again.
                 // The old hard gate was the odd one out, and it made the roll silently unresponsive rather than
                 // letting the player make the risky call themselves.
-                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 0 && !Player.GetModPlayer<tsorcRevampEstusPlayer>().IsDrinking && !Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking
+                && Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent > 0 && !Player.GetModPlayer<EstusFlaskPlayer>().IsDrinking && !Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking
                 && !Player.HasBuff(BuffID.Frozen) && !Player.HasBuff(ModContent.BuffType<Hold>()) && !Player.HasBuff(BuffID.Stoned) && !Player.HasBuff(ModContent.BuffType<Stiff>()))
             {
-                QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player));
+                sbyte verticalInput = 0;
+                if (Player.controlUp != Player.controlDown)
+                {
+                    verticalInput = Player.controlUp ? (sbyte)-1 : (sbyte)1;
+                }
+
+                QueueDodgeroll(0.25f, (sbyte)KeyDirection(Player), verticalDirection: verticalInput);
             }
 
             if (!forceDodgeroll)
@@ -518,14 +609,80 @@ namespace tsorcRevamp
                 }
             }
 
+            Vector2 startVelocity = Player.velocity;
+            if (forceDodgeroll)
+            {
+                startVelocity = syncedDodgerollVelocity;
+                Player.velocity = startVelocity;
+            }
+
+            bool onGround = startVelocity.Y == 0f;
+            // Ornstein's set turns every roll into the Ghost Step dash. The lightning is paid for by the owner, whose
+            // mana is the only exact value, and other clients follow the flag in the roll packet.
+            OrnsteinSpellbladePlayer spellblade = Player.GetModPlayer<OrnsteinSpellbladePlayer>();
+            dodgeIsLightningDash = false;
+
+            if (forceDodgeroll)
+            {
+                dodgeIsLightningDash = syncedDodgerollLightning;
+            }
+            else if (spellblade.SetActive && Player.statMana >= OrnsteinBody.LightningDashManaCost)
+            {
+                SpendManaOnHit(OrnsteinBody.LightningDashManaCost);
+                dodgeIsLightningDash = true;
+            }
+
+            dodgeIsGhostStep = GhostStepEquipped || spellblade.SetActive || dodgeIsLightningDash;
+            sbyte verticalDirection = wantedDodgerollVerticalDir;
+            dodgeDirection = wantedDodgerollDir;
+            dodgeDirectionVisual = (sbyte)Player.direction;
+
+            if (forceDodgeroll)
+            {
+                dodgeDirectionVisual = syncedDodgerollFacing;
+            }
+            else
+            {
+                if (dodgeIsGhostStep)
+                {
+                    verticalDirection = 0;
+                }
+                else if (verticalDirection > 0 && startVelocity.Y * Player.gravDir >= 0f)
+                {
+                    // Check for support at the feet so zero velocity at a jump apex still allows a dive.
+                    Vector2 footProbe = Player.BottomLeft;
+                    if (Player.gravDir < 0f)
+                    {
+                        footProbe = Player.TopLeft - new Vector2(0f, DodgeGroundProbeDepth);
+                    }
+
+                    if (Collision.SolidCollision(footProbe, Player.width, DodgeGroundProbeDepth, acceptTopSurfaces: true))
+                    {
+                        verticalDirection = 0;
+                    }
+                }
+
+                if (verticalDirection == 0 && dodgeDirection == 0)
+                {
+                    dodgeDirection = dodgeDirectionVisual;
+                }
+                else if (verticalDirection != 0 && dodgeDirection != 0)
+                {
+                    dodgeDirectionVisual = dodgeDirection;
+                }
+            }
+
+            dodgeLiftStartedOnGround = verticalDirection < 0 && onGround;
             wantsDodgerollTimer = 0f;
             Player.grappling[0] = -1;
             Player.grapCount = 0;
-            for (int p = 0; p < 1000; p++)
+            for (int i = 0; i < Main.maxProjectiles; i++)
             {
-                if (Main.projectile[p].active && Main.projectile[p].owner == Player.whoAmI && (Main.projectile[p].aiStyle == ProjAIStyleID.Hook || Main.projectile[p].aiStyle == ProjAIStyleID.Flail || Main.projectile[p].GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active && projectile.owner == Player.whoAmI
+                    && (projectile.aiStyle == ProjAIStyleID.Hook || projectile.aiStyle == ProjAIStyleID.Flail || projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail))
                 {
-                    Main.projectile[p].Kill();
+                    projectile.Kill();
                 }
             }
 
@@ -533,31 +690,26 @@ namespace tsorcRevamp
 
             isDodging = true;
 
-            // Ghost Step swaps the rolling thud for a soft rustle (SoundID.Grass) — a dash, not a tumble.
-            if (Player.GetModPlayer<tsorcRevampPlayer>().GhostStepEquipped)
+            if (!Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
-            }
-            //play a dodge roll sound, choose between these
-            else if (isDodging == true)
-            {
-
-                int choice = Main.rand.Next(2);
-                //switch expressions are the only good thing to come out of the 1.4 change PepeLaugh
-                string soundFile = choice switch
+                if (dodgeIsLightningDash)
                 {
-                    0 => "tsorcRevamp/Sounds/DarkSouls/roll1",
-                    1 => "tsorcRevamp/Sounds/DarkSouls/roll2",
-                    _ => "tsorcRevamp/Sounds/DarkSouls/roll1",
-                };
-                SoundStyle rollSound = new SoundStyle(soundFile)
+                    SoundEngine.PlaySound(SoundID.Item94 with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
+                }
+                else if (dodgeIsGhostStep)
                 {
-                    Volume = 0.1f,
-                    PitchVariance = 0.4f
-                };
-                SoundEngine.PlaySound(rollSound, Player.position);
-
-
+                    SoundEngine.PlaySound(SoundID.Grass with { Volume = 0.8f, PitchVariance = 0.2f }, Player.position);
+                }
+                else
+                {
+                    string soundFile = "tsorcRevamp/Sounds/DarkSouls/roll" + Main.rand.Next(1, 3);
+                    SoundStyle rollSound = new SoundStyle(soundFile)
+                    {
+                        Volume = 0.1f,
+                        PitchVariance = 0.4f
+                    };
+                    SoundEngine.PlaySound(rollSound, Player.position);
+                }
             }
             //only subtract stamina on a successful roll
             float rollStaminaCost = RollStaminaCost;
@@ -568,20 +720,44 @@ namespace tsorcRevamp
             dodgeStartRot = Player.GetModPlayer<tsorcRevampPlayer>().rotation;
             dodgeItemRotation = Player.itemRotation;
             dodgeTime = 0f;
-            dodgeDirectionVisual = (sbyte)Player.direction;
-            dodgeDirection = wantedDodgerollDir != 0 ? wantedDodgerollDir : (sbyte)Player.direction;
             dodgeCooldown = DodgeDefaultCooldown;
 
-            dodgeIsGhostStep = Player.GetModPlayer<tsorcRevampPlayer>().GhostStepEquipped;
             dodgeDuration = DodgeTimeMax;
 
             if (dodgeIsGhostStep)
             {
-                dodgeDuration += GhostStepItem.ExtraImmunityFrames / 60f;
+                // Ghost Step and the Ornstein set give one dash between them, so their bonuses never stack.
+                int dashExtraFrames = OrnsteinBody.LightningDashExtraImmunityFrames;
+                dodgeDashExtraTiles = OrnsteinBody.LightningDashExtraDistanceTiles;
+
+                if (GhostStepEquipped)
+                {
+                    dashExtraFrames = GhostStepItem.ExtraImmunityFrames;
+                    dodgeDashExtraTiles = GhostStepItem.ExtraDistanceTiles;
+                }
+
+                dodgeDuration += dashExtraFrames / 60f;
+
+                if (dodgeIsLightningDash && isLocal)
+                {
+                    spellblade.SpawnDashHitbox();
+                }
+
+                // Gold and electric burst where a Lightning Dash starts. Runs on every client, like the puff below.
+                if (dodgeIsLightningDash && !Main.dedServ)
+                {
+                    for (int i = 0; i < LightningDashStartDust; i++)
+                    {
+                        int burstType = i % 2 == 0 ? DustID.GoldFlame : DustID.Electric;
+                        Vector2 burstPosition = Player.Center + Main.rand.NextVector2Circular(10f, 16f);
+                        Dust burst = Dust.NewDustPerfect(burstPosition, burstType, Main.rand.NextVector2Circular(3f, 3f), 60, default, 1f);
+                        burst.noGravity = true;
+                    }
+                }
 
                 // Faint white puff at the start of the dash, drifting back the way we came. Runs on every client
                 // (remote players reach here through forceDodgeroll); a dedicated server has nothing to draw.
-                if (!Main.dedServ)
+                if (!Main.dedServ && !dodgeIsLightningDash)
                 {
                     for (int i = 0; i < 18; i++)
                     {
@@ -599,7 +775,7 @@ namespace tsorcRevamp
             // roll (see UpdateDodging), and without a cap any external velocity spike — a boss push, a
             // knockback, anything that sets velocity.X directly rather than through normal acceleration —
             // becomes the roll's new base speed and then gets the 1.4x ground multiplier on top of it.
-            beforeRollSpeed = Math.Min(Math.Abs(Player.velocity.X), RollMaxCarrySpeed);
+            beforeRollSpeed = Math.Min(Math.Abs(startVelocity.X), RollMaxCarrySpeed);
 
 
             if (!Player.GetModPlayer<tsorcRevampPlayer>().CanUseItemsWhileDodging)
@@ -608,19 +784,28 @@ namespace tsorcRevamp
                 Player.TryInterruptingItemUsage();
             }
 
-            if (!isLocal)
+            if (isLocal && Main.netMode == NetmodeID.MultiplayerClient)
             {
-                forceDodgeroll = false;
+                SendDodgerollPacket(dodgeDirection, verticalDirection, dodgeDirectionVisual, startVelocity, dodgeIsLightningDash);
             }
-            else if (Main.netMode != NetmodeID.SinglePlayer)
+
+            forceDodgeroll = false;
+
+            // Apply one vertical impulse and let the normal gravity and tile collision finish the arc.
+            if (verticalDirection < 0)
             {
-                ModPacket rollPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
-                rollPacket.Write((byte)tsorcPacketID.SyncPlayerDodgeroll);
-                rollPacket.Write(false);
-                rollPacket.Write((byte)Player.whoAmI);
-                rollPacket.Write(wantedDodgerollDir);
-                rollPacket.WriteVector2(Player.velocity);
-                rollPacket.Send();
+                Player.jump = 0;
+                float gravity = Math.Max(0f, Player.gravity);
+                float launchSpeed = MathF.Sqrt(2f * gravity * DodgeFlipHeight);
+                // Gravity ticks before the first movement step, so add half a tick to reach the target height.
+                launchSpeed += gravity * 0.5f;
+                Player.velocity.Y = -launchSpeed * Player.gravDir;
+            }
+            else if (verticalDirection > 0)
+            {
+                Player.jump = 0;
+                float fallSpeed = Math.Max(0f, startVelocity.Y * Player.gravDir);
+                Player.velocity.Y = (fallSpeed + DodgeDownwardBoost) * Player.gravDir;
             }
 
             deaccelerationRate = 0.9f;
@@ -633,8 +818,6 @@ namespace tsorcRevamp
             // duration (isDodging gates every hit), so the net bonus is folded into dodgeDuration at the end.
             int immuneFrames = DefaultDodgeImmuneTime;
             dodgeCooldown = 30;
-
-            bool onGround = OnGround(Player);
 
             // Define custom roll parameters when acessories conflict.
             // Chloranthy Rings no longer modify deaccelerationRate � their speed boost during the roll
@@ -697,7 +880,6 @@ namespace tsorcRevamp
         }
         private void UpdateDodging()
         {
-
             wantsDodgerollTimer = StepTowards(wantsDodgerollTimer, 0f, (float)1 / 60);
 
             // Runs before every early return below so the trail keeps fading after the dash ends.
@@ -725,16 +907,29 @@ namespace tsorcRevamp
                 return;
             }
 
-            bool onGround = OnGround(Player);
-            ref float rotation = ref Player.GetModPlayer<tsorcRevampPlayer>().rotation;
-
             //Attempt to initiate a dodgeroll if the player isn't doing one already.
             if (!isDodging && !TryStartDodgeroll())
             {
                 return;
             }
 
+            // Keep a grounded flip's sideways travel at ground-roll speed after the vertical launch.
+            bool useGroundRollPhysics = dodgeLiftStartedOnGround || OnGround(Player);
+
             TryGrantArtoriasAbysswalkerPoise();
+
+            // Electric sparks along the path of a Lightning Dash: two per tick, plus a third on every other tick.
+            if (dodgeIsLightningDash && !Main.dedServ)
+            {
+                int sparkCount = Main.GameUpdateCount % 2 == 0 ? 3 : 2;
+
+                for (int i = 0; i < sparkCount; i++)
+                {
+                    Vector2 sparkPosition = Player.Center + Main.rand.NextVector2Circular(12f, 20f);
+                    Dust spark = Dust.NewDustPerfect(sparkPosition, DustID.Electric, Main.rand.NextVector2Circular(1.2f, 1.2f), 60, default, 0.75f);
+                    spark.noGravity = true;
+                }
+            }
             /*
             bool chloranthyRing = false;
             for (int i = 3; i <= (8 + Player.extraAccessorySlots); i++) {
@@ -769,7 +964,9 @@ namespace tsorcRevamp
 
                 // Increase the base roll speed if the player is moving faster than the default
                 if (beforeRollSpeed > dodgeSpeed)
+                {
                     dodgeSpeed = beforeRollSpeed;
+                }
 
                 // Chloranthy Ring dodge-speed boost � intended to grant only "a little bit more dodge length"
                 // (a subtle distance increase, not a flat-out velocity multiplier). Values were previously
@@ -782,7 +979,9 @@ namespace tsorcRevamp
                 else if (!(Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing1 && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis))
                 {
                     if (Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
+                    {
                         dodgeSpeed -= 1f;
+                    }
 
                     if (Player.GetModPlayer<tsorcRevampPlayer>().ChloranthyRing2)
                     {
@@ -795,15 +994,17 @@ namespace tsorcRevamp
                 }
 
                 if (Player.GetModPlayer<tsorcRevampPlayer>().HollowSoldierAgility)
+                {
                     dodgeSpeed += 2f;
+                }
 
                 if (Player.GetModPlayer<tsorcRevampPlayer>().BurdenOfSmough)
+                {
                     dodgeSpeed -= 2.5f;
+                }
 
-                // Faster roll speed if on the ground
-                float speedMultiplier = onGround ? 1.4f : 1.1f;
-
-                dodgeSpeed *= speedMultiplier;
+                float rollSpeedMultiplier = useGroundRollPhysics ? 1.4f : 1.1f;
+                dodgeSpeed *= rollSpeedMultiplier;
 
                 if (dodgeIsGhostStep)
                 {
@@ -811,7 +1012,7 @@ namespace tsorcRevamp
                     // dodgeSpeed * GhostRollTravelSpeedTicks; the dash covers dodgeSpeed' * (burst frames + stop tail),
                     // where the tail is the geometric sum of the stop decay (0.3 + 0.09 + ... = 0.3 / 0.7).
                     float rollEquivalentTravel = dodgeSpeed * GhostRollTravelSpeedTicks;
-                    float ghostTravel = rollEquivalentTravel + GhostStepItem.ExtraDistanceTiles * 16f;
+                    float ghostTravel = rollEquivalentTravel + dodgeDashExtraTiles * 16f;
                     float burstFrames = (float)Math.Ceiling(fullSpeedEnd * 60f);
                     float stopTailFrames = GhostStopDecay / (1f - GhostStopDecay);
                     dodgeSpeed = ghostTravel / (burstFrames + stopTailFrames);
@@ -836,9 +1037,11 @@ namespace tsorcRevamp
             {
                 forcedLegFrame = PlayerFrames.Jump;
 
-                rotation = dodgeDirection == 1
-                    ? Math.Min(MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, MathHelper.TwoPi, dodgeTime / dodgeDuration))
-                    : Math.Max(-MathHelper.Pi * 2f, MathHelper.Lerp(dodgeStartRot, -MathHelper.TwoPi, dodgeTime / dodgeDuration));
+                // A vertical-only flip spins forward using facing, since it has no horizontal direction.
+                int spinDirection = dodgeDirection == 0 ? dodgeDirectionVisual : dodgeDirection;
+                float spinEnd = MathHelper.TwoPi * spinDirection;
+                float spinProgress = MathHelper.Clamp(dodgeTime / dodgeDuration, 0f, 1f);
+                rotation = MathHelper.Lerp(dodgeStartRot, spinEnd, spinProgress);
             }
 
             //Progress the dodgeroll
@@ -861,33 +1064,6 @@ namespace tsorcRevamp
                         }
                     }
                 }
-                if (isDodging && Player.GetModPlayer<tsorcRevampPlayer>().IceboundMythrilAegis)
-                {
-                    for (int i = 0; i < Main.maxNPCs; i++)
-                    {
-                        NPC other = Main.npc[i];
-
-                        if (!other.friendly & other.Hitbox.Intersects(Utils.CenteredRectangle(Player.Center, new Vector2(200, 200))))
-                        {
-                            other.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            other.AddBuff(BuffID.Frostburn2, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Confused, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Bleeding, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                            if (Main.rand.NextBool(3))
-                            {
-                                other.AddBuff(BuffID.Poisoned, Content.Items.Accessories.Damage.MythrilBulwark.VulnerabilityDuration * 60);
-                            }
-                        }
-                    }
-                }
-
                 if (dodgeIsGhostStep)
                 {
                     // dodgeTime was already advanced above, so a frame is past the burst only if the PRE-increment
@@ -924,16 +1100,30 @@ namespace tsorcRevamp
                     // If the player is actively running in the roll direction, use a softer decel so
                     // a roll that flows into movement doesn't feel like it hits a wall. When standing
                     // still (or pressing opposite), use the full deceleration for a snappy stop.
-                    float groundDecel = KeyDirection(Player) == dodgeDirection
-                        ? MathHelper.Lerp(deaccelerationRate, 1f, 0.35f)
-                        : deaccelerationRate;
-                    Player.velocity.X *= onGround ? groundDecel : airDeaccelerationRate;
+                    float groundDecel = deaccelerationRate;
+                    if (KeyDirection(Player) == dodgeDirection)
+                    {
+                        groundDecel = MathHelper.Lerp(deaccelerationRate, 1f, 0.35f);
+                    }
+
+                    Player.velocity.X *= useGroundRollPhysics ? groundDecel : airDeaccelerationRate;
                 }
             }
 
             if (dodgeTime >= dodgeDuration)
             {
                 isDodging = false;
+
+                // A last crackle where a Lightning Dash ends.
+                if (dodgeIsLightningDash && !Main.dedServ)
+                {
+                    for (int i = 0; i < LightningDashEndDust; i++)
+                    {
+                        Dust crackle = Dust.NewDustPerfect(Player.Center, DustID.Electric, Main.rand.NextVector2Circular(3.5f, 3.5f), 60, default, 0.9f);
+                        crackle.noGravity = true;
+                    }
+                }
+
                 //Player.eocDash = 0;
                 //forceSyncControls = true;
             }

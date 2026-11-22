@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.FriendlyPuppets;
+using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -38,6 +40,30 @@ namespace tsorcRevamp.Content.Projectiles
         bool spawnedLaser = false;
         public override void AI()
         {
+            MirrorPuppetProjectile tag = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            bool fromPuppet = tag.FromMirrorPuppet;
+
+            if (fromPuppet)
+            {
+                if (tag.GetFiringPuppet(Projectile) == null)
+                {
+                    return;
+                }
+
+                // The holdout is invisible. The firing client handles its use and the synced beam handles its own draw.
+                if (Projectile.owner != Main.myPlayer)
+                {
+                    Projectile.timeLeft = 2;
+                    return;
+                }
+
+                if (!MirrorPuppetSwap.Active)
+                {
+                    Projectile.Kill();
+                    return;
+                }
+            }
+
             Player player = Main.player[Projectile.owner];
             Vector2 rrp = player.RotatedRelativePoint(player.MountedCenter, true);
 
@@ -46,22 +72,37 @@ namespace tsorcRevamp.Content.Projectiles
             if (charge <= 0)
             {
                 Projectile.frame = 10;
-                //Drain BotC players stamina
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+
+                // Starting a new charge cycle after a firing phase: pay the weapon's stamina cost again.
+                if (charge == 0 && spawnedLaser && !fromPuppet && Projectile.owner == Main.myPlayer)
                 {
-                    player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= 1f;
+                    tsorcRevampPlayer tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                    tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+                    if (!staminaPlayer.CanUseWeapon)
+                    {
+                        player.channel = false;
+                    }
+                    else if (tsorcPlayer.UsesWeaponStamina)
+                    {
+                        bool manaBurnActive = player.HasBuff(ModContent.BuffType<ManaBurn>());
+                        bool arcaneBurnThreshold = player.HasBuff(ModContent.BuffType<ArcaneSorcery>())
+                            && staminaPlayer.staminaResourceCurrent <= staminaPlayer.staminaResourceMax2 * ArcaneSorceryPlayer.ManaBurnStaminaThreshold / 100f;
+
+                        if (!manaBurnActive && !arcaneBurnThreshold)
+                        {
+                            Item heldItem = player.HeldItem;
+                            float staminaMult = tsorcPlayer.WeaponStaminaMult(heldItem);
+                            int scaledUseAnimation = (int)(heldItem.useAnimation / player.GetAttackSpeed(heldItem.DamageType));
+                            staminaPlayer.staminaResourceCurrent -= tsorcRevampPlayer.ReduceStamina(scaledUseAnimation) * staminaMult;
+                        }
+                    }
                 }
             }
             //If not, move up the animation sheet as the weapon charges
             else
             {
                 Projectile.frame = (int)((charge / MaxCharge) * (NumAnimationFrames));
-
-                //Stop the BotC player from using the Glaive Beam if they have either 120 stamina or are full (ensures they can still use it even if they don't have stamina vessels)
-                if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && (player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < 120 && player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2))
-                {
-                    player.channel = false;
-                }
             }
             //If it's finished charging, there will be a delay before the next. Set it to negative for the duration, so it stays in the "firing" state.
             if (charge == MaxCharge)
@@ -82,6 +123,7 @@ namespace tsorcRevamp.Content.Projectiles
                 // The Prism immediately stops functioning if the player is Cursed (player.noItems) or "Crowd Controlled", e.g. the Frozen debuff.
                 // player.channel indicates whether the player is still holding down the mouse button to use the item.
                 bool stillInUse = player.channel && !player.noItems && !player.CCed;
+                stillInUse &= !fromPuppet || player.controlUseItem;
 
                 // Spawn in the lasers on the first frame if the player is capable of using the item.
                 if (stillInUse && !spawnedLaser)

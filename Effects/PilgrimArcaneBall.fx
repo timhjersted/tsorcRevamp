@@ -27,7 +27,8 @@ float4 PixelShaderFunction(float4 sampleColor : COLOR0, float2 coords : TEXCOORD
 
 
     //Define the laser effect and center color (these can be tuned to produce any color laser)
-    float4 laserColor = float4(0.1, 0.2, 0.4, 1.0);
+    // Tint comes from the caller (ArmorShaderData.UseColor): EnemyPilgrimArcaneBall passes the cursed-fire red.
+    float4 laserColor = float4(uColor, 1.0);
     float4 white = float4(1.0,1.0,1.0,1.0);
 
     float textureSize = 1024;

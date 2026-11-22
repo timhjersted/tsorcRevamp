@@ -29,6 +29,12 @@ float intensity;
 // xy = live 2x2-pixel block count across the slash trail, zw = its reciprocal.
 // Slash computes this from its current world-space arc length and full strip width.
 float4 PixelGrid;
+// Legacy held-item slashes lead the blade. Measured sources end ON the blade, so
+// their head taper must be shorter or the last quarter of the swish becomes a gap.
+float HeadFadeStart = 0.75;
+// Share of the strip's width, from its inner (hand-side) edge, that fades in. Legacy slashes keep 0.4; measured blade
+// sources pass a short fade so the glow covers the blade from heel to tip.
+float InnerFadeEnd = 0.4;
 
 struct VertexShaderInput
 {
@@ -69,10 +75,10 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         
     
     //Make it fade out towards all 4 edges
-    float start = 0.75;
+    float start = HeadFadeStart;
     float end = 0.01 + (1 - fadeOut);
     float yStart = 0.85;
-    float yEnd = 0.4;
+    float yEnd = InnerFadeEnd;
     
     if (uv.x > start)
     {

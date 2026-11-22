@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.Bosses.TheDestroyer.Original;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
@@ -56,6 +57,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         Vector2 simulatedVelocity;
         public override void AI()
         {
+            TheDestroyerOriginal original = TheDestroyerOriginal.FromLaserHost((int)Projectile.ai[1]);
             if (FiringTimeLeft > 0)
             {
                 Vector2 origin = GetOrigin();
@@ -133,7 +135,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         target = Main.player[(int)Projectile.ai[0] - 1000].Center;// + Main.rand.NextVector2Circular(48, 48);
                         Vector2 prediction = Main.player[(int)Projectile.ai[0] - 1000].velocity * 48;
                         //Don't randomize if it just shot the confining ring of lasers, because that's not possible to dodge
-                        if (NPCs.VanillaChanges.destroyerChargeTimer >= 300 || NPCs.VanillaChanges.destroyerChargeTimer < 0 || NPCs.VanillaChanges.destroyerAttackIndex != 0)
+                        if (original != null && (original.destroyerChargeTimer >= 300 || original.destroyerChargeTimer < 0 || original.destroyerAttackIndex != 0))
                         {
                             target += prediction * Main.rand.NextFloat(-0.15f, 1.15f);
                         }
@@ -146,7 +148,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     Projectile.velocity = UsefulFunctions.Aim(Projectile.Center, target, 1);
 
                     //Failsafe 2. If it is firing and the projectile's angle is too close to the "safe angle", don't fire. This stops lasers from sweeping across the safe area as the destroyer moves relative to it.
-                    if ((UsefulFunctions.CompareAngles(Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f || UsefulFunctions.CompareAngles(-Projectile.velocity, NPCs.VanillaChanges.destroyerLaserSafeAngle) < MathHelper.Pi / 6f))
+                    if (original != null && (UsefulFunctions.CompareAngles(Projectile.velocity, original.destroyerLaserSafeAngle) < MathHelper.Pi / 6f
+                        || UsefulFunctions.CompareAngles(-Projectile.velocity, original.destroyerLaserSafeAngle) < MathHelper.Pi / 6f))
                     {
                         Projectile.Kill();
                     }
@@ -254,6 +257,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     FiringDuration = 10;
                     MaxCharge = 60;
                     LaserName = "Probe Laser";
+                    if (HostIdentifier >= 0 && HostIdentifier < Main.maxNPCs && Main.npc[HostIdentifier].active)
+                    {
+                        FollowHost = true;
+                        LaserOrigin = Main.npc[HostIdentifier].Center;
+                    }
                     Dust.NewDustPerfect(LaserOrigin, DustID.OrangeTorch, Main.rand.NextVector2Circular(-3, 3), Scale: 4).noGravity = true;
                 }
 
@@ -264,7 +272,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     FiringDuration = 120;
                     MaxCharge = 150;
                     LaserName = "Laser Array";
-                    initialPosition += new Vector2(3, 0).RotatedBy(NPCs.VanillaChanges.laserRotation);
+                    if (original != null)
+                    {
+                        initialPosition += new Vector2(3, 0).RotatedBy(original.laserRotation);
+                    }
                     if (Main.rand.NextBool())
                     {
                         Dust.NewDustPerfect(LaserOrigin, DustID.OrangeTorch, Main.rand.NextVector2Circular(-3, 3), Scale: 5).noGravity = true;

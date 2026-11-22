@@ -69,7 +69,7 @@ namespace tsorcRevamp.Systems
     }
 
     /// <summary>
-    /// Central registry of natural spawns for modded enemies, switched by the "New Enemy Spawns" gameplay config.
+    /// Central registry of natural spawns for modded enemies. Registered enemies have no SpawnChance of their own.
     ///
     /// The vanilla spawn pool always contains key 0 = "let vanilla pick" with weight 1.0, so every weight here is relative to
     /// that: 0.1 is roughly one attempt in eleven when nothing else is valid. Weights of all valid enemies are normalized,
@@ -87,15 +87,6 @@ namespace tsorcRevamp.Systems
     /// </summary>
     public class EnemySpawns : ModSystem
     {
-        public static bool Enabled
-        {
-            get
-            {
-                tsorcRevampGameplayConfig config = ModContent.GetInstance<tsorcRevampGameplayConfig>();
-                return config != null && config.NewSpawnBalance;
-            }
-        }
-
         private sealed class SpawnRule
         {
             public SpawnCondition Condition;
@@ -468,20 +459,20 @@ namespace tsorcRevamp.Systems
         // Whether a boss has been killed in this world (the mod's own record, not a vanilla flag).
         public static class Slain
         {
-            public static readonly SpawnCondition OolacileKnight = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Enemies.SuperHardMode.OolacileKnight>())));
-
             public static readonly SpawnCondition TheSorrow = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheSorrow>())));
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())));
 
             public static readonly SpawnCondition TheRage = new(context =>
-                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>())));
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())));
 
             public static readonly SpawnCondition WyvernMage = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>())));
 
             public static readonly SpawnCondition WyvernMageShadow = new(context =>
                 tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>())));
+
+            public static readonly SpawnCondition Artorias = new(context =>
+                tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Artorias>())));
         }
 
         // The world's stage as a plain test, for rules that gate on it instead of carrying a weight per stage.
@@ -523,11 +514,11 @@ namespace tsorcRevamp.Systems
 
         private static readonly SpawnCondition NoDungeonMiniBossOrMage = NoDungeonMiniBoss & Alive.None<DungeonMage>();
 
-        // Jungle or meteor ground with no dungeon or evil biome mixed in: where the Dworc family lives.
-        private static readonly SpawnCondition DworcLand = (Zone.Jungle | Zone.Meteor) & !Zone.Dungeon & !Evil;
+        // Jungle or meteor ground with no dungeon or evil biome or snow mixed in: where the Dworc family lives.
+        private static readonly SpawnCondition DworcLand = (Zone.Jungle | Zone.Meteor) & !Zone.Dungeon & !Evil & !Zone.Snow;
 
-        // Dry jungle outside the dungeon: the two Dworc hunters.
-        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle;
+        // Dry jungle outside the dungeon and snow: the two Dworc hunters.
+        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle & !Zone.Snow;
 
         // The same jungle in the lower half of the map (row 1000 and below on the 2000-tall map). Their underground lines only
         // fire there, a limit added to keep them out of the sky.
@@ -582,6 +573,15 @@ namespace tsorcRevamp.Systems
 
         // The Wyvern Fortress in the sky: meteorite brick or glass walls.
         private static readonly SpawnCondition WyvernFortress = Depth.Sky & Wall.Is(WallID.MeteoriteBrick, WallID.Glass);
+
+        // The top of a sky island: a level spawn tile inside the sky band (Depth.Sky reads the player's zone, so the spawn
+        // tile's own row is checked too), open to the sky above (no wall 5, 8 or 12 tiles up, so not inside a house), and
+        // not the Wyvern Fortress. No tile list: vanilla islands and the adventure map's custom islands both pass.
+        private static readonly SpawnCondition SkyIslandTop = Depth.Sky
+            & new SpawnCondition(context => context.Info.SpawnTileY < Main.worldSurface * 0.35)
+            & Terrain.LevelFooting
+            & Terrain.WallFreeAbove
+            & !WyvernFortress;
 
         // The Sunken Sky Temple in the adventure map's underworld: a Meteorite Brick floor, or Meteorite Brick Wall behind the
         // player. Spawn tile in the bottom 13% of the map (row ~2090+ on the 2400-tall map, ~1740+ on the 2000-tall one), which
@@ -674,11 +674,12 @@ namespace tsorcRevamp.Systems
 
         /// <summary>
         /// Called from the top of tsorcRevampGlobalNPC.EditSpawnPool, before that method's own clears and removals, so those
-        /// still win over anything added here. Replaces each registered enemy's own pool entry with the registry's.
+        /// still win over anything added here. Puts each registered enemy in the pool at the registry's weight; the Remove
+        /// first drops any entry a registered enemy's own SpawnChance would add, so the registry stays the only spawn rule.
         /// </summary>
         public static void Apply(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            if (!Enabled || Rules.Count == 0)
+            if (Rules.Count == 0)
             {
                 return;
             }
@@ -705,7 +706,7 @@ namespace tsorcRevamp.Systems
         /// </summary>
         public static void ApplyExclusiveZones(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            if (!Enabled || ExclusiveZones.Count == 0)
+            if (ExclusiveZones.Count == 0)
             {
                 return;
             }
@@ -852,12 +853,12 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only. The old tests compared the player's pixel position with tile counts, so the "deep cavern" and
             // "outer map" checks matched almost everywhere; the tile bands they were written for are used here: rows from 60% of
             // the map down to the underworld, and the outer 30% on each side. A blood moon doubles every weight.
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld, shm: 0.001f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f), shm: 0.002f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Rows(0.6f, 1f) & !Depth.Underworld, shm: 0.0005f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Time.BloodMoon, shm: 0.002f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f) & Time.BloodMoon, shm: 0.004f);
-            Spawn("AncientDemonOfTheAbyss", Depth.Rows(0.6f, 1f) & !Depth.Underworld & Time.BloodMoon, shm: 0.001f);
+            Spawn("AncientDemon", Depth.Underworld, shm: 0.001f);
+            Spawn("AncientDemon", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f), shm: 0.002f);
+            Spawn("AncientDemon", Depth.Rows(0.6f, 1f) & !Depth.Underworld, shm: 0.0005f);
+            Spawn("AncientDemon", Depth.Underworld & Time.BloodMoon, shm: 0.002f);
+            Spawn("AncientDemon", Depth.Underworld & Region.OutsideSpan(0.3f, 0.7f) & Time.BloodMoon, shm: 0.004f);
+            Spawn("AncientDemon", Depth.Rows(0.6f, 1f) & !Depth.Underworld & Time.BloodMoon, shm: 0.001f);
 
             // Wyvern Fortress: common while the Wyvern Mage lives, rare after it falls, and back in Super Hardmode until the Shadow falls.
             Spawn("Archdeacon", WyvernFortress & !Slain.WyvernMage, hm: 0.3f);
@@ -866,6 +867,7 @@ namespace tsorcRevamp.Systems
 
             Spawn("ArmoredWraith", Zone.Meteor & (Depth.Surface | Depth.Cavern), phm: 0.04f, hm: 0.04f, shm: 0.04f);
             Spawn("ArmoredWraith", Zone.Meteor & Depth.Underground, phm: 0.033f, hm: 0.033f, shm: 0.033f);
+            Spawn("ObsidianGuard", Zone.Meteor & Depth.BelowSurface & Water.Dry, phm: 0.05f, hm: 0.05f, shm: 0.05f, max: 2);
 
             // Old rule: separate one-in-240 and one-in-280 gates stacked in the underground jungle; folded into the weights.
             // Super Hardmode also runs the Hardmode lines (the old tests used Main.hardMode). Blood moon doubled the SHM lines only.
@@ -897,11 +899,12 @@ namespace tsorcRevamp.Systems
             Spawn("BasiliskShifter", BasiliskGround, hm: 0.15f, shm: 0.075f, max: 2);
             Spawn("BasiliskWalker", BasiliskGround, phm: 0.15f, hm: 0.05f, max: 2);
 
-            // Every line was weight 1 behind a random gate (one in 100 to 250), folded into the weights.
-            Spawn("BlackKnight", Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.004f, hm: 0.004f, shm: 0.004f);
-            Spawn("BlackKnight", Town.AtMostOne & Zone.Dungeon, hm: 0.01f, shm: 0.01f);
-            Spawn("BlackKnight", Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.004f, shm: 0.004f);
-            Spawn("BlackKnight", Town.AtMostOne & Depth.Underworld, hm: 0.0063f, shm: 0.0063f);
+            // Sandbox only: Adventure Mode places the Black Knight through its scripted encounters. Every line was weight 1 behind a
+            // random gate (one in 100 to 250), folded into the weights.
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & !Zone.Meteor & !Zone.Dungeon & !Evil & Depth.Surface & Downed.Skeletron & Time.Night, phm: 0.0001f, hm: 0.002f, shm: 0.003f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & Zone.Dungeon, hm: 0.001f, shm: 0.001f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & !Evil & !Zone.Beach, hm: 0.0004f, shm: 0.0004f);
+            Spawn("BlackKnight", Mode.Sandbox & Town.AtMostOne & Depth.Underworld, hm: 0.0063f, shm: 0.0063f);
 
             Spawn("Byakhee", QuietArea & Zone.Desert & Depth.Surface & Time.Night, hm: 0.0627f, shm: 0.0627f);
             Spawn("Byakhee", QuietArea & Zone.Desert & Depth.Surface & Time.Day, hm: 0.0368f, shm: 0.0368f);
@@ -927,7 +930,7 @@ namespace tsorcRevamp.Systems
             Spawn("CorruptedHornet", Zone.Jungle & !Depth.Surface, shm: 0.5f);
 
             // CosmicCrystalLizard: deliberately NOT registered. Its own SpawnChance scales with the player's luck (0.02 x (1 + luck)),
-            // which a registry weight cannot do, and an unregistered enemy keeps its own SpawnChance with New Enemy Spawns on.
+            // which a registry weight cannot do, so it is the one mod enemy that keeps its own SpawnChance.
 
             // The old rules capped these at two alive. Their random gates (one in 15 to 1000) are folded into the weights.
             Spawn("CrazedDemonSpirit", Zone.Meteor, hm: 0.04f, shm: 0.04f, max: 2);
@@ -952,9 +955,8 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only, one alive at a time. The old test allowed one distant town NPC (UnderOne).
             SpawnNightBoosted("DarkKnight", Town.UnderOne & (Zone.Corruption | Zone.Dungeon) & !Zone.Meteor & !Zone.Jungle & !Depth.Underworld & !Zone.Hallow & !Region.Ocean, shm: 0.2f, max: 1);
 
+            // Underworld only (it used to also spawn in Hardmode Crimson and Desert).
             Spawn("DemonElemental", Depth.Underworld, phm: 0.067f, hm: 0.01f, shm: 0.01f, max: 2);
-            Spawn("DemonElemental", Zone.Crimson, hm: 0.04f, shm: 0.04f, max: 2);
-            Spawn("DemonElemental", Zone.Desert, hm: 0.022f, shm: 0.022f, max: 2);
 
             // DemonLordApocalypse
 
@@ -987,7 +989,7 @@ namespace tsorcRevamp.Systems
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Surface, phm: 0.004f, hm: 0.004f, shm: 0.004f, max: 1);
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Underground, phm: 0.008f, hm: 0.008f, shm: 0.008f, max: 1);
             Spawn("DworcAlchemist", Water.Dry & DworcLand & Depth.Cavern, phm: 0.065f, hm: 0.065f, shm: 0.065f, max: 1);
-            Spawn("DworcAlchemist", Water.Dry & Zone.Jungle & !Zone.Meteor & !Zone.Beach & !Evil, hm: 0.005f, shm: 0.005f, max: 1);
+            Spawn("DworcAlchemist", Water.Dry & Zone.Jungle & !Zone.Snow & !Zone.Meteor & !Zone.Beach & !Evil, hm: 0.005f, shm: 0.005f, max: 1);
 
             // Both hunters also have a surface-jungle line (0.265 and 0.2). It had stopped firing because of the same row-1000 test
             // that was meant to keep them out of the sky; it is written for the real surface with no row test.
@@ -1000,7 +1002,7 @@ namespace tsorcRevamp.Systems
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Surface & Time.Night, hm: 0.035f, shm: 0.035f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Underground, hm: 0.025f, shm: 0.025f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Cavern, hm: 0.03f, shm: 0.03f, max: 1);
-            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle, hm: 0.045f, shm: 0.045f, max: 1);
+            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle & !Zone.Snow, hm: 0.045f, shm: 0.045f, max: 1);
 
             // Underground jungle only, never inside the Golem's temple: Zone.Lihzahrd is the player standing on Lihzahrd wall,
             // and the Wall.Is catches a spawn tile inside the temple while the player is just outside it.
@@ -1012,8 +1014,8 @@ namespace tsorcRevamp.Systems
 
             // Caves are 30-60% of the map height; the underworld lines are the bottom fifth. Both were by-tile helpers. The random
             // gates (one in 350 and one in 150) are folded into the weights.
-            Spawn("FallenNecromancer", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.3f, 0.6f) & Region.OutsideSpan(0.45f, 0.75f), hm: 0.0029f, shm: 0.0029f);
-            Spawn("FallenNecromancer", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.8f, 1f), hm: 0.0067f, shm: 0.0067f);
+            Spawn("BoneChaplain", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.3f, 0.6f) & Region.OutsideSpan(0.45f, 0.75f), hm: 0.0029f, shm: 0.0029f);
+            Spawn("BoneChaplain", Town.None & !Zone.Jungle & !Zone.Meteor & Depth.Rows(0.8f, 1f), hm: 0.0067f, shm: 0.0067f);
 
             // Lines are in the old order and each one decides (stop). Three old lines were hidden behind broader ones and never
             // fired; they are made live: the post-boss underground (0.09) and the Super Hardmode overworld (0.13) now sit before the
@@ -1041,12 +1043,12 @@ namespace tsorcRevamp.Systems
             Spawn("GhostOfAHollowWarrior", Invasion.None & !Zone.Snow & Town.AtMostOne & Water.Dry & !Evil & !Zone.Glowshroom & Zone.Graveyard & CatacombWalls, phm: 3f);
 
             // Super Hardmode only. The old lines were already in descending order, so the highest weight wins as before.
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Region.OutsideSpan(0.6f, 0.8f), shm: 0.6f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Depth.Underworld, shm: 0.5f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Time.BloodMoon, shm: 0.4f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon, shm: 0.2f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Forest & Time.Night, shm: 0.3f);
-            Spawn("GhostOfTheDarkmoonKnight", Zone.Hallow, shm: 0.1f);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Region.OutsideSpan(0.6f, 0.8f), shm: 0.6f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Depth.Underworld, shm: 0.5f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon & Time.BloodMoon, shm: 0.4f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Dungeon, shm: 0.2f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Forest & Time.Night, shm: 0.3f, max: 2);
+            Spawn("GhostOfTheDarkmoonKnight", Zone.Hallow, shm: 0.1f, max: 2);
 
             // The catacomb rate is also huge (2.5). The Machine Temple rate lives in GlobalNPC.EditSpawnPool.
             Spawn("GhostOfTheDrowned", Zone.Graveyard & CatacombWalls, phm: 2.5f, hm: 2.5f, shm: 2.5f);
@@ -1054,13 +1056,13 @@ namespace tsorcRevamp.Systems
 
             // The old Super Hardmode dungeon lines (0.05 and 0.1) sat behind the Hardmode dungeon lines and never fired; they are now
             // that stage's weight on the dungeon line.
-            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Dungeon, phm: 0.16f, stop: true);
-            Spawn("GhostOfTheForgottenKnight", Zone.Dungeon, hm: 0.1f, shm: 0.05f, stop: true);
-            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f);
+            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Dungeon, phm: 0.16f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenKnight", Zone.Dungeon, hm: 0.1f, shm: 0.05f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenKnight", Downed.Skeletron & Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f, max: 2);
 
-            Spawn("GhostOfTheForgottenWarrior", Downed.Skeletron & Zone.Dungeon, phm: 0.25f, stop: true);
-            Spawn("GhostOfTheForgottenWarrior", Zone.Dungeon, hm: 0.12f, shm: 0.1f, stop: true);
-            Spawn("GhostOfTheForgottenWarrior", Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f);
+            Spawn("GhostOfTheForgottenWarrior", Downed.Skeletron & Zone.Dungeon, phm: 0.25f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenWarrior", Zone.Dungeon, hm: 0.12f, shm: 0.1f, stop: true, max: 2);
+            Spawn("GhostOfTheForgottenWarrior", Zone.Graveyard, phm: 0.2f, hm: 0.2f, shm: 0.2f, max: 2);
 
             // Gigas
 
@@ -1069,13 +1071,6 @@ namespace tsorcRevamp.Systems
             Spawn("GreatBlackKnight", Mode.Sandbox & Town.AtMostOne & Zone.Dungeon, shm: 0.0022f);
             Spawn("GreatBlackKnight", Mode.Sandbox & Town.AtMostOne & !Evil & !Zone.Beach, shm: 0.0017f);
             Spawn("GreatBlackKnight", Mode.Sandbox & Town.AtMostOne & Depth.Underworld, shm: 0.002f);
-
-            // Super Hardmode only, corruption only, in the old order. The old water line (0.025) sat behind the plain corruption line
-            // (0.25) and never fired; it is now written before it.
-            Spawn("GuardianCorruptor", Zone.Corruption & Depth.Surface & Time.Night, shm: 0.5f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption & Depth.BelowSurface, shm: 0.375f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption & Water.Wet, shm: 0.025f, stop: true);
-            Spawn("GuardianCorruptor", Zone.Corruption, shm: 0.25f, stop: true);
 
             // HeroofLumelia
 
@@ -1149,19 +1144,19 @@ namespace tsorcRevamp.Systems
 
             // Super Hardmode only; the gate of one in 1500 is folded in. The old test compared the player's pixel position with tile
             // rows, which put it in the sky; the cavern, between the rock layer and the underworld, is what it was written for.
-            Spawn("HydrisElemental", Water.Dry & Evil & !Zone.Dungeon & Depth.Cavern, shm: 0.00067f);
+            Spawn("Elemental", Water.Dry & Evil & !Zone.Dungeon & Depth.Cavern, shm: 0.00067f);
 
             // Super Hardmode only; gates (one in 6 to one in 60) are folded in as 1/N. Underground and caverns, or the bottom fifth of
             // the map. The old Bone Block dungeon line returned 0 by mistake (its gate is the same one in 20 as its neighbours), so it
             // never spawned anything; it now spawns like them.
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Hallow, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Glowshroom, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.UndergroundDesert, shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Hallow & Time.BloodMoon, shm: 0.167f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Region.OutsideSpan(0.35f, 0.75f), shm: 0.05f);
-            Spawn("HydrisNecromancer", Depth.BelowSurface & Zone.Dungeon & SpawnTile.Is(TileID.BoneBlock), shm: 0.05f);
-            Spawn("HydrisNecromancer", !Depth.BelowSurface & Depth.BottomFifth, shm: 0.0167f);
-            Spawn("HydrisNecromancer", !Depth.BelowSurface & Depth.BottomFifth & Region.OutsideSpan(0.35f, 0.75f), shm: 0.033f);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Hallow, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Glowshroom, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.UndergroundDesert, shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Hallow & Time.BloodMoon, shm: 0.167f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Region.OutsideSpan(0.35f, 0.75f), shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", Depth.BelowSurface & Zone.Dungeon & SpawnTile.Is(TileID.BoneBlock), shm: 0.05f, max: 1);
+            Spawn("ElementalNecromancer", !Depth.BelowSurface & Depth.BottomFifth, shm: 0.0167f, max: 1);
+            Spawn("ElementalNecromancer", !Depth.BelowSurface & Depth.BottomFifth & Region.OutsideSpan(0.35f, 0.75f), shm: 0.033f, max: 1);
 
             // IceGigas
 
@@ -1177,9 +1172,6 @@ namespace tsorcRevamp.Systems
             // Dungeon-jungle lines wait for the other dungeon mini-bosses and the Dungeon Mage.
             Spawn("JungleWyvernJuvenileHead", Downed.Skeletron & Zone.Jungle & Zone.Dungeon & NoDungeonMiniBossOrMage, phm: 0.05f, hm: 0.05f, shm: 0.05f);
             Spawn("JungleWyvernJuvenileHead", Water.Wet & Region.WestCoast, hm: 0.04f, shm: 0.04f, max: 2);
-
-            // Rare, Super Hardmode only. Used to be a pool.Add in tsorcRevampGlobalNPC.EditSpawnPool.
-            Spawn("KnightOfGwyn", Zone.Dungeon, shm: 0.01f);
 
             // Daytime grass with open air above, away from the evil, desert, jungle and meteor biomes. One alive at a time.
             Spawn("LivingShroomThief", Time.Day & Water.Dry & Terrain.OnGrass & Terrain.WallFreeAbove & !(Evil | Zone.Desert | Zone.Jungle | Zone.Meteor), phm: 0.17f, hm: 0.17f, shm: 0.17f, max: 1);
@@ -1239,7 +1231,7 @@ namespace tsorcRevamp.Systems
             // Super Hardmode only; the gate of one in 45 is folded in.
             Spawn("Massacre", Depth.Underworld | (Depth.Surface & Time.Night), shm: 0.0222f);
 
-            // MinotaurMage
+            Spawn("MinotaurMage", AnyDesert, phm: 0.015f, hm: 0.025f, shm: 0.025f);
 
             // The old rule also excluded the very top rows of the map, which no one can reach.
             Spawn("MountedSandsprog", Invasion.None & !Zone.Snow & AnyDesert, phm: 0.05f, hm: 0.05f, shm: 0.05f);
@@ -1258,11 +1250,11 @@ namespace tsorcRevamp.Systems
 
             // The old gates (one in 44 to one in 3000) are folded in as 1/N. Underworld is the old by-tile bottom fifth and Caves the
             // old Underground and Cavern bands (30-60% of map height). Hardmode lines also apply in Super Hardmode.
-            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, phm: 0.00033f, hm: 0.01f, shm: 0.01f);
-            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, phm: 0.0045f, hm: 0.0227f, shm: 0.0227f);
-            Spawn("Necromancer", NecromancerLand & Region.OutsideSpan(0.35f, 0.75f) & Depth.Caves, phm: 0.0005f);
-            Spawn("Necromancer", NecromancerLand & Zone.Hallow & Depth.Caves, hm: 0.0111f, shm: 0.0111f);
-            Spawn("Necromancer", NecromancerLand & (Evil | Zone.UndergroundDesert) & Depth.Caves, hm: 0.01f, shm: 0.01f);
+            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, phm: 0.00033f, hm: 0.01f, shm: 0.01f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, phm: 0.0045f, hm: 0.0227f, shm: 0.0227f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Region.OutsideSpan(0.35f, 0.75f) & Depth.Caves, phm: 0.0005f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Zone.Hallow & Depth.Caves, hm: 0.0111f, shm: 0.0111f, max: 2);
+            Spawn("Necromancer", NecromancerLand & (Evil | Zone.UndergroundDesert) & Depth.Caves, hm: 0.01f, shm: 0.01f, max: 2);
 
             // The tropical-ocean line comes first in the old rule, so it stops. Water on the ground bands (dirt layer included, as the
             // old comment explains, because the adventure map has little cavern water).
@@ -1274,30 +1266,22 @@ namespace tsorcRevamp.Systems
             Spawn("OolacileCultist", Town.None & Zone.Crimson & (Depth.BelowSurface | (Depth.Surface & Time.Night)), phm: 0.05f, hm: 0.05f, shm: 0.05f);
             Spawn("OolacileCultist", Wall.Is(WallID.PinkDungeonTileUnsafe), phm: 0.2f, hm: 0.2f, shm: 0.2f);
 
-            // Super Hardmode only, one alive at a time; gates (one in 8 to one in 30) are folded in as 1/N.
-            Spawn("OolacileDemon", Zone.Crimson, shm: 0.05f, max: 1);
-            Spawn("OolacileDemon", Zone.Desert, shm: 0.0333f, max: 1);
-            Spawn("OolacileDemon", Zone.UndergroundDesert, shm: 0.05f, max: 1);
-            Spawn("OolacileDemon", Depth.Underworld, shm: 0.0625f, max: 1);
-            Spawn("OolacileDemon", Depth.Underworld & Time.BloodMoon, shm: 0.125f, max: 1);
+            // Super Hardmode only, up to two alive at a time, dry, in the plain underground or plain caverns (vanilla's
+            // NormalUnderground / NormalCaverns: below the surface with no other biome in range).
+            Spawn("DarkrootImp", Water.Dry & (Zone.NormalUnderground | Zone.NormalCaverns), shm: 0.05f, max: 2);
 
-            // Super Hardmode only, one alive at a time, dry; gates (one in 15 to one in 35) are folded in as 1/N. The chat message the
-            // old rule broadcast on a roll now comes from the knight's OnSpawn. The first line is the pre-kill sighting in the
-            // jungle sky and surface; the rest are hunts once it has been slain.
-            Spawn("OolacileKnight", Water.Dry & Zone.Jungle & (Depth.Sky | Depth.Surface) & !Slain.OolacileKnight, shm: 0.05f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Dungeon & Time.BloodMoon & Slain.OolacileKnight, shm: 0.0667f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Meteor & Time.BloodMoon & Slain.OolacileKnight, shm: 0.04f, max: 1);
-            Spawn("OolacileKnight", Water.Dry & Zone.Dungeon & Slain.OolacileKnight, shm: 0.0286f, max: 1);
+            // Same place as the imp. The chat message the old rule broadcast on a roll now comes from the knight's OnSpawn.
+            Spawn("DarkrootSentry", Water.Dry & (Zone.NormalUnderground | Zone.NormalCaverns), shm: 0.05f, max: 2);
 
             // Super Hardmode only, one alive at a time; gates (one in 8 to one in 70) are folded in as 1/N. The old "ocean" test and
             // "gray layer" test mixed tile and pixel units (the ocean covered the west 43% of the map; the gray layer ran through
             // the underworld); this uses the ocean strips and the cavern band they were written for.
-            Spawn("OolacileSorcerer", Zone.Jungle & !Zone.Dungeon & !Evil & (Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0143f, max: 1);
-            Spawn("OolacileSorcerer", Region.Ocean & !(Depth.Sky | Depth.Surface), shm: 0.04f, max: 1);
-            Spawn("OolacileSorcerer", Time.BloodMoon & Zone.Jungle & !Zone.Dungeon & !Evil & !(Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0333f, max: 1);
-            Spawn("OolacileSorcerer", Zone.Crimson, shm: 0.05f, max: 1);
-            Spawn("OolacileSorcerer", Depth.Cavern, shm: 0.02f, max: 1);
-            Spawn("OolacileSorcerer", Time.BloodMoon & Zone.Dungeon, shm: 0.125f, max: 1);
+            Spawn("OolacileAcolyte", Zone.Jungle & !Zone.Dungeon & !Evil & (Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0143f, max: 1);
+            Spawn("OolacileAcolyte", Region.Ocean & !(Depth.Sky | Depth.Surface), shm: 0.04f, max: 1);
+            Spawn("OolacileAcolyte", Time.BloodMoon & Zone.Jungle & !Zone.Dungeon & !Evil & !(Depth.Sky | Depth.Surface) & !Region.Ocean, shm: 0.0333f, max: 1);
+            Spawn("OolacileAcolyte", Zone.Crimson, shm: 0.05f, max: 1);
+            Spawn("OolacileAcolyte", Depth.Cavern, shm: 0.02f, max: 1);
+            Spawn("OolacileAcolyte", Time.BloodMoon & Zone.Dungeon, shm: 0.125f, max: 1);
 
             Spawn("Parasprite", Zone.Hallow & Water.Dry & Downed.Skeletron & Depth.SurfaceToUpperCaves, phm: 0.15f, hm: 0.15f, shm: 0.15f);
 
@@ -1320,7 +1304,9 @@ namespace tsorcRevamp.Systems
             Spawn("QuaraHydromancer", Water.Dry & Zone.Hallow, shm: 0.1f);
             Spawn("QuaraHydromancer", Water.Dry & Zone.Glowshroom, shm: 0.2f);
 
-            // QuaraMantassin
+            // Mantassin
+            // SHM only: a cloaked glintstone finger sorcerer in the ice caves. One at a time.
+            Spawn("Mantassin", Town.None & Zone.Snow & Depth.BelowSurface, shm: 0.05f, max: 1);
 
             // Beach is its home; it is also displaced into the underground desert. Gates (one in 18 to one in 140) are folded in
             // as 1/N. No town NPCs, dungeon or Pumpkin / Frost Moon.
@@ -1344,6 +1330,11 @@ namespace tsorcRevamp.Systems
             Spawn("RedKnight", Zone.Meteor & !Evil & Depth.Cavern, hm: 0.0008f, shm: 0.0008f);
             Spawn("RedKnight", Zone.Dungeon, shm: 0.002f);
             Spawn("RedKnight", Depth.Underworld, hm: 0.00091f, shm: 0.0033f);
+
+            // Sandbox only: Adventure Mode places the Royal Knight through its own events. A rare dungeon elite, and the
+            // sky-island elite once Artorias is dead. max counts the live type, so two from any mix of rules blocks a third.
+            Spawn("RoyalKnight", Mode.Sandbox & Zone.Dungeon, shm: 0.01f, max: 2);
+            Spawn("RoyalKnight", Mode.Sandbox & Slain.Artorias & SkyIslandTop, shm: 0.2f, max: 2);
 
             // The lava-wall line (0.15) was meant to be the richer spot inside the underworld, but the old plain underworld line (0.1)
             // returned first and hid it; with the highest weight winning here, it now works. Hardmode adds the underground desert.
@@ -1369,29 +1360,28 @@ namespace tsorcRevamp.Systems
             // Gate of one in 40 folded in as 0.025. Hardmode and later.
             Spawn("ShadowMage", Zone.Dungeon | Depth.Underworld, hm: 0.025f, shm: 0.025f);
 
-            // Super Hardmode only, never in the dungeon; gates (one in 35 to one in 80) are folded in as 1/N. The old gray-layer test
-            // mixed units and ran through the underworld; the cavern band is used.
-            Spawn("SlograII", !Zone.Dungeon & Zone.Jungle & Time.Night & (Depth.Sky | Depth.Surface), shm: 0.025f);
-            Spawn("SlograII", !Zone.Dungeon & Depth.Underground, shm: 0.0167f);
-            Spawn("SlograII", !Zone.Dungeon & Depth.Cavern, shm: 0.0125f);
-            Spawn("SlograII", !Zone.Dungeon & Zone.Jungle, shm: 0.0286f);
+            // Pre-Hardmode and Hardmode, never Super Hardmode or the dungeon. Plain underground (no special biome) once the
+            // Eye of Cthulhu or Vessel of Souls is down: Vessel of Souls sets NPC.downedBoss1, so Downed.Eye covers both.
+            Spawn("SkeletonWarrior", QuietArea & Neutral & !Zone.Snow & !Zone.Dungeon & !Zone.Glowshroom & !Zone.Graveyard
+                & Depth.BelowSurface & Water.Dry & Downed.Eye, phm: 0.02f, hm: 0.02f, max: 2);
+            // Underground jungle, never inside a meteor or the desert. No boss gate.
+            Spawn("SkeletonWarrior", QuietArea & Zone.Jungle & !Zone.Meteor & !AnyDesert & !Zone.Dungeon & !Evil
+                & Depth.BelowSurface & Water.Dry, phm: 0.01f, hm: 0.01f, max: 2);
+            Spawn("SkeletonWarrior", QuietArea & Zone.Graveyard, phm: 0.01f, hm: 0.01f, max: 2);
 
             // Was any spot with more than five snow tiles, read from the local client's scene. Snow zone is the server-safe equivalent.
-            Spawn("SnowOwl", Zone.Snow & Water.Dry, phm: 0.2f, hm: 0.2f);
+            // Surface and sky only: never underground.
+            Spawn("SnowOwl", Zone.Snow & Water.Dry & !Depth.BelowSurface, phm: 0.2f, hm: 0.2f);
 
             // The old rule multiplied vanilla's cavern spawn chance (1 below the rock layer, above the underworld) by 0.15 before
             // Hardmode and 0.07 in Hardmode. Its Super Hardmode line (0.01) sat behind the Hardmode one and never fired; it is now live.
             Spawn("StoneGolem", Depth.Cavern, phm: 0.15f, hm: 0.07f, shm: 0.01f);
 
-            // Super Hardmode only, one alive at a time; gates (one in 30 to one in 50) are folded in as 1/N. The old underworld line tested
-            // a tile row against a pixel value and never fired; it is live now. The "nearby" chat message the old rule sent on a
-            // roll now comes from the knight's OnSpawn.
-            Spawn("TaurusKnight", AnyDesert, shm: 0.0222f, max: 1);
-            Spawn("TaurusKnight", Zone.Dungeon, shm: 0.02f, max: 1);
-            Spawn("TaurusKnight", Depth.Underworld, shm: 0.0333f, max: 1);
+            // Adventure Mode uses Caliche's scripted encounters. Sandbox keeps the Super Hardmode spawn weights.
+            Spawn("Caliche", Mode.Sandbox & AnyDesert, shm: 0.0222f, max: 1);
+            Spawn("Caliche", Mode.Sandbox & Depth.Underworld, shm: 0.0333f, max: 1);
 
-            // Super Hardmode only: sky 0.5 and meteor 0.75; night doubles it and a blood moon doubles it again.
-            SpawnNightBoosted("Tetsujin", Depth.Sky, shm: 0.5f);
+            // Super Hardmode only: sky 0.5 and meteor 0.75; night doubles it and a blood moon doubles it again.           
             SpawnNightBoosted("Tetsujin", Zone.Meteor, shm: 0.75f);
 
             // Another session changed this rule (uncommitted at the time of the port); this matches the working tree: locked until the
@@ -1427,8 +1417,7 @@ namespace tsorcRevamp.Systems
 
             // Locked until the first boss is down, one alive at a time. Gates (one in 300 to one in 1200) are folded in as 1/N; the
             // bigger weights apply outside the middle 30-70% of the map's width.
-            Spawn("Warlock", Downed.Eye & Depth.Cavern, phm: 0.00083f, max: 1);
-            Spawn("Warlock", Downed.Eye & Depth.Cavern & Region.OutsideSpan(0.3f, 0.7f), phm: 0.00233f, max: 1);
+            // Hardmode and above only (rev 4 of the Warlock puppet conversion); events also hand-place it.
             Spawn("Warlock", Downed.Eye & (Depth.BelowSurface | Zone.Jungle), hm: 0.00167f, shm: 0.00167f, max: 1);
             Spawn("Warlock", Downed.Eye & (Depth.BelowSurface | Zone.Jungle) & Region.OutsideSpan(0.3f, 0.7f), hm: 0.00333f, shm: 0.00333f, max: 1);
 
@@ -1451,10 +1440,10 @@ namespace tsorcRevamp.Systems
             SpawnOnly(Wall.AtPlayer(WallID.StarlitHeavenWallpaper), ("HumanityPhantom", 10f));
             SpawnOnly(Mode.Remix & Region.RemixVaultBox & Wall.AtPlayer(WallID.ObsidianBrickUnsafe), ("HumanityPhantom", 10f));
 
-            // Sunken Sky Temple: only the listed Vortex enemies, from the start of the game. Written after the Phantom rooms so the
-            // temple's own list wins over any Starlit Heaven wallpaper inside it.
+            // Sunken Sky Temple: only the listed Vortex enemies and Tetsujin, from the start of the game. Written after the Phantom
+            // rooms so the temple's own list wins over any Starlit Heaven wallpaper inside it.
             SpawnOnly(SunkenSkyTemple,
-                ("VortexSoldier", 3f), ("VortexRifleman", 1f));
+                ("VortexSoldier", 3f), ("VortexRifleman", 1f), ("Tetsujin", 1f));
 
             // Wyvern Fortress: Archdeacons only, from the start of the game until the Wyvern Mage falls, and in Super Hardmode
             // until its Shadow falls. Otherwise (that stage's Mage slain) nothing spawns there.
@@ -1477,12 +1466,6 @@ namespace tsorcRevamp.Systems
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
-            if (!EnemySpawns.Enabled)
-            {
-                caller.Reply("New Enemy Spawns is off in the gameplay config; the registry is not in use.", Color.Orange);
-                return;
-            }
-
             Player player = caller.Player;
             NPCSpawnInfo spawnInfo = new NPCSpawnInfo();
             spawnInfo.Player = player;
@@ -1509,7 +1492,7 @@ namespace tsorcRevamp.Systems
                 caller.Reply($"  {entry.Name}: weight {entry.Weight:0.###}, {entry.Weight / total * 100f:0.#}% of attempts", Color.White);
             }
 
-            caller.Reply($"  vanilla pick: weight 1, {1f / total * 100f:0.#}% (legacy mod enemies not in the registry are not counted)", Color.Gray);
+            caller.Reply($"  vanilla pick: weight 1, {1f / total * 100f:0.#}% (the Cosmic Crystal Lizard's own SpawnChance is not counted)", Color.Gray);
         }
     }
 }

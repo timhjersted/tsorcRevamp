@@ -63,25 +63,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-
-            if (Main.hardMode && spawnInfo.Water)
-            {
-                chance = 0.25f;
-            }
-            if (Main.hardMode && spawnInfo.Player.ZoneDungeon && spawnInfo.Water)
-            {
-                chance = 0.5f;
-            }
-            if (Math.Abs(spawnInfo.SpawnTileX - Main.spawnTileX) > Main.maxTilesX / 3)
-            {
-                chance *= 4;
-            }
-
-            return chance;
-        }
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
             target.AddBuff(BuffID.Electrified, 5 * 60);

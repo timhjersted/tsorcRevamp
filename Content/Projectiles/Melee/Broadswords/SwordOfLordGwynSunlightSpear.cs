@@ -118,15 +118,9 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
             int frameHeight = texture.Height / Main.projFrames[Projectile.type];
             Rectangle frame = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
             Vector2 origin = GwynLightningSpearFrames.GetVisualOrigin(Projectile.frame);
-            // Sprite's tip is authored on the left, so a rightward throw needs the horizontal flip
-            // for the head to lead (was inverted before — the spear flew butt-first). If a LEFTWARD
-            // throw ever looks backwards instead, swap the comparison.
-            SpriteEffects fx = Projectile.velocity.X < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            if (fx == SpriteEffects.FlipHorizontally)
-            {
-                origin.X = texture.Width - origin.X;
-            }
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.6f, fx, 0);
+            // The sprite's head points RIGHT (+X), so rotating to the velocity angle alone leads with the head in
+            // every direction. A horizontal flip on rightward throws turned it tail-first.
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, frame, Color.White, Projectile.rotation, origin, 0.6f, SpriteEffects.None, 0);
             return false;
         }
     }

@@ -1,21 +1,24 @@
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     class EnemySpellGreatFireball : ModProjectile
     {
+        private const int TicksPerFrame = 4;
+        private const int DamagingFrames = 9;
+        private const int TotalFrames = 11;
 
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Enemy Spell Great Fireball");
-
+            Main.projFrames[Type] = TotalFrames;
         }
+
         public override void SetDefaults()
         {
             Projectile.width = 150;
             Projectile.height = 150;
-            Main.projFrames[Projectile.type] = 9;
             Projectile.aiStyle = -1;
             Projectile.hostile = true;
             Projectile.scale = 2;
@@ -28,22 +31,35 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             DrawOriginOffsetX = -75;
             DrawOriginOffsetY = 70;
         }
-        #region AI
+
         public override void AI()
         {
-
-            Projectile.frameCounter++;
-            if (Projectile.frameCounter > 3)
-            {
-                Projectile.frame++;
-                Projectile.frameCounter = 0;
-            }
-            if (Projectile.frame >= 9)
+            Projectile.ai[0]++;
+            int age = (int)Projectile.ai[0];
+            if (age >= TotalFrames * TicksPerFrame)
             {
                 Projectile.Kill();
                 return;
             }
+
+            Projectile.frame = age / TicksPerFrame;
+
+            // Sync the transition to the ember tail using the same age that drives the frame.
+            if (age == DamagingFrames * TicksPerFrame && Main.netMode == NetmodeID.Server)
+            {
+                Projectile.netUpdate = true;
+            }
         }
-        #endregion
+
+        public override bool? CanDamage()
+        {
+            // Only the original nine frames can hit players. The extra frames are the visual tail.
+            if (Projectile.ai[0] >= DamagingFrames * TicksPerFrame)
+            {
+                return false;
+            }
+
+            return null;
+        }
     }
 }

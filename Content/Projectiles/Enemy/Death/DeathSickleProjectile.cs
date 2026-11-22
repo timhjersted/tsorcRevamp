@@ -11,8 +11,8 @@ using tsorcRevamp.Utilities;
 namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 {
     /// <summary>
-    /// Death's phase-one sickle. It keeps the vanilla Death Sickle texture, but all movement
-    /// and lifecycle behavior is owned by this class: no vanilla slowdown or homing.
+    /// Death's phase-one Mourning Knot: a 64x64 spinning soul-energy sprite.
+    /// Movement and lifecycle behavior are custom: no vanilla slowdown or homing.
     /// ai[0]/ai[1] = travel direction, ai[2] = travel speed. localAI[2] is 1 for the charged
     /// (held-then-accelerated) variant and 2 for the scatter volley, which is removed after it has
     /// flown ScatterTravelLimit pixels. (Projectile arrays only have maxAI = 3 slots.)
@@ -27,9 +27,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
         const int FadeOutTicks = 15;
         /// <summary>Scatter volley sickles (ai[3] == 1) are removed once they have flown this far.</summary>
         const float ScatterTravelLimit = 1500f;
-
-        public override string Texture => "Terraria/Images/Projectile_" + ProjectileID.DeathSickle;
-        // Placeholder sprite: vanilla Death Sickle projectile art.
 
         public override void SetDefaults()
         {
@@ -137,7 +134,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Death
 
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D texture = TextureAssets.Projectile[ProjectileID.DeathSickle].Value;
+            Texture2D texture = TextureAssets.Projectile[Type].Value;
             float opacity = 1f - Projectile.alpha / 255f;
             Main.EntitySpriteDraw(
                 texture,

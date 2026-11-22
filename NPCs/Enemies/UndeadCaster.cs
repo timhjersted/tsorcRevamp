@@ -12,7 +12,6 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -55,19 +54,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.value = 900; // was 95
                 NPC.damage = 0;
             }
-        }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-
-            float chance = 0;
-            Player p = spawnInfo.Player;
-            if (!Main.hardMode && p.ZoneRockLayerHeight && !spawnInfo.Player.ZoneDungeon && !spawnInfo.Player.ZoneJungle) return 0.039f;
-            if (!Main.hardMode && Sky(p) && !Main.dayTime) return 0.025f;
-            if (!Main.hardMode && Sky(p) && Main.dayTime) return 0.05f;
-            if (!Main.hardMode && spawnInfo.Player.ZoneSnow) return 0.1f;
-            if (!Main.hardMode && (spawnInfo.Player.ZoneRockLayerHeight && !(!spawnInfo.Player.ZoneDungeon && spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson || spawnInfo.Player.ZoneJungle))) return 0.033f;
-
-            return chance;
         }
 
         public override void HitEffect(NPC.HitInfo hit)

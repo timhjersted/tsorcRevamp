@@ -6,12 +6,13 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.DarkKnightSet;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.AI;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
@@ -20,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     /// Super Hardmode blood elite rebuilt on the puppet foundation. Its sword and whip are
     /// deliberately dodgeable commitments; its Tendon Bow plays fixed, learnable shot phrases.
     /// </summary>
-    public class DarkBloodKnight : PuppetNPC
+    public class DarkBloodKnight : PuppetNPC, IEnemyWhipOwner
     {
         private const string ScarletHewName = "Scarlet Hew";
         private const string ButchersReversalName = "Butcher's Reversal";
@@ -176,9 +177,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool SecondaryRangedAvailable => NPC.life <= NPC.lifeMax * 0.75f;
 
         private bool IsBlackfirePhase => NPC.life <= NPC.lifeMax * 0.5f;
-        public Vector2 BloodWhipAnchor => PuppetHandPosition;
-        public Vector2 BloodWhipAim => _lockedWhipAim;
-        public bool IsBloodWhipActive => _activeComboUsesWhip
+        // IEnemyWhipOwner: the Dark Harvest lash (EnemyWhipProjectileBase) reads these every tick.
+        public Vector2 WhipAnchor => PuppetHandPosition;
+        public Vector2 WhipAim => _lockedWhipAim;
+        public bool IsWhipActive => _activeComboUsesWhip
             && (Phase == AttackPhase.MeleeComboTelegraph
                 || Phase == AttackPhase.MeleeComboAttack
                 || Phase == AttackPhase.MeleeComboPause
@@ -356,36 +358,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 attackRange: MeleeEngageRange);
         }
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-            bool frozenOcean = spawnInfo.SpawnTileX > Main.maxTilesX - 800;
-            bool ocean = spawnInfo.SpawnTileX < 800 || frozenOcean;
-
-            if (NPC.AnyNPCs(Type))
-                return 0f;
-
-            float chance = 0f;
-            if (tsorcRevampWorld.SuperHardMode
-                && !player.ZoneDungeon
-                && (player.ZoneUnderworldHeight || player.ZoneCrimson)
-                && !ocean)
-            {
-                chance = player.ZoneOverworldHeight ? 0.25f : 0.3f;
-            }
-
-            if (!Main.dayTime)
-                chance *= 2f;
-            if (Main.bloodMoon)
-                chance *= 2f;
-            return chance;
-        }
-
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
             if (combo.Name == DarkHarvestLashName)
                 return distance >= 112f
-                    && distance <= BloodKnightDarkHarvestWhip.MaximumReach;
+                    && distance <= BloodKnightDarkHarvestWhip.MaximumReachPixels;
             return true;
         }
 
@@ -738,7 +715,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RedTitanite>(), 1, 2, 3));
             npcLoot.Add(ItemDropRule.ByCondition(
-                tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule,
+                tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule,
                 ModContent.ItemType<FlameOfTheAbyss>()));
         }
     }

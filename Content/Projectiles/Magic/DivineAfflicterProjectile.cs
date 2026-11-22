@@ -63,6 +63,17 @@ namespace tsorcRevamp.Content.Projectiles.Magic
                 UsefulFunctions.SmoothHoming(Projectile, Main.MouseWorld, 2f, 18f, null);
             }
         }
+        public override float WidthFunction(float progress)
+        {
+            // Pinch the front tip to 0 so sharp turns never expose a flat/diagonal quad edge across the bright core.
+            if (progress > 0.85f)
+            {
+                return MathHelper.SmoothStep(trailWidth, 0f, (progress - 0.85f) / 0.15f);
+            }
+
+            return trailWidth;
+        }
+
         public override float CollisionWidthFunction(float progress)
         {
             if (progress > 0.9)

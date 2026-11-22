@@ -10,8 +10,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
     public class PlagueTeleportCloud : ModProjectile
     {
         public const int LifetimeTicks = 180;
+        public const int SpearImpactLifetimeTicks = 60;
         public const float MaxCloudRadius = 100f;
-        public const int CurseBuildupPerTick = 2;
+        public const float SpearImpactCloudRadius = 24f;
+        public const int CurseBuildupPerTick = 1;
         private const int BuffRefreshTicks = 120;
         private const int ExpansionTicks = 90;
         private const int DissipateTicks = 45;
@@ -35,6 +37,13 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
         public override void AI()
         {
+            // Capture the spawn lifetime on tick 1 so shorter clouds (like the 60-tick spear impact cloud)
+            // scale their expansion and fade phases proportionally instead of spending 45 of 60 ticks fading.
+            if (Projectile.localAI[1] == 0f)
+            {
+                Projectile.localAI[1] = Projectile.timeLeft;
+            }
+
             Projectile.localAI[0]++;
 
             float radius = CurrentRadius();
@@ -51,29 +60,51 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
         private float CurrentRadius()
         {
-            float progress = MathHelper.Clamp(Projectile.localAI[0] / ExpansionTicks, 0f, 1f);
+            float initialLifetime = Projectile.localAI[1] > 0f ? Projectile.localAI[1] : LifetimeTicks;
+            float expansionTicks = System.Math.Min((float)ExpansionTicks, initialLifetime * 0.35f);
+            float progress = MathHelper.Clamp(Projectile.localAI[0] / expansionTicks, 0f, 1f);
             progress = progress * progress * (3f - 2f * progress);
-            return MathHelper.Lerp(16f, TargetRadius, progress);
+            float startRadius = System.Math.Min(16f, TargetRadius * 0.5f);
+            return MathHelper.Lerp(startRadius, TargetRadius, progress);
         }
 
         private void SpawnPlagueDust(float radius)
         {
-            float dissipate = MathHelper.Clamp(Projectile.timeLeft / (float)DissipateTicks, 0f, 1f);
+            float initialLifetime = Projectile.localAI[1] > 0f ? Projectile.localAI[1] : LifetimeTicks;
+            float dissipateTicks = System.Math.Min((float)DissipateTicks, initialLifetime * 0.35f);
+            float dissipate = MathHelper.Clamp(Projectile.timeLeft / dissipateTicks, 0f, 1f);
             int dustCount = (int)MathHelper.Clamp(22f * dissipate, 6f, 22f);
+            float jitterRadius = System.Math.Min(14f, radius * 0.25f);
 
             for (int i = 0; i < dustCount; i++)
             {
                 Vector2 direction = Main.rand.NextVector2CircularEdge(1f, 1f);
                 bool outerEdge = Main.rand.NextBool(3);
                 float distance = outerEdge ? Main.rand.NextFloat(radius * 0.55f, radius) : Main.rand.NextFloat(radius * 0.1f, radius * 0.8f);
-                Vector2 jitter = Main.rand.NextVector2Circular(14f, 14f);
+                Vector2 jitter = Main.rand.NextVector2Circular(jitterRadius, jitterRadius);
                 Vector2 position = Projectile.Center + direction * distance + jitter;
                 Vector2 velocity = direction * Main.rand.NextFloat(0.05f, 0.38f) + Main.rand.NextVector2Circular(0.18f, 0.18f);
 
-                int dustType = Main.rand.NextBool(2) ? DustID.Smoke : (Main.rand.NextBool(3) ? DustID.Wraith : DustID.ShadowbeamStaff);
-                Color color = dustType == DustID.Smoke
-                    ? new Color(12, 8, 18)
-                    : (Main.rand.NextBool() ? new Color(70, 24, 112) : new Color(18, 10, 30));
+                int dustType = DustID.ShadowbeamStaff;
+                if (Main.rand.NextBool(2))
+                {
+                    dustType = DustID.Smoke;
+                }
+                else if (Main.rand.NextBool(3))
+                {
+                    dustType = DustID.Wraith;
+                }
+
+                Color color = new Color(18, 10, 30);
+                if (dustType == DustID.Smoke)
+                {
+                    color = new Color(12, 8, 18);
+                }
+                else if (Main.rand.NextBool())
+                {
+                    color = new Color(70, 24, 112);
+                }
+
                 float scale = dustType == DustID.Smoke ? Main.rand.NextFloat(2.2f, 3.6f) : Main.rand.NextFloat(1.3f, 2.1f);
                 Dust dust = Dust.NewDustPerfect(position, dustType, velocity, 190, color, scale * dissipate);
                 dust.noGravity = true;
@@ -81,7 +112,8 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
                 if (Main.rand.NextBool(3))
                 {
-                    Dust purple = Dust.NewDustPerfect(position - direction * Main.rand.NextFloat(4f, 18f), DustID.PurpleTorch, velocity * 0.4f, 210, new Color(120, 45, 170), Main.rand.NextFloat(0.8f, 1.35f) * dissipate);
+                    float pullBack = System.Math.Min(18f, radius * 0.5f);
+                    Dust purple = Dust.NewDustPerfect(position - direction * Main.rand.NextFloat(2f, pullBack), DustID.PurpleTorch, velocity * 0.4f, 210, new Color(120, 45, 170), Main.rand.NextFloat(0.8f, 1.35f) * dissipate);
                     purple.noGravity = true;
                 }
 
@@ -108,7 +140,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
                 int buffIndex = player.FindBuffIndex(curseBuff);
                 tsorcRevampPlayer modPlayer = player.GetModPlayer<tsorcRevampPlayer>();
-                if (buffIndex == -1 && modPlayer.CurseLevel == 1) modPlayer.CurseLevel = 0;
+                if (buffIndex == -1 && modPlayer.CurseLevel == 1)
+                {
+                    modPlayer.CurseLevel = 0;
+                }
                 modPlayer.CurseLevel += CurseBuildupPerTick;
 
                 if (buffIndex == -1)

@@ -43,32 +43,6 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        #region Spawn
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.townNPCs > 0f) return 0f;
-            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && !Main.dayTime) return 0.0627f;
-            if (spawnInfo.Player.ZoneOverworldHeight && Main.hardMode && spawnInfo.Player.ZoneDesert && Main.dayTime) return 0.0368f;
-            if (spawnInfo.Player.ZoneUndergroundDesert && Main.hardMode && Main.dayTime) return 0.038f;
-
-            if (Main.hardMode && spawnInfo.Player.ZoneRain)
-            {
-                if (spawnInfo.Player.ZoneOverworldHeight && Main.dayTime) return 0.0433f;
-                if (spawnInfo.Player.ZoneOverworldHeight && !Main.dayTime) return 0.0855f;
-            }
-            return chance;
-        }
-        #endregion
-
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
             bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {

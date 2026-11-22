@@ -50,6 +50,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 mark.fadeIn = 0.6f;
             }
             Lighting.AddLight(markPos, 0.3f * markProgress, 0.15f * markProgress, 0.05f * markProgress);
+
+            // Detonate on the mark. tileCollide is off (it must fall through platforms and overhangs to reach the
+            // mark), so without this it fell through the floor and burst ~1000px underground on timeout.
+            // ai[0]/ai[1] both 0 = an unmarked meteor (the plain EnemyMeteorStorm item), which keeps its old flight.
+            bool hasMark = Projectile.ai[0] != 0f || Projectile.ai[1] != 0f;
+            bool reachedMark = Projectile.Center.Y >= Projectile.ai[1];
+
+            if (hasMark && reachedMark)
+            {
+                Projectile.Kill();
+            }
         }
 
         public override void OnKill(int timeLeft)

@@ -43,6 +43,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             float scale = MathHelper.Lerp(1f, 1.2f, lifeProgress);
             Projectile.scale = scale;
             Projectile.Resize((int)(16 * scale), (int)(16 * scale));
+            if (Projectile.timeLeft <= 10)
+            {
+                Projectile.alpha = 255 - Projectile.timeLeft * 255 / 10;
+            }
 
             if (Main.dedServ)
             {
@@ -64,7 +68,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override bool PreKill(int timeLeft)
         {
-            return false;
+            return true;
+        }
+
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return PowerfulCurseBuildup.PowerfulCurseColor * Projectile.Opacity;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                Dust mote = Dust.NewDustPerfect(Projectile.Center, DustID.PinkTorch, Main.rand.NextVector2Circular(2f, 2f), 100, PowerfulCurseBuildup.PowerfulCurseColor, 0.8f);
+                mote.noGravity = true;
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

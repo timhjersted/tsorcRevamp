@@ -61,6 +61,17 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Broadswords
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].velocity = angle.ToRotationVector2() * 2.2f;
             }
+            // Rolling FireBreath flames ride the expanding edge, thrown slightly outward.
+            for (int i = 0; i < 4; i++)
+            {
+                float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                Vector2 outward = angle.ToRotationVector2();
+                Vector2 flamePosition = Projectile.Center + outward * Radius;
+                float flameScale = Main.rand.NextFloat(0.85f, 1.25f);
+                int flameLife = Main.rand.Next(16, 23);
+                global::tsorcRevamp.VFX.VFX.FlameLobe(flamePosition, outward * 2.4f, flameScale, flameLife, 0.02f);
+            }
+
             Lighting.AddLight(Projectile.Center, 1.1f, 0.55f, 0.16f);
         }
 

@@ -9,6 +9,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy.Okiku;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Content.Projectiles.Magic
 {
@@ -128,7 +129,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
 
             if (owner.statMana <= 0 && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !owner.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking && owner.manaFlower)
             {
-                MethodSwaps.TryUseQuickMana(owner);
+                CeruleanFlaskQuickManaOverride.TryUseQuickMana(owner);
             }
 
             if (!owner.channel || owner.noItems || owner.CCed || (owner.statMana < tickManaCost && !JustShot) || owner.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent <= 0)

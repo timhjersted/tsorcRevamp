@@ -14,7 +14,6 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
@@ -1096,7 +1095,7 @@ namespace tsorcRevamp.NPCs
             }
             // Deliberately does NOT include AttackTelegraphing/AttackCommitted: an enemy winding up an attack
             // keeps its movement. Enemies whose attacks need to own the body drive it themselves from their
-            // own state machine (see GreatBlackKnight.RunSpearMeleeApproach), which composes with the mover
+            // own state machine (see BlackKnight's throw approach, KnightHopPlanner), which composes with the mover
             // instead of freezing it.
             intent.SeizesBody = combatMeleeSeizesBody || guardPressureRecoveryHold || teleportBusy || globalNPC.PounceTimer > 0 || globalNPC.DodgeTimer > 0 || globalNPC.DodgeRecoveryTimer > 0 || globalNPC.DirectPounceAfterimageTimer > 0 || globalNPC.DirectPounceRecoveryTimer > 0 || globalNPC.QuickStepTimer > 0 || globalNPC.QuickStepRecoveryTimer > 0 || dashTelegraphHold || globalNPC.EvasiveRetreating;
         }
@@ -2165,6 +2164,9 @@ namespace tsorcRevamp.NPCs
         ///<param name="npc">The npc itself this function will run on</param>
         ///<param name="range">The max range from the player it can teleport. Minimum is 12 blocks.</param>
         ///<param name="requireLineofSight">Try to teleport somewhere that has line of sight to the player</param>
+        // Tiles. GenerateTeleportPosition skips landings closer than this to the NPC's current centre (until its last tries).
+        private const float MinTeleportTravelTiles = 10f;
+
         public static Vector2? GenerateTeleportPosition(NPC npc, int range, bool requireLineofSight = true, bool preferHighGround = false, int minRange = 11)
         {
             int playerTileY = (int)(Main.player[npc.target].Center.Y / 16f);
@@ -2255,10 +2257,15 @@ namespace tsorcRevamp.NPCs
                             continue;
                         }
 
-                        //If it requires line of sight, and there is not a clear path, and it has not tried at least 50 times, then skip to the next try
-                        else if (requireLineofSight && !(Collision.CanHit(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2) && Collision.CanHitLine(new Vector2(teleportTarget.X, (int)teleportTarget.Y + y), 2, 2, Main.player[npc.target].Center / 16, 2, 2)))
+                        // A teleport must actually relocate: for the first 90 tries, reject landings within
+                        // MinTeleportTravelTiles of where the NPC stands now (the "blinked 5 tiles for nothing" case).
+                        // Flank tries are exempt: the target's far side is a purposeful spot even when it is close.
+                        Vector2 landingCenter = new Vector2(landingTileX * 16f, landingTileY * 16f - npc.height / 2f);
+                        float travelTiles = Vector2.Distance(landingCenter, npc.Center) / 16f;
+                        bool landsTooClose = !flanking && i < 90 && travelTiles < MinTeleportTravelTiles;
+
+                        if (landsTooClose)
                         {
-                            //Main.NewText("Fail 3");
                             continue;
                         }
 
@@ -2275,6 +2282,21 @@ namespace tsorcRevamp.NPCs
                         {
                             //Main.NewText("Fail 4");
                             continue;
+                        }
+
+                        // Line of sight from where the NPC's centre would land to the player's centre, in world pixels.
+                        // Tested last and only when required: the two raycasts cost far more than every check above, and
+                        // a failed search runs this up to QueueTeleportSearchRounds x 100 x (landings per column) times.
+                        if (requireLineofSight)
+                        {
+                            Vector2 playerCenter = Main.player[npc.target].Center;
+                            bool landingHasLineOfSight = Collision.CanHit(landingCenter, 1, 1, playerCenter, 1, 1)
+                                && Collision.CanHitLine(landingCenter, 1, 1, playerCenter, 1, 1);
+
+                            if (!landingHasLineOfSight)
+                            {
+                                continue;
+                            }
                         }
 
                         //Then teleport and return
@@ -2511,13 +2533,18 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Fresh GenerateTeleportPosition searches (100 random tries each) before QueueTeleport gives up. It was 100 rounds
+        // while the inner line-of-sight test was broken and nearly every round "succeeded" on its first landing; with the
+        // real raycasts a failed 100-round search cost ~10,000 tries and stalled the game every retry (every 30 ticks).
+        private const int QueueTeleportSearchRounds = 4;
+
         public static void QueueTeleport(NPC npc, int range, bool requireLineofSight = true, int TeleportTelegraphTime = 140, bool preferHighGround = false, int minRange = 11)
         {
             Vector2? potentialNewPos;
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < QueueTeleportSearchRounds; i++)
                 {
                     potentialNewPos = GenerateTeleportPosition(npc, range, requireLineofSight, preferHighGround, minRange);
                     if (potentialNewPos.HasValue && (!requireLineofSight || (Collision.CanHit(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1) && Collision.CanHitLine(potentialNewPos.Value, 1, 1, Main.player[npc.target].Center, 1, 1))))
@@ -2590,7 +2617,7 @@ namespace tsorcRevamp.NPCs
         private static void SpawnTeleportIllusion(NPC source)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient
-                || source.ModNPC is not Puppets.PuppetNPC)
+                || source.ModNPC is not Invaders.PuppetNPC)
             {
                 return;
             }
@@ -2618,7 +2645,7 @@ namespace tsorcRevamp.NPCs
             illusionGlobal.SuppressGlobalOnKillDrops = true;
             illusionGlobal.CanTeleport = false;
             illusionGlobal.EvasiveTeleportAway = false;
-            ((Puppets.PuppetNPC)source.ModNPC).InitializeTeleportIllusion(illusion);
+            ((Invaders.PuppetNPC)source.ModNPC).InitializeTeleportIllusion(illusion);
             illusion.netUpdate = true;
 
             if (Main.netMode == NetmodeID.Server)
@@ -2938,7 +2965,7 @@ namespace tsorcRevamp.NPCs
             // PuppetNPC owns a continuous authored attack sequencer. Its default contract is that
             // ordinary hits add light poise flinch but cannot replace neutral selection with an
             // evasive action; only a completed poise break calls PuppetNPC.OnStagger and cancels it.
-            if (npc.ModNPC is Puppets.PuppetNPC puppet && !puppet.AllowsReactiveDefense)
+            if (npc.ModNPC is Invaders.PuppetNPC puppet && !puppet.AllowsReactiveDefense)
             {
                 return;
             }

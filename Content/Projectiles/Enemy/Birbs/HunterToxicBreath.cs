@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Birbs
             if (!initialized)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
-                hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.TheRage>());
+                hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>());
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;
                 initialized = true;

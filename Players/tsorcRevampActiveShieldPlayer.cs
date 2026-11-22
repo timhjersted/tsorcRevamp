@@ -13,6 +13,7 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Projectiles;
+using tsorcRevamp.Content.Projectiles.Accessories;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 
 namespace tsorcRevamp
@@ -82,6 +83,32 @@ namespace tsorcRevamp
         /// Shields read this to decide whether to apply their classic passive bonuses or defer to active blocking.</summary>
         public static bool ActiveFor(Player player) => RevampActive && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode;
 
+        // Largest hostile projectile Mythril Bulwark will deflect, in px per side. Bigger hitboxes are arena hazards
+        // (rings, walls, beams) rather than shots, and parrying one must not delete it.
+        private const int MythrilReflectMaxSize = 64;
+
+        /// <summary>
+        /// Whether a blocked projectile is a deflectable shot for Mythril Bulwark's perfect parry: an active, moving
+        /// (at least 1 px/tick), shot-sized hostile projectile that isn't a puppet's melee hitbox. Shared by the
+        /// blocking client and the server's ReportBlockedAttack handler so both agree on what gets reflected.
+        /// </summary>
+        public static bool CanMythrilReflect(Projectile projectile)
+        {
+            if (!projectile.active || !projectile.hostile)
+            {
+                return false;
+            }
+
+            if (projectile.type == ModContent.ProjectileType<HumanoidMeleeHitbox>())
+            {
+                return false;
+            }
+
+            bool moving = projectile.velocity.LengthSquared() >= 1f;
+            bool shotSized = projectile.width <= MythrilReflectMaxSize && projectile.height <= MythrilReflectMaxSize;
+            return moving && shotSized;
+        }
+
         /// <summary>True for a raised shield or, on the owning client, an eligible shield input that has not yet
         /// reached <see cref="ProcessTriggers"/> this frame. Item and quick-use hooks can precede that update.</summary>
         public bool IsBlockingOrRaisingShield => isBlocking
@@ -149,7 +176,7 @@ namespace tsorcRevamp
             // Resolve the Right-Click (2nd) slot use first; it gates blocking below.
             UpdateSecondSlotUse();
 
-            isBlocking = ComputeBlocking();
+            isBlocking = ComputeBlocking() && !Systems.CutsceneSystem.Freezes(Player);
             if (!isBlocking)
             {
                 activeShieldType = -1;
@@ -684,7 +711,10 @@ namespace tsorcRevamp
             // ActiveShieldGlobalItem.UpdateEquip (which handles the accessory slots): the mod branch calls
             // ModItem.UpdateEquip directly, and ApplyEquipFunctional only invokes ItemLoader.UpdateAccessory,
             // not UpdateEquip. So this is the sole application point for a 2nd-slot shield — no double-dip.
-            if (data.PassiveRegenPenalty > 0f)
+            // Smough's Armor cancels the Dragon Crest's tax, matching the accessory-slot path.
+            bool smoughCancelsPenalty = rc.type == ModContent.ItemType<DragonCrestShield>() && Player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills;
+
+            if (data.PassiveRegenPenalty > 0f && !smoughCancelsPenalty)
             {
                 Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= data.PassiveRegenPenalty;
             }
@@ -774,6 +804,11 @@ namespace tsorcRevamp
                 cost = (float)Math.Ceiling(cost * PerfectParryCostMult);
             }
 
+            if (data.Resource == ShieldResource.Stamina)
+            {
+                cost = ApplySmoughBlockDiscount(cost);
+            }
+
             tsorcRevampStaminaPlayer staminaPlayer = Player.GetModPlayer<tsorcRevampStaminaPlayer>();
 
             // Stability break: a hit heavy enough relative to your MAXIMUM stamina overwhelms the guard even when
@@ -807,6 +842,7 @@ namespace tsorcRevamp
                 {
                     stamSip = (int)Math.Ceiling(stamSip * PerfectParryCostMult);
                 }
+                stamSip = (int)ApplySmoughBlockDiscount(stamSip);
                 tsorcRevampPlayer modPlayer = Player.GetModPlayer<tsorcRevampPlayer>();
                 if (Player.statMana >= cost && stamina.staminaResourceCurrent >= stamSip)
                 {
@@ -829,10 +865,10 @@ namespace tsorcRevamp
                 guardBroke = true;
             }
 
-            // Post-block regen pause. An ordinary block doubles the class's normal spend delay (60 Unkindled /
-            // 30 BotC); a perfect parry keeps the ordinary one (30 / 15). That gap is the point: the shield-down
-            // window between a kiter's spaced shots was long enough to refill what the block cost, so a
-            // block→shoot loop never lost ground. Doubling it makes sloppy blocking bleed while clean timing
+            // Post-block regen pause. An ordinary block uses the longer block delay (60 Unkindled / 80 BotC,
+            // ~1.33x the spend delay); a perfect parry keeps the ordinary one (45 / 60). That gap is the point: the
+            // shield-down window between a kiter's spaced shots was long enough to refill what the block cost, so a
+            // block→shoot loop never lost ground. The longer pause makes sloppy blocking bleed while clean timing
             // still recovers at the normal rate. Set explicitly rather than leaning on UpdateResource's generic
             // "you spent stamina" detector, so a future change to the parry cost can't silently drop the pause.
             // Mana wards included — they spend a stamina sip per block, and a block is a block.
@@ -1100,17 +1136,24 @@ namespace tsorcRevamp
             if (shieldType == ModContent.ItemType<MythrilBulwark>())
             {
                 attacker.AddBuff(ModContent.BuffType<MythrilRamDebuff>(), MythrilBulwark.VulnerabilityDuration * 60);
-                // ...and deflects a blocked hostile projectile straight back at its source.
-                if (attackingProjectile != null && attackingProjectile.active && attackingProjectile.hostile
-                    && attackingProjectile.type !=
-                        ModContent.ProjectileType<HumanoidMeleeHitbox>())
+                // ...and deflects a blocked hostile shot straight back at its source. The shot is replaced by a friendly
+                // MythrilReflectedShot owned by this player (spawned here, synced like any player projectile) rather
+                // than flipped in place, because hostile/friendly are not networked. In MP the server removes the
+                // hostile original for everyone in the ReportBlockedAttack handler; here we only hide our own copy.
+                if (attackingProjectile != null && CanMythrilReflect(attackingProjectile) && Player.whoAmI == Main.myPlayer)
                 {
-                    Projectile p = attackingProjectile;
-                    p.hostile = false;
-                    p.friendly = true;
-                    p.owner = Player.whoAmI;
-                    p.velocity = -p.velocity;
-                    p.netUpdate = true;
+                    Projectile blockedShot = attackingProjectile;
+                    float shotSpeed = blockedShot.velocity.Length();
+                    Vector2 reversedDirection = -blockedShot.velocity / shotSpeed;
+                    Vector2 toSource = (attacker.Center - blockedShot.Center).SafeNormalize(reversedDirection);
+                    float rotationOffset = blockedShot.rotation - blockedShot.velocity.ToRotation();
+
+                    Projectile.NewProjectile(Player.GetSource_Misc("ActiveShieldBlock"), blockedShot.Center, toSource * shotSpeed,
+                        ModContent.ProjectileType<MythrilReflectedShot>(), blockedShot.damage, blockedShot.knockBack,
+                        Player.whoAmI, blockedShot.type, rotationOffset);
+
+                    // Silent removal, not Kill(): an exploding shot must not detonate on the shield it was parried by.
+                    blockedShot.active = false;
                 }
             }
 
@@ -1145,7 +1188,7 @@ namespace tsorcRevamp
                 TryIgniteFireBreath();
             }
 
-            // Icebound Mythril Aegis — a small frost nova on block.
+            // Icebound Aegis — a small frost nova on block.
             if (shieldType == ModContent.ItemType<IceboundMythrilAegis>())
             {
                 attacker.AddBuff(BuffID.Frostburn, 180);
@@ -1370,7 +1413,9 @@ namespace tsorcRevamp
             packet.Write(tsorcPacketID.ReportBlockedAttack);
             packet.Write(attacker.whoAmI);
             packet.Write(attacker.type);
-            packet.Write(attackingProjectile?.whoAmI ?? -1);
+            // identity, not whoAmI: a client's projectile slot differs from the server's, but a server-owned (hostile)
+            // projectile's identity IS its server slot, which the handler indexes with.
+            packet.Write(attackingProjectile?.identity ?? -1);
             packet.Write(attackingProjectile?.type ?? -1);
             packet.Write(Math.Max(0, blockedDamage));
             packet.Write(perfectParry);
@@ -1401,6 +1446,18 @@ namespace tsorcRevamp
             return false;
         }
 
+        // Smough's Armor: blocks cost less stamina. Mana is untouched, so a mana ward only saves on its stamina sip.
+        private float ApplySmoughBlockDiscount(float staminaCost)
+        {
+            if (!Player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills)
+            {
+                return staminaCost;
+            }
+
+            float costMultiplier = 1f - Content.Items.Armor.SmoughArmor.BlockStaminaDiscount / 100f;
+            return (float)Math.Ceiling(staminaCost * costMultiplier);
+        }
+
         private void TriggerUnblockableGuardBreak(ActiveShieldData data, Player.HurtInfo info)
         {
             float incomingDamage = info.SourceDamage > 0 ? info.SourceDamage : info.Damage;
@@ -1409,13 +1466,14 @@ namespace tsorcRevamp
 
             if (data.Resource == ShieldResource.Stamina)
             {
+                blockCost = ApplySmoughBlockDiscount(blockCost);
                 stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - blockCost);
             }
             else
             {
                 // Mana wards mirror their ordinary block payment: scaled mana plus the flat stamina sip.
                 Player.GetModPlayer<tsorcRevampPlayer>().SpendManaOnHit((int)blockCost);
-                int staminaSip = (int)Math.Ceiling(data.BaseCost / 3f);
+                int staminaSip = (int)ApplySmoughBlockDiscount((float)Math.Ceiling(data.BaseCost / 3f));
                 stamina.staminaResourceCurrent = Math.Max(0f, stamina.staminaResourceCurrent - staminaSip);
             }
 

@@ -4,8 +4,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
-using static tsorcRevamp.oSpawnHelper;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
@@ -41,26 +39,6 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.damage = 80;
                 NPC.knockBackResist = 0.01f;
             }
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            //if (spawnInfo.Player.ZoneDesert && spawnInfo.Player.ZoneSnow)
-            //{
-                if (Main.hardMode)
-                {
-                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.07f;
-                }
-                if (tsorcRevampWorld.SuperHardMode)
-                {
-                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.01f;
-                }
-                else
-                {
-                    return Terraria.ModLoader.Utilities.SpawnCondition.Cavern.Chance * 0.15f;
-                }
-            //}
-        
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)

@@ -50,9 +50,12 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Systems.LethalTempo;
 using tsorcRevamp.UI;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Bosses.Demons;
 using Shockwave = tsorcRevamp.Content.Projectiles.Shockwave;
 
 namespace tsorcRevamp
@@ -78,6 +81,11 @@ namespace tsorcRevamp
         public bool BeastMode1 = false;
         public bool TornWings = false;
         public bool Crippled = false;
+
+        // Torn Wings, Crippled and Suppressed all ground the wings: no flight, no glide, and the wings stay folded
+        // (PostUpdateMiscEffects clears wingsLogic; FrameEffects pins the wings to their folded frame).
+        public bool WingsDisabled => TornWings || Crippled || Suppressed;
+
         public bool WitchkingsGrasp = false;
         public int PullStrength = 0;
         public int PullFrame = 0;
@@ -115,9 +123,6 @@ namespace tsorcRevamp
         public int curseDecayTimer = 0;
         public int powerfulCurseDecayTimer = 0;
 
-        public int DestinedDeathStacks = 0;
-        public float DestinedDeathCurrentHPLoss = 0f;
-        public bool DestinedDeathActive = false;
 
         public bool BrokenSpirit;
 
@@ -174,8 +179,6 @@ namespace tsorcRevamp
 
         public bool MeleeArmorVamp10 = false;
 
-        public bool MagmaArmor;
-        public bool PortlyPlateArmor;
 
         public bool OldWeapon = false;
 
@@ -184,14 +187,6 @@ namespace tsorcRevamp
 
         public bool MythrilOrichalcumCritDamage = false;
         public bool PilgrimSpontoonBuff = false;
-
-        public int RuneterraMinionHitSoundCooldown = 0;
-        public bool Turboboost = false;
-        public int TurboboostControlsCooldown = 0; //so you don't accidentally active it while trying to adjust radius
-        public int MinimumMinionCircleRadius = 150;
-        public int MaximumMinionCircleRadius = 500;
-        public float MinionCircleRadius = 150;
-        public int CenterOfTheUniverseStardustCount = 0;
 
         public float CrystalNunchakuDefenseDamage;
 
@@ -235,6 +230,11 @@ namespace tsorcRevamp
 
         public int supersonicLevel = 0;
         public bool hasSupersonicHarness = false;
+        // Ice Skates grip without the thin-ice protection. Supersonic Wings I/II and the Dragoon helmets set IceGripOnly instead
+        // of iceSkate; PostUpdateEquips notes whether anything else gave real Ice Skates, then turns iceSkate on for grip.
+        // MethodSwaps.On_Player_CheckCrackedBrickBreak breaks thin ice when the grip came only from these. Both reset each tick.
+        public bool IceGripOnly = false;
+        public bool HasRealIceSkates = false;
         public bool hasSlottedWing = false;
         public bool supersonicHarnessHideVisual = false;
         public int slottedWingSlot = 0;
@@ -343,6 +343,14 @@ namespace tsorcRevamp
         // bonfire refills, drop bonuses, recipe conditions) on this. BotC-only features keep checking BearerOfTheCurse.
         public bool SoulsMode => Unkindled || BearerOfTheCurse;
 
+        // Hardmode Souls-mode rule: bonfire map warping only works while resting at a bonfire.
+        // "Resting" = has the Bonfire buff, which BonfireCheckpoint.NearbyEffects refreshes within 80px of a lit bonfire.
+        // The Primordial world applies the same rule in every play mode.
+        public bool BonfireWarpLocked => ((Main.hardMode && SoulsMode) || tsorcRevampWorld.PrimordialAge) && !Player.HasBuff(ModContent.BuffType<Bonfire>());
+
+        // Saved per character so the Hardmode warp-lock notice prints once, including on joining a world already in Hardmode.
+        public bool HardmodeWarpNoticeShown;
+
         // Weapon stamina usage. Classic pays none either way.
         //
         // BASE (0.85 Unkindled / 1.15 BotC, paired with 1.25 and 2.0 regen in tsorcRevampPlayerStamina):
@@ -364,7 +372,9 @@ namespace tsorcRevamp
         private int PercentLifeDrain(float percentPerSecond)
             => Math.Max(2, (int)Math.Round(Player.statLifeMax2 * percentPerSecond * 2f / 100f));
 
-        public bool UsesWeaponStamina => BearerOfTheCurse || Unkindled;
+        public bool UsesWeaponStamina => (BearerOfTheCurse || Unkindled)
+            && !(NPCs.FriendlyPuppets.MirrorPuppetSwap.Active
+                && NPCs.FriendlyPuppets.MirrorPuppetSwap.Current?.UsesFixedCombatResources == true);
         public float WeaponStaminaMult(Item item)
         {
             bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
@@ -377,9 +387,15 @@ namespace tsorcRevamp
                 weaponStaminaMult = 0.5f;
             }
 
+            if (item.DamageType == DamageClass.SummonMeleeSpeed)
+            {
+                weaponStaminaMult = WhipWeaponMult;
+            }
+
             return classStaminaMult * TiredStaminaMult * weaponStaminaMult;
         }
 
+        public const float WhipWeaponMult = 1f;
         // Tired debuff: +25% stamina cost on everything that spends it. Applied here so every existing
         // WeaponStaminaMult read picks it up automatically; the dodge roll's flat stamina cost (which doesn't
         // go through WeaponStaminaMult) multiplies by this directly instead - see DodgeRoll().
@@ -482,6 +498,8 @@ namespace tsorcRevamp
         public bool WasInAbyss;
         public bool SlowfallWingActive;
         public bool Suppressed;
+        // No mounts or minecarts this tick. Set by Suppressed and Treacherous Terrain; reset each tick.
+        public bool MountsDisabled;
         public bool Tired;
         public int timeSinceLastAttacked = 0;
 
@@ -499,17 +517,12 @@ namespace tsorcRevamp
                 tsorcRevampWorld.ResetBossAlive();
             }
 
-            EnterTheAbyss = false;
+            EnterTheAbyss = AbyssWorldSystem.CurseActive;
             SwallowHidden = false;
             SlowfallWingActive = false;
             Suppressed = false;
+            MountsDisabled = false;
             Tired = false;
-            DestinedDeathActive = false;
-            if (Player.dead)
-            {
-                DestinedDeathStacks = 0;
-                DestinedDeathCurrentHPLoss = 0f;
-            }
             BeastMode1 = false;
 
             DragoonBoots = false;
@@ -561,8 +574,6 @@ namespace tsorcRevamp
             DragoonBoots = false;
             OldWeapon = false;
             Miakoda = false;
-            MagmaArmor = false;
-            PortlyPlateArmor = false;
 
             WaspPower = false;
 
@@ -607,6 +618,8 @@ namespace tsorcRevamp
             ConditionOverload = false;
             supersonicLevel = 0;
             hasSupersonicHarness = false;
+            IceGripOnly = false;
+            HasRealIceSkates = false;
             hasSlottedWing = false;
             supersonicHarnessHideVisual = false;
             slottedWingSlot = 0;
@@ -745,14 +758,14 @@ namespace tsorcRevamp
             {
                 Player.ClearBuff(BuffID.SlimeMount);
             }
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 Player.ClearBuff(BuffID.QueenSlimeMount);
             }
 
             // The Black Knight is a regular enemy (npc.boss is false, so BossAlive ignores it) but gets boss-zen anyway:
             // the buff stops other spawns for as long as one is alive. Runs on the server too, which is what reads the flag.
-            bool blackKnightAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Enemies.BlackKnight>());
+            bool blackKnightAlive = NPC.AnyNPCs(ModContent.NPCType<NPCs.Invaders.BlackKnight>());
 
             if ((tsorcRevampWorld.BossAlive || blackKnightAlive) && ModContent.GetInstance<tsorcRevampConfig>().BossZenConfig)
             {
@@ -791,6 +804,14 @@ namespace tsorcRevamp
                 {
                     BonfireUIState.Visible = false;
                 }
+            }
+
+            // One-time notice that Hardmode restricts bonfire warping. Client-local: hardMode arrives with world data,
+            // SoulsMode is this player's saved choice, so no packet is needed.
+            if (Player.whoAmI == Main.myPlayer && Main.hardMode && SoulsMode && !HardmodeWarpNoticeShown)
+            {
+                Main.NewText(LangUtils.GetTextValue("World.HardmodeBonfireWarpNotice"), 250, 110, 90);
+                HardmodeWarpNoticeShown = true;
             }
 
             if (potionBagCountdown > 0)
@@ -1409,6 +1430,15 @@ namespace tsorcRevamp
         }
         public override void PostUpdateEquips()
         {
+            // Grip-only Ice Skates. Equips, armor sets and buffs have all run, so iceSkate being on here means a real
+            // source (Ice Skates, Frostspark, Hero's Hat...) gave it. Record that, then grant the grip.
+            HasRealIceSkates = Player.iceSkate;
+
+            if (IceGripOnly)
+            {
+                Player.iceSkate = true;
+            }
+
             // The wing harness slot used to eject its items when the harness was unequipped or Souls Mode mobility turned
             // off. It now just goes inactive, like the other mod slots: SupersonicWingSlot.IsEnabled() returns false, tML
             // skips ApplyEquipEffects for it (so no wing effects), keeps it drawn while it still holds items
@@ -1535,36 +1565,21 @@ namespace tsorcRevamp
                 Player.gravControl = false;
             }
 
-            // Suppressed also blocks the Gravity Globe's flip, which has no buff to delete.
+            // Suppressed also blocks the Gravity Globe's flip (which has no buff to delete).
+            // Wings are grounded via WingsDisabled in PostUpdateMiscEffects; rocket boots, bottle extra jumps,
+            // and jump height are deliberately left alone.
             if (Suppressed)
             {
                 Player.gravControl2 = false;
+            }
 
-                // Suppressed shuts down float/flight from ANY source, not just the Supersonic items: every wing is
-                // capped to the same short flight time PostUpdateRunSpeeds uses (Wings of Seath keeps its longer cap),
-                // and rocket boots + the bottle/mount extra jumps are disabled. Runs after the equip pass that sets them.
-                bool wearingSeath = supersonicLevel == SoulsModeMobility.WingsOfSeathLevel;
-                int suppressedFlightTicks = 90;
-                if (wearingSeath)
-                {
-                    suppressedFlightTicks = SoulsModeMobility.WingsOfSeathSuppressedFlightTime;
-                }
-
-                Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedFlightTicks);
-                if (Player.wingTime > Player.wingTimeMax)
-                {
-                    Player.wingTime = Player.wingTimeMax;
-                }
-
-                Player.canRocket = false;
-                Player.rocketTime = 0;
-
-                Player.GetJumpState(ExtraJump.CloudInABottle).Disable();
-                Player.GetJumpState(ExtraJump.BlizzardInABottle).Disable();
-                Player.GetJumpState(ExtraJump.SandstormInABottle).Disable();
-                Player.GetJumpState(ExtraJump.FartInAJar).Disable();
-                Player.GetJumpState(ExtraJump.TsunamiInABottle).Disable();
-                Player.GetJumpState(ExtraJump.UnicornMount).Disable();
+            // Suppressed / Treacherous Terrain: no mounts at all, minecarts included. Mount items are refused in
+            // tsorcGlobalItem.CanUseItem; this throws off anything already ridden (or a cart boarded from a track).
+            // Owner-only: Dismount clears the mount buff and syncs the player itself, so remote copies follow.
+            bool ownsThisPlayer = Player.whoAmI == Main.myPlayer;
+            if (MountsDisabled && Player.mount.Active && ownsThisPlayer)
+            {
+                Player.mount.Dismount(Player);
             }
 
             if (ShadowWeight)
@@ -1742,7 +1757,7 @@ namespace tsorcRevamp
 
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
                 const float circleRadius = 150f;
-                const int dustType = 235;
+                int dustType = ModContent.DustType<CrimsonDrainDust>();
                 const int particleCount = 28;
 
                 for (int j = 1; j < particleCount; j++)
@@ -1899,8 +1914,6 @@ namespace tsorcRevamp
             {
                 Player.GetCritChance(DamageClass.Ranged) += Player.ChooseAmmo(Player.HeldItem).damage / 2;
             }
-            Player.GetModPlayer<RubyCrystalPlayer>().Update();
-            Player.GetModPlayer<ZirconRingPlayer>().Update();
 
             if (CurseActive || powerfulCurseActive)
             {
@@ -2158,55 +2171,7 @@ namespace tsorcRevamp
                     Player.accRunSpeed = Math.Min(Player.accRunSpeed, suppressedRunSpeed);
                     Player.maxRunSpeed = Math.Min(Player.maxRunSpeed, suppressedRunSpeed);
                     Player.runAcceleration = Math.Min(Player.runAcceleration, suppressedAcceleration);
-
-                    // Vertical nerf to match the horizontal one. jumpSpeed/jumpHeight were already resolved from
-                    // jumpBoost/jumpSpeedBoost earlier this tick (UpdateJumpHeight), so clamp the final values.
-                    // Mounts own their jump stats. Wing ascent is clamped in tsorcGlobalItem.VerticalWingSpeeds.
-                    // The Triad's Faster Than Sight jump boost is exempt so a Suppressed zone can't cancel it mid-fight.
-                    bool hasTriadFlight = Player.HasBuff<FasterThanSight>();
-                    if (!Player.mount.Active && !hasTriadFlight)
-                    {
-                        float suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeed;
-                        int suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeight;
-
-                        if (isSeath)
-                        {
-                            suppressedJumpSpeed = SoulsModeMobility.SuppressedJumpSpeedSeath;
-                            suppressedJumpHeight = SoulsModeMobility.SuppressedJumpHeightSeath;
-                        }
-
-                        Player.jumpSpeed = Math.Min(Player.jumpSpeed, suppressedJumpSpeed);
-                        Player.jumpHeight = Math.Min(Player.jumpHeight, suppressedJumpHeight);
-                    }
-
-                    bool hasSuppressedWings = supersonicLevel == SoulsModeMobility.SupersonicWingsLevel
-                        || supersonicLevel == SoulsModeMobility.SupersonicWings2Level
-                        || isSeath;
-                    if (hasSuppressedWings)
-                    {
-                        int suppressedWingTime = isSeath ? SoulsModeMobility.WingsOfSeathSuppressedFlightTime : 90; // 1.5s, or 3s for Wings of Seath
-                        Player.wingTimeMax = Math.Min(Player.wingTimeMax, suppressedWingTime);
-                        if (Player.wingTime > Player.wingTimeMax)
-                        {
-                            Player.wingTime = Player.wingTimeMax;
-                        }
-                    }
                 }
-            }
-
-            // Suppressed also slows mounts (the block above is gated on Supersonic gear and skips them). Scale the
-            // mount's run speed/acceleration, then clamp velocity.X to the new max so flying mounts and dashes can't
-            // carry past it. Runs after the mount set maxRunSpeed this tick.
-            if (Suppressed && Player.mount.Active)
-            {
-                float mountSpeedMultiplier = SoulsModeMobility.SuppressedMountSpeedMultiplier;
-
-                Player.maxRunSpeed *= mountSpeedMultiplier;
-                Player.accRunSpeed *= mountSpeedMultiplier;
-                Player.runAcceleration *= mountSpeedMultiplier;
-
-                float mountSpeedCap = Player.maxRunSpeed;
-                Player.velocity.X = MathHelper.Clamp(Player.velocity.X, -mountSpeedCap, mountSpeedCap);
             }
 
             if (Player.HasBuff<MarilithHold>() || Player.HasBuff<MarilithWind>())
@@ -2545,8 +2510,8 @@ namespace tsorcRevamp
                     text = LangUtils.GetTextValue("DeathText.BossDeath1");
                     deathTextOverridden = true;
                 }
-                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>() ||
-                    Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Cataluminance>()
+                else if (Main.rand.NextBool() && (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>() ||
+                    Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>() || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()
                     || Main.npc[currentBoss].type == NPCID.Plantera || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.Death.Death>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>()
                     || Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>()))
@@ -2561,7 +2526,7 @@ namespace tsorcRevamp
                     deathTextOverridden = true;
                 }
 
-                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Puppets.OwlFather>())
+                if (Main.npc[currentBoss].type == ModContent.NPCType<NPCs.Invaders.OwlFather>())
                 {
                     text = LangUtils.GetTextValue("DeathText.OwlFather");
                     deathTextOverridden = true;
@@ -2570,7 +2535,7 @@ namespace tsorcRevamp
                 //If you want to add custom text for other bosses, stick it here using the line above as a template
             }
 
-            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(NPCID.TheDestroyer))
+            if (NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.FireFiendMarilith>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()) || NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>()) || NPC.AnyNPCs(NPCID.TheDestroyer))
             {
                 //Don't tell them rolling is mandatory if they died trying (and failing) to roll out of the way lol
                 if (Main.rand.NextBool() && !wasJustRolling && !tsorcRevamp.DodgerollKey.Current)
@@ -2619,7 +2584,7 @@ namespace tsorcRevamp
 
         internal static bool IsSeathWingFallImmune(Player player)
         {
-            if (!player.controlDown) return false;
+            if (player.GetModPlayer<tsorcRevampPlayer>().Suppressed || !player.controlDown) return false;
             if (player.equippedWings != null && player.equippedWings.type == ModContent.ItemType<WingsOfSeath>())
             {
                 return true;
@@ -2648,6 +2613,9 @@ namespace tsorcRevamp
 
         internal static bool IsWingFallProtected(Player player)
         {
+            // Also used by vanilla's separate equipped-wings immunity check in WingFallDamage_Patch.
+            if (player.GetModPlayer<tsorcRevampPlayer>().Suppressed) return false;
+
             bool activelyGliding = player.controlJump
                 && player.velocity.Y * player.gravDir > 0f
                 && player.wingsLogic > 0;
@@ -2681,10 +2649,10 @@ namespace tsorcRevamp
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
             // Passive wings' fall immunity is stripped by WingFallDamage_Patch (vanilla checks equippedWings
-            // separately from noFallDmg); this only ADDS immunity while the player actively glides or hovers,
+            // separately from noFallDmg); normally this ADDS immunity while the player actively glides or hovers,
             // or has the Wings of Seath slow-fall toggle enabled. It must OR into noFallDmg, never assign:
             // Lucky Horseshoe / Obsidian Horseshoe / the horseshoe balloon bundles set noFallDmg in
-            // UpdateEquips, and overwriting it here silently deleted their fall immunity.
+            // UpdateEquips, and overwriting it here would delete their fall immunity outside Suppressed.
             Player.noFallDmg |= IsWingFallProtected(Player);
 
             // Classic keeps vanilla's full wing fall immunity; the wing fall-damage rule is Souls Mode only.
@@ -2693,6 +2661,13 @@ namespace tsorcRevamp
             if (!SoulsMode && HasFunctionalWings(Player))
             {
                 Player.noFallDmg = true;
+            }
+
+            // Suppressed overrides equipment immunity after all equip hooks, including Classic's wing immunity.
+            // The wing helpers above also block the equipped-wings IL guard and Seath's ImmuneTo shortcut.
+            if (Suppressed)
+            {
+                Player.noFallDmg = false;
             }
 
             // Gravity Alignment can reverse gravity while the player already has a vertical velocity.
@@ -2794,7 +2769,7 @@ namespace tsorcRevamp
                 PhazonCorruption = false;
                 Falling = false;
                 FracturingArmor = 1;
-                tsorcRevampEstusPlayer estusPlayer = Player.GetModPlayer<tsorcRevampEstusPlayer>();
+                EstusFlaskPlayer estusPlayer = Player.GetModPlayer<EstusFlaskPlayer>();
                 estusPlayer.IsDrinking = false;
                 estusPlayer.EstusDrinkTimer = 0;
                 var ceruleanPlayer = Player.GetModPlayer<CeruleanFlaskPlayer>();
@@ -2810,6 +2785,14 @@ namespace tsorcRevamp
 
         public override void PostUpdateMiscEffects()
         {
+            // Run after every ModPlayer's PostUpdateEquips so the Covenant ring's immunity is established.
+            // All peers follow the server-synced boss history; a deterministic refresh needs no buff packets.
+            // The curse begins after the eight-second entry fade and persists everywhere until Gwyn is slain.
+            if (!Player.dead && AbyssWorldSystem.CurseActive)
+            {
+                Player.AddBuff(ModContent.BuffType<Abyss>(), 60);
+            }
+
             // Deliberately NOT in PostUpdateEquips: a Celestriad (or other max-mana source) sitting in the
             // Active Shields 2nd slot adds to MaxManaAmplifier from tsorcRevampActiveShieldPlayer.PostUpdateEquips,
             // a *different* ModPlayer's copy of the same hook. Hook order between two ModPlayer classes for the
@@ -2818,6 +2801,16 @@ namespace tsorcRevamp
             if (MaxManaAmplifier > 0f)
             {
                 Player.statManaMax2 = (int)(Player.statManaMax2 * (1f + MaxManaAmplifier / 100f));
+            }
+
+            // Torn Wings / Crippled / Suppressed: no wing flight AND no wing glide. Vanilla's hold-jump glide only
+            // checks wingsLogic > 0 (not wingTime), so zeroing wingTime alone left it working. Here rather than
+            // PostUpdateEquips for the same hook-order reason as above: CursedDragonArmorPlayer.PostUpdateEquips
+            // grants its own wings. Runs before vanilla's wing air speed, flight and glide code.
+            if (WingsDisabled)
+            {
+                Player.wingsLogic = 0;
+                Player.wingTime = 0;
             }
 
             AbyssTransitionEffects();
@@ -2875,13 +2868,16 @@ namespace tsorcRevamp
 
             // ZoneLihzhardTemple is true only while the player occupies the unsafe Lihzahrd
             // Brick wall used by the Forbidden dungeon, so nearby Jungle terrain is unaffected.
-            // This is shared by the original and Remix Adventure maps. The Golem's arena uses the same
-            // wall, so both debuffs are skipped while the Golem is alive (already-applied ones expire within 60 ticks).
-            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode
-                && !NPC.AnyNPCs(NPCID.Golem))
+            // This is shared by the original and Remix Adventure maps. The Ornstein and Smough arena uses the same
+            // wall: Suppressed lifts during that encounter, while Torn Wings stays on as part of its anti-air rules.
+            if (Player.ZoneLihzhardTemple && ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
                 Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
-                Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+
+                if (!NPCs.Bosses.Ornsmough.OrnsmoughDirector.EncounterActive)
+                {
+                    Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+                }
             }
 
             // Shadow Temple (Hardmode desert dungeon), original Adventure map only. Identified by its wall: plain Pink Dungeon Wall (ID 9),
@@ -2901,8 +2897,18 @@ namespace tsorcRevamp
                 }
             }
 
+            // Snow and desert (surface or underground): the footing is too treacherous to ride. Refreshed every tick
+            // at 1s, so it drops off a second after leaving the biome.
+            bool inMountlessBiome = Player.ZoneSnow || Player.ZoneDesert || Player.ZoneUndergroundDesert;
+
+            if (inMountlessBiome)
+            {
+                Player.AddBuff(ModContent.BuffType<TreacherousTerrain>(), 1 * 60, false);
+            }
+
             // Original Adventure map only (Remix has its own Seath ice-biome block below): the SHM ice biome tears
-            // the player's wings until Seath is slain (permanent, read from NewSlain), and is lifted while any boss is alive.
+            // the player's wings and suppresses them until Seath is slain (permanent, read from NewSlain). Lifted while
+            // any boss is alive, and Suppressed is skipped at a lit bonfire so it can't re-add right after Suppressed deletes itself.
             bool seathSlain = tsorcRevampWorld.BossDefeated(ModContent.NPCType<SeathTheScalelessHead>());
 
             if (Player.ZoneSnow && (Player.ZoneDirtLayerHeight || Player.ZoneRockLayerHeight)
@@ -2910,6 +2916,11 @@ namespace tsorcRevamp
                 && tsorcRevampWorld.SuperHardMode && !seathSlain && !tsorcRevampWorld.BossAlive)
             {
                 Player.AddBuff(ModContent.BuffType<TornWings>(), 1 * 60, false);
+
+                if (!Player.HasBuff(ModContent.BuffType<Bonfire>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Suppressed>(), 1 * 60, false);
+                }
             }
 
             if (tsorcRevampWorld.RemixMap)
@@ -2927,7 +2938,7 @@ namespace tsorcRevamp
                     foreach (NPC npc in Main.npc)
                     {
                         if (npc.active && 
-                            (npc.type == ModContent.NPCType<Witchking>() || npc.type == ModContent.NPCType<AncientDemonOfTheAbyss>())) 
+                            (npc.type == ModContent.NPCType<Witchking>() || npc.type == ModContent.NPCType<AncientDemon>())) 
                         {
                             BossIsAlive = true;
                             break;
@@ -3072,7 +3083,7 @@ namespace tsorcRevamp
             bool entering = EnterTheAbyss;
             WasInAbyss = EnterTheAbyss;
 
-            if (Main.dedServ)
+            if (Main.dedServ || (entering && AbyssWorldSystem.Active))
             {
                 return;
             }
@@ -3146,7 +3157,8 @@ namespace tsorcRevamp
 
         private void SpawnAbyssMist()
         {
-            if ((!EnterTheAbyss && !MethodSwaps.IsAbyssVisualActive()) || Main.dedServ)
+            float visualOpacity = MethodSwaps.AbyssVisualOpacity;
+            if (visualOpacity <= 0f || Main.dedServ)
             {
                 return;
             }
@@ -3161,7 +3173,7 @@ namespace tsorcRevamp
                 abyssMistRefreshTimer--;
             }
 
-            if (abyssMistSurfaceTiles.Count == 0 || !Main.rand.NextBool(2))
+            if (abyssMistSurfaceTiles.Count == 0 || Main.rand.NextFloat() >= 0.5f * visualOpacity)
             {
                 return;
             }
@@ -3286,12 +3298,21 @@ namespace tsorcRevamp
 
             if (Player.ZoneGraveyard) { Player.AddBuff(BuffID.WaterCandle, 2); }
 
+            // World-wide SHM underground rule. Keep this separate from the biome rules so removing it
+            // later restores their original coverage. A boss pauses refreshes; existing stacks expire in 1s.
+            if (tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge && Player.Center.Y > Main.worldSurface * 16.0
+                && !tsorcRevampWorld.BossAlive
+                && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
+            {
+                Player.AddBuff(ModContent.BuffType<Suppressed>(), 60);
+            }
+
             // Dungeon during Super Hard Mode: keep Suppressed topped up at a short fixed duration (rather than
             // silently re-adding every tick) so enemy attacks can also inflict it and have that duration matter.
             // A lit bonfire is a safe rest point and must not immediately reapply the debuff after buff updates.
             // Not applied while any boss is alive, so boss fights in the dungeon aren't crippled by the biome debuff
             // (already-applied stacks just expire within their 60-tick duration).
-            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode
+            if (Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode && !tsorcRevampWorld.PrimordialAge
                 && !tsorcRevampWorld.BossAlive
                 && !Player.HasBuff(ModContent.BuffType<Bonfire>()))
             {
@@ -3412,6 +3433,17 @@ namespace tsorcRevamp
         ///Multiplies the movement speed taken/given by curses
         ///</summary>  
         const float CurseMovementSpeedMultiplier = 1.5f;
+
+        ///<summary>
+        ///Multiplies the resistance a curse GIVES (boons only; a resistance penalty is unchanged). Halved 2026-10-18.
+        ///</summary>
+        const float CurseResistanceBoonMultiplier = 0.5f;
+
+        ///<summary>
+        ///Bump when the curse roll rules change. A saved curse rolled under an older version is rerolled once on load, so
+        ///old saves lose removed boons (defense, life regen) and pick up the halved resistance. 2 = 2026-10-18 nerf.
+        ///</summary>
+        public const int CurseRollVersion = 2;
 
 
         ///<summary> 
@@ -3546,9 +3578,28 @@ namespace tsorcRevamp
 
             int pickedPositiveStats = 0;
             int PositiveStatsAmount = Main.rand.Next(isCursePowerful ? 3 : 2) + 1;
+
+            // Boons left to pick from: resistance, damage, attack speed, move speed, minus any taken as a penalty. A powerful
+            // curse can spend 3 of those 4 on penalties, so without this cap the loop below could need 3 boons from 1 and
+            // never end. Capped before the boon sizes are computed, so fewer boons are each bigger, as before.
+            int freeBoonStats = 0;
+            bool[] boonStatsTaken = { pickedResistance, pickedDamage, pickedAttackSpeed, pickedMovementSpeed };
+            foreach (bool taken in boonStatsTaken)
+            {
+                if (!taken)
+                {
+                    freeBoonStats++;
+                }
+            }
+
+            PositiveStatsAmount = Math.Min(PositiveStatsAmount, freeBoonStats);
+
             //calculating positive stats
             while (pickedPositiveStats < PositiveStatsAmount)
             {
+                // Life regen and defense are no longer boons (2026-10-18: regen sat outside the Estus healing economy, and
+                // a defense roll reached +81 with Ring of Artorias). Both can still roll as penalties above.
+                /*
                 if (Main.rand.NextBool(7) && !pickedLifeRegeneration)
                 {
                     pickedLifeRegeneration = true;
@@ -3577,18 +3628,19 @@ namespace tsorcRevamp
                         CurseDefenseBonus = ((weakCurseBonus / (float)PositiveStatsAmount) * CurseDefenseMultiplier) * BaseCursePositiveStatPercentage;
                     }
                 }
-                else if (Main.rand.NextBool(7) && !pickedResistance)
+                */
+                if (Main.rand.NextBool(7) && !pickedResistance)
                 {
                     pickedResistance = true;
                     pickedPositiveStats++;
 
                     if (isCursePowerful)
                     {
-                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
+                        powerfulCurseResistanceBonus = (powerfulCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage * CurseResistanceBoonMultiplier;
                     }
                     else
                     {
-                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage;
+                        CurseResistanceBonus = (weakCurseBonus / (float)PositiveStatsAmount) * BaseCursePositiveStatPercentage * CurseResistanceBoonMultiplier;
                     }
                 }
                 else if (Main.rand.NextBool(7) && !pickedDamage)
@@ -3746,8 +3798,8 @@ namespace tsorcRevamp
             }
             float curseMaxLifeMultiplier = Math.Min(CurseMaxLifeMultiplier, 0f);
             float powerfulCurseMaxLifeMultiplierToApply = Math.Min(powerfulCurseMaxLifeMultiplier, 0f);
-            Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f + (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f)));
-            Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
+            Player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier += (curseMaxLifeMultiplier / 100f) + (powerfulCurseMaxLifeMultiplierToApply / 100f);
+            //Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
             //life regen is in updateregen functions
             Player.statDefense += (int)MathF.Round((CurseDefenseBonus * ((CurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseDefenseBonus * ((powerfulCurseDefenseBonus > 0) ? CursePositiveStatsMultiplier : 1f)));
             Player.endurance += ((CurseResistanceBonus * ((CurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseResistanceBonus * ((powerfulCurseResistanceBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
@@ -3755,38 +3807,6 @@ namespace tsorcRevamp
             Player.GetAttackSpeed(DamageClass.Generic) += ((CurseAttackSpeedBonus * ((CurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseAttackSpeedBonus * ((powerfulCurseAttackSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
             Player.moveSpeed += ((CurseMovementSpeedBonus * ((CurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f)) + (powerfulCurseMovementSpeedBonus * ((powerfulCurseMovementSpeedBonus > 0) ? CursePositiveStatsMultiplier : 1f))) / 100f;
 
-            // Destined Death debuff logic
-            if (DestinedDeathActive)
-            {
-                float targetLoss = DestinedDeathStacks * 0.10f; // 10% per stack, up to 60%
-                if (DestinedDeathCurrentHPLoss < targetLoss)
-                {
-                    // Drain max HP by 5% per second (0.05f / 60f per tick)
-                    DestinedDeathCurrentHPLoss = Math.Min(targetLoss, DestinedDeathCurrentHPLoss + (0.05f / 60f));
-                }
-            }
-            else if (DestinedDeathCurrentHPLoss > 0f)
-            {
-                // Debuff expired — recover life at 10% per second (0.10f / 60f per tick)
-                DestinedDeathCurrentHPLoss = Math.Max(0f, DestinedDeathCurrentHPLoss - (0.10f / 60f));
-                if (DestinedDeathCurrentHPLoss <= 0f)
-                {
-                    DestinedDeathStacks = 0;
-                }
-            }
-
-            if (DestinedDeathCurrentHPLoss > 0f)
-            {
-                // Apply max HP reduction
-                Player.statLifeMax2 = (int)(Player.statLifeMax2 * (1f - DestinedDeathCurrentHPLoss));
-                Player.statLife = Math.Min(Player.statLife, Player.statLifeMax2);
-
-                // At 60% max HP loss cap, gain 15% extra damage (additive)
-                if (DestinedDeathCurrentHPLoss >= 0.60f)
-                {
-                    Player.GetDamage(DamageClass.Generic) += 0.15f;
-                }
-            }
         }
     }
 }

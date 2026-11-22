@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.IO;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -16,6 +17,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
     {
         // Halved outside Expert, which doubles most debuff durations on its own.
         public const int CrippledTicks = 5 * 60;
+        private float previousMovementScale = 1f;
 
         // Intentional share: same orb sprite as the generic disrupter.
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(HypnoticDisrupter));
@@ -40,6 +42,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override void AI()
         {
+            // Restore unobstructed velocity before the legacy steering. Only displacement is slowed;
+            // repeatedly scaling the steering state would otherwise compound the 40% terrain penalty.
+            Projectile.velocity /= previousMovementScale;
             if (Projectile.ai[1] > 0 && Projectile.timeLeft > 300)
             {
                 Projectile.timeLeft = 300;
@@ -86,13 +91,65 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;
             }
 
-            Dust shadowflame = Dust.NewDustDirect(Projectile.position - new Vector2(0f, 10f), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 50, default, 2.0f);
-            shadowflame.noGravity = true;
-
-            if (Main.rand.NextBool(2))
+            previousMovementScale = 1f;
+            if (Collision.SolidCollision(Projectile.position, Projectile.width, Projectile.height))
             {
-                Lighting.AddLight(Projectile.Center, 0.7f, 0.2f, 0.2f);
+                previousMovementScale = 0.6f;
             }
+
+            Projectile.velocity *= previousMovementScale;
+            if (Projectile.timeLeft <= 15)
+            {
+                Projectile.alpha = 255 - Projectile.timeLeft * 255 / 15;
+            }
+
+            if (!Main.dedServ)
+            {
+                Dust shadowflame = Dust.NewDustDirect(Projectile.position - new Vector2(0f, 10f), Projectile.width, Projectile.height, DustID.Shadowflame, 0, 0, 50, default, 2.0f);
+                shadowflame.noGravity = true;
+
+                if (Main.rand.NextBool(2))
+                {
+                    Lighting.AddLight(Projectile.Center, 0.7f, 0.2f, 0.2f);
+                }
+            }
+        }
+
+        public override bool? CanDamage()
+        {
+            if (Projectile.timeLeft <= 15)
+            {
+                return false;
+            }
+
+            return null;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(previousMovementScale);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            previousMovementScale = reader.ReadSingle();
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 40; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Circular(4f, 4f);
+                Dust mote = Dust.NewDustPerfect(Projectile.Center, DustID.Shadowflame, velocity, 60, Color.Purple, Main.rand.NextFloat(0.8f, 1.5f));
+                mote.noGravity = true;
+            }
+
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24 with { Volume = 0.3f }, Projectile.Center);
         }
 
         private Vector2 GetTargetPosition()
@@ -118,7 +175,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
             Rectangle sourceRectangle = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
             Vector2 origin = sourceRectangle.Size() / 2f;
 
-            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
+            Color color = Projectile.GetAlpha(lightColor);
+            Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, sourceRectangle, color, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0);
             return false;
         }
 

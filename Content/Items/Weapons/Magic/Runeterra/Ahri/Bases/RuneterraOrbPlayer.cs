@@ -31,7 +31,7 @@ public class RuneterraOrbPlayer : ModPlayer
 
     public override void ProcessTriggers(TriggersSet triggersSet)
     {
-        if (tsorcRevamp.specialAbility.JustPressed)
+        if (tsorcRevamp.specialAbility.JustPressed && !Player.dead)
         {
             int dashManaCost = Player.GetManaCost(Player.HeldItem) * OrbOfSpirituality.DashManaCostMultiplier;
             if (Player.ownedProjectileCounts[ModContent.ProjectileType<ThrownOrbOfSpirituality>()] != 0)

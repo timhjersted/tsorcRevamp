@@ -146,6 +146,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -154,6 +155,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -162,6 +164,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -170,6 +173,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -178,6 +182,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -186,6 +191,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -194,6 +200,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -483,7 +490,8 @@
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda: \u0022Red, I\u0027ve heard many rumors about the Shadow Temple. It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, waterways and corrupted spike chasms...\u0022 ",
@@ -491,6 +499,7 @@
   "tileY": 1121,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1164,6 +1173,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1180,6 +1190,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1272,6 +1283,7 @@
   "tileY": 655,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1295,6 +1307,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1318,6 +1331,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1367,6 +1381,7 @@
   "tileY": 699,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1390,6 +1405,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1398,6 +1414,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1414,6 +1431,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1422,6 +1440,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1430,6 +1449,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1578,6 +1598,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1586,6 +1607,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1594,6 +1616,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1619,6 +1642,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1634,6 +1658,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1642,6 +1667,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1798,6 +1824,7 @@
   "tileY": 852,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1830,6 +1857,7 @@
   "tileY": 846,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1847,6 +1875,7 @@
   "tileY": 855,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1887,6 +1916,7 @@
   "tileY": 850,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1903,6 +1933,7 @@
   "tileY": 854,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1911,6 +1942,7 @@
   "tileY": 854,
   "textWidth": 320, 
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1927,6 +1959,7 @@
   "tileY": 860,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story,location",
   "locationName": "THE BURNED VILLAGE"
 }
@@ -2617,14 +2650,16 @@
   "tileX": 7095,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda: \u0022You will know the Rage is about to enrage when its body glows brightly with fire. --NEWLINE  --NEWLINE When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!\u0022",
   "tileX": 7102,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "You\u0027ve found the lair of the Ancestral Spirit. --NEWLINE  --NEWLINE A mystical creature from the frozen lands about whom you know little. It has made its home beneath the mountains and guards the entrance to the Frozen Ocean. It is said that this entity has slaughtered many travelers attempting to travel west, and that it has piled the bones in its lair...",
@@ -2641,6 +2676,7 @@
   "tileY": 568,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2666,6 +2702,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2674,6 +2711,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2682,6 +2720,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2690,6 +2729,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2698,6 +2738,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2839,12 +2880,12 @@
   "category": "lore"
 }
 {
-  "text": "- The Cavern of The Sorrow - --NEWLINE --NEWLINE As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
+  "text": "- You've found the Cavern of The Sorrow -",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story,location",
+  "category": "location",
   "locationName": "CAVERN OF THE SORROW"
 }
 {
@@ -2853,7 +2894,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022Ah, but it is the game that I set up and which you played so masterfully that has me so impressed.\u0022 Red is silent. Glaring. \u0022You haven\u0027t realized by now? I wanted you to kill Aaron. I corrupted his will, got him to betray you. I gave him the stone which you used to kill him, and told him precisely what he needed to hear so that he\u0027d think that he\u0027d be protecting himself by giving it to you.\u0022",
@@ -2861,7 +2903,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022But it was not just enchanted twice, but three times. Once to create the Protection Stone which I traded for the knowledge of your father\u0027s location, twice to tie his life to the stone, and a third time to unleash the most powerful force of destruction this world has ever seen.\u0022",
@@ -2869,7 +2912,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022But I needed you Red. You see, darkness thrives on darkness, and the spell that contained this army remained locked by the pure spirit of your father. To break the seal, a warrior of pure spirit and innocence had to be corrupted by the lust for vengeance.\u0022",
@@ -2877,7 +2921,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022And you played right into it. You played right into it. All you needed... Red... was a little push.\u0022 On Attraidies face was a grinning smile so wicked it becomes etched into your mind.  --NEWLINE \u0022But I\u0027ll give you a chance, Red. See if you can handle this.\u0022 And with that, Attraidies vanishes in a dark magic energy, summoning The Sorrow in his place.",
@@ -2885,7 +2930,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "You catch your breath to look far into the horizon. Nothing but a faint white blending effortlessly with the blue-green sheen glowing up through the snow. This ocean appears to go off into infinity.",
@@ -2973,4 +3019,66 @@
   "category": "location",
   "locationName": "ORIGIN OF THE ABYSS"
 }
-
+{
+  "text": "",
+  "tileX": 4919,
+  "tileY": 873,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4915,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4905,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4880,
+  "tileY": 863,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4837,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4808,
+  "tileY": 864,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4776,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}

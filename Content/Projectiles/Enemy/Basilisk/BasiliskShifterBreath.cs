@@ -42,6 +42,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         public override void AI()
         {
             Projectile.rotation += 3f;
+            if (Projectile.timeLeft <= 10)
+            {
+                Projectile.alpha = 255 - Projectile.timeLeft * 255 / 10;
+            }
 
             if (!Main.dedServ)
             {
@@ -80,20 +84,37 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override bool PreKill(int timeLeft)
         {
-            return false;
+            return true;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (Main.GameUpdateCount >= nextTileImpactSoundFrame)
+            if (!Main.dedServ && Main.GameUpdateCount >= nextTileImpactSoundFrame)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.15f, Pitch = 0.1f }, Projectile.Center);
                 nextTileImpactSoundFrame = Main.GameUpdateCount + 30;
             }
 
-            Projectile.active = false;
-            Projectile.netUpdate = true;
-            return false;
+            return true;
+        }
+
+        public override Color? GetAlpha(Color lightColor)
+        {
+            return PowerfulCurseBuildup.PowerfulCurseColor * Projectile.Opacity;
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                Dust mote = Dust.NewDustPerfect(Projectile.Center, DustID.PinkTorch, Main.rand.NextVector2Circular(2f, 2f), 100, PowerfulCurseBuildup.PowerfulCurseColor, 0.8f);
+                mote.noGravity = true;
+            }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)

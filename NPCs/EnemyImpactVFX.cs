@@ -11,7 +11,13 @@ using tsorcRevamp.NPCs.Enemies.JungleWyvernJuvenile;
 using tsorcRevamp.NPCs.Enemies.ParasyticWorm;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Enemies.Archer;
+using tsorcRevamp.NPCs.Bosses.Gigas;
+using tsorcRevamp.NPCs.Enemies.Hollow;
+using tsorcRevamp.NPCs.Enemies.Knight;
+using tsorcRevamp.NPCs.Enemies.Lothric;
+using tsorcRevamp.NPCs.Bosses.Demons;
 
 namespace tsorcRevamp.NPCs
 {
@@ -24,7 +30,8 @@ namespace tsorcRevamp.NPCs
         None,
         Blood,
         GhostDust,
-        StoneBlood
+        StoneBlood,
+        IceShard
     }
 
     /// <summary>
@@ -45,7 +52,7 @@ namespace tsorcRevamp.NPCs
             // Humanoids, grounded undead, and living creatures.
             [ModContent.NPCType<AbandonedStump>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<AbyssLurker>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<AncientDemonOfTheAbyss>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<AncientDemon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Archdeacon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Assassin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<BasiliskHunter>()] = EnemyImpactMaterial.Blood,
@@ -61,7 +68,6 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<DarkKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DemonLordApocalypse>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DemonWheel>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<DiscipleOfAttraidies>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DungeonMage>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Dunlending>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DworcAbysswalker>()] = EnemyImpactMaterial.Blood,
@@ -70,13 +76,12 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<DworcVenomsniper>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<DworcVoodooShaman>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<EvilEye>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<FallenNecromancer>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<BoneChaplain>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<FirebombHollow>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<FirebombHollowOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<FireLurker>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Gigas>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<GreatBlackKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<GuardianCorruptor>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSoldier>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSoldierOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowSpearman>()] = EnemyImpactMaterial.Blood,
@@ -84,9 +89,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<HollowWarrior>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<HollowWarriorOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Hydra>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<HydrisNecromancer>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<IceGigas>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<IceSkeleton>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<ElementalNecromancer>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleSentree>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileBody>()] = EnemyImpactMaterial.Blood,
@@ -94,7 +97,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<JungleWyvernJuvenileBody3>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileLegs>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<JungleWyvernJuvenileTail>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<KnightOfGwyn>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<RoyalKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LivingShroomThief>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LothricBlackKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<LothricBlackKnightOriginal>()] = EnemyImpactMaterial.Blood,
@@ -113,9 +116,9 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<MutantToad>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Necromancer>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ObsidianJellyfish>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<OolacileDemon>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<OolacileKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<OolacileSorcerer>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<DarkrootImp>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<DarkrootSentry>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<OolacileAcolyte>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Parasprite>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ParasyticWormHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ParasyticWormBody>()] = EnemyImpactMaterial.Blood,
@@ -123,12 +126,11 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<Plaguesmith>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraClutchCrab>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraHydromancer>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<QuaraMantassin>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<Mantassin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<QuaraPincher>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RedCloudHunter>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<ResentfulSeedling>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RedKnight>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<RedKnightTest>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RingedKnight>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<RingedKnightOriginal>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Sahagin>()] = EnemyImpactMaterial.Blood,
@@ -138,10 +140,9 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<SerpentOfTheAbyssHead>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SerpentOfTheAbyssBody>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SerpentOfTheAbyssTail>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<SlograII>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SnowOwl>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<SpellboundGhoul>()] = EnemyImpactMaterial.Blood,
-            [ModContent.NPCType<TaurusKnight>()] = EnemyImpactMaterial.Blood,
+            [ModContent.NPCType<Caliche>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<Tetsujin>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianAmazon>()] = EnemyImpactMaterial.Blood,
             [ModContent.NPCType<TibianValkyrie>()] = EnemyImpactMaterial.Blood,
@@ -168,7 +169,7 @@ namespace tsorcRevamp.NPCs
             [ModContent.NPCType<GhostOfTheForgottenKnight>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<GhostOfTheForgottenWarrior>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<HumanityPhantom>()] = EnemyImpactMaterial.GhostDust,
-            [ModContent.NPCType<HydrisElemental>()] = EnemyImpactMaterial.GhostDust,
+            [ModContent.NPCType<Elemental>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<MarilithSpiritTwin>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<WaterSpirit>()] = EnemyImpactMaterial.GhostDust,
             [ModContent.NPCType<Willowisp>()] = EnemyImpactMaterial.GhostDust,
@@ -176,15 +177,20 @@ namespace tsorcRevamp.NPCs
             // Mineral life gets a dense grey, gravity-affected stone spray instead of blood.
             [ModContent.NPCType<StoneGolem>()] = EnemyImpactMaterial.StoneBlood,
 
+            // Frozen bone sheds blue ice chips: falling crystal-shard dust, lit so it reads in dark caves.
+            [ModContent.NPCType<IceGigas>()] = EnemyImpactMaterial.IceShard,
+            [ModContent.NPCType<IceSkeleton>()] = EnemyImpactMaterial.IceShard,
+
             // Technical NPCs, projectiles implemented as NPCs, and Eland's bespoke blood effects.
             [ModContent.NPCType<DestroyerLaserProbe>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<Eland>()] = EnemyImpactMaterial.None,
+            // Bone chips from its own HitEffect instead of blood.
+            [ModContent.NPCType<SkeletonWarrior>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<FrozenGigasStatue>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<GaibonFireball>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<KhaiosTransitionOrb>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<PinwheelFireball>()] = EnemyImpactMaterial.None,
             [ModContent.NPCType<PrimeLaserProbe>()] = EnemyImpactMaterial.None,
-            [ModContent.NPCType<ViciousSpit>()] = EnemyImpactMaterial.None,
         };
 
         internal static void Spawn(NPC npc, NPC.HitInfo hit, tsorcRevampGlobalNPC globalNPC)
@@ -283,6 +289,11 @@ namespace tsorcRevamp.NPCs
                     dustType = DustID.Stone;
                     color = new Color(132, 132, 142);
                     scale *= 0.9f;
+                    break;
+
+                case EnemyImpactMaterial.IceShard:
+                    dustType = DustID.BlueCrystalShard;
+                    scale *= 1.1f;
                     break;
             }
 

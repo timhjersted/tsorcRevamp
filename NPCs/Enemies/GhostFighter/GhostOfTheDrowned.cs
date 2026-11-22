@@ -17,6 +17,7 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
+using tsorcRevamp.NPCs.Enemies.Hollow;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -842,26 +843,6 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 }
             }
         }*/
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            // special areas
-            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
-            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
-            //playerX > 1737 && playerX < 1909 && playerY > 715 && playerY < 857
-
-            //Wall IDs are the ID's given from TEdit in Catacombs of the drowned, as the name used by tedit and TML don't match.
-            if (spawnInfo.Player.ZoneGraveyard && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
-                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 2.5f;
-
-            //Machine Temple (code in GlobalNPC.cs because I used clear all code to prevent other dungeon/hallow biome enemies spawning 
-            //if (Main.hardMode && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && playerY < 1430) chance = 2.5f;        
-
-            if (spawnInfo.Water && Main.hardMode && spawnInfo.Player.ZoneNormalUnderground) chance = 0.15f;
-            //Rest for Tim to decide
-
-            return chance;
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
@@ -899,7 +880,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
+            Texture2D shieldTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)) + "_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
             if ((AI_State == State_Shielding || AI_State == State_Thrusting || AI_State == State_Shooting) && NPC.velocity.X == 0)

@@ -63,7 +63,7 @@ namespace tsorcRevamp.NPCs.Enemies
         const int RecoveryTicks = 70;
 
         const int SmiteLockTick = 20;
-        const int SmiteFireTick = 40;
+        const int SmiteFireTick = 55;
         const int SmiteIntervalTicks = 15;
         const int MaxSmiteMarks = 5;
         const int SmiteDamage = 45;
@@ -202,35 +202,6 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
         {
-        }
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-
-        public float CanSpawnLegacy(NPCSpawnInfo s)
-        {
-            int x = s.SpawnTileX;
-            int y = s.SpawnTileY;
-            bool oSurface = (y >= (Main.maxTilesY * 0.1f) && y < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (y >= (Main.maxTilesY * 0.2f) && y < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (y >= (Main.maxTilesY * 0.3f) && y < (Main.maxTilesY * 0.4f));
-            bool oCavern = (y >= (Main.maxTilesY * 0.4f) && y < (Main.maxTilesY * 0.6f));
-            bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
-            bool oBorders = (y < (Main.maxTilesY * 0.03f) || x < (Main.maxTilesX * 0.03f) || y > (Main.maxTilesY * 0.97f) || x > (Main.maxTilesX * 0.97f));
-            Player p = s.Player;
-            if ((p.townNPCs > 2f && !Main.bloodMoon) || Main.pumpkinMoon || Main.snowMoon || !p.ZoneJungle || oUnderworld || oBorders)
-            {
-                return 0f;
-            }
-            if (oSurface || oUnderSurface || oUnderground || oCavern)
-            {
-                if (Main.rand.Next(12000) == 1) return 1f;
-                else if (Main.hardMode && Main.rand.Next(50) == 1) return 1f;
-                else if ((oUnderground || oCavern) && Main.rand.Next(800) == 1) return 1f;
-                else if (Main.hardMode && (oUnderground || oCavern) && Main.rand.Next(30) == 1) return 1f;
-                else if (Main.bloodMoon && Main.rand.Next(120) == 1) return 1f;
-                return 0f;
-            }
-            return 0f;
         }
 
         void TryStartAttack(Player player)
@@ -757,24 +728,39 @@ namespace tsorcRevamp.NPCs.Enemies
 
         void SpawnSmiteMarkDust(Vector2 position, float progress)
         {
-            if (Main.netMode == NetmodeID.Server || Main.rand.NextFloat() >= 0.54f + progress * 0.46f)
+            if (Main.netMode == NetmodeID.Server)
             {
                 return;
             }
 
-            int spawnCount = Main.rand.NextBool() ? 2 : 1;
-            for (int i = 0; i < spawnCount; i++)
-            {
-                Vector2 edge = Main.rand.NextVector2CircularEdge(40f, 40f) * (1f - progress * 0.4f);
-                int dust = Dust.NewDust(position + edge, 2, 2, DustID.GoldFlame, 0f, 0f, 100, default, 1.2f + progress * 0.2f);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = -edge * 0.035f;
+            // Converging yellow-gold ring plus rising sparks so the mark reads clearly against dark tiles
+            float ringRadius = MathHelper.Lerp(54f, 24f, progress);
+            int goldCount = 3 + (int)(progress * 3f);
 
-                if (Main.rand.NextBool(4))
-                {
-                    int spark = Dust.NewDust(position + edge, 2, 2, DustID.WhiteTorch, 0f, 0f, 100, default, 1.1f);
-                    Main.dust[spark].noGravity = true;
-                }
+            for (int i = 0; i < goldCount; i++)
+            {
+                Vector2 ringOffset = Main.rand.NextVector2CircularEdge(ringRadius, ringRadius);
+                Vector2 ringVelocity = -ringOffset * 0.045f;
+                float goldScale = 1.15f + progress * 0.45f;
+                Dust goldDust = Dust.NewDustPerfect(position + ringOffset, DustID.GoldFlame, ringVelocity, 40, default, goldScale);
+                goldDust.noGravity = true;
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2 innerOffset = Main.rand.NextVector2Circular(22f, 22f);
+                Vector2 risingVelocity = new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), -1.6f - progress * 1.4f);
+                float yellowScale = 1.0f + progress * 0.35f;
+                Dust yellowSpark = Dust.NewDustPerfect(position + innerOffset, DustID.YellowTorch, risingVelocity, 40, default, yellowScale);
+                yellowSpark.noGravity = true;
+            }
+
+            if (Main.rand.NextBool(2))
+            {
+                Vector2 coreOffset = Main.rand.NextVector2Circular(16f, 16f);
+                float coreScale = 0.85f + progress * 0.3f;
+                Dust coreSpark = Dust.NewDustPerfect(position + coreOffset, DustID.WhiteTorch, Vector2.Zero, 60, default, coreScale);
+                coreSpark.noGravity = true;
             }
         }
 

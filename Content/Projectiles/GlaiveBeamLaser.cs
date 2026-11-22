@@ -8,6 +8,7 @@ using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.NPCs.FriendlyPuppets;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -49,87 +50,77 @@ namespace tsorcRevamp.Content.Projectiles
         }
 
 
-        //Moves the centerpoint of the beam so it's always aligned with the sprite
-        //Kinda hacky, required manually tuning it.
-        //There was a better way to do it, which I learned later when drawing the glowmasks.
-        //Might go back and change this to use that code for this at some point. It works for now, though.
         private Vector2 GetOrigin()
         {
-            Vector2 origin = Main.player[Projectile.owner].Center;
-            origin.X -= 5 * Main.player[Projectile.owner].direction;
-            if (Main.player[Projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
+            Player player = Main.player[Projectile.owner];
+            bool fromPuppet = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>().FromMirrorPuppet;
+            int facing = player.direction;
+            float itemRotation = player.itemRotation;
+            bool inverted = !fromPuppet && player.gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix;
+
+            // Match the firing pose on every peer. Puppet draw and collision can't read the borrowed player's rotation.
+            if (fromPuppet)
             {
-                origin.Y += 15;
+                facing = Projectile.velocity.X < 0f ? -1 : 1;
+                Vector2 itemDirection = Projectile.velocity * facing;
+                itemRotation = itemDirection.ToRotation();
             }
-            else
+
+            Vector2 origin = MirrorPuppetProjectile.GetOwnerVisualCenter(Projectile);
+            origin.X -= 5 * facing;
+            origin.Y += inverted ? 15f : -15f;
+            float angle = Math.Abs(itemRotation);
+            float cosine = (float)Math.Cos(angle);
+            float sine = (float)Math.Sin(angle);
+
+            if (inverted)
             {
-                origin.Y -= 15;
-            }
-            if (Main.player[Projectile.owner].gravDir != 1 && ModContent.GetInstance<tsorcRevampConfig>().GravityFix)
-            {
-                if (Main.player[Projectile.owner].itemRotation < 0)
+                if (itemRotation < 0)
                 {
-                    //If aiming in the upper right quadrant
-                    if (Main.player[Projectile.owner].direction == 1)
+                    if (facing == 1)
                     {
-                        origin.X += 8 + -8 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        //origin.Y += 0 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
+                        origin.X += 8 - 8 * cosine;
                     }
-                    //Bottom left
                     else
                     {
-                        origin.X -= -10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y -= 10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
+                        origin.X += 10 * cosine;
+                        origin.Y -= 10 * sine;
                     }
+                }
+                else if (facing == 1)
+                {
+                    origin.Y -= 15 * sine;
                 }
                 else
                 {
-                    //Bottom right
-                    if (Main.player[Projectile.owner].direction == 1)
-                    {
-                        origin.X += 0 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y -= 15 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                    }
-                    //Upper left
-                    else
-                    {
-                        origin.X -= 5 + -5 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        //origin.Y += 15 * (float)Math.Sin(Math.Abs(Main.player[projectile.owner].itemRotation));
-                    }
+                    origin.X -= 5 - 5 * cosine;
                 }
+
+                return origin;
             }
-            else
+
+            if (itemRotation < 0)
             {
-                if (Main.player[Projectile.owner].itemRotation < 0)
+                if (facing == 1)
                 {
-                    //If aiming in the upper right quadrant
-                    if (Main.player[Projectile.owner].direction == 1)
-                    {
-                        origin.X -= 10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                    }
-                    //Bottom left
-                    else
-                    {
-                        origin.X -= 5 + -10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                    }
+                    origin.X -= 10 * cosine;
+                    origin.Y += 10 * sine;
                 }
                 else
                 {
-                    //Bottom right
-                    if (Main.player[Projectile.owner].direction == 1)
-                    {
-                        origin.X += 6 + -11 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y += -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                    }
-                    //Upper left
-                    else
-                    {
-                        origin.X += 10 * (float)Math.Cos(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                        origin.Y -= -10 * (float)Math.Sin(Math.Abs(Main.player[Projectile.owner].itemRotation));
-                    }
+                    origin.X -= 5 - 10 * cosine;
+                    origin.Y -= 10 * sine;
                 }
+            }
+            else if (facing == 1)
+            {
+                origin.X += 6 - 11 * cosine;
+                origin.Y -= 10 * sine;
+            }
+            else
+            {
+                origin.X += 10 * cosine;
+                origin.Y += 10 * sine;
             }
 
             return origin;
@@ -176,26 +167,29 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
-            if ((!IsAtMaxCharge) || FiringTimeLeft <= 0) return false;
+            if (!IsAtMaxCharge || FiringTimeLeft <= 0)
+            {
+                return false;
+            }
 
-
-            Player player = Main.player[Projectile.owner];
-            Vector2 unit = Projectile.velocity;
-            float point = 0f;
             Vector2 origin = GetOrigin();
-            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin,
-                origin + unit * Distance, 22, ref point);
+            Vector2 end = origin + Projectile.velocity * Distance;
+            float point = 0f;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), origin, end, 22, ref point);
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.Daybreak, 300);
 
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Vector2 endpoint = target.position;
-            Player player = Main.player[Projectile.owner];
-            float distance = Vector2.Distance(endpoint, player.position);
-            float velocity = -8f;
-            Vector2 speed = ((endpoint - player.position) / distance) * velocity;
+            Vector2 towardShooter = GetOrigin() - endpoint;
+            Vector2 speed = towardShooter.SafeNormalize(Vector2.Zero) * 8f;
             speed.X += Main.rand.Next(-1, 1);
             speed.Y += Main.rand.Next(-1, 1);
             int dust = Dust.NewDust(endpoint, 3, 3, 127, speed.X + Main.rand.Next(-10, 10), speed.Y + Main.rand.Next(-10, 10), 20, default, 3.0f);
@@ -215,6 +209,23 @@ namespace tsorcRevamp.Content.Projectiles
 
         public override void AI()
         {
+            MirrorPuppetProjectile tag = Projectile.GetGlobalProjectile<MirrorPuppetProjectile>();
+            bool fromPuppet = tag.FromMirrorPuppet;
+            bool remotePuppetBeam = fromPuppet && Projectile.owner != Main.myPlayer;
+
+            if (fromPuppet && tag.GetFiringPuppet(Projectile) == null)
+            {
+                return;
+            }
+
+            Player player = Main.player[Projectile.owner];
+            bool puppetReleased = fromPuppet && (!MirrorPuppetSwap.Active || !player.controlUseItem);
+
+            if (!remotePuppetBeam && (!player.channel || puppetReleased))
+            {
+                Projectile.Kill();
+                return;
+            }
 
             FiringTimeLeft--;
             if (FiringTimeLeft == 0)
@@ -222,17 +233,39 @@ namespace tsorcRevamp.Content.Projectiles
                 Charge = 0;
             }
 
-            Player player = Main.player[Projectile.owner];
+            if (!remotePuppetBeam)
+            {
+                UpdatePlayer(player, fromPuppet);
+            }
+
             Vector2 origin = GetOrigin();
             Projectile.position = origin + Projectile.velocity * MOVE_DISTANCE;
             Projectile.timeLeft = 2;
 
-            UpdatePlayer(player);
-            ChargeLaser(player);
+            if (Charge < MAX_CHARGE)
+            {
+                Charge++;
 
-            if (Charge < MAX_CHARGE) return;
+                if (!IsAtMaxCharge)
+                {
+                    return;
+                }
 
-            SetLaserPosition(player);
+                FiringTimeLeft = FIRING_TIME;
+
+                if (!Main.dedServ)
+                {
+                    Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/GlaiveBeam") with { Volume = 50f, PitchVariance = 0.1f }, Projectile.Center);
+                }
+            }
+
+            SetLaserPosition(origin);
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Vector2 endpoint = origin + Projectile.velocity * Distance;
             endpoint -= new Vector2(8, 8); //Offset endpoint so dust is centered on it, covering it better
             float distance = Vector2.Distance(endpoint, origin);
@@ -265,13 +298,13 @@ namespace tsorcRevamp.Content.Projectiles
             //}
         }
 
-        private void SetLaserPosition(Player player)
+        private void SetLaserPosition(Vector2 origin)
         {
             for (Distance = MOVE_DISTANCE; Distance <= 2200f; Distance += 5f)
             {
-                Vector2 origin = GetOrigin();
-                var start = origin + Projectile.velocity * Distance;
-                if (!Collision.CanHit(origin, 1, 1, start, 1, 1) && !Collision.CanHitLine(origin, 1, 1, start, 1, 1))
+                Vector2 end = origin + Projectile.velocity * Distance;
+
+                if (!Collision.CanHit(origin, 1, 1, end, 1, 1) && !Collision.CanHitLine(origin, 1, 1, end, 1, 1))
                 {
                     Distance -= 5f;
                     break;
@@ -292,50 +325,29 @@ namespace tsorcRevamp.Content.Projectiles
             shaderData.QueueRipple(ripplePos, waveData, beamDims, RippleShape.Square, Projectile.rotation);
         }
 
-        private void ChargeLaser(Player player)
-        {
-            if (!player.channel)
-            {
-                Projectile.Kill();
-            }
-            else
-            {
-                Vector2 offset = Projectile.velocity;
-                offset *= MOVE_DISTANCE - 20;
-                Vector2 pos = GetOrigin() + offset - new Vector2(10, 10);
-                if (Charge < MAX_CHARGE)
-                {
-                    Charge++;
-                    //Only play the sound once, on the frame it hits max charge
-                    if (Charge == MAX_CHARGE)
-                    {
-                        Terraria.Audio.SoundEngine.PlaySound(new Terraria.Audio.SoundStyle("tsorcRevamp/Sounds/Item/GlaiveBeam") with { Volume = 50f, PitchVariance = 0.1f }, Projectile.Center);
-                        FiringTimeLeft = FIRING_TIME;
-                    }
-                }
-                Vector2 dustVelocity = Vector2.UnitX * 18f;
-                dustVelocity = dustVelocity.RotatedBy(Projectile.rotation - 1.57f);
-            }
-        }
-
-        private void UpdatePlayer(Player player)
+        private void UpdatePlayer(Player player, bool fromPuppet)
         {
             // Multiplayer support here, only run this code if the client running it is the owner of the projectile
             if (Projectile.owner == Main.myPlayer)
             {
-                Vector2 diff = Main.MouseWorld - GetOrigin();
-                diff.Normalize();
-                Projectile.velocity = diff;
+                Vector2 aim = Main.MouseWorld - GetOrigin();
+                Projectile.velocity = aim.SafeNormalize(Projectile.velocity);
                 Projectile.direction = Main.MouseWorld.X > player.position.X ? 1 : -1;
                 Projectile.netUpdate = true;
             }
 
-            int dir = Projectile.direction;
-            player.ChangeDir(dir); // Set player direction to where we are shooting
-            player.heldProj = Projectile.whoAmI; // Update player's held projectile
-            player.itemTime = 2; // Set item time to 2 frames while we are used
-            player.itemAnimation = 2; // Set item animation time to 2 frames while we are used
-            player.itemRotation = (float)Math.Atan2(Projectile.velocity.Y * dir, Projectile.velocity.X * dir); // Set the item rotation to where we are shooting
+            int facing = Projectile.direction;
+            player.ChangeDir(facing);
+
+            if (!fromPuppet)
+            {
+                player.heldProj = Projectile.whoAmI;
+            }
+
+            player.itemTime = 2;
+            player.itemAnimation = 2;
+            Vector2 itemDirection = Projectile.velocity * facing;
+            player.itemRotation = itemDirection.ToRotation();
         }
 
         private void CastLights()

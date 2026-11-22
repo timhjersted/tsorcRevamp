@@ -57,42 +57,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         int[] bodyTypes;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-            Point pTile = p.Center.ToTileCoordinates();
-            bool worldEdge = (pTile.X < Main.maxTilesX * 0.3f) || (pTile.X > Main.maxTilesX * 0.7f); //thanks i hate it
-
-            //Ensuring it can't spawn if one already exists.
-            int count = 0;
-            for (int i = 0; i < Main.npc.Length; i++)
-            {
-                if (Main.npc[i].type == NPC.type)
-                {
-                    count++;
-                    if (count > 0)
-                    {
-                        return 0;
-                    }
-                }
-            }
-
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (p.ZoneUnderworldHeight)
-                {
-                    if (worldEdge)
-                    {
-                        if (Main.bloodMoon) { return 0.2f; } //blood moon, underworld, edge
-                        else return 0.067f; //not blood moon, underworld, edge
-                    }
-                    else if (Main.bloodMoon) { return 0.067f; } //blood moon, underworld
-                    else return 0.02f; //underworld
-                }
-            }
-            return 0; //outside shm
-        }
-
         public override void AI()
         {
 
@@ -150,7 +114,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
-            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.AbyssRule, ModContent.ItemType<FlameOfTheAbyss>()));
+            npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<FlameOfTheAbyss>()));
         }
 
         public override void HitEffect(NPC.HitInfo hit)

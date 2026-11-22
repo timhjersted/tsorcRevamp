@@ -403,21 +403,21 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 currentDownedList[i].scale = previewScale;
                 currentDownedList[i].alpha = 0;
 
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                 {
                     currentDownedList[i].ai[0] = 0;
                     currentDownedList[i].scale = 0.7f;
                 }
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
 
-                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())
                 {
                     currentDownedList[i].ai[0] = 0;
                 }
@@ -460,19 +460,19 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                                 mouseOverGuideText = LangUtils.GetTextValue("Items.BossRematchTome.Next") + "\n" + LangUtils.GetTextValue("Items.BossRematchTome." + nextBoss);
                             }
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>())
                         {
                             currentDownedList[i].ai[0] = 1;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheRage>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheSorrow>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
-                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.TheHunter>())
+                        if (currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())
                         {
                             currentDownedList[i].ai[0] = currentDownedList[i].lifeMax / 20f;
                         }
@@ -499,6 +499,12 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 // That pipeline is unreliable inside preview UIs (and external NPC browsers), often
                 // leaving only their emissive weapon/effects. Use their existing legacy full-body art
                 // for a stable Tome portrait while leaving the live encounter renderer untouched.
+                bool hoveredFinalForm = currentDownedList[i].type == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>() && currentDownedList[i].ai[0] == 1;
+                if (hoveredFinalForm)
+                {
+                    NPCs.Bosses.Attraidies.Attraidies.DrawTomeAura(currentDownedList[i].Center, currentDownedList[i].scale);
+                }
+
                 if (!DrawPuppetTomePreview(primaryNpcType, currentDownedList[i].Center, currentDownedList[i].scale))
                 {
                     Main.instance.DrawNPCDirect(Main.spriteBatch, currentDownedList[i], false, Main.screenPosition);
@@ -560,7 +566,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()) return 0.72f;
             if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.Fiends.WaterFiendKraken>()) return 0.65f;
             if (primaryNpcType == ModContent.NPCType<Chaos>()) return 0.65f;
-            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.TheRage>()) return 0.7f;
+            if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()) return 0.7f;
             return 0.9f;
         }
 
@@ -581,6 +587,16 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 texturePath = "tsorcRevamp/NPCs/UnusedSprites/OldGwyn";
                 frameHeight = 56;
                 portraitScale = 1.2f;
+            }
+            else if (primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.Attraidies>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.BrokenOkiku>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.Okiku>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.DarkDragonMask>()
+                || primaryNpcType == ModContent.NPCType<NPCs.Bosses.Attraidies.DarkShogunMask>())
+            {
+                texturePath = UsefulFunctions.RefactorableFilepath(typeof(NPCs.Bosses.Attraidies.Attraidies)) + "_TomePortrait";
+                frameHeight = 48;
+                portraitScale = 1.5f;
             }
             else
             {
@@ -696,6 +712,14 @@ namespace tsorcRevamp.Content.Projectiles.VFX
                 spawnOffset.Y += 250;
             }
 
+            // Pinwheel is a grounded boss that hangs in place (noGravity, zero velocity) through its intro, so the default 400px-up
+            // spawn left it embedded in the arena ceiling. Spawn at the player's height instead (NewNPC's Y is the hitbox bottom)
+            // and let it settle once the intro ends; it deals no contact damage, so overlapping the player is harmless.
+            if (id == ModContent.NPCType<NPCs.Bosses.Pinwheel.Pinwheel>())
+            {
+                spawnOffset = Vector2.Zero;
+            }
+
             //The "Prime Intro" NPC must be spawned instead of prime itself for its intro to work properly on the adventure map
             if (id == ModContent.NPCType<NPCs.Bosses.PrimeV2.TheMachine>())
             {
@@ -733,10 +757,10 @@ namespace tsorcRevamp.Content.Projectiles.VFX
             {
                 SpawnBoss(ModContent.NPCType<NPCs.Bosses.Gaibon>());
             }
-            if (id == ModContent.NPCType<NPCs.Bosses.Cataluminance>())
+            if (id == ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>())
             {
-                SpawnBoss(ModContent.NPCType<NPCs.Bosses.RetinazerV2>());
-                SpawnBoss(ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+                SpawnBoss(ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>());
+                SpawnBoss(ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
             }
 
             //Golem head gets drawn, but its body must be spawned

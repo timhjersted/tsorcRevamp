@@ -262,6 +262,23 @@ namespace tsorcRevamp
             return new Point(finalTileX, finalTileY - AboveFoldOffset);
         }
 
+        /// <summary>
+        /// True when a current-world tile-Y sits in the fold gap (final-Y 1991–2190 with default constants), the band
+        /// no legacy coord maps into. <see cref="InverseMapTile(int,int)"/> can't round-trip these: they come back
+        /// out of MapTile 200 tiles lower. Always false on non-expanded worlds.
+        /// </summary>
+        public static bool IsInFoldGap(int finalTileY)
+        {
+            if (!Active)
+            {
+                return false;
+            }
+
+            int gapStart = FoldThreshold + AboveFoldOffset;
+            int gapEnd = FoldThreshold + BelowFoldOffset;
+            return finalTileY >= gapStart && finalTileY < gapEnd;
+        }
+
         /// <summary>Inverse of <see cref="MapTile(Vector2)"/> for tile-space vectors. Preserves sub-tile fraction.</summary>
         public static Vector2 InverseMapTile(Vector2 finalTilePos)
         {

@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
+using tsorcRevamp.Systems.CeruleanFlask;
 
 namespace tsorcRevamp.Content.Projectiles.Magic
 {
@@ -55,7 +56,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
                 {
                     if (!player.GetModPlayer<CeruleanFlaskPlayer>().IsCeruleanRestoring && !player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking)
                     {
-                        MethodSwaps.TryUseQuickMana(player);
+                        CeruleanFlaskQuickManaOverride.TryUseQuickMana(player);
                     }
                 }
 
@@ -180,7 +181,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
                 colVel2.Normalize();
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel2.Length(), 1);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision1, colVel2, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 1.5f), 0, Projectile.owner, colVel2.Length(), 1);
                 }
 
                 //And do it again for the next reflection:
@@ -217,7 +218,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
 
                 if (Main.myPlayer == Projectile.owner)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 3f), 0, Projectile.owner, colVel3.Length(), 2);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), collision2, colVel3, ModContent.ProjectileType<LightrifleFire>(), (int)(Projectile.damage * 2f), 0, Projectile.owner, colVel3.Length(), 2);
                     FirstShot = false;
                 }
             }

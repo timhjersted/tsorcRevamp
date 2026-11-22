@@ -94,6 +94,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
+            if (Projectile.localAI[0] == 0f)
+            {
+                Projectile.localAI[0] = Projectile.timeLeft;
+            }
+
             LoadPuffs();
             for (int i = 0; i < puffs.Length; i++)
             {
@@ -116,7 +121,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // Overall envelope: quick fade in, hold, fade out only near the very end of life — the
             // same "hold curve" the rest of this kit's lingering effects use, so the swarm doesn't
             // just blink out mid-pulse when the cloud's lifetime runs out.
-            float lifeFraction = 1f - Projectile.timeLeft / (float)Lifetime;
+            float totalLifetime = Projectile.localAI[0] > 0f ? Projectile.localAI[0] : Lifetime;
+            float lifeFraction = 1f - Projectile.timeLeft / totalLifetime;
             float envelope = MathHelper.Clamp(lifeFraction / 0.08f, 0f, 1f)
                 * MathHelper.Clamp((1f - lifeFraction) / 0.15f, 0f, 1f);
 

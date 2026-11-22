@@ -11,22 +11,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 {
     ///<summary>
     ///Winter's Embrace: a fixed point in space (anchored where it was cast — it does NOT track the
-    ///giant) that pulls the player toward it for its whole 5-second life, like GigasUndertowZone but
+    ///giant) that pulls the player toward it for its whole ~10.7-second life, like GigasUndertowZone but
     ///radial around a point instead of a directional band toward the NPC. While pulling, it fires
-    ///three sets of eight GigasEmbraceIcicle in a ring around its centre: each set spawns, vibrates
-    ///in place for 50 ticks (the telegraph), then launches outward together. The three sets are
-    ///rotated 15° from each other so the safe gaps between lanes shift wave to wave — camping one
-    ///spot only works for the first burst. Deals no damage itself; the icicles are the payoff, same
+    ///six sets of eight GigasEmbraceIcicle in a ring around its centre: each set spawns, vibrates
+    ///in place for 50 ticks (the telegraph), then launches outward together. Each set is rotated
+    ///15° further than the last (0/15/30/45...) so the safe gaps between lanes shift wave to wave —
+    ///camping one spot only works for one burst. Deals no damage itself; the icicles are the payoff, same
     ///split as GigasUndertowZone's pull-vs-exhale.
     ///</summary>
     class GigasFrostZone : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
-        const int Duration = 320; //90 (first suck) + 100*2 (later sets) + 30 tail for the last burst to read
+        //Twice the original 320t / 3-set version: six sets 100t apart, last spawns at 41 + 500 = 541, fires at 591,
+        //then a ~50t tail so the final burst reads before the core fades.
+        const int Duration = 640;
         const int FirstSpawnAge = 41; //spawns here, vibrates 50 more -> fires ~90 ticks after cast
         const int SetInterval = 100; //ticks between each set's spawn (and so each fire, since vibrate is fixed)
-        const int SetCount = 3;
+        const int SetCount = 6;
         const int VibrateTicks = 50; //must match what's passed as GigasEmbraceIcicle's ai[1]
         const int IciclesPerSet = 8;
         const float RingRadius = 56f; //spawn ring; chord spacing at 8-around clears icicle width easily
@@ -135,7 +137,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         ///previous set so the dodgeable gaps between lanes shift each wave.</summary>
         void SpawnSet(int setIndex)
         {
-            SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = 0.2f + setIndex * 0.15f }, Projectile.Center);
+            //Pitch climbs over the first three sets, then repeats, so six sets don't end up shrill.
+            float setPitch = 0.2f + (setIndex % 3) * 0.15f;
+            SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.7f, Pitch = setPitch }, Projectile.Center);
             float rotation = setIndex * SetRotationOffset;
             for (int i = 0; i < IciclesPerSet; i++)
             {

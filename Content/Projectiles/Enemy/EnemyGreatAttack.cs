@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
             // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake. NOTE: this
-            // projectile is ALSO fired by AncientDemonOfTheAbyss, so its great attack changes
+            // projectile is ALSO fired by AncientDemon, so its great attack changes
             // colour here too — intentional, it was using the same retired crimson wake.
             EnemyVFX.DrawBlackKnightSpearWake(Projectile.Center - direction * 24f,
                 direction.ToRotation(), new Vector2(78f, 24f), 0.72f);

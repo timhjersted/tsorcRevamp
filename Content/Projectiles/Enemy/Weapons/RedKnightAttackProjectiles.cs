@@ -40,7 +40,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
     {
         const float SourceOverlap = 22f;
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {
@@ -103,7 +103,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         int Age => (int)Projectile.localAI[0];
         Vector2 PlantPoint => new(Projectile.ai[1], Projectile.ai[2]);
 
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(BlackKnightSpear));
+        public override string Texture => RedKnightsSpear.SpritePath;
 
         public override void SetDefaults()
         {
@@ -115,7 +115,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.netImportant = true;
-            Projectile.scale = 0.8f;
+            Projectile.scale = 0.8f * RedKnightsSpear.ShortSpearScale;
         }
 
         public override void AI()
@@ -189,7 +189,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 float charge = MathHelper.Clamp((Age - FlightTicks) / (float)(RecallStart - FlightTicks), 0f, 1f);
                 DrawThread(source.Center, Projectile.Center, charge, Age >= RecallStart);
             }
-            return true;
+
+            RedKnightsSpear.DrawSpear(Projectile, lightColor, Projectile.rotation + MathHelper.PiOver4);
+            return false;
         }
 
         static void DrawThread(Vector2 start, Vector2 end, float charge, bool active)
@@ -202,9 +204,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             Vector2 origin = new(0f, 0.5f);
             Color shadow = new Color(8, 18, 1) * (0.45f + charge * 0.35f);
             Color body = (active ? new Color(190, 245, 45) : new Color(88, 142, 12)) * (0.35f + charge * 0.55f);
-            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, shadow, rotation, origin,
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), shadow, rotation, origin,
                 new Vector2(length, active ? 13f : 8f), SpriteEffects.None, 0f);
-            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, null, body, rotation, origin,
+            Main.EntitySpriteDraw(pixel, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), body, rotation, origin,
                 new Vector2(length, active ? 4f : 2f), SpriteEffects.None, 0f);
         }
     }
@@ -243,7 +245,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 return;
             }
 
-            if (Age < MaterializeTicks && Main.rand.NextBool(2))
+            if (Age < MaterializeTicks && !Main.dedServ && Main.rand.NextBool(2))
             {
                 Vector2 dustPosition = Projectile.Center + Main.rand.NextVector2CircularEdge(28f, 18f);
                 Dust gather = Dust.NewDustPerfect(dustPosition,
@@ -278,8 +280,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.025f, 0.035f)
-                * (Age < MaterializeTicks ? 0.5f : 0.85f));
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.42f, 0.025f, 0.035f)
+                    * (Age < MaterializeTicks ? 0.5f : 0.85f));
+            }
             Projectile.localAI[0]++;
         }
 
@@ -586,11 +591,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         void DrawSpearSprite(Color lightColor)
         {
-            Texture2D texture = Terraria.GameContent.TextureAssets.Projectile[Projectile.type].Value;
+            int textureType = Projectile.type;
+            float drawScale = Projectile.scale;
+            if (Mode == KnightStandardMode.RedKnight)
+            {
+                textureType = ModContent.ProjectileType<RedKnightsSpear>();
+                drawScale *= RedKnightsSpear.ShortSpearScale;
+            }
+
+            Texture2D texture = TextureAssets.Projectile[textureType].Value;
             float rotation = Projectile.rotation + MathHelper.PiOver4;
             Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null,
                 Projectile.GetAlpha(lightColor), rotation, texture.Size() * 0.5f,
-                Projectile.scale, SpriteEffects.None, 0f);
+                drawScale, SpriteEffects.None, 0f);
         }
 
         static void SpawnBurst(RedKnightBurstKind kind, Vector2 position, float scale)
@@ -878,7 +891,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         int TelegraphTicks => Math.Max(1, (int)Projectile.ai[0]);
         int ActiveTicks => Math.Max(1, Math.Abs((int)Projectile.ai[1]));
         bool SilentRelease => Projectile.ai[1] < 0f;
-        float Length => Math.Max(64f, Projectile.ai[2]);
+        // A negative length opts into the spectral hand's emission flash. The bolt itself uses the magnitude.
+        bool HasHandOriginCore => Projectile.ai[2] < 0f;
+        float Length => Math.Max(64f, Math.Abs(Projectile.ai[2]));
 
         public override void SetDefaults()
         {
@@ -900,9 +915,31 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.62f, Pitch = -0.42f }, Projectile.Center);
             }
-            Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
-                * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+            if (!Main.dedServ)
+            {
+                Lighting.AddLight(Projectile.Center, new Vector3(0.54f, 0.02f, 0.06f)
+                    * (Age >= TelegraphTicks ? 0.9f : 0.35f));
+            }
+
             Projectile.localAI[0]++;
+            int activeAge = Age - TelegraphTicks;
+            if (HasHandOriginCore && !Main.dedServ && activeAge >= 0 && activeAge < ActiveTicks
+                && activeAge % 3 == 0)
+            {
+                // Keep the flash on the fixed beam start after the casting hand has drifted away.
+                int moteCount = activeAge == 0 ? 9 : 2;
+                Vector2 forward = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                for (int i = 0; i < moteCount; i++)
+                {
+                    Vector2 origin = Projectile.Center + Main.rand.NextVector2Circular(3.5f, 3.5f);
+                    Vector2 velocity = forward * Main.rand.NextFloat(0.15f, 0.7f)
+                        + Main.rand.NextVector2Circular(0.65f, 0.65f);
+                    Dust spark = Dust.NewDustPerfect(origin, DustID.TintableDustLighted, velocity,
+                        20, new Color(255, 34, 45), Main.rand.NextFloat(0.62f, 0.92f));
+                    spark.noGravity = true;
+                }
+            }
+
             if (Age >= TelegraphTicks + ActiveTicks + 12)
             {
                 Projectile.Kill();
@@ -1134,7 +1171,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             {
                 return true;
             }
-            return hostNPC.ModNPC is NPCs.Bosses.SuperHardMode.GreatRedKnight knight
+            return hostNPC.ModNPC is NPCs.Invaders.GreatRedKnight knight
                 && knight.InDominionDeathSequence;
         }
 

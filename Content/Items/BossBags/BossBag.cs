@@ -14,15 +14,18 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Shields;
 using tsorcRevamp.Content.Items.Accessories.Magic;
 using tsorcRevamp.Content.Items.Accessories.Magic.Bands;
+using tsorcRevamp.Content.Items.Accessories.Magic.DuskCrownRing;
 using tsorcRevamp.Content.Items.Accessories.Melee;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
 using tsorcRevamp.Content.Items.Accessories.Mobility.Wings;
 using tsorcRevamp.Content.Items.Accessories.Other;
 using tsorcRevamp.Content.Items.Accessories.Other.SilverSerpentRing;
 using tsorcRevamp.Content.Items.Accessories.Ranged;
+using tsorcRevamp.Content.Items.Accessories.Ranged.BlueTearstoneRing;
 using tsorcRevamp.Content.Items.Accessories.Summon;
 using tsorcRevamp.Content.Items.Armor;
 using tsorcRevamp.Content.Items.BossItems;
+using tsorcRevamp.Content.Items.HerosCrest;
 using tsorcRevamp.Content.Items.Lore;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
@@ -397,7 +400,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HerosCrest>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HerosCrestItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GreatMagicShieldScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MagicBarrierScroll>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Laevateinn>()));
@@ -465,6 +468,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.SpectreGoggles));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FieryScale>(), 1, 4, 8));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MarilithSoul>(), 1, 2, 2));
         }
     }
     public class LichBag : BossBag
@@ -531,7 +535,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DuskCrownRing>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DuskCrownRingItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HealingElixir>(), 1, 10, 20));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<PurgingStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 2, 4));
@@ -548,6 +552,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<RingofArtorias>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WolfRingItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulOfArtorias>(), 1, 6, 6));
@@ -598,7 +603,6 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.WitchkingsSword>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WitchkingMace>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BewitchedTitanite>(), 1, 20, 30));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<CovenantOfArtoriasItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
@@ -645,6 +649,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             //no expert-exclusive item yet
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Epilogue>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EssenceOfTerraria>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EmberOfTheFirstDawn>()));
             itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<DraxEX>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.RodOfHarmony));
         }

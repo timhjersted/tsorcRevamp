@@ -33,6 +33,6 @@ namespace tsorcRevamp.Buffs.Debuffs
 
         public static bool FromGreatBlackKnight(Projectile projectile)
             => projectile.GetGlobalProjectile<tsorcGlobalProjectile>().SourceNPCType
-                == ModContent.NPCType<NPCs.Enemies.GreatBlackKnight>();
+                == ModContent.NPCType<NPCs.Invaders.GreatBlackKnight>();
     }
 }

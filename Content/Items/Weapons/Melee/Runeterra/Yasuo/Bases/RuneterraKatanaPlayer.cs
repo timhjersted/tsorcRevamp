@@ -31,7 +31,7 @@ public class RuneterraKatanaPlayer : ModPlayer
 
     public override void ProcessTriggers(TriggersSet triggersSet)
     {
-        if (tsorcRevamp.specialAbility.JustReleased)
+        if (tsorcRevamp.specialAbility.JustReleased && !Player.dead)
         {
             DoSweepingBlade();
 

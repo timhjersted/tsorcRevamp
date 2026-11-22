@@ -14,11 +14,7 @@ namespace tsorcRevamp.Content.Items
         public const float PermanentStaminaCap = 250f;
         public const float StaminaPerVessel = 5f;
 
-        public override void SetStaticDefaults()
-        {
-            /* Tooltip.SetDefault("Permanently increases max stamina by 5%" +
-                               "\nStamina maxes out after consuming 10"); */
-        }
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(StaminaPerVessel);
 
         public override void SetDefaults()
         {
@@ -37,26 +33,23 @@ namespace tsorcRevamp.Content.Items
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
-
-            // Everything here counts from the player's own class starting stamina rather than the generic
-            // default. Every class converges on the same PermanentStaminaCap, so the number of vessels it takes
-            // to get there differs: Melee starts at 130 and needs 24, Magic starts at 115 and needs 27. Measuring
-            // against DefaultStaminaResourceMax reported vessels the player hadn't eaten (and, for Magic, a
-            // negative count), and the "maxes out after" figure was a flat 15 baked into the localization.
             float baseStamina = player.GetModPlayer<tsorcRevampPlayer>().GetStartingClassBaseStamina();
+            float permanentStamina = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax;
             int vesselsToMax = (int)Math.Ceiling((PermanentStaminaCap - baseStamina) / StaminaPerVessel);
-            int used = (int)((player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax - baseStamina) / StaminaPerVessel);
+            int used = (int)((permanentStamina - baseStamina) / StaminaPerVessel);
 
-            // The localized line carries a {0} for the per-class total. A translation that hasn't been updated
-            // yet has no placeholder, and string.Format leaves it alone rather than throwing.
-            TooltipLine maxLine = tooltips.Find(line => line.Name == "Tooltip1");
-            if (maxLine != null)
+            // Keep the player-specific counts on mod-owned lines. The shared tooltip hook refreshes
+            // Terraria's TooltipN lines from the static item description after this hook.
+            int insertIndex = tooltips.FindIndex(line => line.Mod == "Terraria" && line.Name == "Tooltip0") + 1;
+            if (insertIndex == 0)
             {
-                maxLine.Text = string.Format(maxLine.Text, vesselsToMax);
+                insertIndex = tooltips.Count;
             }
 
-            tooltips.Insert(4, new TooltipLine(Mod, "UsedCounter", Language.GetTextValue("Mods.tsorcRevamp.Items.StaminaVessel.UsedCounter") + used));
-
+            string maxVesselsText = this.GetLocalization("MaxVessels").Format(vesselsToMax);
+            string usedCounterText = this.GetLocalization("UsedCounter").Value + used;
+            tooltips.Insert(insertIndex, new TooltipLine(Mod, "MaxVessels", maxVesselsText));
+            tooltips.Insert(insertIndex + 1, new TooltipLine(Mod, "UsedCounter", usedCounterText));
         }
 
         public override bool CanUseItem(Player player)

@@ -54,7 +54,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Okiku
         float rotationSpeed = 0.01f;
         public override void AI()
         {
-            if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Okiku.FinalForm.Attraidies>()))
+            if (NPCs.Bosses.Attraidies.Attraidies.ActiveFinalBossIndex() < 0)
             {
                 Projectile.Kill();
             }

@@ -33,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             recipe.AddIngredient(ModContent.ItemType<Bolt>(), 200);
             recipe.AddIngredient(ItemID.MythrilBar, 1);
             recipe.AddIngredient(ItemID.SoulofFlight, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 50);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 400);
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();
         }

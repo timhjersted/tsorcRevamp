@@ -14,7 +14,7 @@ using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Utilities;
-using static tsorcRevamp.SpawnHelper;
+using tsorcRevamp.NPCs.Enemies.Hollow;
 
 namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 {
@@ -466,7 +466,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         {
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally; //Flip texture depending on spriteDirection
 
-            Texture2D texture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior");
+            Texture2D texture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)));
             if (NPC.spriteDirection == 1)
             {
                 spriteBatch.Draw(texture, NPC.Center - Main.screenPosition, new Rectangle(NPC.frame.X, NPC.frame.Y, 64, 54), Color.White * 0.75f, NPC.rotation, new Vector2(32, 30), NPC.scale, effects, 0f);
@@ -480,7 +480,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)
         {
-            Texture2D shieldTexture = (Texture2D)Mod.Assets.Request<Texture2D>("NPCs/Enemies/HollowWarrior_Shield");
+            Texture2D shieldTexture = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(HollowWarrior)) + "_Shield");
             SpriteEffects effects = NPC.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Rectangle myrectangle = shieldTexture.Frame(1, 10, 0, shieldFrame);
             if (shielding && NPC.velocity.X == 0 && !jumpSlashing && !slashing)
@@ -694,29 +694,6 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             }
         }
 
-
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            bool FrozenOcean = spawnInfo.SpawnTileX > (Main.maxTilesX - 800);
-            bool Ocean = spawnInfo.SpawnTileX < 800 || FrozenOcean;
-
-            Player p = spawnInfo.Player;
-            if (spawnInfo.Invasion || Sky(p) || spawnInfo.Player.ZoneSnow)
-            {
-                chance = 0;
-                return chance;
-            }
-
-            if (spawnInfo.Player.townNPCs > 1f) return 0f;
-            if (spawnInfo.Water || spawnInfo.Player.ZoneCorrupt || spawnInfo.Player.ZoneCrimson) return 0f;
-            if (spawnInfo.Player.ZoneGlowshroom) return 0f;
-
-            if (spawnInfo.Player.ZoneGraveyard && !Main.hardMode && (Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 185 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 215
-                 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 301 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 214 || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 302)) chance = 3f;
-
-            return chance;
-        }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {

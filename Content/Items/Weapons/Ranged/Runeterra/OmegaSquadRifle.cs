@@ -3,11 +3,14 @@ using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Buffs.Runeterra.Ranged;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Buffs;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Sounds.OmegaSquadRifle;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Sounds.ToxicShot;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 {
@@ -18,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
         public override int Rarity => ModContent.RarityType<DarkBlue>();
         public override int Value => Item.buyPrice(1, 0, 0, 0);
         public override float Knockback => 6f;
-        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Ranged/OmegaSquadRifle/";
+        public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(OmegaSquadRifleSound));
         public override int ProjectileType => ModContent.ProjectileType<RadioactiveDart>();
         public override int Tier => 3;
         public override string LocalizationPath => "Items.OmegaSquadRifle.";

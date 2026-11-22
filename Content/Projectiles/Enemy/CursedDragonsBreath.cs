@@ -43,8 +43,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         private static bool BuildsPowerfulCurse()
         {
-            bool hunterSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>()));
-            bool rageSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheRage>()));
+            bool hunterSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>()));
+            bool rageSlain = tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheRage>()));
 
             return hunterSlain && rageSlain;
         }

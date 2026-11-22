@@ -28,7 +28,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.knockBackResist = 0;
             NPC.timeLeft = 22500;
             NPC.damage = 40;
-            NPC.defense = 60;
+            NPC.defense = 500;
             NPC.HitSound = SoundID.NPCHit7;
             NPC.DeathSound = SoundID.NPCDeath8;
             NPC.lifeMax = 75000;
@@ -37,6 +37,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
         }
+        public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
+        {
+            FrostBuildup.Apply(target, SeathTheScalelessHead.FrostBuildupPerHit);
+        }
+
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

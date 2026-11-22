@@ -67,7 +67,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
 
             if (Main.player[(int)Projectile.ai[0]] != null && Main.player[(int)Projectile.ai[0]].active)
             {
-                if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
+                if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>())
                 {
                     Projectile.velocity = (Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2).ToRotationVector2();
                 }
@@ -111,7 +111,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
 
         public override Vector2 GetOrigin()
         {
-            if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.RetinazerV2>())
+            if (Main.npc[(int)Projectile.ai[1]] != null && Main.npc[(int)Projectile.ai[1]].active && Main.npc[(int)Projectile.ai[1]].type == ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>())
             {
                 return Main.npc[(int)Projectile.ai[1]].Center + new Vector2(90, 0).RotatedBy(Main.npc[(int)Projectile.ai[1]].rotation + MathHelper.PiOver2);
             }

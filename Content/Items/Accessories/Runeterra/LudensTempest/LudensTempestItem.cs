@@ -10,20 +10,16 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.LudensTempest
 {
     public class LudensTempestItem : ModItem
     {
-        public static float Dmg = 4f;
-        public static float ArmorPen = 3;
-        public static int Mana = 20;
-        public static int Cooldown = 13;
-        public static float ProcDmg = 1f;
+        public const float Dmg = 4f;
+        public const float ArmorPen = 4;
+        public const int Mana = 20;
+        public const int Cooldown = 13;
+        public const float ProcDmg = 1f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(Dmg, ArmorPen, Mana, Cooldown);
-        public override void SetStaticDefaults()
-        {
-        }
-
         public override void SetDefaults()
         {
-            Item.width = 24;
-            Item.height = 24;
+            Item.width = 42;
+            Item.height = 48;
             Item.accessory = true;
             Item.value = PriceByRarity.Orange_3;
             Item.rare = ItemRarityID.Orange;

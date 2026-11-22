@@ -73,7 +73,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
                 }
                 timer++;
 
-                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Cataluminance>()))
+                if (!NPC.AnyNPCs(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>()))
                 {
                     fadeOut -= 0.01f;
                     if (fadeOut <= 0)
@@ -110,7 +110,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Triad
 
                 //Once the boss is all the way back to that stage again, then start removing the old positions
                 bool finalStandInitiated = false;
-                int? cat = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Cataluminance>());
+                int? cat = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>());
                 if (cat != null)
                 {
                     if (Main.npc[cat.Value].life <= 1000)

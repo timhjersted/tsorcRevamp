@@ -8,6 +8,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic
 {
     class AbyssalDeluge : ModProjectile
     {
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(AbyssalDeluge)) + "X";
 
         public override void SetStaticDefaults()
         {
@@ -50,8 +51,16 @@ namespace tsorcRevamp.Content.Projectiles.Magic
 
         public override bool PreDraw(ref Color lightColor)
         {
+            int frameCount = Main.projFrames[Projectile.type];
+
+            // Keep the existing projectile lifetime while drawing only the frames in the sheet.
+            if (Projectile.frame >= frameCount)
+            {
+                return false;
+            }
+
             Texture2D texture = (Texture2D)Terraria.GameContent.TextureAssets.Projectile[Projectile.type];
-            Rectangle frame = texture.Frame(1, Main.projFrames[Projectile.type], 0, Projectile.frame);
+            Rectangle frame = texture.Frame(1, frameCount, 0, Projectile.frame);
 
             Main.EntitySpriteDraw(
                 texture,

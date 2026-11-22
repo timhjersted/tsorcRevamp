@@ -49,10 +49,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode.SerpentOfTheAbyss
 
         int[] bodyTypes;
 
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            return base.SpawnChance(spawnInfo);
-        }
         public override bool? DrawHealthBar(byte hbPosition, ref float scale, ref Vector2 position)
         {
             return false;

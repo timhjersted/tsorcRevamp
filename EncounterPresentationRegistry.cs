@@ -7,7 +7,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.NPCs.Bosses.GravelordNito;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode;
 using tsorcRevamp.NPCs.Enemies;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.NPCs.Bosses.Gigas;
 
 namespace tsorcRevamp
 {
@@ -124,13 +125,13 @@ namespace tsorcRevamp
             Register(ModContent.NPCType<IceGigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<Gigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<BlackKnight>(), 0, 0, 0, BossClassification.EliteEnemy, BossEncounterEra.Hardmode);
-            Register(ModContent.NPCType<NPCs.Bosses.Okiku.ThirdForm.BrokenOkiku>(), 0, 29, 30, BossClassification.RequiredMajor, BossEncounterEra.Hardmode);
+            Register(ModContent.NPCType<NPCs.Bosses.Attraidies.BrokenOkiku>(), 0, 29, 30, BossClassification.RequiredMajor, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<Marik>(), 47, 47, 48, BossClassification.OptionalMajor, BossEncounterEra.SuperHardmode, true);
 
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Slogra>(), ModContent.NPCType<NPCs.Bosses.Gaibon>());
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.WyvernMage.WyvernMage>(), ModContent.NPCType<NPCs.Bosses.WyvernMage.MechaDragonHead>());
             AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.WyvernMageShadow>(), ModContent.NPCType<NPCs.Bosses.SuperHardMode.GhostWyvernMage.GhostDragonHead>());
-            AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Cataluminance>(), ModContent.NPCType<NPCs.Bosses.RetinazerV2>(), ModContent.NPCType<NPCs.Bosses.SpazmatismV2>());
+            AddCompletionTypes(ModContent.NPCType<NPCs.Bosses.Triad.Cataluminance>(), ModContent.NPCType<NPCs.Bosses.Triad.RetinazerV2>(), ModContent.NPCType<NPCs.Bosses.Triad.SpazmatismV2>());
             AddCompletionTypes(NPCID.EaterofWorldsHead, NPCID.EaterofWorldsBody, NPCID.EaterofWorldsTail);
         }
 
@@ -184,9 +185,9 @@ namespace tsorcRevamp
             if (npcType == NPCID.KingSlime
                 || npcType == NPCID.QueenBee
                 || npcType == ModContent.NPCType<RedKnight>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.OolacileSerpent.GreatSerpentHead>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDragon.HellkiteDragonHead>()
-                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist>())
+                || npcType == ModContent.NPCType<NPCs.Bosses.GreatSerpent.GreatSerpentHead>()
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.HellkiteDrake.HellkiteDrake>()
+                || npcType == ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>())
             {
                 return BossClassification.OptionalField;
             }
@@ -222,6 +223,13 @@ namespace tsorcRevamp
         public static bool TryGet(int primaryNpcType, out BossEncounterPresentation entry)
         {
             return ByPrimaryNpcType.TryGetValue(primaryNpcType, out entry);
+        }
+
+        /// <summary>The encounter an NPC type belongs to, as its primary boss or as one of its completion types
+        /// (the Twins under Cataluminance, the Mecha Dragon under the Wyvern Mage, the Eater of Worlds' segments).</summary>
+        public static bool TryGetByMember(int npcType, out BossEncounterPresentation entry)
+        {
+            return ByCompletionNpcType.TryGetValue(npcType, out entry);
         }
 
         public static bool TryGetByClue(int clueIndex, out BossEncounterPresentation entry)

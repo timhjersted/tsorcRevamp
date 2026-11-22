@@ -25,6 +25,23 @@ namespace tsorcRevamp.NPCs.Enemies
         int sparkCooldown = 120;
         int sparkTimer; //>0 = mid-cast
 
+        // Server-only ownership: which Necromancer raised it (slot + its server-local spawn token, so a recycled
+        // NPC slot never adopts it). Nothing here is synced - only the server counts, sacrifices or dissolves ghouls.
+        int ownerIndex = -1;
+        int ownerToken;
+        int dissolveDelay = -1; //>=0 = owner is gone; ticks left before the binding unravels
+
+        public void BindOwner(int index, int token)
+        {
+            ownerIndex = index;
+            ownerToken = token;
+        }
+
+        public bool BelongsTo(int index, int token)
+        {
+            return ownerIndex == index && ownerToken == token;
+        }
+
         public override void SetStaticDefaults()
         {
             Main.npcFrameCount[NPC.type] = 8;
@@ -80,6 +97,37 @@ namespace tsorcRevamp.NPCs.Enemies
                     NPC.netUpdate = true;
                 }
             }
+
+            // Its Necromancer died (or was never bound): the binding unravels after a 0-20 tick stagger so a pack
+            // doesn't vanish on one frame. A real kill, so the purple dream-dissolve plays; OnKill skips the blast.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                if (dissolveDelay < 0)
+                {
+                    bool ownerInRange = ownerIndex >= 0 && ownerIndex < Main.maxNPCs;
+                    bool ownerAlive = ownerInRange
+                        && Main.npc[ownerIndex].active
+                        && Main.npc[ownerIndex].life > 0
+                        && Main.npc[ownerIndex].type == ModContent.NPCType<Necromancer>()
+                        && Main.npc[ownerIndex].GetGlobalNPC<Dworc.DworcSpawnIdentity>().Token == ownerToken;
+                    if (!ownerAlive)
+                    {
+                        dissolveDelay = Main.rand.Next(21);
+                    }
+                }
+
+                if (dissolveDelay == 0)
+                {
+                    NPC.StrikeInstantKill();
+                    return;
+                }
+
+                if (dissolveDelay > 0)
+                {
+                    dissolveDelay--;
+                }
+            }
+
             Player player = Main.player[NPC.target];
 
             //Dream Spark: a slow drifting wisp bolt from mid-range, so it isn't pure melee
@@ -202,7 +250,13 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void OnKill()
         {
-            //The binding snaps: a telegraphed dreamfire detonation where it fell
+            //The binding snaps: a telegraphed dreamfire detonation where it fell - unless its master died first,
+            //in which case it just dissolves (no blast to punish the player for winning)
+            if (dissolveDelay >= 0)
+            {
+                return;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Projectile.NewProjectile(NPC.GetSource_Death(), NPC.Center, Vector2.Zero,

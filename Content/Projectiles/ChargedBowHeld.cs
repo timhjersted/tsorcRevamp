@@ -4,8 +4,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Bows.BowRework;
 
 namespace tsorcRevamp.Content.Projectiles
 {
@@ -158,18 +160,146 @@ namespace tsorcRevamp.Content.Projectiles
                 Projectile.velocity = aimVector;
             }
             Projectile.spriteDirection = Projectile.direction;
+
+            if (ammoType > ProjectileID.None)
+            {
+                float clampedCharge = MathHelper.Clamp(charge, 0f, 1f);
+                BowDrawAnimationPlayer.ApplyBowArmPose(
+                    player,
+                    Projectile.velocity,
+                    clampedCharge,
+                    fired,
+                    0f,
+                    out _,
+                    out _,
+                    out Player.CompositeArmStretchAmount frontStretch,
+                    out float frontRotation);
+
+                // Keep the arrow nock and bowstring vertex locked to the player's front hand so the hand draws on top of the arrow tail.
+                Texture2D bowTexture = TextureAssets.Projectile[Projectile.type].Value;
+                if (bowTexture != null)
+                {
+                    int bowFrames = Math.Max(1, Main.projFrames[Projectile.type]);
+                    int bowFrameHeight = bowTexture.Height / bowFrames;
+                    float pivotY = (Projectile.height * 0.5f) - DrawOriginOffsetY;
+                    float stringY = MathHelper.Lerp(bowFrameHeight - 15f, bowFrameHeight - 1f, clampedCharge);
+                    float stringPullback = (stringY - pivotY) * Projectile.scale;
+                    Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX * Projectile.direction);
+                    Vector2 frontHandWorld = player.GetFrontHandPosition(frontStretch, frontRotation);
+                    Projectile.Center = frontHandWorld + (aimDirection * stringPullback);
+                }
+            }
         }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (ammoType <= ProjectileID.None)
+            {
+                return true;
+            }
+
+            Texture2D bowTexture = TextureAssets.Projectile[Projectile.type].Value;
+            if (bowTexture == null)
+            {
+                return false;
+            }
+
+            int bowFrames = Math.Max(1, Main.projFrames[Projectile.type]);
+            int bowFrameHeight = bowTexture.Height / bowFrames;
+            int clampedFrame = Math.Clamp(Projectile.frame, 0, bowFrames - 1);
+            Rectangle bowSourceRect = new Rectangle(0, clampedFrame * bowFrameHeight, bowTexture.Width, bowFrameHeight);
+            float pivotY = (Projectile.height * 0.5f) - DrawOriginOffsetY;
+            Vector2 bowOrigin = new Vector2(bowTexture.Width * 0.5f, pivotY);
+            Vector2 drawWorld = Projectile.Center + new Vector2(0f, Projectile.gfxOffY);
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (Projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            Main.EntitySpriteDraw(
+                bowTexture,
+                drawWorld - Main.screenPosition,
+                bowSourceRect,
+                Projectile.GetAlpha(lightColor),
+                Projectile.rotation,
+                bowOrigin,
+                Projectile.scale,
+                spriteEffects,
+                0);
+
+            return false;
+        }
+
         public override void PostDraw(Color lightColor)
         {
+            DrawNockedArrow(lightColor);
             DrawPoints();
+        }
+
+        protected virtual void DrawNockedArrow(Color lightColor)
+        {
+            int arrowProjType = ammoType;
+            if (arrowProjType <= ProjectileID.None || arrowProjType >= TextureAssets.Projectile.Length)
+            {
+                return;
+            }
+
+            Main.instance.LoadProjectile(arrowProjType);
+            Texture2D arrowTexture = TextureAssets.Projectile[arrowProjType].Value;
+            Texture2D bowTexture = TextureAssets.Projectile[Projectile.type].Value;
+            if (arrowTexture == null || bowTexture == null)
+            {
+                return;
+            }
+
+            int arrowFrames = Math.Max(1, Main.projFrames[arrowProjType]);
+            int arrowFrameHeight = arrowTexture.Height / arrowFrames;
+            Rectangle arrowSourceRect = new Rectangle(0, 0, arrowTexture.Width, arrowFrameHeight);
+
+            int bowFrames = Math.Max(1, Main.projFrames[Projectile.type]);
+            int bowFrameHeight = bowTexture.Height / bowFrames;
+
+            // All ChargedBowHeld sheets place the unpulled string 15px above the frame bottom on frame 0
+            // and 1px above the frame bottom on the final frame. Convert that texture-space Y into a
+            // scaled distance behind the bow's rotation pivot (Projectile.height / 2 - DrawOriginOffsetY).
+            float pivotY = (Projectile.height * 0.5f) - DrawOriginOffsetY;
+            float clampedCharge = MathHelper.Clamp(charge, 0f, 1f);
+            float stringY = MathHelper.Lerp(bowFrameHeight - 15f, bowFrameHeight - 1f, clampedCharge);
+            float stringPullback = (stringY - pivotY) * Projectile.scale;
+
+            Vector2 aimDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX * Projectile.direction);
+            Vector2 stringNockWorld = Projectile.Center - (aimDirection * stringPullback) + new Vector2(0f, Projectile.gfxOffY);
+            Vector2 arrowOrigin = new Vector2(arrowTexture.Width * 0.5f, arrowFrameHeight - 2f);
+
+            SpriteEffects spriteEffects = SpriteEffects.None;
+            if (Projectile.spriteDirection == -1)
+            {
+                spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+
+            Main.EntitySpriteDraw(
+                arrowTexture,
+                stringNockWorld - Main.screenPosition,
+                arrowSourceRect,
+                Projectile.GetAlpha(lightColor),
+                Projectile.rotation,
+                arrowOrigin,
+                1f,
+                spriteEffects,
+                0);
         }
 
         protected virtual void DrawPoints()
         {
             if (ModContent.GetInstance<tsorcRevampConfig>().ChargeCircleOpacity == 0) return;
 
-            //forces the projectile to be drawn after liquids, and incidentally wires
-            if (!Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI)) Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
+            // Keep charged bows in PlayerDrawLayers.HeldProj (under PlayerDrawLayers.ArmOverItem) so the front hand draws over the arrow nock.
+            if (ammoType <= ProjectileID.None && !Main.instance.DrawCacheProjsOverWiresUI.Contains(Projectile.whoAmI))
+            {
+                Main.instance.DrawCacheProjsOverWiresUI.Add(Projectile.whoAmI);
+            }
 
             int maxPoints = 72;
             int points = (int)(charge * maxPoints) + 1;

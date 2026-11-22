@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ItemDropRules;
@@ -15,18 +16,19 @@ using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs;
 using tsorcRevamp.Buffs.Debuffs;
-using tsorcRevamp.Buffs.Runeterra.Summon;
 using tsorcRevamp.Buffs.Weapons;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Buffs.Weapons.Summon.WhipDebuffs;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Fiends;
-using tsorcRevamp.NPCs.Puppets;
+using tsorcRevamp.NPCs.Invaders;
 using tsorcRevamp.Utilities;
 using tsorcRevamp;
 using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Accessories.Damage;
 using tsorcRevamp.Content.Items.Accessories.Defensive;
+using tsorcRevamp.Content.Items.Accessories.Runeterra.LiandrysTorment;
 using tsorcRevamp.Content.Items.Armor.Melee;
+using tsorcRevamp.Content.Items.Armor.Melee.MagmaSet;
 using tsorcRevamp.Content.Items.ConsumableSoul;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Materials;
@@ -42,9 +44,14 @@ using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
+using tsorcRevamp.Content.Items.Weapons.Summon.BeetleIdol;
 using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases;
+using tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
 using tsorcRevamp.Content.Projectiles;
@@ -109,7 +116,9 @@ namespace tsorcRevamp.NPCs
     {
         Random,    // ambient per-frame flicker between visible/invisible; any hit snaps fully visible
         Predator,  // invisible while moving (and not attack-telling); a hit reveals for ~1.5s
-        Evasive    // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
+        Evasive,   // threat-reactive cloak: a hit or a nearby threat rolls the cloak; lingers, then fades
+        Stalker    // life-threshold cloak: every StalkerLifeStep of max life lost it vanishes almost completely, relocates to the
+                   // player's far side, glints only in its first and last StalkerGlintTicks, then reappears (StalkerCooldownTicks)
     }
 
     public enum PounceStyle
@@ -155,12 +164,14 @@ namespace tsorcRevamp.NPCs
 
         /// <summary>Opt-out for staged encounter actors whose intermediate death must produce no global drops.</summary>
         public bool SuppressGlobalOnKillDrops;
+        /// <summary>True for an NPC a boss spawned (directly, or through another boss add or a boss's own segment). Set in OnSpawn
+        /// where the NPC is created, so the server and single player know it; only those run OnKill drops, so it needs no sync.</summary>
+        public bool SpawnedByBoss;
+        /// <summary>Chance per eligible kill of the first stamina droplet (OnKill). A second, independent 1-in-12 roll follows.</summary>
+        public const float StaminaDropletChance = 0.4f;
         /// <summary>True for a temporary combat duplicate left behind by a MagicIllusion teleport.</summary>
         public bool IsTeleportIllusion;
         public int TeleportIllusionTimeLeft;
-        public Player lastHitPlayerSummoner = Main.LocalPlayer;
-        public Player lastHitPlayerRanger = Main.LocalPlayer;
-        public Player lastHitPlayerShadowSickle = Main.LocalPlayer;
 
         public float SummonTagFlatDamage;
         public float SummonTagCriticalStrikeChance;
@@ -202,16 +213,6 @@ namespace tsorcRevamp.NPCs
         public int NightsCrackerStacks = 0;
         public int TerraFallStacks = 0;
 
-        public bool Scorched;
-        public int ScorchMarks = 0;
-        public float SuperScorchDuration = 0f;
-        public bool Shocked;
-        public int ShockMarks = 0;
-        public float SuperShockDuration = 0f;
-        public bool Sunburnt;
-        public bool Awestruck;
-        public int SunburnMarks = 0;
-        public float SuperSunburnDuration = 0f;
 
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
@@ -229,6 +230,11 @@ namespace tsorcRevamp.NPCs
         // handler despawn makes the handler re-run its burst + flash every tick, forever.
         public bool DespawnedByHandler;
 
+        // Set by a non-boss event NPC that runs its own NPCDespawnHandler (e.g. Ice Gigas). When its event fails
+        // because everyone died, ScriptedEvent.EndEvent leaves it alive so the handler can play the boss-style fade
+        // (text, dust, flash) instead of deleting it on the spot. Bosses never need it: EndEvent already skips them.
+        public bool UsesOwnDespawnHandler;
+
         //Stores which NPC in that event this is
         public int ScriptedEventIndex;
 
@@ -240,8 +246,6 @@ namespace tsorcRevamp.NPCs
         public bool MorgulPoisoning;
         public bool WitchkingCurse;
         public bool AbyssalSinking;
-        public bool CCShocked;
-        public bool Ignited;
         public bool CrimsonBurn;
         public bool ToxicCatDrain;
         public bool ResetToxicCatBlobs;
@@ -262,10 +266,10 @@ namespace tsorcRevamp.NPCs
 
         public int LionheartMarks = 0;
 
-        public bool Sundered;
 
         public bool Venomized;
         public bool Electrified;
+        private int crushingBlowHits;
         public bool Irradiated;
         public bool IrradiatedByShroom;
 
@@ -386,6 +390,9 @@ namespace tsorcRevamp.NPCs
         // Block attribution/state lives here; the independent cadence snapshot and recovery live in
         // GlobalNPC.GuardPressure.cs. CombatTempo never requires this state to run.
         public const int GuardPressureMaxBlocks = 4;
+        // Banked blocks that turn the next attack into the unblockable finisher. The old-AI knights keep the 4-block
+        // climax; PuppetNPC pushes its own (3) every tick. Stacks still cap at GuardPressureMaxBlocks.
+        public int GuardPressureFinisherBlocks = GuardPressureMaxBlocks;
         public const int GuardPressureFirstDecayTicks = 480;
         public const int GuardPressureStackDecayTicks = 240;
         public int BlockedRecently;
@@ -582,6 +589,15 @@ namespace tsorcRevamp.NPCs
         public bool ShieldGuarding = false;
         public const float ShieldGuardPoiseMult = 0.5f; // front hits build half poise while guarding
 
+        // Set true per-tick by a puppet actively drinking Estus (AttackPhase.Healing). While active, poise
+        // bypasses PoiseBreakCooldown and escalation stacks, doubles knockback poise, and adds a rate-limited
+        // percentage of base PoiseMax so 0-knockback magic weapons can reliably interrupt the heal.
+        public bool EstusDrinking = false;
+        public const float EstusDrinkPoiseMult = 2f;
+        public const float EstusDrinkFlatPoiseFraction = 0.25f;
+        public const int EstusDrinkFlatPoiseCooldownTicks = 15;
+        private int estusFlatPoiseCooldown = 0;
+
         // Reactive shield capability (shared by the shield enemies — HollowSoldier/Spearman + the Lothric knights —
         // configured via ShieldProfile). Layers on TOP of each enemy's own autonomous shield-timer rhythm:
         //  • PreemptiveBlockChance: per-tick roll, when a threat is detected (incoming projectile, or the player within
@@ -626,7 +642,8 @@ namespace tsorcRevamp.NPCs
         private bool IsPhysicalGhost(NPC npc)
             => HasGhostAfterimages && npc.knockBackResist <= 0f;
 
-        private static bool HasMagicWeaponBuff(Player player)
+        // Shared with SkeletonPuppet's magic killing blow, so the two rules stay one rule.
+        internal static bool HasMagicWeaponBuff(Player player)
             => player.HasBuff(ModContent.BuffType<Buffs.MagicWeapon>())
             || player.HasBuff(ModContent.BuffType<Buffs.GreatMagicWeapon>())
             || player.HasBuff(ModContent.BuffType<Buffs.CrystalMagicWeapon>());
@@ -636,9 +653,29 @@ namespace tsorcRevamp.NPCs
             && (item.CountsAsClass(DamageClass.Magic)
                 || (item.CountsAsClass(DamageClass.Melee) && HasMagicWeaponBuff(player)));
 
+        // Melee projectiles (flails, thrown or shot blades) count while their owner has a Magic Weapon buff, the same
+        // rule as a melee swing. Owner 255 is the server/world, which never carries the buff.
         private bool ShouldMagicKnockbackGhost(NPC npc, Projectile projectile)
-            => IsMagicKnockbackGhost(npc)
-            && projectile.DamageType == DamageClass.Magic;
+        {
+            if (!IsMagicKnockbackGhost(npc))
+            {
+                return false;
+            }
+
+            if (projectile.DamageType == DamageClass.Magic)
+            {
+                return true;
+            }
+
+            bool ownedByPlayer = projectile.friendly && projectile.owner >= 0 && projectile.owner < Main.maxPlayers;
+            if (!ownedByPlayer || !projectile.CountsAsClass(DamageClass.Melee))
+            {
+                return false;
+            }
+
+            Player owner = Main.player[projectile.owner];
+            return owner.active && HasMagicWeaponBuff(owner);
+        }
 
         private void EnableMagicGhostPoise(NPC npc)
         {
@@ -696,20 +733,20 @@ namespace tsorcRevamp.NPCs
 
             // Bosses
             Add<Bosses.SuperHardMode.Gwyn>(0.15f, 150f); // the final boss — sturdiest poise in the game
+            Add<Bosses.Primordial.PrimeGwyn>(0.15f, 150f);
             Add<Bosses.SuperHardMode.Artorias>(0.15f, 120f);
             Add<Bosses.SuperHardMode.Witchking>(0.15f, 120f);
-            Add<Bosses.SuperHardMode.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
+            Add<Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(0.15f, 120f); // the one stagger window is Dark Bead Barrage's first 55t
             Add<Bosses.SuperHardMode.Chaos>(0.15f, 120f); // the one stagger window is the Fireball Storm channel's first 66t
-            Add<Bosses.OolacileSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
+            Add<Bosses.GreatSerpent.GreatSerpentHead>(0.15f, 150f); // sturdier than the other bosses -- a lot of boss to stagger
             Add<Bosses.Slogra>(0.4f, 90f);   // kept at its already-tuned 0.4
-            Add<Bosses.HeroofLumelia>(0.15f, 120f);
-            Add<Enemies.SuperHardMode.SlograII>(0.4f, 50f);
+            Add<Invaders.HeroofLumelia>(0.15f, 120f);
             // Heavy giants / demons
-            Add<Bosses.AncientDemon>(0.15f, 80f);
-            Add<Bosses.AncientOolacileDemon>(0.15f, 80f);
-            Add<Enemies.SuperHardMode.AncientDemonOfTheAbyss>(0.15f, 80f);
-            Add<Enemies.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
-            Add<Enemies.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
+            Add<Bosses.Demons.DefiledDemon>(0.15f, 80f);
+            Add<Bosses.Demons.OolacileDemon>(0.15f, 80f);
+            Add<Bosses.Demons.AncientDemon>(0.15f, 80f);
+            Add<Bosses.Gigas.Gigas>(0.15f, 120f); // caster-giant mini-boss: boss-tier poise; its long Wrath of Gold telegraph is the stagger window
+            Add<Bosses.Gigas.IceGigas>(0.15f, 120f); // frost terrain-controller mini-boss: boss-tier poise; Absolute Zero's channel is the stagger window
             Add<Bosses.GravelordNito.GravelordNito>(0.15f, 120f); // Skeletron-tier boss: harmless contact body, sword/projectile damage, Death Nova channel is the stagger window
             Add<Bosses.VesselOfSouls.VesselOfSouls>(0.15f, 120f); // EoC-slot flying eye boss: boss-tier poise; its gravity-well channel (phase 2) will be the stagger window
             Add<Enemies.DemonLordApocalypse>(0.15f, 80f);
@@ -717,17 +754,28 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.Hydra>(0.2f, 60f);
             Add<Enemies.SuperHardMode.Massacre>(0.2f, 60f);
             // Elite / heavy knight
-            Add<Enemies.SuperHardMode.TaurusKnight>(0.2f, 55f);
+            Add<Bosses.Ornsmough.Ornstein>(0.15f, 120f); // phase two swaps to (0.08, 180) in BecomeEmpowered
+            Add<Bosses.Ornsmough.Smough>(0.05f, 200f);   // phase two swaps to (0.03, 260)
+            Add<Enemies.SuperHardMode.RoyalKnight>(0.15f, 120f); // puppet halberd elite: boss-tier poise; tells are the stagger windows, heavies, leaps and dashes are hyper-armored
+            Add<Invaders.Caliche>(0.15f, 80f); // puppet great-hammer elite: tells are the stagger windows; Quake Slam, Bull Rush and the breath are hyper-armored
             Add<Enemies.SuperHardMode.CrystalKnight>(0.25f, 45f);
+            Add<Invaders.GreatBlackKnight>(0.2f, 80f); // puppet flail mini-boss: the Death Seal channel and the hurl's orbit are the stagger windows
             // Standard fighters
+            Add<Enemies.GhostFighter.GhostOfTheForgottenWarrior>(0.3f, 30f);
+            Add<Enemies.SkeletonWarrior>(0.3f, 30f); // shield advance halves frontal poise; a stagger strips the shield for good
+            Add<Enemies.GhostFighter.GhostOfTheForgottenKnight>(0.3f, 35f);
+            Add<Enemies.GhostFighter.GhostOfTheDarkmoonKnight>(0.3f, 55f);
             Add<AttraidiesIllusion>(0.3f, 30f);
+            Add<Enemies.BarrowWight>(0.35f, 40f); // ghost swordsman: tells and recovery stay interruptible
+            Add<Enemies.SuperHardMode.BarrowWightNemesis>(0.3f, 50f);
             Add<Enemies.Archdeacon>(0.2f, 40f); // Wyvern Fortress caster, 3000 HP in Hardmode: tougher than the Illusion; its tells and Blink are the stagger windows
-            Add<Enemies.MinotaurMage>(0.3f, 35f); // beefy caster; its Ring of Cinders cast is the stagger window
+            Add<Enemies.SuperHardMode.OolacileAcolyte>(0.2f, 40f); // SHM Madness caster: the Archdeacon's poise; tells and the Babbling Spiral channel are the stagger windows
+            Add<Enemies.MinotaurMage>(0.3f, 20f); // beefy caster; its Ring of Cinders cast is the stagger window
             Add<Enemies.SuperHardMode.DarkBloodKnight>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.OolacileKnight>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.DarkrootSentry>(0.3f, 50f);
             Add<Enemies.Basilisk.BasiliskHunter>(0.3f, 35f);
             Add<Enemies.Dworc.DworcAbysswalker>(0.3f, 35f);
-            Add<Enemies.SuperHardMode.HydrisElemental>(0.3f, 35f);
+            Add<Enemies.SuperHardMode.Elemental>(0.3f, 35f);
             Add<Enemies.SuperHardMode.CorruptedElemental>(0.3f, 35f);
             // Standard+
             Add<Enemies.SuperHardMode.DarkKnight>(0.35f, 30f);
@@ -737,23 +785,27 @@ namespace tsorcRevamp.NPCs
             Add<Enemies.QuaraHydromancer>(0.35f, 30f);
             Add<Enemies.QuaraPincher>(0.3f, 60f); // brood-leader bruiser: Brood Call is the interruptible window
             Add<Enemies.QuaraClutchCrab>(0.5f, 18f); // summoned support kiter: fragile, easily staggered
+            Add<Enemies.SuperHardMode.CorruptedHornet>(0.5f, 15f); // small SHM flyer: a few hits break the volley tell or the dive rear
+            Add<Enemies.SuperHardMode.Mantassin>(0.3f, 20f); // finger sorcerer: 3-4 hits break any cast; every tell is interruptible
+            Add<Enemies.SuperHardMode.DarkrootImp>(0.25f, 40f); // flying curse-caster: breaking a windup (ember / orb charge / swoop rear) cancels it
             // Human / skilled
-            Add<Enemies.FallenNecromancer>(0.4f, 26f);
+            Add<Enemies.BoneChaplain>(0.4f, 26f);
             Add<Enemies.Necromancer>(0.4f, 26f);
-            Add<Enemies.SuperHardMode.HydrisNecromancer>(0.4f, 26f);
+            Add<Enemies.SuperHardMode.ElementalNecromancer>(0.4f, 26f);
             Add<Enemies.SuperHardMode.IceSkeleton>(0.4f, 26f);
-            Add<Enemies.FirebombHollow>(0.4f, 26f);
+            Add<Enemies.Hollow.FirebombHollow>(0.4f, 26f);
             Add<Enemies.Basilisk.BasiliskShifter>(0.4f, 26f);
             // Light / agile
-            Add<Puppets.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
-            Add<Puppets.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
-            Add<Enemies.Assassin>(0.45f, 20f);
+            Add<Enemies.ClericOfSorrow>(0.4f, 26f); // amphibious frost ritual-caster: Necromancer tier; its Communion/Undertow channels are the stagger windows
+            Add<Enemies.OolacileCultist>(0.45f, 15f); // pre-HM pyromancer → claw frenzy: the first 40t of every cast and the Recoil Flare tell are the stagger windows
+            Add<Enemies.Archer.Assassin>(0.45f, 20f);
             Add<Enemies.TibianAmazon>(0.45f, 20f);
             Add<Enemies.TibianValkyrie>(0.45f, 20f);
             // Lighter / hunters
             Add<Enemies.Basilisk.BasiliskWalker>(0.5f, 18f);
-            Add<Enemies.ManHunter>(0.5f, 18f);
-            Add<Enemies.RedCloudHunter>(0.5f, 18f);
+            Add<Enemies.Archer.ManHunter>(0.5f, 18f);
+            Add<Enemies.ObsidianGuard>(0.45f, 18f); // Stage-specific poise/knockback is applied by the Guard's synchronized AI.
+            Add<Enemies.Archer.RedCloudHunter>(0.5f, 18f);
             // Small
             Add<Enemies.Sandsprog>(0.55f, 15f);
             Add<Enemies.SandsprogMage>(0.55f, 15f);
@@ -775,24 +827,43 @@ namespace tsorcRevamp.NPCs
             {
                 return;
             }
+
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob (affects meter only, not the flinch below)
+
             // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Keep in sync with HandlePoiseOnHit.
             if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
             {
                 poiseDamage *= ShieldGuardPoiseMult;
             }
+
+            // Drinking Estus overrides the post-stagger immunity window so an active heal is never uninterruptible.
+            bool poiseImmune = PoiseBreakCooldown > 0 && !EstusDrinking;
+
             // ZERO knockback whenever the enemy can't take stagger damage = the white-bar states: hyper-armor
             // (AttackCommitted), already-staggered (manual slide drives it), OR the post-stagger recovery i-frames
-            // (PoiseBreakCooldown). Previously the recovery window took REDUCED flinch; now it's fully immune.
-            if (AttackCommitted || StaggerTimer > 0 || PoiseBreakCooldown > 0)
+            // (PoiseBreakCooldown, unless drinking Estus).
+            if (AttackCommitted || StaggerTimer > 0 || poiseImmune)
             {
                 modifiers.DisableKnockback();
                 PoiseWillBreakThisHit = false;
                 return;
             }
-            // Neutral / windup: light flinch so the hit always reads.
+
+            float poiseThreshold = EffectivePoiseMax;
+            if (EstusDrinking)
+            {
+                poiseThreshold = PoiseMax;
+                poiseDamage *= EstusDrinkPoiseMult;
+
+                if (estusFlatPoiseCooldown <= 0)
+                {
+                    poiseDamage += PoiseMax * EstusDrinkFlatPoiseFraction;
+                }
+            }
+
+            // Neutral / windup / drinking: light flinch so the hit always reads.
             modifiers.Knockback *= PoiseFlinchFactor;
-            PoiseWillBreakThisHit = (Poise + poiseDamage) >= EffectivePoiseMax;
+            PoiseWillBreakThisHit = (Poise + poiseDamage) >= poiseThreshold;
         }
 
         /// <summary>Post-strike: accumulate poise and trigger the stagger if it broke. Source is the attacker's center,
@@ -804,31 +875,51 @@ namespace tsorcRevamp.NPCs
                 PoiseWillBreakThisHit = false;
                 return; // hyper-armor: no poise, no knockback
             }
+
             poiseDamage *= PoiseDamageMultiplier; // global stagger-rate knob — keep in sync with ApplyPoiseToKnockback
+
             // Shield guard: a FRONT block soaks stagger buildup (backstabs unaffected). Mirrors ApplyPoiseToKnockback.
             if (ShieldGuarding && Math.Sign(sourceCenter.X - npc.Center.X) == npc.direction)
             {
                 poiseDamage *= ShieldGuardPoiseMult;
             }
+
             if (StaggerTimer > 0)
             {
                 ApplyStaggerImpulse(npc, sourceCenter, 0.5f); // already broken — a lighter follow-up shove
                 PoiseWillBreakThisHit = false;
                 return;
             }
-            if (PoiseBreakCooldown > 0)
+
+            bool poiseImmune = PoiseBreakCooldown > 0 && !EstusDrinking;
+            if (poiseImmune)
             {
                 PoiseWillBreakThisHit = false;
                 return; // post-stagger i-frames: immune to further poise damage (anti-stunlock)
             }
 
+            float poiseThreshold = EffectivePoiseMax;
+            if (EstusDrinking)
+            {
+                poiseThreshold = PoiseMax;
+                poiseDamage *= EstusDrinkPoiseMult;
+
+                if (estusFlatPoiseCooldown <= 0)
+                {
+                    poiseDamage += PoiseMax * EstusDrinkFlatPoiseFraction;
+                    estusFlatPoiseCooldown = EstusDrinkFlatPoiseCooldownTicks;
+                    npc.netUpdate = true;
+                }
+            }
+
             Poise += poiseDamage;
             PoiseRegenDelay = PoiseRegenDelayTicks;
 
-            if (PoiseWillBreakThisHit || Poise >= EffectivePoiseMax)
+            if (PoiseWillBreakThisHit || Poise >= poiseThreshold)
             {
                 TriggerStagger(npc, sourceCenter);
             }
+
             PoiseWillBreakThisHit = false;
         }
 
@@ -1011,7 +1102,7 @@ namespace tsorcRevamp.NPCs
             {
                 HandlePoiseOnHit(npc, report.PoiseDamage, report.SourceCenter);
             }
-            if (npc.ModNPC is Puppets.PuppetNPC puppet)
+            if (npc.ModNPC is Invaders.PuppetNPC puppet)
             {
                 puppet.RegisterHit(report.SourceCenter, report.DamageDone, report.MeleeHit);
             }
@@ -1092,13 +1183,22 @@ namespace tsorcRevamp.NPCs
         /// <summary>Enter the staggered state: launch, freeze, cancel a windup attack, and escalate.</summary>
         private void TriggerStagger(NPC npc, Vector2 sourceCenter)
         {
+            bool interruptedEstus = EstusDrinking;
+
             Poise = 0f;
             StaggerTimer = StaggerDurationTicks;
+            estusFlatPoiseCooldown = 0;
             SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, PitchVariance = 0.15f }, npc.Center); // stagger cue
+
             // Escalation: add a stack and refresh the (long) window. The rising EffectivePoiseMax is what makes re-staggers
             // progressively harder — the recovery cooldown stays a flat ~recovery window (not stack-scaled, or it'd balloon).
-            PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
-            PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            // Interrupting an Estus drink skips escalation so punishing a heal never bloats normal combat poise.
+            if (!interruptedEstus)
+            {
+                PoiseEscalationStacks = Math.Min(PoiseEscalationStacks + 1, PoiseEscalationMaxStacks);
+                PoiseEscalationTimer = PoiseEscalationDurationTicks;
+            }
+
             PoiseBreakCooldown = PoiseBreakCooldownTicks;
             ApplyStaggerImpulse(npc, sourceCenter, 1f);
             // Cancel a windup attack. Enemies with bespoke attack STATE (C# flags / custom timer slots) implement
@@ -1125,6 +1225,8 @@ namespace tsorcRevamp.NPCs
                     FighterRangedStandShotsRemaining = 0;
                 }
             }
+
+            EstusDrinking = false;
             ResetCombatTempoSequence(clearRecovery: true);
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f, Volume = 0.8f }, npc.Center);
             npc.netUpdate = true;
@@ -1307,6 +1409,10 @@ namespace tsorcRevamp.NPCs
             {
                 PoiseBreakCooldown--;
             }
+            if (estusFlatPoiseCooldown > 0)
+            {
+                estusFlatPoiseCooldown--;
+            }
             if (PoiseEscalationTimer > 0)
             {
                 PoiseEscalationTimer--;
@@ -1385,6 +1491,9 @@ namespace tsorcRevamp.NPCs
         // flat. The wider sprite EDGES clip/sink separately (BeastSinkMaxTiles). Only consulted when MinSurfaceWidth
         // > 0, so non-beasts are unaffected.
         public int MaxSurfaceStep = 2;
+        // Opt-in navigation owner. Assigned only by Gigas and Ice Gigas; other beasts retain
+        // their existing stepping/phasing policy. A future enemy can supply its own instance.
+        public GigasTerrainNavigation StableHeavyNavigation;
         // === Large-beast positioning (SF4 beasts only — all gated on RequiresFlatGround) ===
         // A giant should NEVER freeze: when it can't path to the player it falls back to a large preferred band
         // (KiteRangeMin/Max above) and oscillates in/out instead of standing; it bobs out of melee after each touch;
@@ -1428,6 +1537,7 @@ namespace tsorcRevamp.NPCs
         // pinned against a wall has its velocity zeroed by collision every frame, so the Lerp in the drift never builds the
         // 0.2 px/tick forward speed the gate otherwise demands, and the teleport silently never fired.
         public bool GhostDriftIntent = false;
+        public bool SuppressGhostWallTeleport;
         // Opt-in lever, 0 = off. A player who is VISIBLE but unreachable re-aggros the FSM every frame (LOS inside aggro range
         // forces Pursue), so after SF4's no-path / hard-stuck give-up the enemy just stood at the wall forever. With this set,
         // that give-up goes straight to Patrol (skipping Search: the last-known spot is the unreachable one) and LOS re-aggro is
@@ -1559,8 +1669,15 @@ namespace tsorcRevamp.NPCs
         // Merges the legacy `canTeleport` AI param and the WeakTeleport system into one re-acquire-on-give-up
         // blink (reusing TeleportCountdown / QueueTeleport / ExecuteQueuedTeleport for the actual smoke + warp).
         public bool CanTeleport = false;
+        // Transient per-frame gate: set by PuppetNPC while holding an active attack so SF4 stuck recovery
+        // cannot initiate a teleport mid-swing or mid-pierce. Never persisted or synced.
+        public bool SuppressAutoTeleportThisFrame = false;
         // Optional pursuit leash for normal enemies that should not blink after a fleeing player.
         public float TeleportReacquireMaxRange = float.PositiveInfinity;
+        // Puppet Aggressive teleporters only: keep blinking back to the target (cooldown-gated, within
+        // TeleportReacquireMaxRange) after nav has given up into Search/Patrol. Without it the reacquire needs a
+        // Pursue-only give-up clock, so a puppet that gave up stood idle until it despawned. Set in SetDefaults; not synced.
+        public bool TeleportReacquiresAfterGiveUp = false;
         public bool CanDodgeroll = false; // mirrors the FighterAI canDodgeroll param; read by the wall-pin escape
         public TeleportStyle TeleportStyle = TeleportStyle.Normal;
         // -1 = unlimited (legacy canTeleport). A positive value = limited charges that DO NOT recharge
@@ -1649,6 +1766,19 @@ namespace tsorcRevamp.NPCs
         public int EvasiveCloakCooldownTicks = 300;    // downtime after a reveal before it can cloak again (balances easy cloakers)
         private int EvasiveCloakTimer = 0;             // ticks left of the current cloak (server-only)
         private int EvasiveCloakCooldown = 0;          // ticks left of post-reveal downtime (server-only)
+        // === Stalker style tuning (only used when InvisibilityStyle == Stalker) ===
+        public float StalkerLifeStep = 0.25f;       // fraction of max life lost per cloak: 0.25 = at 75% / 50% / 25% life, so up to 3
+        public int StalkerCooldownTicks = 600;      // after it reappears, before a queued threshold can cloak it again
+        public int StalkerGlintTicks = 60;          // glint shown for this long after vanishing AND before reappearing
+        public int StalkerHiddenTicks = 240;        // fully hidden prowl between the two glints, then it relocates
+        public int StalkerFlankMinTiles = 6;        // relocation distance on the player's far side
+        public int StalkerFlankMaxTiles = 9;
+        public Color StalkerGlintColor = Color.White;
+        public int StalkerTimer = 0;                // ticks since this cloak began (synced; clients tick it between syncs)
+        private float stalkerNextLifeFraction = -1f; // next life fraction that queues a cloak (server-only; -1 = not set yet)
+        private int stalkerPendingCloaks = 0;        // thresholds crossed but not yet used (server-only)
+        private int stalkerCooldown = 0;             // server-only
+        private bool stalkerWasInvisible = false;    // client-local: last tick's IsInvisible, to catch vanish / reappear once
         public bool IsInvisible = false;
         // Draws the same ghostly afterimage/shimmer used while invisible, without changing alpha or targeting.
         public bool HasGhostAfterimages = false;
@@ -1715,8 +1845,6 @@ namespace tsorcRevamp.NPCs
             MorgulPoisoning = false;
             WitchkingCurse = false;
             AbyssalSinking = false;
-            CCShocked = false;
-            Ignited = false;
             CrimsonBurn = false;
             ToxicCatDrain = false;
             ResetToxicCatBlobs = false;
@@ -1759,10 +1887,6 @@ namespace tsorcRevamp.NPCs
             markedByMorningStar = false;
             markedByDarkHarvest = false;
             markedByKaleidoscope = false;
-            Sundered = false;
-            Scorched = false;
-            Shocked = false;
-            Sunburnt = false;
             Insane = false;
         }
 
@@ -1812,7 +1936,12 @@ namespace tsorcRevamp.NPCs
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
+                if (InvisibilityStyle == InvisibilityStyle.Stalker)
+                {
+                    // Owns its hit handling: ordinary hits never reveal it (only a poise break does).
+                    UpdateStalkerInvisibility(npc);
+                }
+                else if (npc.justHit && InvisibilityStyle != InvisibilityStyle.Evasive)
                 {
                     // Random/Predator: any hit snaps fully visible. Evasive owns its own hit handling (a hit is a
                     // cloak TRIGGER when visible, and only a CHANCE to reveal when already cloaked) — see below.
@@ -1850,7 +1979,138 @@ namespace tsorcRevamp.NPCs
             }
             else
             {
+                if (InvisibilityStyle == InvisibilityStyle.Stalker && IsInvisible)
+                {
+                    StalkerTimer++;
+                }
                 ApplyInvisibilityAlpha(npc, false);
+            }
+
+            if (InvisibilityStyle == InvisibilityStyle.Stalker)
+            {
+                DrawStalkerGlint(npc);
+            }
+        }
+
+        // Stalker (server): queue a cloak each time life falls past the next StalkerLifeStep mark; spend one when off cooldown
+        // and not mid-attack. While cloaked: hidden for StalkerGlintTicks + StalkerHiddenTicks, then relocate to the player's
+        // far side, glint StalkerGlintTicks there, reappear. Hits deal 1 hidden damage but build poise, and a poise break
+        // rips the cloak off at once (ModifyHitBy*).
+        private void UpdateStalkerInvisibility(NPC npc)
+        {
+            if (stalkerNextLifeFraction < 0f)
+            {
+                stalkerNextLifeFraction = 1f - StalkerLifeStep;
+            }
+            while (stalkerNextLifeFraction > 0f && npc.life <= npc.lifeMax * stalkerNextLifeFraction)
+            {
+                stalkerPendingCloaks++;
+                stalkerNextLifeFraction -= StalkerLifeStep;
+            }
+
+            if (!IsInvisible)
+            {
+                if (stalkerCooldown > 0)
+                {
+                    stalkerCooldown--;
+                }
+
+                bool canCloak = stalkerPendingCloaks > 0 && stalkerCooldown == 0 && StaggerTimer == 0 && !InAttack;
+                if (canCloak)
+                {
+                    stalkerPendingCloaks--;
+                    StalkerTimer = 0;
+                    SetInvisible(npc, true);
+                    RequestNetworkSnapshot();
+                }
+                else
+                {
+                    ApplyInvisibilityAlpha(npc, false);
+                }
+                return;
+            }
+
+            StalkerTimer++;
+            int relocateTick = StalkerGlintTicks + StalkerHiddenTicks;
+            int revealTick = relocateTick + StalkerGlintTicks;
+
+            if (StaggerTimer > 0 || StalkerTimer >= revealTick)
+            {
+                StalkerTimer = 0;
+                SetInvisible(npc, false);
+                stalkerCooldown = StalkerCooldownTicks;
+                RequestNetworkSnapshot();
+                return;
+            }
+
+            if (StalkerTimer == relocateTick && npc.HasValidTarget)
+            {
+                // Borrow the teleport finder's flank mode (far side of the player, StalkerFlank tiles out, line of sight),
+                // then put the NPC's own teleport settings back. No spot found = it reappears where it is.
+                bool savedFlanks = TeleportFlanksTarget;
+                int savedFlankMin = TeleportFlankMinTiles;
+                int savedFlankMax = TeleportFlankMaxTiles;
+                TeleportFlanksTarget = true;
+                TeleportFlankMinTiles = StalkerFlankMinTiles;
+                TeleportFlankMaxTiles = StalkerFlankMaxTiles;
+                Vector2? flankSpot = tsorcRevampAIs.GenerateTeleportPosition(npc, StalkerFlankMaxTiles + 4, true, false, StalkerFlankMinTiles);
+                TeleportFlanksTarget = savedFlanks;
+                TeleportFlankMinTiles = savedFlankMin;
+                TeleportFlankMaxTiles = savedFlankMax;
+
+                if (flankSpot.HasValue)
+                {
+                    npc.Center = flankSpot.Value;
+                    npc.velocity = Vector2.Zero;
+                    RequestNetworkSnapshot();
+                }
+            }
+            ApplyInvisibilityAlpha(npc, false);
+        }
+
+        // Stalker glints (every machine but a server): a puff where it vanishes, a pinprick glint through its first and last
+        // StalkerGlintTicks (the only tells while hidden), and a burst as it reappears.
+        private void DrawStalkerGlint(NPC npc)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            bool vanished = IsInvisible && !stalkerWasInvisible;
+            bool reappeared = !IsInvisible && stalkerWasInvisible;
+            stalkerWasInvisible = IsInvisible;
+
+            if (vanished)
+            {
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.5f, Pitch = -0.4f }, npc.Center);
+                for (int i = 0; i < 24; i++)
+                {
+                    Dust puff = Dust.NewDustPerfect(npc.Center + Main.rand.NextVector2Circular(npc.width, npc.height * 0.5f),
+                        DustID.TintableDustLighted, Main.rand.NextVector2Circular(1.5f, 1.5f), 60, StalkerGlintColor, 0.9f);
+                    puff.noGravity = true;
+                }
+            }
+
+            int relocateTick = StalkerGlintTicks + StalkerHiddenTicks;
+            bool fadingGlint = StalkerTimer <= StalkerGlintTicks;
+            bool arrivingGlint = StalkerTimer > relocateTick;
+            if (IsInvisible && (fadingGlint || arrivingGlint) && Main.GameUpdateCount % 4 == 0)
+            {
+                Dust glint = Dust.NewDustPerfect(npc.Center + new Vector2(0f, -npc.height * 0.25f) + Main.rand.NextVector2Circular(4f, 4f),
+                    DustID.TintableDustLighted, Vector2.Zero, 40, StalkerGlintColor, 0.75f);
+                glint.noGravity = true;
+            }
+
+            if (reappeared)
+            {
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = 0.2f }, npc.Center);
+                for (int i = 0; i < 30; i++)
+                {
+                    Dust burst = Dust.NewDustPerfect(npc.Center, DustID.TintableDustLighted,
+                        Main.rand.NextVector2CircularEdge(3.5f, 3.5f), 40, StalkerGlintColor, 0.9f);
+                    burst.noGravity = true;
+                }
             }
         }
 
@@ -1973,6 +2233,13 @@ namespace tsorcRevamp.NPCs
 
         private bool IsUsingAttackTell()
         {
+            // Bespoke state machines (Mantassin, the Gigas-Method enemies) flag their windups and releases here rather than
+            // through AttackList, so a Predator cloak must read these too or it stays invisible through its own tell.
+            if (AttackTelegraphing || AttackCommitted)
+            {
+                return true;
+            }
+
             if (ArcherAimDirection != 0f || FighterRangedStandShotsRemaining > 0 || TeleportCountdown > 0 || TeleportAppearanceTimer > 0)
             {
                 return true;
@@ -2134,6 +2401,8 @@ namespace tsorcRevamp.NPCs
                 NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, npc.whoAmI);
             }
 
+            bool suppressGhostTeleport = SuppressGhostWallTeleport;
+            SuppressGhostWallTeleport = false;
             if (!CanPassThroughWalls)
                 return;
 
@@ -2157,6 +2426,11 @@ namespace tsorcRevamp.NPCs
             float _ghostFwdVel = npc.direction * npc.velocity.X;
             bool pushingForward = _ghostFwdVel > 0.2f || GhostDriftIntent;
             GhostDriftIntent = false;
+            if (suppressGhostTeleport || Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                GhostWallTimer = 0;
+                return;
+            }
             bool wallBlocked = pushingForward && IsWallBlockingAhead(npc);
 
             if (wallBlocked)
@@ -2353,6 +2627,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write(TeleportAppearanceTimer);
             binaryWriter.WriteVector2(TeleportTelegraph);
             binaryWriter.Write(IsInvisible);
+            binaryWriter.Write(StalkerTimer);
 
             binaryWriter.Write(Aggression);
             binaryWriter.Write(Patience);
@@ -2405,6 +2680,7 @@ namespace tsorcRevamp.NPCs
             binaryWriter.Write((byte)Math.Clamp(PoiseEscalationStacks, 0, byte.MaxValue));
             binaryWriter.Write((short)Math.Clamp(PoiseEscalationTimer, 0, short.MaxValue));
             binaryWriter.Write(staggerSlideVelocity);
+            binaryWriter.Write((byte)Math.Clamp(estusFlatPoiseCooldown, 0, byte.MaxValue));
 
             // Evasion / quick-step: the server rolls and arms these (EvasiveOnHit, preemptive steps). Clients need them for the
             // step velocity, the i-frames (CanBeHit*/CanHitPlayer read QuickStepTimer) and the RunningDash telegraph.
@@ -2477,6 +2753,7 @@ namespace tsorcRevamp.NPCs
             TeleportAppearanceTimer = binaryReader.ReadInt32();
             TeleportTelegraph = binaryReader.ReadVector2();
             IsInvisible = binaryReader.ReadBoolean();
+            StalkerTimer = binaryReader.ReadInt32();
 
             Aggression = binaryReader.ReadSingle();
             Patience = binaryReader.ReadSingle();
@@ -2526,6 +2803,7 @@ namespace tsorcRevamp.NPCs
             PoiseEscalationStacks = binaryReader.ReadByte();
             PoiseEscalationTimer = binaryReader.ReadInt16();
             staggerSlideVelocity = binaryReader.ReadSingle();
+            estusFlatPoiseCooldown = binaryReader.ReadByte();
 
             // TriggerStagger's cues play on the server, where they are silent: play them on the first snapshot of a new
             // stagger. The 10-tick window ignores a late snapshot of a stagger this client already counted down.
@@ -2645,11 +2923,15 @@ namespace tsorcRevamp.NPCs
         }
         public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
         {
-            // New Enemy Spawns: the central registry replaces the pool entry of every enemy it lists. First, so the clears and removals below still win.
+            // The Primordial world replaces the whole pool: wild Hellkite Drakes on the surface, Ancient Demons below.
+            if (Systems.PrimordialWorldSystem.ReplaceSpawnPool(pool, spawnInfo))
+            {
+                return;
+            }
+
+            // The central spawn registry (Systems/EnemySpawns.cs) sets the pool entry of every mod enemy. First, so the clears and removals below still win.
             EnemySpawns.Apply(pool, spawnInfo);
 
-            int playerX = (int)(Main.LocalPlayer.Center.X / 16f);
-            int playerY = (int)(Main.LocalPlayer.Center.Y / 16f);
             Player player = spawnInfo.Player;
 
             //Human enemies can't swim — never let them spawn in water, regardless of their own SpawnChance.
@@ -2710,12 +2992,6 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.BoneThrowingSkeleton2, 0.03f);
             }
 
-            // The Catacombs use the Cursed Pink Tiled Wall rather than a vanilla biome flag.
-            if (!EnemySpawns.Enabled && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.PinkDungeonTileUnsafe)
-            {
-                pool.Add(ModContent.NPCType<Puppets.OolacileCultist>(), 0.2f);
-            }
-
             //HARD MODE SECTION
 
             //golem temple
@@ -2723,14 +2999,6 @@ namespace tsorcRevamp.NPCs
             {
                 pool.Add(NPCID.DesertDjinn, 0.075f);
                 pool.Add(NPCID.DiabolistWhite, 0.02f); //was 0.1
-
-                // With New Enemy Spawns on, the registry holds these two (and Add would throw on the key it already put in the pool).
-                if (!EnemySpawns.Enabled)
-                {
-                    pool.Add(ModContent.NPCType<Enemies.LothricSpearKnight>(), 0.08f);
-                    pool.Add(ModContent.NPCType<Enemies.LothricKnight>(), 0.08f);
-                }
-
             }
 
             //desert or underground desert and dungeon(shadow temple)
@@ -2739,32 +3007,6 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.DiabolistRed, 0.01f);
             }
 
-            //machine temple (in water)
-            //(depth gate is legacy 2000-space tile-Y; MapTileY shifts it on the expanded world, identity elsewhere)
-            //(with New Enemy Spawns on, the registry's exclusive zones do this instead)
-            if (!EnemySpawns.Enabled && spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
-            {            
-                // 98 = WallID.GreenDungeonSlabUnsafe
-                
-                    // Clear the existing pool to ensure no other NPCs can spawn
-                    pool.Clear();
-
-                    // Add specific NPCs back into the pool with their spawn weights
-                    pool.Add(NPCID.GreenJellyfish, 10f);                  
-                    pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 2f);
-                    pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 2f);
-
-
-
-            }
-            //machine temple (not in water)
-            if (!EnemySpawns.Enabled && !spawnInfo.Water && playerY < ExpandedWorldTransform.MapTileY(4615, 1430) && Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == 98 && Main.hardMode)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.GhostFighter.GhostOfTheDrowned>(), 3f);
-                pool.Add(ModContent.NPCType<Enemies.MutantToad>(), 1f);
-
-            }
             //sky
             if (spawnInfo.Player.ZoneSkyHeight && Main.hardMode)
             {
@@ -2816,12 +3058,7 @@ namespace tsorcRevamp.NPCs
                 pool.Add(NPCID.SolarCorite, 0.01f);
                 pool.Add(NPCID.SolarSpearman, 0.4f);
                 pool.Add(NPCID.SolarDrakomire, 0.4f);
-                pool.Add(NPCID.SolarSolenian, 0.6f); 
-            }
-            //dungeon (rare)
-            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneDungeon && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(ModContent.NPCType<Enemies.SuperHardMode.KnightOfGwyn>(), 0.01f);
+                pool.Add(NPCID.SolarSolenian, 0.6f);
             }
             //catacombs
             if (spawnInfo.SpawnTileType == TileID.BoneBlock && tsorcRevampWorld.SuperHardMode)
@@ -2834,15 +3071,6 @@ namespace tsorcRevamp.NPCs
             if ((spawnInfo.SpawnTileType == TileID.MartianConduitPlating || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.Flesh || spawnInfo.Player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode)
             {
                 pool.Add(NPCID.VortexLarva, 2f); //.1 is 3%
-            }
-            // sunken sky temple
-            // (with New Enemy Spawns on, the registry's Sunken Sky Temple exclusive zone does this instead)
-            if (!EnemySpawns.Enabled && spawnInfo.Player.ZoneUnderworldHeight &&(spawnInfo.SpawnTileType == TileID.MeteoriteBrick || spawnInfo.SpawnTileType == TileID.HeavenforgeBrick || Main.tile[spawnInfo.SpawnTileX, spawnInfo.SpawnTileY].WallType == WallID.HeavenforgeBrickWall) && tsorcRevampWorld.SuperHardMode)
-            {
-                pool.Add(NPCID.VortexRifleman, 0.1f); //.1 is 3%
-                pool.Add(NPCID.VortexHornet, 0.02f); //.5 is 16%
-                pool.Add(NPCID.VortexSoldier, 0.3f);
-                pool.Add(NPCID.Paladin, 0.6f);
             }
             if (tsorcRevampWorld.RemixMap) // If it is Remix Map
             {
@@ -2897,20 +3125,8 @@ namespace tsorcRevamp.NPCs
                 }
             }
 
-            // New Enemy Spawns: the registry's exclusive zones (Machine Temple, Humanity Phantom rooms) clear the pool here, after the invasion block above.
+            // The registry's exclusive zones (Machine Temple, Humanity Phantom rooms, Sunken Sky Temple, Wyvern Fortress) clear the pool here, after the invasion block above.
             EnemySpawns.ApplyExclusiveZones(pool, spawnInfo);
-
-            if (!EnemySpawns.Enabled && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.StarlitHeavenWallpaper)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
-            }
-
-            if (!EnemySpawns.Enabled && (playerX > 6083 && playerX < 6847 && playerY > 1664 && playerY < 1999) && Main.tile[(int)player.position.X / 16, (int)player.position.Y / 16].WallType == WallID.ObsidianBrickUnsafe && tsorcRevampWorld.RemixMap)
-            {
-                pool.Clear();
-                pool.Add(ModContent.NPCType<Enemies.HumanityPhantom>(), 10f);
-            }
 
             if (tsorcRevampWorld.TheEnd)
             {
@@ -3022,6 +3238,25 @@ namespace tsorcRevamp.NPCs
 
         //vanilla npc changes moved to separate file
 
+        // Marks boss adds for the stamina-droplet rule in OnKill. Bosses spawn adds through NPC.GetSource_FromAI/FromThis,
+        // which are EntitySource_Parent with the boss as Entity. A parent that is itself a boss add, or a segment whose head
+        // (realLife) is a boss, counts too, so adds of adds and worm-boss spawns are covered.
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            if (source is not EntitySource_Parent parentSource || parentSource.Entity is not NPC parent)
+            {
+                return;
+            }
+
+            bool parentIsBossPart = parent.realLife >= 0 && parent.realLife < Main.maxNPCs && Main.npc[parent.realLife].boss;
+            bool parentIsBossAdd = parent.GetGlobalNPC<tsorcRevampGlobalNPC>().SpawnedByBoss;
+
+            if (parent.boss || parentIsBossPart || parentIsBossAdd)
+            {
+                SpawnedByBoss = true;
+            }
+        }
+
         public override void OnKill(NPC npc)
         {
             Player LocalPlayer = Main.LocalPlayer;
@@ -3045,6 +3280,13 @@ namespace tsorcRevamp.NPCs
                         ? new Color(182, 92, 224)
                         : new Color(238, 143, 55);
                     tsorcRevamp.ShowAnnouncementBanner(EncounterPresentationRegistry.GetBannerText(style), bannerColor);
+                    SoundEngine.PlaySound(DefeatBannerSound);
+                }
+                else if (npc.ModNPC is FriendlyPuppets.MirrorInvader)
+                {
+                    tsorcRevamp.ShowAnnouncementBanner(
+                        EncounterPresentationRegistry.GetBannerText(EncounterBannerStyle.InvaderVanquished),
+                        new Color(238, 143, 55));
                     SoundEngine.PlaySound(DefeatBannerSound);
                 }
             }
@@ -3080,9 +3322,26 @@ namespace tsorcRevamp.NPCs
                     }
                 }
 
-            if (!SuppressGlobalOnKillDrops && Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent < Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceMax2)
+            // Stamina droplets: not from boss adds, worm body/tail segments, or enemies that give no money (helpers, props,
+            // critters). Those used to make boss fights with adds a stamina fountain (2026-10-18).
+            bool isLinkedSegment = npc.realLife >= 0 && npc.realLife != npc.whoAmI;
+            // Eater of Worlds pieces aren't linked by realLife, and every split piece becomes a new head, so all three count.
+            bool isEaterOfWorldsSegment = npc.type == NPCID.EaterofWorldsHead || npc.type == NPCID.EaterofWorldsBody || npc.type == NPCID.EaterofWorldsTail;
+            bool dropsStaminaDroplets = !SpawnedByBoss && !isLinkedSegment && !isEaterOfWorldsSegment && npc.value > 0f;
+
+            // Single player skips the roll at full stamina. A server can't check that: stamina is never synced to it, and its
+            // Main.LocalPlayer is an unused slot whose max stamina stays 0, so the old check blocked every multiplayer drop.
+            bool staminaNotFull = true;
+            if (Main.netMode == NetmodeID.SinglePlayer)
             {
-                if (Main.rand.NextBool(2))
+                tsorcRevampStaminaPlayer killerStamina = Main.LocalPlayer.GetModPlayer<tsorcRevampStaminaPlayer>();
+                staminaNotFull = killerStamina.staminaResourceCurrent < killerStamina.staminaResourceMax2;
+            }
+
+            if (!SuppressGlobalOnKillDrops && dropsStaminaDroplets && staminaNotFull)
+            {
+                // First droplet 40% (was 50% until 2026-10-18), plus an independent 1-in-12 second one.
+                if (Main.rand.NextFloat() < StaminaDropletChance)
                 {
                     Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<StaminaDroplet>(), 1);
                 }
@@ -3156,17 +3415,9 @@ namespace tsorcRevamp.NPCs
             {
                 modifiers.Defense.Flat -= CrimsonPotion.DefenseReduction;
             }
-            if (Sundered && modifiers.DamageType == DamageClass.Magic)
-            {
-                modifiers.FinalDamage *= 1f + OrbOfFlame.MagicSunder / 100f;
-            }
             if (AbyssalSinking)
             {
                 modifiers.FinalDamage *= 1.09f;
-            }
-            if (Ignited)
-            {
-                modifiers.FlatBonusDamage += MagmaBreastplate.OnHitDmg;
             }
             if (PlaguesmithBuff)
             {
@@ -3194,9 +3445,18 @@ namespace tsorcRevamp.NPCs
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
+            // Stalker cloak: hits still land and build poise (a stagger rips the cloak off), but each is capped at 1 damage with
+            // the number hidden — the game's minimum, so effectively none. Damage-over-time debuffs still tick.
+            if (StalkerCloaked)
+            {
+                modifiers.SetMaxDamage(1);
+                modifiers.HideCombatText();
+            }
+
             // Poise damage scales with the projectile's knockback stat × its per-projectile ProjectilePoiseMultiplier
             // lever (see project_poise_stagger_system).
             float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, projectile.owner, false);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {
@@ -3510,12 +3770,57 @@ namespace tsorcRevamp.NPCs
             return poiseKnockback;
         }
 
+        // Smough's Crushing Blow: every Nth hit on this enemy deals extra poise damage. These hooks run on the attacker's
+        // client, so the counter only sees that client's hits. ModifyHit peeks at it and the landed hit advances it,
+        // which keeps both passes on the same poise value.
+        private float ApplyCrushingBlowPoise(float poiseKnockback, NPC npc, int playerIndex, bool hitLanded)
+        {
+            if (playerIndex < 0 || playerIndex >= Main.maxPlayers || !Main.player[playerIndex].GetModPlayer<tsorcRevampPlayer>().SmoughAttackSpeedReduction)
+            {
+                return poiseKnockback;
+            }
+
+            bool isCrushingBlow = crushingBlowHits + 1 >= Content.Items.Armor.SmoughArmor.CrushingBlowHitCount;
+
+            if (hitLanded)
+            {
+                crushingBlowHits++;
+
+                if (isCrushingBlow)
+                {
+                    crushingBlowHits = 0;
+                    SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.7f, Pitch = -0.4f }, npc.Center);
+
+                    for (int i = 0; i < 14; i++)
+                    {
+                        Dust.NewDustPerfect(npc.Center, DustID.Stone, Main.rand.NextVector2Circular(4f, 4f), 0, default, 1.2f);
+                    }
+                }
+            }
+
+            if (isCrushingBlow)
+            {
+                poiseKnockback *= 1f + Content.Items.Armor.SmoughArmor.CrushingBlowPoiseBonus / 100f;
+            }
+
+            return poiseKnockback;
+        }
+
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
+            // Stalker cloak: hits still land and build poise (a stagger rips the cloak off), but each is capped at 1 damage with
+            // the number hidden — the game's minimum, so effectively none. Damage-over-time debuffs still tick.
+            if (StalkerCloaked)
+            {
+                modifiers.SetMaxDamage(1);
+                modifiers.HideCombatText();
+            }
+
             // Poise damage scales with the weapon's knockback stat × its per-weapon WeaponPoiseMultiplier lever
             // (see project_poise_stagger_system).
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, player.whoAmI, false);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -3592,6 +3897,7 @@ namespace tsorcRevamp.NPCs
             // Must match the poise damage computed in ModifyHitByItem above.
             float poiseKnockback = item.knockBack * item.GetGlobalItem<tsorcInstancedGlobalItem>().WeaponPoiseMultiplier;
             poiseKnockback = ApplyOwlRingPoiseBonus(poiseKnockback, player, item);
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, player.whoAmI, true);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, player, item);
             if (magicGhostHit)
             {
@@ -3627,6 +3933,7 @@ namespace tsorcRevamp.NPCs
         {
             // Must match the poise damage computed in ModifyHitByProjectile above.
             float poiseKnockback = projectile.knockBack * projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ProjectilePoiseMultiplier;
+            poiseKnockback = ApplyCrushingBlowPoise(poiseKnockback, npc, projectile.owner, true);
             bool magicGhostHit = ShouldMagicKnockbackGhost(npc, projectile);
             if (magicGhostHit)
             {
@@ -3928,6 +4235,9 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        /// <summary>True while a Stalker-style cloak is up (hits deal 1 hidden damage but still build poise).</summary>
+        public bool StalkerCloaked => CanGoInvisible && InvisibilityStyle == InvisibilityStyle.Stalker && IsInvisible;
+
         public override bool? CanBeHitByItem(NPC npc, Player player, Item item)
         {
             if (DodgeTimer > 0 || QuickStepTimer > 0) // i-frames during a dodgeroll / standing quick step
@@ -3946,9 +4256,6 @@ namespace tsorcRevamp.NPCs
             return base.CanBeHitByProjectile(npc, projectile);
         }
         Texture2D LionheartMarksSprite;
-        Texture2D ScorchMarksSprite;
-        Texture2D ShockMarksSprite;
-        Texture2D SunburnMarksSprite;
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
             if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars)
@@ -4000,123 +4307,6 @@ namespace tsorcRevamp.NPCs
                 }
                 Main.EntitySpriteDraw(LionheartMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks * LionheartMarksSprite.Height / 5 - 100), LionheartSourceRectangle, Color.White, 0, LionheartSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
             }
-            if (npc.HasBuff(ModContent.BuffType<ScorchingDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks > 0)
-            {
-                ScorchMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/ScorchingMarkVisual");
-                Rectangle ScorchingMarkSourceRectangle = new Rectangle(0, 0 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ScorchMarks)
-                {
-                    case 1:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 5 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 4 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 3 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 2 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 1 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            ScorchingMarkSourceRectangle = new Rectangle(0, 0 * ScorchMarksSprite.Height / 6, ScorchMarksSprite.Width, ScorchMarksSprite.Height / 6);
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(ScorchMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, ScorchMarksSprite.Height / 6 * ScorchMarks - 100), ScorchingMarkSourceRectangle, Color.White, 0, ScorchingMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
-            if (npc.HasBuff(ModContent.BuffType<ShockedDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks > 0)
-            {
-                ShockMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/ShockedMarkVisual");
-                Rectangle ShockedMarkSourceRectangle = new Rectangle(0, 0 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().ShockMarks)
-                {
-                    case 1:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 5 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 4 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 3 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 2 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 1 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            ShockedMarkSourceRectangle = new Rectangle(0, 0 * ShockMarksSprite.Height / 6, ShockMarksSprite.Width, ShockMarksSprite.Height / 6);
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(ShockMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, ShockMarksSprite.Height / 6 * ShockMarks - 100), ShockedMarkSourceRectangle, Color.White, 0, ShockedMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
-            if (npc.HasBuff(ModContent.BuffType<SunburnDebuff>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks > 0)
-            {
-                SunburnMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Runeterra/Summon/SunburntMarkVisual");
-                Rectangle SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().SunburnMarks)
-                {
-                    case 1:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 5 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 2:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 4 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 3:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 3 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 4:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 2 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 5:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 1 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6);
-                            break;
-                        }
-                    case 6:
-                        {
-                            SunburnMarkSourceRectangle = new Rectangle(0, 0 * SunburnMarksSprite.Height / 6, SunburnMarksSprite.Width, SunburnMarksSprite.Height / 6); 
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(SunburnMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, SunburnMarksSprite.Height / 6 * SunburnMarks - 100), SunburnMarkSourceRectangle, Color.White, 0, SunburnMarkSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
 
             if (DodgeTimer > 0 && !SuppressDodgeBlink && Main.GameUpdateCount % 10 < 5)
             {
@@ -4135,8 +4325,19 @@ namespace tsorcRevamp.NPCs
                 //   white  = can't take stagger damage — hyperarmor (committed attack) OR the post-stagger recovery i-frames;
                 //   yellow (flashing) = actively staggered/broken.
                 // The "can't stagger" states show a full/locked bar so the white reads as a shield, not an empty sliver.
-                bool cantStagger = globalNPC.AttackCommitted || globalNPC.PoiseBreakCooldown > 0;
-                float poisePercentage = (globalNPC.StaggerTimer > 0 || globalNPC.PoiseBreakCooldown > 0) ? 1f : globalNPC.Poise / globalNPC.EffectivePoiseMax;
+                // Drinking Estus overrides PoiseBreakCooldown and escalation stacks, so show the live orange fill bar.
+                bool poiseImmune = globalNPC.PoiseBreakCooldown > 0 && !globalNPC.EstusDrinking;
+                bool cantStagger = globalNPC.AttackCommitted || poiseImmune;
+                float poiseThreshold = globalNPC.EstusDrinking ? globalNPC.PoiseMax : globalNPC.EffectivePoiseMax;
+                float poisePercentage;
+                if (globalNPC.StaggerTimer > 0 || poiseImmune)
+                {
+                    poisePercentage = 1f;
+                }
+                else
+                {
+                    poisePercentage = globalNPC.Poise / poiseThreshold;
+                }
                 Color poiseColor;
                 if (globalNPC.StaggerTimer > 0)
                 {
@@ -4200,7 +4401,9 @@ namespace tsorcRevamp.NPCs
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs();
+            // Stalker cloaks are near-total: no shimmer afterimages, or the trail would be far easier to see than the body.
+            bool drawInvisibleAfterimages = CanGoInvisible && IsInvisible && !LocalPlayerRevealsInvisibleNPCs()
+                && InvisibilityStyle != InvisibilityStyle.Stalker;
             if (!drawInvisibleAfterimages && !HasGhostAfterimages && !EvasiveAfterimagesActive)
             {
                 return;
@@ -4279,11 +4482,12 @@ namespace tsorcRevamp.NPCs
         /// <param name="dotBase">The base damage of the DoT effect</param>
         /// <param name="reducedDragonPotency">Whether Dragon Stone's potency should be reduced for this DoT</param>
         /// <param name="isFire">Whether the DoT effect is fire-related. Determines if the Oiled debuff adds damage to this.</param>
+        /// <param name="dragonStoneForbidden">Whether the DoT effect shouldn't be affected by Dragon Stone at all. If true, Dragon Stones buff is not applied to it. </param>
         /// <returns></returns>
-        public static float DoDamageOverTime(in NPC npcType, in float dotBase, in bool reducedDragonPotency, in bool isFire)
+        public static float DoDamageOverTime(in NPC npcType, in float dotBase, in bool reducedDragonPotency, in bool isFire, bool dragonStoneForbidden = false)
         {
             float DoTPerSec = dotBase;
-            DoTPerSec += DragonStoneNPC.AddDragonStonePotencyDoT(npcType, dotBase, reducedDragonPotency, isFire);
+            DoTPerSec += DragonStoneNPC.AddDragonStonePotencyDoT(npcType, dotBase, reducedDragonPotency, isFire, dragonStoneForbidden);
             return DoTPerSec;
         }
 
@@ -4292,58 +4496,42 @@ namespace tsorcRevamp.NPCs
             DragonStoneNPC.CustomUpdateLifeRegen(npc, ref damage);
             float dotBase;
             float DoTPerS = 0;
-            if (Ignited)
-            {
-                dotBase = MagmaBreastplate.BaseDoT;
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
-            }
-            if (Venomized)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)ToxicShot.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)ToxicShot.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
-            }
 
-            if (Electrified)
+            if (npc.GetGlobalNPC<LiandrysTormentNPC>().Burning)
             {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)AlienGun.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)AlienGun.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
+                dotBase = MathF.Max(npc.lifeMax * LiandrysTormentItem.MaxHealthDmgPerSec / 100f,
+                    LiandrysTormentItem.MinDmgPerSec);
+                DoTPerS += DoDamageOverTime(npc, dotBase, true, true, true);
             }
-
-            if (Irradiated)
+            
+            if (npc.GetGlobalNPC<MagmaSetNPC>().Ignited)
             {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage * 1.5f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage * 1.5f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
-
-            if (IrradiatedByShroom)
-            {
-                dotBase = (int)lastHitPlayerRanger.GetTotalDamage(DamageClass.Ranged).ApplyTo((float)OmegaSquadRifle.BaseDamage * 2.28f) + (int)(lastHitPlayerRanger.GetTotalCritChance(DamageClass.Ranged) / 100f * (float)OmegaSquadRifle.BaseDamage * 2.28f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
-
-            if (Scorched && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)ScorchingPoint.BaseDmg / 3f);
+                dotBase = MagmaHelmet.BaseDoT;
                 DoTPerS += DoDamageOverTime(npc, dotBase, false, true);
             }
 
-            if (Shocked && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)InterstellarVesselGauntlet.BaseDmg / 3f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, false, false);
-            }
+            var runeterraDartsNPC = npc.GetGlobalNPC<RuneterraDartsNPC>();
 
-            if (Sunburnt && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg / 3f);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, true);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Venomized, ToxicShot.BaseDamage);
 
-            if (Awestruck && !NPCID.Sets.ImmuneToRegularBuffs[npc.type])
-            {
-                dotBase = lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo((float)CenterOfTheUniverse.BaseDmg);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Electrified, AlienGun.BaseDamage);
+
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, Irradiated, OmegaSquadRifle.BaseDamage, true);
+
+            DoTPerS += runeterraDartsNPC.DoDOT(npc, IrradiatedByShroom, OmegaSquadRifle.BaseDamage * 1.5f);
+
+            var runeterraGauntletNPC = npc.GetGlobalNPC<RuneterraGauntletNPC>();
+            
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Scorched, ScorchingPoint.BaseDmg, false);
+
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Shocked, InterstellarVesselGauntlet.BaseDmg,
+                false, false);
+
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Sunburnt, CenterOfTheUniverse.BaseDmg, true,
+                true);
+
+            DoTPerS += runeterraGauntletNPC.DoDOT(npc, runeterraGauntletNPC.Awestruck, CenterOfTheUniverse.BaseDmg * 3,
+                true, true);
 
             if (DarkInferno)
             {
@@ -4406,11 +4594,8 @@ namespace tsorcRevamp.NPCs
                 npc.velocity *= 0.98f;
             }
 
-            if (CCShocked)
-            {
-                dotBase = (int)lastHitPlayerSummoner.GetTotalDamage(DamageClass.Summon).ApplyTo(BeetleIdol.BaseDoT);
-                DoTPerS += DoDamageOverTime(npc, dotBase, true, false);
-            }
+            var beetleIdolNPC = npc.GetGlobalNPC<BeetleIdolNPC>();
+            beetleIdolNPC.DoDOT(npc, beetleIdolNPC.CCShocked, BeetleIdolItem.BaseDoT, true);
 
             if (PhazonCorruption)
             {
@@ -4616,8 +4801,46 @@ namespace tsorcRevamp.NPCs
             }
         }
 
+        // Vanilla ammo that vanilla shopkeepers sell for coins, repriced in Dark Souls per single round (one shop click = one round).
+        // Makes ammo a soul cost like the mod's own ammo recipes: ~1 DS/shot early, 2 for better rounds, 3-6 for rockets/cannonballs.
+        // Bombs and Dynamite are left on coins because they double as mining tools.
+        private static readonly Dictionary<int, int> VanillaAmmoDarkSoulPrices = new Dictionary<int, int>()
+        {
+            { ItemID.WoodenArrow, 1 },
+            { ItemID.Shuriken, 1 },
+            { ItemID.ThrowingKnife, 1 },
+            { ItemID.MusketBall, 1 },
+            { ItemID.EmptyBullet, 1 },
+            { ItemID.SilverBullet, 2 },
+            { ItemID.TungstenBullet, 2 },
+            { ItemID.UnholyArrow, 2 },
+            { ItemID.HellfireArrow, 2 },
+            { ItemID.Grenade, 20 },
+            { ItemID.Nail, 3 },
+            { ItemID.RocketI, 3 },
+            { ItemID.RocketII, 4 },
+            { ItemID.RocketIII, 4 },
+            { ItemID.RocketIV, 5 },
+            { ItemID.ClusterRocketI, 5 },
+            { ItemID.ClusterRocketII, 6 },
+            { ItemID.Cannonball, 5 },
+        };
+
         public override void ModifyShop(NPCShop shop)
         {
+            // Every vanilla shopkeeper (Merchant, Arms Dealer, Demolitionist, Cyborg, Pirate, Skeleton Merchant...) gets
+            // the Dark Soul ammo prices. Entry.Item is the template each opened shop clones, so editing it reprices every visit.
+            if (shop.NpcType < NPCID.Count)
+            {
+                foreach (NPCShop.Entry entry in shop.ActiveEntries)
+                {
+                    if (VanillaAmmoDarkSoulPrices.TryGetValue(entry.Item.type, out int darkSoulPrice))
+                    {
+                        entry.Item.shopCustomPrice = darkSoulPrice;
+                        entry.Item.shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId;
+                    }
+                }
+            }
 
             switch (shop.NpcType)
             {
@@ -4629,7 +4852,7 @@ namespace tsorcRevamp.NPCs
                 case NPCID.DyeTrader:
                     {
                         //Basic dyes (most others can be crafted from a combination of these)
-                        int price = 5;
+                        int price = 25;
                         shop.Add(new Item(ItemID.RedDye)
                         {
                             shopCustomPrice = price,
@@ -4696,7 +4919,7 @@ namespace tsorcRevamp.NPCs
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
-                        price = 25;
+                        price = 125;
 
                         //Special Dyes (Aka the cool ones)
                         shop.Add(new Item(ItemID.FogboundDye)
@@ -4802,13 +5025,13 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<Firebomb>())
                         {
-                            shopCustomPrice = 5,
+                            shopCustomPrice = 25,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
                         shop.Add(new Item(ModContent.ItemType<EternalCrystal>())
                         {
-                            shopCustomPrice = 2000,
+                            shopCustomPrice = 10000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
@@ -4817,14 +5040,14 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<Pulsar>())
                         {
-                            shopCustomPrice = 800,
+                            shopCustomPrice = 4000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
 
 
                         shop.Add(new Item(ModContent.ItemType<ToxicCatalyzer>())
                         {
-                            shopCustomPrice = 800,
+                            shopCustomPrice = 4000,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
@@ -4833,7 +5056,7 @@ namespace tsorcRevamp.NPCs
                     {
                         shop.Add(new Item(ModContent.ItemType<SeedBag>())
                         {
-                            shopCustomPrice = 5,
+                            shopCustomPrice = 25,
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         },
                         new Condition("", () => Main.LocalPlayer.HasItem(ItemID.Blowpipe) || Main.LocalPlayer.HasItem(ItemID.Blowgun) || Main.LocalPlayer.HasItem(ModContent.ItemType<ToxicShot>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<AlienGun>()) || Main.LocalPlayer.HasItem(ModContent.ItemType<OmegaSquadRifle>())));
@@ -4848,7 +5071,7 @@ namespace tsorcRevamp.NPCs
 
                         shop.Add(new Item(ModContent.ItemType<LoveRing>())
                         {
-                            shopCustomPrice = 5000, 
+                            shopCustomPrice = 100000, 
                             shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
                         });
                         break;
@@ -4930,7 +5153,18 @@ namespace tsorcRevamp.NPCs
                 {
                     Patience = Main.rand.NextFloat(0.5f, 2);
                 }
-                if (Cowardice == -1)
+                // Puppets and knights never flee at low HP. They have no flee movement, so a Fleeing roll only shut off
+                // every attack for the rest of the fight (CanStartAttack / the melee gate refuse while Fleeing).
+                bool neverFlees = npc.ModNPC is PuppetNPC
+                    || npc.type == ModContent.NPCType<Enemies.Knight.RingedKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricBlackKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricKnight>()
+                    || npc.type == ModContent.NPCType<Enemies.Lothric.LothricSpearKnight>();
+                if (neverFlees)
+                {
+                    Cowardice = 0;
+                }
+                else if (Cowardice == -1)
                 {
                     Cowardice = Main.rand.NextFloat(0, 0.3f);
                 }
@@ -5005,7 +5239,7 @@ namespace tsorcRevamp.NPCs
                 npc.knockBackResist = poiseProfile.knockBackResist;
                 PoiseMax = poiseProfile.poiseMax;
             }
-            else if (npc.ModNPC is Puppets.PuppetNPC)
+            else if (npc.ModNPC is Invaders.PuppetNPC)
             {
                 // Every puppet-style invader can channel Estus and must therefore have a poise
                 // meter so the player can interrupt that channel. Per-NPC tuning set in the
@@ -5034,7 +5268,7 @@ namespace tsorcRevamp.NPCs
             // EnablePuppetDifficultyScaling), and without the halving below vanilla's 2x expert
             // life multiplier would silently double every puppet's authored lifeMax.
             bool isModNPC = npc.ModNPC != null && npc.ModNPC.Mod == ModLoader.GetMod("tsorcRevamp");
-            bool scalesLikeBoss = npc.boss || (npc.ModNPC is Puppets.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling);
+            bool scalesLikeBoss = npc.boss || (npc.ModNPC is Invaders.PuppetNPC puppet && puppet.UsesPuppetDifficultyScaling);
 
             if (isModNPC && scalesLikeBoss)
             {

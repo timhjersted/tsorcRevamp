@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -355,10 +356,16 @@ namespace tsorcRevamp.NPCs.Bosses
             if (MoveList == null)
             {
                 InitializeMovesAndDamage();
-                do
+
+                //Move 0 always opens the fight, so the queued second move must be anything but 0.
+                //Guarded because a one-move list would re-roll forever.
+                if (MoveList.Count > 1)
                 {
-                    NextMoveIndex = Main.rand.Next(MoveList.Count);
-                } while (NextMoveIndex != 0);
+                    do
+                    {
+                        NextMoveIndex = Main.rand.Next(MoveList.Count);
+                    } while (NextMoveIndex == 0);
+                }
 
                 //Create the 'used move list'
                 UsableMoveList = new List<BossMove>();
@@ -367,9 +374,10 @@ namespace tsorcRevamp.NPCs.Bosses
                     UsableMoveList.Add(MoveList[i]);
                 }
 
-                //Remove the two moves already picked (0 is always the first move)
-                UsableMoveList.RemoveAt(0);
-                UsableMoveList.RemoveAt(NextMoveIndex);
+                //Remove the two moves already picked (0 is always the first move).
+                //Removed by reference: RemoveAt(0) shifts the list, so a second RemoveAt(index) would drop the wrong move.
+                UsableMoveList.Remove(MoveList[0]);
+                UsableMoveList.Remove(MoveList[NextMoveIndex]);
             }
 
             //If it's doing an attack or phase transition, then do nothing else until it's done
@@ -537,10 +545,27 @@ namespace tsorcRevamp.NPCs.Bosses
                     //Pick the next move randomly
                     NextMoveIndex = Main.rand.Next(MoveList.Count);
                 }
+            }
 
-                //Sync it
-                NPC.netUpdate = true;
-            }            
+            //Sync it. Applies to the in-order mode too, since MoveIndex is sent in SendExtraAI.
+            NPC.netUpdate = true;
+        }
+
+        //MoveIndex is a plain field (only NextMoveIndex rides in ai[0]) and clients return from NextMove() before picking,
+        //so without this a client animates and telegraphs the wrong move. The transition timers ride along so the client's
+        //pauses line up with the server's. Subclasses that override these must call base first.
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(MoveIndex);
+            writer.Write(attackTransitionTimeRemaining);
+            writer.Write(phaseTransitionTimeRemaining);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            MoveIndex = reader.ReadInt32();
+            attackTransitionTimeRemaining = reader.ReadInt32();
+            phaseTransitionTimeRemaining = reader.ReadInt32();
         }
 
         public void NextPhase()

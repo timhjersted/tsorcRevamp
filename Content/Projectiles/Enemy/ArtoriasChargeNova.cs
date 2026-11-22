@@ -27,7 +27,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         int AgeTicks => Lifetime - Projectile.timeLeft;
 
-        public override string Texture => "tsorcRevamp/NPCs/Puppets/PuppetPlaceholder";
+        public override string Texture => "tsorcRevamp/NPCs/Invaders/PuppetPlaceholder";
 
         public override void SetDefaults()
         {

@@ -9,9 +9,9 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.InfinityEdge
 {
     public class InfinityEdgeItem : ModItem
     {
-        public static float CritDmgIncrease = 20f;
-        public static float Dmg = 8f;
-        public static float Crit = 3f;
+        public static float CritDmgIncrease = 25f;
+        public static float Dmg = 4f;
+        public static float Crit = 5f;
         public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CritDmgIncrease, Dmg, Crit);
         public override void SetStaticDefaults()
         {
@@ -29,7 +29,7 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.InfinityEdge
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.IronBroadsword);
+            recipe.AddIngredient(ItemID.BoneSword);
             recipe.AddIngredient(ItemID.IronPickaxe);
             recipe.AddIngredient(ItemID.HunterCloak);
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());

@@ -6,10 +6,12 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 using tsorcRevamp.Content.Items.Armor;
+using tsorcRevamp.Content.Items.Armor.SupremeDragoonSet;
 using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
+using tsorcRevamp.Systems.EstusFlask;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.Content.Items.VanillaItems
@@ -108,7 +110,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.XenoStaff, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
-            SimpleModTooltip(Mod, item, tooltips, ItemID.CoinGun, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.CoinGun"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.Ruby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Ruby"));
 
             if (tsorcRevampWorld.RemixMap)
             {
@@ -133,7 +135,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("CommonItemTooltip.ItemDisabled"));
             }
 
-            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.TheHunter>())))
+            if ((item.type == ItemID.OasisCrate || item.type == ItemID.OasisCrateHard || item.type == ItemID.DungeonFishingCrate || item.type == ItemID.DungeonFishingCrateHard) && !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Birds.TheHunter>())))
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.VanillaItems.LockedCrates"));
             }
@@ -159,14 +161,14 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             }
 
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse && item.type == ModContent.ItemType<AaronsProtectionStone>())
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && item.type == ModContent.ItemType<AaronsProtectionStone>())
             {
                 SimpleGlobalModTooltip(Mod, tooltips, LangUtils.GetTextValue("Items.AaronsProtectionStone.BotCOnly", (int)AaronsProtectionStone.DamageIncrease));
             }
 
-            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<DragoonHelmet2>()))
+            if (player.GetModPlayer<tsorcRevampPlayer>().SoulsMode && player.whoAmI == Main.myPlayer && (item.type == ItemID.PhilosophersStone || item.type == ItemID.CharmofMyths || item.type == ModContent.ItemType<SupremeDragoonHelmet>()))
             {
-                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", tsorcRevampEstusPlayer.EstusPStoneDrinkTimeReduction));
+                SimpleGlobalModTooltip(Mod, tooltips, Language.GetTextValue("Mods.tsorcRevamp.CommonItemTooltip.EstusPStone", EstusFlaskPlayer.EstusPStoneDrinkTimeReduction));
             }
 
 

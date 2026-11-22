@@ -22,6 +22,14 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.WolfRing
             Item.rare = ModContent.RarityType<DarkBlue>();
         }
 
+        public override bool CanAccessoryBeEquippedWith(Item equippedItem, Item incomingItem, Player player)
+        {
+            if (equippedItem.type == ModContent.ItemType<GreyWolfRing>())
+            {
+                return false;
+            }
+            return base.CanAccessoryBeEquippedWith(equippedItem, incomingItem, player);
+        }
 
         public override void UpdateAccessory(Player player, bool hideVisual)
         {

@@ -35,7 +35,10 @@ namespace tsorcRevamp.Content.Items.Accessories.Defensive.Shields
             // Greatshield "equip load": an always-on regen tax that applies whether or not you ever raise it.
             // Safe here (UpdateEquip runs before the stamina system's PostUpdateMiscEffects, same as armor);
             // do NOT move it to PostUpdateRunSpeeds, which is after the regen calc.
-            if (data.PassiveRegenPenalty > 0f)
+            // Smough's Armor (equipped earlier in the same pass) cancels the Dragon Crest's tax.
+            bool smoughCancelsPenalty = item.type == ModContent.ItemType<DragonCrestShield>() && player.GetModPlayer<tsorcRevampPlayer>().SmoughShieldSkills;
+
+            if (data.PassiveRegenPenalty > 0f && !smoughCancelsPenalty)
             {
                 player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceGainMult -= data.PassiveRegenPenalty;
             }

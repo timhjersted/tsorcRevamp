@@ -10,7 +10,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
     ///<summary>
     ///Ice Gigas ground spike (Deerclops homage, reusing its vanilla spike texture). Spawned with its
     ///bottom on the ground; frost-patch telegraph for ai[0] ticks, then erupts over a few ticks and
-    ///persists ~2s as damaging terrain before sinking away. ai[1] = height scale (1 = normal).
+    ///persists ~2s as damaging terrain before bursting into frost. ai[1] = height scale.
+    ///ai[2] = frost travel beyond the sprite (default 32px; Glacial Slam uses 64px).
     ///Shared by Glacial Slam's marching waves, Rimefang Spikes and the Stampede's foot-trail.
     ///</summary>
     class GigasIceSpike : ModProjectile
@@ -19,7 +20,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
 
         const int RiseTicks = 6;
         const int HoldTicks = 110;
-        const int SinkTicks = 10;
         //Vanilla's own draw code special-cases type 961 (see Main.DrawProj) and crops ONE frame out
         //of a 1x5 vertical strip — the sheet is 5 growth-stage frames, not a single tall image. We
         //were drawing the whole sheet as one sprite, which squashed it to 1/5 height: the "spike"
@@ -28,11 +28,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         const int SheetFrames = 5;
         const int ArtFrame = 4; //tallest/most-detailed growth stage; our own RiseProgress handles the animation
 
+        ///<summary>Set by the spawner on the server (Rimefang): the burst also puffs a short ring of frost breath. Only
+        ///OnKill's server-side branch reads it, so it is never synced.</summary>
+        internal bool BreathCloud;
+        const int BreathCloudPuffs = 8;
+        //Short-form breath puffs decay 0.978/tick over 80 ticks, so travel ≈ speed x 38: 0.7 → ~26px, and the 56x64px
+        //breath shader around each puff makes the cloud read about two tiles out from the spike.
+        const float BreathCloudSpeed = 0.7f;
+
         int TelegraphTicks => (int)Projectile.ai[0];
         float HeightScale => Projectile.ai[1] > 0f ? Projectile.ai[1] : 1f;
         int Timer => (int)Projectile.localAI[0];
         bool Erupted => Timer > TelegraphTicks;
-        bool Sinking => Timer > TelegraphTicks + RiseTicks + HoldTicks;
 
         public override void SetDefaults()
         {
@@ -48,18 +55,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
             Projectile.height = (int)(54 * HeightScale);
-            Projectile.timeLeft = TelegraphTicks + RiseTicks + HoldTicks + SinkTicks;
+            Projectile.timeLeft = TelegraphTicks + RiseTicks + HoldTicks;
         }
 
         public override bool? CanDamage()
         {
-            return Erupted && !Sinking;
+            return Erupted;
         }
 
         public override void AI()
         {
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0]++;
+            if (Main.dedServ) return;
             float bottom = Projectile.position.Y + Projectile.height;
 
             if (!Erupted)
@@ -75,7 +83,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             }
             if (Timer == TelegraphTicks + 1)
             {
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.6f, Pitch = -0.3f }, Projectile.Center);
+                // Glacial Slam marches 126 spikes 3-5 ticks apart, so its eruptions are quiet or they stack into a
+                // machine-gun rattle. Slam is the only caller passing the 64px frost range (ai[2]).
+                bool slamWave = Projectile.ai[2] >= 64f;
+                float eruptVolume = 0.6f;
+
+                if (slamWave)
+                {
+                    eruptVolume = 0.15f;
+                }
+
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = eruptVolume, Pitch = -0.3f + Main.rand.NextFloat(-0.1f, 0.1f) }, Projectile.Center);
                 for (int i = 0; i < 10; i++)
                 {
                     int dust = Dust.NewDust(new Vector2(Projectile.position.X, bottom - 12f), Projectile.width, 12, DustID.Ice, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 60, default, 1.2f);
@@ -83,7 +101,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
                 }
             }
             //Held: occasional cold glints
-            if (!Sinking && Main.rand.NextBool(6))
+            if (Main.rand.NextBool(6))
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), bottom - Main.rand.NextFloat(Projectile.height * RiseProgress()));
                 int glint = Dust.NewDust(pos, 4, 4, DustID.IceRod, 0f, 0f, 100, default, 0.8f);
@@ -99,11 +117,28 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             {
                 return 0f;
             }
-            if (Sinking)
-            {
-                return 1f - (Timer - TelegraphTicks - RiseTicks - HoldTicks) / (float)SinkTicks;
-            }
             return MathHelper.Min(1f, (Timer - TelegraphTicks) / (float)RiseTicks);
+        }
+
+        public override void OnKill(int timeLeft)
+        {
+            if (!Erupted || Main.netMode == NetmodeID.MultiplayerClient) return;
+            float range = Projectile.ai[2] > 0f ? Projectile.ai[2] : 32f;
+            Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero,
+                ModContent.ProjectileType<GigasFrostBurst>(), 0, 0f, Main.myPlayer,
+                range, NPCs.Bosses.Gigas.IceGigas.FrostBuildupPerHit, HeightScale);
+
+            //Harmless breath cloud (0 damage): the burst above already applies the frost buildup.
+            if (BreathCloud)
+            {
+                for (int i = 0; i < BreathCloudPuffs; i++)
+                {
+                    float angle = MathHelper.TwoPi * i / BreathCloudPuffs;
+                    Vector2 puffVelocity = angle.ToRotationVector2() * BreathCloudSpeed;
+                    Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, puffVelocity,
+                        ModContent.ProjectileType<GigasFrostBreathPuff>(), 0, 0f, Main.myPlayer);
+                }
+            }
         }
 
         //Draw the vanilla Deerclops spike rising out of the ground (bottom-anchored, vertically clipped)
@@ -116,10 +151,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.IceGigas
             }
             Texture2D texture = TextureAssets.Projectile[ProjectileID.DeerclopsIceSpike].Value;
             int frameHeight = texture.Height / SheetFrames;
-            Rectangle frame = new Rectangle(0, ArtFrame * frameHeight, texture.Width, frameHeight);
-
-            float drawHeight = Projectile.height * progress;
-            float texScaleY = drawHeight / frameHeight;
+            // Reveal the bottom of the upright sprite; never squash/fold the full sprite.
+            int visibleHeight = System.Math.Max(1, (int)(frameHeight * progress));
+            Rectangle frame = new Rectangle(0, (ArtFrame + 1) * frameHeight - visibleHeight, texture.Width, visibleHeight);
+            float texScaleY = Projectile.height / (float)frameHeight;
             float texScaleX = Projectile.width / (float)texture.Width * 1.4f;
             Vector2 bottom = new Vector2(Projectile.Center.X, Projectile.position.Y + Projectile.height + 2f) - Main.screenPosition;
             SpriteEffects flip = Projectile.whoAmI % 2 == 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

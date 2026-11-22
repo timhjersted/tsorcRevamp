@@ -53,6 +53,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -69,6 +70,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -77,6 +79,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -92,6 +95,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -100,6 +104,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -108,6 +113,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -116,6 +122,7 @@
   "tileY": 1367,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -446,7 +453,8 @@
   "tileX": 1897,
   "tileY": 1121,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda: \u0022Red, I\u0027ve heard many rumors about the Shadow Temple. It is legendary for its labyrinthian design, which sprawls beyond the gates of the temple, connecting caverns, a great underground lake and hallowed spike chasms...\u0022 ",
@@ -454,6 +462,7 @@
   "tileY": 1121,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -467,6 +476,7 @@
   "text": "Suddenly you notice you are completely in shadow. You look up and see a dark mass blocking out the sun...",
   "tileX": 1966,
   "tileY": 846,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }
@@ -474,6 +484,7 @@
   "text": "Looking back at the temple architecture, Miakoda wonders aloud, \u0022Do you think the direction and alignment of these columns have any significance?\u0022",
   "tileX": 2033,
   "tileY": 860,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }
@@ -498,10 +509,21 @@
   "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You get out your map and write a note: \u0022Gate just East of an unknown temple in the desert.\u0022",
   "tileX": 2238,
   "tileY": 857,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "hint,location",
   "locationName": "PATH TO THE CATACOMBS"
+}
+{
+  "text": "- This gate guards the Path to the Catacombs, home of the Fire Fiend Spirit - --NEWLINE  --NEWLINE You mark the spot on your map.",
+  "tileX": 2238,
+  "tileY": 946,
+  "textWidth": 320,
+  "style": 1,
+  "category": "hint,location",
+  "locationName": "PATH TO THE CATACOMBS",
+  "expandedOnly": true
 }
 {
   "text": "You come upon a deep hallowed cavern. As you make your way down you can feel the gravitational pull start to shift again... --NEWLINE  --NEWLINE (Try pressing the Up key)",
@@ -516,14 +538,16 @@
   "tileX": 2354,
   "tileY": 843,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda: \u0022The puzzle on the water crest we obtained said to look for an ashen fog, illuminated by a violet glow... That should lead us to The Hunter.  --NEWLINE  --NEWLINE But... the people who once lived beneath this desert left behind scrolls alluding to many secrets. They spoke of a hidden path in the desert that leads to an ancient being known as Serris.\u0022",
   "tileX": 2374,
   "tileY": 843,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Checking your compass and map, you think the path East must lead below the Corrupted Temple. --NEWLINE  --NEWLINE You can sense a terrible foe in this direction, something you have never seen before. ",
@@ -918,10 +942,21 @@
   "text": "- You\u0027ve found the Mushroom Caverns -",
   "tileX": 3801,
   "tileY": 1545,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "location",
   "locationName": "MUSHROOM CAVERNS"
+}
+{
+  "text": "- You've found the Ancient Undergrowth -",
+  "tileX": 3802,
+  "tileY": 1777,
+  "textWidth": 320,
+  "style": 1,
+  "category": "location",
+  "locationName": "ANCIENT UNDERGROWTH",
+  "expandedOnly": true
 }
 {
   "text": "The opulent beast carved into the rock mesmerizes you, its red eyes seeping down, down, down into your subliminal conciousness, reaching into your dreams, planting seeds of nightmares and crumbling your faith. You begin to doubt, to ask yourself if you are really capable of taking this to the end.. Enough! You tear your gaze away and suddenly you awake. Two hours have passed! My god. What powers lie within this beast of a god?",
@@ -1079,6 +1114,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1095,6 +1131,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1186,6 +1223,7 @@
   "tileY": 679,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1209,6 +1247,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1232,6 +1271,7 @@
   "tileY": 713,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1257,10 +1297,11 @@
   "tileY": 695,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
-    "text": "\u0022Miakoda, in your travels, have you ever come across a Shadow Key?\u0022 --NEWLINE  --NEWLINE \u0022While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean. I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...\u0022",
+    "text": "\u0022Miakoda, in your travels, have you ever come across a Shadow Key?\u0022 --NEWLINE  --NEWLINE \u0022I have heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...\u0022",
     "tileX": 4236,
     "tileY": 1749,
     "textWidth": 320,
@@ -1280,6 +1321,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1288,6 +1330,7 @@
   "tileY": 709,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1304,6 +1347,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1312,6 +1356,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1320,6 +1365,7 @@
   "tileY": 1822,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1458,6 +1504,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1466,6 +1513,7 @@
   "tileY": 1740,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1474,6 +1522,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1490,6 +1539,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1505,6 +1555,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1513,6 +1564,7 @@
   "tileY": 1745,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1660,6 +1712,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1675,6 +1728,7 @@
   "tileY": 864,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1692,6 +1746,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1722,6 +1777,7 @@
   "tileY": 863,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "lore"
 }
 {
@@ -1738,6 +1794,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1746,6 +1803,7 @@
   "tileY": 867,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -1754,6 +1812,7 @@
   "tileY": 873,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story",
   "locationName": "THE BURNED VILLAGE"
 }
@@ -1810,6 +1869,7 @@
   "text": "This ancient temple was built in honor of the guardian known as Skeletron, The First of the Dead. It is said he was a creation of a powerful mage known as the Lunatic Cultist, whose connection to these temples is still unknown... --NEWLINE  --NEWLINE If your first encounter with the old man does not go well, use the bones in this chest to summon Skeletron until you have stolen its power.",
   "tileX": 5059,
   "tileY": 1402,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "lore,hint,location",
@@ -1858,6 +1918,7 @@
   "text": "This gate was created and sealed shut long ago to protect the temple inhabitants from the nameless and immortal \u0022old man.\u0022 He is now cursed to exist merely as a vessel for the demon known as Skeletron, The First of the Dead. But do not pity him. His crimes were far greater than the fate he earned...",
   "tileX": 5151,
   "tileY": 1366,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1,
   "category": "lore"
@@ -1917,7 +1978,8 @@
   "tileY": 1694,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "skipOnExpanded": true
 }
 {
   "text": "- You\u0027ve discovered the underground jungle\u0027s Lake of Flowered Paths -",
@@ -2104,6 +2166,7 @@
   "text": "You can feel the heat of magma boiling above you. Before you pull the lever, you make sure you\u0027re ready, because you know you\u0027re going to have to make a mad dash to survive this.",
   "tileX": 6035,
   "tileY": 1053,
+  "skipOnExpanded": true,
   "textWidth": 320,
   "style": 1
 }
@@ -2313,7 +2376,8 @@
   "tileX": 6697,
   "tileY": 1663,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "You feel yourself growing lighter. The gravitational pull is shifting... --NEWLINE  --NEWLINE Try pressing the up key (as if you had a gravity potion active) to become fully in tune with the unique gravitational forces within this area.",
@@ -2339,7 +2403,8 @@
   "textWidth": 320,
   "style": 1,
   "category": "lore,location",
-  "locationName": "BOWELS OF THE ABYSS"
+  "locationName": "BOWELS OF THE ABYSS",
+  "skipOnExpanded": true
 }
 {
   "text": "\u0022Have you seen it?\u0022 whispers a feminine voice. --NEWLINE  --NEWLINE \u0022The sky temple that floats above the village?\u0022 --NEWLINE  --NEWLINE \u0022It is where Golem imprisoned the Empress!\u0022",
@@ -2391,14 +2456,16 @@
   "tileX": 7095,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "Miakoda: \u0022You will know the Rage is about to enrage when its body glows brightly with fire. --NEWLINE  --NEWLINE When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!\u0022",
   "tileX": 7102,
   "tileY": 1457,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "This gate has been sealed by the Wyvern Mage, who lives high atop these mountains. --NEWLINE  --NEWLINE Beyond this gate lies the Frozen Ocean, Miakoda tells you.",
@@ -2413,6 +2480,7 @@
   "tileY": 568,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2445,6 +2513,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2453,6 +2522,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2461,6 +2531,7 @@
   "tileY": 604,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2469,6 +2540,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2477,6 +2549,7 @@
   "tileY": 599,
   "textWidth": 320,
   "style": 1,
+  "retired": true,
   "category": "story"
 }
 {
@@ -2552,12 +2625,13 @@
   "locationName": "BLIGHT ON THE FROZEN OCEAN"
 }
 {
-  "text": "The cavern of The Sorrow. As you step farther in, you hear a deep, booming voice begin to speak, at once everywhere and no where, \u0022You\u0027ve come far Red, I\u0027m quite pleased.\u0022 Suddenly, the Mindflayer King bursts into existence in front of you, hovering in the air. You take your sword and leap at Attraidies, and your sword blasts against the force field protecting him. ",
+  "text": "- You've found the Cavern of The Sorrow -",
   "tileX": 8157,
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "location",
+  "locationName": "CAVERN OF THE SORROW"
 }
 {
   "text": "Attraidies lets out a deep bellowing laugh. \u0022Red,\u0022 he says, \u0022You\u0027ve got to learn how to savor the moment. Isn\u0027t it these *little moments* that makes a life what it is? Besides, I really should thank you..\u0022 --NEWLINE  --NEWLINE Red: \u0022Enough games Attraidies, say what you will.\u0022",
@@ -2565,7 +2639,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022Ah, but it is the game that I set up and which you played so masterfully that has me so impressed.\u0022 Red is silent. Glaring. \u0022You haven\u0027t realized by now? I wanted you to kill Aaron. I corrupted his will, got him to betray you. I gave him the stone which you used to kill him, and told him precisely what he needed to hear so that he\u0027d think that he\u0027d be protecting himself by giving it to you.\u0022",
@@ -2573,7 +2648,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022But it was not just enchanted twice, but three times. Once to create the Protection Stone which I traded for the knowledge of your father\u0027s location, twice to tie his life to the stone, and a third time to unleash the most powerful force of destruction this world has ever seen.\u0022",
@@ -2581,7 +2657,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022But I needed you Red. You see, darkness thrives on darkness, and the spell that contained this army remained locked by the pure spirit of your father. To break the seal, a warrior of pure spirit and innocence had to be corrupted by the lust for vengeance.\u0022",
@@ -2589,7 +2666,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "\u0022And you played right into it. You played right into it. All you needed... Red... was a little push.\u0022 On Attraidies face was a grinning smile so wicked it becomes etched into your mind.  --NEWLINE \u0022But I\u0027ll give you a chance, Red. See if you can handle this.\u0022 And with that, Attraidies vanishes in a dark magic energy, summoning The Sorrow in his place.",
@@ -2597,7 +2675,8 @@
   "tileY": 1645,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "- You've discovered the Shadewood Garden -",
@@ -2608,4 +2687,22 @@
   "category": "location",
   "locationName": "SHADEWOOD GARDEN",
   "expandedOnly": true
+}
+{
+  "text": "",
+  "tileX": 4911,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
+}
+{
+  "text": "",
+  "tileX": 4902,
+  "tileY": 867,
+  "textWidth": 320,
+  "style": 1,
+  "retired": true,
+  "category": "story"
 }

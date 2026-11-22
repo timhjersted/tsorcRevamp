@@ -211,7 +211,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gwyn
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 if (TryGetOwner(out NPC owner)
-                    && owner.ModNPC is global::tsorcRevamp.NPCs.Puppets.PuppetNPC puppet)
+                    && owner.ModNPC is global::tsorcRevamp.NPCs.Invaders.PuppetNPC puppet)
                 {
                     puppet.ReportAttackHit();
                 }

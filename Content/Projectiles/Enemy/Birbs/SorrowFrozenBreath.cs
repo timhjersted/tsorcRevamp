@@ -45,7 +45,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Birbs
             if (!initialized)
             {
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_BetsyDeath, Projectile.Center);
-                hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.TheSorrow>());
+                hostIndex = UsefulFunctions.GetFirstNPC(ModContent.NPCType<NPCs.Bosses.Birds.TheSorrow>());
                 Projectile.rotation = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;
                 Projectile.timeLeft = (int)Projectile.ai[0] + 15;
@@ -92,7 +92,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Birbs
 
                 if (inBeam)
                 {
-                    Buffs.Debuffs.FrostBuildup.Apply(localPlayer, NPCs.Bosses.TheSorrow.BreathFrostBuildupPerTick);
+                    Buffs.Debuffs.FrostBuildup.Apply(localPlayer, NPCs.Bosses.Birds.TheSorrow.BreathFrostBuildupPerTick);
                 }
             }
         }

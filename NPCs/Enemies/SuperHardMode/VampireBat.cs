@@ -2,7 +2,6 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
-using static tsorcRevamp.SpawnHelper;
 
 namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 {
@@ -33,26 +32,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.value = 2000; // life / 2 / 2 bc simple : not changed
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.VampireBatBanner>();
-        }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player p = spawnInfo.Player;
-            if (tsorcRevampWorld.SuperHardMode)
-            {
-                if (p.ZoneCorrupt || p.ZoneCrimson)
-                {
-                    return 0.125f;
-                }
-                else if (Underworld(p))
-                {
-                    return 0.0167f;
-                }
-                else if (p.ZoneHallow)
-                {
-                    return 0.03f;
-                }
-            }
-            return 0;
         }
 
         public override void AI()

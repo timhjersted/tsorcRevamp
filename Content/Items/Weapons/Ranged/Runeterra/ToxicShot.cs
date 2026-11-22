@@ -9,7 +9,9 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Projectiles.Ranged.Runeterra;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Projectiles;
+using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Sounds.ToxicShot;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
 {
@@ -20,7 +22,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra
         public override int Rarity => ItemRarityID.Green;
         public override int Value => Item.buyPrice(0, 10, 0, 0);
         public override float Knockback => 4f;
-        public override string SoundPath => "tsorcRevamp/Sounds/Runeterra/Ranged/ToxicShot/";
+        public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(ToxicShotSound));
         public override int ProjectileType => ModContent.ProjectileType<ToxicShotDart>();
         public override int Tier => 1;
         public override string LocalizationPath => "Items.ToxicShot.";

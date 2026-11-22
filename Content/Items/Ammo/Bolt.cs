@@ -34,7 +34,7 @@ namespace tsorcRevamp.Content.Items.Ammo
             Recipe recipe = CreateRecipe(10);
 
             recipe.AddIngredient(ItemID.Wood, 1);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 10);
 
             recipe.AddTile(TileID.DemonAltar);
             recipe.Register();

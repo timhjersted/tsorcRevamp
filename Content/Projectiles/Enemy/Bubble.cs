@@ -47,7 +47,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             float rotation = Main.GameUpdateCount % (MathHelper.TwoPi * 10);
             rotation /= 10;
             rotation -= MathHelper.Pi;
-            rotation += Projectile.whoAmI * 0.7f;
+            rotation += Projectile.identity * 0.7f; //identity matches on every peer; whoAmI does not
 
             Vector2 distortion;
             distortion.X = 0;

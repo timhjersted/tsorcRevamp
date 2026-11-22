@@ -14,7 +14,7 @@ Vibrent / mod founder, programmer + spriter
 MarfMasterofDesaster / programmer + beta testing
 Xelvaa / programmer + remix map builder
 NephilimDeath / spriter + translator
-JOI3 / spriter
+JOI3 / major sprite contributions
 Logar / spriter
 Fezzy Draws / spriter
 Omnir / major npc & item sprite contributions

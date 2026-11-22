@@ -19,7 +19,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         QuaraInkBurst,
         EvilEyeGhostBurst,
         EvilEyeTeleportBurst,
-        GreatBlackKnightBlightBombBlast
+        GreatBlackKnightBlightBombBlast,
+        MantassinGlintFlash,
+        MantassinBlink
     }
 
     internal static class EnemyVFX
@@ -49,6 +51,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static Asset<Effect> quaraTideRush;
         static Asset<Effect> greatBlackKnightFlail;
         static Asset<Effect> voidExplosion;
+        static Asset<Effect> archdeaconGlintstone;
+        static Asset<Effect> mantassinGlintstone;
+        static Asset<Effect> witchkingVoidCrescent;
 
         static Asset<Texture2D> circle;
         static Asset<Texture2D> gradient;
@@ -90,6 +95,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static readonly Color ToxicDark = new(8, 25, 8);
         static readonly Color ToxicMid = new(66, 176, 54);
         static readonly Color ToxicCore = new(213, 255, 133);
+        // Shadow Ninja smoke bombs: charcoal with a faint violet cast, no bright core (it is smoke, not gas).
+        static readonly Color ShadowSmokeDark = new(6, 6, 9);
+        static readonly Color ShadowSmokeMid = new(46, 44, 54);
+        static readonly Color ShadowSmokeCore = new(96, 92, 108);
         static readonly Color WaterDark = new(5, 25, 52);
         static readonly Color WaterMid = new(32, 150, 221);
         static readonly Color WaterCore = new(213, 249, 255);
@@ -120,6 +129,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         static readonly Color PlagueAshMid = new(74, 66, 86);
         static readonly Color PlagueAshCore = new(198, 196, 206);
 
+        // Archdeacon glintstone palette: deep azure body / glint blue / blue-white (approved in the offline preview).
+        static readonly Color GlintDark = new(20, 50, 140);
+        static readonly Color GlintMid = new(70, 145, 255);
+        static readonly Color GlintCore = new(225, 245, 255);
+
+        // Mantassin finger-sorcery palette, from the user's Elden Ring reference art: silver light with a faint
+        // lavender cast, white core, and the Fleeting Microcosm's gold haze. Its shader has no DarkColor term.
+        internal static readonly Color MantassinMid = new(168, 172, 226);
+        internal static readonly Color MantassinCore = new(246, 246, 255);
+        internal static readonly Color MantassinGold = new(255, 196, 92);
+        static readonly Color MantassinBlinkDark = new(10, 10, 26);
+
+        // Witchking's void fire: dark purple frayed edges, bright purple body, white accents (premultiplied, so the dark
+        // purple reads over a bright sky too).
+        static readonly Color VoidFireDark = new(46, 8, 78);
+        static readonly Color VoidFireMid = new(176, 82, 255);
+        static readonly Color VoidFireCore = new(255, 246, 255);
+
         static void LoadAssets()
         {
             if (Main.dedServ)
@@ -149,6 +176,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             quaraTideRush ??= ModContent.Request<Effect>(EffectRoot + "QuaraTideRush", AssetRequestMode.ImmediateLoad);
             greatBlackKnightFlail ??= ModContent.Request<Effect>(EffectRoot + "GreatBlackKnightFlail", AssetRequestMode.ImmediateLoad);
             voidExplosion ??= ModContent.Request<Effect>(EffectRoot + "VoidExplosion", AssetRequestMode.ImmediateLoad);
+            archdeaconGlintstone ??= ModContent.Request<Effect>(EffectRoot + "ArchdeaconGlintstone", AssetRequestMode.ImmediateLoad);
+            mantassinGlintstone ??= ModContent.Request<Effect>(EffectRoot + "MantassinGlintstone", AssetRequestMode.ImmediateLoad);
+            witchkingVoidCrescent ??= ModContent.Request<Effect>(EffectRoot + "WitchkingVoidCrescent", AssetRequestMode.ImmediateLoad);
 
             circle ??= ModContent.Request<Texture2D>(NoiseRoot + "T_VFX_CircleFit1", AssetRequestMode.ImmediateLoad);
             gradient ??= ModContent.Request<Texture2D>(NoiseRoot + "T_Gradient_circle22", AssetRequestMode.ImmediateLoad);
@@ -260,6 +290,30 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 blight ? BlightCore : PlagueCore, 0.62f, progress, 1f, 1f);
         }
 
+        /// <summary>The Witchking's Void Flame: a ")" crescent of purple fire, bulge leading, on a quad rotated to the
+        /// velocity. <paramref name="size"/> = (quad width along travel, crescent height). The band's middle half-thickness
+        /// (px) goes to the shader as a fraction of the quad width (Active), pre-divided here to save ps_2_0 slots.
+        /// <paramref name="phase"/> offsets the noise so a fan of crescents doesn't burn identically.</summary>
+        internal static void DrawWitchkingVoidCrescent(Vector2 center, Vector2 size, float rotation, float midHalfThickness, float opacity, float phase)
+        {
+            LoadAssets();
+            float crescentWidth = MathHelper.Max(size.X, 1f);
+            float activeHalfThickness = midHalfThickness / crescentWidth;
+
+            // Pad the drawn quad by one mid half-thickness front and back: the flame licking off the band reaches past
+            // the crescent's own box, and at launch size (46px) the quad edge sliced it flat. CrescentBox maps the
+            // padded quad's uv back onto the crescent box (crescent u = u * paddedWidth / width - pad / width).
+            float padding = midHalfThickness;
+            float paddedWidth = crescentWidth + padding * 2f;
+            Vector2 paddedSize = new Vector2(paddedWidth, size.Y);
+            Vector4 crescentBox = new Vector4(-padding / crescentWidth, 0f, paddedWidth / crescentWidth, 1f);
+            witchkingVoidCrescent.Value.Parameters["CrescentBox"]?.SetValue(crescentBox);
+
+            Draw(witchkingVoidCrescent, "WitchkingVoidCrescent", cloudNoise, perlinTiled,
+                center, paddedSize, rotation, VoidFireDark, VoidFireMid, VoidFireCore,
+                opacity, 0f, activeHalfThickness, phase, BlendState.AlphaBlend);
+        }
+
         internal static void DrawBlackKnightDeathTrail(Vector2 center, Vector2 velocity, Vector2 size, float opacity, bool blight = false)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
@@ -337,6 +391,216 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Draw(blackKnightSpearWake, "BlackKnightSpearWake", perlinTiled, cloudNoise,
                 center, size, rotation, PlagueAshDark, PlagueAshMid, PlagueAshCore,
                 opacity, 0.5f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Archdeacon glintstone sorcery (Effects/ArchdeaconGlintstone.fx). All four are premultiplied AlphaBlend over a
+        // procedural quad (cloud noise drawn, broken noise in s1), 2px pixel filter.
+        // Comet: the head sits at uv.x 0.80 of a 3:1 quad pointing along `rotation`; tailLength 0 = bare glint.
+        internal static void DrawArchdeaconGlintComet(Vector2 headCenter, float rotation, float height, float tailLength, float opacity)
+        {
+            LoadAssets();
+            Vector2 size = new Vector2(height * 3f, height);
+            // Shift the quad back along the travel direction so the head, not the quad centre, sits on headCenter.
+            Vector2 quadCenter = headCenter - rotation.ToRotationVector2() * (size.X * 0.30f);
+            Draw(archdeaconGlintstone, "ArchdeaconGlintComet", cloudNoise, brokenNoise,
+                quadCenter, size, rotation, GlintDark, GlintMid, GlintCore,
+                opacity, MathHelper.Clamp(tailLength, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Orb: sphere radius is 0.52 of half the quad, the ribbons reach 0.82.
+        internal static void DrawArchdeaconGlintOrb(Vector2 center, float diameter, float opacity)
+        {
+            LoadAssets();
+            Draw(archdeaconGlintstone, "ArchdeaconGlintOrb", cloudNoise, brokenNoise,
+                center, new Vector2(diameter), 0f, GlintDark, GlintMid, GlintCore,
+                opacity, 0f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Snare field: a square quad whose floor line is 92% of the way down it. `pulse` 0..1 flashes the field bright.
+        internal static void DrawArchdeaconGlintSnare(Vector2 floorCenter, float width, float opacity, float pulse)
+        {
+            LoadAssets();
+            Vector2 size = new Vector2(width, width);
+            Vector2 quadCenter = floorCenter + new Vector2(0f, size.Y * (0.5f - 0.92f));
+            Draw(archdeaconGlintstone, "ArchdeaconGlintSnare", cloudNoise, brokenNoise,
+                quadCenter, size, 0f, GlintDark, GlintMid, GlintCore,
+                opacity, MathHelper.Clamp(pulse, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Lance: drawn on the lance hitbox, tip at the top.
+        internal static void DrawArchdeaconGlintLance(Vector2 center, Vector2 size, float opacity)
+        {
+            LoadAssets();
+            Draw(archdeaconGlintstone, "ArchdeaconGlintLance", cloudNoise, brokenNoise,
+                center, size, 0f, GlintDark, GlintMid, GlintCore,
+                opacity, 0f, 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Mantassin finger sorceries (Effects/MantassinGlintstone.fx). Premultiplied AlphaBlend, 2px pixel filter.
+        // Glint: the 4-point star over a nail head. `flare` 0..1 brightens it (pre-launch flare, shatter flash).
+        internal static void DrawMantassinNailGlint(Vector2 center, float diameter, float opacity, float flare)
+        {
+            LoadAssets();
+            Draw(mantassinGlintstone, "MantassinNailGlint", cloudNoise, brokenNoise,
+                center, new Vector2(diameter), 0f, Color.Black, MantassinMid, MantassinCore,
+                opacity, MathHelper.Clamp(flare, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Fleeting Microcosm. The quad is the hit diameter / 0.70 (the shader puts the hit radius at r = 0.70).
+        // `open` 0..1 = how far the black void has opened, `flash` = the rim flash on the pulse.
+        // The two crossed lens-flare spikes are drawn first so the disc's black interior covers their middles.
+        internal static void DrawMantassinMicrocosm(Vector2 center, float hitRadius, float open, float flash,
+            float opacity, float flareRotation, float flareLength)
+        {
+            LoadAssets();
+            Vector2 raySize = new Vector2(flareLength, flareLength * 0.07f);
+            float rayOpacity = opacity * MathHelper.Clamp(open, 0f, 1f);
+            Draw(mantassinGlintstone, "MantassinMicrocosmRay", cloudNoise, brokenNoise,
+                center, raySize, flareRotation, Color.Black, MantassinMid, MantassinCore,
+                rayOpacity, 0f, 1f, 1f, BlendState.AlphaBlend, MantassinGold);
+            Draw(mantassinGlintstone, "MantassinMicrocosmRay", cloudNoise, brokenNoise,
+                center, raySize, flareRotation + MathHelper.PiOver2, Color.Black, MantassinMid, MantassinCore,
+                rayOpacity, 0f, 1f, 1f, BlendState.AlphaBlend, MantassinGold);
+
+            float quadSize = hitRadius * 2f / 0.70f;
+            Draw(mantassinGlintstone, "MantassinMicrocosm", cloudNoise, brokenNoise,
+                center, new Vector2(quadSize), 0f, Color.Black, MantassinMid, MantassinCore,
+                opacity, MathHelper.Clamp(open, 0f, 1f), flash, 1f, BlendState.AlphaBlend, MantassinGold);
+        }
+
+        // Cherishing Light arc. The shader draws 70 degrees of a circle at r = 0.75 of the half-quad, centred on +x,
+        // so the quad is sized from the arc radius and rotated to the arc's middle angle.
+        // `trace` 0..1 draws it in from one tip; `flash` lights it up on a block.
+        internal static void DrawMantassinCrescent(Vector2 center, float arcRadius, float middleAngle, float trace,
+            float flash, float opacity)
+        {
+            LoadAssets();
+            float quadSize = arcRadius * 2f / 0.75f;
+            Draw(mantassinGlintstone, "MantassinCrescent", cloudNoise, brokenNoise,
+                center, new Vector2(quadSize), middleAngle, Color.Black, MantassinMid, MantassinCore,
+                opacity, MathHelper.Clamp(trace, 0f, 1f), flash, 1f, BlendState.AlphaBlend);
+        }
+
+        // Floor sigil: a flat ellipse lying on the floor. `countdown` 0..1 = how much of its timer has run.
+        internal static void DrawMantassinRune(Vector2 floorCenter, float width, float countdown, float opacity)
+        {
+            LoadAssets();
+            Vector2 size = new Vector2(width, width * 0.30f);
+            Draw(mantassinGlintstone, "MantassinRune", cloudNoise, brokenNoise,
+                floorCenter, size, 0f, Color.Black, MantassinMid, MantassinCore,
+                opacity, MathHelper.Clamp(countdown, 0f, 1f), 1f, 1f, BlendState.AlphaBlend);
+        }
+
+        // Nail trail: a primitive strip along the nail's recorded path, points[0] = the head. Not a SpriteBatch quad,
+        // because the trail has to bend round tile bounces. Vertex alpha fades 1 at the head -> 0 at the tail end;
+        // the shader tapers the width. PixelGrid comes from the strip's real length so the blocks stay 2px.
+        internal static void DrawMantassinNailTrail(Vector2[] points, int count, float width, float opacity)
+        {
+            if (Main.dedServ || count < 2 || opacity <= 0f)
+            {
+                return;
+            }
+            LoadAssets();
+
+            float totalLength = 0f;
+            for (int i = 1; i < count; i++)
+            {
+                totalLength += Vector2.Distance(points[i], points[i - 1]);
+            }
+            if (totalLength < 2f)
+            {
+                return;
+            }
+
+            VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[count * 2];
+            short[] indices = new short[(count - 1) * 6];
+            float travelled = 0f;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (i > 0)
+                {
+                    travelled += Vector2.Distance(points[i], points[i - 1]);
+                }
+
+                Vector2 tangent;
+                if (i == 0)
+                {
+                    tangent = points[0] - points[1];
+                }
+                else
+                {
+                    tangent = points[i - 1] - points[i];
+                }
+                if (tangent.LengthSquared() < 0.001f)
+                {
+                    tangent = Vector2.UnitX;
+                }
+                tangent.Normalize();
+
+                Vector2 normal = new Vector2(-tangent.Y, tangent.X);
+                float along = travelled / totalLength;
+                Color vertexColor = Color.White * (1f - along);
+                Vector2 screenPoint = points[i] - Main.screenPosition;
+                Vector2 halfWidth = normal * (width * 0.5f);
+
+                vertices[i * 2] = new VertexPositionColorTexture(new Vector3(screenPoint - halfWidth, 0f), vertexColor, new Vector2(along, 0f));
+                vertices[i * 2 + 1] = new VertexPositionColorTexture(new Vector3(screenPoint + halfWidth, 0f), vertexColor, new Vector2(along, 1f));
+            }
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                int vertex = i * 2;
+                int index = i * 6;
+                indices[index] = (short)vertex;
+                indices[index + 1] = (short)(vertex + 1);
+                indices[index + 2] = (short)(vertex + 2);
+                indices[index + 3] = (short)(vertex + 2);
+                indices[index + 4] = (short)(vertex + 1);
+                indices[index + 5] = (short)(vertex + 3);
+            }
+
+            Effect effect = mantassinGlintstone.Value;
+            GraphicsDevice device = Main.instance.GraphicsDevice;
+            Main.spriteBatch.End();
+
+            BlendState previousBlend = device.BlendState;
+            RasterizerState previousRasterizer = device.RasterizerState;
+            Texture previousTexture = device.Textures[0];
+            SamplerState previousSampler = device.SamplerStates[0];
+
+            try
+            {
+                device.BlendState = BlendState.AlphaBlend;
+                device.RasterizerState = RasterizerState.CullNone;
+                device.Textures[0] = cloudNoise.Value;
+                device.SamplerStates[0] = SamplerState.LinearWrap;
+
+                // Pre-divided pixel grid (see Draw): 2px blocks along the trail's real length and across its width.
+                Vector2 pixelBlocks = Vector2.Max(new Vector2(totalLength, width) / 2f, Vector2.One);
+
+                effect.CurrentTechnique = effect.Techniques["MantassinNailTrail"];
+                effect.Parameters["WorldViewProjection"]?.SetValue(global::tsorcRevamp.Content.Projectiles.VFX.DynamicTrail.GetWorldViewProjectionMatrix());
+                effect.Parameters["MidColor"]?.SetValue(MantassinMid.ToVector3());
+                effect.Parameters["CoreColor"]?.SetValue(MantassinCore.ToVector3());
+                effect.Parameters["Opacity"]?.SetValue(opacity);
+                effect.Parameters["Time"]?.SetValue(Main.GlobalTimeWrappedHourly);
+                effect.Parameters["PixelGrid"]?.SetValue(
+                    new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+                effect.CurrentTechnique.Passes[0].Apply();
+
+                device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length,
+                    indices, 0, indices.Length / 3);
+            }
+            finally
+            {
+                device.BlendState = previousBlend;
+                device.RasterizerState = previousRasterizer;
+                device.Textures[0] = previousTexture;
+                device.SamplerStates[0] = previousSampler;
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp,
+                    DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+            }
         }
 
         internal static void DrawDemonSpiritCastSigil(Vector2 center, int pattern, float progress, Vector2 aimDirection)
@@ -504,6 +768,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 BlendState.AlphaBlend);
         }
 
+        /// <summary>Shadow Ninja smoke cloud: the ToxicField fog (round, noise-edged, no border) in the charcoal palette.
+        /// Same progress hold curve: full from 0.11 to 0.72, faded out at 1.0.</summary>
+        internal static void DrawShadowSmokeField(Vector2 center, Vector2 size, float progress, float rotation, float opacity)
+        {
+            LoadAssets();
+            Draw(elandToxicVFX, "ElandToxicField", voronoiNoise, cloudNoise,
+                center, size * FogVisualScale, rotation, ShadowSmokeDark, ShadowSmokeMid, ShadowSmokeCore,
+                opacity, progress, 0f, 1f / FogVisualScale, BlendState.AlphaBlend);
+        }
+
         /// <summary>
         /// Soft, centred aura for Eland's spinning PoisonSmog projectile. Keep this separate from
         /// the deliberately asymmetric ToxicField used by the large fog attacks: that irregular
@@ -581,16 +855,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         internal static void DrawQuaraInkGeyser(Vector2 center, float progress, bool active)
         {
             LoadAssets();
-            Draw(quaraInkGeyser, "QuaraInkGeyser", circle, brokenNoise,
+            float envelope = active
+                ? 1f - progress * progress * progress * 0.85f
+                : 0.45f + progress * 0.55f;
+            float opacity = (active ? 0.9f : 0.72f) * envelope;
+            Draw(quaraInkGeyser, "QuaraInkGeyser", cloudNoise, wavyDetailNoise,
                 center, Vector2.One * 80f, 0f, InkDark, InkMid, InkCore,
-                active ? 0.9f : 0.72f, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
+                opacity, progress, active ? 1f : 0f, 1f, BlendState.AlphaBlend);
         }
 
         internal static void DrawQuaraInkJet(Vector2 center, Vector2 velocity)
         {
             Vector2 direction = velocity.SafeNormalize(Vector2.UnitX);
             LoadAssets();
-            Draw(quaraInkGeyser, "QuaraInkJet", windstreak, brokenNoise,
+            Draw(quaraInkGeyser, "QuaraInkJet", cloudNoise, wavyDetailNoise,
                 center - direction * 31f, new Vector2(82f, 26f), direction.ToRotation(),
                 InkDark, InkMid, InkCore, 0.84f, 0.5f, 1f, 1f, BlendState.AlphaBlend);
         }
@@ -714,7 +992,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
                 case EnemyVFXBurstKind.QuaraInkBurst:
-                    Draw(quaraInkGeyser, "QuaraInkBurst", circle, brokenNoise,
+                    Draw(quaraInkGeyser, "QuaraInkBurst", cloudNoise, wavyDetailNoise,
                         center, Vector2.One * 92f, 0f, InkDark, InkMid, InkCore,
                         opacity, progress, 1f, 1f, BlendState.AlphaBlend);
                     break;
@@ -729,6 +1007,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                     // DemonSpirit's live explosion so it can't be edited in place.
                     Draw(evilEyeTeleport, "EvilEyeTeleportRift", perlinTiled, swirlyNoise,
                         center, Vector2.One * 300f, 0f, CurseDark, CurseMid, CurseCore, opacity, progress, 1f, 1f);
+                    break;
+                case EnemyVFXBurstKind.MantassinGlintFlash:
+                    // Nail shatter / bounce spark: the nail glint blown up and fading out as the burst runs.
+                    float flashFade = 1f - progress;
+                    Draw(mantassinGlintstone, "MantassinNailGlint", cloudNoise, brokenNoise,
+                        center, Vector2.One * MathHelper.Lerp(40f, 76f, progress), 0f, Color.Black, MantassinMid, MantassinCore,
+                        opacity * flashFade, flashFade, 1f, 1f, BlendState.AlphaBlend);
+                    break;
+                case EnemyVFXBurstKind.MantassinBlink:
+                    // The EvilEye space-distorting rift, recoloured to the Mantassin's silver glint.
+                    Draw(evilEyeTeleport, "EvilEyeTeleportRift", perlinTiled, swirlyNoise,
+                        center, Vector2.One * 180f, 0f, MantassinBlinkDark, MantassinMid, MantassinCore, opacity, progress, 1f, 1f);
                     break;
             }
         }
@@ -848,6 +1138,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             // User's explicit ask: long enough to actually see it (~60t), independent of
             // DemonSpiritSoulBurst's own 18t so DemonSpirit's real explosion is untouched.
             EnemyVFXBurstKind.EvilEyeTeleportBurst => 60,
+            EnemyVFXBurstKind.MantassinGlintFlash => 12,
+            EnemyVFXBurstKind.MantassinBlink => 40,
             _ => 14
         };
 

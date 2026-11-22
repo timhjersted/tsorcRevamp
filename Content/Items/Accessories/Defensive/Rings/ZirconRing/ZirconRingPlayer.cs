@@ -1,4 +1,5 @@
 using Terraria.ModLoader;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Items.Accessories.Defensive.Rings.ZirconRing;
 
@@ -10,11 +11,12 @@ public class ZirconRingPlayer : ModPlayer
         Equipped = false;
     }
 
-    public void Update()
+    public override void PostUpdateEquips()
     {
         if (Equipped)
         {
-            Player.statLifeMax2 += (int)(Player.statLifeMax2 * ZirconRingItem.PercentMaxLifeIncrease / 100f);
+            Player.GetModPlayer<MaxHealthCalculator>().MaxHealthMultiplier +=
+                ZirconRingItem.PercentMaxLifeIncrease / 100f;
         }
     }
 }

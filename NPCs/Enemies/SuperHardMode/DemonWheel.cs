@@ -36,22 +36,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             NPC.dontTakeDamage = true;
         }
 
-        //Super high because they seem to like spawning, rolling out of range, and instantly despawning
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            Player player = spawnInfo.Player;
-
-            if (player.ZoneDungeon && tsorcRevampWorld.SuperHardMode) return 0.5f; 
-
-            if (player.ZoneDungeon && Main.hardMode) return 0.1f; 
-
-            if ((player.ZoneCorrupt || player.ZoneCrimson) && tsorcRevampWorld.SuperHardMode) return 0.5f; 
-
-            if (player.ZoneUnderworldHeight && tsorcRevampWorld.SuperHardMode) return 0.25f; 
-
-            return 0;
-        }
-
         int lifespan = 1800;
         public override void AI()
         {

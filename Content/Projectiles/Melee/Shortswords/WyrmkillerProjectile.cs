@@ -3,9 +3,10 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.NPCs.Bosses.JungleWyvern;
-using tsorcRevamp.NPCs.Bosses.Okiku.SecondForm;
+using tsorcRevamp.NPCs.Bosses.Attraidies;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.GhostWyvernMage;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDragon;
+using tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake;
 using tsorcRevamp.NPCs.Bosses.SuperHardMode.Seath;
 using tsorcRevamp.NPCs.Bosses.WyvernMage;
 
@@ -34,6 +35,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Shortswords
                 || target.type == NPCID.WyvernTail
                 || target.type == ModContent.NPCType<ShadowDragonBody>()
                 || target.type == ModContent.NPCType<ShadowDragonHead>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.OldShadowDragonBody>()
+                || target.type == ModContent.NPCType<NPCs.Bosses.Okiku.SecondForm.OldShadowDragonHead>()
                 || target.type == ModContent.NPCType<MechaDragonBody>()
                 || target.type == ModContent.NPCType<MechaDragonBody2>()
                 || target.type == ModContent.NPCType<MechaDragonBody3>()
@@ -56,6 +59,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Shortswords
                 || target.type == ModContent.NPCType<HellkiteDragonBody2>()
                 || target.type == ModContent.NPCType<HellkiteDragonBody3>()
                 || target.type == ModContent.NPCType<HellkiteDragonHead>()
+                || target.type == ModContent.NPCType<HellkiteDrake>()
+                || target.type == ModContent.NPCType<HellkiteDrakeHitbox>()
                 || target.type == ModContent.NPCType<HellkiteDragonLegs>()
                 || target.type == ModContent.NPCType<HellkiteDragonTail>()
                 || target.type == ModContent.NPCType<SeathTheScalelessBody>()

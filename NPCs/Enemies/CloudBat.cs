@@ -26,15 +26,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Banner = NPC.type;
             BannerItem = ModContent.ItemType<Banners.CloudBatBanner>();
         }
-        public override float SpawnChance(NPCSpawnInfo spawnInfo)
-        {
-            float chance = 0;
-            if (Main.hardMode)
-            {
-                chance = Terraria.ModLoader.Utilities.SpawnCondition.Sky.Chance * 0.2f;
-            }
-            return chance;
-        }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {

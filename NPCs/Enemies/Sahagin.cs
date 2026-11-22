@@ -25,38 +25,6 @@ namespace tsorcRevamp.NPCs.Enemies{
         bool tooBig = false;
         bool lavaJumping = false;
 
-        #region Spawn
-        public override float SpawnChance(NPCSpawnInfo spawnInfo) { return 0f; }
-public float CanSpawnLegacy(NPCSpawnInfo s)
-        {
-            int x = s.SpawnTileX;
-            int y = s.SpawnTileY;
-            bool oSky = (y < (Main.maxTilesY * 0.1f));
-            bool oSurface = (y >= (Main.maxTilesY * 0.1f) && y < (Main.maxTilesY * 0.2f));
-            bool oUnderSurface = (y >= (Main.maxTilesY * 0.2f) && y < (Main.maxTilesY * 0.3f));
-            bool oUnderground = (y >= (Main.maxTilesY * 0.3f) && y < (Main.maxTilesY * 0.4f));
-            bool oCavern = (y >= (Main.maxTilesY * 0.4f) && y < (Main.maxTilesY * 0.6f));
-            bool oMagmaCavern = (y >= (Main.maxTilesY * 0.6f) && y < (Main.maxTilesY * 0.8f));
-            bool oUnderworld = (y >= (Main.maxTilesY * 0.8f));
-            bool oOcean = (x <= (Main.maxTilesX * .2f) && x < (Main.maxTilesX * 0.8f) && y < (Main.maxTilesY * 0.4f));
-            int tile = (int)Main.tile[x, y].TileType;
-            Player p = s.Player;
-            if (Main.pumpkinMoon || Main.snowMoon || Main.hardMode || p.townNPCs > 0f || p.ZoneDungeon)
-            {
-                return 0f;
-            }
-            if (oOcean)
-            {
-                if ((oSurface) && Main.rand.Next(20) == 1) return 1f;
-                else if (oUnderSurface && Main.rand.Next(10) == 1) return 1f;
-                return 0f;
-            }
-            return 0f;
-        }
-        //Spawns in the Ocean, before the Cavern (Height). Does not spawn in Hardmode, or if there are Town NPCs.
-        #endregion
-
-
 
 
         public override void SetDefaults()

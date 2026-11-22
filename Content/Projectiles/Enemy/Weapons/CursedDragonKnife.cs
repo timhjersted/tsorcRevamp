@@ -156,6 +156,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
                         Main.rand.NextVector2Circular(4.5f, 4.5f) + new Vector2(0f, -1.5f),
                         0, default, Main.rand.NextFloat(1.2f, 1.8f));
                 }
+
+                // 10 s Darkness to anyone caught in the bloom at the moment it bursts. Each peer debuffs only its
+                // own player: Player.AddBuff on the server never reaches the client that owns that player.
+                Player localPlayer = Main.LocalPlayer;
+                float radiusSquared = CloudRadius * CloudRadius;
+                bool caught = localPlayer.active && !localPlayer.dead
+                    && Vector2.DistanceSquared(localPlayer.Center, Projectile.Center) <= radiusSquared;
+
+                if (caught)
+                {
+                    localPlayer.AddBuff(BuffID.Darkness, DarknessTicks);
+                }
             }
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -165,17 +177,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             // Plague cloud — identical to the plague teleport (ai0=1 → curse buildup, ai1 = radius).
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
                 ModContent.ProjectileType<PlagueTeleportCloud>(), 0, 0f, Main.myPlayer, 1f, CloudRadius);
-
-            // 10 s Darkness to anyone caught in the bloom at the moment it bursts.
-            float rSq = CloudRadius * CloudRadius;
-            for (int i = 0; i < Main.maxPlayers; i++)
-            {
-                Player pl = Main.player[i];
-                if (pl.active && !pl.dead && Vector2.DistanceSquared(pl.Center, Projectile.Center) <= rSq)
-                {
-                    pl.AddBuff(BuffID.Darkness, DarknessTicks);
-                }
-            }
         }
     }
 }
