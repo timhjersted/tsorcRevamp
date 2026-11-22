@@ -13,8 +13,9 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 {
     class StarlightShardItem : ModItem
     {
-        public static float BaseDuration = 20f;
-        public static float BaseRestorationPercent = 5f;
+        public const float BaseDuration = 20f;
+        public const float BaseRestorationPercent = 2f;
+        public const float RestorationScalingDivisor = 50f;
         public override void SetStaticDefaults()
         {
         }
@@ -128,7 +129,7 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
             Player player = Main.LocalPlayer;
-            float restorationPercentPerSecond = BaseRestorationPercent * (1f + ((float)player.manaRegenBonus / 10f));
+            float restorationPercentPerSecond = BaseRestorationPercent + (((float)player.manaRegenBonus / RestorationScalingDivisor));
             int restorationDuration = (int)(BaseDuration * ((player.manaRegenBuff ? 1.5f : 1f) + player.manaRegenDelayBonus));
             int ttIndex = tooltips.FindIndex(t => t.Name == "Tooltip0");
             if (ttIndex != -1)
