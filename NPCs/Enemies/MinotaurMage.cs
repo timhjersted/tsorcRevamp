@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies{
 	// MNPC.teleporterAI) survives as the Blink Volley. Below half health the beast under the robes
 	// comes out: a hyper-armored horn charge and a desperation cinder burst.
 	//
-	// Poise contract at small scale: standard-fighter tier (35f in PoiseProfiles). Short telegraphs
+	// Poise contract at small scale: 20f in PoiseProfiles. Short telegraphs
 	// are hyper-armored; the one long cast (Ring of Cinders) is staggerable for its first two thirds.
 	// Recovery windows have no armor — same rules as the giants, much smaller numbers.
 	public class MinotaurMage : ModNPC, IStaggerable
@@ -89,7 +89,18 @@ namespace tsorcRevamp.NPCs.Enemies{
 			NPC.lifeMax = 155;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
-            NPC.value = 5000f;
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.value = 5000f;
+            }
+            else if (Main.hardMode)
+            {
+                NPC.value = 3500f;
+            }
+            else
+            {
+                NPC.value = 2000f;
+            }
 			NPC.npcSlots = 3;
             NPC.scale = 1.1f;
 			NPC.knockBackResist = 0.6f; //overridden by the PoiseProfiles entry

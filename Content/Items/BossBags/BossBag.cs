@@ -468,6 +468,7 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.SpectreGoggles));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<FieryScale>(), 1, 4, 8));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MarilithSoul>(), 1, 2, 2));
         }
     }
     public class LichBag : BossBag

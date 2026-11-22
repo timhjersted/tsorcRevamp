@@ -6160,6 +6160,11 @@ Mods: {
 				Tooltip: "'The essence of pure discord'"
 			}
 
+			MarilithSoul: {
+				DisplayName: Marilith Soul
+				Tooltip: "'The essence of Fire Fiend Marilith'"
+			}
+
 			SoulOfLife: {
 				DisplayName: Soul of Life
 				Tooltip: "'The essence of growth, deeply connected to the Earth'"

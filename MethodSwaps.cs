@@ -2749,9 +2749,24 @@ namespace tsorcRevamp
             // keeps ZonePurity honest. Vanilla assigns both zones earlier in UpdateBiomes, so the clear sticks.
             if (ModContent.GetInstance<tsorcRevampConfig>().AdventureMode)
             {
-                if (self.ZoneCrimson && !HasNearbyBiomeTiles(self, tileType => TileID.Sets.Crimson[tileType]))
+                // Keep vanilla's full Crimson radius while Brain of Cthulhu is alive so it does not despawn mid-arena,
+                // and count Crimson background walls so open Crimson caverns still qualify before summoning.
+                bool brainOfCthulhuAlive = NPC.AnyNPCs(NPCID.BrainofCthulhu);
+
+                if (self.ZoneCrimson && !brainOfCthulhuAlive)
                 {
-                    self.ZoneCrimson = false;
+                    bool hasNearbyCrimson = HasNearbyBiomeTiles(
+                        self,
+                        tileType => TileID.Sets.Crimson[tileType],
+                        wallType => WallID.Sets.Crimson[wallType]
+                            || wallType == WallID.Flesh
+                            || wallType == WallID.CrimtaneBrick
+                            || wallType == WallID.CrimstoneBrick);
+
+                    if (!hasNearbyCrimson)
+                    {
+                        self.ZoneCrimson = false;
+                    }
                 }
 
                 // Snow, snow brick and every ice variant: vanilla's own snow-biome tile weights.
@@ -2769,17 +2784,17 @@ namespace tsorcRevamp
         private const int BiomeNearbyRadiusY = 10;
         private const int BiomeNearbyMinTiles = 20;
 
-        // True when at least BiomeNearbyMinTiles tiles matching isBiomeTile sit in the box around the player.
+        // True when at least BiomeNearbyMinTiles tiles (or optional background walls) match in the box around the player.
         // Stops counting once the minimum is reached, so standing inside the biome exits within a few columns.
-        private static bool HasNearbyBiomeTiles(Player player, Func<ushort, bool> isBiomeTile)
+        private static bool HasNearbyBiomeTiles(Player player, Func<ushort, bool> isBiomeTile, Func<ushort, bool> isBiomeWall = null)
         {
             int centerTileX = (int)player.Center.X / 16;
             int centerTileY = (int)player.Center.Y / 16;
-            int nearbyBiomeTiles = 0;
+            int nearbyBiomeCount = 0;
 
-            for (int tileX = centerTileX - BiomeNearbyRadiusX; tileX <= centerTileX + BiomeNearbyRadiusX && nearbyBiomeTiles < BiomeNearbyMinTiles; tileX++)
+            for (int tileX = centerTileX - BiomeNearbyRadiusX; tileX <= centerTileX + BiomeNearbyRadiusX && nearbyBiomeCount < BiomeNearbyMinTiles; tileX++)
             {
-                for (int tileY = centerTileY - BiomeNearbyRadiusY; tileY <= centerTileY + BiomeNearbyRadiusY && nearbyBiomeTiles < BiomeNearbyMinTiles; tileY++)
+                for (int tileY = centerTileY - BiomeNearbyRadiusY; tileY <= centerTileY + BiomeNearbyRadiusY && nearbyBiomeCount < BiomeNearbyMinTiles; tileY++)
                 {
                     if (!WorldGen.InWorld(tileX, tileY))
                     {
@@ -2787,15 +2802,17 @@ namespace tsorcRevamp
                     }
 
                     Tile tile = Main.tile[tileX, tileY];
+                    bool matchesTile = tile.HasTile && isBiomeTile(tile.TileType);
+                    bool matchesWall = isBiomeWall != null && tile.WallType != WallID.None && isBiomeWall(tile.WallType);
 
-                    if (tile.HasTile && isBiomeTile(tile.TileType))
+                    if (matchesTile || matchesWall)
                     {
-                        nearbyBiomeTiles++;
+                        nearbyBiomeCount++;
                     }
                 }
             }
 
-            return nearbyBiomeTiles >= BiomeNearbyMinTiles;
+            return nearbyBiomeCount >= BiomeNearbyMinTiles;
         }
 
         static int deathTextTimer = 0;
