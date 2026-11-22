@@ -32,12 +32,13 @@ namespace tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker
 
         public override void AddRecipes()
         {
+            int cost = 3200 - RubyCrystalItem.SoulCost;
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.ChainKnife);
             recipe.AddIngredient(ItemID.IronHammer);
             recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
             recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2200);
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), cost);
             recipe.AddTile(TileID.DemonAltar);
 
             recipe.Register();

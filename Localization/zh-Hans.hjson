@@ -1005,6 +1005,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				// Ruby: Can be used to craft a healthy crystal
 				/* SquireHelm:
 					'''
 					{$CommonItemTooltip.IncreasesMaxSentriesBy}
@@ -8057,34 +8058,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					'小心破伤风'
-					'''
-			}
-
-			Galeforce: {
-				DisplayName: 极风之弦
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					召唤一张魔法之弓，向你的光标射出一阵箭雨
-					'''
-			}
-
-			Typhoon: {
-				DisplayName: 炽风之弦
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					召唤一张地狱之弓，向你的光标射出一阵燃烧的箭雨
-					施加狱火减益
-					'''
-			}
-
-			CaiusPyre: {
-				DisplayName: 凯厄斯之葬
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					召唤一道炽热的裂隙，向你的光标射出火球
 					'''
 			}
 

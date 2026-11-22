@@ -29,12 +29,13 @@ public class LiandrysTormentItem : ModItem
     }
     public override void AddRecipes()
     {
+        int cost = 3200 - RubyCrystalItem.SoulCost;
         Recipe recipe = CreateRecipe();
         recipe.AddIngredient(ItemID.SpellTome, 2);
         recipe.AddIngredient(ItemID.ManaCrystal);
         recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
         recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-        recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2200);
+        recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), cost);
         recipe.AddTile(TileID.DemonAltar);
 
         recipe.Register();

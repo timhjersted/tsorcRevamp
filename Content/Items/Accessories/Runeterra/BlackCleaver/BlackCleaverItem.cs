@@ -29,12 +29,13 @@ public class BlackCleaverItem : ModItem
     }
     public override void AddRecipes()
     {
+        int cost = 3200 - RubyCrystalItem.SoulCost;
         Recipe recipe = CreateRecipe();
         recipe.AddIngredient(ItemID.WoodenHammer);
         recipe.AddIngredient(ItemID.IronPickaxe);
         recipe.AddIngredient(ModContent.ItemType<RubyCrystalItem>());
         recipe.AddIngredient(ModContent.ItemType<WorldRune>());
-        recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 2200);
+        recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), cost);
         recipe.AddTile(TileID.DemonAltar);
 
         recipe.Register();

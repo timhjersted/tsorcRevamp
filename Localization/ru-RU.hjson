@@ -973,6 +973,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				// Ruby: Can be used to craft a healthy crystal
 				/* SquireHelm:
 					'''
 					{$CommonItemTooltip.IncreasesMaxSentriesBy}
@@ -8029,34 +8030,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					"Эта ржавчина почти заразна"
-					'''
-			}
-
-			Galeforce: {
-				DisplayName: Сила Галактики
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Вызывает волшебный лук, который стреляет магическими стрелами в направлении вашего курсора
-					'''
-			}
-
-			Typhoon: {
-				DisplayName: Тайфун
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Призывает адский лук, который стреляет пылающими стрелами в направлении вашего курсора
-					Применяет адский огонь
-					'''
-			}
-
-			CaiusPyre: {
-				DisplayName: Погребальный костёр Кая
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Вызывает огненный разлом, который стреляет огненными шарами в направлении вашего курсора
 					'''
 			}
 

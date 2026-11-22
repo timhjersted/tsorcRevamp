@@ -13,8 +13,8 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 {
     class StarlightShardItem : ModItem
     {
-        public static float BaseDuration = 12f;
-        public static float BaseRestorationPercent = 1f;
+        public static float BaseDuration = 20f;
+        public static float BaseRestorationPercent = 5f;
         public override void SetStaticDefaults()
         {
         }

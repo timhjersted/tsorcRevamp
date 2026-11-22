@@ -1006,6 +1006,7 @@ Mods: {
 
 		Items: {
 			VanillaItems: {
+				Ruby: Can be used to craft a healthy crystal
 				SquireHelm:
 					'''
 					{$CommonItemTooltip.IncreasesMaxSentriesBy}
@@ -8014,34 +8015,6 @@ Mods: {
 					'''
 					{$CommonItemTooltip.Summon.TagArmorPen}
 					'This rust is almost infectious'
-					'''
-			}
-
-			Galeforce: {
-				DisplayName: Galeforce
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a magical bow which shoots magic arrows towards your cursor
-					'''
-			}
-
-			Typhoon: {
-				DisplayName: Typhoon
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a hellish bow which shoots flaming arrows towards your cursor
-					Applies hellfire
-					'''
-			}
-
-			CaiusPyre: {
-				DisplayName: Caius' Pyre
-				Tooltip:
-					'''
-					{$CommonItemTooltip.Sentry}
-					Summons a fiery rift which shoots fireballs towards your cursor
 					'''
 			}
 

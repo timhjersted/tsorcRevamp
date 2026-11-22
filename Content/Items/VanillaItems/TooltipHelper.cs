@@ -110,6 +110,7 @@ namespace tsorcRevamp.Content.Items.VanillaItems
             SimpleModTooltip(Mod, item, tooltips, ItemID.XenoStaff, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.MartianBuff"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.StarinaBottle, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.StarinaBottle"));
             SimpleModTooltip(Mod, item, tooltips, ItemID.ManaRegenerationBand, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.ManaRegenerationBand"));
+            SimpleModTooltip(Mod, item, tooltips, ItemID.Ruby, Language.GetTextValue("Mods.tsorcRevamp.Items.VanillaItems.Ruby"));
 
             if (tsorcRevampWorld.RemixMap)
             {
