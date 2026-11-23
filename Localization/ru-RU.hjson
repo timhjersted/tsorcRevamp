@@ -6165,6 +6165,11 @@ Mods: {
 				Tooltip: Эссенция Хаоса.
 			}
 
+			MarilithSoul: {
+				// DisplayName: Marilith Soul
+				// Tooltip: "'The essence of Fire Fiend Marilith'"
+			}
+
 			SoulOfLife: {
 				DisplayName: Душа Жизни
 				Tooltip: Эссенция роста, глубоко связанная с Землей.

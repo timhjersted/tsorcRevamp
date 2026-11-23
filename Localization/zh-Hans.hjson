@@ -6202,6 +6202,11 @@ Mods: {
 				Tooltip: 混沌的本质
 			}
 
+			MarilithSoul: {
+				// DisplayName: Marilith Soul
+				// Tooltip: "'The essence of Fire Fiend Marilith'"
+			}
+
 			SoulOfLife: {
 				DisplayName: 生命之魂
 				Tooltip: 生命的精髓，与大地紧密相连

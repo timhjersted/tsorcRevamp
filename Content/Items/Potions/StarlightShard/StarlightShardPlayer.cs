@@ -19,13 +19,17 @@ public class StarlightShardPlayer : ModPlayer
             if (Restoration) //Restores 1% of maximum mana over 12 seconds by default
             {
                 RestorationTimer += (float)Player.statManaMax2 / (100f * 60f) * (StarlightShardItem.BaseRestorationPercent + ((float)Player.manaRegenBonus / StarlightShardItem.RestorationScalingDivisor)); 
-                //^x% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is insane scaling
+                //^x% of maximum mana per second, since there are 60 ticks per second, manaregenbonuses are usually in the double digits so this is good scaling
 
                 if (RestorationTimer >= 1f)
                 {
-                    int fullInt = (int)RestorationTimer;
-                    Player.statMana += fullInt;
-                    RestorationTimer -= fullInt;
+                    int manaInt = (int)RestorationTimer;
+                    Player.statMana += manaInt;
+                    if (Player.statMana > Player.statManaMax2) //respect the cap so it doesn't spill over for a moment
+                    {
+                        Player.statMana = Player.statManaMax2;
+                    }
+                    RestorationTimer -= manaInt;
                 }
             }
 

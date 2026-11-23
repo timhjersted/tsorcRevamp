@@ -14,7 +14,7 @@ public class SentientTorso : ModItem
 {
     public int DamageTaken;
     public float Level = 0;
-    public const float Divisor = 150f;
+    public const float Divisor = 165f;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
     public override void SetStaticDefaults()

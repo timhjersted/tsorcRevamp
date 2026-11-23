@@ -14,7 +14,7 @@ public class SentientLegs : ModItem
 {
     public float DistanceTraveled;
     public float Level = 0;
-    public const float Divisor = 2000f;
+    public const float Divisor = 4000f;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
     public override void SetStaticDefaults()

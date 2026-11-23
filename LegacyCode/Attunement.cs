@@ -27,6 +27,7 @@ namespace tsorcRevamp.LegacyCode
     /// falloff, same animated stack icon) but with its own counter so the two never share a tooltip or
     /// pay a hybrid build twice for one stack. The payout lives in tsorcRevampPlayer.ModifyManaCost.
     /// </summary>
+    [Autoload(false)]
     public class AttunementBuff : ModBuff
     {
         public const int FrameCount = 10;
@@ -113,6 +114,7 @@ namespace tsorcRevamp.LegacyCode
         }
     }
 
+    [Autoload(false)]
     public class AttunementPlayer : ModPlayer
     {
         public bool Enabled = false;
@@ -150,6 +152,7 @@ namespace tsorcRevamp.LegacyCode
         }
     }
 
+    [Autoload(false)]
     public class AttunementItem : GlobalItem
     {
         public override void OnHitNPC(Item item, Player player, NPC target, NPC.HitInfo hit, int damageDone)

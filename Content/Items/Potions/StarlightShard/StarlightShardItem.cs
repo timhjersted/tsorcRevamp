@@ -105,14 +105,8 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
                         dust.noGravity = true;
                     }
                 }
-                if (player.manaRegenBuff)
-                {
-                    player.AddBuff(ModContent.BuffType<StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1.5f + player.manaRegenDelayBonus)));
-                }
-                else
-                {
-                    player.AddBuff(ModContent.BuffType<StarlightShardRestoration>(), (int)(BaseDuration * 60f * (1f + player.manaRegenDelayBonus)));
-                }
+                
+                player.AddBuff(ModContent.BuffType<StarlightShardRestoration>(), (int)(BaseDuration * ((player.manaRegenBuff ? 1.5f : 1f) + player.manaRegenDelayBonus) * 60f));
 
                 //if (Main.mouseItem == null) // Not sure why but seems like it's not null if you're using something
                 //{
@@ -159,7 +153,7 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.LesserManaPotion, 50);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 100);
             recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe.AddTile(TileID.Bottles);
 
@@ -167,7 +161,7 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.ManaPotion, 40);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe2.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 80);
             recipe2.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe2.AddTile(TileID.Bottles);
 
@@ -175,7 +169,7 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 
             Recipe recipe3 = CreateRecipe();
             recipe3.AddIngredient(ItemID.GreaterManaPotion, 30);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 60);
             recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
@@ -183,15 +177,15 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 
             Recipe recipe4 = CreateRecipe();
             recipe4.AddIngredient(ItemID.SuperManaPotion, 24);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe4.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 40);
             recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe4.AddTile(TileID.Bottles);
 
             recipe4.Register();
 
             Recipe recipe5 = CreateRecipe();
-            recipe5.AddIngredient(ModContent.ItemType<SupremeManaPotion>(), 7);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe5.AddIngredient(ModContent.ItemType<SupremeManaPotion>(), 1); //these potions already cost souls to make xd
+            recipe5.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe5.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe5.AddTile(TileID.Bottles);
 
@@ -199,7 +193,7 @@ namespace tsorcRevamp.Content.Items.Potions.StarlightShard
 
             Recipe recipe6 = CreateRecipe();
             recipe6.AddIngredient(ItemID.ManaCrystal, 2);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe6.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 20);
             recipe6.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe6.AddTile(TileID.Bottles);
 

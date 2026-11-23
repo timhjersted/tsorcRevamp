@@ -14,7 +14,7 @@ public class SentientHead : ModItem
 {
     public int DamageDealt;
     public float Level = 0;
-    public const float Divisor = 1000;
+    public const float Divisor = 1500;
     
     public const float BaseRegen = 6;
     public const float BaseDmg = 9;
