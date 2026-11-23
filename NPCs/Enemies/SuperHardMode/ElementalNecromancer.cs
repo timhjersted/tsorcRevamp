@@ -234,7 +234,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetStaticDefaults()
         {
             // Keeps the old sheet's slicing for the bestiary/banner; the puppet Player draws the body in game.
-            Main.npcFrameCount[NPC.type] = 15;
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
         }
@@ -1168,10 +1168,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     SoundEngine.PlaySound(SoundID.Item15 with { Volume = 0.5f, Pitch = -0.8f }, ground);
                 }
 
-                int count = 1;
+                int count = 2;
                 if (markFadeTimer == 0 && ticksToRise <= 20)
                 {
-                    count = 3;
+                    count = 5;
                 }
 
                 for (int j = 0; j < count; j++)
@@ -1181,10 +1181,28 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         continue;
                     }
 
-                    Vector2 position = new Vector2(ground.X - 24f + Main.rand.NextFloat(48f), ground.Y - 2f);
-                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(-3f, -1f));
-                    Dust rising = Dust.NewDustPerfect(position, DustID.PurpleTorch, velocity, 80, default, 1.2f);
+                    int dustType = DustID.PurpleTorch;
+                    if (j % 3 == 1)
+                    {
+                        dustType = DustID.BlueTorch;
+                    }
+                    else if (j % 4 == 3)
+                    {
+                        dustType = DustID.Shadowflame;
+                    }
+
+                    Vector2 position = new Vector2(ground.X - 26f + Main.rand.NextFloat(52f), ground.Y - 2f);
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.45f, 0.45f), Main.rand.NextFloat(-3.6f, -1.2f));
+                    Dust rising = Dust.NewDustPerfect(position, dustType, velocity, 80, default, Main.rand.NextFloat(0.95f, 1.35f));
                     rising.noGravity = true;
+                }
+
+                if (markFadeTimer == 0 && ticksToRise <= 20 && Main.rand.NextFloat() <= strength)
+                {
+                    Vector2 sparkPos = new Vector2(ground.X - 20f + Main.rand.NextFloat(40f), ground.Y - 2f);
+                    Vector2 sparkVel = new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-6f, -3.2f));
+                    Dust spark = Dust.NewDustPerfect(sparkPos, DustID.PurpleTorch, sparkVel, 50, default, Main.rand.NextFloat(0.65f, 0.95f));
+                    spark.noGravity = true;
                 }
 
                 Lighting.AddLight(ground - new Vector2(0f, 8f), 0.3f * strength, 0.12f * strength, 0.5f * strength);

@@ -27,6 +27,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
         protected override string InvaderTitle => "Dread Wraith";
 
+        protected override int HealAnimationTicks => 170;
+        protected override int HealCooldownTicks => 9 * 60;
+
         protected override Color PuppetSkinColor => new Color(190, 195, 200); // pale, corpse-grey skin
         protected override Color PuppetEyeColor => new Color(150, 60, 210);   // glowing violet eyes
 

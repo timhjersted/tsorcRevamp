@@ -99,7 +99,7 @@ namespace tsorcRevamp.NPCs.Invaders
         public override void SetStaticDefaults()
         {
             // GreatRedKnight.png (16 frames) stays as the bestiary / placeholder sprite; the puppet draws the body.
-            Main.npcFrameCount[NPC.type] = 16;
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.TrailCacheLength[NPC.type] = 3;
             NPCID.Sets.TrailingMode[NPC.type] = 0;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.OnFire] = true;

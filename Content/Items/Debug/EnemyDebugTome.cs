@@ -193,6 +193,8 @@ namespace tsorcRevamp.Content.Items.Debug
                         // Grab it: re-attach to cursor and remove the placed instance.
                         enemyUI.SelectedNpcType = npcToGrab.NpcID;
                         enemyUI.QuickAddMode = false;
+                        // Wait for mouse release so UpdatePlacementInput in the same tick cannot immediately drop it back down.
+                        JustClosedUI = true;
                         ev.Npcs.Remove(npcToGrab);
                         configUI.RefreshList();
                         tsorcScriptedEvents.SaveDynamicEvents();

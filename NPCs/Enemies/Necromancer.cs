@@ -168,8 +168,8 @@ namespace tsorcRevamp.NPCs.Enemies
 
         public override void SetStaticDefaults()
         {
-            // Keeps the old sheet's slicing for the bestiary/banner; the puppet Player draws the body in game.
-            Main.npcFrameCount[NPC.type] = 15;
+            // Single-frame exported puppet portrait (34x46): keeps mouse-over hover box full body height instead of 3px at the feet.
+            Main.npcFrameCount[NPC.type] = 1;
         }
 
         public override void SetDefaults()
@@ -779,11 +779,6 @@ namespace tsorcRevamp.NPCs.Enemies
             Vector2 palm = Palm;
             if (!Main.dedServ && AttackTimer <= FanTelegraphTicks)
             {
-                if (AttackTimer == 1)
-                {
-                    SoundEngine.PlaySound(SoundID.Item2 with { Volume = 0.6f, Pitch = -0.3f }, NPC.Center); //dry rattle
-                }
-
                 //WHITE: bone dust rattling around the cocked palm; the flared off hand sheds a few chips too
                 if (Main.rand.NextBool(2))
                 {
@@ -814,7 +809,7 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (!Main.dedServ)
                 {
-                    SoundEngine.PlaySound(SoundID.Item2 with { Volume = 0.7f, Pitch = 0.2f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.7f, Pitch = -0.1f }, NPC.Center);
                 }
             }
         }

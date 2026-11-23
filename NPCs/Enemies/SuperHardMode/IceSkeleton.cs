@@ -38,6 +38,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public const int TwinThrustExpertDamage = 170;
         public const int HaftSweepExpertDamage = 150;
         public const int LungeExpertDamage = 230;
+        public const int LeapStrikeExpertDamage = 210;
         public const int RimeShardExpertDamage = 150;
         public const int ContactExpertDamage = 40;
 
@@ -87,7 +88,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         static readonly Color Frost = new Color(150, 205, 255);
 
-        public enum Move : byte { None, GuardThrust, TwinThrust, HaftSweep, Lunge, Lance }
+        public enum Move : byte { None, GuardThrust, TwinThrust, HaftSweep, Lunge, Lance, LeapStrike }
 
         // ── Pike Guard -> Guard Thrust (reaction, outside the bag; ticks from the action's start) ─────────────────
         //   Trigger: target 64-128px in front, |dy| < 48, 6 consecutive server ticks, off its 180t cooldown.
@@ -129,8 +130,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const float SweepPushIn = 12f;
 
         // ── Hoarfrost Lunge (1 bag card, ranged start 140-280px with a ground lane; cooldown 300t) ─────────────
-        //   Tell 36: spear levelled low, drawn back over 20t; lane locks t24 and faint blue motes rise along the
-        //   floor lane over t24-36 (one per 3t); ice glint at the point for the last 12t.
+        //   Tell 36: spear levelled low, drawn back over 20t; lane locks t24 and a rapid frost-dust flash races
+        //   along the floor from the feet to 5 tiles (80px) out over t24-36, snapping bright at the moment the dash
+        //   launches; ice glint at the point for the last 12t.
         //   Dash t36: lane re-solved at release (to 48px past the target, cut short at walls and at drops deeper than 3
         //   tiles). ShapedSpeed 4/6/10 k3 over 20t (304px -> peak 29px/t). The spear is live the whole dash: [36, 56).
         //   Hyper-armor during the dash only. Recovery 44: slides to a stop with the spear out 20t, then retracts.
@@ -139,9 +141,42 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         const int LungeLock = 24;
         public const int LungeDashTicks = 20;
         public const int LungeTotal = 36 + 20 + 44;
+        const float LungeTellLength = 80f;
         const float LungeOvershoot = 48f;
         const float LungeMinimumTravel = 64f;
         const float LungeMaxDrop = 48f;
+
+        // ── Glacial Leap (1 bag card, catch-up range 180-480px, |dy| <= 160px, ceiling clear; cooldown 480t = 8s) ─
+        //   Poses:    start -1.65 rad -> end +1.25 rad (envelope 166 deg; spear-geometry limit so the 132px tip
+        //             slams into the floor rather than burying vertically underground).
+        //   Tell:     26t on ground (LeapTell = 26). Spear frosts in (t0-8) and raises overhead to LeapCarryRotation
+        //             (-1.65 rad, grip 0.58) over t0-20; facing tracks until t20 then locks; frost gathers at feet & tip.
+        //   Flight:   t26 ballistic launch solved on server to land 40px short of target (vx clamped [3.5, 12.5] px/t,
+        //             apex rise 56-176px clearing target ledge + 40px, predicted airtime ~38-66t). Holds cocked pose.
+        //   Strike:   Triggered past apex when within 145px of target, within 10t of predicted landing, or on landing.
+        //             Weighted 7/0/23 k7 -> peak 29.6 deg/t @ strike t7; grip extends 0.58 -> ExtendedGrip over 9t.
+        //   Live:     armed while speed >= 30% peak -> 7 + 23*1.204/7 = 11t (< 22: cleanly rollable).
+        //   Open:     19t harmless tail + 34t recovery = 53t punish window (holds slam 8t, eases to dropped guard 16t).
+        //   Reach:    proven at close 180px (vx 3.6), typical 320px (vx 6.6), max 480px (vx 9.3), +7t ledge (vx 5.8).
+        //   Poise:    hyper-armor during flight and live strike; tell and recovery stay poise-breakable.
+        public const int LeapTell = 26;
+        const int LeapLock = 20;
+        const int LeapMaxFlightTicks = 80;
+        public const int LeapStrikeTicks = 30;
+        public const int LeapLiveTicks = 11;
+        public const int LeapRecoveryTicks = 34;
+        const int LeapCooldownTicks = 480;
+        public const float LeapCarryRotation = -1.65f;
+        public const float LeapSlamRotation = 1.25f;
+        public const float LeapCarryGrip = 0.58f;
+        const float LeapMinRange = 180f;
+        const float LeapMaxRange = 480f;
+        const float LeapMaxVerticalGap = 160f;
+        const float LeapStandoff = 40f;
+        const float LeapStrikeRange = 145f;
+        const float LeapGravity = 0.3f;
+        const float LeapMinVx = 3.5f;
+        const float LeapMaxVx = 12.5f;
 
         // ── Lance of Rime (1 bag card, 200-520px with line of sight) ──────────────────────────────────────────
         //   Tell 40: spear drawn back to the shoulder (grip slides to 72px); an ice shard forms AT the point and grows
@@ -179,6 +214,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         Vector2 _lanceDirection = Vector2.UnitX;
         bool _shardReleased;
         int _restTicks;
+        Vector2 _leapVelocity;
+        int _leapPredictedFlight;
+        int _leapStrikeStart = -1;
 
         // ── Server-only selection state (never synced; clients follow the chosen action) ───────────────────────
         AttackBag<Move> _bag;
@@ -200,6 +238,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         float _dissolveRotation = GuardDropRotation;
         float _dissolveGrip = CarryGrip;
         bool _drawingSpearFade;
+        bool _leapImpactPlayed;
 
         bool Server => Main.netMode != NetmodeID.MultiplayerClient;
         bool Neutral => Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll || Phase == AttackPhase.ClosingDistance;
@@ -292,16 +331,17 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override bool UseCompositeArmForAdditionalPhase => Phase == AttackPhase.Custom;
         protected override bool SuppressSlashVFXForCurrentPhase => Phase == AttackPhase.Custom;
 
-        protected override float TopSpeed => 1.8f;
-        protected override float Acceleration => 0.06f;
+        protected override float TopSpeed => 2.9f;
+        protected override float Acceleration => 0.11f;
         protected override float PuppetJumpPower => 9f;
         protected override float PuppetJumpBoost => 5f;
 
         protected override bool HasUnblockableBodyAura => SpearOut && _move == Move.Lunge && _lungeFinisher
             && !_abortRecovery && CustomElapsed < LungeTell;
 
-        /// <summary>True on the ticks the action itself drives the body: thrust and sweep push-ins, and the lunge from
-        /// release through its slide. Pure timeline, so it does not depend on DoCustomTick having run first.</summary>
+        /// <summary>True on the ticks the action itself drives the body: thrust and sweep push-ins, the lunge from
+        /// release through its slide, and the leap from takeoff through landing. Pure timeline, so it does not depend
+        /// on DoCustomTick having run first.</summary>
         bool ActionOwnsMovement
         {
             get
@@ -326,6 +366,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         return elapsed >= SweepTell && elapsed < SweepTell + SweepTicks;
                     case Move.Lunge:
                         return elapsed >= LungeTell;
+                    case Move.LeapStrike:
+                        return elapsed >= LeapTell;
                     default:
                         return false;
                 }
@@ -334,9 +376,33 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         protected override bool SlowDownDuringCustom => !ActionOwnsMovement;
 
-        // Hyper-armor only while the lunge is travelling; tells, thrusts and recoveries stay poise-breakable.
-        protected override bool CustomAttackCommitted => SpearOut && _move == Move.Lunge && !_abortRecovery
-            && CustomElapsed >= LungeTell && CustomElapsed < LungeTell + LungeDashTicks;
+        // Hyper-armor while the lunge is travelling, or during the leap's flight and live overhead plunge; tells,
+        // thrusts and recoveries stay poise-breakable.
+        protected override bool CustomAttackCommitted
+        {
+            get
+            {
+                if (!SpearOut || _abortRecovery)
+                {
+                    return false;
+                }
+
+                int elapsed = CustomElapsed;
+                if (_move == Move.Lunge)
+                {
+                    return elapsed >= LungeTell && elapsed < LungeTell + LungeDashTicks;
+                }
+
+                if (_move == Move.LeapStrike)
+                {
+                    bool launched = elapsed >= LeapTell;
+                    bool stillLive = _leapStrikeStart < 0 || elapsed < _leapStrikeStart + LeapLiveTicks;
+                    return launched && stillLive;
+                }
+
+                return false;
+            }
+        }
 
         protected override float? CustomWeaponRotation
         {
@@ -363,8 +429,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             return _dissolveGrip;
         }
 
-        // Thrusts and the lunge connect with the ice head only (38px back from the drawn point). The sweep is a haft
-        // swing: everything from 8px out of the hand to the point.
+        // Thrusts and the lunge connect with the ice head only (38px back from the drawn point). The sweep and the
+        // leaping overhead cleave swing the whole shaft, so they arm from just outside the hand to the point.
         protected override void ModifyFrontBladeCapsule(ref Vector2 origin, ref Vector2 tip)
         {
             Vector2 point = PuppetSpearTipPosition;
@@ -373,6 +439,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (_move == Move.HaftSweep)
             {
                 origin += shaftDirection * 8f;
+            }
+            else if (_move == Move.LeapStrike)
+            {
+                origin += shaftDirection * 16f;
             }
             else
             {
@@ -567,6 +637,37 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
                     return;
                 }
+
+                case Move.LeapStrike:
+                {
+                    if (elapsed < LeapTell)
+                    {
+                        rotation = Smooth(LevelRotation, LeapCarryRotation, elapsed, 20f);
+                        grip = Smooth(CarryGrip, LeapCarryGrip, elapsed, 20f);
+                        return;
+                    }
+
+                    if (_leapStrikeStart < 0 || elapsed < _leapStrikeStart)
+                    {
+                        rotation = LeapCarryRotation;
+                        grip = LeapCarryGrip;
+                        return;
+                    }
+
+                    int strike = elapsed - _leapStrikeStart;
+                    if (strike < LeapStrikeTicks)
+                    {
+                        rotation = SwingEase.ApplyWeighted(LeapCarryRotation, LeapSlamRotation, strike, LeapStrikeTicks, 7, 23, 7f);
+                        grip = Smooth(LeapCarryGrip, ExtendedGrip, strike, 9f);
+                        return;
+                    }
+
+                    int recovery = strike - LeapStrikeTicks;
+                    // Hold the planted slam for 8t, then ease back to the dropped guard and carry grip over 16t.
+                    rotation = Smooth(LeapSlamRotation, GuardDropRotation, recovery - 8, 16f);
+                    grip = Smooth(ExtendedGrip, CarryGrip, recovery - 8, 16f);
+                    return;
+                }
             }
         }
 
@@ -732,6 +833,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Move.TwinThrust => "Twin Thrust (" + stage + ")",
                     Move.HaftSweep => "Haft Sweep (" + stage + ")",
                     Move.Lunge => "Hoarfrost Lunge (" + stage + ")",
+                    Move.LeapStrike => "Glacial Leap (" + stage + ")",
                     _ => "Lance of Rime (" + stage + ")",
                 };
             }
@@ -846,7 +948,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         /// <summary>Server, before base.AI: cooldowns, the post-reform hold, and the next pick.</summary>
         void ServerPreTick(tsorcRevampGlobalNPC globalNPC)
         {
-            foreach (Move move in new[] { Move.GuardThrust, Move.TwinThrust, Move.HaftSweep, Move.Lunge, Move.Lance })
+            foreach (Move move in new[] { Move.GuardThrust, Move.TwinThrust, Move.HaftSweep, Move.Lunge, Move.Lance, Move.LeapStrike })
             {
                 if (_cooldowns.TryGetValue(move, out int remaining) && remaining > 0)
                 {
@@ -976,6 +1078,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 cards.Add(Move.HaftSweep);
                 cards.Add(Move.Lunge);
                 cards.Add(Move.Lance);
+                cards.Add(Move.LeapStrike);
             });
 
             bool Eligible(Move move)
@@ -996,6 +1099,18 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         return distance >= 140f && distance <= 280f && SolveLungeLane(target) >= LungeMinimumTravel;
                     case Move.Lance:
                         return distance >= 200f && distance <= 520f;
+                    case Move.LeapStrike:
+                    {
+                        bool inRange = distance >= LeapMinRange && distance <= LeapMaxRange && verticalGap <= LeapMaxVerticalGap;
+                        if (!inRange)
+                        {
+                            return false;
+                        }
+
+                        // Require 3 tiles of overhead headroom so the skeleton does not leap straight into a low ceiling.
+                        Vector2 headroomBox = NPC.position + new Vector2(0f, -48f);
+                        return !Collision.SolidCollision(headroomBox, NPC.width, 48);
+                    }
                     default:
                         return false;
                 }
@@ -1033,6 +1148,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _lungeDistance = 0f;
             _lungeFinisher = finisher;
             _shardReleased = false;
+            _leapVelocity = Vector2.Zero;
+            _leapPredictedFlight = 44;
+            _leapStrikeStart = -1;
+            _leapImpactPlayed = false;
             _abortRecovery = false;
             _customLive = false;
             _guardZoneTicks = 0;
@@ -1044,6 +1163,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Move.TwinThrust => TwinTotal,
                 Move.HaftSweep => SweepTotal,
                 Move.Lunge => LungeTotal,
+                Move.LeapStrike => LeapTell + LeapMaxFlightTicks + LeapStrikeTicks + LeapRecoveryTicks,
                 _ => LanceTotal,
             };
 
@@ -1079,6 +1199,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Move.HaftSweep => 180,
                 Move.Lunge => 300,
                 Move.Lance => 240,
+                Move.LeapStrike => LeapCooldownTicks,
                 _ => 0,
             };
 
@@ -1172,6 +1293,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     tracking = elapsed < LanceLock;
                     pitchLimit = LancePitchLimit;
                     break;
+                case Move.LeapStrike:
+                    tracking = elapsed < LeapLock;
+                    pitchLimit = 0f;
+                    break;
             }
 
             if (tracking && target != null)
@@ -1194,6 +1319,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool lockTick = elapsed == GuardLock && _move == Move.GuardThrust;
             lockTick |= _move == Move.TwinThrust && (elapsed == TwinLock || elapsed == TwinSecondLock);
             lockTick |= _move == Move.HaftSweep && elapsed == 12;
+            lockTick |= _move == Move.LeapStrike && elapsed == LeapLock;
             if (lockTick && Server)
             {
                 Snapshot();
@@ -1304,6 +1430,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     TickLunge(elapsed, target);
                     break;
 
+                case Move.LeapStrike:
+                    TickLeapStrike(elapsed, target);
+                    break;
+
                 case Move.Lance:
                 {
                     if (elapsed == LanceLock && Server)
@@ -1357,6 +1487,31 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         if (elapsed == LanceTell)
                         {
                             SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.8f, Pitch = 0.1f }, NPC.Center);
+
+                            // Muzzle burst at release so the shot clearly snaps free of the spear point.
+                            Vector2 point = PuppetSpearTipPosition;
+                            Vector2 sideways = new Vector2(-_lanceDirection.Y, _lanceDirection.X);
+                            for (int i = 0; i < 12; i++)
+                            {
+                                int dustType = DustID.IceTorch;
+                                if (i % 3 == 0)
+                                {
+                                    dustType = DustID.Frost;
+                                }
+
+                                Vector2 vel = _lanceDirection * Main.rand.NextFloat(2.5f, 6.5f)
+                                    + sideways * Main.rand.NextFloat(-2.2f, 2.2f);
+                                Dust burst = Dust.NewDustPerfect(point, dustType, vel, 30, default, Main.rand.NextFloat(1.0f, 1.45f));
+                                burst.noGravity = true;
+                            }
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                Vector2 vel = _lanceDirection * Main.rand.NextFloat(4f, 8.5f)
+                                    + sideways * Main.rand.NextFloat(-1.8f, 1.8f);
+                                Dust spark = Dust.NewDustPerfect(point, DustID.IceTorch, vel, 0, Color.White, Main.rand.NextFloat(0.65f, 1.0f));
+                                spark.noGravity = true;
+                            }
                         }
                     }
 
@@ -1365,9 +1520,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        /// <summary>Hoarfrost Lunge: lane locked at t24 (faint motes rise along the floor lane), re-solved at the
-        /// t36 release, then a 20t distance-solved dash with the spear live the whole way. A wall the lane check missed
-        /// ends the dash where it is.</summary>
+        /// <summary>Hoarfrost Lunge: lane locked at t24 and a rapid frost-dust flash races along the floor from the
+        /// feet to 5 tiles (80px) out over t24-35, snapping bright as the dash launches at t36. Then a 20t
+        /// distance-solved dash with the spear live the whole way. A wall the lane check missed ends the dash.</summary>
         void TickLunge(int elapsed, Player target)
         {
             if (!Main.dedServ)
@@ -1378,21 +1533,103 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     Glint(PuppetSpearTipPosition);
                 }
 
-                // Lane tell, kept minimal: every 3rd tick from the t24 lock, one faint blue mote rises from a random point
-                // on the floor along the locked dash lane (its feet -> _lungeDistance ahead, synced).
-                bool laneTell = elapsed >= LungeLock && elapsed < LungeTell && _lungeDistance > 0f && elapsed % 3 == 0;
-                if (laneTell)
+                // Rapid floor dust flash from feet to 5 tiles (80px) out over t24-35, completing as the dash launches.
+                if (elapsed >= LungeLock && elapsed < LungeTell)
                 {
-                    float along = Main.rand.NextFloat(_lungeDistance);
-                    Vector2 floorPoint = NPC.Bottom + new Vector2(_lockFacing * along, -2f);
-                    Dust mote = Dust.NewDustPerfect(floorPoint, DustID.IceTorch, new Vector2(0f, -0.4f), 120, default, 0.8f);
-                    mote.noGravity = true;
+                    float tellLength = LungeTellLength;
+                    if (_lungeDistance > 0f && _lungeDistance < tellLength)
+                    {
+                        tellLength = _lungeDistance;
+                    }
+
+                    int flashDuration = LungeTell - LungeLock;
+                    int flashStep = elapsed - LungeLock;
+                    float startDist = tellLength * (flashStep / (float)flashDuration);
+                    float endDist = tellLength * ((flashStep + 1) / (float)flashDuration);
+
+                    if (elapsed == LungeLock)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item28 with { Volume = 0.45f, Pitch = 0.55f }, NPC.Bottom);
+                    }
+
+                    // Body of the sweeping frost line across this tick's newly-reached floor segment.
+                    for (int i = 0; i < 4; i++)
+                    {
+                        float along = MathHelper.Lerp(startDist, endDist, (i + Main.rand.NextFloat(0.15f, 0.85f)) / 4f);
+                        float sampleX = NPC.Bottom.X + _lockFacing * along;
+                        float floorY = FloorYAt(sampleX);
+                        Vector2 spot = new Vector2(sampleX, floorY - Main.rand.NextFloat(2f, 5f));
+                        int dustType = DustID.IceTorch;
+                        if (i % 2 == 0)
+                        {
+                            dustType = DustID.Frost;
+                        }
+
+                        Vector2 vel = new Vector2(_lockFacing * Main.rand.NextFloat(0.8f, 2.0f), Main.rand.NextFloat(-1.6f, -0.5f));
+                        Dust line = Dust.NewDustPerfect(spot, dustType, vel, 35, default, Main.rand.NextFloat(1.05f, 1.45f));
+                        line.noGravity = true;
+                    }
+
+                    // Bright leading flash head racing forward so the eye tracks the streak cleanly.
+                    float headX = NPC.Bottom.X + _lockFacing * endDist;
+                    Vector2 headSpot = new Vector2(headX, FloorYAt(headX) - 3f);
+                    Lighting.AddLight(headSpot, 0.35f, 0.65f, 0.95f);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Vector2 vel = new Vector2(_lockFacing * Main.rand.NextFloat(1.5f, 3.0f), Main.rand.NextFloat(-1.4f, -0.3f));
+                        Dust head = Dust.NewDustPerfect(headSpot + Main.rand.NextVector2Circular(3f, 2f), DustID.IceTorch, vel, 0, Color.White, Main.rand.NextFloat(1.25f, 1.65f));
+                        head.noGravity = true;
+                    }
+
+                    Dust chip = Dust.NewDustPerfect(headSpot, DustID.BlueCrystalShard, new Vector2(_lockFacing * 1.4f, -1.8f), 20, default, Main.rand.NextFloat(0.75f, 1.05f));
+                    chip.noGravity = true;
+
+                    // Final tick before launch: crisp completion flash along the full 5-tile floor line.
+                    if (elapsed == LungeTell - 1)
+                    {
+                        for (int i = 0; i < 16; i++)
+                        {
+                            float along = tellLength * (i / 15f);
+                            float sampleX = NPC.Bottom.X + _lockFacing * along;
+                            Vector2 spot = new Vector2(sampleX, FloorYAt(sampleX) - 3f);
+                            Color tint = default;
+                            if (i % 2 == 0)
+                            {
+                                tint = Color.White;
+                            }
+
+                            Vector2 vel = new Vector2(_lockFacing * Main.rand.NextFloat(1.0f, 2.4f), Main.rand.NextFloat(-2.6f, -0.8f));
+                            Dust flash = Dust.NewDustPerfect(spot, DustID.IceTorch, vel, 10, tint, Main.rand.NextFloat(1.1f, 1.55f));
+                            flash.noGravity = true;
+
+                            if (i % 3 == 0)
+                            {
+                                Dust glintChip = Dust.NewDustPerfect(spot, DustID.BlueCrystalShard, new Vector2(_lockFacing * 1.2f, Main.rand.NextFloat(-3.0f, -1.4f)), 20, default, Main.rand.NextFloat(0.8f, 1.1f));
+                                glintChip.noGravity = false;
+                            }
+                        }
+                    }
                 }
 
                 if (elapsed == LungeTell)
                 {
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.5f, Pitch = 0.5f }, NPC.Center);
                     SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = -0.2f }, NPC.Center);
+
+                    // Launch kick-off burst behind the feet as the dash erupts forward.
+                    for (int i = 0; i < 14; i++)
+                    {
+                        int dustType = DustID.IceTorch;
+                        if (i % 3 == 0)
+                        {
+                            dustType = DustID.Frost;
+                        }
+
+                        Vector2 vel = new Vector2(-_lockFacing * Main.rand.NextFloat(1.8f, 5.2f), Main.rand.NextFloat(-2.4f, -0.3f));
+                        Dust kick = Dust.NewDustPerfect(NPC.Bottom + new Vector2(0f, -4f), dustType, vel, 30, default, Main.rand.NextFloat(1.05f, 1.5f));
+                        kick.noGravity = true;
+                    }
                 }
             }
 
@@ -1436,13 +1673,32 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             if (!Main.dedServ)
             {
-                // Frost glitters along the floor behind it; the motes linger ~30t and fade on their own.
-                Vector2 feet = NPC.Bottom + new Vector2(0f, -2f);
-                for (int i = 0; i < 2; i++)
+                // Layered hoarfrost wake along the floor behind the dash: body frost, crisp glints, and cold mist.
+                Vector2 feet = NPC.Bottom + new Vector2(0f, -3f);
+                for (int i = 0; i < 4; i++)
                 {
-                    Vector2 spot = feet + new Vector2(-_lockFacing * Main.rand.NextFloat(0f, speed), 0f);
-                    Dust sparkle = Dust.NewDustPerfect(spot, DustID.IceTorch, Vector2.Zero, 60, default, 1.1f);
-                    sparkle.noGravity = true;
+                    float frac = (i + Main.rand.NextFloat()) / 4f;
+                    Vector2 spot = feet + new Vector2(-_lockFacing * speed * frac, Main.rand.NextFloat(-4f, 1f));
+                    int dustType = DustID.IceTorch;
+                    if (i % 2 == 0)
+                    {
+                        dustType = DustID.Frost;
+                    }
+
+                    Vector2 vel = new Vector2(-_lockFacing * Main.rand.NextFloat(0.6f, 2.0f), Main.rand.NextFloat(-1.4f, -0.2f));
+                    Dust wake = Dust.NewDustPerfect(spot, dustType, vel, 45, default, Main.rand.NextFloat(1.0f, 1.45f));
+                    wake.noGravity = true;
+                }
+
+                Vector2 tipSpot = PuppetSpearTipPosition;
+                Dust tipSpark = Dust.NewDustPerfect(tipSpot, DustID.IceTorch, new Vector2(-_lockFacing * 1.6f, Main.rand.NextFloat(-0.8f, 0.8f)), 0, Color.White, Main.rand.NextFloat(0.85f, 1.2f));
+                tipSpark.noGravity = true;
+
+                if (dash % 2 == 0)
+                {
+                    Dust mist = Dust.NewDustPerfect(feet, DustID.Cloud, new Vector2(-_lockFacing * 0.8f, -0.6f), 155, new Color(175, 225, 255), Main.rand.NextFloat(0.55f, 0.75f));
+                    mist.fadeIn = Main.rand.NextFloat(1.3f, 1.6f);
+                    mist.noGravity = true;
                 }
             }
 
@@ -1456,6 +1712,263 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     AbortIntoRecovery(36);
                 }
             }
+        }
+
+        /// <summary>Glacial Leap: 26t grounded tell raising the spear overhead, ballistic leap solved on server to land
+        /// 40px short of the target, then an in-air or landing-timed overhead spear plunge (11t live, 34t recovery).</summary>
+        void TickLeapStrike(int elapsed, Player target)
+        {
+            if (elapsed == 0)
+            {
+                _leapImpactPlayed = false;
+            }
+
+            if (!Main.dedServ && elapsed < LeapTell)
+            {
+                // Tell dust: frost gathers at the feet and glints at the raised spear tip over the final 14t.
+                if (elapsed >= 12)
+                {
+                    Vector2 feet = NPC.Bottom + new Vector2(Main.rand.NextFloat(-14f, 14f), -2f);
+                    Dust gather = Dust.NewDustPerfect(feet, DustID.Frost, new Vector2(0f, Main.rand.NextFloat(-1.8f, -0.6f)), 40, default, Main.rand.NextFloat(0.95f, 1.35f));
+                    gather.noGravity = true;
+
+                    if (elapsed % 2 == 0)
+                    {
+                        Glint(PuppetSpearTipPosition);
+                    }
+                }
+            }
+
+            if (elapsed < LeapTell)
+            {
+                return;
+            }
+
+            // Takeoff tick: server solves the ballistic velocity so the arc reaches 40px in front of the target.
+            if (elapsed == LeapTell)
+            {
+                if (Server)
+                {
+                    float dx = 280f;
+                    float dy = 0f;
+                    if (target != null)
+                    {
+                        dx = Math.Abs(target.Center.X - NPC.Center.X);
+                        dy = target.Bottom.Y - NPC.Bottom.Y;
+                    }
+
+                    float rangeFactor = MathHelper.Clamp((dx - LeapMinRange) / (LeapMaxRange - LeapMinRange), 0f, 1f);
+                    float baseRise = MathHelper.Lerp(56f, 88f, rangeFactor);
+                    float rise = MathHelper.Clamp(Math.Max(baseRise, -dy + 40f), 56f, 176f);
+                    float launchVy = -(float)Math.Sqrt(2f * LeapGravity * rise);
+                    float timeUp = -launchVy / LeapGravity;
+                    float drop = Math.Max(16f, rise + dy);
+                    float timeDown = (float)Math.Sqrt(2f * drop / LeapGravity);
+                    float airtime = Math.Max(20f, timeUp + timeDown);
+
+                    float travelX = Math.Max(40f, dx - LeapStandoff);
+                    float launchVx = MathHelper.Clamp(travelX / airtime, LeapMinVx, LeapMaxVx);
+
+                    _leapVelocity = new Vector2(_lockFacing * launchVx, launchVy);
+                    _leapPredictedFlight = (int)Math.Round(airtime);
+                    NPC.velocity = _leapVelocity;
+                    Trace("leap-launch");
+                    Snapshot();
+                }
+                else if (_leapVelocity != Vector2.Zero)
+                {
+                    NPC.velocity = _leapVelocity;
+                }
+
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.7f, Pitch = 0.15f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item30 with { Volume = 0.6f, Pitch = 0.2f }, NPC.Bottom);
+
+                    // Takeoff frost ring off the floor.
+                    for (int i = 0; i < 16; i++)
+                    {
+                        float spread = Main.rand.NextFloat(-14f, 14f);
+                        Vector2 vel = new Vector2(spread * 0.22f - _lockFacing * 1.4f, Main.rand.NextFloat(-2.6f, -0.5f));
+                        int dustType = DustID.IceTorch;
+                        if (i % 2 == 0)
+                        {
+                            dustType = DustID.Frost;
+                        }
+
+                        Dust burst = Dust.NewDustPerfect(NPC.Bottom + new Vector2(spread, -2f), dustType, vel, 35, default, Main.rand.NextFloat(1.0f, 1.45f));
+                        burst.noGravity = true;
+                    }
+                }
+
+                return;
+            }
+
+            int flightElapsed = elapsed - LeapTell;
+
+            // Airborne flight before the downswing starts: carry solved horizontal speed while gravity arcs Y.
+            if (_leapStrikeStart < 0)
+            {
+                if (!NPC.collideX && _leapVelocity.X != 0f)
+                {
+                    NPC.velocity.X = _leapVelocity.X;
+                }
+
+                if (!Main.dedServ)
+                {
+                    Vector2 tip = PuppetSpearTipPosition;
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Dust trail = Dust.NewDustPerfect(tip + Main.rand.NextVector2Circular(4f, 4f), DustID.IceTorch, -NPC.velocity * 0.18f, 45, default, Main.rand.NextFloat(0.9f, 1.3f));
+                        trail.noGravity = true;
+                    }
+
+                    Dust footFrost = Dust.NewDustPerfect(NPC.Bottom + Main.rand.NextVector2Circular(6f, 3f), DustID.Frost, -NPC.velocity * 0.12f, 55, default, Main.rand.NextFloat(0.85f, 1.2f));
+                    footFrost.noGravity = true;
+                }
+
+                if (Server && flightElapsed >= 6)
+                {
+                    bool descending = NPC.velocity.Y >= 0f;
+                    bool targetClose = target != null && NPC.Distance(target.Center) <= LeapStrikeRange;
+                    bool nearLanding = flightElapsed >= Math.Max(8, _leapPredictedFlight - 10);
+                    bool touchedGround = NPC.velocity.Y == 0f;
+                    bool maxFlight = flightElapsed >= LeapMaxFlightTicks;
+
+                    if ((descending && (targetClose || nearLanding)) || touchedGround || maxFlight)
+                    {
+                        _leapStrikeStart = elapsed;
+                        int remainingAfterStart = LeapStrikeTicks + LeapRecoveryTicks;
+                        _actionTotal = elapsed + remainingAfterStart;
+                        PhaseTimer = remainingAfterStart;
+                        Trace("leap-strike");
+                        Snapshot();
+                    }
+                }
+
+                return;
+            }
+
+            int strike = elapsed - _leapStrikeStart;
+            bool grounded = NPC.velocity.Y == 0f;
+            if (grounded)
+            {
+                NPC.velocity.X *= 0.80f;
+            }
+            else if (!NPC.collideX && _leapVelocity.X != 0f)
+            {
+                NPC.velocity.X = _leapVelocity.X * 0.85f;
+            }
+
+            bool live = strike >= 0 && strike < LeapLiveTicks;
+            _customLive = live;
+            _customExpertDamage = LeapStrikeExpertDamage;
+
+            if (!Main.dedServ)
+            {
+                if (strike == 0)
+                {
+                    SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.85f, Pitch = -0.15f }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.85f, Pitch = -0.1f }, NPC.Center);
+                }
+
+                if (live)
+                {
+                    Vector2 tip = PuppetSpearTipPosition;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        int dustType = DustID.IceTorch;
+                        if (i == 0)
+                        {
+                            dustType = DustID.Frost;
+                        }
+
+                        Vector2 vel = Main.rand.NextVector2Circular(1.8f, 1.8f);
+                        Dust arc = Dust.NewDustPerfect(tip + Main.rand.NextVector2Circular(5f, 5f), dustType, vel, 30, default, Main.rand.NextFloat(1.05f, 1.45f));
+                        arc.noGravity = true;
+                    }
+
+                    Dust whiteEdge = Dust.NewDustPerfect(tip, DustID.IceTorch, Vector2.Zero, 0, Color.White, Main.rand.NextFloat(0.8f, 1.15f));
+                    whiteEdge.noGravity = true;
+                }
+
+                // Ground-slam frost burst when the spear finishes its plunge (peak impact at t8 or on touchdown).
+                if (!_leapImpactPlayed && (strike == 8 || (grounded && strike >= 6)))
+                {
+                    _leapImpactPlayed = true;
+                    Vector2 impactSpot = PuppetSpearTipPosition;
+                    impactSpot.Y = Math.Min(impactSpot.Y, FloorYAt(impactSpot.X) - 2f);
+                    SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.75f, Pitch = -0.15f }, impactSpot);
+
+                    // Midground body frost burst.
+                    for (int i = 0; i < 22; i++)
+                    {
+                        int dustType = DustID.IceTorch;
+                        if (i % 2 == 0)
+                        {
+                            dustType = DustID.Frost;
+                        }
+
+                        Vector2 vel = new Vector2(Main.rand.NextFloat(-5.2f, 5.2f), Main.rand.NextFloat(-4.2f, -0.5f));
+                        Dust body = Dust.NewDustPerfect(impactSpot + Main.rand.NextVector2Circular(8f, 4f), dustType, vel, 35, default, Main.rand.NextFloat(1.05f, 1.55f));
+                        body.noGravity = true;
+                    }
+
+                    // Foreground fast ice shards & white glints.
+                    for (int i = 0; i < 12; i++)
+                    {
+                        int dustType = DustID.BlueCrystalShard;
+                        Color tint = default;
+                        bool weightless = false;
+                        if (i % 2 == 0)
+                        {
+                            dustType = DustID.IceTorch;
+                            tint = Color.White;
+                            weightless = true;
+                        }
+
+                        Vector2 vel = new Vector2(Main.rand.NextFloat(-6.5f, 6.5f), Main.rand.NextFloat(-5.5f, -1.5f));
+                        Dust spark = Dust.NewDustPerfect(impactSpot, dustType, vel, 0, tint, Main.rand.NextFloat(0.65f, 1.0f));
+                        spark.noGravity = weightless;
+                    }
+
+                    // Background billowing cold vapor that outlives the flash.
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 vel = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), Main.rand.NextFloat(-1.4f, -0.3f));
+                        Dust mist = Dust.NewDustPerfect(impactSpot + Main.rand.NextVector2Circular(10f, 3f), DustID.Cloud, vel, 150, new Color(175, 225, 255), Main.rand.NextFloat(0.55f, 0.8f));
+                        mist.fadeIn = Main.rand.NextFloat(1.35f, 1.7f);
+                        mist.noGravity = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary>Client visual helper: returns the top-of-floor Y near NPC.Bottom.Y at <paramref name="worldX"/>
+        /// (searching 2 tiles up to 3 tiles down) so floor tells and slam bursts hug uneven terrain.</summary>
+        float FloorYAt(float worldX)
+        {
+            int tileX = (int)(worldX / 16f);
+            int baseTileY = (int)(NPC.Bottom.Y / 16f);
+            for (int deltaY = -2; deltaY <= 3; deltaY++)
+            {
+                int checkY = baseTileY + deltaY;
+                Tile tile = Framing.GetTileSafely(tileX, checkY);
+                bool solid = tile.HasTile && !tile.IsActuated && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
+                if (!solid)
+                {
+                    continue;
+                }
+
+                Tile above = Framing.GetTileSafely(tileX, checkY - 1);
+                bool openAbove = !above.HasTile || above.IsActuated || !Main.tileSolid[above.TileType];
+                if (openAbove)
+                {
+                    return checkY * 16f;
+                }
+            }
+
+            return NPC.Bottom.Y;
         }
 
         /// <summary>
@@ -1542,8 +2055,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // ── Movement ─────────────────────────────────────────────────────────────────────────────────────────
-        // Neutral: a planted advance via SmartFighter4 - 1.4px/t once a target is within 280px (Pike Guard), 1.8px/t
-        // otherwise. No kiting, leaps at the player, quick-steps or teleports. Actions own their push-ins and dash.
+        // Neutral: brisk chase at 2.9px/t via SmartFighter4, stepping down to a steadier 2.1px/t Pike Guard stride
+        // inside 200px. Actions own their push-ins, dash and catch-up leap.
         protected override void RunMovementAI(float speedMult)
         {
             if (ActionOwnsMovement)
@@ -1554,9 +2067,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (Neutral && _restTicks == 0)
             {
                 float walkSpeed = TopSpeed;
-                if (NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) <= 280f)
+                if (NPC.HasValidTarget && NPC.Distance(Main.player[NPC.target].Center) <= 200f)
                 {
-                    walkSpeed = 1.4f;
+                    walkSpeed = 2.1f;
                 }
 
                 walkSpeed *= WalkSpeedVariance;
@@ -1803,6 +2316,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             writer.WriteVector2(_lanceDirection);
             writer.Write(_shardReleased);
             writer.Write(_restTicks);
+            writer.WriteVector2(_leapVelocity);
+            writer.Write(_leapPredictedFlight);
+            writer.Write(_leapStrikeStart);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -1821,6 +2337,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             _lanceDirection = reader.ReadVector2();
             _shardReleased = reader.ReadBoolean();
             _restTicks = reader.ReadInt32();
+            _leapVelocity = reader.ReadVector2();
+            _leapPredictedFlight = reader.ReadInt32();
+            _leapStrikeStart = reader.ReadInt32();
         }
     }
 }

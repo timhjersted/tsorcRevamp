@@ -213,6 +213,17 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
         private bool AltSequence = false;
         private bool SyncAltSequence = false;
 
+        // Cursor hover stabilization: keeps the dragon calm and level when the cursor rests over its body
+        // instead of overshooting and flipping left/right every tick.
+        private const float CursorDeadzoneRadius = 48f;
+        private const float CloseTurnRadius = 150f;
+        private const float CloseFlipThresholdX = 42f;
+        private const float FarFlipThresholdX = 16f;
+        private const int CloseFlipCooldownTicks = 18;
+        private const int FarFlipCooldownTicks = 6;
+        private int facingDirection = 1;
+        private int flipCooldownTicks = 0;
+
         public float maxBreathSize = 2700;
         public float breathSize = 2700;
 
@@ -291,6 +302,11 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
         public override void OnSpawn(IEntitySource source)
         {
             BaseOriginalDamage = Projectile.originalDamage;
+            Player owner = Main.player[Projectile.owner];
+            if (owner != null && owner.active)
+            {
+                facingDirection = owner.direction < 0 ? -1 : 1;
+            }
         }
         public override void OnKill(int timeLeft)
         {
@@ -403,55 +419,105 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
                 Projectile.localNPCHitCooldown = BaseAttackSpeed; 
             }
 
-            Vector2 offset = new Vector2(0, 0); //I have no idea why there was an offset, it just made it feel way jankier to use
+            Vector2 offset = new Vector2(0, 0);
             Vector2 movementVec = player.GetModPlayer<tsorcRevampPlayer>().CursorPosition + offset - Projectile.Center;
-
-
-            //until here
 
             float length = movementVec.Length();
 
-            switch (length)
+            if (flipCooldownTicks > 0)
             {
-                case float gear1 when (gear1 < 30f):
-                    {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.02f;
-                        break;
-                    }
-                case float gear2 when (gear2 >= 30f && gear2 < 150f):
-                    {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.06f;
-                        break;
-                    }
-                case float gear3 when (gear3 >= 150f && gear3 < 500f):
-                    {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.12f;
-                        break;
-                    }
-                case float gear4 when gear4 >= 500f && gear4 < 2000f:
-                    {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.24f;
-                        break;
-                    }
-                case float gear5 when gear5 >= 2000f:
-                    {
-                        Projectile.velocity += (Vector2.Normalize(movementVec) * MathF.Pow((length), 1f / 2f)) * 0.5f;
-                        break;
-                    }
+                flipCooldownTicks--;
+            }
+
+            // Deadzone around the dragon's body prevents overshoot and erratic jitter when hovering over it.
+            // Outside the deadzone, acceleration ramps smoothly up to normal drag-follow gears.
+            if (length > CursorDeadzoneRadius)
+            {
+                Vector2 moveDir = movementVec / length;
+                float sqrtLength = MathF.Pow(length, 0.5f);
+
+                if (length < CloseTurnRadius)
+                {
+                    float closeFactor = (length - CursorDeadzoneRadius) / (CloseTurnRadius - CursorDeadzoneRadius);
+                    Projectile.velocity += moveDir * sqrtLength * (0.06f * closeFactor);
+                }
+                else if (length < 500f)
+                {
+                    Projectile.velocity += moveDir * sqrtLength * 0.12f;
+                }
+                else if (length < 2000f)
+                {
+                    Projectile.velocity += moveDir * sqrtLength * 0.24f;
+                }
+                else
+                {
+                    Projectile.velocity += moveDir * sqrtLength * 0.5f;
+                }
+            }
+            else
+            {
+                Projectile.velocity *= 0.80f;
             }
 
             Projectile.velocity *= 0.84f;
 
             if (Projectile.velocity.Length() < 0.2f)
+            {
                 Projectile.velocity *= 0.01f;
+            }
 
-            Projectile.rotation = movementVec.ToRotation() - (Projectile.velocity.X > 0f ? 0f : MathF.PI);
+            // Facing hysteresis + turnaround cooldown: only flip when the cursor crosses meaningfully past
+            // the centerline outside the deadzone, with a wider threshold and slower turnaround nearby.
+            if (length > CursorDeadzoneRadius && flipCooldownTicks <= 0)
+            {
+                float flipThreshold = length < CloseTurnRadius ? CloseFlipThresholdX : FarFlipThresholdX;
+                int desiredFacing = facingDirection;
+
+                if (movementVec.X > flipThreshold)
+                {
+                    desiredFacing = 1;
+                }
+                else if (movementVec.X < -flipThreshold)
+                {
+                    desiredFacing = -1;
+                }
+
+                if (desiredFacing != facingDirection)
+                {
+                    facingDirection = desiredFacing;
+                    flipCooldownTicks = length < CloseTurnRadius ? CloseFlipCooldownTicks : FarFlipCooldownTicks;
+                    Projectile.rotation = MathHelper.WrapAngle(-Projectile.rotation);
+                }
+            }
+
+            // Smooth pitch tracking: settle gently toward level inside the deadzone, turn slowly when
+            // hovering nearby, and track crisply when dragging the cursor far across the screen.
+            float targetBodyRotation = 0f;
+            float maxTurnStep = 0.06f;
+
+            if (length > CursorDeadzoneRadius)
+            {
+                float facingOffset = facingDirection > 0 ? 0f : MathF.PI;
+                targetBodyRotation = MathHelper.WrapAngle(movementVec.ToRotation() - facingOffset);
+
+                if (length < CloseTurnRadius)
+                {
+                    float closeRatio = (length - CursorDeadzoneRadius) / (CloseTurnRadius - CursorDeadzoneRadius);
+                    maxTurnStep = MathHelper.Lerp(0.05f, 0.12f, closeRatio);
+                }
+                else
+                {
+                    maxTurnStep = 0.22f;
+                }
+            }
+
+            float rotationDelta = MathHelper.WrapAngle(targetBodyRotation - Projectile.rotation);
+            rotationDelta = MathHelper.Clamp(rotationDelta, -maxTurnStep, maxTurnStep);
+            Projectile.rotation = MathHelper.WrapAngle(Projectile.rotation + rotationDelta);
 
             NPC targetMob = GetTargetWithinXDegree(player, 300f, out bool keepCharge, out bool flip);
 
-            int dir = 1;
-            if (Projectile.velocity.X < 0)
-                dir = -1;
+            int dir = facingDirection;
 
             if (flip)
             {
@@ -600,6 +666,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
             float MaxDist = (320f * size / maxSize) * 1.4f;
             float MinDist = 80f * Scale;
 
+            // Use the dragon's current facing vector when hovering at rest so Normalize never produces NaN.
+            Vector2 headingDirection = Projectile.velocity.SafeNormalize(new Vector2(facingDirection, 0f));
+
             // This code is required if your minion weapon has the targeting feature
             if (owner.HasMinionAttackTargetNPC)
             {
@@ -607,7 +676,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
                 Vector2 between = npc.Center - Projectile.Center;
 
                 float distBetween = between.Length();
-                float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity).RotatedBy(Mouth.rotation));
+                float rotationDiff = Vector2.Dot(between.SafeNormalize(Vector2.UnitX), headingDirection.RotatedBy(Mouth.rotation));
 
                 bool canHit = rotationDiff > targetRRange;
 
@@ -637,7 +706,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Bases
                     float distBetween = between.Length();
                     bool closest = closestDist > distBetween;
 
-                    float rotationDiff = Vector2.Dot(Vector2.Normalize(between), Vector2.Normalize(Projectile.velocity).RotatedBy(Mouth.rotation));
+                    float rotationDiff = Vector2.Dot(between.SafeNormalize(Vector2.UnitX), headingDirection.RotatedBy(Mouth.rotation));
 
                     bool canHit = rotationDiff > targetRRange;
 

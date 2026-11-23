@@ -6439,5 +6439,416 @@
         "CustomSouls": null
       }
     ]
+  },
+  {
+    "EventID": "e2dde7d3-a630-4303-9f4e-3362b210529e",
+    "CenterX": 1823.0,
+    "CenterY": 269.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/RoyalKnight",
+        "SpawnX": 1917.0,
+        "SpawnY": 273.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "48a2c0fe-8ac7-4f32-b77e-b93b54a1804b",
+    "CenterX": 2206.0,
+    "CenterY": 345.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/RoyalKnight",
+        "SpawnX": 2284.0,
+        "SpawnY": 350.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/ElementalNecromancer",
+        "SpawnX": 2110.0,
+        "SpawnY": 364.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b5b0d06f-cbdc-40e1-9ea9-f6faa030c5d9",
+    "CenterX": 2343.0,
+    "CenterY": 403.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "AncientDoom",
+        "SpawnX": 2371.0,
+        "SpawnY": 409.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "AncientDoom",
+        "SpawnX": 2348.0,
+        "SpawnY": 389.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "AncientDoom",
+        "SpawnX": 2338.0,
+        "SpawnY": 425.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "AncientDoom",
+        "SpawnX": 2311.0,
+        "SpawnY": 393.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "AncientDoom",
+        "SpawnX": 2322.0,
+        "SpawnY": 401.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "AncientCultistSquidhead",
+        "SpawnX": 2295.0,
+        "SpawnY": 392.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "643f4982-697d-4f18-acd7-6020ee37fa39",
+    "CenterX": 2314.0,
+    "CenterY": 394.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/AncientDemon",
+        "SpawnX": 2267.0,
+        "SpawnY": 411.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "d35ef23f-a622-4f79-b59e-6868e8bb4d7f",
+    "CenterX": 2191.0,
+    "CenterY": 401.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "AncientCultistSquidhead",
+        "SpawnX": 2230.0,
+        "SpawnY": 404.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "b8c0e4a8-a5c9-4d6e-93a8-539fbd07d1c9",
+    "CenterX": 2156.0,
+    "CenterY": 294.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Gigas",
+        "SpawnX": 2230.0,
+        "SpawnY": 317.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "23ce2023-009a-4a56-85dd-ebd432a01e28",
+    "CenterX": 2289.0,
+    "CenterY": 287.0,
+    "Radius": 102400.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/RoyalKnight",
+        "SpawnX": 2268.0,
+        "SpawnY": 244.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/RoyalKnight",
+        "SpawnX": 2326.0,
+        "SpawnY": 238.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "4d8f5bfa-cdfd-4795-9c8e-577afd89056c",
+    "CenterX": 2409.0,
+    "CenterY": 122.0,
+    "Radius": 313600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "Deerclops",
+        "SpawnX": 2410.0,
+        "SpawnY": 154.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0014d619-a8ef-43dd-95e7-f4208de86611",
+    "CenterX": 2430.0,
+    "CenterY": 192.0,
+    "Radius": 160000.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Assassin",
+        "SpawnX": 2370.0,
+        "SpawnY": 202.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "9fba2d55-6986-4e71-9290-9fcba264ac25",
+    "CenterX": 2527.0,
+    "CenterY": 301.0,
+    "Radius": 25600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "DD2DarkMageT3",
+        "SpawnX": 2528.0,
+        "SpawnY": 283.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "0c617f20-e619-45d8-9372-965da6e63f69",
+    "CenterX": 2023.0,
+    "CenterY": 192.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/TibianValkyrie",
+        "SpawnX": 2085.0,
+        "SpawnY": 205.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      },
+      {
+        "NpcName": "tsorcRevamp/TibianValkyrie",
+        "SpawnX": 1968.0,
+        "SpawnY": 205.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "10435914-e328-40c7-86b6-42010cb077d4",
+    "CenterX": 1755.0,
+    "CenterY": 18.0,
+    "Radius": 57600.0,
+    "Square": false,
+    "TriggerDust": 27,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": false,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [],
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Necromancer",
+        "SpawnX": 1828.0,
+        "SpawnY": 26.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
   }
 ]

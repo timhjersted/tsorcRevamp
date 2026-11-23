@@ -217,6 +217,10 @@ namespace tsorcRevamp.NPCs
         //Stores the event this NPC belongs to
         public ScriptedEvent ScriptedEventOwner;
 
+        // DynamicEvents.json EventID for NPCs spawned by a dynamic event. Synced in SendExtraAI
+        // only when that event has a custom track in TsorcMusicRegistry so multiplayer clients hear it too.
+        public string DynamicEventID;
+
         // Opt specific pursuit bosses into natural distance/timeLeft despawning.
         public bool AllowDynamicEventNaturalDespawn;
 
@@ -2737,6 +2741,14 @@ namespace tsorcRevamp.NPCs
                 binaryWriter.Write(KiteLetClose);
                 binaryWriter.Write((short)Math.Clamp(KiteRerollTimer, 0, short.MaxValue));
             }
+
+            // Only transmit DynamicEventID when the event actually overrides music; normal NPCs pay one bool.
+            bool hasEventMusic = TsorcMusicRegistry.HasDynamicEventMusic(DynamicEventID);
+            binaryWriter.Write(hasEventMusic);
+            if (hasEventMusic)
+            {
+                binaryWriter.Write(DynamicEventID);
+            }
         }
 
         public override void ReceiveExtraAI(NPC npc, BitReader bitReader, BinaryReader binaryReader)
@@ -2869,6 +2881,16 @@ namespace tsorcRevamp.NPCs
                 KiteHoldDrift = 0;
                 KiteLetClose = false;
                 KiteRerollTimer = 0;
+            }
+
+            bool hasEventMusic = binaryReader.ReadBoolean();
+            if (hasEventMusic)
+            {
+                DynamicEventID = binaryReader.ReadString();
+            }
+            else
+            {
+                DynamicEventID = null;
             }
         }
 

@@ -232,6 +232,18 @@ namespace tsorcRevamp.NPCs
                 || (nav.Plan != null && nav.PlanIndex < nav.Plan.Count);
         }
 
+        /// <summary>True when the last ground A* replan found no path to the target. Read-only query so winged
+        /// enemies (e.g. Royal Knight) can switch to flight when stranded on a rock or across a chasm.</summary>
+        public static bool HasNoAStarPath(NPC npc)
+        {
+            if (!States.TryGetValue(npc.whoAmI, out NavState nav) || nav.OwnerType != npc.type)
+            {
+                return false;
+            }
+
+            return nav.NoAStarPath;
+        }
+
         // Explicit handoff for the opt-in giant controller. Keep failed-edge memory, but never
         // resume a takeoff column, airborne drift, or step timer belonging to the previous floor.
         internal static void ResetStableHeavyRoute(NPC npc)
@@ -5120,13 +5132,17 @@ namespace tsorcRevamp.NPCs
             {
                 return false;
             }
-            // A "platform" for navigation = anything solid only on its top: wood platforms AND solid-top
-            // furniture (tables, fireplaces, work benches, etc.). Gameplay-wise these can all be stood on,
-            // jumped up through, and dropped down through — but they aren't in TileID.Sets.Platforms and are
-            // tileFrameImportant, so IsNavigationSolid rejects them. Without this the planner saw a table as
-            // neither solid nor platform: NPCs couldn't path onto one and stood frozen on top (the stuck-on-
-            // table report), and couldn't drop through one to reach a lower target.
-            return TileID.Sets.Platforms[tile.TileType] || Main.tileSolidTop[tile.TileType];
+            // A "platform" for navigation = anything solid only on its top: wood platforms AND the top row of
+            // solid-top furniture (tables, fireplaces, work benches, bookcases, etc.). Vanilla Collision.TileCollision
+            // only treats non-platform solid-top furniture as solid on its top row (TileFrameY == 0); lower leg rows
+            // are air. Treating lower table rows as platforms created phantom mid-table spans that trapped NPCs in
+            // same-X Walk freezes on top of tables.
+            if (TileID.Sets.Platforms[tile.TileType])
+            {
+                return true;
+            }
+
+            return Main.tileSolidTop[tile.TileType] && tile.TileFrameY == 0;
         }
 
         private static bool IsNavigationSolid(int x, int y)

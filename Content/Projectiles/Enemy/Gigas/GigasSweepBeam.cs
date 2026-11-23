@@ -63,40 +63,128 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
             Projectile.velocity = Vector2.Zero;
             Projectile.localAI[0]++;
 
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Origin sits where the shader eruption emerges in front of Gigas.
+            Vector2 burstOrigin = new Vector2(Projectile.Center.X - Direction * (BeamLength * 0.5f), Projectile.Center.Y);
+
             if (!Striking)
             {
-                //Sparkle line along the beam path, brighter toward the strike
+                // Sparkle line along the beam path, brighter toward the strike.
                 float progress = Projectile.localAI[0] / (float)TelegraphTicks;
                 int count = 2 + (int)(progress * 3f);
                 for (int i = 0; i < count; i++)
                 {
                     Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(BeamLength), Projectile.position.Y + Main.rand.NextFloat(BeamHeight));
-                    int sparkle = Dust.NewDust(pos, 4, 4, DustID.GoldCoin, 0f, 0f, 0, default, 0.9f + progress * 0.4f);
-                    Main.dust[sparkle].noGravity = true;
-                    Main.dust[sparkle].velocity = new Vector2(Direction * 0.5f, -0.6f);
+                    Dust sparkle = Dust.NewDustDirect(pos, 4, 4, DustID.GoldCoin, 0f, 0f, 0, default, 0.9f + progress * 0.4f);
+                    sparkle.noGravity = true;
+                    sparkle.velocity = new Vector2(Direction * 0.5f, -0.6f);
                 }
+
+                // Converging golden energy in a ~2-3 tile ring around the eruption origin before ignition.
+                int gatherCount = 2 + (int)(progress * 4f);
+                for (int i = 0; i < gatherCount; i++)
+                {
+                    Vector2 radial = Main.rand.NextVector2Unit();
+                    Vector2 spawnPos = burstOrigin + radial * Main.rand.NextFloat(26f, 52f);
+                    int dustType = i % 3 == 0 ? DustID.GoldCoin : DustID.GoldFlame;
+                    Dust gather = Dust.NewDustPerfect(spawnPos, dustType,
+                        (burstOrigin - spawnPos) * 0.08f, dustType == DustID.GoldCoin ? 0 : 75,
+                        default, Main.rand.NextFloat(0.75f, 1.20f));
+                    gather.noGravity = true;
+                }
+
+                Lighting.AddLight(burstOrigin, 0.8f * progress, 0.65f * progress, 0.25f * progress);
+
                 if (Projectile.localAI[0] >= TelegraphTicks)
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Thunder with { Volume = 0.5f, Pitch = 0.2f }, Projectile.Center);
                 }
+
                 return;
             }
 
-            //Strike: dense golden lightning filling the band
+            // Ignition pop: layered golden burst in a ~2.25-tile (36px) radius around the eruption origin.
+            if (Projectile.localAI[0] == TelegraphTicks + 1)
+            {
+                for (int i = 0; i < 40; i++)
+                {
+                    Vector2 radial = Main.rand.NextVector2Unit();
+                    Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(36f, 36f);
+                    Vector2 velocity = radial * Main.rand.NextFloat(1.8f, 5.2f) + new Vector2(Direction * Main.rand.NextFloat(2.0f, 5.5f), 0f);
+                    Dust flame = Dust.NewDustPerfect(spawnPos, DustID.GoldFlame, velocity, 55, default, Main.rand.NextFloat(0.85f, 1.45f));
+                    flame.noGravity = true;
+                }
+
+                for (int i = 0; i < 20; i++)
+                {
+                    Vector2 radial = Main.rand.NextVector2Unit();
+                    Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(32f, 32f);
+                    Vector2 velocity = radial * Main.rand.NextFloat(2.2f, 5.8f) + new Vector2(Direction * Main.rand.NextFloat(1.2f, 3.8f), 0f);
+                    Dust coin = Dust.NewDustPerfect(spawnPos, DustID.GoldCoin, velocity, 0, default, Main.rand.NextFloat(0.70f, 1.10f));
+                    coin.noGravity = true;
+                }
+
+                for (int i = 0; i < 18; i++)
+                {
+                    Vector2 radial = Main.rand.NextVector2Unit();
+                    Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(28f, 28f);
+                    Vector2 velocity = radial * Main.rand.NextFloat(4.0f, 8.5f) + new Vector2(Direction * Main.rand.NextFloat(2.5f, 6.0f), 0f);
+                    Dust spark = Dust.NewDustPerfect(spawnPos, DustID.AncientLight, velocity, 20, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.50f, 0.85f));
+                    spark.noGravity = true;
+                }
+            }
+
+            // Sustained origin eruption: dense golden flames, glints, and bright sparks within ~2.25 tiles.
+            for (int i = 0; i < 9; i++)
+            {
+                Vector2 radial = Main.rand.NextVector2Unit();
+                Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(36f, 36f);
+                Vector2 velocity = radial * Main.rand.NextFloat(1.2f, 3.2f) + new Vector2(Direction * Main.rand.NextFloat(2.5f, 6.8f), 0f);
+                Dust originFlame = Dust.NewDustPerfect(spawnPos, DustID.GoldFlame, velocity, 55, default, Main.rand.NextFloat(0.80f, 1.40f));
+                originFlame.noGravity = true;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 radial = Main.rand.NextVector2Unit();
+                Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(34f, 34f);
+                Vector2 velocity = radial * Main.rand.NextFloat(1.4f, 3.6f) + new Vector2(Direction * Main.rand.NextFloat(1.0f, 3.2f), Main.rand.NextFloat(-1.2f, 1.2f));
+                Dust originCoin = Dust.NewDustPerfect(spawnPos, DustID.GoldCoin, velocity, 0, default, Main.rand.NextFloat(0.65f, 1.05f));
+                originCoin.noGravity = true;
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                Vector2 radial = Main.rand.NextVector2Unit();
+                Vector2 spawnPos = burstOrigin + Main.rand.NextVector2Circular(28f, 28f);
+                Vector2 velocity = radial * Main.rand.NextFloat(2.5f, 5.5f) + new Vector2(Direction * Main.rand.NextFloat(3.0f, 7.5f), 0f);
+                Dust originSpark = Dust.NewDustPerfect(spawnPos, DustID.AncientLight, velocity, 20, Color.LightGoldenrodYellow, Main.rand.NextFloat(0.50f, 0.85f));
+                originSpark.noGravity = true;
+            }
+
+            Lighting.AddLight(burstOrigin, 1.35f, 1.10f, 0.45f);
+
+            // Strike: dense golden lightning filling the band
             for (int i = 0; i < 22; i++)
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(BeamLength), Projectile.position.Y + Main.rand.NextFloat(BeamHeight));
-                int dust = Dust.NewDust(pos, 4, 4, DustID.GoldFlame, Direction * 3f, 0f, 50, default, Main.rand.NextFloat(1.6f, 2.4f));
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity = new Vector2(Direction * Main.rand.NextFloat(2f, 6f), Main.rand.NextFloat(-1f, 1f));
+                Dust dust = Dust.NewDustDirect(pos, 4, 4, DustID.GoldFlame, Direction * 3f, 0f, 50, default, Main.rand.NextFloat(1.3f, 1.85f));
+                dust.noGravity = true;
+                dust.velocity = new Vector2(Direction * Main.rand.NextFloat(2f, 6f), Main.rand.NextFloat(-1f, 1f));
             }
-            //White-hot core streaks
+
+            // White-hot core streaks
             for (int i = 0; i < 5; i++)
             {
                 Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(BeamLength), Projectile.Center.Y + Main.rand.NextFloat(-8f, 8f));
-                int core = Dust.NewDust(pos, 2, 2, DustID.AncientLight, Direction * 5f, 0f, 20, Color.LightGoldenrodYellow, 1.5f);
-                Main.dust[core].noGravity = true;
+                Dust core = Dust.NewDustDirect(pos, 2, 2, DustID.AncientLight, Direction * 5f, 0f, 20, Color.LightGoldenrodYellow, 1.25f);
+                core.noGravity = true;
             }
+
             for (int seg = 0; seg < 6; seg++)
             {
                 Lighting.AddLight(new Vector2(Projectile.position.X + BeamLength * (seg + 0.5f) / 6f, Projectile.Center.Y), 1f, 0.9f, 0.4f);

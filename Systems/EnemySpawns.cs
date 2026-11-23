@@ -1389,10 +1389,11 @@ namespace tsorcRevamp.Systems
             Spawn("TibianAmazon", TibianLand & !Zone.Desert & !Zone.Dungeon & Downed.Eye & !(Zone.Meteor | Evil) & Depth.Ground, phm: 0.0542f, hm: 0.0542f);
 
             // Early returns in the old order; the lines never overlap, so none needs to stop. Hardmode lines also apply in Super Hardmode.
-            Spawn("TibianValkyrie", TibianLand & Depth.Surface & !Zone.Crimson & Time.Night, phm: 0.0427f);
-            Spawn("TibianValkyrie", TibianLand & Depth.Surface & !Zone.Crimson & Time.Day, phm: 0.038f);
-            Spawn("TibianValkyrie", TibianLand & !Zone.Meteor & !Zone.Jungle & !Zone.Dungeon & !Evil & Depth.BelowSurface, phm: 0.0494f);
-            Spawn("TibianValkyrie", TibianLand & !Zone.Meteor & !Zone.Jungle & Zone.Dungeon & Depth.BelowSurface, phm: 0.03857f);
+            // PHM weights halved (were 0.0427 / 0.038 / 0.0494 / 0.03857). Surface lines wait for the Eye and stay out of evil and Hallow.
+            Spawn("TibianValkyrie", TibianLand & Depth.Surface & !Evil & !Zone.Hallow & Downed.Eye & Time.Night, phm: 0.02135f);
+            Spawn("TibianValkyrie", TibianLand & Depth.Surface & !Evil & !Zone.Hallow & Downed.Eye & Time.Day, phm: 0.019f);
+            Spawn("TibianValkyrie", TibianLand & !Zone.Meteor & !Zone.Jungle & !Zone.Dungeon & !Evil & Depth.BelowSurface, phm: 0.0247f);
+            Spawn("TibianValkyrie", TibianLand & !Zone.Meteor & !Zone.Jungle & Zone.Dungeon & Depth.BelowSurface, phm: 0.019285f);
             Spawn("TibianValkyrie", TibianLand & !(Zone.Meteor | Zone.Jungle | Evil) & Depth.Surface & Time.Night, hm: 0.025f, shm: 0.025f);
             Spawn("TibianValkyrie", TibianLand & !(Zone.Meteor | Zone.Jungle | Evil) & Depth.Surface & Time.Day, hm: 0.018f, shm: 0.018f);
             Spawn("TibianValkyrie", TibianLand & !(Zone.Meteor | Zone.Jungle | Evil) & Depth.BelowSurface, hm: 0.027f, shm: 0.027f);

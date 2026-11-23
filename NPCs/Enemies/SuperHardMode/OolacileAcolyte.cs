@@ -358,7 +358,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         public override void SetStaticDefaults()
         {
             // The puppet body is drawn by the base; OolacileAcolyte.png is only the bestiary/placeholder sprite.
-            Main.npcFrameCount[Type] = 3;
+            Main.npcFrameCount[Type] = 1;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
         }
 

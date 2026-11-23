@@ -12809,6 +12809,8 @@ Mods: {
 			// GrandOolacileJudgmentWave.DisplayName: Grand Oolacile Judgment Wave
 			// GrandOolacileThrownAxe.DisplayName: Grand Oolacile Thrown Axe
 			// GrandOolacileJudgmentBlaze.DisplayName: Grand Oolacile Judgment Blaze
+			// ElementalBoulder.DisplayName: Elemental Boulder
+			// ElementalFireball.DisplayName: Elemental Fireball
 		}
 
 		NPCs: {

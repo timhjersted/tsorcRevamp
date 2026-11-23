@@ -37,7 +37,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
             trailCollision = true;
             collisionFrequency = 5;
             noFadeOut = true;
-            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrail", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            customEffect = ModContent.Request<Effect>("tsorcRevamp/Effects/CataluminanceTrailPixelated", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
         }
 
         float waitTimer = 0;
@@ -137,6 +137,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
             effect.Parameters["shaderColor"].SetValue(rgbColor.ToVector4());
             effect.Parameters["shaderColor2"].SetValue(new Color(0f, 0f, 2f).ToVector4());
             effect.Parameters["length"].SetValue(trailCurrentLength);
+            float pixelBlocksX = MathF.Max(1f, trailCurrentLength / 2f);
+            float pixelBlocksY = MathF.Max(1f, trailWidth / 2f);
+            effect.Parameters["PixelGrid"]?.SetValue(
+                new Vector4(pixelBlocksX, pixelBlocksY, 1f / pixelBlocksX, 1f / pixelBlocksY));
             effect.Parameters["WorldViewProjection"].SetValue(GetWorldViewProjectionMatrix());
         }
         public override bool PreDraw(ref Color lightColor)

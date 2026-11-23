@@ -3196,6 +3196,23 @@ namespace tsorcRevamp
                     break;
                 }
 
+                case tsorcPacketID.EventMaterializationBurst:
+                {
+                    Vector2 center = reader.ReadVector2();
+                    int width = reader.ReadInt32();
+                    int height = reader.ReadInt32();
+                    int burstDustID = reader.ReadInt32();
+                    Color tintColor = reader.ReadRGB();
+                    int groupCount = reader.ReadInt32();
+
+                    if (!Main.dedServ)
+                    {
+                        ScriptedEvent.SpawnMaterializationDust(center, width, height, burstDustID, tintColor, groupCount);
+                    }
+
+                    break;
+                }
+
                 default:
                     {
                         Logger.InfoFormat("[tsorcRevamp] Sync failed. Unknown message ID: {0}", message);
@@ -5442,6 +5459,8 @@ namespace tsorcRevamp
         public const byte SyncMirrorSummonerClass = 54;
         /// <summary>Victim client to server: latch a server-owned enemy whip that hit this player.</summary>
         public const byte RequestEnemyWhipLatch = 55;
+        /// <summary>Server to clients: play a scripted event's NPC materialization dust burst at the spawn footprint.</summary>
+        public const byte EventMaterializationBurst = 56;
     }
 
     //config moved to separate file

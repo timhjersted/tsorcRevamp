@@ -57,6 +57,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeDamage => 52;
         protected override int RangedDamage => 0;
         protected override int MagicDamage => 34;
+
+        protected override int EstusChargesMax => 0;
         protected override float TopSpeed => 3f;
         protected override float Acceleration => 0.105f;
         protected override float MeleeRange => 84f;

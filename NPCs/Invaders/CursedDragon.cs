@@ -105,6 +105,10 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int SecondaryRangedDamage => 40; // venom fang (multi-projectile)
         protected override int MagicDamage => 50;   // meteor
 
+        protected override int EstusChargesMax => 4;
+        protected override int HealAnimationTicks => 180;
+        protected override int HealCooldownTicks => 10 * 60;
+
         // ── Melee ───────────────────────────────────────────────────────────────────
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Halberd;
         protected override int MeleeComboChance => 60;

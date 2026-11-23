@@ -116,7 +116,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
-            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/DragonBreath", AssetRequestMode.ImmediateLoad).Value;
+            effect = ModContent.Request<Effect>("tsorcRevamp/Effects/DragonBreathPixelated", AssetRequestMode.ImmediateLoad).Value;
 
             float angle = MathHelper.TwoPi / 10f;
             float shaderRotation = MathF.PI * 0.9f;
@@ -151,6 +151,14 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
             effect.Parameters["splitAnglePlusRotationMinusPI"].SetValue(shaderRotation + angle - MathHelper.Pi);
             effect.Parameters["RotationMinus2PIMinusSplitAngleMinusPI"].SetValue((shaderRotation - (MathHelper.TwoPi - angle)) - MathHelper.Pi);
 
+            // Pixel filter grid pre-divided on CPU (4px blocks read cleanly across the ~600px breath cone).
+            float trueSizeMultiplier = 1.2f;
+            float drawScale = trueSizeMultiplier * trueSizeMultiplier * 7.5f;
+            const float breathPixelBlockSize = 4f;
+            Vector2 pixelBlocks = Vector2.Max(NoiseSmooth.Size() * drawScale / breathPixelBlockSize, Vector2.One);
+            effect.Parameters["PixelGrid"]?.SetValue(
+                new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
+
             //Apply the shader
             effect.CurrentTechnique.Passes[0].Apply();
 
@@ -158,8 +166,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
             Vector2 origin = new Vector2(recsize.Width * 0.5f, recsize.Height * 0.5f);
 
             //Draw the rendertarget with the shader
-            float trueSizeMultiplier = 1.2f;
-            Main.spriteBatch.Draw(NoiseSmooth, Mouth.finalPosition - Main.screenPosition, recsize, Color.White, Mouth.finalRotation - MathF.PI * (Mouth.curEffect == SpriteEffects.None ? 0 : 1), origin, trueSizeMultiplier * trueSizeMultiplier * 7.5f, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(NoiseSmooth, Mouth.finalPosition - Main.screenPosition, recsize, Color.White, Mouth.finalRotation - MathF.PI * (Mouth.curEffect == SpriteEffects.None ? 0 : 1), origin, drawScale, SpriteEffects.None, 0);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);

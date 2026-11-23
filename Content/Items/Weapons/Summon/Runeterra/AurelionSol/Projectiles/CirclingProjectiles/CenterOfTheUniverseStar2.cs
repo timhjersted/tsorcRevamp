@@ -22,7 +22,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
         public override int TrailWidth => 150;
         public override int TrailPointLimit => 900;
         public override int TrailMaxLength => 400;
-        public override string EffectType => "tsorcRevamp/Effects/InterstellarVessel";
+        public override string EffectType => "tsorcRevamp/Effects/InterstellarVesselPixelated";
         public override string SoundPath => UsefulFunctions.RefactorableFilepath(typeof(CenterOfTheUniverseSound));
         public override int BuffType => ModContent.BuffType<CenterOfTheUniverseBuff>();
         public override int dustID => DustID.AncientLight;
@@ -77,6 +77,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon.Runeterra.AurelionSol.Project
 
             effect.Parameters["noiseTexture"].SetValue(tsorcRevamp.NoiseWavy);
             effect.Parameters["length"].SetValue(trailCurrentLength);
+            float pixelBlocksX = System.MathF.Max(1f, trailCurrentLength / 2f);
+            float pixelBlocksY = System.MathF.Max(1f, trailWidth / 2f);
+            effect.Parameters["PixelGrid"]?.SetValue(
+                new Vector4(pixelBlocksX, pixelBlocksY, 1f / pixelBlocksX, 1f / pixelBlocksY));
             float hostVel = 0;
             hostVel = Projectile.velocity.Length();
             float modifiedTime = 0.001f * hostVel;

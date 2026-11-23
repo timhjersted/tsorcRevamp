@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 {
     /// <summary>
     /// The Elemental Necromancer's eruption: a 480px (30-tile) column of purple light with a white core and a blue edge,
-    /// spawned bottom-anchored on a marked floor patch after its 90-tick dust telegraph. 8t rise, 12t full, 8t fade
+    /// spawned bottom-anchored on a marked floor patch after its 90-tick dust telegraph. 8t rise, 12t full, 12t fade
     /// (harmless). Each hit adds 35 Miasma buildup. The hitbox is the shader's revealed core (~40px wide), rising from the floor as the shader reveals it.
     /// Spawn its Center at (markX, groundY - Height / 2).
     /// </summary>
@@ -22,7 +22,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         const int QuadWidth = 72;
         const int RiseTicks = 8;
         const int FullTicks = 12;
-        const int FadeTicks = 8;
+        const int FadeTicks = 12;
         const int Lifetime = RiseTicks + FullTicks + FadeTicks;
         // ElementalEruption.fx: a row is revealed once Progress >= (height fraction from the bottom) * 0.72.
         const float EruptionRiseProgress = 0.72f;
@@ -81,32 +81,145 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             if (Elapsed == 1)
             {
-                // The rumble and floor puff as it breaks the surface.
+                // The rumble and 4x layered floor burst as the column breaks the surface (72 motes: 40 body + 18 fast sparks + 14 falling embers).
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f, Pitch = -0.3f }, Projectile.Bottom);
+
+                for (int i = 0; i < 40; i++)
+                {
+                    int dustType = DustID.PurpleTorch;
+                    if (i % 4 == 0)
+                    {
+                        dustType = DustID.BlueTorch;
+                    }
+                    else if (i % 6 == 1)
+                    {
+                        dustType = DustID.Shadowflame;
+                    }
+
+                    Vector2 position = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-34f, 34f), Main.rand.NextFloat(-10f, 0f));
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-3.8f, 3.8f), Main.rand.NextFloat(-8.5f, -1.5f));
+                    Dust puff = Dust.NewDustPerfect(position, dustType, velocity, 60, default, Main.rand.NextFloat(0.95f, 1.55f));
+                    puff.noGravity = true;
+                }
+
                 for (int i = 0; i < 18; i++)
                 {
+                    int dustType = DustID.PurpleTorch;
+                    if (i % 3 == 0)
+                    {
+                        dustType = DustID.AncientLight;
+                    }
+
                     Vector2 position = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-24f, 24f), -4f);
-                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-5f, -1f));
-                    Dust puff = Dust.NewDustPerfect(position, DustID.PurpleTorch, velocity, 60, default, 1.5f);
-                    puff.noGravity = true;
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-4.5f, 4.5f), Main.rand.NextFloat(-14f, -5.5f));
+                    Dust glint = Dust.NewDustPerfect(position, dustType, velocity, 40, default, Main.rand.NextFloat(0.55f, 0.95f));
+                    glint.noGravity = true;
+                }
+
+                // Gravity-affected shards launched up out of the origin so they arc and rain back down.
+                for (int i = 0; i < 14; i++)
+                {
+                    int dustType = DustID.PurpleCrystalShard;
+                    if (i % 3 == 0)
+                    {
+                        dustType = DustID.BlueCrystalShard;
+                    }
+
+                    Vector2 position = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-28f, 28f), -4f);
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-3.2f, 3.2f), Main.rand.NextFloat(-9.5f, -5f));
+                    Dust ember = Dust.NewDustPerfect(position, dustType, velocity, 60, default, Main.rand.NextFloat(0.95f, 1.35f));
+                    ember.noGravity = false;
                 }
             }
 
             // Violet light along the risen part of the column.
             float riseFraction = MathHelper.Clamp(RiseProgress / EruptionRiseProgress, 0f, 1f);
+            float risenHeight = Height * riseFraction;
             float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
             for (int i = 0; i < 4; i++)
             {
-                Vector2 lightPoint = Projectile.Bottom - new Vector2(0f, Height * riseFraction * (i + 0.5f) / 4f);
+                Vector2 lightPoint = Projectile.Bottom - new Vector2(0f, risenHeight * (i + 0.5f) / 4f);
                 Lighting.AddLight(lightPoint, 0.55f * fade, 0.3f * fade, 0.95f * fade);
             }
 
-            if (Projectile.timeLeft % 2 == 0)
+            // Ongoing origin boil + upward streaks overlapping the shader + gravity embers that shoot up and rain back down.
+            if (Projectile.timeLeft > FadeTicks)
             {
-                Vector2 position = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-CoreHalfWidth, CoreHalfWidth), 0f);
-                Vector2 velocity = new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-16f, -6f));
-                Dust spark = Dust.NewDustPerfect(position, DustID.PurpleTorch, velocity, 40, default, 1.4f);
-                spark.noGravity = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    int dustType = DustID.PurpleTorch;
+                    if (i == 2)
+                    {
+                        dustType = DustID.BlueTorch;
+                    }
+
+                    Vector2 basePos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-28f, 28f), Main.rand.NextFloat(-6f, 0f));
+                    Vector2 baseVel = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), Main.rand.NextFloat(-5.5f, -1.5f));
+                    Dust boil = Dust.NewDustPerfect(basePos, dustType, baseVel, 60, default, Main.rand.NextFloat(0.9f, 1.35f));
+                    boil.noGravity = true;
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int dustType = DustID.PurpleTorch;
+                    if (i == 1)
+                    {
+                        dustType = DustID.BlueTorch;
+                    }
+                    else if (i == 3)
+                    {
+                        dustType = DustID.AncientLight;
+                    }
+
+                    float heightOffset = Main.rand.NextFloat(0f, risenHeight * 0.65f);
+                    Vector2 streakPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-CoreHalfWidth * 1.15f, CoreHalfWidth * 1.15f), -heightOffset);
+                    Vector2 streakVel = new Vector2(Main.rand.NextFloat(-1.1f, 1.1f), Main.rand.NextFloat(-19f, -9.5f));
+                    float scale = Main.rand.NextFloat(0.85f, 1.4f);
+                    if (dustType == DustID.AncientLight)
+                    {
+                        scale = Main.rand.NextFloat(0.55f, 0.9f);
+                    }
+
+                    Dust spark = Dust.NewDustPerfect(streakPos, dustType, streakVel, 40, default, scale);
+                    spark.noGravity = true;
+                }
+
+                // Gravity embers shot upward along the column: rise ~30-60t, crest, then fall back down after the column fades.
+                for (int i = 0; i < 3; i++)
+                {
+                    int dustType = DustID.Shadowflame;
+                    if (i == 1)
+                    {
+                        dustType = DustID.PurpleCrystalShard;
+                    }
+                    else if (i == 2)
+                    {
+                        dustType = DustID.BlueCrystalShard;
+                    }
+
+                    float heightOffset = Main.rand.NextFloat(0f, risenHeight * 0.85f);
+                    Vector2 rainPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-CoreHalfWidth * 1.25f, CoreHalfWidth * 1.25f), -heightOffset);
+                    Vector2 rainVel = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), Main.rand.NextFloat(-7.5f, -3.5f));
+                    Dust falling = Dust.NewDustPerfect(rainPos, dustType, rainVel, 50, default, Main.rand.NextFloat(0.95f, 1.35f));
+                    falling.noGravity = false;
+                }
+            }
+            else if (Projectile.timeLeft > FadeTicks / 2)
+            {
+                // Tail shower during the first half of fadeout so falling embers linger naturally as the shader dissolves.
+                for (int i = 0; i < 2; i++)
+                {
+                    int dustType = DustID.PurpleCrystalShard;
+                    if (i == 1)
+                    {
+                        dustType = DustID.BlueCrystalShard;
+                    }
+
+                    Vector2 tailPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-CoreHalfWidth, CoreHalfWidth), -Main.rand.NextFloat(Height * 0.2f, Height * 0.95f));
+                    Vector2 tailVel = new Vector2(Main.rand.NextFloat(-1.8f, 1.8f), Main.rand.NextFloat(-3.5f, -1f));
+                    Dust linger = Dust.NewDustPerfect(tailPos, dustType, tailVel, 70, default, Main.rand.NextFloat(0.85f, 1.2f));
+                    linger.noGravity = false;
+                }
             }
         }
 
@@ -127,8 +240,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Vector2 scale = drawSize / sourceSize;
             const float PixelBlockSize = 4f;
             Vector2 pixelBlocks = Vector2.Max(drawSize / PixelBlockSize, Vector2.One);
+            // 12-tick fadeout: scale both RGB (via drawColor) and Opacity by fade so the overbright white core (intensity ~2.0)
+            // dissolves cleanly across the full 12 ticks instead of staying clipped to white until the last 2-3 frames.
             float fade = MathHelper.Clamp(Projectile.timeLeft / (float)FadeTicks, 0f, 1f);
             float opacity = 0.92f * fade;
+            Color drawTint = new Color(fade, fade, fade, 1f);
 
             Effect effect = eruptionEffect.Value;
             effect.CurrentTechnique = effect.Techniques["ElementalEruption"];
@@ -156,7 +272,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 effect.Parameters["PixelGrid"]?.SetValue(new Vector4(pixelBlocks.X, pixelBlocks.Y, 1f / pixelBlocks.X, 1f / pixelBlocks.Y));
                 effect.CurrentTechnique.Passes[0].Apply();
 
-                Main.EntitySpriteDraw(smoke, Projectile.Center - Main.screenPosition, source, Color.White,
+                Main.EntitySpriteDraw(smoke, Projectile.Center - Main.screenPosition, source, drawTint,
                     0f, sourceSize * 0.5f, scale, SpriteEffects.None, 0f);
             }
             finally

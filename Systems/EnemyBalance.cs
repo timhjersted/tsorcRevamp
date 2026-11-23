@@ -520,11 +520,11 @@ namespace tsorcRevamp.Systems
 
             // ---- Enemies that first appear in Hardmode ----
             Enemy("CloudBat", hm: 500); // fodder; authored 100
-            Enemy("Willowisp", hm: 1500, shm: 9000); // fodder; authored 150 / 350
-            Enemy("ClericOfSorrow", hm: 4000, shm: 24000); // strong; authored 400 / 1200; puppet
+            Enemy("Willowisp", hm: 500, shm: 3000); // fodder; authored 150 / 350; hm was 1500 (~12s Expert kill, far over the fodder band), shm was 9000
+            Enemy("ClericOfSorrow", hm: 2600, shm: 24000); // strong; authored 400 / 1200; puppet; hm was 4000 (~28s Expert kill at HM start)
             Enemy("GhostOfTheDrowned", phm: 175, hm: 3500, shm: 15000); // standard; authored 150 / 450 / 1300; caster, contact damage 0
             Enemy("ShadowMage", hm: 3000, shm: 9000); // fodder; authored 450 / 1350; caster, contact damage 0
-            Enemy("QuaraHydromancer", hm: 3500, shm: 12000); // strong / fodder; authored 250 / 250; caster, contact damage 0
+            Enemy("QuaraHydromancer", hm: 2800, shm: 12000); // strong / fodder; authored 250 / 250; caster, contact damage 0; hm was 3500 (~22s Expert kill at HM start)
             Enemy("Byakhee", hm: 2500, shm: 7200); // standard / fodder; authored 300 / 700
             Enemy("BasiliskShifter", hm: 3500); // strong; authored 350
             Enemy("DworcVoodooShaman", hm: 1500); // standard; authored 750; caster, contact damage 0
@@ -849,7 +849,7 @@ namespace tsorcRevamp.Systems
             Vanilla(NPCID.SeekerHead, hm: 2000, shm: 5000); // old hm 2000 / shm 5000; kept: has SHM scaling
             Vanilla(NPCID.SkeletonArcher, hm: 210, shm: 525); // old hm 210 / shm 525; kept: has SHM scaling; 0 contact damage, so vanilla skipped the Expert x2
             Vanilla(NPCID.Slimer, hm: 120, shm: 300); // old hm 120 / shm 300; kept: has SHM scaling
-            Vanilla(NPCID.Unicorn, hm: 800, shm: 2000); // old hm 800 / shm 2000; kept: has SHM scaling
+            Vanilla(NPCID.Unicorn, hm: 600, shm: 2000); // old hm 800 / shm 2000; kept: has SHM scaling; hm lowered 800 -> 600
             Vanilla(NPCID.WanderingEye, hm: 600, shm: 1500); // old hm 600 / shm 1500; kept: has SHM scaling
             Vanilla(NPCID.Werewolf, hm: 700, shm: 1750); // old hm 700 / shm 1750; kept: has SHM scaling
             Vanilla(NPCID.Wolf, hm: 600, shm: 1500); // old hm 600 / shm 1500; kept: has SHM scaling

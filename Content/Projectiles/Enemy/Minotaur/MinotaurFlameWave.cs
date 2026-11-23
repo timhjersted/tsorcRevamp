@@ -53,10 +53,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Minotaur
 
             if (!Armed)
             {
-                if (!Main.dedServ && Age <= ArmDelay && Main.rand.NextBool(2))
+                if (!Main.dedServ && Age <= ArmDelay)
                 {
-                    int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Torch, 0f, -1f, 100, default, 1.1f);
-                    Main.dust[dust].noGravity = true;
+                    MinotaurFireVFX.Embers(Projectile.Bottom, 12f, 2, 0.85f);
                 }
                 return;
             }
@@ -67,23 +66,26 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Minotaur
                 Projectile.Kill();
                 return;
             }
-            if (Main.dedServ) return;
-
-            for (int i = 0; i < 3; i++)
+            if (Main.dedServ)
             {
-                Vector2 pos = new Vector2(Projectile.position.X + Main.rand.NextFloat(Projectile.width), Projectile.position.Y + Projectile.height - 6f);
-                int dust = Dust.NewDust(pos, 4, 4, DustID.Torch, Direction * 0.5f, Main.rand.NextFloat(-4f, -2f), 80, default, Main.rand.NextFloat(1.3f, 1.8f));
-                Main.dust[dust].noGravity = true;
+                return;
             }
-            Lighting.AddLight(Projectile.Center, 0.5f, 0.3f, 0.1f);
+
+            MinotaurFireVFX.BurnColumn(Projectile.Bottom, 13f, 1.05f, Age % 2 == 0);
+            Lighting.AddLight(Projectile.Center, 0.65f, 0.35f, 0.10f);
         }
 
         public override bool PreDraw(ref Color lightColor) => false;
         public override void PostDraw(Color lightColor)
         {
-            float opacity = Age <= ArmDelay ? 0.3f
-                : MathHelper.Clamp((ArmDelay + WaveTravelTicks + FadeTicks - Age) / (float)FadeTicks, 0f, 1f) * 0.85f;
-            Vector2 size = Age <= ArmDelay ? new Vector2(32f, 18f) : new Vector2(32f, 46f);
+            float opacity = MathHelper.Clamp((ArmDelay + WaveTravelTicks + FadeTicks - Age) / (float)FadeTicks, 0f, 1f) * 0.9f;
+            Vector2 size = new Vector2(42f, 54f);
+            if (Age <= ArmDelay)
+            {
+                opacity = 0.35f;
+                size = new Vector2(36f, 22f);
+            }
+
             MinotaurFireVFX.Draw(Projectile.Bottom - new Vector2(0f, size.Y * 0.44f), size,
                 opacity, Projectile.identity * 0.17f);
         }

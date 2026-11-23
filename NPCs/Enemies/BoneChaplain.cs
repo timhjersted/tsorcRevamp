@@ -169,7 +169,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             // Keeps the old sheet's slicing for the bestiary/banner; the puppet Player draws the body in game.
-            Main.npcFrameCount[NPC.type] = 15;
+            Main.npcFrameCount[NPC.type] = 1;
         }
 
         public override void SetDefaults()

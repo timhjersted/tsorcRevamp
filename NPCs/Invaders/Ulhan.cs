@@ -128,7 +128,12 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MagicRecoveryTicks => 60;
         protected override int MagicCooldownAfterUse => 480;
         protected override Color MagicTelegraphFlashColor => new Color(255, 170, 45);
-        protected override int EstusChargesMax => 0;
+        protected override int EstusChargesMax => 2;
+        protected override float EstusHealFraction => 0.30f;
+        protected override int HealAnimationTicks => 4 * 60;
+        protected override int HealCooldownTicks => 15 * 60;
+        // Gate both threshold and burst-damage heals to <= 50% HP.
+        protected override bool CanBeginEstusHeal => NPC.lifeMax > 0 && NPC.life <= NPC.lifeMax * 0.50f;
         protected override bool PuppetCanDoubleJump => true;
         protected override float PuppetDoubleJumpPower => SecondJumpSpeed;
         protected override int CasualStrollChance => 0;

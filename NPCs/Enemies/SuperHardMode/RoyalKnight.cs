@@ -369,11 +369,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // ── Selection gates ────────────────────────────────────────────────────────
-        // rise = how far the target stands ABOVE the knight (px). Ground moves never start at a target more than 48px up;
-        // Ascending Pike owns 48-240px. Every move needs a clear line.
+        // rise = how far the target stands ABOVE the knight (px). Ground cuts stay within 48px; Royal Leap can jump
+        // up to an elevated ledge (128px); Ascending Pike owns 48-240px. In wing flight, non-leap swings fire at
+        // nearby targets within ±115px vertical so the knight can slash a player perched on a narrow platform.
         private const float GroundCutMaxRise = 48f;
+        private const float RoyalLeapMaxRise = 128f;
         private const float AscendingPikeMaxRise = 240f;
         private const float AscendingPikeMaxHorizontal = 160f;
+        private const float AerialSwingMaxRise = 115f;
+        private const float AerialSweepMaxRange = 195f;
+        private const float AerialThrustMinRange = 95f;
         private const float ThrustMinRange = 135f;
         private const float ThrustMaxRange = 260f;
         private const float RoyalLeapMinRange = 260f;
@@ -389,17 +394,55 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             float horizontal = Math.Abs(target.Center.X - NPC.Center.X);
             bool clearLine = Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
 
-            // Wing Dive comes down on a standing target; an airborne one gets Wing Sweep or Skyward Pike instead.
+            if (!clearLine)
+            {
+                return false;
+            }
+
+            // Wing Dive drops out of flight onto a standing target; skip it on tiny perches with no room to land
+            // so the knight stays airborne slashing and firing instead of diving off into the floor below.
             if (combo.AirborneStartOnly)
             {
                 bool targetStanding = target.velocity.Y == 0f;
-                return clearLine && targetStanding;
+                return targetStanding && HasLandingRoomNearTarget(target);
+            }
+
+            // While flying, allow sweeps, thrusts, and windmill spins against a nearby target at roughly hover height.
+            if (InWingFlight)
+            {
+                if (Math.Abs(rise) > AerialSwingMaxRise)
+                {
+                    return false;
+                }
+
+                if (combo.Name == SunfallCleaveName)
+                {
+                    return _phaseTwo && distance <= AerialSweepMaxRange;
+                }
+
+                if (combo.Name == RoyalThrustName || combo.Name == TwinThrustName)
+                {
+                    return distance >= AerialThrustMinRange && distance <= ThrustMaxRange;
+                }
+
+                if (combo.Name == HalberdReapName || combo.Name == HalberdWindmillName)
+                {
+                    return distance <= AerialSweepMaxRange;
+                }
+
+                return false;
             }
 
             if (combo.Name == AscendingPikeName)
             {
                 bool aboveInBand = rise > GroundCutMaxRise && rise <= AscendingPikeMaxRise;
-                return aboveInBand && horizontal <= AscendingPikeMaxHorizontal && clearLine;
+                return aboveInBand && horizontal <= AscendingPikeMaxHorizontal;
+            }
+
+            if (combo.Name == RoyalLeapName)
+            {
+                bool leapRiseOk = rise <= RoyalLeapMaxRise;
+                return leapRiseOk && distance >= RoyalLeapMinRange && distance <= ReliableJumpStartRange(combo.Steps[0]);
             }
 
             if (rise > GroundCutMaxRise)
@@ -407,19 +450,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return false;
             }
 
-            if (!clearLine)
-            {
-                return false;
-            }
-
             if (combo.Name == SunfallCleaveName)
             {
                 return _phaseTwo;
-            }
-
-            if (combo.Name == RoyalLeapName)
-            {
-                return distance >= RoyalLeapMinRange && distance <= ReliableJumpStartRange(combo.Steps[0]);
             }
 
             if (combo.Name == RoyalThrustName || combo.Name == TwinThrustName)
@@ -434,10 +467,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             float targetDistance = NPC.Distance(target.Center);
 
-            // The leaping finisher only bolts on when the chasing spin didn't close the gap.
+            // The leaping finisher only bolts on from the ground when the chasing spin didn't close the gap.
             if (comboName == HalberdWindmillName && nextStepIndex == 1)
             {
-                return targetDistance > WindmillFinisherRange;
+                return !InWingFlight && targetDistance > WindmillFinisherRange;
             }
 
             // A hit always earns the next step; a whiff only does if the next step can still reach.
@@ -529,6 +562,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             base.OnMeleeComboAttackTick(combo, step, elapsed, total);
 
+            // Keep flying thrusts and spins level horizontally instead of drifting vertically mid-swing.
+            if (InWingFlight && step.ForwardPushMult > 0f)
+            {
+                NPC.velocity.Y *= 0.85f;
+            }
+
             if (Main.dedServ)
             {
                 return;
@@ -569,11 +608,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        // Sunfall Cleave: one floor spark each way when the overhead lands (Gwyn's spark, 8 tiles, jumpable).
+        // Sunfall Cleave: one floor spark each way when the overhead lands on the ground (Gwyn's spark, 8 tiles, jumpable).
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
             bool sunfallImpact = ActiveMeleeComboName == SunfallCleaveName && step.Motion == ComboMotion.OverheadArc;
-            if (!sunfallImpact)
+            if (!sunfallImpact || InWingFlight)
             {
                 return;
             }
@@ -757,7 +796,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override void RunMovementAI(float speedMult)
         {
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-            globalNPC.NavSearchRadius = 80;
+            globalNPC.NavSearchRadius = 100;
             globalNPC.RemembersLastKnownPos = true;
 
             // Accelerate harder while sprinting to close a melee gap, so a kiting player sees the knight gaining.
@@ -775,8 +814,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // ── Wings ───────────────────────────────────────────────────────────────────
-        // Angel Wings: hidden on the ground, spread in the air. No random flight: every takeoff comes from the anti-air
-        // ladder in TickServerDecisions (the target airborne out of reach, or standing on a ledge far above).
+        // Angel Wings: hidden on the ground, spread in the air. Takeoffs come from TickServerDecisions (anti-air,
+        // elevated ledges, unreachable terrain, plus occasional voluntary hover bursts to bob-fire or swing mid-air).
         protected override bool HasWings => true;
         protected override int WingsAccessoryItemType => ItemID.AngelWings;
         protected override bool ShowWingsWhenGrounded => false;
@@ -784,19 +823,23 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         protected override float FlightHeightTrigger => 99999f;
         protected override float FlightHpEscalationFrac => 0f;
         protected override int AirborneComboChancePercent => 50;
+        protected override bool AllowAerialMeleeSwings => true;
+        protected override float AerialRangedVerticalBand => 180f;
 
-        // The hover keeps station 80px above and 150px beside the target; at 6 px/t it is slower than a winged player at
-        // full speed, so the Skyward Pike dash is the catch. MaxFlightTicks 480 caps any one flight at 8s.
+        // Hover keeps station 70px above and 140px beside the target with a natural gravity-sink + wing-flap-burst bob
+        // (sinks 24px gliding, then beats wings 18t to spring 18px up). InfiniteFlight lets the knight cross chasms or
+        // fight indefinitely beside tiny ledges; TickServerDecisions lands once the target is reachable on real ground.
         protected override EnemyFlightConfig FlightConfig => new EnemyFlightConfig
         {
-            HoverAltitude = 80f,
-            HoverSideOffset = 150f,
+            HoverAltitude = 70f,
+            HoverSideOffset = 140f,
             HoverTopSpeed = 6.0f,
             TakeOffSpeed = 8.5f,
             DiveAcceleration = 0.55f,
             DiveTopSpeed = 12f,
             LandSpeed = 6.5f,
             MaxFlightTicks = 480,
+            InfiniteFlight = true,
             CooldownTicks = 60,
             TakeOffTicks = 32,
             HoverDwellTicks = 90,
@@ -804,6 +847,10 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             DiveAttackTicks = 46,
             LandTicks = 60,
             WingFlapSpeed = 0.085f,
+            HoverDriftSpeed = 0.30f,
+            HoverDriftMax = 24f,
+            HoverFlapRise = 18f,
+            HoverFlapBurstTicks = 18,
             StrafeArcHeight = 40f,
         };
 
@@ -847,10 +894,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
         protected override bool UseBowStringDrawPose => true;
-        protected override bool ShowRangedWeaponDuringRecovery => true;
+        // Hide the weapon during ranged recovery rather than drawing it detached on the relaxed non-composite arm;
+        // the halberd returns with a gold puff once neutral resumes.
+        protected override bool ShowRangedWeaponDuringRecovery => false;
+        protected override Color BowStringColor => new Color(255, 245, 200);
         protected override bool AllowRangedPatternsAirborne => true;
         protected override float RangedRange => 900f;
-        protected override float MinRangedRange => 280f;
+        // Lower min range while airborne so Storm Volley fires cleanly from the 140px hover station.
+        protected override float MinRangedRange => InWingFlight ? 120f : 220f;
         protected override int RangedTelegraphTicks => 42;
         protected override int RangedRecoveryTicks => 36;
         protected override int RangedCooldownAfterUse => 150;
@@ -1207,7 +1258,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            DebugAttackLabel = "Royal Oath (phase two)";
             SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, NPC.Center);
             UsefulFunctions.ScreenShake(NPC.Center, 3f, 12);
 
@@ -1247,7 +1297,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             EnterSkyStage(openingStage);
             StartSetPiece(KnightSetPiece.SkywardPike, SkyPhaseSafetyTicks);
-            DebugAttackLabel = "Skyward Pike";
             PlaySkyStageCue(openingStage);
         }
 
@@ -1264,7 +1313,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             StopMeleeHit();
             _skyStage = SkyStage.None;
             _setPiece = KnightSetPiece.None;
-            DebugAttackLabel = null;
             PhaseTimer = 1;
             RequestNetworkSnapshot();
         }
@@ -1537,20 +1585,29 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         }
 
         // ── Server decisions: the anti-air ladder, flight, phase two, Grounding Shot ──
-        // The anti-air ladder (first match wins):
-        //   1. airborne 48-240px above, <= 160px across -> Ascending Pike (the combo gate above).
-        //   2. airborne >= 30t, <= 600px, LOS -> Skyward Pike from the ground: 6%/tick from neutral, or out of a melee recovery.
-        //   3. airborne >= 60t and (> 240px above or > 300px away), headroom -> take off (Sky Pursuit); in the hover the base
-        //      picks Storm Volley / Wing Sweep / Wing Dive and this picks Skyward Pike from the hover.
-        //   4. grounded >= 240px above for 45t -> take off (Rise) to volley or dive onto the ledge.
-        // "Airborne" is Artorias's test: not standing (two still ticks), or hanging from a hook. Server-only counters.
+        // The anti-air / elevation ladder (first match wins):
+        //   1. target 48-240px above, <= 160px across -> Ascending Pike (the combo gate above).
+        //   2. target airborne >= 30t OR standing on a ledge >= 96px above for 30t, <= 600px, LOS -> Skyward Pike.
+        //   3. takeoff: airborne pursuit, elevated ledge (>= 96px for 45t), no ground A* path (45t), or voluntary
+        //      aerial hover roll (12%/s P1, 20%/s P2) for a 4s bob-hover shooting Storm Volley and flying halberd swings.
         private const int AirborneTriggerTicks = 30;
+        private const int LedgeSkywardTriggerTicks = 30;
         private const int PursuitTriggerTicks = 60;
         private const int LedgeTriggerTicks = 45;
+        private const int NoPathTriggerTicks = 45;
         private const int LandAfterGroundedTicks = 60;
+        private const int VoluntaryHoverTicks = 240;
+        private const int VoluntaryHoverChancePhaseOne = 12;
+        private const int VoluntaryHoverChancePhaseTwo = 20;
         private const float AntiAirMaxRange = 600f;
+        private const float LedgeMinRise = 96f;
         private const float PursuitMinRise = 240f;
         private const float PursuitMinDistance = 300f;
+        private const float TakeoffMinHeadroom = 48f;
+        private const float LandingMaxRise = 32f;
+        private const float LandingMaxHorizontal = 260f;
+        private const float AerialMeleeAnchorX = 88f;
+        private const float AerialMeleeAnchorY = -10f;
         private const int SkyOpenerChancePercent = 6;
         private const int HoverSettleTicks = 40;
         private const int HoverPikeChanceDenominator = 60;
@@ -1565,6 +1622,9 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private int _targetAirborneTicks;
         private int _targetGroundedTicks;
         private int _targetOnLedgeTicks;
+        private int _noPathTicks;
+        private int _minFlightTicks;
+        private bool _aerialSwingAnchorLocked;
         private int _antiAirCooldown;
         private int _flightCooldown;
         private int _hoverTicks;
@@ -1614,6 +1674,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 _targetAirborneTicks = 0;
                 _targetGroundedTicks = 0;
                 _targetOnLedgeTicks = 0;
+                _noPathTicks = 0;
                 return;
             }
 
@@ -1648,7 +1709,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 _targetGroundedTicks = 0;
             }
 
-            bool onLedgeAbove = targetStanding && rise >= PursuitMinRise;
+            bool onLedgeAbove = targetStanding && rise >= LedgeMinRise;
             if (onLedgeAbove)
             {
                 _targetOnLedgeTicks++;
@@ -1671,9 +1732,62 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            // In the air: count the hover, pick Skyward Pike from it, and land once the target has stood still a while.
+            // In the air: manage flying-melee HoverAnchor, pick Skyward Pike, and land only once the target has settled
+            // on real ground with room to join them (stays hovering beside tiny perches and during voluntary hover).
             if (InWingFlight)
             {
+                if (_minFlightTicks > 0)
+                {
+                    _minFlightTicks--;
+                }
+
+                // Flying melee positioning: glide into sword reach during telegraph/pause, lock spot during sweep
+                // strikes so the player can roll out, and release anchor on thrusts/spins or outside melee phases.
+                bool flyingSwingTelegraph = (Phase == AttackPhase.MeleeComboTelegraph || Phase == AttackPhase.MeleeComboPause)
+                    && ActiveMeleeComboName != WingDiveName;
+                bool flyingSwingActive = Phase == AttackPhase.MeleeComboAttack && ActiveMeleeComboName != WingDiveName;
+
+                if (flyingSwingTelegraph)
+                {
+                    int anchorSide = NPC.Center.X < target.Center.X ? -1 : 1;
+                    Flight.HoverAnchor = target.Center + new Vector2(anchorSide * AerialMeleeAnchorX, AerialMeleeAnchorY);
+                    _aerialSwingAnchorLocked = false;
+                    if (PhaseTimer % 6 == 0)
+                    {
+                        NPC.netUpdate = true;
+                    }
+                }
+                else if (flyingSwingActive)
+                {
+                    bool pushMove = ActiveMeleeComboName == RoyalThrustName
+                        || ActiveMeleeComboName == TwinThrustName
+                        || ActiveMeleeComboName == HalberdWindmillName;
+
+                    if (pushMove)
+                    {
+                        if (Flight.HoverAnchor.HasValue)
+                        {
+                            Flight.HoverAnchor = null;
+                            NPC.netUpdate = true;
+                        }
+                    }
+                    else if (!_aerialSwingAnchorLocked)
+                    {
+                        Flight.HoverAnchor = NPC.Center;
+                        _aerialSwingAnchorLocked = true;
+                        NPC.netUpdate = true;
+                    }
+                }
+                else
+                {
+                    _aerialSwingAnchorLocked = false;
+                    if (Flight.HoverAnchor.HasValue)
+                    {
+                        Flight.HoverAnchor = null;
+                        NPC.netUpdate = true;
+                    }
+                }
+
                 if (Flight.Mode == FlightMode.Hover)
                 {
                     _hoverTicks++;
@@ -1683,26 +1797,50 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                     _hoverTicks = 0;
                 }
 
-                bool pikeReady = _antiAirCooldown <= 0 && _targetAirborneTicks >= AirborneTriggerTicks
-                    && distance <= AntiAirMaxRange && clearLine;
+                // Skyward Pike from hover works against both airborne targets and players perched on ledges or ground.
+                bool pikeReady = _antiAirCooldown <= 0 && distance <= AntiAirMaxRange && clearLine;
                 bool hoverSettled = Flight.Mode == FlightMode.Hover && _hoverTicks >= HoverSettleTicks;
                 if (Phase == AttackPhase.Idle && hoverSettled && pikeReady && Main.rand.NextBool(HoverPikeChanceDenominator))
                 {
+                    Flight.HoverAnchor = null;
                     StartSkywardPike(fromHover: true);
                     return;
                 }
 
-                // The base gets the first 30 of these ticks to pick a Wing Dive at the standing target; then the knight lands.
+                _noPathTicks = 0;
+
+                float horizontalGap = Math.Abs(target.Center.X - NPC.Center.X);
+                bool reachedTarget = rise <= LandingMaxRise && clearLine && horizontalGap <= LandingMaxHorizontal;
                 bool targetSettled = _targetGroundedTicks >= LandAfterGroundedTicks && _targetOnLedgeTicks == 0;
-                if (Phase == AttackPhase.Idle && targetSettled)
+                if (Phase == AttackPhase.Idle && _minFlightTicks <= 0 && targetSettled && reachedTarget
+                    && HasLandingRoomNearTarget(target))
                 {
                     Flight.RequestLand();
+                    NPC.netUpdate = true;
                 }
 
                 return;
             }
 
             _hoverTicks = 0;
+            _minFlightTicks = 0;
+            _aerialSwingAnchorLocked = false;
+            if (Flight != null && Flight.HoverAnchor.HasValue)
+            {
+                Flight.HoverAnchor = null;
+            }
+
+            bool groundPathBlocked = neutral && knightStanding
+                && SmartFighter4AI.HasNoAStarPath(NPC)
+                && !SmartFighter4AI.HasActiveMovementPlan(NPC);
+            if (groundPathBlocked)
+            {
+                _noPathTicks++;
+            }
+            else
+            {
+                _noPathTicks = 0;
+            }
 
             // Grounding Shot arming.
             bool groundingEligible = _phaseTwo && !_groundingArmed && _groundingCooldown <= 0 && distance >= GroundingMinRange
@@ -1722,9 +1860,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             bool pikeBand = rise > GroundCutMaxRise && rise <= AscendingPikeMaxRise
                 && Math.Abs(target.Center.X - NPC.Center.X) <= AscendingPikeMaxHorizontal;
 
-            // 2. Skyward Pike from the ground.
-            bool skywardEligible = _antiAirCooldown <= 0 && _targetAirborneTicks >= AirborneTriggerTicks
-                && distance <= AntiAirMaxRange && clearLine && !pikeBand && HasHeadroom(SkyHopMaxRise);
+            // 2. Skyward Pike from the ground: fires at airborne targets OR players standing on a ledge above (>= 96px).
+            bool targetElevatedForPike = _targetAirborneTicks >= AirborneTriggerTicks
+                || _targetOnLedgeTicks >= LedgeSkywardTriggerTicks;
+            float neededHopHeadroom = MathHelper.Clamp(rise + SkyHopOvershoot, SkyHopMinRise, SkyHopMaxRise);
+            bool skywardEligible = _antiAirCooldown <= 0 && targetElevatedForPike
+                && distance <= AntiAirMaxRange && clearLine && !pikeBand && HasHeadroom(neededHopHeadroom);
             bool openerRoll = neutral && Main.rand.Next(100) < SkyOpenerChancePercent;
             if (skywardEligible && (openerRoll || inMeleeRecovery))
             {
@@ -1732,7 +1873,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 return;
             }
 
-            // 3 and 4. Take off: Sky Pursuit at an airborne target out of reach, or Rise at one standing on a high ledge.
+            // 3. Takeoff: Sky Pursuit (airborne target), Rise (ledge >= 96px above), no ground A* path (across chasm or
+            // narrow perch), or a voluntary aerial hover roll (12%/s P1, 20%/s P2) to bob-hover with bow and halberd.
             if (!neutral || _flightCooldown > 0)
             {
                 return;
@@ -1740,14 +1882,95 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             bool pursuitDue = _targetAirborneTicks >= PursuitTriggerTicks && (rise > PursuitMinRise || distance > PursuitMinDistance);
             bool riseDue = _targetOnLedgeTicks >= LedgeTriggerTicks;
-            float neededRise = MathHelper.Clamp(rise, 0f, SkyHopMaxRise);
-            if ((pursuitDue || riseDue) && HasHeadroom(neededRise) && Flight != null && Flight.RequestTakeoff())
+            bool noPathDue = _noPathTicks >= NoPathTriggerTicks;
+            int voluntaryChance = _phaseTwo ? VoluntaryHoverChancePhaseTwo : VoluntaryHoverChancePhaseOne;
+            bool voluntaryHoverDue = clearLine && distance <= RangedRange
+                && Main.GameUpdateCount % 60 == 0
+                && Main.rand.Next(100) < voluntaryChance;
+
+            if ((pursuitDue || riseDue || noPathDue || voluntaryHoverDue)
+                && HasHeadroom(TakeoffMinHeadroom) && Flight != null && Flight.RequestTakeoff())
             {
                 _flightCooldown = FlightCooldown;
                 _hoverTicks = 0;
-                DebugAttackLabel = pursuitDue ? "Sky Pursuit" : "Rise";
+                _noPathTicks = 0;
+                _minFlightTicks = voluntaryHoverDue ? VoluntaryHoverTicks : 0;
                 NPC.netUpdate = true;
             }
+        }
+
+        /// <summary>True when the target stands on a surface with at least 5 contiguous standable tiles (80px) and
+        /// 3 tiles of clear headroom within ±6 tiles — enough room for the knight to land and fight on foot. Narrow
+        /// 1-4 tile perches return false so the knight stays airborne slashing and firing beside the platform.</summary>
+        private static bool HasLandingRoomNearTarget(Player target)
+        {
+            const int ScanHalfWidth = 6;
+            const int MinRunTiles = 5;
+            const int HeadroomTiles = 3;
+
+            int centerColumn = (int)(target.Center.X / 16f);
+            int feetRow = (int)(target.Bottom.Y / 16f);
+            int currentRun = 0;
+            int bestRun = 0;
+
+            for (int column = centerColumn - ScanHalfWidth; column <= centerColumn + ScanHalfWidth; column++)
+            {
+                if (column < 1 || column >= Main.maxTilesX - 1)
+                {
+                    currentRun = 0;
+                    continue;
+                }
+
+                bool columnStandable = false;
+                for (int rowOffset = -1; rowOffset <= 1; rowOffset++)
+                {
+                    int surfaceRow = feetRow + rowOffset;
+                    if (surfaceRow < HeadroomTiles || surfaceRow >= Main.maxTilesY)
+                    {
+                        continue;
+                    }
+
+                    Tile floorTile = Framing.GetTileSafely(column, surfaceRow);
+                    bool isFloor = floorTile.HasUnactuatedTile
+                        && (Main.tileSolid[floorTile.TileType] || Main.tileSolidTop[floorTile.TileType]);
+                    if (!isFloor)
+                    {
+                        continue;
+                    }
+
+                    bool headroomClear = true;
+                    for (int headOffset = 1; headOffset <= HeadroomTiles; headOffset++)
+                    {
+                        Tile aboveTile = Framing.GetTileSafely(column, surfaceRow - headOffset);
+                        if (aboveTile.HasUnactuatedTile && Main.tileSolid[aboveTile.TileType] && !Main.tileSolidTop[aboveTile.TileType])
+                        {
+                            headroomClear = false;
+                            break;
+                        }
+                    }
+
+                    if (headroomClear)
+                    {
+                        columnStandable = true;
+                        break;
+                    }
+                }
+
+                if (columnStandable)
+                {
+                    currentRun++;
+                    if (currentRun > bestRun)
+                    {
+                        bestRun = currentRun;
+                    }
+                }
+                else
+                {
+                    currentRun = 0;
+                }
+            }
+
+            return bestRun >= MinRunTiles;
         }
 
         /// <summary>Shadow Ninja's headroom check: a body-wide column <paramref name="height"/> px above the knight is open air.</summary>
@@ -1814,11 +2037,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 || _lastPhase == AttackPhase.CrossbowBurstPause || _lastPhase == AttackPhase.RangedRecovery;
             bool halberdBack = wasShotPhase && !shotPhase;
 
-            if (Phase == AttackPhase.RangedRecovery)
-            {
-                SetDisplayWeapon(RangedWeaponItemType, swing: false);
-            }
-
             if (halberdBack)
             {
                 SetDisplayWeapon(MeleeWeaponItemType, swing: false);
@@ -1857,10 +2075,60 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
         }
 
-        /// <summary>Cosmetic, every peer: the swoop's dive sound edge, hover dust from the wing roots, the landing puff and
-        /// the phase-two aura.</summary>
+        /// <summary>Cosmetic, every peer: live debug label, the swoop's dive sound edge, hover dust from the wing
+        /// roots, and the phase-two aura.</summary>
         private void TickPresentation()
         {
+            // Re-derive the debug label every tick from synced state so flight labels clear immediately upon landing
+            // and never stick while walking on the ground. Null lets DebugComboTag / DebugPhaseName show through.
+            if (Phase == AttackPhase.Custom && _setPiece == KnightSetPiece.PhaseTwo)
+            {
+                DebugAttackLabel = "Royal Oath (phase two)";
+            }
+            else if (SkywardPikeActive)
+            {
+                DebugAttackLabel = "Skyward Pike";
+            }
+            else if (Phase == AttackPhase.PierceTelegraph || Phase == AttackPhase.PierceDash || Phase == AttackPhase.PierceRecovery)
+            {
+                DebugAttackLabel = "Gilded Charge";
+            }
+            else if (Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack
+                || Phase == AttackPhase.CrossbowBurstPause || Phase == AttackPhase.RangedRecovery)
+            {
+                if (_groundingArmed)
+                {
+                    DebugAttackLabel = "Grounding Shot";
+                }
+                else if (_airVolley)
+                {
+                    DebugAttackLabel = "Storm Volley";
+                }
+                else
+                {
+                    DebugAttackLabel = "Thunder Arrow";
+                }
+            }
+            else if (InWingFlight && (Phase == AttackPhase.Idle || Phase == AttackPhase.ClosingDistance))
+            {
+                if (Flight.Mode == FlightMode.DiveAttack)
+                {
+                    DebugAttackLabel = "Wing Sweep";
+                }
+                else if (Flight.Mode == FlightMode.Land)
+                {
+                    DebugAttackLabel = "Landing";
+                }
+                else
+                {
+                    DebugAttackLabel = "Sky Pursuit";
+                }
+            }
+            else
+            {
+                DebugAttackLabel = null;
+            }
+
             bool nowDiving = Flight != null && Flight.IsDiving;
             if (nowDiving && !_wasDiving && !Main.dedServ)
             {
@@ -1902,9 +2170,14 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         {
             base.OnStagger(npc);
 
-            // A stagger takes the Custom phase away: drop the pike cleanly and give gravity back.
+            // A stagger takes the Custom phase away: drop the pike cleanly, release any hover anchor, and give gravity back.
             NPC.noGravity = false;
             _skyStage = SkyStage.None;
+            _aerialSwingAnchorLocked = false;
+            if (Flight != null)
+            {
+                Flight.HoverAnchor = null;
+            }
             if (_setPiece == KnightSetPiece.SkywardPike)
             {
                 _setPiece = KnightSetPiece.None;
@@ -1914,9 +2187,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         // ── Stats ─────────────────────────────────────────────────────────────────
         public override void SetStaticDefaults()
         {
-            // RoyalKnight.png is the old Knight of Gwyn sheet (80x930, 15 frames of 62px). The puppet draws itself; the
-            // frame count only keeps the bestiary portrait to the standing frame instead of the whole strip.
-            Main.npcFrameCount[NPC.type] = 15;
+            // RoyalKnight.png is a single-frame exported puppet portrait (53x69); 1 keeps mouse-over hover full height.
+            Main.npcFrameCount[NPC.type] = 1;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Confused] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.CursedInferno] = true;
             NPCID.Sets.SpecificDebuffImmunity[Type][BuffID.Ichor] = true;
@@ -1942,7 +2214,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.AllowDynamicEventNaturalDespawn = true;
-            globalNPC.NavSearchRadius = 80;
+            globalNPC.NavSearchRadius = 100;
             globalNPC.NavGiveUpTicks = 180;
             globalNPC.CanUseRopes = true;
             globalNPC.Agility = 0f;

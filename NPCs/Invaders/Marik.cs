@@ -124,14 +124,15 @@ namespace tsorcRevamp.NPCs.Invaders
                 || Phase == AttackPhase.MeleeTelegraph
                 || Phase == AttackPhase.StabTelegraph);
 
-        protected override int EstusChargesMax => 1;
+        protected override int EstusChargesMax => 5;
         protected override float EstusHealFraction => 0.10f;
-        protected override float FirstHealThreshold => 0.30f;
-        protected override float SecondHealThreshold => -1f;
+        protected override float FirstHealThreshold => 0.45f;
+        protected override float SecondHealThreshold => 0.25f;
         protected override float HealLifeCapFraction => 0.499f;
         protected override int HealCooldownTicks => 900;
-        protected override int HealAnimationTicks => 110;
-        protected override float RecentDamageThreshold => 1f;
+        protected override int HealAnimationTicks => 150;
+        protected override float RecentDamageThreshold => 0.18f;
+        protected override bool CanBeginEstusHeal => SecondPhase && Phase != AttackPhase.Custom;
         protected override float FleeToHealDistance => 20f * 16f;
         protected override int FleeToHealMaxTicks => 120;
 

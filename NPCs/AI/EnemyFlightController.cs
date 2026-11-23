@@ -38,6 +38,10 @@ namespace tsorcRevamp.NPCs.AI
         public int StuckTicks { get; private set; }
         /// <summary>+1 / -1 / 0 horizontal scan direction when seeking ceiling clearance.</summary>
         private int _clearanceSeekDir;
+        /// <summary>Locked overhead gap found while routing past a bridge or ceiling; cleared once feet pass above it.</summary>
+        private bool _hasClearanceGap;
+        private float _clearanceGapX;
+        private float _clearanceCeilingY;
 
         /// <summary>Current Y offset from the ideal hover altitude.  Accumulates downward each tick;
         /// springs negative (above target) when the threshold is hit, producing the natural bob.</summary>
@@ -180,10 +184,14 @@ namespace tsorcRevamp.NPCs.AI
             }
 
             // Decrement total airborne budget; force landing if it runs out.
-            if (IsAirborne && Mode != FlightMode.Land)
+            // InfiniteFlight keeps the NPC airborne until its owner explicitly requests landing.
+            if (IsAirborne && Mode != FlightMode.Land && !Config.InfiniteFlight)
             {
                 FlightTicksRemaining--;
-                if (FlightTicksRemaining <= 0) EnterMode(FlightMode.Land, Config.LandTicks);
+                if (FlightTicksRemaining <= 0)
+                {
+                    EnterMode(FlightMode.Land, Config.LandTicks);
+                }
             }
 
             // Advance wing flap phase only while flapping (glide freezes mid-cycle).
@@ -247,25 +255,92 @@ namespace tsorcRevamp.NPCs.AI
             float sideOffset = npc.Center.X < target.Center.X ? -Config.HoverSideOffset : Config.HoverSideOffset;
             Vector2 desired = new Vector2(target.Center.X + sideOffset, target.Center.Y - Config.HoverAltitude);
 
-            // ── Ceiling-clearance routing ─────────────────────────────────────
-            // If desired altitude or the path up is blocked, shift horizontally to find
-            // a column with overhead clearance, then climb there.
+            // ── Ceiling-clearance and wall-climb routing ──────────────────────
+            // Under a bridge or roof while trying to rise, find the nearest body-wide opening
+            // (up to 64 tiles away), steer under it, then climb straight through until feet clear.
+            bool wantsToClimb = desired.Y < npc.Center.Y - 16f;
+            bool headBlocked = HeadIsBlocked(npc);
+
+            if (_hasClearanceGap)
+            {
+                float horizontalToGap = Math.Abs(_clearanceGapX - npc.Center.X);
+                bool clearedCeiling = npc.Bottom.Y <= _clearanceCeilingY;
+                bool blockedBeforeGap = npc.collideX && horizontalToGap > 12f;
+
+                if (clearedCeiling || !wantsToClimb || blockedBeforeGap)
+                {
+                    _hasClearanceGap = false;
+                    _clearanceSeekDir = 0;
+                }
+            }
+
+            bool centeringThroughGap = false;
+
             if (HoverAnchor.HasValue)
             {
                 // Station-keeping for a locked attack: no drift, no circling; the spring below eases onto the point.
                 desired = HoverAnchor.Value;
+                _hasClearanceGap = false;
+                _clearanceSeekDir = 0;
                 _driftY = 0f;
                 _flapBurstTicks = 0;
             }
-            else if (HeadIsBlocked(npc) || StuckTicks > 60)
+            else if (_hasClearanceGap)
             {
-                int seek = _clearanceSeekDir != 0 ? _clearanceSeekDir : SeekCeilingClearanceDir(npc);
-                if (seek == 0) seek = npc.direction; // fall back to current facing
-                _clearanceSeekDir = seek;
-                desired = new Vector2(npc.Center.X + seek * 96f, npc.Center.Y + 4f); // slide sideways slightly downward
+                float gapDeltaX = _clearanceGapX - npc.Center.X;
+                _driftY = 0f;
+                _flapBurstTicks = 0;
+
+                if (Math.Abs(gapDeltaX) > 6f)
+                {
+                    float slideY = headBlocked ? npc.Center.Y + 4f : npc.Center.Y;
+                    desired = new Vector2(_clearanceGapX, slideY);
+                }
+                else
+                {
+                    // Aligned under the opening: climb straight up and gently center to clear narrow 2-tile shafts.
+                    desired = new Vector2(_clearanceGapX, _clearanceCeilingY - npc.height - 16f);
+                    centeringThroughGap = true;
+                }
+            }
+            else if ((headBlocked && wantsToClimb) || StuckTicks > 60)
+            {
+                if (headBlocked && TryFindCeilingOpening(npc, target, out float gapCenterX, out float ceilingTopY))
+                {
+                    _hasClearanceGap = true;
+                    _clearanceGapX = gapCenterX;
+                    _clearanceCeilingY = ceilingTopY;
+                    _clearanceSeekDir = gapCenterX < npc.Center.X ? -1 : 1;
+                    desired = new Vector2(gapCenterX, npc.Center.Y + 4f);
+                }
+                else
+                {
+                    if (_clearanceSeekDir != 0 && npc.collideX)
+                    {
+                        _clearanceSeekDir = -_clearanceSeekDir;
+                    }
+
+                    int seek = _clearanceSeekDir != 0 ? _clearanceSeekDir : SeekCeilingClearanceDir(npc);
+                    if (seek == 0)
+                    {
+                        seek = npc.direction;
+                    }
+
+                    _clearanceSeekDir = seek;
+                    desired = new Vector2(npc.Center.X + seek * 96f, npc.Center.Y + 4f);
+                }
+
                 // Suppress drift during ceiling routing so we don't fight the clearance logic.
                 _driftY = 0f;
                 _flapBurstTicks = 0;
+            }
+            else if (npc.collideX && !headBlocked)
+            {
+                // Lateral wall in the way while sky above is open: climb over the wall instead of stalling.
+                _clearanceSeekDir = 0;
+                _driftY = 0f;
+                _flapBurstTicks = 0;
+                desired = new Vector2(desired.X, Math.Min(desired.Y, npc.Center.Y - 96f));
             }
             else
             {
@@ -302,6 +377,12 @@ namespace tsorcRevamp.NPCs.AI
                 desiredVel *= MathHelper.Min(dist * 0.06f, Config.HoverTopSpeed);
             }
             npc.velocity = Vector2.Lerp(npc.velocity, desiredVel, 0.10f);
+
+            if (centeringThroughGap)
+            {
+                float centerCorrectionX = MathHelper.Clamp((_clearanceGapX - npc.Center.X) * 0.35f, -2f, 2f);
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, centerCorrectionX, 0.45f);
+            }
 
             // Flap during the upward beat, when climbing hard, turning sharply, or ceiling-pinned.
             // During the downward drift the wings stay spread open (glide) — callers read
@@ -388,19 +469,41 @@ namespace tsorcRevamp.NPCs.AI
 
         private void TickLand(NPC npc, Player target)
         {
-            // Descend toward ground.  Compare FEET (not center) to ground tile so we don't
-            // declare "landed" while the body is still half a tile above the surface.
-            float groundY  = FindGroundY(npc.Center.X, npc.Center.Y);
+            // Scan across the full hitbox width (not just center X) so a rock catching the left or right foot
+            // registers as the landing surface.
+            FindFootprintGround(npc, out float groundY, out bool groundHasLiquid);
             bool groundFound = groundY < npc.Center.Y + NoGroundDistance;
-            bool dryLanding = groundFound && !IsLiquidAbove(npc.Center.X, groundY);
+            bool dryLanding = groundFound && !groundHasLiquid;
+
+            // If Terraria tile collision has already set the NPC down on a dry surface (solid ledge or platform,
+            // never a ceiling bounce), finish landing immediately instead of flapping forever in Land mode.
+            bool feetTouchingSolid = Collision.SolidCollision(new Vector2(npc.position.X, npc.Bottom.Y), npc.width, 4);
+            bool standableUnderFeet = feetTouchingSolid || (groundFound && (groundY - npc.Bottom.Y) <= 4f);
+            bool stoppedOnDryFloor = !npc.wet && !groundHasLiquid && standableUnderFeet
+                && (npc.collideY || (Math.Abs(npc.velocity.Y) < 0.1f && ModeTimer < Config.LandTicks - 5));
+
+            if (stoppedOnDryFloor)
+            {
+                npc.noGravity = false;
+                WingsActiveThisTick = false;
+                CooldownRemaining = Config.CooldownTicks;
+                EnterMode(FlightMode.Grounded, 0);
+                return;
+            }
 
             // Never descend into a pit or liquid: hold altitude and glide toward the nearest column with dry ground.
-            // The flight budget isn't spent in Land, so this may take as long as it needs. No column found = hover here.
+            // Infinite-flight flyers return to Hover if no dry ground exists in range instead of freezing in Land.
             if (!dryLanding)
             {
                 if (_landSeekDirection == 0)
                 {
-                    _landSeekDirection = FindDryGroundDirection(npc);
+                    _landSeekDirection = FindDryGroundDirection(npc, target);
+                }
+
+                if (_landSeekDirection == 0 && Config.InfiniteFlight)
+                {
+                    EnterMode(FlightMode.Hover, Config.HoverDwellTicks);
+                    return;
                 }
 
                 Vector2 aheadPosition = npc.position + new Vector2(_landSeekDirection * 8f, 0f);
@@ -420,7 +523,7 @@ namespace tsorcRevamp.NPCs.AI
             }
 
             _landSeekDirection = 0;
-            float feetY    = npc.position.Y + npc.height;
+            float feetY = npc.position.Y + npc.height;
             float distFeet = groundY - feetY;
 
             // Phase 1 — still well above ground: powered descent with flapping.
@@ -458,12 +561,16 @@ namespace tsorcRevamp.NPCs.AI
             ModeSequence++;
             _landSeekDirection = 0;
             if (mode == FlightMode.TakeOff)
+            {
                 FlightTicksRemaining = Config.MaxFlightTicks;
-            // Reset drift state when leaving hover so it doesn't bleed into other modes.
+            }
+            // Reset drift and ceiling-escape state when leaving hover so it doesn't bleed into other modes.
             if (mode != FlightMode.Hover)
             {
                 _driftY = 0f;
                 _flapBurstTicks = 0;
+                _clearanceSeekDir = 0;
+                _hasClearanceGap = false;
             }
         }
 
@@ -473,7 +580,8 @@ namespace tsorcRevamp.NPCs.AI
             return npc.velocity.Y > -0.5f;
         }
 
-        /// <summary>True if the NPC's head is pressed against a solid tile (4px above body top).</summary>
+        /// <summary>True if the NPC's head is pressed against a solid tile (4px above body top; excludes platforms
+        /// since flying upward passes through tileSolidTop).</summary>
         private bool HeadIsBlocked(NPC npc)
         {
             int leftTile  = (int)(npc.position.X / 16f);
@@ -481,10 +589,16 @@ namespace tsorcRevamp.NPCs.AI
             int topTile   = (int)((npc.position.Y - 4f) / 16f);
             for (int x = leftTile; x <= rightTile; x++)
             {
-                if (x < 0 || x >= Main.maxTilesX || topTile < 0 || topTile >= Main.maxTilesY) continue;
-                Tile t = Framing.GetTileSafely(x, topTile);
-                if (t.HasUnactuatedTile && Main.tileSolid[t.TileType])
+                if (x < 0 || x >= Main.maxTilesX || topTile < 0 || topTile >= Main.maxTilesY)
+                {
+                    continue;
+                }
+
+                Tile tile = Framing.GetTileSafely(x, topTile);
+                if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -563,6 +677,120 @@ namespace tsorcRevamp.NPCs.AI
             return Math.Max(desiredCenterY, highestCenterY);
         }
 
+        /// <summary>Scan outward up to 64 tiles left and right for the nearest body-wide opening through the ceiling
+        /// row above the NPC (stopping a side early if a wall blocks body height). Prefers the side toward target on ties.</summary>
+        private bool TryFindCeilingOpening(NPC npc, Player target, out float gapCenterX, out float ceilingTopY)
+        {
+            const int MaxOpeningSearchTiles = 64;
+            const int RequiredClearRows = 4;
+
+            gapCenterX = npc.Center.X;
+            ceilingTopY = npc.position.Y;
+
+            int ceilingRow = (int)((npc.position.Y - 4f) / 16f);
+            int bodyTopRow = (int)(npc.position.Y / 16f);
+            int bodyBottomRow = (int)((npc.Bottom.Y - 1f) / 16f);
+            int bodyWidthTiles = Math.Max(1, (int)Math.Ceiling(npc.width / 16f));
+            int centerTileX = (int)(npc.Center.X / 16f);
+
+            int firstSide = 1;
+            if (target != null && target.Center.X < npc.Center.X)
+            {
+                firstSide = -1;
+            }
+
+            bool firstSideBlocked = false;
+            bool secondSideBlocked = false;
+
+            for (int offset = 1; offset <= MaxOpeningSearchTiles; offset++)
+            {
+                for (int sideIndex = 0; sideIndex < 2; sideIndex++)
+                {
+                    int side = sideIndex == 0 ? firstSide : -firstSide;
+                    if ((sideIndex == 0 && firstSideBlocked) || (sideIndex == 1 && secondSideBlocked))
+                    {
+                        continue;
+                    }
+
+                    int probeColumn = centerTileX + side * offset;
+                    if (probeColumn < 1 || probeColumn >= Main.maxTilesX - bodyWidthTiles)
+                    {
+                        if (sideIndex == 0)
+                        {
+                            firstSideBlocked = true;
+                        }
+                        else
+                        {
+                            secondSideBlocked = true;
+                        }
+                        continue;
+                    }
+
+                    // Stop scanning past a solid wall at the NPC's current flight altitude.
+                    bool wallAtBodyHeight = false;
+                    for (int row = bodyTopRow; row <= bodyBottomRow; row++)
+                    {
+                        if (row < 0 || row >= Main.maxTilesY)
+                        {
+                            continue;
+                        }
+
+                        Tile wallTile = Framing.GetTileSafely(probeColumn, row);
+                        if (wallTile.HasUnactuatedTile && Main.tileSolid[wallTile.TileType] && !Main.tileSolidTop[wallTile.TileType])
+                        {
+                            wallAtBodyHeight = true;
+                            break;
+                        }
+                    }
+
+                    if (wallAtBodyHeight)
+                    {
+                        if (sideIndex == 0)
+                        {
+                            firstSideBlocked = true;
+                        }
+                        else
+                        {
+                            secondSideBlocked = true;
+                        }
+                        continue;
+                    }
+
+                    // Check if a body-wide vertical shaft starting at this column is open through the ceiling.
+                    int startColumn = side < 0 ? probeColumn - bodyWidthTiles + 1 : probeColumn;
+                    bool openingClear = true;
+
+                    for (int column = startColumn; column < startColumn + bodyWidthTiles && openingClear; column++)
+                    {
+                        if (column < 0 || column >= Main.maxTilesX)
+                        {
+                            openingClear = false;
+                            break;
+                        }
+
+                        for (int row = ceilingRow; row > ceilingRow - RequiredClearRows && row >= 0; row--)
+                        {
+                            Tile tile = Framing.GetTileSafely(column, row);
+                            if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+                            {
+                                openingClear = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (openingClear)
+                    {
+                        gapCenterX = (startColumn + bodyWidthTiles * 0.5f) * 16f;
+                        ceilingTopY = ceilingRow * 16f;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>Scan ±96px from the NPC for the side with more overhead clearance.
         /// Returns +1 (right), -1 (left), or 0 if neither side is clearly better.</summary>
         private int SeekCeilingClearanceDir(NPC npc)
@@ -632,14 +860,44 @@ namespace tsorcRevamp.NPCs.AI
             return Framing.GetTileSafely(x, y).LiquidAmount > 0;
         }
 
-        /// <summary>Nearest side (-1/+1) with dry ground under the NPC's current height, checking outward tile by tile;
-        /// 0 if neither side has any within DryGroundSearchTiles. Caller: TickLand over a pit or liquid.</summary>
-        private int FindDryGroundDirection(NPC npc)
+        /// <summary>Scans every tile column under the NPC's hitbox width for the highest standable surface
+        /// (solid tile or platform), so landing on a rock edge detects the surface supporting the outer foot.</summary>
+        private void FindFootprintGround(NPC npc, out float highestGroundY, out bool groundHasLiquid)
         {
+            int leftTile = (int)(npc.position.X / 16f);
+            int rightTile = (int)((npc.position.X + npc.width - 1f) / 16f);
+            float scanStartY = Math.Max(npc.Center.Y, npc.Bottom.Y - 4f);
+            highestGroundY = npc.Center.Y + NoGroundDistance;
+            groundHasLiquid = false;
+
+            for (int column = leftTile; column <= rightTile; column++)
+            {
+                float columnWorldX = column * 16f + 8f;
+                float columnGroundY = FindGroundY(columnWorldX, scanStartY);
+
+                if (columnGroundY < highestGroundY)
+                {
+                    highestGroundY = columnGroundY;
+                    groundHasLiquid = IsLiquidAbove(columnWorldX, columnGroundY);
+                }
+            }
+        }
+
+        /// <summary>Nearest side (-1/+1) with dry ground under the NPC's current height, checking outward tile by tile
+        /// and preferring the side toward target on ties; 0 if neither side has any within DryGroundSearchTiles.</summary>
+        private int FindDryGroundDirection(NPC npc, Player target)
+        {
+            int firstSide = -1;
+            if (target != null && target.Center.X > npc.Center.X)
+            {
+                firstSide = 1;
+            }
+
             for (int offsetTiles = 1; offsetTiles <= DryGroundSearchTiles; offsetTiles++)
             {
-                for (int side = -1; side <= 1; side += 2)
+                for (int sideIndex = 0; sideIndex < 2; sideIndex++)
                 {
+                    int side = sideIndex == 0 ? firstSide : -firstSide;
                     float columnX = npc.Center.X + side * offsetTiles * 16f;
                     float columnGroundY = FindGroundY(columnX, npc.Center.Y);
                     // Ground must be below the feet: a hit at body height is a wall, not somewhere to land.
@@ -746,6 +1004,9 @@ namespace tsorcRevamp.NPCs.AI
         public float LandSpeed;
         /// <summary>Max total airborne time before forced landing.</summary>
         public int   MaxFlightTicks;
+        /// <summary>When true, FlightTicksRemaining never forces a landing — the owner controls landing explicitly
+        /// (used by flyers that must cross large gaps or climb out of deep pits to reach the player).</summary>
+        public bool  InfiniteFlight;
         /// <summary>Cooldown after landing before next takeoff allowed.</summary>
         public int   CooldownTicks;
 

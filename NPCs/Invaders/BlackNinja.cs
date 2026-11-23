@@ -70,6 +70,9 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int SecondaryRangedDamage => 1;
         protected override int MagicDamage => 14;
 
+        protected override int HealAnimationTicks => 160;
+        protected override int HealCooldownTicks => 5 * 60;
+
         protected override WeaponArchetype MeleeArchetype => WeaponArchetype.Flail;
 
         // Reverse Halo, Ankle Reaper, and Chain Cross live in reusable optional mace tables. Black

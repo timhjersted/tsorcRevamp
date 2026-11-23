@@ -75,6 +75,9 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeDamage => 65;
         protected override int RangedDamage => 42;
 
+        protected override int HealAnimationTicks => 150;
+        protected override int HealCooldownTicks => 10 * 60;
+
         // ── Melee tuning — agile fire-sword duelist ─────────────────────────────────────
         const string QuickslashName = "Quickslash";
         const string UnderOverName = "Under-Over";

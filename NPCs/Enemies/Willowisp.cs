@@ -24,7 +24,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.defense = 4;
             NPC.lifeMax = 150;
             NPC.knockBackResist = 0.1f;
-            NPC.value = 3000f;
+            NPC.value = 600f; // was 3000; HM fodder now (500 Expert HP), in line with CloudBat's 500
             NPC.buffImmune[BuffID.Poisoned] = true;
             NPC.buffImmune[BuffID.OnFire] = true;
             NPC.buffImmune[BuffID.CursedInferno] = true;
@@ -41,6 +41,9 @@ namespace tsorcRevamp.NPCs.Enemies
                 NPC.lifeMax = 350;
                 NPC.defense = 15;
                 NPC.damage = 65;
+
+                // SHM fodder: 3000 Expert HP in the registry. Was 3000 value at 9000 HP.
+                NPC.value = 1000f;
             }
         }
 

@@ -39,7 +39,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeDamage => EnemyDamage.Projectile(320);
         protected override int RangedDamage => EnemyDamage.Projectile(220);
         protected override int SecondaryRangedDamage => EnemyDamage.Projectile(280);
-        protected override int EstusChargesMax => 3;
+        protected override int EstusChargesMax => 4;
+        protected override int HealCooldownTicks => 10 * 60;
         protected override bool CanBeginEstusHeal => Neutral && _move == Move.None && _pendingTier <= _tier && !_withdrawing && !HasOwnedHazards();
         protected override bool HoldAttackSelection => true; // Local bag selects ALL offense, never a legacy fallback.
         protected override bool CanStab => false;

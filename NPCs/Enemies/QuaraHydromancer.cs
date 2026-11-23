@@ -235,7 +235,7 @@ namespace tsorcRevamp.NPCs.Enemies
         public override void SetStaticDefaults()
         {
             // Kept so the bestiary and other resource consumers still slice the old 15-frame sheet.
-            Main.npcFrameCount[Type] = 15;
+            Main.npcFrameCount[Type] = 1;
         }
 
         public override void SetDefaults()

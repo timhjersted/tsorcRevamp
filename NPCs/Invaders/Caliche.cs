@@ -256,7 +256,14 @@ namespace tsorcRevamp.NPCs.Invaders
 
         protected override string InvaderTitle => DisplayName.Value;
         protected override bool AnnounceInvasion => false;
-        protected override int EstusChargesMax => 0;
+        protected override int EstusChargesMax => 2;
+        protected override float EstusHealFraction => 0.40f;
+        protected override int HealAnimationTicks => 4 * 60;
+        protected override int HealCooldownTicks => 10 * 60;
+        // Gate both threshold and burst-damage heals to <= 50% HP, and avoid cancelling Custom set-pieces mid-stage.
+        protected override bool CanBeginEstusHeal => NPC.lifeMax > 0
+            && NPC.life <= NPC.lifeMax * 0.50f
+            && Phase != AttackPhase.Custom;
         protected override int CasualStrollChance => 0;
 
         protected override int HeadArmorItemType => ItemID.FossilHelm;
@@ -370,7 +377,7 @@ namespace tsorcRevamp.NPCs.Invaders
         public override void SetStaticDefaults()
         {
             // The legacy 16-frame sheet stays as the bestiary/map sprite; the puppet body is what draws in the world.
-            Main.npcFrameCount[Type] = 16;
+            Main.npcFrameCount[Type] = 1;
             NPCID.Sets.TrailCacheLength[Type] = 10;
             NPCID.Sets.TrailingMode[Type] = 1;
         }

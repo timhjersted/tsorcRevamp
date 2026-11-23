@@ -43,31 +43,37 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Necromancer
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            //One ricochet, then shatter
+            // One ricochet, then shatter.
             Projectile.localAI[0]++;
             if (Projectile.localAI[0] > 1)
             {
                 return true;
             }
+
             if (Projectile.velocity.X != oldVelocity.X)
             {
                 Projectile.velocity.X = -oldVelocity.X * 0.9f;
             }
+
             if (Projectile.velocity.Y != oldVelocity.Y)
             {
                 Projectile.velocity.Y = -oldVelocity.Y * 0.8f;
             }
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item2 with { Volume = 0.4f, Pitch = 0.3f }, Projectile.Center);
+
             return false;
         }
 
         public override void OnKill(int timeLeft)
         {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item2 with { Volume = 0.4f, Pitch = -0.2f }, Projectile.Center);
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             for (int i = 0; i < 6; i++)
             {
-                Vector2 vel = Main.rand.NextVector2Circular(2.5f, 2.5f);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Bone, vel.X, vel.Y, 60, default, 1.1f);
+                Vector2 shardVelocity = Main.rand.NextVector2Circular(2.5f, 2.5f);
+                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Bone, shardVelocity.X, shardVelocity.Y, 60, default, 1.1f);
                 Main.dust[dust].noGravity = true;
             }
         }

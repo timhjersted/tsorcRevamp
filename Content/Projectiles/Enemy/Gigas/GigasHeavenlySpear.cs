@@ -10,13 +10,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
 {
     ///<summary>
     ///Gigas heavenly spear: materializes in the air near the player as a converging sparkle cluster
-    ///(harmless telegraph), then lances at the player's position. ai[0] = hover ticks before the dive;
-    ///ai[1] = a 0-3 visual length tier used by the escalating barrage waves.
-    ///The dive locks its direction at launch — repositioning during the hover dodges it.
+    ///(harmless telegraph), then lances at the player or straight down depending on ai[2].
+    ///ai[0] = hover ticks before launch; ai[1] = 0-3 visual length tier;
+    ///ai[2] = aim mode (0 = lock onto player at launch, 1 = straight down).
     ///</summary>
     class GigasHeavenlySpear : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
+
+        public const float AimAtPlayerMode = 0f;
+        public const float StraightDownMode = 1f;
 
         const float DiveSpeed = 15f;
         const string TextureRoot = "tsorcRevamp/Textures/Noise/";
@@ -27,6 +30,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
 
         int HoverTicks => (int)Projectile.ai[0];
         int LengthTier => Math.Clamp((int)Projectile.ai[1], 0, 3);
+        bool StraightDown => Projectile.ai[2] > 0.5f;
         bool Diving => Projectile.localAI[0] > HoverTicks;
         float FlightProgress => MathHelper.Clamp((Projectile.localAI[0] - HoverTicks) / (14f + LengthTier * 2f), 0f, 1f);
 
@@ -60,60 +64,99 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Gigas
             if (!Diving)
             {
                 Projectile.velocity = Vector2.Zero;
-                //Converging sparkles: light drawn inward to the forming spear
-                float progress = Projectile.localAI[0] / (float)HoverTicks;
-                for (int i = 0; i < 2; i++)
+                // Converging sparkles: light drawn inward to the forming spear.
+                float progress = Projectile.localAI[0] / (float)Math.Max(HoverTicks, 1);
+                if (!Main.dedServ)
                 {
-                    float angle = Main.rand.NextFloat(MathHelper.TwoPi);
-                    float radius = MathHelper.Lerp(38f, 6f, progress) + Main.rand.NextFloat(8f);
-                    Vector2 pos = Projectile.Center + angle.ToRotationVector2() * radius;
-                    int dust = Dust.NewDust(pos, 4, 4, DustID.GoldCoin, 0f, 0f, 0, default, 1f);
-                    Main.dust[dust].noGravity = true;
-                    Main.dust[dust].velocity = (Projectile.Center - pos) * 0.12f;
-                }
-                Lighting.AddLight(Projectile.Center, 0.5f * progress, 0.45f * progress, 0.2f * progress);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        float radius = MathHelper.Lerp(38f, 6f, progress) + Main.rand.NextFloat(8f);
+                        Vector2 pos = Projectile.Center + angle.ToRotationVector2() * radius;
+                        Dust dust = Dust.NewDustDirect(pos, 4, 4, DustID.GoldCoin, 0f, 0f, 0, default, 1f);
+                        dust.noGravity = true;
+                        dust.velocity = (Projectile.Center - pos) * 0.12f;
+                    }
 
-                //Launch: lock onto the player's position right now
+                    // Straight-down curtain spears drop a faint downward gold glint to telegraph the vertical fall.
+                    if (StraightDown && Main.rand.NextBool(2))
+                    {
+                        Dust hint = Dust.NewDustPerfect(
+                            Projectile.Center + new Vector2(Main.rand.NextFloat(-6f, 6f), 6f),
+                            DustID.GoldFlame, new Vector2(0f, 3.2f + progress * 2.4f), 80, default, 0.85f);
+                        hint.noGravity = true;
+                    }
+
+                    Lighting.AddLight(Projectile.Center, 0.5f * progress, 0.45f * progress, 0.2f * progress);
+                }
+
+                // Launch: lock straight down for curtain waves, or aim at the player right now.
                 if (Projectile.localAI[0] >= HoverTicks)
                 {
-                    Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
-                    if (target != null && !target.dead)
-                    {
-                        Projectile.velocity = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY) * DiveSpeed;
-                    }
-                    else
+                    if (StraightDown)
                     {
                         Projectile.velocity = Vector2.UnitY * DiveSpeed;
                     }
+                    else
+                    {
+                        Player target = UsefulFunctions.GetClosestPlayer(Projectile.Center);
+                        if (target != null && !target.dead)
+                        {
+                            Projectile.velocity = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitY) * DiveSpeed;
+                        }
+                        else
+                        {
+                            Projectile.velocity = Vector2.UnitY * DiveSpeed;
+                        }
+                    }
+
                     Projectile.tileCollide = true;
                     Projectile.timeLeft = 240;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.6f, Pitch = 0.4f }, Projectile.Center);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.netUpdate = true;
+                    }
+
+                    if (!Main.dedServ)
+                    {
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.6f, Pitch = 0.4f }, Projectile.Center);
+                    }
                 }
+
                 return;
             }
 
-            //Diving: draw the lance as a short dust streak behind the head
+            // Diving: draw the lance as a short dust streak behind the head.
             Projectile.rotation = Projectile.velocity.ToRotation();
-            int segments = 3 + LengthTier * 2;
-            for (int seg = 0; seg < segments; seg++)
+            if (!Main.dedServ)
             {
-                Vector2 pos = Projectile.Center - Projectile.velocity * (seg * 0.6f);
-                float scale = 1.5f - seg * 0.9f / Math.Max(1, segments - 1);
-                int dust = Dust.NewDust(pos - new Vector2(4, 4), 8, 8, DustID.GoldFlame, 0f, 0f, 100, default, scale);
-                Main.dust[dust].noGravity = true;
-                Main.dust[dust].velocity *= 0.1f;
+                int segments = 3 + LengthTier * 2;
+                for (int seg = 0; seg < segments; seg++)
+                {
+                    Vector2 pos = Projectile.Center - Projectile.velocity * (seg * 0.6f);
+                    float scale = 1.5f - seg * 0.9f / Math.Max(1, segments - 1);
+                    Dust dust = Dust.NewDustDirect(pos - new Vector2(4, 4), 8, 8, DustID.GoldFlame, 0f, 0f, 100, default, scale);
+                    dust.noGravity = true;
+                    dust.velocity *= 0.1f;
+                }
+
+                Lighting.AddLight(Projectile.Center, 0.8f, 0.7f, 0.3f);
             }
-            Lighting.AddLight(Projectile.Center, 0.8f, 0.7f, 0.3f);
         }
 
         public override void OnKill(int timeLeft)
         {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.7f, Pitch = -0.2f }, Projectile.Center);
             for (int i = 0; i < 14; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(3.5f, 3.5f);
-                int dust = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, vel.X, vel.Y, 80, default, 1.4f);
-                Main.dust[dust].noGravity = true;
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, vel.X, vel.Y, 80, default, 1.4f);
+                dust.noGravity = true;
             }
         }
 

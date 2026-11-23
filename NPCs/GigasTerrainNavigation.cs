@@ -235,8 +235,9 @@ namespace tsorcRevamp.NPCs
         /// <summary>
         /// Starts a direct leap when possible. If the wall is too close for a safe launch, searches
         /// up to ten flat tiles behind the giant, walks back there, then revalidates before launch.
+        /// Callers may opt into longer catch-up leaps over open ground (e.g. Holy Gigas up to 200 tiles).
         /// </summary>
-        public bool TryBegin(NPC npc, Player player)
+        public bool TryBegin(NPC npc, Player player, float maxRangePixels = 1120f, bool allowOpenCatchup = false)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient || cooldown > 0 || leapTicks > 0 || runupTicks > 0
                 || npc.velocity.Y != 0f || !player.active || player.dead)
@@ -245,29 +246,57 @@ namespace tsorcRevamp.NPCs
             }
 
             float playerDx = player.Center.X - npc.Center.X;
-            if (Math.Abs(playerDx) < 240f || Math.Abs(playerDx) > 1120f)
+            float absPlayerDx = Math.Abs(playerDx);
+            if (absPlayerDx < 240f || absPlayerDx > maxRangePixels)
             {
                 return false;
             }
+
             bool blocked = npc.collideX || !Collision.CanHitLine(npc.position, npc.width, npc.height, player.position, player.width, player.height);
-            if (!blocked)
+            bool openCatchup = allowOpenCatchup && absPlayerDx > 560f;
+            if (!blocked && !openCatchup)
             {
                 return false;
             }
 
             int direction = Math.Sign(playerDx);
-            if (!TryFindLanding(npc, player, direction, out Vector2 landing))
+            Vector2 landing = Vector2.Zero;
+            bool foundDirectLanding = false;
+
+            // Try landing near the player first; if a long catch-up arc is blocked by terrain or
+            // ceilings, step back along intermediate points so Gigas still bounds forward.
+            float[] reachFractions = openCatchup && absPlayerDx > 960f
+                ? new[] { 1f, 0.65f, 0.40f }
+                : new[] { 1f };
+
+            for (int i = 0; i < reachFractions.Length; i++)
+            {
+                float targetX = npc.Center.X + playerDx * reachFractions[i];
+                float targetBottomY = MathHelper.Lerp(npc.Bottom.Y, player.Bottom.Y, reachFractions[i]);
+                if (!TryFindLanding(npc, targetX, targetBottomY, direction, maxRangePixels, out Vector2 candidate))
+                {
+                    continue;
+                }
+
+                if (TryBuildArc(npc, npc.position, candidate, out float directTime, out float directVelocityY))
+                {
+                    plannedLandingPosition = candidate;
+                    Launch(npc, directTime, directVelocityY, "launch");
+                    return true;
+                }
+
+                if (!foundDirectLanding)
+                {
+                    landing = candidate;
+                    foundDirectLanding = true;
+                }
+            }
+
+            if (!foundDirectLanding)
             {
                 cooldown = 45;
                 Log(npc, "rejected", "blocked but no flat landing near player");
                 return false;
-            }
-
-            if (TryBuildArc(npc, npc.position, landing, out float directTime, out float directVelocityY))
-            {
-                plannedLandingPosition = landing;
-                Launch(npc, directTime, directVelocityY, "launch");
-                return true;
             }
 
             if (TryFindRunup(npc, landing, direction, out float runupCenterX))
@@ -374,32 +403,42 @@ namespace tsorcRevamp.NPCs
             return false;
         }
 
-        static bool TryFindLanding(NPC npc, Player player, int direction, out Vector2 landingPosition)
+        static bool TryFindLanding(NPC npc, float targetCenterX, float targetBottomY, int direction,
+            float maxRangePixels, out Vector2 landingPosition)
         {
             landingPosition = Vector2.Zero;
-            int playerTileX = (int)(player.Center.X / 16f);
-            float searchStartY = player.Bottom.Y - 20f * 16f;
+            int targetTileX = (int)(targetCenterX / 16f);
+            float searchStartY = targetBottomY - 20f * 16f;
             for (int width = 4; width >= 2; width -= 2)
-            for (int offset = 0; offset <= 16; offset++)
             {
-                int signedOffset = offset == 0 ? 0 : -direction * offset;
-                int landingTileX = playerTileX + signedOffset;
-                float groundY = FindGroundY(new Vector2(landingTileX * 16f + 8f, searchStartY), 48);
-                if (groundY <= 0f || !UsefulFunctions.IsFootprintSupported(landingTileX, (int)(groundY / 16f), width))
+                for (int offset = 0; offset <= 16; offset++)
                 {
-                    continue;
+                    int signedOffset = offset == 0 ? 0 : -direction * offset;
+                    int landingTileX = targetTileX + signedOffset;
+                    float groundY = FindGroundY(new Vector2(landingTileX * 16f + 8f, searchStartY), 48);
+                    if (groundY <= 0f || !UsefulFunctions.IsFootprintSupported(landingTileX, (int)(groundY / 16f), width))
+                    {
+                        continue;
+                    }
+
+                    Vector2 candidate = new Vector2(landingTileX * 16f + 8f - npc.width * 0.5f, groundY - npc.height);
+                    if (SmartFighter4AI.IsStableHeavyLandingFailed(npc, landingTileX, (int)(groundY / 16f) - 1))
+                    {
+                        continue;
+                    }
+
+                    float dx = candidate.X - npc.position.X;
+                    if (Math.Sign(dx) != direction || Math.Abs(dx) < 192f || Math.Abs(dx) > maxRangePixels
+                        || Collision.SolidCollision(candidate, npc.width, npc.height))
+                    {
+                        continue;
+                    }
+
+                    landingPosition = candidate;
+                    return true;
                 }
-                Vector2 candidate = new Vector2(landingTileX * 16f + 8f - npc.width * 0.5f, groundY - npc.height);
-                if (SmartFighter4AI.IsStableHeavyLandingFailed(npc, landingTileX, (int)(groundY / 16f) - 1)) continue;
-                float dx = candidate.X - npc.position.X;
-                if (Math.Sign(dx) != direction || Math.Abs(dx) < 192f || Math.Abs(dx) > 1120f
-                    || Collision.SolidCollision(candidate, npc.width, npc.height))
-                {
-                    continue;
-                }
-                landingPosition = candidate;
-                return true;
             }
+
             return false;
         }
 
@@ -544,7 +583,12 @@ namespace tsorcRevamp.NPCs
 
         static bool TryBuildArc(NPC npc, Vector2 start, Vector2 landing, out float time, out float vy)
         {
-            bool valid = TrySolveArc(npc, start, landing, 10f, 18f, 12f, out int ticks, out Vector2 velocity);
+            // Standard leaps cap at 18/12 (up to 70 tiles); long-range catch-up leaps (>70 tiles,
+            // up to 200 tiles) allow a higher ballistic arc so Gigas can bound across wide terrain.
+            bool longRange = Math.Abs(landing.X - start.X) > 1120f;
+            float maxJump = longRange ? 23f : 18f;
+            float maxSpeed = longRange ? 25f : 12f;
+            bool valid = TrySolveArc(npc, start, landing, 10f, maxJump, maxSpeed, out int ticks, out Vector2 velocity);
             time = ticks;
             vy = velocity.Y;
             return valid;

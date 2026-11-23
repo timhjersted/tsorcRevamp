@@ -43,15 +43,25 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
             LedgeLeap,      // anti-camping: telegraphed super-jump to a perch, lands as a slam
         }
 
+        enum HeavenlySpearsPattern : byte
+        {
+            ArchCanopy = 0,     // escalating 3/5/7/9 canopy above the player
+            FlankBurst = 1,     // 3 spears on the left + 3 on the right pincer burst
+            StraightCurtain = 2 // 10 straight-down spears spaced 3 tiles apart, 3 waves 90t apart
+        }
+
         //Attack timings (ticks)
-        const int SlamWindupTicks = 40;
-        const int SlamApexTicks = 16;
+        const int SlamWindupTicks = 36;
+        const int SlamApexTicks = 11;
         const int SlamRecoveryTicks = 35;
         const int WrathTelegraphTicks = 100;
         const int WrathApproachWindupTicks = 24;
         const int WrathStaggerableTicks = 66;  //first two thirds: hyper-armor OFF, a poise break cancels the cast
         const int WrathRecoveryTicks = 30;
         const int SpearsCastTicks = 132;
+        const int SpearsFlankCastTicks = 56;
+        const int SpearsCurtainWaveInterval = 90;
+        const int SpearsCurtainCastTicks = 210;
         const int PillarsCastTicks = 12;
         const int HaloCastTicks = 30;
         const int SweepTelegraphTicks = 70;
@@ -60,6 +70,8 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
         const int BoulderCastTicks = 45;
         const int SolarSlabsCastTicks = 30;
         const int LeapWindupTicks = 45;
+        const float MaxCatchupLeapRange = 200f * 16f;   // 200 tiles: long-range ballistic catch-up leap cap
+        const float DespawnKeepAliveRange = 240f * 16f; // 240 tiles: prevents vanilla despawn while chasing at long range
 
         //Projectile damage, tuned for a LATE-HARDMODE boss event (hostile projectiles deal 2x this
         //on hit in normal mode). SuperHardMode encounters additionally run every value through
@@ -79,16 +91,49 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 
         AttackState State = AttackState.None;
         AttackState LastAttack = AttackState.None;
+        HeavenlySpearsPattern SpearsPattern = HeavenlySpearsPattern.ArchCanopy;
+        HeavenlySpearsPattern LastSpearsPattern = HeavenlySpearsPattern.StraightCurtain;
 
         /// <summary>DebugMode above-head readout (see IDebugAttackLabel).</summary>
-        public string DebugAttackLabel => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0
-            ? "Staggered"
-            : State == AttackState.None ? "Idle" : DebugLabels.Humanize(State.ToString());
+        public string DebugAttackLabel
+        {
+            get
+            {
+                if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().StaggerTimer > 0)
+                {
+                    return "Staggered";
+                }
+
+                if (State == AttackState.None)
+                {
+                    return "Idle";
+                }
+
+                if (State == AttackState.HeavenlySpears)
+                {
+                    if (SpearsPattern == HeavenlySpearsPattern.FlankBurst)
+                    {
+                        return "Heavenly Spears (Flanks)";
+                    }
+
+                    if (SpearsPattern == HeavenlySpearsPattern.StraightCurtain)
+                    {
+                        return "Heavenly Spears (Curtain)";
+                    }
+
+                    return "Heavenly Spears (Storm)";
+                }
+
+                return DebugLabels.Humanize(State.ToString());
+            }
+        }
 
         int AttackTimer;
         int AttackCooldown = 150;
-        int SlamPhase;          //sub-phase for SunlightSlam / LedgeLeap: 0 windup, 1 rising, 2 apex, 3 dive, 4 recovery
+        int SlamPhase;          //sub-phase for SunlightSlam / LedgeLeap: 0 windup, 1 rising/ballistic flight, 2 apex, 3 dive, 4 recovery
         float DiveDriftX;       //horizontal drift locked at the start of the dive
+        float SlamLaunchVelX;   //locked horizontal velocity across the slam jump / ballistic catch-up arc
+        bool SlamBallisticCatchup; //true when SunlightSlam is flying a long-range 35-200 tile parabola
         int lockedSweepDir = 1; //facing locked when the lightning sweep telegraph starts
         bool TeleportUsed;      //the once-per-fight surprise blink (below 50% health, opening Wrath of Gold)
         bool SunfallActive;     //enrage below 20%: comets rain continuously
@@ -139,7 +184,7 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 			// for a strong jump (NPC.gravity is read-only, so a true "weighty" heavy fall isn't available — feel
 			// comes from the slow walk + strong jump). Tuning values — adjust to taste.
 			tsorcRevampGlobalNPC g = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
-			g.NavSearchRadius = 60; // larger window so A* can find valid flat ledges above/across to jump to
+			g.NavSearchRadius = 120; // full SmartFighter4 A* search window so Gigas routes across large arenas
 			g.MaxJumpPower = 9f;
 			g.MaxJumpBoost = 5f;
 			// A two-tile support core may straddle exactly one tile of descent. This keeps the
@@ -182,13 +227,34 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
                 new NonSHMFirstKillRule(), ModContent.ItemType<WrathOfGold>()));
         }
 
+        public override bool CheckActive()
+        {
+            // Keep Holy Gigas loaded while any living player is within 240 tiles so vanilla's ~100-tile
+            // offscreen despawn does not delete it while it is leaping or routing to catch up.
+            float maxRangeSq = DespawnKeepAliveRange * DespawnKeepAliveRange;
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player candidate = Main.player[i];
+                if (candidate.active && !candidate.dead && Vector2.DistanceSquared(candidate.Center, NPC.Center) <= maxRangeSq)
+                {
+                    NPC.timeLeft = Math.Max(NPC.timeLeft, 750);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write((byte)State);
+            writer.Write((byte)SpearsPattern);
             writer.Write(AttackTimer);
             writer.Write((byte)SlamPhase);
             writer.Write(AttackCooldown);
             writer.Write(DiveDriftX);
+            writer.Write(SlamLaunchVelX);
+            writer.Write(SlamBallisticCatchup);
             writer.Write(TeleportUsed);
             writer.Write(SunfallActive);
             writer.Write(SHM);
@@ -201,10 +267,13 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             State = (AttackState)reader.ReadByte();
+            SpearsPattern = (HeavenlySpearsPattern)reader.ReadByte();
             AttackTimer = reader.ReadInt32();
             SlamPhase = reader.ReadByte();
             AttackCooldown = reader.ReadInt32();
             DiveDriftX = reader.ReadSingle();
+            SlamLaunchVelX = reader.ReadSingle();
+            SlamBallisticCatchup = reader.ReadBoolean();
             TeleportUsed = reader.ReadBoolean();
             SunfallActive = reader.ReadBoolean();
             SHM = reader.ReadBoolean();
@@ -283,15 +352,21 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
                 LedgeCampCheck(player);
 
                 //Only launch across terrain after the ordinary SmartFighter mover has had a chance to
-                //solve a local step. A rejected leap is harmless: it has a fully clear arc and a flat,
-                //body-width landing as hard requirements.
-                bool terrainLeapStarted = !recoveringFromNarrowPerch && TerrainNavigation.TryBegin(NPC, player);
+                //solve a local step. Holy Gigas opts into open-ground ballistic catch-up leaps up to
+                //200 tiles so fleeing players cannot outrun it on flat terrain either.
+                bool terrainLeapStarted = !recoveringFromNarrowPerch
+                    && TerrainNavigation.TryBegin(NPC, player, MaxCatchupLeapRange, allowOpenCatchup: true);
+                float distanceToPlayer = NPC.Distance(player.Center);
                 if (!terrainLeapStarted && AttackCooldown > 0)
                 {
                     AttackCooldown--;
+                    if (distanceToPlayer > 45f * 16f && distanceToPlayer <= MaxCatchupLeapRange && AttackCooldown > 45)
+                    {
+                        AttackCooldown -= 2;
+                    }
                 }
                 if (!terrainLeapStarted && !recoveringFromNarrowPerch && Main.netMode != NetmodeID.MultiplayerClient && AttackCooldown <= 0 && NPC.velocity.Y == 0f
-                    && !player.dead && player.active && NPC.Distance(player.Center) < 1100f)
+                    && !player.dead && player.active && distanceToPlayer <= MaxCatchupLeapRange)
                 {
                     PickAttack(player);
                 }
@@ -342,12 +417,21 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
             }
 
             float distTiles = NPC.Distance(player.Center) / 16f;
+
+            // Beyond 55 tiles (up to 200 tiles), close the distance immediately with a long-range
+            // ballistic Sunlight Slam leap rather than casting spells from offscreen.
+            if (distTiles > 55f)
+            {
+                StartAttack(AttackState.SunlightSlam);
+                return;
+            }
+
             bool sameLevel = Math.Abs(player.Bottom.Y - NPC.Bottom.Y) < 4 * 16f;
 
             //Weighted pool by range; repeating the previous attack is halved
             Span<(AttackState state, float weight)> pool = stackalloc (AttackState, float)[]
             {
-                (AttackState.SunlightSlam,   distTiles < 40f ? 1f : 0.3f),
+                (AttackState.SunlightSlam,   distTiles < 40f ? 1f : 1.8f),
                 (AttackState.WrathOfGold,    distTiles < 16f ? 1.2f : 0.2f),
                 (AttackState.LightningSweep, distTiles < 40f && sameLevel ? 0.9f : 0f),
                 (AttackState.SolarSlabs,     distTiles < 45f ? 0.8f : 0f),
@@ -384,8 +468,20 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
             State = state;
             AttackTimer = 0;
             SlamPhase = 0;
+            SlamLaunchVelX = 0f;
+            SlamBallisticCatchup = false;
             WrathApproachLaunched = false;
             WrathApproachVelocityX = 0f;
+
+            if (state == AttackState.HeavenlySpears && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                // Rotate across all 3 spear variations without immediate repeats.
+                int lastIndex = (int)LastSpearsPattern;
+                int nextIndex = (lastIndex + 1 + Main.rand.Next(2)) % 3;
+                SpearsPattern = (HeavenlySpearsPattern)nextIndex;
+                LastSpearsPattern = SpearsPattern;
+            }
+
             NPC.netUpdate = true;
         }
 
@@ -497,21 +593,90 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
                     }
                     if (AttackTimer >= windup)
                     {
-                        float dx = player.Center.X - NPC.Center.X;
-                        NPC.velocity.Y = LeapVariant ? -16f : -14f;
-                        NPC.velocity.X = MathHelper.Clamp(dx / (LeapVariant ? 55f : 50f), LeapVariant ? -10f : -7f, LeapVariant ? 10f : 7f);
+                        float rawDx = player.Center.X - NPC.Center.X;
+                        float clampedDx = MathHelper.Clamp(rawDx, -MaxCatchupLeapRange, MaxCatchupLeapRange);
+                        float absDx = Math.Abs(clampedDx);
+                        float dy = player.Bottom.Y - NPC.Bottom.Y;
+                        float gravity = NPC.gravity > 0f ? NPC.gravity : 0.3f;
+
+                        if (!LeapVariant && absDx > 560f)
+                        {
+                            // Long-range ballistic catch-up leap (35-200 tiles): scale jump height with
+                            // distance and solve horizontal velocity across the rise + ballistic glide
+                            // so Gigas arcs cleanly up to 200 tiles before slamming down on the player.
+                            float rangeFraction = MathHelper.Clamp((absDx - 560f) / (MaxCatchupLeapRange - 560f), 0f, 1f);
+                            float jumpSpeed = MathHelper.Lerp(15f, 22f, rangeFraction);
+                            if (dy < -64f)
+                            {
+                                jumpSpeed = Math.Min(25f, jumpSpeed + Math.Min(5f, -dy / 140f));
+                            }
+
+                            float riseTicks = jumpSpeed / gravity;
+                            float totalFlightTicks = riseTicks * 1.90f;
+                            SlamLaunchVelX = MathHelper.Clamp(clampedDx / totalFlightTicks, -25f, 25f);
+                            SlamBallisticCatchup = true;
+                            NPC.velocity.Y = -jumpSpeed;
+                            NPC.velocity.X = SlamLaunchVelX;
+                        }
+                        else
+                        {
+                            float jumpSpeed = LeapVariant ? 16f : 14f;
+                            float riseTicks = jumpSpeed / gravity;
+                            float maxHorizontal = LeapVariant ? 12f : 10f;
+                            SlamLaunchVelX = MathHelper.Clamp(clampedDx / riseTicks, -maxHorizontal, maxHorizontal);
+                            SlamBallisticCatchup = false;
+                            NPC.velocity.Y = -jumpSpeed;
+                            NPC.velocity.X = SlamLaunchVelX;
+                        }
+
                         SlamPhase = 1;
                         AttackTimer = 0;
                         NPC.netUpdate = true;
                     }
                     break;
 
-                case 1: //rising
+                case 1: //rising (and ballistic glide for long-range catch-up leaps)
                     g.AttackCommitted = true;
+                    NPC.velocity.X = SlamLaunchVelX;
+                    if (!SlamBallisticCatchup)
+                    {
+                        if (NPC.velocity.Y >= 0f)
+                        {
+                            SlamPhase = 2;
+                            AttackTimer = 0;
+                        }
+
+                        break;
+                    }
+
+                    if (!Main.dedServ && Main.rand.NextBool(2))
+                    {
+                        Dust trail = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GoldFlame,
+                            -SlamLaunchVelX * 0.15f, 0f, 80, default, 1.35f);
+                        trail.noGravity = true;
+                    }
+
+                    if (AttackTimer > 6 && NPC.collideY && NPC.velocity.Y >= 0f)
+                    {
+                        LandSlam(12f);
+                        SlamPhase = 4;
+                        AttackTimer = 0;
+                        NPC.netUpdate = true;
+                        break;
+                    }
+
                     if (NPC.velocity.Y >= 0f)
                     {
-                        SlamPhase = 2;
-                        AttackTimer = 0;
+                        float remainingDx = player.Center.X - NPC.Center.X;
+                        bool arrivedHorizontally = Math.Abs(remainingDx) <= 96f
+                            || (SlamLaunchVelX != 0f && Math.Sign(remainingDx) != Math.Sign(SlamLaunchVelX));
+                        bool nearPlayerHeight = NPC.Bottom.Y >= player.Top.Y - 64f;
+                        if (arrivedHorizontally || nearPlayerHeight || NPC.collideX || AttackTimer > 200)
+                        {
+                            SlamPhase = 2;
+                            AttackTimer = 0;
+                            NPC.netUpdate = true;
+                        }
                     }
                     break;
 
@@ -529,7 +694,7 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
                     }
                     if (AttackTimer >= SlamApexTicks)
                     {
-                        DiveDriftX = MathHelper.Clamp((player.Center.X - NPC.Center.X) / 40f, -4f, 4f);
+                        DiveDriftX = MathHelper.Clamp((player.Center.X - NPC.Center.X) / 30f, -5.5f, 5.5f);
                         SlamPhase = 3;
                         AttackTimer = 0;
                         SoundEngine.PlaySound(SoundID.Item72 with { Volume = 0.7f, Pitch = -0.4f }, NPC.Center);
@@ -539,7 +704,7 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 
                 case 3: //dive: afterimage trail (PreDraw) + heavy dust, lands as the slam
                     g.AttackCommitted = true;
-                    NPC.velocity.Y = 24f; //re-set every tick to beat the terminal-velocity clamp
+                    NPC.velocity.Y = 32f; //re-set every tick to beat the terminal-velocity clamp
                     NPC.velocity.X = DiveDriftX;
                     for (int i = 0; i < 3; i++)
                     {
@@ -737,35 +902,91 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 
         void RunHeavenlySpears(tsorcRevampGlobalNPC g, Player player)
         {
-            //Walking cast: the giant keeps lumbering while the threat forms at the player's position
-            //(no dodgeroll/pounce — the cast should read as stately, not acrobatic)
+            // Walking cast: the giant keeps lumbering while the threat forms at the player's position
+            // (no dodgeroll/pounce — the cast should read as stately, not acrobatic).
             if (!TerrainNavigation.Update(NPC))
             {
                 tsorcRevampAIs.FighterAI(NPC, topSpeed: 0.5f, acceleration: 0.5f, canTeleport: false, canDodgeroll: false, canPounce: false, minSurfaceWidth: 2, canWalkBackwards: true);
                 TerrainNavigation.RecoverFromNarrowPerch(NPC, g, player);
             }
+
             FootstepEffects();
             g.AttackCommitted = true;
 
-            if (AttackTimer == 1)
+            if (!Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
+                if (AttackTimer == 1)
+                {
+                    SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.7f, Pitch = -0.3f }, NPC.Center);
+                }
+
+                if (Main.rand.NextBool(2))
+                {
+                    Dust mote = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GoldCoin, 0f, -1.5f, 0, default, 1f);
+                    mote.noGravity = true;
+                }
             }
-            if (Main.rand.NextBool(2))
+
+            if (SpearsPattern == HeavenlySpearsPattern.FlankBurst)
             {
-                int dust = Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.GoldCoin, 0f, -1.5f, 0, default, 1f);
-                Main.dust[dust].noGravity = true;
+                if (AttackTimer == 12 && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    SpawnHeavenlySpearFlankBurst(player);
+                }
+
+                if (AttackTimer >= SpearsFlankCastTicks)
+                {
+                    EndAttack(0, immediateFollowup: true);
+                }
+
+                return;
             }
+
+            if (SpearsPattern == HeavenlySpearsPattern.StraightCurtain)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    if (AttackTimer == 12)
+                    {
+                        SpawnHeavenlySpearCurtainWave(player, 0, 1);
+                    }
+                    else if (AttackTimer == 12 + SpearsCurtainWaveInterval)
+                    {
+                        SpawnHeavenlySpearCurtainWave(player, 1, 2);
+                    }
+                    else if (AttackTimer == 12 + SpearsCurtainWaveInterval * 2)
+                    {
+                        SpawnHeavenlySpearCurtainWave(player, 2, 3);
+                    }
+                }
+
+                if (AttackTimer >= SpearsCurtainCastTicks)
+                {
+                    EndAttack(0, immediateFollowup: true);
+                }
+
+                return;
+            }
+
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 switch (AttackTimer)
                 {
-                    case 12: SpawnHeavenlySpearWave(player, 3, 140f, 300f, 45, 15, 0); break;
-                    case 42: SpawnHeavenlySpearWave(player, 5, 240f, 335f, 42, 10, 1); break;
-                    case 72: SpawnHeavenlySpearWave(player, 7, 340f, 370f, 38, 8, 2); break;
-                    case 102: SpawnHeavenlySpearWave(player, 9, 450f, 405f, 34, 6, 3); break;
+                    case 12:
+                        SpawnHeavenlySpearWave(player, 3, 140f, 300f, 45, 15, 0);
+                        break;
+                    case 42:
+                        SpawnHeavenlySpearWave(player, 5, 240f, 335f, 42, 10, 1);
+                        break;
+                    case 72:
+                        SpawnHeavenlySpearWave(player, 7, 340f, 370f, 38, 8, 2);
+                        break;
+                    case 102:
+                        SpawnHeavenlySpearWave(player, 9, 450f, 405f, 34, 6, 3);
+                        break;
                 }
             }
+
             if (AttackTimer >= SpearsCastTicks)
             {
                 EndAttack(0, immediateFollowup: true);
@@ -1090,7 +1311,71 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
                 }
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
                     ModContent.ProjectileType<GigasHeavenlySpear>(), SpearDamage, 3f, Main.myPlayer,
-                    hoverTicks + i * hoverStep, lengthTier);
+                    hoverTicks + i * hoverStep, lengthTier, GigasHeavenlySpear.AimAtPlayerMode);
+            }
+        }
+
+        // Flank pincer burst: 3 spears on the left and 3 on the right at 20 tiles out (~21t flight
+        // plus 38-50t hover telegraph), launching in 3 staggered pairs aimed at the player.
+        void SpawnHeavenlySpearFlankBurst(Player player)
+        {
+            float[] verticalOffsets = { -88f, -8f, 72f };
+            for (int side = -1; side <= 1; side += 2)
+            {
+                for (int row = 0; row < verticalOffsets.Length; row++)
+                {
+                    Vector2 pos = player.Center + new Vector2(side * 320f, verticalOffsets[row]);
+
+                    // Pull inward from solid walls up to 8 tiles while preserving >= 192px clearance.
+                    for (int tries = 0; tries < 8 && IsSolidAt(pos); tries++)
+                    {
+                        pos.X -= side * 16f;
+                    }
+
+                    for (int tries = 0; tries < 4 && IsSolidAt(pos); tries++)
+                    {
+                        pos.Y -= 16f;
+                    }
+
+                    if (IsSolidAt(pos))
+                    {
+                        continue;
+                    }
+
+                    int hoverTicks = 38 + row * 6;
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                        ModContent.ProjectileType<GigasHeavenlySpear>(), SpearDamage, 3f, Main.myPlayer,
+                        hoverTicks, 2f, GigasHeavenlySpear.AimAtPlayerMode);
+                }
+            }
+        }
+
+        // Straight-down curtain: 10 spears in a horizontal line spaced 3 tiles (48px) apart, firing
+        // vertically downward. Alternating waves shift by half a tile-step (24px) so standing still
+        // in one gap does not dodge all three waves automatically.
+        void SpawnHeavenlySpearCurtainWave(Player player, int waveIndex, int lengthTier)
+        {
+            const int spearCount = 10;
+            const float tileSpacing = 48f;
+            float shiftX = waveIndex % 2 == 1 ? tileSpacing * 0.5f : 0f;
+
+            for (int i = 0; i < spearCount; i++)
+            {
+                float x = (i - (spearCount - 1) * 0.5f) * tileSpacing + shiftX;
+                Vector2 pos = player.Center + new Vector2(x, -340f);
+                for (int tries = 0; tries < 14 && IsSolidAt(pos); tries++)
+                {
+                    pos.Y += 16f;
+                }
+
+                if (IsSolidAt(pos))
+                {
+                    continue;
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, Vector2.Zero,
+                    ModContent.ProjectileType<GigasHeavenlySpear>(), SpearDamage, 3f, Main.myPlayer,
+                    42f, lengthTier, GigasHeavenlySpear.StraightDownMode);
             }
         }
 

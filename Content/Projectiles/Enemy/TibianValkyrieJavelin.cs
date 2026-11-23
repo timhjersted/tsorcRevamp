@@ -11,19 +11,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
     /// <summary>
     /// Gilded Javelin: the Tibian Valkyrie's own held spear, thrown. Same art and draw scale as the spear in her hand,
     /// so the release reads as the weapon leaving the fist. Tip leads (the art's head sits top-left, a -135 degree shaft).
-    /// Life: 10px/t launch, 0.12px/t^2 gravity, one gold mote per 4t. Death: a tile sticks it (harmless, fades 40t);
-    /// a player hit bursts ~20 gold/grey motes; the 150t lifetime fades over its last 12t.
-    /// ai[0] = 0 flying, 1 stuck. Spawned by the server only.
+    /// Life: 14px/t launch (16.5px/t SHM), 0.10px/t^2 gravity, 3 interpolated body motes + 1 white glint per tick.
+    /// Death: a tile sticks it (harmless, fades 40t); a player hit bursts a 3-layer gold/silver/air burst; the 150t
+    /// lifetime fades over its last 12t. ai[0] = 0 flying, 1 stuck. Spawned by the server only.
     /// </summary>
     public class TibianValkyrieJavelin : ModProjectile
     {
-        public const float LaunchSpeed = 10f;
-        public const float Gravity = 0.12f;
+        public const float LaunchSpeed = 14f;
+        public const float SuperHardModeLaunchSpeed = 16.5f;
+        public const float Gravity = 0.10f;
         public const float DrawScale = 0.75f;
         const int LifeTicks = 150;
         const int FadeTicks = 12;
         public const int MaxFlightTicks = LifeTicks - FadeTicks;
         const int StuckFadeTicks = 40;
+        static readonly Color WarmWhite = new Color(255, 240, 185);
 
         // Measured from the 104x104 art: head (1, 1) -> butt (102, 102). The tip texel is pinned to Projectile.Center.
         static readonly Vector2 TipTexel = new Vector2(1.5f, 1.5f);
@@ -57,10 +59,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
             Projectile.velocity.Y += Gravity;
             Projectile.rotation = Projectile.velocity.ToRotation() + SpriteRotationOffset;
 
-            if (!Main.dedServ && Projectile.timeLeft % 4 == 0)
+            if (!Main.dedServ)
             {
-                Dust mote = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, -Projectile.velocity * 0.1f, 80, default, 0.9f);
-                mote.noGravity = true;
+                // 3 interpolated midground motes + 1 white foreground glint per tick (gap <= 5.5px at 16.5px/t).
+                const int BodyCount = 3;
+                for (int i = 0; i < BodyCount; i++)
+                {
+                    float fraction = (i + Main.rand.NextFloat(0.15f, 0.85f)) / BodyCount;
+                    Vector2 samplePosition = Projectile.Center - Projectile.velocity * fraction;
+                    int dustType = DustID.GoldFlame;
+                    Color tint = default;
+                    int alpha = 40;
+                    float scale = Main.rand.NextFloat(0.85f, 1.15f);
+
+                    if (i == 1)
+                    {
+                        dustType = DustID.TintableDustLighted;
+                        tint = WarmWhite;
+                        alpha = 35;
+                        scale = Main.rand.NextFloat(0.70f, 0.95f);
+                    }
+
+                    Dust mote = Dust.NewDustPerfect(samplePosition, dustType, -Projectile.velocity * 0.12f, alpha, tint, scale);
+                    mote.noGravity = true;
+                }
+
+                Dust glint = Dust.NewDustPerfect(Projectile.Center, DustID.AncientLight, -Projectile.velocity * 0.08f,
+                    15, Color.White, Main.rand.NextFloat(0.55f, 0.80f));
+                glint.noGravity = true;
             }
         }
 
@@ -108,15 +134,46 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            // A stuck spear or a timed-out flight has already faded; only a strike gets the burst.
+            // A stuck spear or a timed-out flight has already faded; only a strike gets the 3-layer burst.
             bool faded = Stuck || timeLeft <= 0;
-            int moteCount = faded ? 4 : 20;
-            for (int i = 0; i < moteCount; i++)
+            if (faded)
             {
-                int dustType = i % 2 == 0 ? DustID.GoldFlame : DustID.Silver;
-                Vector2 velocity = Main.rand.NextVector2Circular(3f, 3f);
-                Dust mote = Dust.NewDustPerfect(Projectile.Center, dustType, velocity, 60, default, 1.1f);
-                mote.noGravity = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Dust fadeMote = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame,
+                        Main.rand.NextVector2Circular(1.8f, 1.8f), 80, default, 0.85f);
+                    fadeMote.noGravity = true;
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < 22; i++)
+            {
+                int dustType = DustID.Silver;
+                if (i % 2 == 0)
+                {
+                    dustType = DustID.GoldFlame;
+                }
+
+                Vector2 bodyVelocity = Main.rand.NextVector2Circular(4.2f, 4.2f);
+                Dust body = Dust.NewDustPerfect(Projectile.Center, dustType, bodyVelocity, 40, default, Main.rand.NextFloat(0.95f, 1.35f));
+                body.noGravity = true;
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 sparkVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.5f, 7.5f);
+                Dust spark = Dust.NewDustPerfect(Projectile.Center, DustID.AncientLight, sparkVelocity, 15, Color.White, Main.rand.NextFloat(0.55f, 0.85f));
+                spark.noGravity = true;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 puffVelocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.8f, 2.0f);
+                Dust puff = Dust.NewDustPerfect(Projectile.Center, DustID.Cloud, puffVelocity, 135, Color.White, Main.rand.NextFloat(0.55f, 0.75f));
+                puff.fadeIn = Main.rand.NextFloat(1.25f, 1.55f);
+                puff.noGravity = true;
             }
         }
 
@@ -142,13 +199,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         }
 
         /// <summary>
-        /// Earliest reachable intercept at up to LaunchSpeed, including the remaining tell and target motion.
+        /// Earliest reachable intercept at up to <paramref name="launchSpeed"/>, including the remaining tell and target motion.
         /// Uses the projectile's exact gravity-before-movement steps; zero means unreachable before the flight fades.
         /// Selection, lock and release share this solve instead of falling back to a throw that cannot connect.
         /// </summary>
-        public static Vector2 SolveLaunch(Vector2 start, Vector2 targetPosition, Vector2 targetVelocity, int releaseDelay, out Vector2 aimPoint)
+        public static Vector2 SolveLaunch(Vector2 start, Vector2 targetPosition, Vector2 targetVelocity, int releaseDelay,
+            out Vector2 aimPoint, float launchSpeed = LaunchSpeed)
         {
-            float speedSquared = LaunchSpeed * LaunchSpeed;
+            float speedSquared = launchSpeed * launchSpeed;
             aimPoint = targetPosition;
 
             for (int flightTicks = 1; flightTicks <= MaxFlightTicks; flightTicks++)

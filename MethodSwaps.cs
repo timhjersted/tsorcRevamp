@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,6 +62,24 @@ namespace tsorcRevamp
         // This is intentionally one isolated, optional layer. Set false to return to the existing
         // black + star background unchanged.
         private const bool UseVesselInteriorBackground = true;
+
+        // Ancestral Spirit (resprited vanilla Deerclops) roar tuning.
+        // Replace SoundID.DeerclopsScream with new SoundStyle("tsorcRevamp/Sounds/...") to swap in a custom audio file.
+        private const float AncestralSpiritRoarVolume = 0.45f;
+        private const float AncestralSpiritRoarPitch = -0.35f;
+        private const float AncestralSpiritRoarPitchVariance = 0.08f;
+        private const uint AncestralSpiritRoarCooldownTicks = 360;
+
+        private static readonly SoundStyle AncestralSpiritRoarSound = SoundID.DeerclopsScream with
+        {
+            Volume = AncestralSpiritRoarVolume,
+            Pitch = AncestralSpiritRoarPitch,
+            PitchVariance = AncestralSpiritRoarPitchVariance
+        };
+
+        private static bool allowAncestralSpiritRoar;
+        private static bool hasPlayedAncestralSpiritRoar;
+        private static uint lastAncestralSpiritRoarTick;
 
         internal static void ApplyMethodSwaps()
         {
@@ -249,6 +268,11 @@ namespace tsorcRevamp
             On_Player.KillMe += On_Player_KillMe;
 
             On_NPC.AI_069_DukeFishron += DukeFishronAdjustment;
+
+            // Ancestral Spirit (vanilla Deerclops) roars on every spike/rubble windup and twice on rubble throws.
+            // Track when AI_123_Deerclops is in an actual roar state and tune/throttle SoundID.DeerclopsScream there.
+            On_NPC.AI_123_Deerclops += TrackAncestralSpiritRoarState;
+            Terraria.Audio.On_SoundPlayer.Play += TuneAncestralSpiritRoar;
 
             On_Main.HoverOverNPCs += Main_HoverOverNPCs;
 
@@ -4473,6 +4497,56 @@ namespace tsorcRevamp
             {
                 orig(plr, Type);
             }
+        }
+
+        private static void TrackAncestralSpiritRoarState(On_NPC.orig_AI_123_Deerclops orig, NPC self)
+        {
+            // Restrict roars to dedicated roar animations (ai[0] == 3 slow roar, 5 shadow hands, 7 teleport home, 8 despawn).
+            // Suppresses the 3 non-roar FindFrame screams (spike/rubble windups) and the duplicate rubble-throw scream in case 2.
+            int aiState = (int)self.ai[0];
+            bool isDedicatedRoarState = aiState == 3 || aiState == 5 || aiState == 7 || aiState == 8;
+            bool previousAllowed = allowAncestralSpiritRoar;
+            allowAncestralSpiritRoar = isDedicatedRoarState;
+
+            try
+            {
+                orig(self);
+            }
+            finally
+            {
+                allowAncestralSpiritRoar = previousAllowed;
+            }
+        }
+
+        private static SlotId TuneAncestralSpiritRoar(
+            Terraria.Audio.On_SoundPlayer.orig_Play orig,
+            SoundPlayer self,
+            ref SoundStyle style,
+            Vector2? position,
+            SoundUpdateCallback updateCallback)
+        {
+            if (!style.IsVariantOf(SoundID.DeerclopsScream))
+            {
+                return orig(self, ref style, position, updateCallback);
+            }
+
+            if (!allowAncestralSpiritRoar)
+            {
+                return SlotId.Invalid;
+            }
+
+            // Enforce a minimum gap between roars (in 60 Hz ticks) so back-to-back shadow-hand summons cannot spam it.
+            uint currentTick = Main.GameUpdateCount;
+            if (hasPlayedAncestralSpiritRoar && currentTick - lastAncestralSpiritRoarTick < AncestralSpiritRoarCooldownTicks)
+            {
+                return SlotId.Invalid;
+            }
+
+            hasPlayedAncestralSpiritRoar = true;
+            lastAncestralSpiritRoarTick = currentTick;
+
+            SoundStyle tunedRoar = AncestralSpiritRoarSound;
+            return orig(self, ref tunedRoar, position, updateCallback);
         }
 
         private static void DestroyerAIRevamp(Terraria.On_NPC.orig_AI_037_Destroyer orig, NPC npc)

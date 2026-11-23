@@ -4,11 +4,13 @@ using ReLogic.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.GameInput;
+using Terraria.Map;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Buffs.Debuffs;
@@ -30,6 +32,10 @@ namespace tsorcRevamp
     {
         public static RecipeGroup UpgradedMirrors;
         public static RecipeGroup CobaltHelmets;
+
+        private const int RainbowBrickMapOptionCount = 9;
+        private static readonly Color RainbowBrickMapColor = new Color(220, 220, 220);
+        private static Color[] originalRainbowBrickMapColors;
 
         // Tracked to detect the inventory open/close transition for Storage reopen logic.
         private bool prevInventoryOpen;
@@ -1675,11 +1681,66 @@ namespace tsorcRevamp
             }
         }
 
+        public override void PostSetupContent()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            // Flatten Rainbow Brick's 9 static rainbow-stripe map colors to plain off-white so it matches
+            // the non-cycling world sprite (ILEdits.RainbowBrick_NoColorCycle) on both new and saved maps.
+            FieldInfo colorLookupField = typeof(MapHelper).GetField("colorLookup", BindingFlags.NonPublic | BindingFlags.Static);
+            Color[] colorLookup = colorLookupField?.GetValue(null) as Color[];
+
+            if (colorLookup == null)
+            {
+                return;
+            }
+
+            originalRainbowBrickMapColors = new Color[RainbowBrickMapOptionCount];
+
+            for (int option = 0; option < RainbowBrickMapOptionCount; option++)
+            {
+                int lookupIndex = MapHelper.TileToLookup(TileID.RainbowBrick, option);
+
+                if (lookupIndex < 0 || lookupIndex >= colorLookup.Length)
+                {
+                    continue;
+                }
+
+                originalRainbowBrickMapColors[option] = colorLookup[lookupIndex];
+                colorLookup[lookupIndex] = RainbowBrickMapColor;
+            }
+        }
+
         public override void Unload()
         {
             PuppetAttackTelemetry.EndSession("mod-unload");
             UpgradedMirrors = null;
             CobaltHelmets = null;
+
+            if (!Main.dedServ && originalRainbowBrickMapColors != null)
+            {
+                FieldInfo colorLookupField = typeof(MapHelper).GetField("colorLookup", BindingFlags.NonPublic | BindingFlags.Static);
+                Color[] colorLookup = colorLookupField?.GetValue(null) as Color[];
+
+                if (colorLookup != null)
+                {
+                    for (int option = 0; option < originalRainbowBrickMapColors.Length; option++)
+                    {
+                        int lookupIndex = MapHelper.TileToLookup(TileID.RainbowBrick, option);
+
+                        if (lookupIndex >= 0 && lookupIndex < colorLookup.Length)
+                        {
+                            colorLookup[lookupIndex] = originalRainbowBrickMapColors[option];
+                        }
+                    }
+                }
+
+                originalRainbowBrickMapColors = null;
+            }
+
             Texture2D textureToDispose = hurtVignetteTexture;
             hurtVignetteTexture = null;
 

@@ -56,13 +56,19 @@ namespace tsorcRevamp
         }
 
         private static readonly Dictionary<int, TrackAssignment> Assignments = new();
+        private static readonly Dictionary<string, TrackAssignment> DynamicEventAssignments = new(StringComparer.Ordinal);
         private static readonly List<ConditionalRule> ConditionalRules = new();
+        // 200-tile encounter radius keeps dynamic event music local to players fighting that event.
+        private const float DynamicEventMusicRangeSquared = 3200f * 3200f;
         private static readonly Rectangle ForgottenCityEntrance = new Rectangle(4340, 1335, 560, 155);
         private static readonly Rectangle ForgottenCityDistrict = new Rectangle(4080, 1450, 1140, 375);
         // Native 2400-tile map coordinates from the reviewed 1.5.07 outline.
         // Keep the chasm, Fire Temple, arena above and eastern vertical cavern outside these bounds.
         private static readonly Rectangle ArtoriasWestRuins = new Rectangle(4245, 2008, 587, 222);
         private static readonly Rectangle ArtoriasEastRuins = new Rectangle(4862, 2000, 1283, 220);
+        // Native 2400-tile map coordinates from 1.6.38 for Gwyn's Castle in the sky above the desert.
+        // Ends along the bottom cloud shelf wire (Y = 678) so the desert arch below keeps desert music.
+        private static readonly Rectangle GwynCastle = new Rectangle(1587, 0, 1045, 680);
         private static readonly Point[] ArtoriasEastCeiling =
         {
             new Point(4862, 2039),
@@ -172,6 +178,7 @@ namespace tsorcRevamp
         internal static void Populate()
         {
             Assignments.Clear();
+            DynamicEventAssignments.Clear();
             ConditionalRules.Clear();
 
             RegisterAreaMusic(player => !Main.hardMode && Main.dayTime && IsInForgottenCity(player),
@@ -196,6 +203,11 @@ namespace tsorcRevamp
                 return playerTileX >= 3300 && playerTileX < 4200;
             }, mainTrack: "Pillars", priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
             RegisterAreaMusic(IsInArtoriasRuins, mainTrack: "Witchlands",
+                priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
+            // Gwyn's Castle spans across ZoneSkyHeight (Y = 407) and tsorcMusic's SkyTemple cutoff (Y = 470).
+            // Registering at Environment keeps SkyTemple consistent across both keeps while still yielding to bosses and Primordial Age.
+            RegisterAreaMusic(player => tsorcRevampWorld.ExpandedAdventure && GwynCastle.Contains(player.Center.ToTileCoordinates()),
+                mainTrack: "SkyTemple", fallback: MusicID.SpaceDay,
                 priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
             // Primordial world: `Tomb` above ground everywhere, and for everyone watching the transformation.
             RegisterAreaMusic(Systems.PrimordialWorldSystem.WantsTombMusic, mainTrack: "Tomb", remixTrack: "Tomb",
@@ -281,14 +293,36 @@ namespace tsorcRevamp
             Register("PrimeGwyn", "Boss8", "Boss8", MusicID.Boss2);
             RegisterGroup(new[] { "DarkShogunMask", "DarkDragonMask", "Okiku", "BrokenOkiku", "OldDarkShogunMask", "OldDarkDragonMask", "OldOkiku", "OldBrokenOkiku" }, "Boss5", "Boss5", MusicID.Boss2, SceneEffectPriority.BossHigh);
             RegisterGroup(new[] { "AttraidiesMimic", "Attraidies", "OldAttraidies" }, "Boss8", "Boss8", MusicID.Boss2);
+
+            // Specific DynamicEvents.json encounters keyed by EventID (plays while any event NPC is alive nearby).
+            // Gwyn's Castle: Royal Knight + Elemental Necromancer ambush.
+            RegisterDynamicEventMusic("48a2c0fe-8ac7-4f32-b77e-b93b54a1804b", "Boss1", "Boss1", MusicID.Boss1);
         }
 
         internal static void Clear()
         {
             Assignments.Clear();
+            DynamicEventAssignments.Clear();
             ConditionalRules.Clear();
             cachedAssignment = null;
             cachedMusic = -1;
+            cachedTick = ulong.MaxValue;
+        }
+
+        public static bool HasDynamicEventMusic(string eventId)
+        {
+            return !string.IsNullOrEmpty(eventId) && DynamicEventAssignments.ContainsKey(eventId);
+        }
+
+        public static void RegisterDynamicEventMusic(string eventId, string mainTrack = null, string remixTrack = null,
+            int fallback = -1, SceneEffectPriority priority = SceneEffectPriority.BossMedium)
+        {
+            if (string.IsNullOrEmpty(eventId))
+            {
+                throw new ArgumentException("Event ID must not be null or empty.", nameof(eventId));
+            }
+
+            DynamicEventAssignments[eventId] = new TrackAssignment(Path(mainTrack), Path(remixTrack), fallback, priority);
             cachedTick = ulong.MaxValue;
         }
 
@@ -428,14 +462,37 @@ namespace tsorcRevamp
             cachedAssignment = null;
             cachedMusic = -1;
 
+            TrackAssignment dynamicEventAssignment = null;
+            bool checkDynamicEvents = DynamicEventAssignments.Count > 0 && Main.LocalPlayer.active;
+
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
+                if (!npc.active)
+                {
+                    continue;
+                }
+
                 // A wild Primordial Hellkite Drake is an ordinary enemy and keeps the area's music.
-                if (npc.active && !Systems.PrimordialWorldSystem.IsWildDrake(npc) && Assignments.TryGetValue(npc.type, out TrackAssignment assignment))
+                if (!Systems.PrimordialWorldSystem.IsWildDrake(npc) && Assignments.TryGetValue(npc.type, out TrackAssignment assignment))
                 {
                     cachedAssignment = assignment;
                 }
+                else if (cachedAssignment == null && checkDynamicEvents && npc.TryGetGlobalNPC(out NPCs.tsorcRevampGlobalNPC globalNpc))
+                {
+                    string dynamicEventId = globalNpc.DynamicEventID;
+                    if (!string.IsNullOrEmpty(dynamicEventId)
+                        && DynamicEventAssignments.TryGetValue(dynamicEventId, out TrackAssignment eventAssignment)
+                        && Vector2.DistanceSquared(Main.LocalPlayer.Center, npc.Center) <= DynamicEventMusicRangeSquared)
+                    {
+                        dynamicEventAssignment = eventAssignment;
+                    }
+                }
+            }
+
+            if (cachedAssignment == null && dynamicEventAssignment != null)
+            {
+                cachedAssignment = dynamicEventAssignment;
             }
 
             // NPC encounters always win. Otherwise event > area > biome, and later

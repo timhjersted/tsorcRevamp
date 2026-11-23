@@ -3381,6 +3381,15 @@ namespace tsorcRevamp.NPCs.Invaders
         /// the rest fall through to the flight controller's generic pierce-through dive. 100 (default) = combos only,
         /// the OwlFather behaviour. Rolled server-side with the rest of selection.</summary>
         protected virtual int AirborneComboChancePercent => 100;
+        /// <summary>When true, the puppet can run non-leap melee combos (sweeps, thrusts, spins) while in wing flight
+        /// without dropping to the ground. Default false preserves existing dive-only flyers.</summary>
+        protected virtual bool AllowAerialMeleeSwings => false;
+        /// <summary>Max distance for starting a hovering melee swing when <see cref="AllowAerialMeleeSwings"/> is true.</summary>
+        protected virtual float AerialMeleeSwingRange => 260f;
+        /// <summary>Max vertical separation for starting a hovering melee swing.</summary>
+        protected virtual float AerialMeleeSwingVerticalBand => 130f;
+        /// <summary>Cooldown (ticks) after starting a hovering melee swing before the next aerial melee pick.</summary>
+        protected virtual int AerialMeleeSwingCooldownTicks => 90;
         protected virtual float AerialRangedVerticalBand => 96f;
         /// <summary>When true, the airborne ranged trigger rolls a full burst pattern (fan/twin-ring/
         /// accelerating chain/etc., whatever PrimaryRangedBurstPatterns or SecondaryRangedBurstPatterns
@@ -5104,6 +5113,18 @@ namespace tsorcRevamp.NPCs.Invaders
                                     EnterPhase(AttackPhase.RangedTelegraph, _activeRangedTelegraphTicks);
                                 }
                             }
+                            else if (AllowAerialMeleeSwings && _flight.Mode == FlightMode.Hover && hasLOS
+                                && CanUseAerialMelee && MeleeWeaponItemType >= 0
+                                && _aerialDiveCooldown <= 0
+                                && aerialDistance <= AerialMeleeSwingRange
+                                && Math.Abs(target.Center.Y - NPC.Center.Y) <= AerialMeleeSwingVerticalBand
+                                && Main.rand.Next(50) == 0)
+                            {
+                                if (TryStartMeleeCombo(aerialDistance, aerialSwing: true))
+                                {
+                                    _aerialDiveCooldown = AerialMeleeSwingCooldownTicks;
+                                }
+                            }
                             else if (_flight.Mode == FlightMode.Hover && hasLOS
                                 && CanUseAerialMelee && MeleeWeaponItemType >= 0
                                 && _aerialDiveCooldown <= 0 && aerialDistance <= AerialMeleeRange
@@ -5176,7 +5197,9 @@ namespace tsorcRevamp.NPCs.Invaders
                             {
                                 StartCursedKnives(NPC.Distance(target.Center), hasLOS);
                             }
-                            else if (_flight.Mode == FlightMode.Hover && Main.rand.Next(110) == 0)
+                            else if (_flight.Mode == FlightMode.Hover
+                                && (hasLOS || Math.Abs(target.Center.Y - NPC.Center.Y) <= 120f)
+                                && Main.rand.Next(110) == 0)
                             {
                                 // No attack was selected this tick, so vary the hover line with a lateral pass.
                                 float side = Math.Sign(NPC.Center.X - target.Center.X);
@@ -7394,10 +7417,11 @@ namespace tsorcRevamp.NPCs.Invaders
                         {
                             _meleeComboCooldowns[_activeMeleeComboIndex] = _activeMeleeCombo.CooldownAfterUse;
                         }
-                        // A whiffed combo may queue a follow-up swing: ClosingDistance sprints in and TryStartMeleeCombo
-                        // starts the named combo, telegraph and all. Server decision; a client predicts the plain end.
+                        // A whiffed combo may queue a follow-up swing: ClosingDistance sprints in on foot and
+                        // TryStartMeleeCombo starts the named combo. Skipped while flying (no ground sprint).
                         string followUpName = null;
-                        if (!IsMultiplayerClient && !_lastAttackHitConnected && NPC.HasValidTarget
+                        bool groundedForFollowUp = _flight == null || !_flight.IsAirborne;
+                        if (!IsMultiplayerClient && groundedForFollowUp && !_lastAttackHitConnected && NPC.HasValidTarget
                             && dist <= ComboMaxStartRange + 80f
                             && Main.rand.Next(100) < MeleeFollowUpChancePercent(_meleeFollowUpsDone))
                         {
@@ -7648,7 +7672,7 @@ namespace tsorcRevamp.NPCs.Invaders
         /// range-aware (close/mid/far bands) and HP-aware (heavy combos weighted up as HP drops).
         /// Returns true if a combo started; false if no eligible combo (cooldowns/weights).
         /// </summary>
-        protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false, bool airborneStart = false)
+        protected bool TryStartMeleeCombo(float dist, bool rangedStartOnly = false, bool airborneStart = false, bool aerialSwing = false)
         {
             // Combo selection is server-authoritative; a client adopts the chosen combo, with its customized
             // steps, from the snapshot. Returning false lets any caller fall through safely.
@@ -7657,10 +7681,10 @@ namespace tsorcRevamp.NPCs.Invaders
                 return false;
             }
 
-            // Ground combos never start from wing flight: the flight controller owns velocity and facing,
-            // so the swing plays from a hovering body with no aim. Only AirborneStartOnly combos may.
+            // Ground combos never start from wing flight unless explicitly opted in via aerialSwing
+            // (which filters out gravity leaps below) or airborneStart (AirborneStartOnly dive combos).
             bool inWingFlight = _flight != null && _flight.IsAirborne;
-            if (inWingFlight && !airborneStart)
+            if (inWingFlight && !airborneStart && !aerialSwing)
             {
                 return false;
             }
@@ -7725,6 +7749,25 @@ namespace tsorcRevamp.NPCs.Invaders
                 {
                     effective[i] = 0;
                     continue;
+                }
+                if (aerialSwing && (_meleeComboPool[i].Steps == null || _meleeComboPool[i].Steps.Length == 0))
+                {
+                    effective[i] = 0;
+                    continue;
+                }
+                if (aerialSwing)
+                {
+                    ComboMotion openingMotion = _meleeComboPool[i].Steps[0].Motion;
+                    bool groundMovementStep = openingMotion == ComboMotion.LeapSlam
+                        || openingMotion == ComboMotion.LeapThrust
+                        || openingMotion == ComboMotion.RisingUppercutLeap
+                        || openingMotion == ComboMotion.ChargeChop
+                        || openingMotion == ComboMotion.LowAxeRun;
+                    if (groundMovementStep)
+                    {
+                        effective[i] = 0;
+                        continue;
+                    }
                 }
                 float w = _meleeComboPool[i].BaseWeight;
                 w *= (_meleeComboPool[i].Preferred == band
@@ -11123,13 +11166,23 @@ namespace tsorcRevamp.NPCs.Invaders
         /// </summary>
         private bool HoldingMagicStaff => _heldItemType == MagicWeaponItemType && MagicWeaponItemType != MeleeWeaponItemType;
 
+        /// <summary>
+        /// True when the hand holds the polearm rather than a separate primary ranged weapon, magic staff,
+        /// secondary ranged weapon, or cursed knives (a spear that also casts primary ranged shares MeleeWeaponItemType).
+        /// </summary>
+        private bool HoldingSpearWeapon => DrawWeaponAsSpear
+            && !(RangedWeaponItemType >= 0 && RangedWeaponItemType != MeleeWeaponItemType && _heldItemType == RangedWeaponItemType)
+            && _heldItemType != MagicWeaponItemType
+            && _heldItemType != SecondaryRangedWeaponItemType
+            && (CursedKnivesWeaponItemType < 0 || _heldItemType != CursedKnivesWeaponItemType);
+
         private Vector2 GetWeaponWorldDirection()
         {
             if (HoldingMagicStaff)
             {
                 return GetDiagonalSpriteWorldDirection(_weaponRotation + MagicWeaponRotationOffset, BladeFlipActive);
             }
-            if (DrawWeaponAsSpear)
+            if (HoldingSpearWeapon)
             {
                 if (MirrorSpearRotationByFacing)
                     return GetSpriteSpearTipOffset().SafeNormalize(new Vector2(NPC.direction, 0f));
@@ -13532,12 +13585,9 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
-            // Only draw as spear when actually holding the polearm — not the magic staff, secondary ranged,
-            // or cursed knives (those are separate weapons that use normal centred draw).
-            bool holdingSpearNow = DrawWeaponAsSpear
-                && _heldItemType != MagicWeaponItemType
-                && _heldItemType != SecondaryRangedWeaponItemType
-                && (CursedKnivesWeaponItemType < 0 || _heldItemType != CursedKnivesWeaponItemType);
+            // Only draw as spear when actually holding the polearm — not a separate primary ranged weapon,
+            // magic staff, secondary ranged, or cursed knives.
+            bool holdingSpearNow = HoldingSpearWeapon;
 
             // When drawing as a spear, prefer the holdout-projectile texture (the full shaft+head sprite)
             // over the item icon (which is just a small inventory tile).

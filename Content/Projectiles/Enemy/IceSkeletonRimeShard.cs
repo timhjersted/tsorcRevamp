@@ -53,14 +53,60 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                 return;
             }
 
-            Lighting.AddLight(Projectile.Center, new Vector3(0.25f, 0.45f, 0.6f) * Projectile.Opacity);
+            Lighting.AddLight(Projectile.Center, new Vector3(0.32f, 0.58f, 0.78f) * Projectile.Opacity);
 
-            // One white-blue mote every 3t, shed backwards off the tail.
-            if (Projectile.timeLeft % 3 == 0)
+            Vector2 forward = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+            Vector2 sideways = new Vector2(-forward.Y, forward.X);
+            Vector2 tailBase = Projectile.Center - forward * 8f;
+            float opacity = Projectile.Opacity;
+
+            // Midground frost wake: 3 motes/tick interpolated over the 12px step (~4px spacing, no dotted gaps).
+            // Max scale with +/-20% jitter: 1.2 * 1.35 = 1.62.
+            for (int i = 0; i < 3; i++)
             {
-                Vector2 tail = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitX) * 10f;
-                Dust mote = Dust.NewDustPerfect(tail, DustID.IceTorch, -Projectile.velocity * 0.08f, 80, default, 1.1f);
-                mote.noGravity = true;
+                float stepFraction = (i + Main.rand.NextFloat()) / 3f;
+                Vector2 along = tailBase - Projectile.velocity * stepFraction;
+                Vector2 spread = sideways * Main.rand.NextFloat(-4.5f, 4.5f);
+                int dustType = DustID.IceTorch;
+                if (i == 0)
+                {
+                    dustType = DustID.Frost;
+                }
+
+                Vector2 vel = -Projectile.velocity * Main.rand.NextFloat(0.10f, 0.24f)
+                    + sideways * Main.rand.NextFloat(-0.6f, 0.6f);
+                Dust wake = Dust.NewDustPerfect(along + spread, dustType, vel, 45, default, Main.rand.NextFloat(0.95f, 1.35f) * opacity);
+                wake.noGravity = true;
+            }
+
+            // Foreground crystalline glints: bright white-hot core spark every tick + crystal shard every 2 ticks.
+            Vector2 sparkPos = Projectile.Center - forward * Main.rand.NextFloat(0f, 10f)
+                + sideways * Main.rand.NextFloat(-3.5f, 3.5f);
+            Vector2 sparkVel = -Projectile.velocity * Main.rand.NextFloat(0.05f, 0.16f)
+                + sideways * Main.rand.NextFloat(-1.1f, 1.1f);
+            Dust glint = Dust.NewDustPerfect(sparkPos, DustID.IceTorch, sparkVel, 0, Color.White, Main.rand.NextFloat(0.55f, 0.90f) * opacity);
+            glint.noGravity = true;
+
+            if (Projectile.timeLeft % 2 == 0)
+            {
+                Vector2 chipVel = -Projectile.velocity * 0.12f + sideways * Main.rand.NextFloat(-1.5f, 1.5f);
+                Dust chip = Dust.NewDustPerfect(tailBase, DustID.BlueCrystalShard, chipVel, 20, default, Main.rand.NextFloat(0.6f, 0.9f) * opacity);
+                chip.noGravity = true;
+
+                // Background cold vapor: spawns small and billows via fadeIn so a lingering frost ribbon trails behind.
+                Vector2 mistVel = -Projectile.velocity * 0.05f + new Vector2(0f, Main.rand.NextFloat(-0.5f, 0.2f));
+                Dust mist = Dust.NewDustPerfect(tailBase, DustID.Cloud, mistVel, 155, new Color(175, 225, 255), Main.rand.NextFloat(0.55f, 0.75f) * opacity);
+                mist.fadeIn = Main.rand.NextFloat(1.25f, 1.55f);
+                mist.noGravity = true;
+            }
+
+            // During timeout fade-out, shed gentle falling frost flakes so dissipation reads intentionally.
+            if (remaining < FadeTicks)
+            {
+                Dust flake = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(6f, 6f),
+                    DustID.Snow, new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), Main.rand.NextFloat(0.3f, 1.2f)),
+                    60, default, Main.rand.NextFloat(0.75f, 1.1f));
+                flake.noGravity = false;
             }
         }
 
@@ -86,17 +132,47 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
             SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.7f, Pitch = 0.2f }, Projectile.Center);
 
-            for (int i = 0; i < 40; i++)
+            // 3-layer 70-mote shatter burst: 38 midground frost body, 20 fast foreground crystal/white sparks,
+            // 12 slow billowing vapor clouds that outlive the flash.
+            for (int i = 0; i < 38; i++)
             {
                 int dustType = DustID.IceTorch;
                 if (i % 3 == 0)
                 {
-                    dustType = DustID.BlueCrystalShard;
+                    dustType = DustID.Frost;
                 }
 
-                Vector2 velocity = Main.rand.NextVector2Circular(4f, 4f);
-                Dust shard = Dust.NewDustPerfect(Projectile.Center, dustType, velocity, 60, default, Main.rand.NextFloat(0.9f, 1.5f));
-                shard.noGravity = dustType == DustID.IceTorch;
+                Vector2 dir = Main.rand.NextVector2Unit();
+                Vector2 velocity = dir * Main.rand.NextFloat(1.8f, 5.8f);
+                Dust body = Dust.NewDustPerfect(Projectile.Center + dir * Main.rand.NextFloat(0f, 6f),
+                    dustType, velocity, 40, default, Main.rand.NextFloat(0.95f, 1.5f));
+                body.noGravity = true;
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                int dustType = DustID.BlueCrystalShard;
+                Color tint = default;
+                bool weightless = false;
+                if (i % 2 == 0)
+                {
+                    dustType = DustID.IceTorch;
+                    tint = Color.White;
+                    weightless = true;
+                }
+
+                Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.5f, 9.2f);
+                Dust spark = Dust.NewDustPerfect(Projectile.Center, dustType, velocity, 0, tint, Main.rand.NextFloat(0.55f, 0.95f));
+                spark.noGravity = weightless;
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(0.6f, 2.2f);
+                Dust mist = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f),
+                    DustID.Cloud, velocity, 150, new Color(175, 225, 255), Main.rand.NextFloat(0.55f, 0.8f));
+                mist.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
+                mist.noGravity = true;
             }
         }
 

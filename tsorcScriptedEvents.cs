@@ -3408,12 +3408,29 @@ namespace tsorcRevamp
 
                 if (spawnBurst)
                 {
-                    SpawnMaterializationDust(thisNPC);
+                    int groupCount = eventNPCs.Count;
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        ModPacket burstPacket = ModContent.GetInstance<tsorcRevamp>().GetPacket();
+                        burstPacket.Write(tsorcPacketID.EventMaterializationBurst);
+                        burstPacket.WriteVector2(thisNPC.Center);
+                        burstPacket.Write(thisNPC.width);
+                        burstPacket.Write(thisNPC.height);
+                        burstPacket.Write(dustID);
+                        burstPacket.WriteRGB(eventTextColor);
+                        burstPacket.Write(groupCount);
+                        burstPacket.Send();
+                    }
+                    else if (!Main.dedServ)
+                    {
+                        SpawnMaterializationDust(thisNPC.Center, thisNPC.width, thisNPC.height, dustID, eventTextColor, groupCount);
+                    }
                 }
 
                 NPCs.tsorcRevampGlobalNPC eventGlobalNPC = thisNPC.GetGlobalNPC<NPCs.tsorcRevampGlobalNPC>();
                 eventGlobalNPC.ScriptedEventOwner = this;
                 eventGlobalNPC.ScriptedEventIndex = i;
+                eventGlobalNPC.DynamicEventID = DynamicEventID;
 
                 if (thisNPC.boss && !eventGlobalNPC.AllowDynamicEventNaturalDespawn)
                 {
@@ -3462,27 +3479,105 @@ namespace tsorcRevamp
             }
         }
 
-        private void SpawnMaterializationDust(NPC npc)
+        public static void SpawnMaterializationDust(Vector2 center, int width, int height, int burstDustID, Color textColor, int groupCount)
         {
-            // Keep each mote the same size; scale the area they occupy to the NPC instead. The event's dustID is
-            // also the dust used by its trigger ring, so the ring and the materialization payoff share a palette.
-            // Alpha 100 / scale 2 keeps the motes readable against the grey smoke; speed 2.5–8 px/tick throws them past
-            // the smoke cloud so the burst reads as a pop rather than more haze.
-            float radiusX = Math.Max(npc.width * 0.5f, 4f);
-            float radiusY = Math.Max(npc.height * 0.5f, 4f);
-            float averageDiameter = (npc.width + npc.height) * 0.5f;
-            int dustCount = (int)MathHelper.Clamp(averageDiameter, 30f, 80f);
-            float burstSpeed = MathHelper.Clamp((float)Math.Sqrt(npc.width * npc.height) / 8f, 2.5f, 8f);
-
-            for (int i = 0; i < dustCount; i++)
+            if (Main.dedServ)
             {
-                Vector2 offset = Main.rand.NextVector2Circular(radiusX, radiusY);
-                Vector2 direction = offset.SafeNormalize(Main.rand.NextVector2Unit());
-                Vector2 velocity = direction * Main.rand.NextFloat(burstSpeed * 0.4f, burstSpeed);
-                float scale = Main.rand.NextFloat(1.6f, 2.4f);
+                return;
+            }
 
-                Dust dust = Dust.NewDustPerfect(npc.Center + offset, dustID, velocity, 100, default, scale);
-                dust.noGravity = true;
+            // Fill the full sprite footprint (width/height * 0.8 half-extents cover typical sprite overhang; floor at
+            // 20x28 so compact humanoid hitboxes still burst across their whole silhouette) and blast outward ~5+ tiles
+            // (80px+) in all directions across 4 layered passes so the magical arrival feels dramatic.
+            float halfWidth = Math.Max(width * 0.8f, 20f);
+            float halfHeight = Math.Max(height * 0.8f, 28f);
+            float sizeScale = MathHelper.Clamp((halfWidth + halfHeight) / 52f, 1f, 2.1f);
+            float groupScale = 1f;
+            if (groupCount > 5)
+            {
+                groupScale = MathHelper.Clamp(5f / groupCount, 0.65f, 1f);
+            }
+
+            float countMult = sizeScale * groupScale;
+            float speedScale = MathHelper.Clamp(0.85f + sizeScale * 0.25f, 1f, 1.35f);
+
+            Lighting.AddLight(center, 0.85f, 0.85f, 1.0f);
+
+            // Pass 1 — Full-body silhouette fill: packs the entire sprite box with the event's magic dust before
+            // parting outward, so the enemy visibly materializes out of a dense arcane cloud.
+            // Max scale with +/-20% jitter: 1.2 * 1.65 = 1.98 (stays below blocky masonry ceiling).
+            int bodyCount = (int)Math.Round(46 * countMult);
+            for (int i = 0; i < bodyCount; i++)
+            {
+                Vector2 offset = new Vector2(Main.rand.NextFloat(-halfWidth, halfWidth), Main.rand.NextFloat(-halfHeight, halfHeight));
+                Vector2 direction = offset.SafeNormalize(Main.rand.NextVector2Unit());
+                Vector2 velocity = direction * Main.rand.NextFloat(1.6f, 4.6f) * speedScale;
+                float scale = Main.rand.NextFloat(1.15f, 1.65f);
+
+                Dust body = Dust.NewDustPerfect(center + offset, burstDustID, velocity, 35, default, scale);
+                body.noGravity = true;
+            }
+
+            // Pass 2 — Wide radial magical eruption: throws dense dust 5+ tiles (80px+) outward in all directions
+            // even under Terraria's 0.90-0.93/tick noGravity velocity damping (v / 0.10 = 50-100px+).
+            int burstCount = (int)Math.Round(56 * countMult);
+            for (int i = 0; i < burstCount; i++)
+            {
+                Vector2 dir = Main.rand.NextVector2Unit();
+                Vector2 spawnOffset = new Vector2(dir.X * halfWidth, dir.Y * halfHeight) * Main.rand.NextFloat(0.25f, 1.0f);
+                Vector2 velocity = dir * Main.rand.NextFloat(5.2f, 9.8f) * speedScale;
+                float scale = Main.rand.NextFloat(1.05f, 1.55f);
+
+                Dust burst = Dust.NewDustPerfect(center + spawnOffset, burstDustID, velocity, 20, default, scale);
+                burst.noGravity = true;
+            }
+
+            // Pass 3a — Crisp expanding shockwave ring: evenly spaced around 360 degrees racing 5+ tiles outward.
+            int ringCount = (int)Math.Round(28 * countMult);
+            float phaseOffset = Main.rand.NextFloat(MathHelper.TwoPi);
+            for (int i = 0; i < ringCount; i++)
+            {
+                float angle = phaseOffset + MathHelper.TwoPi * i / ringCount + Main.rand.NextFloat(-0.06f, 0.06f);
+                Vector2 dir = angle.ToRotationVector2();
+                Vector2 spawnOffset = new Vector2(dir.X * halfWidth * 0.7f, dir.Y * halfHeight * 0.7f);
+                Vector2 velocity = dir * Main.rand.NextFloat(8.5f, 11.8f) * speedScale;
+                float scale = Main.rand.NextFloat(0.90f, 1.30f);
+
+                Dust ring = Dust.NewDustPerfect(center + spawnOffset, burstDustID, velocity, 0, default, scale);
+                ring.noGravity = true;
+            }
+
+            // Pass 3b — Fast foreground arcane glints: small bright sparkles leading the shockwave edge.
+            int sparkCount = (int)Math.Round(18 * countMult);
+            for (int i = 0; i < sparkCount; i++)
+            {
+                Vector2 dir = Main.rand.NextVector2Unit();
+                Vector2 velocity = dir * Main.rand.NextFloat(7.0f, 12.8f) * speedScale;
+                float scale = Main.rand.NextFloat(0.60f, 0.95f);
+
+                Dust spark = Dust.NewDustPerfect(center + Main.rand.NextVector2Circular(halfWidth * 0.6f, halfHeight * 0.6f),
+                    DustID.AncientLight, velocity, 0, default, scale);
+                spark.noGravity = true;
+            }
+
+            // Pass 4 — Billowing magical vapor: spawns small and expands via fadeIn so the summoning aura lingers
+            // cleanly after the flash instead of snapping off.
+            Color mistColor = Color.Lerp(textColor, new Color(210, 225, 255), 0.45f);
+            if (textColor == default || (textColor.R < 30 && textColor.G < 30 && textColor.B < 30))
+            {
+                mistColor = new Color(110, 95, 140);
+            }
+
+            int mistCount = (int)Math.Round(20 * countMult);
+            for (int i = 0; i < mistCount; i++)
+            {
+                Vector2 offset = new Vector2(Main.rand.NextFloat(-halfWidth, halfWidth), Main.rand.NextFloat(-halfHeight, halfHeight));
+                Vector2 dir = offset.SafeNormalize(Main.rand.NextVector2Unit());
+                Vector2 velocity = dir * Main.rand.NextFloat(1.8f, 4.4f) * speedScale;
+
+                Dust mist = Dust.NewDustPerfect(center + offset, DustID.Cloud, velocity, 145, mistColor, Main.rand.NextFloat(0.60f, 0.85f));
+                mist.fadeIn = Main.rand.NextFloat(1.40f, 1.80f);
+                mist.noGravity = true;
             }
         }
 
