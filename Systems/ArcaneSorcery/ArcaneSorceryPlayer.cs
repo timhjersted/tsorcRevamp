@@ -23,7 +23,7 @@ public class ArcaneSorceryPlayer : ModPlayer
     public const float ManaBurnCostMult = 3f;
     public const float ManaBurnBadResistance = 100f;
     public const float ManaBurnMagicDamageAmp = 10f;
-    public const float ManaBurnMagicAttackSpeedAmp = 0f; //was 20f; zeroed to test Mana Burn's damage without the attack speed bonus
+    //public const float ManaBurnMagicAttackSpeedAmp = 0f; //was 20f; zeroed to test Mana Burn's damage without the attack speed bonus
 
     
     public override void ResetEffects()
@@ -70,7 +70,7 @@ public class ArcaneSorceryPlayer : ModPlayer
             if (ManaBurn)
             {
                 Player.GetDamage(DamageClass.Magic) *= 1f + (ManaBurnMagicDamageAmp / 100f);
-                Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (ManaBurnMagicAttackSpeedAmp / 100f);
+                //Player.GetAttackSpeed(DamageClass.Magic) *= 1f + (ManaBurnMagicAttackSpeedAmp / 100f);
             }
 
             var tsorcPlayer = Player.GetModPlayer<tsorcRevampPlayer>();

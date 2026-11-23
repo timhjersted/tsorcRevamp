@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,8 +12,8 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
     public class MonocleOfPrecision : ModItem
     {
         public static float CriticalStrikeChance = 7;
-        public static float WhipCritHitboxSize = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CriticalStrikeChance, WhipCritHitboxSize);
+        public static float WhipTipHitboxSize = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(CriticalStrikeChance, WhipTipHitboxSize);
         public override void SetStaticDefaults()
         {
         }
@@ -27,7 +28,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Damage
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             player.GetCritChance(DamageClass.Generic) += CriticalStrikeChance;
-            player.GetModPlayer<WhipTipHit>().WhipTipHitboxSize = WhipCritHitboxSize;
+            player.GetModPlayer<WhipTipHit>().WhipTipHitboxSize = WhipTipHitboxSize;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "TipHits", Language.GetTextValue(Tooltip.Key + "0", WhipTipHitboxSize)));
+            }
         }
         public override void AddRecipes()
         {

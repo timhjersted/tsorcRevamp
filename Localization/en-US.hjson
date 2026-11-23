@@ -51,13 +51,13 @@ Mods: {
 		ArcaneSorceryExplanation:
 			'''
 			[c/ea00ea:Arcane Sorcery: Maximum mana is increased by {0}%, ]
-			[c/ea00ea:mana costs are multiplied by {1}, mana regeneration is disabled.]
+			[c/ea00ea:mana costs are multiplied by {1}x, mana regeneration is disabled.]
 			[c/ea00ea:Cerulean Flask is buffed to restore {2}x the default and {3}% of your maximum mana, ]
 			[c/ea00ea:but drinking the Cerulean Flask stunts your mobility like the Estus Flask.]
 			[c/ea00ea:When trying to use a magic weapon under {4}% of your maximum stamina, activate Mana Burn.]
 			[c/ea00ea:Mana Burn stops weapons from using stamina, ]
-			[c/ea00ea:multiplicatively increases magic damage by {5}% and attack speed by {6}%, ]
-			[c/ea00ea:but decreases your Resistance by {7} and multiplies your mana costs by another {8}x.]
+			[c/ea00ea:multiplicatively increases magic damage by {5}%, ]
+			[c/ea00ea:but decreases your Resistance by {6} and multiplies your mana costs by another {7}x.]
 			'''
 		ConquerorExplanation:
 			'''
@@ -66,6 +66,7 @@ Mods: {
 			[c/6efaff:these increase summon damage temporarily and fall off after a few seconds, if not refreshed.]
 			[c/6efaff:Each stack grants both {1}% multiplicative summon damage and {4}% multiplicative whip damage,]
 			[c/6efaff:up to a total of {2}x summon damage and {5}x whip damage at the maximum of {3} stacks.]
+			[c/6efaff:Hit enemies with the tip of a whip to deal {7}% bonus damage.]
 			[c/6efaff:At max stacks: {$CommonItemTooltip.LifeRegen@6} and adds a whip tag slot.... soon™]
 			'''
 
@@ -2392,11 +2393,8 @@ Mods: {
 
 			MonocleOfPrecision: {
 				DisplayName: Monocle of Precision
-				Tooltip:
-					'''
-					{$CommonItemTooltip.PercentIncreasedCritChance}
-					{$CommonItemTooltip.Summon.WhipTipHitbox@1}
-					'''
+				Tooltip: "{$CommonItemTooltip.PercentIncreasedCritChance}"
+				Tooltip0: "{$CommonItemTooltip.Summon.WhipTipHitbox}"
 			}
 
 			ArchmenEmblem: {
@@ -2483,11 +2481,11 @@ Mods: {
 					{$CommonItemTooltip.PercentIncreasedSummonDamage@0}
 					{$CommonItemTooltip.Summon.AtkSpeed@1}
 					{$CommonItemTooltip.IncreasesWhipRangeByPercent@2}
-					{$CommonItemTooltip.Summon.WhipTipHitbox@3}
 					{$CommonItemTooltip.Summon.WhipKnockback}
 					{$CommonItemTooltip.MeleeWhipAutoswing}
 					{$CommonItemTooltip.AggroBoost}
 					'''
+				Tooltip0: "{$CommonItemTooltip.Summon.WhipTipHitbox}"
 			}
 
 			CrystallineShard: {
@@ -8608,7 +8606,7 @@ Mods: {
 					{$CommonItemTooltip.Summon.AtkSpeed@2}
 					{$CommonItemTooltip.IncreasesMaxLifeBy@1}
 					[c/dc143c:Empowers whip swings occasionally({$CommonItemTooltip.Cooldown@3})]
-					[c/dc143c:Empowered whip swings gain extra damage, range, count as tip hits and heal you on-hit]
+					[c/dc143c:Empowered whip swings gain extra damage, range and heal you on-hit]
 					Heal scales with whip damage and missing life
 					Cooldown is reduced on every normal whip hit
 					'''
@@ -9000,7 +8998,6 @@ Mods: {
 					Minion Slots: {5}
 					Turret Slots: {6}
 					Whip Range: {7}%
-					Tips: Hitting enemies with the tip of a whip increases damage dealt by {8}%
 					All summon damage respects summon critical strike chance
 					'''
 			}

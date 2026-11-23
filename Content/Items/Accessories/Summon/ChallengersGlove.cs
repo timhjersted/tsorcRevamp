@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -15,8 +16,8 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
         public static float SummonDamage = 12;
         public static float SummonAttackSpeed = 12;
         public static float WhipRangeIncrease = 10;
-        public static float WhipCritHitboxSize = 3;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipCritHitboxSize);
+        public static float WhipTipHitboxSize = 3;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(SummonDamage, SummonAttackSpeed, WhipRangeIncrease, WhipTipHitboxSize);
         public override void SetStaticDefaults()
         {
         }
@@ -37,7 +38,15 @@ namespace tsorcRevamp.Content.Items.Accessories.Summon
             player.GetAttackSpeed(DamageClass.Summon) += SummonAttackSpeed / 100f;
             player.whipRangeMultiplier += WhipRangeIncrease / 100f;
             player.aggro += 400;
-            player.GetModPlayer<WhipTipHit>().WhipTipHitboxSize = WhipCritHitboxSize;
+            player.GetModPlayer<WhipTipHit>().WhipTipHitboxSize = WhipTipHitboxSize;
+        }
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
+            if (ttindex != -1 && Main.LocalPlayer.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                tooltips.Insert(ttindex + 6, new TooltipLine(Mod, "TipHits", Language.GetTextValue(Tooltip.Key + "0", WhipTipHitboxSize)));
+            }
         }
         public override void AddRecipes()
         {

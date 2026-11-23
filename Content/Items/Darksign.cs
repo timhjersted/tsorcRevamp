@@ -298,7 +298,7 @@ namespace tsorcRevamp.Content.Items
                             tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "ArcaneSorcery", LangUtils.GetTextValue("ArcaneSorceryExplanation", 
                                 ArcaneSorceryPlayer.MaxManaAmplifier, ArcaneSorceryPlayer.ManaCostMult, ArcaneSorceryPlayer.BaseCeruleanFlatManaGainMult, 
                                 ArcaneSorceryPlayer.BaseCeruleanFlaskMaxManaScalingMult * ceruleanPlayer.BaseMaxManaGain, 
-                                ArcaneSorceryPlayer.ManaBurnStaminaThreshold, ArcaneSorceryPlayer.ManaBurnMagicDamageAmp, ArcaneSorceryPlayer.ManaBurnMagicAttackSpeedAmp,
+                                ArcaneSorceryPlayer.ManaBurnStaminaThreshold, ArcaneSorceryPlayer.ManaBurnMagicDamageAmp,
                                 ArcaneSorceryPlayer.ManaBurnBadResistance, ArcaneSorceryPlayer.ManaBurnCostMult)));
                         }
                         break;
@@ -311,7 +311,7 @@ namespace tsorcRevamp.Content.Items
                                 ConquerorPlayer.BaseDamageMult, MathF.Round(ConquerorPlayer.BonusDmgPerStack * 100f, 2), 
                                 MathF.Round(ConquerorPlayer.MaxDmgMult, 2), ConquerorPlayer.MaxStacks,
                                 MathF.Round(ConquerorPlayer.BonusWhipDmgPerStack * 100f, 2), MathF.Round(ConquerorPlayer.MaxWhipDmgMult, 2),
-                                ConquerorPlayer.FullyStackedRegenBonus / 2f)));
+                                ConquerorPlayer.FullyStackedRegenBonus / 2f, WhipTipHit.WhipTipHitBonusDamage)));
                         }
                         break;
                     }
