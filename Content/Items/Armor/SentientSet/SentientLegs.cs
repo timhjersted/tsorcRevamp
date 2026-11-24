@@ -12,9 +12,9 @@ namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 [AutoloadEquip(EquipType.Legs)]
 public class SentientLegs : ModItem
 {
-    public float DistanceTraveled;
+    public double DistanceTraveled;
     public float Level = 0;
-    public const float Divisor = 4000f;
+    public const double Divisor = 4800f;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
     public override void SetStaticDefaults()
@@ -36,24 +36,24 @@ public class SentientLegs : ModItem
     {
         var modPlayer = player.GetModPlayer<SentientSetPlayer>();
         modPlayer.EquippedLegs = this;
-        Level = MathF.Round(MathF.Sqrt(DistanceTraveled / Divisor), 0);
+        Level = (float)Math.Round(Math.Sqrt(DistanceTraveled / Divisor), 0);
         player.moveSpeed += (Level / 100f);
     }
     public override void SaveData(TagCompound tag)
     {
-        tag.Add("DistTrav", DistanceTraveled);
+        tag.Add("DistanceTravelled", DistanceTraveled);
     }
     public override void LoadData(TagCompound tag)
     {
-        DistanceTraveled = tag.GetFloat("DistTrav");
-        Level = MathF.Round(MathF.Sqrt(DistanceTraveled / Divisor), 0);
+        DistanceTraveled = tag.GetDouble("DistanceTravelled");
+        Level = (float)Math.Round(Math.Sqrt(DistanceTraveled / Divisor), 0);
     }
     public override void ModifyTooltips(List<TooltipLine> tooltips)
     {
         int ttindex = tooltips.FindIndex(t => t.Name == "Tooltip0");
         if (ttindex != -1)
         {
-            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Lvl", Language.GetTextValue(Tooltip.Key + "0", MathF.Round(DistanceTraveled, 2), Level)));
+            tooltips.Insert(ttindex + 1, new TooltipLine(Mod, "Lvl", Language.GetTextValue(Tooltip.Key + "0", Math.Round(DistanceTraveled, 2), Level)));
         }
     }
     public override void AddRecipes()

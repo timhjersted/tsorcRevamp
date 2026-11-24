@@ -12,9 +12,9 @@ namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 [AutoloadEquip(EquipType.Head)]
 public class SentientHead : ModItem
 {
-    public int DamageDealt;
+    public long DamageDealt;
     public float Level = 0;
-    public const float Divisor = 1500;
+    public const float Divisor = 1700;
     
     public const float BaseRegen = 6;
     public const float BaseDmg = 9;
@@ -43,11 +43,11 @@ public class SentientHead : ModItem
     }
     public override void SaveData(TagCompound tag)
     {
-        tag.Add("DmgDealt", DamageDealt);
+        tag.Add("DamageDealt", DamageDealt);
     }
     public override void LoadData(TagCompound tag)
     {
-        DamageDealt = tag.GetInt("DmgDealt");
+        DamageDealt = tag.GetLong("DamageDealt");
         Level = MathF.Round(MathF.Sqrt(DamageDealt / Divisor), 0);
     }
     public override void ModifyTooltips(List<TooltipLine> tooltips)

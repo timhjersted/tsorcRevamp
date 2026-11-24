@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -12,9 +13,9 @@ namespace tsorcRevamp.Content.Items.Armor.SentientSet;
 [AutoloadEquip(EquipType.Body)]
 public class SentientTorso : ModItem
 {
-    public int DamageTaken;
+    public long DamageTaken;
     public float Level = 0;
-    public const float Divisor = 165f;
+    public const float Divisor = 180f;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
     public override void SetStaticDefaults()
@@ -44,11 +45,11 @@ public class SentientTorso : ModItem
     }
     public override void SaveData(TagCompound tag)
     {
-        tag.Add("DmgTaken", DamageTaken);
+        tag.Add("DamageTaken", DamageTaken);
     }
     public override void LoadData(TagCompound tag)
     {
-        DamageTaken = tag.GetInt("DmgTaken");
+        DamageTaken = tag.GetLong("DamageTaken");
         Level = MathF.Round(MathF.Sqrt(DamageTaken / Divisor), 0);
     }
 
