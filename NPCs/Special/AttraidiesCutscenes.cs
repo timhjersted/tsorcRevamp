@@ -115,12 +115,12 @@ namespace tsorcRevamp.NPCs.Special
             return false;
         }
 
-        /// <summary>The lead plus every living player near center. Skip is offered once the world has seen this scene.</summary>
+        /// <summary>The lead plus every living player near center. Skip is always offered, first viewing included.</summary>
         public static CutsceneCast BuildCast(Vector2 center, int leadPlayer, string sceneId)
         {
             CutsceneCast cast = new CutsceneCast();
             cast.LeadPlayer = leadPlayer;
-            cast.AllowSkip = CutsceneSystem.HasSeen(sceneId);
+            cast.AllowSkip = true;
 
             for (int i = 0; i < Main.maxPlayers; i++)
             {

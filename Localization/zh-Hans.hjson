@@ -7526,6 +7526,7 @@ Mods: {
 					为杀死魔神而锻造的弓
 					按住 攻击 进行蓄力
 					蓄力时箭更快更准
+					满弦射出的箭造成{0}%额外伤害，并额外穿透{1}个敌人
 					'''
 			}
 
@@ -7584,6 +7585,7 @@ Mods: {
 					射出两支箭 
 					按住左键进行蓄力
 					蓄力时箭更快更准
+					满弦射出的箭造成{0}%额外伤害，并额外穿透{1}个敌人
 					'''
 			}
 
@@ -11537,8 +11539,8 @@ Mods: {
 			}
 
 			Stagger: {
-				// Description: Ichor is applied; shields, items, and flight are disabled; movement and stamina recovery are heavily reduced
-				// DisplayName: Staggered
+				Description: 无法使用盾牌和飞行，移动速度降低{0}%，并受到完整击退
+				DisplayName: 踉跄
 			}
 
 			PlaguesmithBuff: {
@@ -12623,6 +12625,15 @@ Mods: {
 			// PuppetSnareBolt.DisplayName: Puppet Snare Bolt
 			// PuppetSnareNet.DisplayName: Puppet Snare Net
 			// PuppetGreatfireCrescent.DisplayName: Puppet Greatfire Crescent
+			// KhaiosFrozenTearBolt.DisplayName: Frozen Tear III
+			// KhaiosGrandCometZone.DisplayName: Grand Comet Shockwave
+			// KhaiosGrandCometMeteor.DisplayName: Grand Comet
+			// KhaiosGrandCometShard.DisplayName: Cosmic Stardust Shard
+			// KhaiosThunderArrow.DisplayName: Forgotten Thunder Arrow
+			// KhaiosThunderLance.DisplayName: Forgotten Thunder Lance
+			// KhaiosOrbitStar.DisplayName: Celestial Orbit Star
+			// KhaiosHaloBlade.DisplayName: Halo of Judgment
+			// KhaiosSeraphEcho.DisplayName: Seraphic Echo
 			// PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 			// GwynDescentColumn.DisplayName: Gwyn Descent Column
 			// HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox
@@ -12812,6 +12823,7 @@ Mods: {
 			// KnightDebuffPulseWave.DisplayName: Knight Debuff Pulse Wave
 			// BasiliskBiteHitbox.DisplayName: Basilisk Bite Hitbox
 			// LurkerClawStrike.DisplayName: Lurker Claw Strike
+			// AbyssRakeStrike.DisplayName: Abyss Rake
 			// BoneChaplainBlightFlame.DisplayName: Bone Chaplain Blight Flame
 			// ElementalEruptionColumn.DisplayName: Elemental Eruption Column
 			// ElementalNecromancerDeathSigil.DisplayName: Elemental Necromancer Death Sigil
@@ -12846,6 +12858,7 @@ Mods: {
 			// ElementalBoulder.DisplayName: Elemental Boulder
 			// ElementalFireball.DisplayName: Elemental Fireball
 			// LethalTempoBolt.DisplayName: Lethal Tempo Bolt
+			// NitoSlamCloud.DisplayName: Nito Slam Cloud
 		}
 
 		NPCs: {
@@ -14660,6 +14673,7 @@ Mods: {
 			Ulhan.DisplayName: Ulhan
 			// SpiritOfKhaios.DisplayName: Spirit Of Khaios
 			// KhaiosTransitionOrb.DisplayName: Khaios Transition Orb
+			// KhaiosStarForger.DisplayName: Spirit of the Universe
 			// Khaios.DisplayName: Khaios
 
 			Runeterra: {

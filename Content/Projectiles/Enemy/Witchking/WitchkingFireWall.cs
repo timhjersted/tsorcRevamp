@@ -11,7 +11,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
 {
     /// <summary>
     /// Hellfire Plunge's wall of fire: erupts from the floor where the fire sword is buried, 20 tiles
-    /// tall, then rolls 40 tiles along the floor in one direction. Ground-crawler: each tick it snaps to the floor,
+    /// tall, then rolls 120 tiles along the floor in one direction. Ground-crawler: each tick it snaps to the floor,
     /// climbing up to 3 tiles or dropping up to 5; a taller wall or a deeper pit ends it early (fade).
     /// Drawn as a stacked column of Destined Death blaze sprites (the Great Red Knight's wave flame) with a short
     /// tail of wisps shed off the back that fall behind and fade. Everything drawn is inside the hitbox: the column
@@ -24,7 +24,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
         public override string Texture => "Terraria/Images/MagicPixel";
 
         public const float WallHeight = 20f * 16f;
-        public const float TravelDistance = 40f * 16f;
+        // 120 tiles: three times the original 40, so a wave crosses the whole arena instead of dying mid-room.
+        public const float TravelDistance = 120f * 16f;
         private const float WallWidth = 40f;
         // Wisps live in this band behind the wall; the hitbox covers it too.
         private const float TrailLength = 56f;
@@ -287,8 +288,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
                     dustType = DustID.Shadowflame;
                 }
                 Vector2 velocity = new Vector2(Direction * Main.rand.NextFloat(0.5f, 2f), Main.rand.NextFloat(-3f, -1f));
-                Dust ember = Dust.NewDustPerfect(position, dustType, velocity, 80, default, Main.rand.NextFloat(1.1f, 1.7f));
+                Dust ember = Dust.NewDustPerfect(position, dustType, velocity, 50, default, Main.rand.NextFloat(1.1f, 1.6f));
                 ember.noGravity = true;
+            }
+
+            // Leading edge: white-hot sparks thrown forward off the front face, so the wall's advancing side reads
+            // against the dark cave even where the blaze sprites are thin. 2 a tick once it is moving.
+            if (Travelling)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Vector2 edge = new Vector2(
+                        Projectile.Center.X + Direction * WallWidth / 2f,
+                        floorY - Main.rand.NextFloat(0f, currentHeight));
+                    Vector2 velocity = new Vector2(Direction * Main.rand.NextFloat(2.5f, 5f), Main.rand.NextFloat(-2.5f, -0.5f));
+                    Dust spark = Dust.NewDustPerfect(edge, DustID.Torch, velocity, 10, new Color(255, 220, 190), Main.rand.NextFloat(0.55f, 0.9f));
+                    spark.noGravity = true;
+                }
             }
 
             if (Main.rand.NextBool(2))

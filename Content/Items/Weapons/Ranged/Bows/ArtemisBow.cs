@@ -2,16 +2,20 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Ranged;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
 {
     public class ArtemisBow : ModItem
     {
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChargedBowHeld.FullDrawDamageBonusPercent, ChargedBowHeld.FullDrawBonusPierce);
+
         public override void SetStaticDefaults()
         {
 
@@ -22,7 +26,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             Item.DamageType = DamageClass.Ranged;
             Item.shoot = ModContent.ProjectileType<ArtemisBowHeld>();
             Item.channel = true;
-            Item.damage = 200;
+            Item.damage = 300;
             Item.crit = 10;
             Item.width = 14;
             Item.height = 28;
@@ -32,7 +36,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.knockBack = 15f;
+            Item.knockBack = 20f;
             Item.value = PriceByRarity.LightRed_4;
             Item.rare = ItemRarityID.LightRed;
             Item.UseSound = SoundID.Item7;

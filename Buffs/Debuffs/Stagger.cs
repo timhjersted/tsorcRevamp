@@ -1,5 +1,7 @@
+using System;
 using Terraria;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Accessories.Damage;
 
@@ -17,7 +19,14 @@ namespace tsorcRevamp.Buffs.Debuffs
         public const float ScreenShakeStrength = 1.25f;
         public const int ScreenShakeFrames = 6;
 
+        // Stamina regen pause after a hit taken in stamina debt. Same for Unkindled and Bearer of the Curse.
+        public const int DebtHitRegenDelayTicks = 15;
+
         public override bool PlaysSoundOnLastTick => false;
+
+        // Tooltip shows the slowdown as a whole percent: 0.75 multiplier -> "25".
+        public override LocalizedText Description => base.Description.WithFormatArgs(
+            (int)Math.Round((1f - MovementSpeedMultiplier) * 100f));
 
         public static void Apply(Player player) => Apply(player, DebtHitDurationTicks);
 

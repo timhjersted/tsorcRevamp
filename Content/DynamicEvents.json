@@ -261,11 +261,12 @@
   {
     "EventID": "5867a3de-f270-460d-8be5-ca23f839f013",
     "CenterX": 7874.0,
-    "CenterY": 390.0,
+    "CenterY": 397.0,
     "Radius": 409600.0,
     "Square": false,
     "TriggerDust": 114,
     "VisibleRing": false,
+    "SpawnBurst": true,
     "SaveOnCompletion": true,
     "TextToDisplay": "A Hemogoblin Shark is thirsty for blood!",
     "TextColorHex": "FF0000FF",
@@ -273,6 +274,9 @@
     "MapCondition": "",
     "CustomAction": "SetNightCustomAction",
     "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [
+      "GoblinSharkTropicalIsland"
+    ],
     "Npcs": [
       {
         "NpcName": "GoblinShark",
@@ -1370,8 +1374,8 @@
   },
   {
     "EventID": "ed8c51b2-ced9-4b99-9106-4077c66d21d8",
-    "CenterX": 2484.0,
-    "CenterY": 1795.0,
+    "CenterX": 2050.0,
+    "CenterY": 1792.0,
     "Radius": 230400.0,
     "Square": false,
     "TriggerDust": 158,
@@ -1383,6 +1387,9 @@
     "MapCondition": "OnlyAdventureMapCondition",
     "CustomAction": null,
     "SingleNpcMarker": false,
+    "ReplacedScriptedEvents": [
+      "WitchkingFight"
+    ],
     "Npcs": [
       {
         "NpcName": "tsorcRevamp/Witchking",
@@ -6844,6 +6851,34 @@
         "NpcName": "tsorcRevamp/Necromancer",
         "SpawnX": 1828.0,
         "SpawnY": 26.0,
+        "CustomHealth": null,
+        "CustomDamage": null,
+        "CustomDefense": null,
+        "CustomSouls": null
+      }
+    ]
+  },
+  {
+    "EventID": "e9eabb9d-c9c0-4878-8b12-c7b0be56cfbe",
+    "CenterX": 8303.0,
+    "CenterY": -4.0,
+    "Radius": 230400.0,
+    "Square": false,
+    "TriggerDust": 228,
+    "VisibleRing": false,
+    "SpawnBurst": true,
+    "SaveOnCompletion": true,
+    "TextToDisplay": null,
+    "TextColorHex": null,
+    "WorldCondition": "OnlyAdventureMapCondition",
+    "MapCondition": "",
+    "CustomAction": null,
+    "SingleNpcMarker": false,
+    "Npcs": [
+      {
+        "NpcName": "tsorcRevamp/Khaios",
+        "SpawnX": 8305.0,
+        "SpawnY": -7.0,
         "CustomHealth": null,
         "CustomDamage": null,
         "CustomDefense": null,

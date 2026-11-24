@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -35,6 +36,16 @@ namespace tsorcRevamp.Content.Projectiles
         protected Vector2 aimVector;
 
         protected Texture2D pointTexture;
+
+        // Full-draw reward for bows that opt in (HasFullDrawPerk): a shot released at full charge deals this many
+        // percent more damage and its arrows pierce this many extra enemies. Public so the bows' tooltips can show them.
+        public const int FullDrawDamageBonusPercent = 20;
+        public const int FullDrawBonusPierce = 1;
+
+        // Opt-in per bow. Off by default so spears (which also derive from this class) and Cernos Prime are untouched.
+        protected virtual bool HasFullDrawPerk => false;
+
+        bool playedFullDrawCue = false;
 
         protected int ammoType
         {
@@ -68,6 +79,43 @@ namespace tsorcRevamp.Content.Projectiles
 
         protected abstract void SetStats();
 
+        // Add the arrow's own damage back onto the charged shot. Projectile.damage arrives from the item's Shoot as
+        // weapon + ammo damage (all modifiers applied), and AI() zeroes it every tick, so it has to be read here.
+        // The ammo share is that figure minus the bare weapon damage. Runs only on the owner, the only place Shoot() runs.
+        // ChargedSpearHeld overrides OnSpawn without calling this, because spears have no ammo.
+        public override void OnSpawn(IEntitySource source)
+        {
+            Player owner = Main.player[Projectile.owner];
+            int weaponOnlyDamage = owner.GetWeaponDamage(owner.HeldItem);
+            int ammoDamage = Math.Max(0, Projectile.damage - weaponOnlyDamage);
+
+            maxDamage += ammoDamage;
+            minDamage = maxDamage / 10;
+        }
+
+        // Spawns one arrow, applying the full-draw reward when this bow has it and the shot is fully charged.
+        // Damage is passed into NewProjectile so it syncs; the extra pierce only matters on the owner, which resolves the hits.
+        protected void SpawnChargedArrow(Player player, int arrowType, Vector2 arrowVelocity, int damage)
+        {
+            bool fullDraw = HasFullDrawPerk && charge >= 1f;
+
+            int arrowDamage = damage;
+            if (fullDraw)
+            {
+                arrowDamage = damage * (100 + FullDrawDamageBonusPercent) / 100;
+            }
+
+            IEntitySource itemSource = player.GetSource_ItemUse(player.inventory[player.selectedItem]);
+            int arrowIndex = Projectile.NewProjectile(itemSource, player.Center, arrowVelocity, arrowType, arrowDamage, Projectile.knockBack, Projectile.owner);
+
+            // -1 is infinite pierce already; leave it alone.
+            Projectile arrow = Main.projectile[arrowIndex];
+            if (fullDraw && arrow.penetrate > 0)
+            {
+                arrow.penetrate += FullDrawBonusPierce;
+            }
+        }
+
         protected virtual void SpecialBehavior()
         {
         }
@@ -80,11 +128,13 @@ namespace tsorcRevamp.Content.Projectiles
 
         protected abstract void Shoot();
 
-        // Runs once when stamina hits 0 while held, just before the projectile is removed. Bows do nothing (the
-        // draw is cancelled). Spears override it to finish the attack instead: a click that overdraws into
-        // stamina debt lands at 0 on the very first tick, and Dark Souls rules say that attack still goes through.
+        // Runs once when stamina hits 0 while held, just before the projectile is removed. Bows loose the arrow at
+        // whatever charge they reached instead of losing the draw. A click that overdraws into stamina debt lands
+        // at 0 on the very first tick, so it fires a near-zero-charge shot. Spears override this with their stab/throw.
         protected virtual void OnStaminaDepleted(Player player)
         {
+            Shoot();
+            SoundEngine.PlaySound(soundtype, player.Center);
         }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -126,6 +176,32 @@ namespace tsorcRevamp.Content.Projectiles
                 if (charge < 1f)
                 {
                     charge += chargeRate;
+
+                    // Snap to exactly 1. Summing 1/useTime in floats can land at 0.99999 after useTime ticks,
+                    // which would cost an extra tick before "charge >= 1" checks (full-draw perk, spear throws) pass.
+                    if (charge > 0.999f)
+                    {
+                        charge = 1f;
+                    }
+                }
+
+                // One-time "fully drawn" cue: a chime and a ring of golden sparks at the bow. Cosmetic only.
+                if (HasFullDrawPerk && charge >= 1f && !playedFullDrawCue)
+                {
+                    playedFullDrawCue = true;
+
+                    if (!Main.dedServ)
+                    {
+                        SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = 0.3f, Volume = 0.8f }, player.Center);
+
+                        // 14 sparks evenly spaced on a ring, flung outward at 2.5 px/tick.
+                        for (int i = 0; i < 14; i++)
+                        {
+                            Vector2 sparkDirection = Vector2.UnitX.RotatedBy(MathHelper.TwoPi * i / 14f);
+                            Dust spark = Dust.NewDustPerfect(Projectile.Center, DustID.GoldFlame, sparkDirection * 2.5f, 0, default, 1.1f);
+                            spark.noGravity = true;
+                        }
+                    }
                 }
             }
             else

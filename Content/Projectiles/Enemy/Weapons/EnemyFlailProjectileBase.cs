@@ -135,14 +135,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         /// <summary>Both Chain Cross locks must stay in the committed front lane. This deliberately
         /// makes a roll through the owner beat the second lash instead of letting it whip backward.</summary>
-        public static bool IsChainCrossTargetValid(NPC owner, Player target, int facing)
+        public static bool IsChainCrossTargetValid(NPC owner, Player target, int facing, float reachScale = 1f)
         {
             if (owner == null || !owner.active || target == null || !target.active || target.dead || facing == 0)
                 return false;
 
             return (target.Center.X - owner.Center.X) * facing > 24f
                 && System.Math.Abs(target.Center.Y - owner.Center.Y) <= ChainCrossTargetVerticalTolerance
-                && Vector2.Distance(target.Center, owner.Center) <= ChainCrossReach + 48f;
+                && Vector2.Distance(target.Center, owner.Center) <= ChainCrossReach * reachScale + 48f;
         }
     }
 
@@ -221,6 +221,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         protected virtual int LashOutTicks => 10;
         /// <summary>Ticks taken to retract from full extension back to the hand.</summary>
         protected virtual int LashReturnTicks => 16;
+
+        // ── Authored-pattern opt-ins (defaults leave every existing owner unchanged) ──
+        /// <summary>Multiplies the authored patterns' reach caps (level lash 208px, Backlash 192px, Chain Cross
+        /// 200px). A bigger owner passes a matching reach in ai[2]; Chainfall/Chainrise/Chainstorm already use
+        /// ai[2] directly.</summary>
+        protected virtual float PatternReachScale => 1f;
+
+        /// <summary>Vertical offset (px, + is down) of a level lash's head from the hand. Blended in with the lash's
+        /// extension and out with the retract, so the tell orbit and the release frame stay continuous.
+        /// ankleReaper picks Ankle Reaper (true) or Reverse Halo (false).</summary>
+        protected virtual float LevelLashHeightOffset(bool ankleReaper) => 0f;
+
+        /// <summary>Draws the head and chain instead of the default chain-texture + ball pair. Return true when
+        /// drawn. Used by owners whose head and chain share one sprite sheet.</summary>
+        protected virtual bool DrawFlailOverride(NPC owner, Vector2 hand, Color lightColor) => false;
 
         public override void SetDefaults()
         {
@@ -761,7 +776,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private void TickBacklashReversal(Vector2 hand, float reach, int attackTick)
         {
-            reach = System.Math.Min(reach, EnemyFlailAttackPatterns.BacklashReach);
+            reach = System.Math.Min(reach, EnemyFlailAttackPatterns.BacklashReach * PatternReachScale);
 
             if (attackTick <= EnemyFlailAttackPatterns.BacklashLoadTicks)
             {
@@ -810,8 +825,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private void TickLevelLash(Vector2 hand, float reach, int attackTick, bool ankleReaper)
         {
-            reach = System.Math.Min(reach, EnemyFlailAttackPatterns.LevelLashReach);
+            reach = System.Math.Min(reach, EnemyFlailAttackPatterns.LevelLashReach * PatternReachScale);
             float frontAngle = _patternFacing > 0 ? 0f : MathHelper.Pi;
+            float heightOffset = LevelLashHeightOffset(ankleReaper);
 
             if (attackTick <= EnemyFlailAttackPatterns.LevelLashTicks)
             {
@@ -833,7 +849,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
                 float radius = MathHelper.Lerp(EnemyFlailAttackPatterns.LevelLashOrbitRadius,
                     reach, progress);
-                Projectile.Center = hand + new Vector2(radius, 0f).RotatedBy(frontAngle);
+                Vector2 lashHeight = new Vector2(0f, heightOffset * progress);
+                Projectile.Center = hand + new Vector2(radius, 0f).RotatedBy(frontAngle) + lashHeight;
                 _patternDamageActive = attackTick >= 3;
                 return;
             }
@@ -849,7 +866,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             }
 
             float retractRadius = MathHelper.Lerp(reach, 0f, retractProgress);
-            Projectile.Center = hand + new Vector2(retractRadius, 0f).RotatedBy(frontAngle);
+            Vector2 retractHeight = new Vector2(0f, heightOffset * (1f - retractProgress));
+            Projectile.Center = hand + new Vector2(retractRadius, 0f).RotatedBy(frontAngle) + retractHeight;
             if (ankleReaper)
                 SetFullOrbitArm(-MathHelper.TwoPi);
             else
@@ -939,13 +957,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
             int facing = _patternFacing == 0 ? (owner.direction == 0 ? 1 : owner.direction) : _patternFacing;
             Player target = Main.player[owner.target];
-            if (!EnemyFlailAttackPatterns.IsChainCrossTargetValid(owner, target, facing))
+            if (!EnemyFlailAttackPatterns.IsChainCrossTargetValid(owner, target, facing, PatternReachScale))
                 return false;
 
             localTarget = new Vector2(
                 MathHelper.Clamp((target.Center.X - hand.X) * facing,
                     EnemyFlailAttackPatterns.ChainCrossMinimumReach,
-                    EnemyFlailAttackPatterns.ChainCrossReach),
+                    EnemyFlailAttackPatterns.ChainCrossReach * PatternReachScale),
                 MathHelper.Clamp(target.Center.Y - hand.Y,
                     -EnemyFlailAttackPatterns.ChainCrossTargetVerticalTolerance,
                     EnemyFlailAttackPatterns.ChainCrossTargetVerticalTolerance));
@@ -1120,6 +1138,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         private void DrawFlail(NPC owner, Color lightColor)
         {
+            if (DrawFlailOverride(owner, GetHandAnchor(owner), lightColor))
+            {
+                return;
+            }
+
             Texture2D chainTexture = ModContent.Request<Texture2D>(ChainTexturePath).Value;
             Vector2 mountedCenter = GetHandAnchor(owner);
             Vector2 center = Projectile.Center;

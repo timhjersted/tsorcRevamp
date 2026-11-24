@@ -93,11 +93,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
                 return;
             }
 
+            // Deliberately small (22 motes): fifty skulls end together, so a full 40-70 burst each would be 2000-3500
+            // dust in one tick and the budget would drop most of it. Three layers still: wraith body, violet sparks,
+            // billowing dark smoke.
             for (int i = 0; i < 12; i++)
             {
-                Dust puff = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, 0f, 0f, 80, default, 1.3f);
+                // dust-lint: ok
+                Dust puff = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Wraith, 0f, 0f, 60, default, 1.3f);
                 puff.velocity = Main.rand.NextVector2Circular(2.5f, 2.5f);
                 puff.noGravity = true;
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                Dust spark = Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, Main.rand.NextVector2Circular(5f, 5f), 0, new Color(235, 210, 255), Main.rand.NextFloat(0.55f, 0.85f));
+                spark.noGravity = true;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                Dust smoke = Dust.NewDustPerfect(Projectile.Center, DustID.Smoke, Main.rand.NextVector2Circular(1.2f, 1.2f), 150, new Color(30, 20, 40), 0.6f);
+                smoke.noGravity = true;
+                smoke.noLight = true;
+                smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.6f);
             }
         }
     }

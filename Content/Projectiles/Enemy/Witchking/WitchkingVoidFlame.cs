@@ -12,18 +12,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
     /// Void Flame: a crescent of purple fire, shaped like ")" with its bulge leading, thrown off the Witchking's void blade
     /// on the peak of a rising cut. It leaves the blade 4 tiles tall and grows to 16 tiles tall over its first 20 tiles of
     /// travel, then holds that size until it fades. The burning band is 2.5 tiles thick at the middle and 1.5 at the tips.
-    /// Homes weakly for its first 75 ticks (max 0.02 rad/tick — a sideways dash outruns it), then flies straight.
+    /// No homing: it flies dead straight along its release aim (at 8 px/t over 11–40 tiles that is 22–80t to arrive).
     /// Drawn by the WitchkingVoidCrescent shader (EnemyVFX.DrawWitchkingVoidCrescent); the hitbox follows the drawn arc.
     /// Its centre bursts on cave walls (tileCollide, small hitbox); the tall arms deliberately pass through rock.
-    /// ai[0] = target player index, chosen by the server at release (nearest valid player).
+    /// Aim is fixed by the server at release (toward the nearest valid player); nothing in ai[] is read.
     /// </summary>
     public class WitchkingVoidFlame : ModProjectile
     {
         public override string Texture => "Terraria/Images/MagicPixel";
 
         public const float LaunchSpeed = 8f;
-        private const int HomingTicks = 75;
-        private const float MaxTurnPerTick = 0.02f;
         private const int LifetimeTicks = 180;
         private const int FadeTicks = 15;
 
@@ -36,8 +34,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
         private const float MidHalfThickness = 20f;
         private const float TipHalfThickness = 12f;
         private const int ArcSamples = 11;
-
-        private int Age => (int)Projectile.localAI[0];
 
         // Distance flown so far (px); drives the growth. Local per machine: speed is constant, so every peer agrees.
         private float Travelled
@@ -66,21 +62,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
 
         public override void AI()
         {
-            Projectile.localAI[0]++;
             Travelled += Projectile.velocity.Length();
-
-            // Weak homing: turn toward the target at most MaxTurnPerTick, for the first HomingTicks only.
-            int targetIndex = (int)Projectile.ai[0];
-            bool targetValid = targetIndex >= 0 && targetIndex < Main.maxPlayers
-                && Main.player[targetIndex].active && !Main.player[targetIndex].dead;
-            if (Age < HomingTicks && targetValid)
-            {
-                Player target = Main.player[targetIndex];
-                float currentAngle = Projectile.velocity.ToRotation();
-                float desiredAngle = (target.Center - Projectile.Center).ToRotation();
-                float turn = MathHelper.Clamp(MathHelper.WrapAngle(desiredAngle - currentAngle), -MaxTurnPerTick, MaxTurnPerTick);
-                Projectile.velocity = Projectile.velocity.RotatedBy(turn);
-            }
 
             Projectile.rotation = Projectile.velocity.ToRotation();
 
@@ -92,11 +74,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
 
             if (!Main.dedServ)
             {
-                // A few embers shed off the arc, and light along it.
-                Vector2 ember = ArcPoint(Main.rand.NextFloat(-1f, 1f), out _);
-                Dust shed = Dust.NewDustPerfect(ember, Main.rand.NextBool(3) ? DustID.PurpleTorch : DustID.Shadowflame,
-                    -Projectile.velocity * 0.15f, 100, default, 1.2f * Opacity);
-                shed.noGravity = true;
+                // Embers shed off the band: 3 body motes a tick at random points along the arc, spread back across the
+                // tick's 8px of travel (gap ~3px), plus 1 bright violet-white glint on the leading bulge.
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 ember = ArcPoint(Main.rand.NextFloat(-1f, 1f), out _);
+                    ember -= Projectile.velocity * Main.rand.NextFloat(0f, 1f);
+                    int emberType = DustID.Shadowflame;
+                    if (i == 0)
+                    {
+                        emberType = DustID.PurpleTorch;
+                    }
+                    Dust shed = Dust.NewDustPerfect(ember, emberType, -Projectile.velocity * 0.15f, 50, default, Main.rand.NextFloat(1.0f, 1.35f) * Opacity);
+                    shed.noGravity = true;
+                }
+                Vector2 bulge = ArcPoint(Main.rand.NextFloat(-0.35f, 0.35f), out _);
+                Dust glint = Dust.NewDustPerfect(bulge, DustID.PurpleTorch, Projectile.velocity * 0.1f, 0, new Color(235, 210, 255), Main.rand.NextFloat(0.55f, 0.85f) * Opacity);
+                glint.noGravity = true;
                 for (int i = 0; i < 3; i++)
                 {
                     Lighting.AddLight(ArcPoint(-0.66f + i * 0.66f, out _), 0.45f * Opacity, 0.15f * Opacity, 0.6f * Opacity);

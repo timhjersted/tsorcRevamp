@@ -301,24 +301,78 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         ///<summary>The red-and-black grave-fire dust burst that punctuates every pyre-family effect —
         ///blades tearing out of / sinking back into the ground, hands erupting, fire guttering out.
-        ///Deliberately plain Dust (not a shader) so it layers on top of whatever shader quad spawned
-        ///it and survives the spritebatch juggling those do.</summary>
+        ///Split into three distinct layers (midground flame, fast foreground embers, slow billowing
+        ///dark smoke) so bursts read as cohesive fire events rather than one repeated stamp.</summary>
         internal static void PyreBurst(Vector2 position, int count, float speed, float scale = 1f,
             float spreadX = 10f, float spreadY = 10f)
         {
-            if (Main.netMode == NetmodeID.Server) return;
-            for (int i = 0; i < count; i++)
+            if (Main.netMode == NetmodeID.Server || count <= 0)
+            {
+                return;
+            }
+
+            float clampedScale = MathHelper.Clamp(scale, 0.5f, 1.3f);
+
+            // For tiny continuous calls (count <= 3), emit directly into midground + bright ember.
+            if (count <= 3)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2Circular(spreadX, spreadY);
+                    Vector2 velocity = Main.rand.NextVector2Circular(speed, speed) - new Vector2(0f, speed * 0.4f);
+                    int dustType = i == 0 ? DustID.RedTorch : DustID.Torch;
+                    int alpha = i == 0 ? 45 : 20;
+                    float dustScale = i == 0
+                        ? Main.rand.NextFloat(0.95f, 1.35f) * clampedScale
+                        : Main.rand.NextFloat(0.55f, 0.85f) * clampedScale;
+
+                    Dust ember = Dust.NewDustPerfect(position + offset, dustType, velocity, alpha, default, dustScale);
+                    ember.noGravity = true;
+                }
+
+                return;
+            }
+
+            int bodyCount = System.Math.Max(1, (int)(count * 0.55f));
+            int sparkCount = System.Math.Max(1, (int)(count * 0.30f));
+            int smokeCount = System.Math.Max(1, count - bodyCount - sparkCount);
+
+            // Midground body: red grave-fire with a minority of shadowflame for dark contrast.
+            for (int i = 0; i < bodyCount; i++)
             {
                 Vector2 offset = Main.rand.NextVector2Circular(spreadX, spreadY);
                 Vector2 velocity = Main.rand.NextVector2Circular(speed, speed) - new Vector2(0f, speed * 0.35f);
-                // Two thirds red flame, one third black smoke — the PyreRed/PyreBlack pairing the
-                // shaders use, expressed in dust.
-                bool ember = !Main.rand.NextBool(3);
-                Dust d = Dust.NewDustPerfect(position + offset,
-                    ember ? DustID.RedTorch : DustID.Smoke, velocity, ember ? 80 : 140,
-                    ember ? default : new Color(24, 10, 12),
-                    Main.rand.NextFloat(0.85f, 1.35f) * scale);
-                d.noGravity = true;
+                bool darkFlame = i % 4 == 0;
+                int dustType = darkFlame ? DustID.Shadowflame : DustID.RedTorch;
+                int alpha = darkFlame ? 55 : 40;
+                float dustScale = Main.rand.NextFloat(0.9f, 1.4f) * clampedScale;
+
+                Dust body = Dust.NewDustPerfect(position + offset, dustType, velocity, alpha, default, dustScale);
+                body.noGravity = true;
+            }
+
+            // Foreground sparks: smallest, fastest, brightest orange/fire embers giving a crisp leading edge.
+            for (int i = 0; i < sparkCount; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(spreadX * 0.8f, spreadY * 0.8f);
+                Vector2 velocity = Main.rand.NextVector2Circular(speed * 1.65f, speed * 1.65f) - new Vector2(0f, speed * 0.65f);
+                int sparkType = i % 2 == 0 ? DustID.Torch : DustID.OrangeTorch;
+                float sparkScale = Main.rand.NextFloat(0.45f, 0.85f) * clampedScale;
+
+                Dust spark = Dust.NewDustPerfect(position + offset, sparkType, velocity, Main.rand.Next(0, 30), default, sparkScale);
+                spark.noGravity = true;
+            }
+
+            // Background smoke: slow, dark-tinted billows that grow via fadeIn and outlive the flame.
+            for (int i = 0; i < smokeCount; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2Circular(spreadX, spreadY);
+                Vector2 velocity = Main.rand.NextVector2Circular(speed * 0.45f, speed * 0.45f) - new Vector2(0f, speed * 0.25f);
+                Dust smoke = Dust.NewDustPerfect(position + offset, DustID.Smoke, velocity, 155,
+                    new Color(28, 12, 16), Main.rand.NextFloat(0.55f, 0.78f));
+                smoke.noGravity = true;
+                smoke.noLight = true;
+                smoke.fadeIn = Main.rand.NextFloat(1.35f, 1.65f);
             }
         }
 

@@ -131,11 +131,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Axes
 
             if (isJudgmentSwing)
             {
-                if (!Main.dedServ)
-                {
-                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.55f, Pitch = -0.5f }, player.Center);
-                }
-
                 if (player.whoAmI == Main.myPlayer)
                 {
                     Vector2 aimDirection = (Main.MouseWorld - player.Center).SafeNormalize(new Vector2(player.direction, 0f));

@@ -5,6 +5,8 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs.Debuffs;
+using tsorcRevamp.Gores;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 {
@@ -72,28 +74,53 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 return; // eased tail: the boss still draws the blade, but no dust advertises a dead hitbox
             }
 
-            // The shader carries the blade silhouette. In phase two, blood droplets and wraith wisps
-            // rise directly from the same hilt-to-tip line used for collision, so the empowered sword
-            // never leaves a detached cloud behind it.
-            Vector2 blade = Projectile.rotation.ToRotationVector2();
-            Vector2 hilt = Projectile.Center - blade * 40f;
-            Vector2 tip = Projectile.Center + blade * 150f;
-            for (int i = 0; i < 2; i++)
+            // The shader carries the blade silhouette. Emit unthrottled body motes plus a bright edge
+            // glint along the hilt-to-tip line; phase two uses RedTorch + Shadowflame (not gore-gated
+            // Blood alone) so readability holds even with Blood & Gore disabled.
+            if (!Main.dedServ)
             {
-                Vector2 pos = Vector2.Lerp(hilt, tip, Main.rand.NextFloat()) + Main.rand.NextVector2Circular(7f, 7f);
-                int dustType = phaseTwo && i == 0 ? DustID.Blood
-                    : phaseTwo ? DustID.Wraith : DustID.BoneTorch;
-                Vector2 velocity = phaseTwo
-                    ? blade * Main.rand.NextFloat(0.3f, 1.3f) + new Vector2(0f, Main.rand.NextFloat(-2.8f, -1f))
-                    : blade * Main.rand.NextFloat(0.5f, 2f);
-                Dust d = Dust.NewDustPerfect(pos, dustType, velocity, 90, default,
-                    dustType == DustID.Blood ? 1.1f : 1f);
-                d.noGravity = true;
+                Vector2 blade = Projectile.rotation.ToRotationVector2();
+                Vector2 hilt = Projectile.Center - blade * 40f;
+                Vector2 tip = Projectile.Center + blade * 150f;
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 position = Vector2.Lerp(hilt, tip, Main.rand.NextFloat()) + Main.rand.NextVector2Circular(7f, 7f);
+                    int dustType;
+                    if (phaseTwo)
+                    {
+                        dustType = i == 0 ? DustID.RedTorch : DustID.Shadowflame;
+                    }
+                    else
+                    {
+                        dustType = i == 0 ? DustID.Shadowflame : DustID.BoneTorch;
+                    }
+
+                    Vector2 velocity = phaseTwo
+                        ? blade * Main.rand.NextFloat(0.4f, 1.6f) + new Vector2(0f, Main.rand.NextFloat(-2.6f, -0.8f))
+                        : blade * Main.rand.NextFloat(0.6f, 2.2f);
+                    Dust body = Dust.NewDustPerfect(position, dustType, velocity, Main.rand.Next(35, 58), default,
+                        Main.rand.NextFloat(0.95f, 1.35f));
+                    body.noGravity = true;
+                }
+
+                Vector2 glintPosition = Vector2.Lerp(hilt, tip, Main.rand.NextFloat(0.45f, 1f));
+                Dust glint = Dust.NewDustPerfect(glintPosition, DustID.AncientLight,
+                    blade * Main.rand.NextFloat(1.4f, 3.2f), Main.rand.Next(0, 26),
+                    phaseTwo ? new Color(255, 165, 175) : new Color(220, 200, 245),
+                    Main.rand.NextFloat(0.55f, 0.85f));
+                glint.noGravity = true;
             }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
+            if (Kind == 1)
+            {
+                // Downward Overhead Cleave impact staggers and slows the player for 2 seconds.
+                Stagger.Apply(target, 2 * 60);
+                target.AddBuff(BuffID.Slow, 2 * 60);
+            }
+
             NPC owner = OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs ? Main.npc[OwnerIndex] : null;
             if (owner?.ModNPC is global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito nito
                 && nito.IsPhaseTwo)
@@ -190,13 +217,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             {
                 Projectile.velocity = Vector2.Zero;
                 Projectile.rotation += 0.42f; // spin in place — the actual "incoming" tell
-                Lighting.AddLight(Projectile.Center, 0.18f, 0.18f, 0.2f);
-                if (Main.rand.NextBool(2))
+                Lighting.AddLight(Projectile.Center, 0.22f, 0.2f, 0.28f);
+
+                if (!Main.dedServ)
                 {
-                    Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(14f, 14f),
-                        DustID.Smoke, Main.rand.NextVector2Circular(1.1f, 1.1f), 120, new Color(150, 150, 150), 1f);
-                    d.noGravity = true;
+                    float chargeProgress = MathHelper.Clamp(Timer / (float)ChargeTicks, 0f, 1f);
+                    int chargeCount = 1 + (int)(chargeProgress * 2f);
+
+                    for (int i = 0; i < chargeCount; i++)
+                    {
+                        Vector2 spawnOffset = Main.rand.NextVector2CircularEdge(16f + (1f - chargeProgress) * 10f, 16f + (1f - chargeProgress) * 10f);
+                        int chargeType = i % 2 == 0 ? DustID.BoneTorch : DustID.Shadowflame;
+                        Dust chargeDust = Dust.NewDustPerfect(Projectile.Center + spawnOffset, chargeType,
+                            -spawnOffset.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.8f, 1.8f),
+                            Main.rand.Next(40, 65), default, Main.rand.NextFloat(0.75f, 1.15f));
+                        chargeDust.noGravity = true;
+                    }
+
+                    if (Timer % 2 == 0)
+                    {
+                        Dust smoke = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(12f, 12f),
+                            DustID.Smoke, Main.rand.NextVector2Circular(0.8f, 0.8f), 155,
+                            new Color(52, 44, 58), Main.rand.NextFloat(0.5f, 0.7f));
+                        smoke.noGravity = true;
+                        smoke.noLight = true;
+                        smoke.fadeIn = Main.rand.NextFloat(1.25f, 1.5f);
+                    }
                 }
+
                 return;
             }
             if (Timer == ChargeTicks + 1 && ChargeTicks > 0)
@@ -206,24 +254,85 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             Projectile.rotation += Projectile.velocity.X * 0.04f;
             Projectile.velocity.Y += ShardGravity;
             Lighting.AddLight(Projectile.Center, 0.16f, 0.16f, 0.22f);
-            if (Main.rand.NextBool(2))
+
+            if (!Main.dedServ)
             {
-                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5f, 5f), DustID.BoneTorch, Projectile.velocity * -0.05f, 110, default, 0.85f);
-                d.noGravity = true;
+                // Interpolate 2-3 motes across the velocity step so 9.5-10.8 px/t flight stays <= 4.5 px gap.
+                const int TrailCount = 3;
+                for (int i = 0; i < TrailCount; i++)
+                {
+                    float fraction = (i + Main.rand.NextFloat()) / TrailCount;
+                    Vector2 trailPos = Projectile.Center - Projectile.velocity * fraction + Main.rand.NextVector2Circular(4f, 4f);
+                    int trailType = i == 0 ? DustID.Shadowflame : DustID.BoneTorch;
+                    Dust trail = Dust.NewDustPerfect(trailPos, trailType,
+                        Projectile.velocity * -0.08f + Main.rand.NextVector2Circular(0.4f, 0.4f),
+                        Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.85f, 1.25f));
+                    trail.noGravity = true;
+                }
+
+                Dust glint = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(3f, 3f),
+                    DustID.AncientLight, Projectile.velocity * -0.14f, Main.rand.Next(0, 26),
+                    new Color(225, 220, 240), Main.rand.NextFloat(0.5f, 0.8f));
+                glint.noGravity = true;
+
+                if (Timer % 2 == 0)
+                {
+                    Dust mist = Dust.NewDustPerfect(Projectile.Center - Projectile.velocity * 0.5f, DustID.Smoke,
+                        Projectile.velocity * -0.04f + Main.rand.NextVector2Circular(0.4f, 0.4f), 160,
+                        new Color(48, 42, 56), Main.rand.NextFloat(0.5f, 0.72f));
+                    mist.noGravity = true;
+                    mist.noLight = true;
+                    mist.fadeIn = Main.rand.NextFloat(1.25f, 1.5f);
+                }
             }
         }
 
-        ///<summary>Aims at release rather than at spawn: a full second of lead time locked in at spawn
-        ///would make every volley trivially walk-away-able. The telegraph warns; the shot still tracks.
-        ///
-        ///The aim is BALLISTIC: the old straight-line aim ignored the 0.08 gravity, so a shard dropped
-        ///~41px by 15 tiles and fell hopelessly short by 50. Flight time is distance / nominal speed,
-        ///then the launch velocity is solved so the centre shard passes through the target's current
-        ///position after exactly that many ticks. Launch speed therefore grows with range (7.5 up close,
-        ///~8.6 at 50 tiles). The fan offset is applied afterwards, so only the middle shard is exact.</summary>
+        public override void OnKill(int timeLeft)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.45f, Pitch = 0.2f }, Projectile.Center);
+
+            // 3-layer shatter burst: 12 midground bone/shadow, 7 fast glints, 5 billowing dark smoke.
+            for (int i = 0; i < 12; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                int dustType = i % 3 == 0 ? DustID.Shadowflame : DustID.BoneTorch;
+                Dust body = Dust.NewDustPerfect(Projectile.Center + direction * Main.rand.NextFloat(2f, 8f),
+                    dustType, direction * Main.rand.NextFloat(1.8f, 4.6f), Main.rand.Next(35, 60),
+                    default, Main.rand.NextFloat(0.9f, 1.35f));
+                body.noGravity = true;
+            }
+
+            for (int i = 0; i < 7; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust spark = Dust.NewDustPerfect(Projectile.Center, DustID.AncientLight,
+                    direction * Main.rand.NextFloat(4.5f, 7.8f), Main.rand.Next(0, 25),
+                    new Color(230, 225, 240), Main.rand.NextFloat(0.5f, 0.85f));
+                spark.noGravity = true;
+            }
+
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust smoke = Dust.NewDustPerfect(Projectile.Center + direction * Main.rand.NextFloat(2f, 10f),
+                    DustID.Smoke, direction * Main.rand.NextFloat(0.5f, 1.6f), 155,
+                    new Color(46, 40, 54), Main.rand.NextFloat(0.55f, 0.75f));
+                smoke.noGravity = true;
+                smoke.noLight = true;
+                smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.55f);
+            }
+        }
+
+        ///<summary>Aims at release with a partial ballistic velocity lead (6-16 ticks) so steady
+        ///sideways walking gets clipped while still leaving room for a direction reversal, jump, or roll.</summary>
         void LaunchAtTarget()
         {
-            float speed = LaunchSpeed > 0.1f ? LaunchSpeed : 7.5f;
+            float speed = LaunchSpeed > 0.1f ? LaunchSpeed : 9.5f;
             Vector2 aim = new Vector2(speed, 0f);
             if (OwnerIndex >= 0 && OwnerIndex < Main.maxNPCs)
             {
@@ -233,7 +342,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                     Player target = Main.player[owner.target];
                     if (target.active && !target.dead)
                     {
-                        Vector2 toTarget = target.Center - Projectile.Center;
+                        Vector2 rawToTarget = target.Center - Projectile.Center;
+                        float initialFlightTicks = MathHelper.Clamp(rawToTarget.Length() / speed, MinFlightTicks, MaxFlightTicks);
+                        float leadTicks = MathHelper.Clamp(initialFlightTicks * 0.45f, 6f, 16f);
+                        Vector2 predictedTarget = target.Center + target.velocity * leadTicks;
+                        Vector2 toTarget = predictedTarget - Projectile.Center;
                         float flightTicks = MathHelper.Clamp(toTarget.Length() / speed, MinFlightTicks, MaxFlightTicks);
 
                         // AI() runs BEFORE the position update, and this same AI call adds gravity once
@@ -245,7 +358,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 }
             }
             Projectile.velocity = aim.RotatedBy(FanOffset);
-            SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.35f, Pitch = 0.3f }, Projectile.Center);
+
+            if (!Main.dedServ)
+            {
+                SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.35f, Pitch = 0.3f }, Projectile.Center);
+                Vector2 launchDir = Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                for (int i = 0; i < 10; i++)
+                {
+                    int dustType = i < 4 ? DustID.AncientLight : DustID.BoneTorch;
+                    Vector2 sparkVel = launchDir.RotatedBy(Main.rand.NextFloat(-0.55f, 0.55f)) * Main.rand.NextFloat(2.5f, 6.2f);
+                    Dust snap = Dust.NewDustPerfect(Projectile.Center, dustType, sparkVel,
+                        i < 4 ? 10 : 40, default, i < 4 ? Main.rand.NextFloat(0.55f, 0.85f) : Main.rand.NextFloat(0.9f, 1.25f));
+                    snap.noGravity = true;
+                }
+            }
+
             Projectile.netUpdate = true;
         }
 
@@ -268,8 +395,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
 
-        const float ExpandSpeed = 8f;
-        internal const float RingHalfThickness = 24f; // also read by NitoGraveHand to size its blast dust
+        const float ExpandSpeed = 10.5f;
+        internal const float RingHalfThickness = 28f; // also read by NitoGraveHand to size its blast dust
         internal const int HandBlastVisualTicks = 90;
         internal const int HandBlastPulseCount = 5;
         internal const int HandBlastPulseSpacing = 8;
@@ -349,6 +476,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                             Dust dust = Dust.NewDustPerfect(position, DustID.Wraith, radial * 1.5f,
                                 115, new Color(24, 2, 20), 0.85f * ringOpacity);
                             dust.noGravity = true;
+                            dust.noLight = true;
                         }
                     }
                 }
@@ -360,8 +488,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                     Vector2 pos = Projectile.Center + radial * (Radius + Main.rand.NextFloat(-7f, 7f));
                     Dust dust = Dust.NewDustPerfect(pos,
                         Main.rand.NextBool(3) ? DustID.Shadowflame : DustID.BoneTorch,
-                        radial * 2.2f, 75, default, Main.rand.NextFloat(1f, 1.5f));
+                        radial * 2.4f, Main.rand.Next(40, 62), default, Main.rand.NextFloat(1f, 1.45f));
                     dust.noGravity = true;
+                }
+
+                if (!GraveHandDetonation)
+                {
+                    // Foreground leading-edge sparks give the shockwave ring crisp contrast.
+                    for (int i = 0; i < 10; i++)
+                    {
+                        float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                        Vector2 radial = angle.ToRotationVector2();
+                        Vector2 sparkPos = Projectile.Center + radial * (Radius + Main.rand.NextFloat(-4f, 6f));
+                        Dust spark = Dust.NewDustPerfect(sparkPos, DustID.AncientLight,
+                            radial * Main.rand.NextFloat(3.2f, 5.5f), Main.rand.Next(0, 26),
+                            new Color(220, 195, 250), Main.rand.NextFloat(0.55f, 0.9f));
+                        spark.noGravity = true;
+                    }
                 }
 
                 int pulseAge = Age - 1;
@@ -379,6 +522,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                             direction * Main.rand.NextFloat(1.5f, 4f) * strength, 110,
                             new Color(32, 4, 24), Main.rand.NextFloat(0.65f, 1.1f));
                         dust.noGravity = true;
+                        dust.noLight = true;
                     }
                 }
 
@@ -505,9 +649,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             float bottom = Projectile.position.Y + Projectile.height;
             if (!Erupted)
             {
-                for (int i = 0; i < 2; i++)
+                if (!Main.dedServ)
                 {
-                    Dust.NewDust(new Vector2(Projectile.position.X, bottom - 10f), Projectile.width, 8, DustID.BoneTorch, 0f, -0.8f, 100, default, 0.9f);
+                    float telegraphProgress = TelegraphTicks > 0
+                        ? MathHelper.Clamp(Timer / (float)TelegraphTicks, 0f, 1f)
+                        : 1f;
+                    int tellCount = 2 + (int)(telegraphProgress * 2f);
+                    for (int i = 0; i < tellCount; i++)
+                    {
+                        int dustType = i % 2 == 0 ? DustID.RedTorch : DustID.BoneTorch;
+                        Vector2 dustPos = new Vector2(
+                            Projectile.position.X + Main.rand.NextFloat(Projectile.width),
+                            bottom - Main.rand.NextFloat(2f, 12f));
+                        Dust tell = Dust.NewDustPerfect(dustPos, dustType,
+                            new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-2.6f, -0.8f)),
+                            Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.85f, 1.25f));
+                        tell.noGravity = true;
+                    }
                 }
                 return;
             }
@@ -523,9 +681,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 // the sprite simply being switched off.
                 NitoVFX.PyreBurst(new Vector2(Projectile.Center.X, bottom), 18, 3.2f, 1f, 18f, 8f);
             }
-            if (!Sinking && Main.rand.NextBool(4))
+            if (!Sinking && !Main.dedServ)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, 0f, -0.6f, 100, default, 0.8f);
+                int smolderType = Main.rand.NextBool(3) ? DustID.RedTorch : DustID.BoneTorch;
+                Dust smolder = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height,
+                    smolderType, 0f, Main.rand.NextFloat(-1.8f, -0.7f), Main.rand.Next(45, 65), default,
+                    Main.rand.NextFloat(0.8f, 1.15f));
+                smolder.noGravity = true;
             }
         }
 
@@ -604,15 +766,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         int TelegraphTicks => Projectile.ai[0] > 0f ? (int)Projectile.ai[0] : 18;
         float ConvergeCenterX => Projectile.ai[1];
+        // ai[2] bitflags: bit 0 = right-hand exploder, bit 1 = outward-detonation branch, bit 2 = Phase 2 tempo.
         bool IsExploder => ((int)Projectile.ai[2] & 1) == 1;
-        bool OutwardDetonation => Projectile.ai[2] >= 2f;
+        bool OutwardDetonation => ((int)Projectile.ai[2] & 2) != 0;
+        bool IsPhaseTwo => ((int)Projectile.ai[2] & 4) != 0;
         int Side => IsExploder ? 1 : -1;
         int Timer => (int)Projectile.localAI[0];
 
         const int GrabTicks = 16;    // the initial damaging emergence
-        const int PauseTicks = 60;   // the 1-second beat before they start closing
-        const float ConvergeSpeed = 3.8f;  // was 3.1 (+~22%): the close is 150px -> ~39 ticks, still rollable
-        const float OutwardSpeed = 6f;     // was 5; OutwardTravelDistance / OutwardSpeed drives the timeLeft, so it self-adjusts
+        int PauseTicks => IsPhaseTwo ? 24 : 32;      // beat before closing (was 60 — now forces a real jump or roll-through)
+        float ConvergeSpeed => IsPhaseTwo ? 6.0f : 5.2f; // 150px close in 25-29 ticks (was 3.8 / 39 ticks)
+        const float OutwardSpeed = 6f;     // OutwardTravelDistance / OutwardSpeed drives the timeLeft, so it self-adjusts
         internal const float InitialHandOffset = 150f;
         const float OutwardTravelDistance = 300f;
         const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
@@ -682,9 +846,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             Projectile.localAI[0]++;
             if (Timer <= EmergeTick)
             {
-                for (int i = 0; i < 3; i++)
+                if (!Main.dedServ)
                 {
-                    Dust.NewDust(Projectile.BottomLeft - new Vector2(0f, 8f), Projectile.width, 12, DustID.BoneTorch, 0f, -1f, 100, default, 0.9f);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int dustType = i % 2 == 0 ? DustID.BoneTorch : DustID.RedTorch;
+                        Dust tell = Dust.NewDustDirect(Projectile.BottomLeft - new Vector2(0f, 10f), Projectile.width, 12,
+                            dustType, Main.rand.NextFloat(-0.6f, 0.6f), Main.rand.NextFloat(-2.6f, -0.9f),
+                            Main.rand.Next(38, 60), default, Main.rand.NextFloat(0.9f, 1.3f));
+                        tell.noGravity = true;
+                    }
                 }
                 return;
             }
@@ -728,10 +899,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
             int dir = ConvergeCenterX >= Projectile.Center.X ? 1 : -1;
             Projectile.velocity = new Vector2(dir * ConvergeSpeed, 0f);
-            if (Main.rand.NextBool(2))
-            {
-                NitoVFX.PyreBurst(Projectile.Bottom + new Vector2(0f, -6f), 1, 1.6f, 0.8f, 26f, 10f);
-            }
+            NitoVFX.PyreBurst(Projectile.Bottom + new Vector2(0f, -6f), 2, 2.2f, 0.9f, 26f, 10f);
 
             // Met in the middle: detonate. Only the flagged hand spawns the blast so a pair produces
             // one explosion, but BOTH retire on contact.
@@ -766,14 +934,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile hand = Main.projectile[i];
-                if (!hand.active || hand.type != handType || hand.ai[2] >= 2f
+                if (!hand.active || hand.type != handType || ((int)hand.ai[2] & 2) != 0
                     || System.Math.Abs(hand.ai[1] - ConvergeCenterX) > 0.5f
                     || System.Math.Abs(System.Math.Abs(hand.Center.X - ConvergeCenterX) - InitialHandOffset) > 4f)
                 {
                     continue;
                 }
 
-                hand.ai[2] += 2f;
+                hand.ai[2] = (int)hand.ai[2] | 2;
                 int handSide = ((int)hand.ai[2] & 1) == 1 ? 1 : -1;
                 hand.velocity = new Vector2(handSide * OutwardSpeed, 0f);
                 hand.timeLeft = System.Math.Max(hand.timeLeft,
@@ -1047,9 +1215,35 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             {
                 return;
             }
-            if (Timer < BurnTicks && Main.rand.NextBool(2))
+            if (Timer < BurnTicks && !Main.dedServ)
             {
-                NitoVFX.PyreBurst(Projectile.Center + new Vector2(0f, 10f), 1, 2.2f, 0.9f, 46f, 12f);
+                // 3-layer lingering fire column: 2 rising body flames + 1 fast ember + billowing dark smoke every 2t.
+                for (int i = 0; i < 2; i++)
+                {
+                    int flameType = i == 0 ? DustID.RedTorch : DustID.OrangeTorch;
+                    Vector2 flamePos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-46f, 46f), Main.rand.NextFloat(-16f, -2f));
+                    Dust flame = Dust.NewDustPerfect(flamePos, flameType,
+                        new Vector2(Main.rand.NextFloat(-0.5f, 0.5f), Main.rand.NextFloat(-4.2f, -1.8f)),
+                        Main.rand.Next(35, 65), default, Main.rand.NextFloat(1.0f, 1.48f));
+                    flame.noGravity = true;
+                }
+
+                Vector2 sparkPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-40f, 40f), Main.rand.NextFloat(-24f, -4f));
+                Dust spark = Dust.NewDustPerfect(sparkPos, DustID.Torch,
+                    new Vector2(Main.rand.NextFloat(-0.9f, 0.9f), Main.rand.NextFloat(-5.4f, -3.2f)),
+                    Main.rand.Next(10, 35), default, Main.rand.NextFloat(0.55f, 0.85f));
+                spark.noGravity = true;
+
+                if (Timer % 2 == 0)
+                {
+                    Vector2 smokePos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-42f, 42f), Main.rand.NextFloat(-26f, -8f));
+                    Dust smoke = Dust.NewDustPerfect(smokePos, DustID.Smoke,
+                        new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-1.6f, -0.7f)),
+                        155, new Color(28, 12, 16), Main.rand.NextFloat(0.55f, 0.8f));
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.35f, 1.65f);
+                }
             }
             else if (Timer == BurnTicks)
             {
@@ -1125,15 +1319,32 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             {
                 SoundEngine.PlaySound(SoundID.Item60 with { Volume = 0.65f, Pitch = -0.15f }, Projectile.Center);
             }
-            Projectile.velocity.Y += 0.15f;
-            if (Projectile.velocity.Y > 13f)
+            Projectile.velocity.Y += 0.22f;
+            if (Projectile.velocity.Y > 15f)
             {
-                Projectile.velocity.Y = 13f;
+                Projectile.velocity.Y = 15f;
             }
             Lighting.AddLight(Projectile.Center, 0.18f, 0.1f, 0.12f);
-            if (Main.rand.NextBool(2))
+
+            if (!Main.dedServ)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, -Projectile.velocity.X * 0.1f, -Projectile.velocity.Y * 0.1f, 100, default, 0.8f);
+                // Interpolate 3 body motes across the fall step (<= 5px gap at 15 px/t) + 1 edge glint.
+                const int FallTrailCount = 3;
+                for (int i = 0; i < FallTrailCount; i++)
+                {
+                    float fraction = (i + Main.rand.NextFloat()) / FallTrailCount;
+                    Vector2 trailPos = Projectile.Center - Projectile.velocity * fraction + Main.rand.NextVector2Circular(5f, 5f);
+                    int dustType = i == 0 ? DustID.RedTorch : DustID.BoneTorch;
+                    Dust trail = Dust.NewDustPerfect(trailPos, dustType,
+                        Projectile.velocity * -0.1f + Main.rand.NextVector2Circular(0.45f, 0.45f),
+                        Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.85f, 1.3f));
+                    trail.noGravity = true;
+                }
+
+                Dust glint = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(4f, 4f),
+                    DustID.AncientLight, Projectile.velocity * -0.15f, Main.rand.Next(0, 26),
+                    new Color(235, 210, 220), Main.rand.NextFloat(0.5f, 0.85f));
+                glint.noGravity = true;
             }
         }
 
@@ -1155,10 +1366,50 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         public override void OnKill(int timeLeft)
         {
-            SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.4f, Pitch = -0.3f }, Projectile.Center);
-            for (int i = 0; i < 6; i++)
+            if (Main.dedServ)
             {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 0f), 100, default, 0.9f);
+                return;
+            }
+
+            SoundEngine.PlaySound(SoundID.Item27 with { Volume = 0.45f, Pitch = -0.3f }, Projectile.Center);
+
+            // 3-layer ground shatter (~30 motes): 14 body + 8 fast sparks + 4 billowing dark smoke + 4 stone chips.
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                int dustType = i % 3 == 0 ? DustID.RedTorch : DustID.BoneTorch;
+                Dust body = Dust.NewDustPerfect(Projectile.Center + direction * Main.rand.NextFloat(2f, 10f),
+                    dustType, direction * Main.rand.NextFloat(1.8f, 4.8f) + new Vector2(0f, -1.2f),
+                    Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.95f, 1.4f));
+                body.noGravity = true;
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                int sparkType = i % 2 == 0 ? DustID.Torch : DustID.AncientLight;
+                Dust spark = Dust.NewDustPerfect(Projectile.Center, sparkType,
+                    direction * Main.rand.NextFloat(4.5f, 8.2f) + new Vector2(0f, -1.5f),
+                    Main.rand.Next(0, 25), default, Main.rand.NextFloat(0.5f, 0.85f));
+                spark.noGravity = true;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 direction = Main.rand.NextVector2Unit();
+                Dust smoke = Dust.NewDustPerfect(Projectile.Center + direction * Main.rand.NextFloat(2f, 10f),
+                    DustID.Smoke, direction * Main.rand.NextFloat(0.6f, 1.8f) + new Vector2(0f, -0.8f),
+                    155, new Color(42, 36, 46), Main.rand.NextFloat(0.55f, 0.78f));
+                smoke.noGravity = true;
+                smoke.noLight = true;
+                smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.6f);
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f),
+                    DustID.Stone, new Vector2(Main.rand.NextFloat(-3.5f, 3.5f), Main.rand.NextFloat(-5.5f, -2f)),
+                    20, default, Main.rand.NextFloat(0.9f, 1.35f));
             }
         }
     }
@@ -1186,11 +1437,34 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             // this is what actually carries the breath across the arena.
             Projectile.velocity *= 0.995f;
             Projectile.rotation += 0.03f;
-            if (Main.rand.NextBool(2))
+
+            if (!Main.dedServ)
             {
-                Dust d = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(28f, 28f), DustID.Poisoned, Main.rand.NextVector2Circular(1f, 1f), 120, default, Main.rand.NextFloat(1.1f, 1.8f));
-                d.noGravity = true;
+                // Unthrottled 2-mote body trail interpolated across velocity (no fadeIn on DustID.Poisoned —
+                // type 46 grows at +0.1/tick). Billowing dark-green Smoke carries the gaseous atmosphere.
+                const int CloudTrailCount = 2;
+                for (int i = 0; i < CloudTrailCount; i++)
+                {
+                    float fraction = (i + Main.rand.NextFloat()) / CloudTrailCount;
+                    Vector2 trailPos = Projectile.Center - Projectile.velocity * fraction + Main.rand.NextVector2Circular(24f, 24f);
+                    int dustType = i == 0 ? DustID.Poisoned : DustID.CursedTorch;
+                    Dust body = Dust.NewDustPerfect(trailPos, dustType,
+                        Projectile.velocity * -0.06f + Main.rand.NextVector2Circular(0.9f, 0.9f),
+                        Main.rand.Next(40, 65), default, Main.rand.NextFloat(0.85f, 1.4f));
+                    body.noGravity = true;
+                }
+
+                if ((int)Projectile.localAI[0] % 2 == 0)
+                {
+                    Dust smog = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(22f, 22f),
+                        DustID.Smoke, Projectile.velocity * -0.04f + Main.rand.NextVector2Circular(0.7f, 0.7f),
+                        155, new Color(28, 46, 24), Main.rand.NextFloat(0.55f, 0.8f));
+                    smog.noGravity = true;
+                    smog.noLight = true;
+                    smog.fadeIn = Main.rand.NextFloat(1.35f, 1.6f);
+                }
             }
+
             Lighting.AddLight(Projectile.Center, 0.1f, 0.18f, 0.07f);
         }
 
@@ -1210,6 +1484,180 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         {
             Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaBuildupPerHit);
             target.AddBuff(BuffID.Darkness, 3 * 60);
+        }
+    }
+
+    ///<summary>
+    ///Short-range ground-slam dust and dirt-clod cloud thrown forward by Nito's downward Overhead Cleave.
+    ///Punishes backward rolling out of the heavy cleave with 2s Stagger and 2s Slow while staying cleanly
+    ///rollable (14 live ticks &lt; 22-tick roll i-frames) or jumpable. Sold entirely by gravity dirt clods,
+    ///3-layer ash dust, and dark-gray NitoImpactCloud smoke gores (retinted ChaosImpactCloud).
+    ///ai[0] = facing direction (-1/1), ai[1] = phaseTwo (1 = phase two ember accents).
+    ///</summary>
+    class NitoSlamCloud : ModProjectile
+    {
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
+
+        const int LiveTicks = 14;
+        const int TotalTicks = 28;
+        const int ImpactDebuffTicks = 2 * 60;
+
+        int Direction => Projectile.ai[0] >= 0f ? 1 : -1;
+        bool PhaseTwo => Projectile.ai[1] > 0.5f;
+        int Timer => (int)Projectile.localAI[0];
+
+        public override void SetDefaults()
+        {
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.width = 164;
+            Projectile.height = 86;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = TotalTicks;
+            Projectile.aiStyle = 0;
+        }
+
+        public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+        {
+            // Spawned at the floor anchor; lift the box so its bottom sits flush on the ground and roll forward.
+            Projectile.position.Y -= Projectile.height;
+            Projectile.velocity = new Vector2(Direction * 4.5f, 0f);
+        }
+
+        public override bool? CanDamage() => Timer <= LiveTicks ? null : false;
+
+        public override void AI()
+        {
+            Projectile.localAI[0]++;
+            Projectile.velocity.X *= 0.90f;
+            Projectile.velocity.Y = 0f;
+
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            if (Timer == 1)
+            {
+                SoundEngine.PlaySound(SoundID.DD2_MonkStaffGroundImpact with { Volume = 0.85f, Pitch = -0.35f }, Projectile.Bottom);
+                UsefulFunctions.ScreenShake(Projectile.Bottom, 6.5f, 14, 6f, 450f);
+
+                // Dirt clods and stone grit kicked up off the floor with gravity ON so they arc and shower down.
+                for (int i = 0; i < 28; i++)
+                {
+                    Vector2 clodPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-64f, 64f), Main.rand.NextFloat(-6f, 2f));
+                    Vector2 clodVel = new Vector2(Direction * Main.rand.NextFloat(1.2f, 6.8f) + Main.rand.NextFloat(-2.4f, 2.4f),
+                        Main.rand.NextFloat(-9.5f, -3.2f));
+                    Dust.NewDustPerfect(clodPos, DustID.Dirt, clodVel, 0, default, Main.rand.NextFloat(1.05f, 1.55f));
+                }
+
+                for (int i = 0; i < 14; i++)
+                {
+                    Vector2 gritPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-56f, 56f), Main.rand.NextFloat(-4f, 2f));
+                    Vector2 gritVel = new Vector2(Direction * Main.rand.NextFloat(1.6f, 7.2f) + Main.rand.NextFloat(-2f, 2f),
+                        Main.rand.NextFloat(-8.2f, -2.5f));
+                    Dust.NewDustPerfect(gritPos, DustID.Stone, gritVel, 20, default, Main.rand.NextFloat(0.95f, 1.45f));
+                }
+
+                // Dark-gray smoke gores (retinted Chaos ground-slam clouds) erupting up and forward.
+                int[] goreTypes =
+                {
+                    ModContent.GoreType<NitoImpactCloud1>(),
+                    ModContent.GoreType<NitoImpactCloud2>(),
+                    ModContent.GoreType<NitoImpactCloud3>(),
+                };
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector2 gorePos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-52f, 52f), Main.rand.NextFloat(-28f, -10f));
+                    Vector2 goreVel = new Vector2(Direction * Main.rand.NextFloat(1.4f, 4.2f) + Main.rand.NextFloat(-1.2f, 1.2f),
+                        Main.rand.NextFloat(-3.8f, -1.2f));
+                    Gore.NewGore(Projectile.GetSource_FromThis(), gorePos, goreVel,
+                        goreTypes[i % goreTypes.Length], Main.rand.NextFloat(0.85f, 1.25f));
+                }
+
+                // Midground billowing dark-gray ash cloud + foreground sparks for crisp impact readability.
+                for (int i = 0; i < 20; i++)
+                {
+                    Vector2 cloudPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-68f, 68f), Main.rand.NextFloat(-28f, -2f));
+                    Vector2 cloudVel = new Vector2(Direction * Main.rand.NextFloat(1.8f, 5.4f) + Main.rand.NextFloat(-1.4f, 1.4f),
+                        Main.rand.NextFloat(-3.6f, -0.6f));
+                    Dust ash = Dust.NewDustPerfect(cloudPos, DustID.Smoke, cloudVel, 145,
+                        new Color(62, 58, 66), Main.rand.NextFloat(0.6f, 0.85f));
+                    ash.noGravity = true;
+                    ash.noLight = true;
+                    ash.fadeIn = Main.rand.NextFloat(1.4f, 1.75f);
+                }
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 sparkPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-52f, 52f), Main.rand.NextFloat(-18f, -2f));
+                    Vector2 sparkVel = new Vector2(Direction * Main.rand.NextFloat(3.5f, 8.5f), Main.rand.NextFloat(-5.2f, -1.2f));
+                    int sparkType = PhaseTwo ? DustID.RedTorch : DustID.BoneTorch;
+                    if (i % 3 == 0)
+                    {
+                        sparkType = DustID.AncientLight;
+                    }
+
+                    Dust spark = Dust.NewDustPerfect(sparkPos, sparkType, sparkVel, Main.rand.Next(0, 35),
+                        default, Main.rand.NextFloat(0.55f, 0.95f));
+                    spark.noGravity = true;
+                }
+            }
+
+            if (Timer <= LiveTicks)
+            {
+                // Rolling ground cloud while the hitbox is live so visual volume matches the active window.
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 dustPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-72f, 72f), Main.rand.NextFloat(-42f, -4f));
+                    Vector2 dustVel = new Vector2(Direction * Main.rand.NextFloat(1.2f, 3.6f), Main.rand.NextFloat(-2.4f, -0.4f));
+                    if (i == 0)
+                    {
+                        Dust clod = Dust.NewDustPerfect(dustPos, DustID.Dirt,
+                            new Vector2(Direction * Main.rand.NextFloat(1.5f, 4.2f), Main.rand.NextFloat(-5.5f, -2.2f)),
+                            0, default, Main.rand.NextFloat(0.95f, 1.35f));
+                        clod.noGravity = false;
+                    }
+                    else
+                    {
+                        Dust smoke = Dust.NewDustPerfect(dustPos, DustID.Smoke, dustVel, 145,
+                            new Color(58, 56, 62), Main.rand.NextFloat(0.58f, 0.82f));
+                        smoke.noGravity = true;
+                        smoke.noLight = true;
+                        smoke.fadeIn = Main.rand.NextFloat(1.35f, 1.65f);
+                    }
+                }
+
+                if (Timer == 6 || Timer == 12)
+                {
+                    int variant = Main.rand.Next(3);
+                    int goreType = ModContent.GoreType<NitoImpactCloud3>();
+                    if (variant == 0)
+                    {
+                        goreType = ModContent.GoreType<NitoImpactCloud1>();
+                    }
+                    else if (variant == 1)
+                    {
+                        goreType = ModContent.GoreType<NitoImpactCloud2>();
+                    }
+                    Vector2 trailPos = Projectile.Bottom + new Vector2(Main.rand.NextFloat(-44f, 44f), Main.rand.NextFloat(-24f, -8f));
+                    Vector2 trailVel = new Vector2(Direction * Main.rand.NextFloat(1.2f, 3.2f), Main.rand.NextFloat(-2.8f, -1f));
+                    Gore.NewGore(Projectile.GetSource_FromThis(), trailPos, trailVel, goreType, Main.rand.NextFloat(0.75f, 1.05f));
+                }
+            }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            Stagger.Apply(target, ImpactDebuffTicks);
+            target.AddBuff(BuffID.Slow, ImpactDebuffTicks);
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            return false;
         }
     }
 }

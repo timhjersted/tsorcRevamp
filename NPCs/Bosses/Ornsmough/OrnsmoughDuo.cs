@@ -1356,6 +1356,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         private const int IntroTicks = 312;
         private const int EntranceTicks = 120;
         private const int EmpowerTicks = 300;
+        private const int SkipCloseTicks = 20;
         private const float GolemDistance = 24f * 16f;
         private const float DuoPastGolem = 18f * 16f;
         private const float EntranceDistance = 22f * 16f;
@@ -1513,7 +1514,51 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             scriptTick = 0;
 
             Vector2 cameraPoint = (player.Center + new Vector2(golemX, floorY - 70f)) * 0.5f;
-            CutsceneSystem.Start(IntroScene, IntroTicks, CutsceneFocus.AtPoint(cameraPoint));
+            CutsceneSystem.Start(IntroScene, IntroTicks, CutsceneFocus.AtPoint(cameraPoint), -1, EveryoneCast(player.whoAmI));
+        }
+
+        // Holds every player, as a scene without a cast does, but gives the summoner the Skip button.
+        private static CutsceneCast EveryoneCast(int leadPlayer)
+        {
+            CutsceneCast cast = new CutsceneCast();
+            cast.LeadPlayer = leadPlayer;
+            cast.AllowSkip = true;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                if (Main.player[i].active)
+                {
+                    cast.Players.Add(i);
+                }
+            }
+
+            return cast;
+        }
+
+        /// <summary>Skip runs the scene to its end: Wardens spawned, the Golem gone, both released into the fight.</summary>
+        private static void SkipOpening()
+        {
+            CutsceneSystem.SetSkipAllowed(false);
+
+            if (WardenAt(ornsteinIndex) == null || WardenAt(smoughIndex) == null)
+            {
+                SpawnWardens(NearestPlayer(duoPoint));
+            }
+
+            bool golemAlive = golemIndex >= 0 && Main.npc[golemIndex].active && Main.npc[golemIndex].type == ModContent.NPCType<CutsceneGolem>();
+            if (golemAlive)
+            {
+                NPC golem = Main.npc[golemIndex];
+                golem.active = false;
+                golem.life = 0;
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, golem.whoAmI);
+                }
+            }
+
+            FinishOpening();
+            CutsceneSystem.FinishIn(SkipCloseTicks);
         }
 
         private static void BeginEntrance(Player player)
@@ -1525,7 +1570,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             scriptTick = 0;
 
             Vector2 cameraPoint = (player.Center + duoPoint) * 0.5f;
-            CutsceneSystem.Start(EntranceScene, EntranceTicks, CutsceneFocus.AtPoint(cameraPoint));
+            CutsceneSystem.Start(EntranceScene, EntranceTicks, CutsceneFocus.AtPoint(cameraPoint), -1, EveryoneCast(player.whoAmI));
             SpawnWardens(player);
         }
 
@@ -1582,7 +1627,8 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             survivor.ScriptFaceX = fallen.NPC.Center.X;
             fallen.ScriptHiddenTarget = FallenDimmedHidden;
 
-            CutsceneSystem.Start(EmpowerScene, EmpowerTicks, CutsceneFocus.BetweenNpcs(survivorIndex, fallenIndex), survivorIndex);
+            int viewer = Player.FindClosest(survivor.NPC.position, survivor.NPC.width, survivor.NPC.height);
+            CutsceneSystem.Start(EmpowerScene, EmpowerTicks, CutsceneFocus.BetweenNpcs(survivorIndex, fallenIndex), survivorIndex, EveryoneCast(viewer));
         }
 
         public override void PostUpdateNPCs()
@@ -1593,6 +1639,13 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             }
 
             scriptTick++;
+
+            bool openingRunning = activeScript == Script.Intro || activeScript == Script.Entrance;
+            if (CutsceneSystem.SkipRequested && openingRunning)
+            {
+                SkipOpening();
+                return;
+            }
 
             switch (activeScript)
             {
@@ -1706,6 +1759,30 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
             {
                 CutsceneSystem.Stop(EmpowerScene);
                 ResetScript();
+                return;
+            }
+
+            // Skip lands on the scene's result: partner absorbed, full empowered health, survivor released alone.
+            if (CutsceneSystem.SkipRequested)
+            {
+                CutsceneSystem.SetSkipAllowed(false);
+                if (scriptTick < AbsorbTick)
+                {
+                    AbsorbFallenPartner(survivor, fallen);
+                }
+
+                if (scriptTick <= GrowthEndTick)
+                {
+                    survivor.NPC.life = empowerTargetLife;
+                    survivor.BecomeEmpowered();
+                    survivor.ScriptGrow = false;
+                }
+
+                survivor.Role = DuoRole.Alone;
+                survivor.PartnerWhoAmI = -1;
+                survivor.ReleaseFromCutscene();
+                ResetScript();
+                CutsceneSystem.FinishIn(SkipCloseTicks);
                 return;
             }
 

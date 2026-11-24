@@ -480,7 +480,7 @@ namespace tsorcRevamp
             if (info.Damage > 0 && (staminaResourceCurrent < 0f || staminaDebt > 0f))
             {
                 Buffs.Debuffs.Stagger.Apply(Player);
-                PauseStaminaRegen(SpendRegenDelay);
+                PauseStaminaRegen(Buffs.Debuffs.Stagger.DebtHitRegenDelayTicks);
 
                 /*
                 // Ensure the player is visibly and physically bumped on the initial debt hit, even if the attack had 0 knockback
@@ -959,11 +959,8 @@ namespace tsorcRevamp
             // A simple timer that goes up to 3, increases the exampleResourceCurrent by 1 and then resets back to 0.
             if (Player.whoAmI == Main.myPlayer && staminaRegenDelayTimer <= 0)
             {
-                bool isDrinkingFlask = Player.GetModPlayer<EstusFlaskPlayer>().IsDrinking
-                    || Player.GetModPlayer<CeruleanFlaskPlayer>().IsDrinking;
-
-                //no stamina regen during a roll/swordspin/using an item/drinking a flask, for balance? Yes
-                if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping && !isDrinkingFlask)
+                // No stamina regen during a roll or swordspin. Drinking a flask does not pause regen.
+                if (!Player.GetModPlayer<tsorcRevampPlayer>().isDodging && !Player.GetModPlayer<tsorcRevampPlayer>().isSwordflipping)
                 {
                     // Minion staves do not consume stamina on swing and should not pause stamina regen mid-swing.
                     bool swingingStaminaItem = Player.itemAnimation != 0 && Player.HeldItem.DamageType != DamageClass.Summon;

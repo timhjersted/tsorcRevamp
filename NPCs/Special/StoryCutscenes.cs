@@ -113,6 +113,7 @@ namespace tsorcRevamp.NPCs.Special
             EmoteOnActor,
             OpenDoor,
             SkipLanding,
+            SkipEnd,
             ActorWalk,
             PropCue,
             GiveStone,
@@ -209,6 +210,10 @@ namespace tsorcRevamp.NPCs.Special
         private const int ZoomTicks = 50;
         private const int WispSpawnOffset = 64;
 
+        // Skip runs to each scene's end: past its SkipEnd beat if it has one, otherwise straight to FinishScene. Setting this
+        // true restores the older behavior, where Skip lands on the SkipLanding beat and Skip is then withdrawn.
+        private const bool SkipLandsOnKeyMoment = false;
+
         private static StoryScene activeScene;
         private static StoryScene finishedScene;
         private static List<Beat> beats;
@@ -223,6 +228,7 @@ namespace tsorcRevamp.NPCs.Special
         private static bool skipped;
         private static bool openingMusicHeld;
         private static bool burnedVillageBannerPending;
+        private static bool gravesSceneWatched;
 
         public static bool IsRunning => activeScene != StoryScene.None;
 
@@ -379,6 +385,7 @@ namespace tsorcRevamp.NPCs.Special
                         Wait(70),
 
                         new Beat { Kind = BeatKind.SkipLanding },
+                        new Beat { Kind = BeatKind.SkipEnd },
                         Camera(Shot.Red, BarCloseTicks).If(WasSkipped),
                         Prop(StoryCue.SelectPickaxe),
                         Wait(15),
@@ -774,14 +781,15 @@ namespace tsorcRevamp.NPCs.Special
                         Say(Speaker.Aaron, "Line07"),
                         Prop(StoryCue.StoneToRed),
                         Wait(StoryPropActor.StoneTravelTicks),
+                        new Beat { Kind = BeatKind.SkipEnd },
                         new Beat { Kind = BeatKind.GiveStone },
 
                         // Red turns to go, and only the player sees what the stone really is.
-                        Turn(-entry),
-                        Prop(StoryCue.StonePulse),
-                        Wait(90),
-                        Zoom(1f),
-                        Wait(ZoomTicks),
+                        Turn(-entry).If(NotSkipped),
+                        Prop(StoryCue.StonePulse).If(NotSkipped),
+                        Wait(90).If(NotSkipped),
+                        Zoom(1f).If(NotSkipped),
+                        Wait(ZoomTicks).If(NotSkipped),
                     };
                 }
 
@@ -1292,6 +1300,18 @@ namespace tsorcRevamp.NPCs.Special
                     tsorcRevamp.ShowAnnouncementBanner(BurnedVillageName, Color.White);
                     SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
                 }
+            }
+
+            // The title card normally brings the music back. A skipped graves scene never shows it, so its end does.
+            bool watchingGraves = CutsceneSystem.IsActive && CutsceneSystem.SceneId == SceneId(StoryScene.UnmarkedGraves) && CutsceneSystem.IsParticipant(player);
+            if (watchingGraves)
+            {
+                gravesSceneWatched = true;
+            }
+            else if (gravesSceneWatched)
+            {
+                gravesSceneWatched = false;
+                openingMusicHeld = false;
             }
 
             if (!openingMusicHeld)
@@ -1902,8 +1922,8 @@ namespace tsorcRevamp.NPCs.Special
             skipped = false;
 
             CutsceneCast cast = AttraidiesCutscenes.BuildCast(leadCharacter.Center, lead, SceneId(scene));
-            // Miakoda's short talks hold hints, so they advance with Next rather than offering Skip.
-            cast.AllowSkip = !IsMiakodaScene(scene) || scene == StoryScene.FireTemple;
+            // Every scene can be skipped, including first viewings and Miakoda's hint conversations.
+            cast.AllowSkip = true;
 
             CutsceneFocus openingFocus = CutsceneFocus.OnPlayer(lead);
             if (needsActor)
@@ -2091,8 +2111,11 @@ namespace tsorcRevamp.NPCs.Special
                 }
 
                 case BeatKind.SkipLanding:
-                    // From here on the lines carry directions the player needs, so they cannot be skipped.
-                    CutsceneSystem.SetSkipAllowed(false);
+                    // In key-moment mode the lines from here carry directions the player needs, so they cannot be skipped.
+                    if (SkipLandsOnKeyMoment)
+                    {
+                        CutsceneSystem.SetSkipAllowed(false);
+                    }
                     break;
             }
         }
@@ -2216,16 +2239,21 @@ namespace tsorcRevamp.NPCs.Special
                 CutsceneSystem.SetSkipAllowed(false);
                 CutsceneSystem.ClearLine();
 
-                // Scenes with directions land on them; the others simply end.
+                // Beats after SkipEnd are the scene's results (a gift, the selected pickaxe), so a skip still runs them.
+                int skipTarget = beats.Count;
+                int endIndex = beats.FindIndex(beat => beat.Kind == BeatKind.SkipEnd);
+                if (endIndex >= beatIndex)
+                {
+                    skipTarget = endIndex;
+                }
+
                 int landingIndex = beats.FindIndex(beat => beat.Kind == BeatKind.SkipLanding);
-                if (landingIndex >= beatIndex)
+                if (SkipLandsOnKeyMoment && landingIndex >= beatIndex)
                 {
-                    beatIndex = landingIndex;
+                    skipTarget = landingIndex;
                 }
-                else
-                {
-                    beatIndex = beats.Count;
-                }
+
+                beatIndex = skipTarget;
 
                 beatStarted = false;
             }
@@ -2270,6 +2298,7 @@ namespace tsorcRevamp.NPCs.Special
             propIndex = -1;
             openingMusicHeld = false;
             burnedVillageBannerPending = false;
+            gravesSceneWatched = false;
         }
     }
 

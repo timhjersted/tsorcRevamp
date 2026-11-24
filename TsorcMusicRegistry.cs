@@ -69,6 +69,11 @@ namespace tsorcRevamp
         // Native 2400-tile map coordinates from 1.6.38 for Gwyn's Castle in the sky above the desert.
         // Ends along the bottom cloud shelf wire (Y = 678) so the desert arch below keeps desert music.
         private static readonly Rectangle GwynCastle = new Rectangle(1587, 0, 1045, 680);
+        // Native 2400-tile map coordinates from 1.6.51 for the upper-right sky (shadow cube, sky islands,
+        // Khaios arena) plus the shifted Wyvern Mage Fortress directly below (legacy Y 90..608 -> +200).
+        // Ends at Y = 410 on the right side so the Frozen Ocean island below (Y >= 567) keeps its own track.
+        private static readonly Rectangle WyvernMageFortressSky = new Rectangle(6290, 0, 2110, 410);
+        private static readonly Rectangle WyvernMageFortressLower = new Rectangle(6300, 410, 1085, 398);
         private static readonly Point[] ArtoriasEastCeiling =
         {
             new Point(4862, 2039),
@@ -209,6 +214,10 @@ namespace tsorcRevamp
             RegisterAreaMusic(player => tsorcRevampWorld.ExpandedAdventure && GwynCastle.Contains(player.Center.ToTileCoordinates()),
                 mainTrack: "SkyTemple", fallback: MusicID.SpaceDay,
                 priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
+            // Upper-right sky + Wyvern Mage Fortress below (2400-tall coordinates). Yields to bosses and Primordial Age.
+            RegisterAreaMusic(IsInWyvernMageFortressRegion,
+                mainTrack: "WyvernMageFortress",
+                priority: SceneEffectPriority.Environment, scope: MusicWorldScope.Adventure);
             // Primordial world: `Tomb` above ground everywhere, and for everyone watching the transformation.
             RegisterAreaMusic(Systems.PrimordialWorldSystem.WantsTombMusic, mainTrack: "Tomb", remixTrack: "Tomb",
                 fallback: MusicID.Eerie, priority: SceneEffectPriority.Event);
@@ -268,6 +277,7 @@ namespace tsorcRevamp
             RegisterGroup(new[] { "OolacileDemon", "AncientDemon", "DefiledDemon" }, "Boss15", "Boss15", MusicID.Boss2);
             Register("HeroofLumelia", "Boss2", "Boss2", MusicID.Boss2);
             Register("OwlFather", "Boss19", "Boss19", MusicID.Boss2);
+            RegisterGroup(new[] { "Khaios", "KhaiosTransitionOrb", "SpiritOfKhaios" }, "Boss5", "Boss5", MusicID.Boss5);
             Register("DreadWraith", "Boss17", null, MusicID.Boss2);
             Register("JungleWyvernHead", "Boss10", "Boss10", MusicID.Boss2);
             Register("TheRage", "Boss7", "Boss7", MusicID.Boss2);
@@ -414,6 +424,17 @@ namespace tsorcRevamp
             }
 
             return false;
+        }
+
+        private static bool IsInWyvernMageFortressRegion(Player player)
+        {
+            if (!tsorcRevampWorld.ExpandedAdventure)
+            {
+                return false;
+            }
+
+            Point playerTile = player.Center.ToTileCoordinates();
+            return WyvernMageFortressSky.Contains(playerTile) || WyvernMageFortressLower.Contains(playerTile);
         }
 
         private static void RegisterConditionalMusic(Func<Player, bool> condition, string mainTrack, string remixTrack,

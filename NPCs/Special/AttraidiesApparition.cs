@@ -285,7 +285,23 @@ namespace tsorcRevamp.NPCs.Special
             // Dialogue: runs on the server, one line at a time, with short staged pauses between lines.
             if (authority && stage != SceneStage.Charging)
             {
-                if (pauseTicks > 0)
+                // Skip jumps to the retry's short charge, so The Sorrow still spawns and the scene is still marked seen.
+                bool skipPressed = CutsceneSystem.SkipRequested && CutsceneSystem.SceneId == AttraidiesCutscenes.SorrowScene;
+                if (skipPressed)
+                {
+                    const int SkipCloseTicks = 20;
+                    CutsceneSystem.SetSkipAllowed(false);
+                    CutsceneSystem.ClearLine();
+                    pauseTicks = 0;
+                    restoreFocusAfterPause = false;
+                    lineIndex = LineCount;
+                    NPC.ai[2] = RetryChargeStartTick;
+                    CutsceneSystem.SetZoom(1f, SkipCloseTicks);
+                    CutsceneSystem.SetFocus(CutsceneFocus.BetweenLocalPlayerAndNpc(NPC.whoAmI), SkipCloseTicks);
+                    CutsceneSystem.FinishIn(ChargeEndTick - RetryChargeStartTick + 1);
+                    SetStage(SceneStage.Charging);
+                }
+                else if (pauseTicks > 0)
                 {
                     pauseTicks--;
                     if (pauseTicks == 0)

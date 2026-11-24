@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -17,6 +19,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Enemy.Witchking;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.NPCs.Enemies.SuperHardMode;
@@ -40,7 +43,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
     /// Set-pieces run on AttackPhase.Custom, started only by the server and pushed with a phase snapshot.
     /// </summary>
     [AutoloadBossHead]
-    class Witchking : PuppetNPC, IHumanoidMeleeHitEffects, IEnemyWhipOwner
+    class Witchking : PuppetNPC, IHumanoidMeleeHitEffects, IEnemyWhipOwner, IFlailAnchor
     {
         // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
         // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss" and crash at load.
@@ -75,8 +78,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Hellfire Plunge holds the fire sword in a reverse grip: the blade leaves the bottom of the fist, 90° clockwise
         // from the forearm, so with the arm out level the blade points straight down into the floor.
         private const float ReverseGripOffset = MathHelper.PiOver2;
-        // WitchkingMace.png (48x54, the coiled whip icon) held at its handle.
+        // WitchkingMace.png (48x54, the coiled whip icon) held at its handle. Its icon is never drawn (see CreateMace),
+        // but the grip still places the hand for the arm pose.
         private static readonly Vector2 MaceHandleNorm = new Vector2(0.2f, 0.8f);
+        // The resting mace (phase 2, whenever the whip and Grond are not out): a short chain from the hand to the head,
+        // which lies on the floor and drags. The hand sits ~16-21px above the floor, so a 48px chain lays the head
+        // ~2.5 tiles behind his feet. The head ball is ~24px across (rows 94-117 of the sheet's head frame), its centre
+        // 29px below the frame top, so it rests 12px above the floor surface.
+        private const float RestingChainLength = 48f;
+        private const float RestingHeadRadius = 12f;
+        private const float RestingHeadCentreFromFrameTop = 29f;
+        private const float RestingHeadGravity = 0.35f;
+        private const float RestingHeadFloorFriction = 0.82f;
+        private const float RestingDragSparkSpeed = 0.8f;
 
         // Arc poses (attack-timing-design §3): 224° envelope ≈ 180° live. Overhead and underhand share endpoints so
         // alternating chains never snap. Witch's Cross is the signature heavy at a wider 235° envelope.
@@ -165,6 +179,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private static readonly int[] VolleyRiseReleaseTicks = { 10, 30, 50 };
         private static readonly float[] VolleyRiseElevationDegrees = { 62f, 80f, 98f };
         private const float VolleyClusterSpreadDegrees = 5f;
+        // Hellfire rain, after the cluster: 10 more flames, one every 30t (5s of rain in all), each forming 30t in the air
+        // above the player (its own spawn telegraph) then falling 30° off vertical, slanting in from his side. Each aims
+        // at where the player stood when it appeared, ±2 tiles, so a player who keeps moving walks out from under it;
+        // fall height 4–12 tiles under the ceiling → 10–32t of fall after the 30t forming window.
+        private const int VolleyRainCount = 10;
+        private const int VolleyRainIntervalTicks = 30;
+        private const float VolleyRainSlantDegrees = 30f;
+        private const float VolleyRainMaxHeight = 12f * 16f;
+        private const float VolleyRainMinHeight = 4f * 16f;
+        private const float VolleyRainJitter = 2f * 16f;
 
         // Whip timing (the shared enemy whip): opening tell 40t, a mid-combo tell is the preceding pause (20t). The
         // lash is live on lash ticks 8–19 (12t, rollable).
@@ -184,12 +208,43 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private const float LashStartPose = -0.6f; // < π from the cut poses (2.36 / -1.55), so hand-offs never wrap
         private const float LashEndPose = 1.0f;
 
-        // Hellfire Plunge. Raise 30 → plunge 10 → 90t of flame building from the buried blade → the
-        // walls erupt (phase 2: two more, 90t apart) → hold 20 → pull out 20.
+        // Mace flail moves (phase 2): the shared authored flail patterns on WitchkingMaceFlail, every reach x1.25.
+        //   Morgul Reaper (Ankle Reaper): 40t low loop → 16t level lash 10px under the hand (live 3-16 = 14t), JUMPED or
+        //     rolled; 18t retract; 60t recovery. Crown of Iron (Reverse Halo): the same clock 24px above the hand, head
+        //     height, ROLLED (a jump rises into it). Both only with the target within ±48px vertically and 64-260px
+        //     away, and never within 90t of each other (the high/low read must be a read, not a stack).
+        //   Black Captain's Cross (Chain Cross): two 14t-live lashes 46t start to start (the second only if the player
+        //     is still in front), then, after a 20t pause, a void underhand cut — only with the player still in front
+        //     and in reach. Its live window opens ~39t after lash 2's ends (18t retract + 20t pause + 1), outside a
+        //     late roller's 30t gap; the condition is there so he doesn't cut at empty air behind a cross-through.
+        //   Backlash (Backlash Reversal): reactive only — a mace move ending with the target behind his committed
+        //     facing unlocks a 240px rear whip for 120t: 40t load + 6t reversal → live 15t; 60t recovery.
+        //   Grond's March (Advancing Chainstorm, ≤ 25% HP): four 36t revolutions at 300px walking forward at
+        //     TopSpeed × 0.6; crossings 36t apart (≤ 4 rolls standing), spacing out of 300px escapes.
+        private const float LevelLashMinRange = 64f;
+        private const int LevelLashExclusionTicks = 90;
+        private const float CrossMinRange = 96f;
+        private const float GrondsMarchHealthGate = 0.25f;
+        private const float GrondsMarchPush = 0.6f;
+        private const int BacklashWindowTicks = 120;
+        // 20t, not 12: at 12 the void sword winding in through the pause peaked 23.5°/t, faster than the cut it
+        // announces (23.0°/t, SwingPreview --profile).
+        private const int MaceFlailCrossCutPause = 20;
+
+        // Hellfire Plunge. Raise 30 → plunge 10 → 90t of flame building from the buried blade → the first pair of walls
+        // erupts → each further wave 45t after the last → hold 20 → pull out 20. Wave count is a server roll: 1–3 above
+        // 50% HP, 2–4 at or below. 45t apart is wider than a roll (22t i-frames, next roll 30t after the last started),
+        // so each wave is its own roll; a wave crossing at 8 px/t overlaps a player for ~7t.
         private const int PlungeRaiseTicks = 30;
         private const int PlungeStrikeTicks = 10;
         private const int PlungeImpactTick = PlungeRaiseTicks + PlungeStrikeTicks;
-        private const int PlungeWallIntervalTicks = 90;
+        private const int PlungeBuildTicks = 90;
+        private const int PlungeWallIntervalTicks = 45;
+        private const int PlungeWavesMinHigh = 1;
+        private const int PlungeWavesMaxHigh = 3;
+        private const int PlungeWavesMinLow = 2;
+        private const int PlungeWavesMaxLow = 4;
+        private const float PlungeLowHealthFraction = 0.5f;
         private const int PlungeHoldTicks = 20;
         private const int PlungePullTicks = 20;
         private const float PlungeMinRange = 96f;
@@ -263,6 +318,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private const string VoidCutName = "Void Cut";
         private const string VoidFellLeapName = "Fell Leap (Void)";
         private const string HellfireVolleyName = "Hellfire Volley";
+        private const string MorgulReaperName = "Morgul Reaper";
+        private const string CrownOfIronName = "Crown of Iron";
+        private const string BlackCaptainsCrossName = "Black Captain's Cross";
+        private const string BacklashName = "Backlash";
+        private const string GrondsMarchName = "Grond's March";
         #endregion
 
         private enum CustomKind : byte { None, Shriek, Transition, BarrowSummons, HellfirePlunge, GrondsToll, Unmaking }
@@ -294,6 +354,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         private int _summonCooldown = SummonCooldownTicks;
         private int _huggedTicks;
         private bool _nextWitchCutUsesBackHand;
+        private int _volleyRainShotsLeft;
+        private int _volleyRainTimer;
+        // Backlash branch memory and the Reaper/Crown exclusion clock. The pick and its facing reach clients in the
+        // normal combo snapshot.
+        private ulong _backlashReadyUntil;
+        private int _backlashFollowupFacing;
+        private string _lastLevelLashName;
+        private ulong _lastLevelLashTick;
 
         // Whip: the aim each peer tracks (DBK pattern: tracks through the tell, locks for its last 10 ticks; the
         // projectile syncs its velocity at the lock). _whipComboActive: the running combo contains a lash.
@@ -306,6 +374,11 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // can fill the arc swept since then.
         private float _lastFireBladeRotation;
         private float _lastVoidBladeRotation;
+
+        // Local per machine (decor): the resting mace head's position and velocity; invalid while it isn't shown.
+        private Vector2 _restingMaceHead;
+        private Vector2 _restingMaceVelocity;
+        private bool _restingMaceValid;
 
         // Local per machine: throttles the "Immune" combat text; a set-piece just ended and left its pose item in hand.
         private int _immuneTextCooldown;
@@ -342,21 +415,20 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override float TopSpeed => _phaseTwo ? 2.3f : 2.0f;
         protected override float Acceleration => 0.06f;
-        // A void-smoke blink to re-acquire after losing sight of the player: 60t of telegraph (base 90).
-        protected override int TeleportTelegraphTicks => 60;
+        // A void-smoke blink to re-acquire after losing sight of the player: 30t in all. 30t of telegraph (base 90), and
+        // SetDefaults turns off the hidden reveal hold and the arrival mist (the Black Ninja's speed teleport).
+        protected override int TeleportTelegraphTicks => 30;
 
         // Weapon descriptors (immutable; PuppetWeapon is shared by reference, so these are compared to the equipped one).
         private PuppetWeapon _fireSword;
         private PuppetWeapon _voidSword;
         private PuppetWeapon _reverseFireSword;
-        private PuppetWeapon _maceCoiled;
-        private PuppetWeapon _maceLashing;
+        private PuppetWeapon _mace;
 
         private PuppetWeapon FireSword => _fireSword ??= CreateSword(0f);
         private PuppetWeapon VoidSword => _voidSword ??= CreateSword(0f);
         private PuppetWeapon ReverseFireSword => _reverseFireSword ??= CreateSword(ReverseGripOffset);
-        private PuppetWeapon MaceCoiled => _maceCoiled ??= CreateMace(hidden: false);
-        private PuppetWeapon MaceLashing => _maceLashing ??= CreateMace(hidden: true);
+        private PuppetWeapon Mace => _mace ??= CreateMace();
 
         private static PuppetWeapon CreateSword(float rotationOffset)
         {
@@ -369,15 +441,16 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 rotationOffset: rotationOffset);
         }
 
-        // The mace's real visual while lashing is the whip projectile, so its icon hides then.
-        private static PuppetWeapon CreateMace(bool hidden)
+        // The held item icon never draws: while lashing the whip projectile is the mace, otherwise the resting chain
+        // (DrawRestingMace) hangs from the hand with the head on the floor.
+        private static PuppetWeapon CreateMace()
         {
             return new PuppetWeapon(
                 ModContent.ItemType<WitchkingMace>(),
                 handleNorm: MaceHandleNorm,
                 drawScale: 1f,
                 archetype: WeaponArchetype.Whip,
-                hideHeldSprite: hidden);
+                hideHeldSprite: true);
         }
         #endregion
 
@@ -512,6 +585,46 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         private static bool IsLashStep(MeleeComboStep step) => step.Motion == ComboMotion.HorizontalSweep && step.Ease == SwingEaseStyle.Whip;
+
+        // A mace flail step: FlailBrace holds the hand still while WitchkingMaceFlail owns every visible beat. The 40t tell
+        // is the head's harmless orbit; attackTicks must cover the pattern so the head is home when the step ends.
+        private static MeleeComboStep MaceFlailStep(int attackTicks, float damageMult, int pauseAfter = 0, float forwardPushMult = 0f)
+        {
+            return new MeleeComboStep
+            {
+                Motion = ComboMotion.FlailBrace,
+                Hand = ComboHand.Front,
+                TelegraphTicks = EnemyFlailAttackPatterns.TelegraphTicks,
+                AttackTicks = attackTicks,
+                PostStepPause = pauseAfter,
+                DamageMult = damageMult,
+                ReachMult = 1f,
+                ForwardPushMult = forwardPushMult,
+                SwingSpeedMult = 1f,
+                Ease = SwingEaseStyle.Smooth,
+                LeapHeightMult = 1f,
+                LeapForwardSpeedMult = 1f,
+            };
+        }
+
+        // Which shared flail pattern a Witchking combo plays (its own names, so TryResolve's names don't apply).
+        private static EnemyFlailAttackPattern MaceFlailPatternFor(string comboName)
+        {
+            switch (comboName)
+            {
+                case MorgulReaperName:
+                    return EnemyFlailAttackPattern.AnkleReaper;
+                case CrownOfIronName:
+                    return EnemyFlailAttackPattern.ReverseHalo;
+                case BlackCaptainsCrossName:
+                    return EnemyFlailAttackPattern.ChainCross;
+                case BacklashName:
+                    return EnemyFlailAttackPattern.BacklashReversal;
+                case GrondsMarchName:
+                    return EnemyFlailAttackPattern.AdvancingCyclone;
+            }
+            return EnemyFlailAttackPattern.None;
+        }
 
         private static MeleeComboStep LeapStep(ComboHand hand)
         {
@@ -808,12 +921,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Morgul Lash        40 → 26    a latching lash; the rising cut follows ONLY a latch, ≥41t after the hit
         // Void Cut           30         filler single cut
         // Fell Leap (Void)   30         the leap with the void blade only
+        // Morgul Reaper      40         floor-level flail lash, 14t live, jumped; ±48px level gate
+        // Crown of Iron      40         head-height flail lash, 14t live, rolled; same gate, 90t apart from Reaper
+        // Black Captain's    40 → 12    two flail lashes (14t live, 46t apart) + conditional void underhand cut
+        //   Cross
+        // Backlash           40         reactive rear whip after a mace move leaves the target behind him
+        // Grond's March      40         ≤ 25% HP: four 300px flail revolutions while walking forward
         private static readonly MeleeCombo[] PhaseTwoCombos =
         {
             new MeleeCombo
             {
                 Name = MaceLashName,
-                BaseWeight = 90,
+                BaseWeight = 70,
                 Preferred = ComboRangeBand.Mid,
                 InitialFlashColor = new Color(120, 60, 160),
                 CooldownAfterUse = 120,
@@ -908,6 +1027,68 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 MoveBrake = 0.35f,
                 Steps = new[] { LeapStep(ComboHand.Back) },
             },
+            new MeleeCombo
+            {
+                Name = MorgulReaperName,
+                BaseWeight = 70,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(255, 200, 120),
+                CooldownAfterUse = 190,
+                RecoveryTicks = 60,
+                MoveBrake = 0.05f,
+                Steps = new[] { MaceFlailStep(EnemyFlailAttackPatterns.LevelLashAttackTicks, 1f) },
+            },
+            new MeleeCombo
+            {
+                Name = CrownOfIronName,
+                BaseWeight = 70,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(170, 110, 255),
+                CooldownAfterUse = 190,
+                RecoveryTicks = 60,
+                MoveBrake = 0.05f,
+                Steps = new[] { MaceFlailStep(EnemyFlailAttackPatterns.LevelLashAttackTicks, 1f) },
+            },
+            new MeleeCombo
+            {
+                Name = BlackCaptainsCrossName,
+                BaseWeight = 55,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(120, 60, 200),
+                CooldownAfterUse = 300,
+                RecoveryTicks = 40,
+                HeavyCommit = true,
+                MoveBrake = 0.1f,
+                Steps = new[]
+                {
+                    MaceFlailStep(EnemyFlailAttackPatterns.ChainCrossAttackTicks, StringDamageMult, MaceFlailCrossCutPause),
+                    Cut(ComboMotion.UnderhandArc, ComboHand.Back, 0, 0, StringDamageMult, stepInDistance: 0f),
+                },
+            },
+            new MeleeCombo
+            {
+                Name = BacklashName,
+                BaseWeight = 1,
+                Preferred = ComboRangeBand.Any,
+                InitialFlashColor = new Color(255, 90, 160),
+                CooldownAfterUse = 300,
+                RecoveryTicks = 60,
+                MoveBrake = 0.1f,
+                Steps = new[] { MaceFlailStep(EnemyFlailAttackPatterns.BacklashAttackTicks, 1.1f) },
+            },
+            new MeleeCombo
+            {
+                Name = GrondsMarchName,
+                BaseWeight = 40,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = new Color(255, 40, 40),
+                CooldownAfterUse = 600,
+                RecoveryTicks = 120,
+                HeavyCommit = true,
+                HyperArmor = true,
+                MoveBrake = 0f,
+                Steps = new[] { MaceFlailStep(EnemyFlailAttackPatterns.CycloneAttackTicks, 0.75f, forwardPushMult: GrondsMarchPush) },
+            },
         };
 
         // One cached pool (PuppetNPC builds it once); CanSelectMeleeCombo gates each phase's half. Void Flame is shared.
@@ -930,8 +1111,41 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return false;
             }
 
+            // One mace head at a time: no new mace move while the whip, Grond or the flail is still out.
+            bool maceMove = MaceFlailPatternFor(combo.Name) != EnemyFlailAttackPattern.None;
+            if (maceMove && MaceWhipOut())
+            {
+                return false;
+            }
+
             switch (combo.Name)
             {
+                case MorgulReaperName:
+                case CrownOfIronName:
+                {
+                    Player target = Main.player[NPC.target];
+                    bool level = Math.Abs(target.Center.Y - NPC.Center.Y) <= EnemyFlailAttackPatterns.LevelTargetVerticalTolerance;
+                    float maxRange = EnemyFlailAttackPatterns.LevelLashReach * WitchkingMaceFlail.ReachScale;
+                    bool inBand = distance >= LevelLashMinRange && distance <= maxRange;
+                    bool otherLevelLashRecent = _lastLevelLashName != null
+                        && _lastLevelLashName != combo.Name
+                        && Main.GameUpdateCount < _lastLevelLashTick + (ulong)LevelLashExclusionTicks;
+                    return level && inBand && !otherLevelLashRecent;
+                }
+                case BlackCaptainsCrossName:
+                {
+                    int facing = NPC.direction;
+                    if (facing == 0)
+                    {
+                        facing = 1;
+                    }
+                    bool frontLane = EnemyFlailAttackPatterns.IsChainCrossTargetValid(NPC, Main.player[NPC.target], facing, WitchkingMaceFlail.ReachScale);
+                    return distance >= CrossMinRange && frontLane;
+                }
+                case BacklashName:
+                    return BacklashFollowupStillValid();
+                case GrondsMarchName:
+                    return healthFraction <= GrondsMarchHealthGate;
                 case WitchsCrossName:
                     return healthFraction < 0.8f;
                 case EmberAshScissorName:
@@ -989,6 +1203,144 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _lockedWhipAim = CalculateWhipAim(Main.player[NPC.target]);
             }
+
+            EnemyFlailAttackPattern pattern = MaceFlailPatternFor(combo.Name);
+            if (pattern != EnemyFlailAttackPattern.None && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                SpawnMaceFlail(combo, pattern);
+            }
+        }
+
+        // Server: the head is created as the combo starts so its harmless orbit IS the 40t tell; DoComboMeleeHit
+        // releases this same head. Facing: toward the target, except Backlash, which keeps the facing the previous
+        // mace move committed to (the whip goes out behind him). Reach rides ai[2], scaled x1.25.
+        private void SpawnMaceFlail(MeleeCombo combo, EnemyFlailAttackPattern pattern)
+        {
+            int facing = NPC.direction;
+            if (facing == 0)
+            {
+                facing = 1;
+            }
+
+            if (pattern == EnemyFlailAttackPattern.BacklashReversal)
+            {
+                if (_backlashFollowupFacing != 0)
+                {
+                    facing = _backlashFollowupFacing;
+                }
+                _backlashReadyUntil = 0;
+            }
+            else
+            {
+                _backlashReadyUntil = 0;
+                if (NPC.HasValidTarget && Main.player[NPC.target].Center.X < NPC.Center.X)
+                {
+                    facing = -1;
+                }
+                else if (NPC.HasValidTarget)
+                {
+                    facing = 1;
+                }
+            }
+
+            bool levelLash = pattern == EnemyFlailAttackPattern.AnkleReaper || pattern == EnemyFlailAttackPattern.ReverseHalo;
+            if (levelLash)
+            {
+                _lastLevelLashName = combo.Name;
+                _lastLevelLashTick = Main.GameUpdateCount;
+            }
+
+            float reach = EnemyFlailAttackPatterns.ReachFor(pattern) * WitchkingMaceFlail.ReachScale;
+            int damage = (int)(EnemyDamage.Projectile(MaceLashDamage) * combo.Steps[0].DamageMult);
+            Projectile flail = Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), PuppetHandPosition, new Vector2(facing, 0f),
+                ModContent.ProjectileType<WitchkingMaceFlail>(), damage, 3.5f, Main.myPlayer, NPC.whoAmI, (float)pattern, reach);
+            flail.timeLeft = EnemyFlailAttackPatterns.MaximumLifetime;
+            flail.netUpdate = true;
+        }
+
+        private bool TryGetMaceFlail(out Projectile flail)
+        {
+            int flailType = ModContent.ProjectileType<WitchkingMaceFlail>();
+            for (int i = 0; i < Main.maxProjectiles; i++)
+            {
+                Projectile projectile = Main.projectile[i];
+                if (projectile.active && projectile.type == flailType && (int)projectile.ai[0] == NPC.whoAmI)
+                {
+                    flail = projectile;
+                    return true;
+                }
+            }
+            flail = null;
+            return false;
+        }
+
+        // IFlailAnchor: the flail's chain draws to, and its head orbits and launches from, the front (mace) hand.
+        public Vector2 GetFlailAnchor() => PuppetHandPosition;
+
+        // Level lashes and the Cross lock their facing for the tell (the head's orbit already says where it goes);
+        // Grond's March keeps turning toward the target until it starts walking.
+        protected override bool TrackMeleeComboFacingDuringTelegraph(MeleeCombo combo)
+        {
+            EnemyFlailAttackPattern pattern = MaceFlailPatternFor(combo.Name);
+            bool locks = pattern == EnemyFlailAttackPattern.AnkleReaper
+                || pattern == EnemyFlailAttackPattern.ReverseHalo
+                || pattern == EnemyFlailAttackPattern.ChainCross
+                || pattern == EnemyFlailAttackPattern.BacklashReversal;
+            return !locks;
+        }
+
+        protected override int GetMeleeComboStartFacing(MeleeCombo combo, Player target)
+        {
+            if (combo.Name == BacklashName && _backlashFollowupFacing != 0)
+            {
+                return _backlashFollowupFacing;
+            }
+            return base.GetMeleeComboStartFacing(combo, target);
+        }
+
+        // Backlash jumps the queue whenever its branch is open (it is weight 1 in the bag otherwise).
+        protected override int ReactiveComboIndex(float dist, ComboRangeBand band, int[] ready)
+        {
+            if (!BacklashFollowupStillValid())
+            {
+                return base.ReactiveComboIndex(dist, band, ready);
+            }
+
+            for (int i = 0; i < AllCombos.Length && i < ready.Length; i++)
+            {
+                if (ready[i] > 0 && AllCombos[i].Name == BacklashName)
+                {
+                    return i;
+                }
+            }
+            return base.ReactiveComboIndex(dist, band, ready);
+        }
+
+        // Server: is the Backlash branch still open (inside its 120t window, target still behind that facing)?
+        private bool BacklashFollowupStillValid()
+        {
+            bool windowOpen = _backlashReadyUntil != 0 && Main.GameUpdateCount <= _backlashReadyUntil;
+            if (!windowOpen || !NPC.HasValidTarget)
+            {
+                return false;
+            }
+            return TargetQualifiesForBacklash(Main.player[NPC.target], _backlashFollowupFacing);
+        }
+
+        // Behind the facing by more than 24px, within 64px vertically and inside the 240px rear whip (+48 slack).
+        private bool TargetQualifiesForBacklash(Player target, int facing)
+        {
+            if (!target.active || target.dead || facing == 0)
+            {
+                return false;
+            }
+
+            float horizontalBehind = (target.Center.X - NPC.Center.X) * facing;
+            bool behind = horizontalBehind < -24f;
+            bool level = Math.Abs(target.Center.Y - NPC.Center.Y) <= EnemyFlailAttackPatterns.BacklashTargetVerticalTolerance;
+            float rearReach = EnemyFlailAttackPatterns.BacklashReach * WitchkingMaceFlail.ReachScale + 48f;
+            bool inReach = Vector2.Distance(target.Center, NPC.Center) <= rearReach;
+            return behind && level && inReach;
         }
 
         protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
@@ -1001,6 +1353,14 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (comboName == MorgulLashName)
             {
                 return previousStepHit;
+            }
+
+            // Black Captain's Cross: the void cut follows only with the player still in front and in reach, so a
+            // player who crossed behind during the carry isn't chased by a cut at empty air. Flail hits land on the hit
+            // player's machine, so the server can't use previousStepHit here; position is the whole condition.
+            if (comboName == BlackCaptainsCrossName)
+            {
+                return stillInFront && insideReach;
             }
 
             // Lash → cut goes live 25t after the lash, inside a late roller's gap, so it needs the player still in
@@ -1069,37 +1429,206 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 {
                     SpawnMaceWhip(total, combo.Name == MorgulLashName);
                 }
+
+                // Blight smoke curling off the mace hand through the tell (1 → 3 a tick) with yellow Blight flecks, so the
+                // lash is called even when the whip's own wind-up is behind his body.
+                if (!Main.dedServ)
+                {
+                    float lashProgress = elapsed / (float)Math.Max(1, total);
+                    int smokeCount = 1 + (int)(lashProgress * 2.5f);
+                    for (int i = 0; i < smokeCount; i++)
+                    {
+                        Vector2 position = PuppetHandPosition + Main.rand.NextVector2Circular(10f, 10f);
+                        Dust smoke = Dust.NewDustPerfect(position, DustID.Wraith, new Vector2(0f, -Main.rand.NextFloat(0.6f, 1.6f)), 70, default, Main.rand.NextFloat(1.0f, 1.35f));
+                        smoke.noGravity = true;
+                    }
+                    if (Main.rand.NextBool(2))
+                    {
+                        Dust fleck = Dust.NewDustPerfect(PuppetHandPosition, DustID.YellowTorch, Main.rand.NextVector2Circular(1.5f, 1.5f), 20, default, Main.rand.NextFloat(0.6f, 0.9f));
+                        fleck.noGravity = true;
+                    }
+                }
                 return;
             }
 
-            if (combo.Name == VoidFlameName && !Main.dedServ)
+            if (Main.dedServ)
             {
-                // Violet motes converge on the void tip and a flame grows there through the tell: three of each a tick,
-                // plus void dust running the length of the blade, so the cast reads from across the arena.
-                float progress = elapsed / (float)Math.Max(1, total);
-                Vector2 voidTip = PuppetBackHandPosition + PuppetBackWeaponDirection * SwordTipReach;
-                for (int i = 0; i < VoidFlameTellDustPerTick; i++)
-                {
-                    Vector2 offset = Main.rand.NextVector2CircularEdge(60f, 60f) * (1f - progress);
-                    Dust mote = Dust.NewDustPerfect(voidTip + offset, DustID.Shadowflame, -offset * 0.08f, 80, default, 1.1f);
-                    mote.noGravity = true;
-                    Dust core = Dust.NewDustPerfect(voidTip, DustID.PurpleTorch, Main.rand.NextVector2Circular(0.5f, 0.5f), 60, default, 0.6f + progress * 1.2f);
-                    core.noGravity = true;
-                }
-                SpawnBladeLengthDust(PuppetBackHandPosition, PuppetBackWeaponDirection, DustID.Shadowflame, 1.2f);
+                return;
             }
 
-            if (combo.Name == HellfireVolleyName && !Main.dedServ)
+            float progress = elapsed / (float)Math.Max(1, total);
+
+            if (step.Motion == ComboMotion.FlailBrace)
             {
-                // Crimson embers converge on the fire tip through the opening tell.
-                float progress = elapsed / (float)Math.Max(1, total);
-                Vector2 fireTip = PuppetHandPosition + PuppetWeaponDirection * SwordTipReach;
+                SpawnMaceFlailTellDust(combo.Name, progress);
+                return;
+            }
+
+            if (combo.Name == VoidFlameName)
+            {
+                // The cast must read from 40 tiles away. Four layers on the void tip, all ramping with the tell:
+                //   suction: 3 → 7 violet motes/t pulled in from a ring that shrinks 90 → 30px;
+                //   core: 2 motes/t of growing purple flame sitting on the tip (0.6 → 1.6 scale);
+                //   glint: 1 near-white spark/t on the tip, the brightest point on screen;
+                //   blade: void dust along the whole blade, doubled, so the low-held sword itself glows.
+                Vector2 voidTip = PuppetBackHandPosition + PuppetBackWeaponDirection * SwordTipReach;
+                int suctionCount = VoidFlameTellDustPerTick + (int)(progress * 4f);
+                float ringRadius = MathHelper.Lerp(90f, 30f, progress);
+                for (int i = 0; i < suctionCount; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(ringRadius, ringRadius);
+                    Vector2 inward = -offset * 0.1f + offset.RotatedBy(MathHelper.PiOver2) * 0.03f;
+                    int moteType = DustID.Shadowflame;
+                    if (i % 3 == 0)
+                    {
+                        moteType = DustID.PurpleTorch;
+                    }
+                    Dust mote = Dust.NewDustPerfect(voidTip + offset, moteType, inward, 40, default, Main.rand.NextFloat(0.95f, 1.3f));
+                    mote.noGravity = true;
+                }
                 for (int i = 0; i < 2; i++)
                 {
-                    Vector2 offset = Main.rand.NextVector2CircularEdge(56f, 56f) * (1f - progress);
-                    Dust ember = Dust.NewDustPerfect(fireTip + offset, DustID.RedTorch, -offset * 0.08f, 60, default, 1.3f);
+                    Dust core = Dust.NewDustPerfect(voidTip + Main.rand.NextVector2Circular(6f, 6f), DustID.PurpleTorch,
+                        Main.rand.NextVector2Circular(0.5f, 0.5f), 30, default, 0.6f + progress * 1.0f);
+                    core.noGravity = true;
+                }
+                Dust glint = Dust.NewDustPerfect(voidTip, DustID.PurpleTorch, Main.rand.NextVector2Circular(1f, 1f), 0, new Color(240, 220, 255), 0.5f + progress * 0.5f);
+                glint.noGravity = true;
+                SpawnBladeLengthDust(PuppetBackHandPosition, PuppetBackWeaponDirection, DustID.Shadowflame, 1.2f);
+                SpawnBladeLengthDust(PuppetBackHandPosition, PuppetBackWeaponDirection, DustID.PurpleTorch, 1f);
+                Lighting.AddLight(voidTip, 0.35f * progress, 0.1f * progress, 0.55f * progress);
+                return;
+            }
+
+            if (combo.Name == HellfireVolleyName)
+            {
+                // Crimson embers pulled into the fire tip (2 → 5 a tick), a white-hot glint and fire along the blade.
+                Vector2 fireTip = PuppetHandPosition + PuppetWeaponDirection * SwordTipReach;
+                int emberCount = 2 + (int)(progress * 3f);
+                for (int i = 0; i < emberCount; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(64f, 64f) * (1f - progress * 0.6f);
+                    int emberType = DustID.RedTorch;
+                    if (i % 3 == 2)
+                    {
+                        emberType = DustID.Shadowflame;
+                    }
+                    Dust ember = Dust.NewDustPerfect(fireTip + offset, emberType, -offset * 0.09f, 40, default, Main.rand.NextFloat(1.0f, 1.35f));
                     ember.noGravity = true;
                 }
+                Dust glint = Dust.NewDustPerfect(fireTip, DustID.Torch, Main.rand.NextVector2Circular(0.8f, 0.8f), 0, new Color(255, 225, 190), 0.5f + progress * 0.5f);
+                glint.noGravity = true;
+                SpawnBladeLengthDust(PuppetHandPosition, PuppetWeaponDirection, DustID.RedTorch, 1.1f);
+                Lighting.AddLight(fireTip, 0.8f * progress, 0.15f * progress, 0.05f * progress);
+                return;
+            }
+
+            // Every sword tell (light cuts, strings, the twin-blade moves, the leap): the blade(s) about to swing gather
+            // their element at the tip, ramping 1 → 3 motes/t, with a bright glint on the last third so the release reads.
+            // Heavy commits (Witch's Cross, Scissor, Backstep) gather from a wider ring.
+            float gatherRadius = 40f;
+            if (combo.HeavyCommit || combo.HyperArmor)
+            {
+                gatherRadius = 64f;
+            }
+            bool fireGathers = step.Hand != ComboHand.Back && !_phaseTwo;
+            bool voidGathers = step.Hand != ComboHand.Front;
+            if (fireGathers)
+            {
+                Vector2 fireTip = PuppetHandPosition + PuppetWeaponDirection * SwordTipReach;
+                SpawnTellGatherDust(fireTip, progress, gatherRadius, DustID.Torch, DustID.InfernoFork, new Color(255, 225, 190));
+            }
+            if (voidGathers)
+            {
+                Vector2 voidTip = PuppetBackHandPosition + PuppetBackWeaponDirection * SwordTipReach;
+                SpawnTellGatherDust(voidTip, progress, gatherRadius, DustID.Shadowflame, DustID.PurpleTorch, new Color(240, 220, 255));
+            }
+        }
+
+        // The five flail moves' tells, on the orbiting head (every machine, decor). Each reads differently so the
+        // high/low pair is a read: Morgul Reaper grinds sparks off the floor under a low head; Crown of Iron trails a
+        // Blight smoke ring and a violet glint up high; the Cross flashes violet at its lock; Backlash flares pink-violet
+        // as it loads; Grond's March sheds smoke and sparks. All ramp with the tell.
+        private void SpawnMaceFlailTellDust(string comboName, float progress)
+        {
+            if (!TryGetMaceFlail(out Projectile flail))
+            {
+                return;
+            }
+
+            Vector2 head = flail.Center;
+            int smokeCount = 2 + (int)(progress * 2f);
+            for (int i = 0; i < smokeCount; i++)
+            {
+                Dust smoke = Dust.NewDustPerfect(head + Main.rand.NextVector2Circular(9f, 9f), DustID.Wraith,
+                    Main.rand.NextVector2Circular(0.8f, 0.8f), 50, default, Main.rand.NextFloat(1.0f, 1.35f));
+                smoke.noGravity = true;
+            }
+
+            if (comboName == MorgulReaperName || comboName == GrondsMarchName)
+            {
+                // Floor grind: sparks wherever the head passes within a tile of the ground.
+                Point below = (head + new Vector2(0f, 18f)).ToTileCoordinates();
+                if (WorldGen.SolidTile(below.X, below.Y))
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 contact = new Vector2(head.X + Main.rand.NextFloat(-6f, 6f), below.Y * 16f);
+                        Vector2 sparkVelocity = new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), -Main.rand.NextFloat(2f, 4.5f));
+                        Dust spark = Dust.NewDustPerfect(contact, DustID.Torch, sparkVelocity, 0, new Color(255, 220, 170), Main.rand.NextFloat(0.55f, 0.85f));
+                        spark.noGravity = false;
+                    }
+                }
+                return;
+            }
+
+            if (comboName == CrownOfIronName)
+            {
+                Dust ring = Dust.NewDustPerfect(head, DustID.Shadowflame, Vector2.Zero, 30, default, Main.rand.NextFloat(1.1f, 1.4f));
+                ring.noGravity = true;
+                Dust glint = Dust.NewDustPerfect(head, DustID.PurpleTorch, Main.rand.NextVector2Circular(1f, 1f), 0, new Color(235, 210, 255), 0.5f + progress * 0.4f);
+                glint.noGravity = true;
+                return;
+            }
+
+            // The Cross and Backlash: a bright flash building on the head over the last third, the "it goes now" beat.
+            if (progress > 0.66f)
+            {
+                Color flashTint = new Color(235, 210, 255);
+                if (comboName == BacklashName)
+                {
+                    flashTint = new Color(255, 190, 230);
+                }
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust flash = Dust.NewDustPerfect(head, DustID.PurpleTorch, Main.rand.NextVector2Circular(2.5f, 2.5f), 0, flashTint, Main.rand.NextFloat(0.6f, 0.95f));
+                    flash.noGravity = true;
+                }
+            }
+        }
+
+        // A sword tell's gather at one blade tip: 1 → 3 motes/t drawn in from a ring that shrinks to a third of its size,
+        // plus a near-white glint on the tip for the last third of the tell (the "about to swing" beat).
+        private static void SpawnTellGatherDust(Vector2 tip, float progress, float radius, int bodyDust, int accentDust, Color glintTint)
+        {
+            int count = 1 + (int)(progress * 2.5f);
+            float ringRadius = radius * (1f - progress * 0.66f);
+            for (int i = 0; i < count; i++)
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(ringRadius, ringRadius);
+                int dustType = bodyDust;
+                if (Main.rand.NextBool(4))
+                {
+                    dustType = accentDust;
+                }
+                Dust gather = Dust.NewDustPerfect(tip + offset, dustType, -offset * 0.1f, 40, default, Main.rand.NextFloat(0.95f, 1.3f));
+                gather.noGravity = true;
+            }
+
+            if (progress > 0.66f)
+            {
+                Dust glint = Dust.NewDustPerfect(tip, bodyDust, Main.rand.NextVector2Circular(0.7f, 0.7f), 0, glintTint, Main.rand.NextFloat(0.55f, 0.85f));
+                glint.noGravity = true;
             }
         }
 
@@ -1107,6 +1636,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         protected override void OnComboStepCompleted(MeleeComboStep step)
         {
             _comboStepsCompleted++;
+            UpdateBacklashMemory();
+
             bool nextExists = _runningCombo.Steps != null && _comboStepsCompleted < _runningCombo.Steps.Length;
             if (!nextExists || Main.netMode == NetmodeID.MultiplayerClient)
             {
@@ -1121,6 +1652,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     _lockedWhipAim = CalculateWhipAim(Main.player[NPC.target]);
                 }
                 SpawnMaceWhip(step.PostStepPause, latch: false);
+            }
+        }
+
+        // Server: after any mace move (the flail moves, Mace Lash, Morgul Lash) a target left behind his committed
+        // facing opens Backlash for 120t; anything else closes it. Backlash itself never re-opens it.
+        private void UpdateBacklashMemory()
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || !NPC.HasValidTarget)
+            {
+                return;
+            }
+
+            string completed = ActiveMeleeComboName;
+            bool maceMove = completed == MaceLashName
+                || completed == MorgulLashName
+                || (MaceFlailPatternFor(completed) != EnemyFlailAttackPattern.None && completed != BacklashName);
+            if (!maceMove)
+            {
+                return;
+            }
+
+            int facing = NPC.direction;
+            if (facing == 0)
+            {
+                facing = 1;
+            }
+            if (TargetQualifiesForBacklash(Main.player[NPC.target], facing))
+            {
+                _backlashFollowupFacing = facing;
+                _backlashReadyUntil = Main.GameUpdateCount + (ulong)BacklashWindowTicks;
+            }
+            else
+            {
+                _backlashReadyUntil = 0;
             }
         }
 
@@ -1161,12 +1726,71 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             SpawnSlashDust(step, elapsed, total);
 
+            // A flail release: a Blight burst off the head as it leaves the orbit (body smoke, violet sparks).
+            bool flailRelease = step.Motion == ComboMotion.FlailBrace && elapsed == 0;
+            if (flailRelease && !Main.dedServ && TryGetMaceFlail(out Projectile releasedFlail))
+            {
+                for (int i = 0; i < 16; i++)
+                {
+                    Dust body = Dust.NewDustPerfect(releasedFlail.Center, DustID.Wraith, Main.rand.NextVector2Circular(3.5f, 3.5f), 40, default, Main.rand.NextFloat(1.0f, 1.4f));
+                    body.noGravity = true;
+                }
+                for (int i = 0; i < 8; i++)
+                {
+                    Dust spark = Dust.NewDustPerfect(releasedFlail.Center, DustID.PurpleTorch, Main.rand.NextVector2Circular(6f, 6f), 0, new Color(235, 210, 255), Main.rand.NextFloat(0.55f, 0.85f));
+                    spark.noGravity = true;
+                }
+            }
+
             int peakTick = (int)Math.Round(step.EaseInTicks * total / (float)Math.Max(1, step.AttackTicks));
             bool voidFlameRelease = combo.Name == VoidFlameName && elapsed == peakTick;
-            if (voidFlameRelease && !Main.dedServ)
+
+            // Void Flame's rising cut, every machine: until the release the flame keeps burning on the tip as the blade
+            // climbs (3 motes/t + glint); on the release a 3-layer burst throws the crescent off the tip; after it, a
+            // denser slash (SpawnSlashDust, 7 motes per sub-step instead of 3) leaves a heavy violet wake through the arc.
+            if (combo.Name == VoidFlameName && !Main.dedServ)
             {
                 Vector2 voidTip = PuppetBackHandPosition + PuppetBackWeaponDirection * SwordTipReach;
-                SoundEngine.PlaySound(SoundID.Item73 with { Volume = 0.8f, Pitch = -0.2f }, voidTip);
+                if (elapsed < peakTick)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Dust carried = Dust.NewDustPerfect(voidTip + Main.rand.NextVector2Circular(8f, 8f), DustID.Shadowflame,
+                            Main.rand.NextVector2Circular(0.8f, 0.8f), 30, default, Main.rand.NextFloat(1.1f, 1.5f));
+                        carried.noGravity = true;
+                    }
+                    Dust tipGlint = Dust.NewDustPerfect(voidTip, DustID.PurpleTorch, Vector2.Zero, 0, new Color(240, 220, 255), 0.9f);
+                    tipGlint.noGravity = true;
+                }
+
+                if (voidFlameRelease)
+                {
+                    SoundEngine.PlaySound(SoundID.Item73 with { Volume = 0.8f, Pitch = -0.2f }, voidTip);
+                    Vector2 throwDirection = PuppetBackWeaponDirection;
+                    for (int i = 0; i < 30; i++)
+                    {
+                        int bodyType = DustID.Shadowflame;
+                        if (i % 3 == 0)
+                        {
+                            bodyType = DustID.PurpleTorch;
+                        }
+                        Dust body = Dust.NewDustPerfect(voidTip, bodyType, Main.rand.NextVector2Circular(4.5f, 4.5f), 40, default, Main.rand.NextFloat(1.0f, 1.5f));
+                        body.noGravity = true;
+                    }
+                    for (int i = 0; i < 16; i++)
+                    {
+                        Vector2 sparkVelocity = Main.rand.NextVector2Circular(8f, 8f) + throwDirection * 2f;
+                        Dust spark = Dust.NewDustPerfect(voidTip, DustID.PurpleTorch, sparkVelocity, 0, new Color(240, 220, 255), Main.rand.NextFloat(0.55f, 0.9f));
+                        spark.noGravity = true;
+                    }
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Dust mist = Dust.NewDustPerfect(voidTip, DustID.Smoke, Main.rand.NextVector2Circular(1.8f, 1.8f), 150, new Color(45, 20, 70), Main.rand.NextFloat(0.55f, 0.8f));
+                        mist.noGravity = true;
+                        mist.noLight = true;
+                        mist.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
+                    }
+                }
             }
 
             // Hellfire Volley: the rising cut throws one ceiling flame on each of its release ticks (scaled to the step's
@@ -1212,10 +1836,28 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (!Main.dedServ)
             {
                 SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.6f, Pitch = 0.1f }, fireTip);
-                for (int i = 0; i < 14; i++)
+                // Release burst at the tip: crimson/shadow body, fast white-hot sparks, a puff of billowing dark smoke.
+                for (int i = 0; i < 22; i++)
                 {
-                    Dust burst = Dust.NewDustPerfect(fireTip, DustID.RedTorch, Main.rand.NextVector2Circular(3f, 3f), 60, default, 1.5f);
+                    int bodyType = DustID.RedTorch;
+                    if (i % 4 == 0)
+                    {
+                        bodyType = DustID.Shadowflame;
+                    }
+                    Dust burst = Dust.NewDustPerfect(fireTip, bodyType, Main.rand.NextVector2Circular(3.5f, 3.5f), 40, default, Main.rand.NextFloat(1.0f, 1.45f));
                     burst.noGravity = true;
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    Dust spark = Dust.NewDustPerfect(fireTip, DustID.Torch, Main.rand.NextVector2Circular(7f, 7f), 0, new Color(255, 225, 190), Main.rand.NextFloat(0.55f, 0.85f));
+                    spark.noGravity = true;
+                }
+                for (int i = 0; i < 6; i++)
+                {
+                    Dust smoke = Dust.NewDustPerfect(fireTip, DustID.Smoke, Main.rand.NextVector2Circular(1.5f, 1.5f), 150, new Color(40, 18, 22), 0.6f);
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.6f);
                 }
             }
 
@@ -1251,6 +1893,44 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 velocity = aim.RotatedBy(spread * i) * WitchkingHellfireFlame.AimedSpeed;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), fireTip, velocity, flameType,
                     flameDamage, 0f, Main.myPlayer, 1f, 0f, 0f);
+            }
+
+            // The cluster starts the rain: the first drop appears one interval later.
+            _volleyRainShotsLeft = VolleyRainCount;
+            _volleyRainTimer = VolleyRainIntervalTicks;
+        }
+
+        // Server: one rain drop over the target. Height = the open air above the player, 4–12 tiles; the drop sits up
+        // the slant from the aim point so a 30° fall lands on it. If the slant start is in rock or has no clear line to
+        // the aim point, try 1 tile lower, down to the minimum; skip the drop if nothing fits.
+        private void SpawnHellfireRainDrop(Player target)
+        {
+            float windSide = Math.Sign(target.Center.X - NPC.Center.X);
+            if (windSide == 0f)
+            {
+                windSide = NPC.direction;
+            }
+
+            Vector2 aimPoint = target.Center + new Vector2(Main.rand.NextFloat(-VolleyRainJitter, VolleyRainJitter), 0f);
+            float slant = MathHelper.ToRadians(VolleyRainSlantDegrees);
+            Vector2 fallDirection = new Vector2(windSide * MathF.Sin(slant), MathF.Cos(slant));
+
+            for (float height = VolleyRainMaxHeight; height >= VolleyRainMinHeight; height -= 16f)
+            {
+                float pathLength = height / fallDirection.Y;
+                Vector2 spawn = aimPoint - fallDirection * pathLength;
+                Point spawnTile = spawn.ToTileCoordinates();
+                bool inRock = WorldGen.SolidTile(spawnTile.X, spawnTile.Y);
+                bool clearPath = Collision.CanHitLine(spawn, 1, 1, aimPoint, 1, 1);
+                if (inRock || !clearPath)
+                {
+                    continue;
+                }
+
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), spawn, fallDirection * WitchkingHellfireFlame.RainSpeed,
+                    ModContent.ProjectileType<WitchkingHellfireFlame>(), EnemyDamage.Projectile(HellfireVolleyDamage), 0f,
+                    Main.myPlayer, 2f, 1f, 0f);
+                return;
             }
         }
 
@@ -1291,7 +1971,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 }
                 Vector2 velocity = aim.RotatedBy(offset) * WitchkingVoidFlame.LaunchSpeed;
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), voidTip, velocity, ModContent.ProjectileType<WitchkingVoidFlame>(),
-                    EnemyDamage.Projectile(VoidFlameDamage), 0f, Main.myPlayer, targetIndex);
+                    EnemyDamage.Projectile(VoidFlameDamage), 0f, Main.myPlayer);
             }
         }
 
@@ -1306,16 +1986,34 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             _leapImpactSpawned = true;
             SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.8f, Pitch = -0.3f }, NPC.Bottom);
-            for (int i = 0; i < 30; i++)
+
+            // Landing burst, three layers: fire/void body thrown out along the floor, fast white sparks, and a low
+            // billowing dust cloud kicked up by the boots that outlives the flame.
+            for (int i = 0; i < 34; i++)
             {
-                int dustType = i % 2 == 0 ? DustID.Shadowflame : DustID.Torch;
-                if (_phaseTwo)
+                int dustType = DustID.Torch;
+                if (i % 2 == 0 || _phaseTwo)
                 {
                     dustType = DustID.Shadowflame;
                 }
-                Dust burst = Dust.NewDustDirect(NPC.BottomLeft - new Vector2(16f, 8f), NPC.width + 32, 12, dustType, 0f, -2f, 60, default, 1.5f);
+                Dust burst = Dust.NewDustDirect(NPC.BottomLeft - new Vector2(16f, 8f), NPC.width + 32, 12, dustType, 0f, -2f, 40, default, Main.rand.NextFloat(1.0f, 1.45f));
                 burst.velocity.X *= 3f;
                 burst.noGravity = true;
+            }
+            for (int i = 0; i < 14; i++)
+            {
+                Vector2 sparkVelocity = new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-5f, -1f));
+                Dust spark = Dust.NewDustPerfect(NPC.Bottom, DustID.Torch, sparkVelocity, 0, new Color(255, 230, 210), Main.rand.NextFloat(0.55f, 0.85f));
+                spark.noGravity = true;
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                Vector2 cloudPosition = NPC.Bottom + new Vector2(Main.rand.NextFloat(-24f, 24f), -4f);
+                Vector2 cloudVelocity = new Vector2(Main.rand.NextFloat(-2.2f, 2.2f), Main.rand.NextFloat(-1f, -0.2f));
+                Dust cloud = Dust.NewDustPerfect(cloudPosition, DustID.Smoke, cloudVelocity, 150, new Color(50, 40, 50), Main.rand.NextFloat(0.55f, 0.8f));
+                cloud.noGravity = true;
+                cloud.noLight = true;
+                cloud.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
             }
 
             float sweep = MathHelper.ToRadians(150f) * NPC.direction;
@@ -1338,7 +2036,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // lingers and fades); a Delayed back blade starts its slash when its own strike starts. Every machine, decor only.
         private void SpawnSlashDust(MeleeComboStep step, int elapsed, int total)
         {
-            bool drawsSlash = step.DamageMult > 0f || ActiveMeleeComboName == HellfireVolleyName;
+            bool drawsSlash = (step.DamageMult > 0f || ActiveMeleeComboName == HellfireVolleyName) && step.Motion != ComboMotion.FlailBrace;
             if (Main.dedServ || !drawsSlash)
             {
                 return;
@@ -1355,6 +2053,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             bool fireSwings = step.Hand != ComboHand.Back && !_phaseTwo;
             bool voidSwings = step.Hand != ComboHand.Front && elapsed >= backStartTick;
 
+            // Void Flame's cut is the cast itself: a far denser wake than an ordinary slash so it reads at range.
+            int motesPerSubStep = 3;
+            if (ActiveMeleeComboName == VoidFlameName)
+            {
+                motesPerSubStep = 7;
+            }
+
             if (fireSwings)
             {
                 float fireRotation = PuppetWeaponDirection.ToRotation();
@@ -1362,7 +2067,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (fireLive)
                 {
                     float swept = MathHelper.WrapAngle(fireRotation - _lastFireBladeRotation);
-                    SpawnSlashArcDust(PuppetHandPosition, _lastFireBladeRotation, swept, fireBlade: true);
+                    SpawnSlashArcDust(PuppetHandPosition, _lastFireBladeRotation, swept, fireBlade: true, motesPerSubStep);
                 }
                 _lastFireBladeRotation = fireRotation;
             }
@@ -1375,7 +2080,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 if (voidLive)
                 {
                     float swept = MathHelper.WrapAngle(voidRotation - _lastVoidBladeRotation);
-                    SpawnSlashArcDust(PuppetBackHandPosition, _lastVoidBladeRotation, swept, fireBlade: false);
+                    SpawnSlashArcDust(PuppetBackHandPosition, _lastVoidBladeRotation, swept, fireBlade: false, motesPerSubStep);
                 }
                 _lastVoidBladeRotation = voidRotation;
             }
@@ -1384,7 +2089,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         // Fills the sector a blade swept (signed sweptAngle radians from fromRotation) with dust, biased to the tip where
         // the slash is widest, drifting along the swing. One sub-step per ~12px of tip travel so a fast swing leaves no
         // gaps. Under 0.01 rad (a held blade) nothing is drawn. Points inside solid tiles are skipped.
-        private void SpawnSlashArcDust(Vector2 hand, float fromRotation, float sweptAngle, bool fireBlade)
+        // motesPerSubStep: body motes per sub-step (3 for an ordinary cut). Each sub-step also drops one near-white glint
+        // at the very tip, so the leading edge of the arc is the brightest part of it.
+        private void SpawnSlashArcDust(Vector2 hand, float fromRotation, float sweptAngle, bool fireBlade, int motesPerSubStep = 3)
         {
             if (Math.Abs(sweptAngle) < 0.01f)
             {
@@ -1393,10 +2100,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
             int mainDust = DustID.Shadowflame;
             int accentDust = DustID.PurpleTorch;
+            Color glintTint = new Color(240, 220, 255);
             if (fireBlade)
             {
                 mainDust = DustID.Torch;
                 accentDust = DustID.InfernoFork;
+                glintTint = new Color(255, 225, 190);
             }
 
             float tipTravel = Math.Abs(sweptAngle) * SwordTipReach;
@@ -1409,7 +2118,15 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Vector2 bladeDirection = angle.ToRotationVector2();
                 Vector2 swingTangent = bladeDirection.RotatedBy(MathHelper.PiOver2 * swingSign);
 
-                for (int i = 0; i < 3; i++)
+                Vector2 tipPoint = hand + bladeDirection * SwordTipReach;
+                Point tipTile = tipPoint.ToTileCoordinates();
+                if (!WorldGen.SolidTile(tipTile.X, tipTile.Y))
+                {
+                    Dust glint = Dust.NewDustPerfect(tipPoint, accentDust, swingTangent * 2f, 0, glintTint, Main.rand.NextFloat(0.55f, 0.85f));
+                    glint.noGravity = true;
+                }
+
+                for (int i = 0; i < motesPerSubStep; i++)
                 {
                     // sqrt of a uniform roll: more of the dust lands toward the tip.
                     float alongFraction = (float)Math.Sqrt(Main.rand.NextFloat(0.1f, 1f));
@@ -1426,7 +2143,8 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                         dustType = accentDust;
                     }
                     Vector2 velocity = swingTangent * (1.5f * alongFraction) + Main.rand.NextVector2Circular(0.6f, 0.6f);
-                    float scale = MathHelper.Lerp(1f, 1.9f, alongFraction);
+                    // 1.0 at the guard → 1.6 at the tip (≤ 1.92 after Terraria's ±20% jitter: no blocks).
+                    float scale = MathHelper.Lerp(1f, 1.6f, alongFraction);
                     Dust slash = Dust.NewDustPerfect(position, dustType, velocity, 40, default, scale);
                     slash.noGravity = true;
                 }
@@ -1435,6 +2153,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
 
         protected override void DoComboMeleeHit(MeleeComboStep step)
         {
+            // A flail step: release the head that has been orbiting as the tell (server; the release syncs). No blade
+            // is armed: the flail projectile is the only hitbox.
+            if (step.Motion == ComboMotion.FlailBrace)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient && TryGetMaceFlail(out Projectile flail)
+                    && flail.ModProjectile is EnemyFlailProjectileBase flailHead)
+                {
+                    flailHead.ReleaseAuthoredPattern();
+                }
+                return;
+            }
+
             if (step.DamageMult > 0f && !Main.dedServ)
             {
                 SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.65f, Pitch = -0.25f, PitchVariance = 0.15f }, NPC.Center);
@@ -1536,6 +2266,9 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             globalNPC.CanTeleport = true;
             globalNPC.TeleportStyle = TeleportStyle.Aggressive;
             globalNPC.TeleportVisualStyle = TeleportVisualStyle.GreySmoke;
+            // 30t total: no hidden hold after the telegraph, no second mist pair at the reveal.
+            globalNPC.TeleportAppearanceDelay = 0;
+            globalNPC.TeleportArrivalMistTime = 0;
             globalNPC.NavSearchRadius = 80;
             globalNPC.CanUseRopes = true;
         }
@@ -1590,6 +2323,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             TickPull();
             ApplyFightCurses();
             SpawnAmbientBladeDust();
+            UpdateRestingMace();
 
             // Hellfire Volley's 60t hold: the cocked fire blade gathers a crimson flame at its tip, growing to the strike.
             bool volleyHold = Phase == AttackPhase.MeleeComboPause && ActiveMeleeComboName == HellfireVolleyName;
@@ -1615,18 +2349,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         }
 
         // Every peer equips the same hands from synced state: the void sword behind always; in front the fire sword
-        // (phase 1), the mace (phase 2: its icon hides while the whip projectile is out), or the reverse-grip fire sword
-        // for Hellfire Plunge in either phase.
+        // (phase 1), the mace (phase 2: never drawn as an icon), or the reverse-grip fire sword for Hellfire Plunge.
         private void EquipHands()
         {
             PuppetWeapon desiredFront = FireSword;
             if (_phaseTwo)
             {
-                desiredFront = MaceCoiled;
-                if (MaceWhipOut())
-                {
-                    desiredFront = MaceLashing;
-                }
+                desiredFront = Mace;
             }
             if (_customKind == CustomKind.HellfirePlunge && Phase == AttackPhase.Custom)
             {
@@ -1647,11 +2376,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
         {
             int whipType = ModContent.ProjectileType<WitchkingMaceWhip>();
             int grondType = ModContent.ProjectileType<WitchkingGrondMace>();
+            int flailType = ModContent.ProjectileType<WitchkingMaceFlail>();
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
                 bool ours = projectile.active && (int)projectile.ai[0] == NPC.whoAmI;
-                if (ours && (projectile.type == whipType || projectile.type == grondType))
+                bool maceProjectile = projectile.type == whipType || projectile.type == grondType || projectile.type == flailType;
+                if (ours && maceProjectile)
                 {
                     return true;
                 }
@@ -1754,6 +2485,18 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             {
                 _grondCooldown--;
             }
+
+            // Hellfire rain keeps falling after the volley ends, whatever he does next; it stops with the Unmaking.
+            if (_volleyRainShotsLeft > 0 && !_unmakingStarted && NPC.HasValidTarget)
+            {
+                _volleyRainTimer--;
+                if (_volleyRainTimer <= 0)
+                {
+                    SpawnHellfireRainDrop(Main.player[NPC.target]);
+                    _volleyRainShotsLeft--;
+                    _volleyRainTimer = VolleyRainIntervalTicks;
+                }
+            }
             if (_phaseTwo && CountPhantoms() < PhantomCap && _summonCooldown > 0)
             {
                 _summonCooldown--;
@@ -1844,12 +2587,19 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
             if (plungeReady)
             {
                 _plungeCooldown = PlungeCooldownTicks;
-                _plungeWallCount = 1;
-                if (_phaseTwo)
+
+                // Wave count: the server rolls it here and it reaches clients in SendExtraAI (_plungeWallCount).
+                bool lowHealth = NPC.life <= NPC.lifeMax * PlungeLowHealthFraction;
+                if (lowHealth)
                 {
-                    _plungeWallCount = 3;
+                    _plungeWallCount = Main.rand.Next(PlungeWavesMinLow, PlungeWavesMaxLow + 1);
                 }
-                int lastEruption = PlungeImpactTick + PlungeWallIntervalTicks * _plungeWallCount;
+                else
+                {
+                    _plungeWallCount = Main.rand.Next(PlungeWavesMinHigh, PlungeWavesMaxHigh + 1);
+                }
+
+                int lastEruption = PlungeEruptionTick(_plungeWallCount - 1);
                 BeginSetPiece(CustomKind.HellfirePlunge, lastEruption + PlungeHoldTicks + PlungePullTicks, ModContent.ItemType<WitchkingsSword>());
             }
         }
@@ -1916,7 +2666,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 case CustomKind.BarrowSummons:
                     return "Barrow Summons";
                 case CustomKind.HellfirePlunge:
-                    return $"Hellfire Plunge ({_plungeWallCount} wall{(_plungeWallCount > 1 ? "s" : "")})";
+                    return $"Hellfire Plunge ({_plungeWallCount} wave{(_plungeWallCount > 1 ? "s" : "")})";
                 case CustomKind.GrondsToll:
                     return "Grond's Toll";
                 case CustomKind.Unmaking:
@@ -2083,12 +2833,22 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 return;
             }
 
-            float collapse = 1f - elapsed / (float)ShriekTellTicks;
-            for (int i = 0; i < 2; i++)
+            // 2 -> 6 motes/t from a 200px ring collapsing onto him, with a pale glint on his raised blades' tips once the
+            // ring is half closed, so the scream (and its pull) is called from across the arena.
+            float tellProgress = elapsed / (float)ShriekTellTicks;
+            float collapse = 1f - tellProgress;
+            int moteCount = 2 + (int)(tellProgress * 4f);
+            for (int i = 0; i < moteCount; i++)
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(200f, 200f) * collapse;
-                Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, -offset * 0.05f, 80, default, 1.2f);
+                Dust mote = Dust.NewDustPerfect(NPC.Center + offset, DustID.ShadowbeamStaff, -offset * 0.05f, 40, default, Main.rand.NextFloat(1.0f, 1.35f));
                 mote.noGravity = true;
+            }
+            if (tellProgress > 0.5f)
+            {
+                Vector2 raisedTip = PuppetBackHandPosition + PuppetBackWeaponDirection * SwordTipReach;
+                Dust glint = Dust.NewDustPerfect(raisedTip, DustID.PurpleTorch, new Vector2(0f, -1f), 0, new Color(240, 220, 255), 0.8f);
+                glint.noGravity = true;
             }
         }
 
@@ -2211,30 +2971,90 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 ModContent.NPCType<BarrowWightPhantom>(), 0, NPC.whoAmI);
         }
 
+        // Elapsed tick on which wave waveIndex (0-based) erupts: the first after the 90t build, then every 45t.
+        private static int PlungeEruptionTick(int waveIndex)
+        {
+            return PlungeImpactTick + PlungeBuildTicks + PlungeWallIntervalTicks * waveIndex;
+        }
+
         // Hellfire Plunge: at the impact the blade is in the floor; flame builds up out of the ground around it for
-        // 90t, then the walls erupt both ways (phase 2: every 90t, three times).
+        // 90t, then the walls erupt both ways, again every 45t until the rolled wave count is spent.
         private void TickHellfirePlunge(int elapsed)
         {
             float floorY = (int)(NPC.Bottom.Y / 16f) * 16f;
             Vector2 bladePoint = new Vector2(PuppetHandPosition.X, floorY);
 
+            // Raise: crimson embers gather on the fire tip as the reverse-gripped blade goes up, so the plunge is called
+            // before it falls. Ramps 1 → 3 motes/t with a white-hot glint at the tip.
+            bool raising = elapsed < PlungeImpactTick;
+            if (raising && !Main.dedServ)
+            {
+                float raiseProgress = elapsed / (float)PlungeImpactTick;
+                Vector2 fireTip = PuppetHandPosition + PuppetWeaponDirection * SwordTipReach;
+                int gatherCount = 1 + (int)(raiseProgress * 2.5f);
+                for (int i = 0; i < gatherCount; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(48f, 48f) * (1f - raiseProgress * 0.7f);
+                    Dust gather = Dust.NewDustPerfect(fireTip + offset, DustID.RedTorch, -offset * 0.09f, 40, default, Main.rand.NextFloat(1.0f, 1.4f));
+                    gather.noGravity = true;
+                }
+                Dust glint = Dust.NewDustPerfect(fireTip, DustID.Torch, Main.rand.NextVector2Circular(0.6f, 0.6f), 0, new Color(255, 230, 200), 0.5f + raiseProgress * 0.6f);
+                glint.noGravity = true;
+            }
+
             if (elapsed == PlungeImpactTick && !Main.dedServ)
             {
                 SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.9f, Pitch = -0.5f }, bladePoint);
-                for (int i = 0; i < 25; i++)
+
+                // Three layers: a body of crimson/shadow flame thrown up off the floor, fast white-hot sparks, and slow
+                // black smoke that billows (fadeIn above spawn scale) and outlives the flame.
+                for (int i = 0; i < 34; i++)
                 {
-                    Dust spark = Dust.NewDustPerfect(bladePoint, DustID.Torch, new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-5f, -1f)), 40, default, 1.6f);
+                    int bodyDust = DustID.RedTorch;
+                    if (i % 4 == 0)
+                    {
+                        bodyDust = DustID.Shadowflame;
+                    }
+                    Vector2 bodyVelocity = new Vector2(Main.rand.NextFloat(-4.5f, 4.5f), Main.rand.NextFloat(-5f, -1f));
+                    Dust body = Dust.NewDustPerfect(bladePoint, bodyDust, bodyVelocity, 40, default, Main.rand.NextFloat(1.0f, 1.5f));
+                    body.noGravity = true;
+                }
+                for (int i = 0; i < 18; i++)
+                {
+                    Vector2 sparkVelocity = new Vector2(Main.rand.NextFloat(-7f, 7f), Main.rand.NextFloat(-8f, -2f));
+                    Dust spark = Dust.NewDustPerfect(bladePoint, DustID.Torch, sparkVelocity, 0, new Color(255, 225, 190), Main.rand.NextFloat(0.55f, 0.9f));
                     spark.noGravity = true;
+                }
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 smokeVelocity = new Vector2(Main.rand.NextFloat(-1.6f, 1.6f), Main.rand.NextFloat(-1.8f, -0.4f));
+                    Dust smoke = Dust.NewDustPerfect(bladePoint, DustID.Smoke, smokeVelocity, 150, new Color(40, 20, 24), Main.rand.NextFloat(0.55f, 0.8f));
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.7f);
                 }
             }
 
-            int lastEruption = PlungeImpactTick + PlungeWallIntervalTicks * _plungeWallCount;
+            int lastEruption = PlungeEruptionTick(_plungeWallCount - 1);
             bool building = elapsed > PlungeImpactTick && elapsed <= lastEruption;
             if (building && !Main.dedServ)
             {
-                int sinceImpact = elapsed - PlungeImpactTick;
-                float wallBuild = (sinceImpact % PlungeWallIntervalTicks) / (float)PlungeWallIntervalTicks;
-                int flameCount = 1 + (int)(5f * wallBuild);
+                // 0..1 toward the next eruption: across the 90t build for the first wave, across 45t for each after.
+                float wallBuild;
+                int firstEruption = PlungeEruptionTick(0);
+                if (elapsed <= firstEruption)
+                {
+                    wallBuild = (elapsed - PlungeImpactTick) / (float)PlungeBuildTicks;
+                }
+                else
+                {
+                    int sinceFirst = elapsed - firstEruption;
+                    wallBuild = (sinceFirst % PlungeWallIntervalTicks) / (float)PlungeWallIntervalTicks;
+                }
+
+                // Flame climbing out of the floor round the blade, 2 → 6 motes/t, widening as the wave nears, plus sparks
+                // that leap higher than the flame tips and a smoke wisp every other tick.
+                int flameCount = 2 + (int)(4f * wallBuild);
                 for (int i = 0; i < flameCount; i++)
                 {
                     Vector2 position = bladePoint + new Vector2(Main.rand.NextFloat(-24f, 24f) * (0.4f + wallBuild), 0f);
@@ -2244,13 +3064,40 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                     {
                         flameDust = DustID.Shadowflame;
                     }
-                    Dust flame = Dust.NewDustPerfect(position, flameDust,new Vector2(0f, -Main.rand.NextFloat(1f, 3f + 4f * wallBuild)), 40, default, 1.2f + wallBuild);
+                    Vector2 flameVelocity = new Vector2(0f, -Main.rand.NextFloat(1f, 3f + 4f * wallBuild));
+                    Dust flame = Dust.NewDustPerfect(position, flameDust, flameVelocity, 40, default, 1.05f + wallBuild * 0.55f);
                     flame.noGravity = true;
                 }
+
+                int sparkCount = 1 + (int)(wallBuild * 1.5f);
+                for (int i = 0; i < sparkCount; i++)
+                {
+                    Vector2 sparkPosition = bladePoint + new Vector2(Main.rand.NextFloat(-16f, 16f), -2f);
+                    Vector2 sparkVelocity = new Vector2(Main.rand.NextFloat(-1.2f, 1.2f), -Main.rand.NextFloat(4f, 7f + 3f * wallBuild));
+                    Dust spark = Dust.NewDustPerfect(sparkPosition, DustID.Torch, sparkVelocity, 15, new Color(255, 225, 190), Main.rand.NextFloat(0.55f, 0.85f));
+                    spark.noGravity = true;
+                }
+
+                if (elapsed % 2 == 0)
+                {
+                    Vector2 smokePosition = bladePoint + new Vector2(Main.rand.NextFloat(-20f, 20f), -8f);
+                    Dust smoke = Dust.NewDustPerfect(smokePosition, DustID.Smoke, new Vector2(0f, -1.4f), 150, new Color(40, 20, 24), 0.6f);
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.35f, 1.7f);
+                }
+
                 Lighting.AddLight(bladePoint, 0.9f * wallBuild, 0.4f * wallBuild, 0.1f * wallBuild);
             }
 
-            bool eruption = elapsed > PlungeImpactTick && elapsed <= lastEruption && (elapsed - PlungeImpactTick) % PlungeWallIntervalTicks == 0;
+            bool eruption = false;
+            for (int wave = 0; wave < _plungeWallCount; wave++)
+            {
+                if (elapsed == PlungeEruptionTick(wave))
+                {
+                    eruption = true;
+                }
+            }
             if (eruption && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 Vector2 wallCenter = new Vector2(bladePoint.X, floorY - WitchkingFireWall.WallHeight / 2f);
@@ -2470,6 +3317,146 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode
                 Dust blade = Dust.NewDustPerfect(position, dustType, velocity, 60, default, scale * Main.rand.NextFloat(0.8f, 1.2f));
                 blade.noGravity = true;
             }
+        }
+
+        // The flail draws its first ticks sliding out of the resting head (client decor). Null when none is shown.
+        internal Vector2? RestingMaceHeadForDraw
+        {
+            get
+            {
+                if (!_restingMaceValid)
+                {
+                    return null;
+                }
+                return _restingMaceHead;
+            }
+        }
+
+        // The resting chain shows in phase 2 whenever the mace is in his hand and not out as the whip or Grond, and he
+        // isn't hidden inside a teleport.
+        private bool RestingMaceShown =>
+            _phaseTwo
+            && FrontHandWeapon == Mace
+            && NPC.alpha < 255
+            && !MaceWhipOut();
+
+        // Client-only rope sim for the resting mace head: gravity, rests on solid floor with friction, held within
+        // RestingChainLength of the hand. Re-seeded behind him whenever it reappears or the hand jumps (a teleport).
+        // Dragging along the floor throws sparks; the head smoulders Blight like the whip's.
+        private void UpdateRestingMace()
+        {
+            if (Main.dedServ || !RestingMaceShown)
+            {
+                _restingMaceValid = false;
+                return;
+            }
+
+            Vector2 hand = PuppetHandPosition;
+            bool handJumped = _restingMaceValid && Vector2.Distance(hand, _restingMaceHead) > RestingChainLength * 3f;
+            if (!_restingMaceValid || handJumped)
+            {
+                _restingMaceHead = hand + new Vector2(-NPC.direction * RestingChainLength * 0.7f, 12f);
+                _restingMaceVelocity = Vector2.Zero;
+                _restingMaceValid = true;
+                for (int i = 0; i < 12; i++)
+                {
+                    Dust puff = Dust.NewDustPerfect(_restingMaceHead + Main.rand.NextVector2Circular(10f, 10f), DustID.Wraith,
+                        Main.rand.NextVector2Circular(1.5f, 1.5f), 60, default, Main.rand.NextFloat(1.0f, 1.3f));
+                    puff.noGravity = true;
+                }
+            }
+
+            Vector2 previous = _restingMaceHead;
+            _restingMaceVelocity.Y = Math.Min(_restingMaceVelocity.Y + RestingHeadGravity, 10f);
+            Vector2 next = previous + _restingMaceVelocity;
+
+            // Floor: the ball's bottom on a solid tile (or a platform top) stops the fall and drags with friction.
+            Point floorTile = (next + new Vector2(0f, RestingHeadRadius)).ToTileCoordinates();
+            Tile tile = Framing.GetTileSafely(floorTile.X, floorTile.Y);
+            bool floorSolid = tile.HasTile && !tile.IsActuated && (Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]);
+            bool onFloor = false;
+            if (floorSolid && _restingMaceVelocity.Y >= 0f)
+            {
+                next.Y = floorTile.Y * 16f - RestingHeadRadius;
+                onFloor = true;
+            }
+
+            // Chain: never further than RestingChainLength from the hand; the hand drags it along.
+            Vector2 fromHand = next - hand;
+            float chainDistance = fromHand.Length();
+            if (chainDistance > RestingChainLength)
+            {
+                next = hand + fromHand / chainDistance * RestingChainLength;
+            }
+
+            _restingMaceVelocity = next - previous;
+            if (onFloor)
+            {
+                _restingMaceVelocity.Y = 0f;
+                _restingMaceVelocity.X *= RestingHeadFloorFriction;
+            }
+            _restingMaceHead = next;
+
+            // Scrape sparks off the floor behind the dragged head, thrown up and back.
+            bool dragging = onFloor && Math.Abs(_restingMaceVelocity.X) > RestingDragSparkSpeed;
+            if (dragging)
+            {
+                Vector2 contact = _restingMaceHead + new Vector2(0f, RestingHeadRadius - 2f);
+                Vector2 sparkVelocity = new Vector2(-_restingMaceVelocity.X * 0.8f + Main.rand.NextFloat(-0.6f, 0.6f), -Main.rand.NextFloat(1.5f, 3.5f));
+                Dust spark = Dust.NewDustPerfect(contact, DustID.Torch, sparkVelocity, 0, new Color(255, 220, 170), Main.rand.NextFloat(0.5f, 0.8f));
+                spark.noGravity = false;
+            }
+
+            if (Main.rand.NextBool(3))
+            {
+                Dust blight = Dust.NewDustPerfect(_restingMaceHead + Main.rand.NextVector2Circular(8f, 8f), DustID.Wraith,
+                    new Vector2(0f, -0.6f), 100, default, 1.1f);
+                blight.noGravity = true;
+            }
+        }
+
+        // The resting mace over the finished puppet (like the flails): handle at the hand, links while the chain is long
+        // enough to need them, then the head frame hung from its top with the ball centred on the simulated head.
+        // Sheet faces DOWN, so rotation = chain angle - 90°. Skipped when the puppet went out in the early behind-tiles
+        // pass (only during Hellfire Plunge, when the mace isn't in hand anyway).
+        public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+        {
+            bool earlyPass = DrawnBeforeSolidTiles;
+            base.PostDraw(spriteBatch, screenPos, drawColor);
+            if (earlyPass || !_restingMaceValid || !RestingMaceShown)
+            {
+                return;
+            }
+
+            Texture2D texture = TextureAssets.Projectile[ModContent.ProjectileType<WitchkingMaceWhip>()].Value;
+            Vector2 hand = PuppetHandPosition;
+            Vector2 head = _restingMaceHead;
+            Vector2 line = head - hand;
+            float length = line.Length();
+            Vector2 direction = line.SafeNormalize(Vector2.UnitY);
+            float rotation = direction.ToRotation() - MathHelper.PiOver2;
+            float opacity = 1f - NPC.alpha / 255f;
+
+            Rectangle handleFrame = WitchkingMaceWhip.HandleFrame;
+            Rectangle linkFrame = WitchkingMaceWhip.LinkFrame;
+            Rectangle headFrame = WitchkingMaceWhip.HeadFrame;
+
+            Color handleColor = Lighting.GetColor(hand.ToTileCoordinates()) * opacity;
+            Main.EntitySpriteDraw(texture, hand - Main.screenPosition, handleFrame, handleColor, rotation,
+                new Vector2(handleFrame.Width / 2f, 16f), 1f, SpriteEffects.None, 0);
+
+            float headFrameTop = length - RestingHeadCentreFromFrameTop;
+            for (float along = 18f; along + linkFrame.Height <= headFrameTop; along += linkFrame.Height)
+            {
+                Vector2 linkPosition = hand + direction * along;
+                Color linkColor = Lighting.GetColor(linkPosition.ToTileCoordinates()) * opacity;
+                Main.EntitySpriteDraw(texture, linkPosition - Main.screenPosition, linkFrame, linkColor, rotation,
+                    new Vector2(linkFrame.Width / 2f, 0f), 1f, SpriteEffects.None, 0);
+            }
+
+            Color headColor = Lighting.GetColor(head.ToTileCoordinates()) * opacity;
+            Main.EntitySpriteDraw(texture, head - Main.screenPosition, headFrame, headColor, rotation,
+                new Vector2(headFrame.Width / 2f, RestingHeadCentreFromFrameTop), 1f, SpriteEffects.None, 0);
         }
 
         public override void SendExtraAI(BinaryWriter writer)

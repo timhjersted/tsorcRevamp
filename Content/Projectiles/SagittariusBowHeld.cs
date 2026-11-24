@@ -6,6 +6,8 @@ namespace tsorcRevamp.Content.Projectiles
 {
     class SagittariusBowHeld : ChargedBowHeld
     {
+        protected override bool HasFullDrawPerk => true;
+
         protected override void SetStats()
         {
             Player owner = Main.LocalPlayer;
@@ -35,7 +37,7 @@ namespace tsorcRevamp.Content.Projectiles
                 float velocity = LerpFloat(minVelocity, maxVelocity, charge);
                 int damage = (int)LerpFloat(minDamage, maxDamage, charge);
                 Vector2 inaccuracy = (aimVector * velocity).RotatedByRandom(MathHelper.ToRadians(18f - (15f * charge)));
-                Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), player.Center, inaccuracy, arrow, damage, Projectile.knockBack, Projectile.owner);
+                SpawnChargedArrow(player, arrow, inaccuracy, damage);
             }
 
         }

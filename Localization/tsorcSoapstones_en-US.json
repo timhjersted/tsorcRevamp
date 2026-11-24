@@ -561,7 +561,8 @@
   "tileX": 2445,
   "tileY": 1794,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "You pull the lever and hear the sound of stone crumbling above you and behind you.",

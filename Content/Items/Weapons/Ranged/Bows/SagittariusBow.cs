@@ -2,16 +2,19 @@
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Items.Materials.Titanite;
 
 namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
 {
     class SagittariusBow : ModItem
     {
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChargedBowHeld.FullDrawDamageBonusPercent, ChargedBowHeld.FullDrawBonusPierce);
 
         public override void SetStaticDefaults()
         {
@@ -27,12 +30,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
             Item.width = 14;
             Item.height = 28;
             Item.scale = 0.75f;
-            Item.useTime = 60;
-            Item.useAnimation = 60;
+            Item.useTime = 50;
+            Item.useAnimation = 50;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
-            Item.knockBack = 5f;
+            Item.knockBack = 8f;
             Item.value = PriceByRarity.Purple_11;
             Item.rare = ItemRarityID.Purple;
             Item.UseSound = SoundID.Item7;

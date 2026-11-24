@@ -17,13 +17,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
     /// <summary>
     /// Grond's Toll, the Witchking's phase-2 signature. The mace whirls overhead on its chain, speeding
     /// up across three turns while Blight smoke thickens on the head (0–50); at tick 30 the strike point locks — the
-    /// floor under the target, at most 12 tiles out — and a violet marker burns on it until the slam. Ticks 50–58 the
+    /// floor under the target, at most 36 tiles out — and a violet marker burns on it until the slam. Ticks 50–58 the
     /// head drops onto the mark (the only damaging window); on 58 two void shockwaves run along the floor both ways
     /// (jumpable) and a Blight mire is left on the spot. 58–128 the mace drags back to the hand (the punish window).
     /// Not rollable by design: the slam is a positional test. The Witchking's pose beats read SlamStartTick/ImpactTick.
     /// ai[0] = owner whoAmI (an IEnemyWhipOwner: the hand anchor), ai[1] = target player. Strike point = velocity
     /// (ShouldUpdatePosition is false), synced once by the server at the lock.
     /// Drawn with the player whip's sheet (intentional sharing): handle, 18px links, mace head.
+    /// Scale: Grond is three times the original toll in every dimension that reaches. Strike range 12 → 36 tiles, the
+    /// whirl 70 → 210px wide (flattened to half height so it doesn't plough the low cave ceiling), the head drawn 1.4 →
+    /// 4.2x with a 40 → 120px hitbox (the 30x50 head frame at 4.2x is 126px wide: the hitbox matches the drawn head),
+    /// chain links thickening 1x → 3x toward the head, and the marker and impact burst three times as wide. The floor
+    /// shockwaves and the mire are unchanged: they are separate hazards with their own counterplay (jumped, walked out).
     /// </summary>
     public class WitchkingGrondMace : ModProjectile
     {
@@ -33,12 +38,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
         public const int SlamStartTick = 50;
         public const int ImpactTick = 58;
         public const int TotalTicks = 128;
-        private const float OrbitRadius = 70f;
+        private const float ReachScale = 3f;
+        private const float OrbitRadius = 70f * ReachScale;
+        // The whirl is flattened: full radius sideways, half of it up and down (reads as a lasso seen side-on).
+        private const float OrbitVerticalSquash = 0.5f;
         private const float OrbitLift = 50f;
         private const float OrbitTurns = 3f;
-        private const float MaxStrikeDistance = 12f * 16f;
+        private const float MaxStrikeDistance = 12f * 16f * ReachScale;
         private const int FloorScanTiles = 30;
-        private const float HeadHitboxSize = 40f;
+        private const float HeadHitboxSize = 40f * ReachScale;
+        private const float HeadDrawScale = 1.4f * ReachScale;
+        private const float MarkerHalfWidth = 28f * ReachScale;
 
         private static readonly Rectangle HandleFrame = new Rectangle(0, 0, 30, 36);
         private static readonly Rectangle LinkFrame = new Rectangle(0, 48, 30, 18);
@@ -46,13 +56,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
 
         private int Age => (int)Projectile.localAI[0];
         private Vector2 StrikePoint => Projectile.velocity;
+        // Where the head's centre comes to rest: 40% of the head above the floor point, so the 120px head lands ON the
+        // floor (its hitbox reaching ~108px up, past a standing player's 42) instead of half buried in it.
+        private Vector2 HeadRestPoint => StrikePoint - new Vector2(0f, HeadHitboxSize * 0.4f);
 
         // The head's position at the end of the whirl, kept for the slam's start.
         private Vector2 _orbitEnd;
 
         public override void SetStaticDefaults()
         {
-            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 600;
+            // The chain can be 36 tiles long: keep drawing it while the head is far off screen.
+            ProjectileID.Sets.DrawScreenCheckFluff[Type] = 1400;
         }
 
         public override void SetDefaults()
@@ -96,19 +110,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
                 float progress = Age / (float)SlamStartTick;
                 float angle = owner.direction * OrbitTurns * MathHelper.TwoPi * MathF.Pow(progress, 1.5f) - MathHelper.PiOver2;
                 Vector2 orbitCenter = anchor - new Vector2(0f, OrbitLift);
-                head = orbitCenter + angle.ToRotationVector2() * OrbitRadius;
+                Vector2 orbitOffset = angle.ToRotationVector2() * OrbitRadius;
+                orbitOffset.Y *= OrbitVerticalSquash;
+                head = orbitCenter + orbitOffset;
                 _orbitEnd = head;
             }
             else if (Age < ImpactTick)
             {
                 // Accelerating drop onto the marked floor.
                 float slam = (Age - SlamStartTick) / (float)(ImpactTick - SlamStartTick);
-                head = Vector2.Lerp(_orbitEnd, StrikePoint, slam * slam);
+                head = Vector2.Lerp(_orbitEnd, HeadRestPoint, slam * slam);
             }
             else
             {
                 float drag = MathHelper.SmoothStep(0f, 1f, (Age - ImpactTick) / (float)(TotalTicks - ImpactTick));
-                head = Vector2.Lerp(StrikePoint, anchor, drag);
+                head = Vector2.Lerp(HeadRestPoint, anchor, drag);
             }
 
             Projectile.Center = head;
@@ -155,11 +171,35 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
             {
                 SoundEngine.PlaySound(SoundID.Item70 with { Volume = 1f, Pitch = -0.6f }, StrikePoint);
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.8f, Pitch = -0.4f }, StrikePoint);
-                for (int i = 0; i < 50; i++)
+
+                // Three layers across the 120px head's footprint. Body: black Blight smoke and violet shadow thrown up off
+                // the floor. Sparks: fast yellow Blight flecks. Atmosphere: slow tinted smoke that billows and outlives it.
+                for (int i = 0; i < 70; i++)
                 {
-                    int dustType = i % 5 == 0 ? DustID.YellowTorch : DustID.Wraith;
-                    Dust burst = Dust.NewDustPerfect(StrikePoint, dustType, new Vector2(Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-7f, -1f)), 60, default, 1.8f);
+                    int dustType = DustID.Wraith;
+                    if (i % 3 == 0)
+                    {
+                        dustType = DustID.Shadowflame;
+                    }
+                    Vector2 position = StrikePoint + new Vector2(Main.rand.NextFloat(-HeadHitboxSize / 2f, HeadHitboxSize / 2f), -4f);
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-9f, 9f), Main.rand.NextFloat(-9f, -1.5f));
+                    Dust burst = Dust.NewDustPerfect(position, dustType, velocity, 40, default, Main.rand.NextFloat(1.1f, 1.6f));
                     burst.noGravity = true;
+                }
+                for (int i = 0; i < 30; i++)
+                {
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-13f, 13f), Main.rand.NextFloat(-11f, -3f));
+                    Dust spark = Dust.NewDustPerfect(StrikePoint, DustID.YellowTorch, velocity, 0, default, Main.rand.NextFloat(0.6f, 0.95f));
+                    spark.noGravity = true;
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Vector2 position = StrikePoint + new Vector2(Main.rand.NextFloat(-HeadHitboxSize, HeadHitboxSize), -8f);
+                    Vector2 velocity = new Vector2(Main.rand.NextFloat(-2.4f, 2.4f), Main.rand.NextFloat(-2.2f, -0.4f));
+                    Dust smoke = Dust.NewDustPerfect(position, DustID.Smoke, velocity, 150, new Color(36, 24, 48), Main.rand.NextFloat(0.6f, 0.85f));
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.4f, 1.8f);
                 }
             }
 
@@ -188,25 +228,40 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
                 return;
             }
 
+            // Whirl: Blight smoke streaming off the 120px head, 3 -> 7 motes/t as it speeds up, plus a yellow fleck a tick.
             if (Age < SlamStartTick)
             {
-                int smokeCount = 1 + Age / 20;
+                int smokeCount = 3 + Age / 12;
                 for (int i = 0; i < smokeCount; i++)
                 {
-                    int dustType = Main.rand.NextBool(5) ? DustID.YellowTorch : DustID.Wraith;
-                    Dust smoke = Dust.NewDustPerfect(head + Main.rand.NextVector2Circular(10f, 10f), dustType, Vector2.Zero, 100, default, 1.3f);
+                    Vector2 position = head + Main.rand.NextVector2Circular(HeadHitboxSize * 0.35f, HeadHitboxSize * 0.35f);
+                    Dust smoke = Dust.NewDustPerfect(position, DustID.Wraith, Vector2.Zero, 60, default, Main.rand.NextFloat(1.1f, 1.5f));
                     smoke.noGravity = true;
                 }
+                Dust fleck = Dust.NewDustPerfect(head + Main.rand.NextVector2Circular(30f, 30f), DustID.YellowTorch,
+                    Main.rand.NextVector2Circular(1.5f, 1.5f), 0, default, Main.rand.NextFloat(0.6f, 0.9f));
+                fleck.noGravity = true;
             }
 
+            // Marker: a violet strip as wide as the head burning on the floor from the lock to the slam, 6 -> 10 motes/t
+            // as the slam nears, with bright edges so its full width reads.
             bool marking = Age >= AimLockTick && Age < ImpactTick;
             if (marking)
             {
-                for (int i = 0; i < 3; i++)
+                float markProgress = (Age - AimLockTick) / (float)(ImpactTick - AimLockTick);
+                int markCount = 6 + (int)(markProgress * 4f);
+                for (int i = 0; i < markCount; i++)
                 {
-                    Vector2 mark = StrikePoint + new Vector2(Main.rand.NextFloat(-28f, 28f), -2f);
-                    Dust marker = Dust.NewDustPerfect(mark, DustID.Shadowflame, new Vector2(0f, -1.2f), 40, default, 1.3f);
+                    Vector2 mark = StrikePoint + new Vector2(Main.rand.NextFloat(-MarkerHalfWidth, MarkerHalfWidth), -2f);
+                    Vector2 rise = new Vector2(0f, -Main.rand.NextFloat(0.8f, 2.2f));
+                    Dust marker = Dust.NewDustPerfect(mark, DustID.Shadowflame, rise, 30, default, Main.rand.NextFloat(1.0f, 1.4f));
                     marker.noGravity = true;
+                }
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    Vector2 edge = StrikePoint + new Vector2(side * MarkerHalfWidth, -2f);
+                    Dust edgeGlint = Dust.NewDustPerfect(edge, DustID.PurpleTorch, new Vector2(0f, -1.6f), 0, new Color(235, 210, 255), 0.8f);
+                    edgeGlint.noGravity = true;
                 }
                 Lighting.AddLight(StrikePoint, 0.4f, 0.1f, 0.55f);
             }
@@ -237,17 +292,23 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
             Main.EntitySpriteDraw(texture, anchor - Main.screenPosition, HandleFrame, handleColor, rotation,
                 new Vector2(HandleFrame.Width / 2f, 16f), 1f, SpriteEffects.None, 0);
 
-            for (float along = 18f; along < length - 12f; along += LinkFrame.Height)
+            // Links thicken from 1x at the hand to ReachScale x at the head; each link advances by its own drawn length so
+            // the chain stays closed. Stop where the scaled head's upper half begins.
+            float headHalfLength = HeadFrame.Height / 2f * HeadDrawScale;
+            float along = 18f;
+            while (along < length - headHalfLength)
             {
+                float linkScale = MathHelper.Lerp(1f, ReachScale, along / Math.Max(1f, length));
                 Vector2 linkPosition = anchor + direction * along;
                 Color linkColor = Lighting.GetColor(linkPosition.ToTileCoordinates());
                 Main.EntitySpriteDraw(texture, linkPosition - Main.screenPosition, LinkFrame, linkColor, rotation,
-                    new Vector2(LinkFrame.Width / 2f, 0f), 1f, SpriteEffects.None, 0);
+                    new Vector2(LinkFrame.Width / 2f, 0f), linkScale, SpriteEffects.None, 0);
+                along += LinkFrame.Height * linkScale;
             }
 
             Color headColor = Lighting.GetColor(head.ToTileCoordinates());
             Main.EntitySpriteDraw(texture, head - Main.screenPosition, HeadFrame, headColor, rotation,
-                new Vector2(HeadFrame.Width / 2f, HeadFrame.Height / 2f), 1.4f, SpriteEffects.None, 0);
+                new Vector2(HeadFrame.Width / 2f, HeadFrame.Height / 2f), HeadDrawScale, SpriteEffects.None, 0);
             return false;
         }
 

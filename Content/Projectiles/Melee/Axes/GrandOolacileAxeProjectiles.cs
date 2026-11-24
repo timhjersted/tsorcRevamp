@@ -1122,6 +1122,10 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Axes
                     if (!Main.dedServ)
                     {
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.7f, Pitch = -0.4f }, Projectile.Center);
+
+                        // Same impact sound as the greatsword combo slam (Greatsword.cs GreatswordSwing.SlamSound).
+                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time") with { Volume = 0.45f }, Projectile.Center);
+
                         for (int i = 0; i < 36; i++)
                         {
                             bool blood = i % 3 != 0;

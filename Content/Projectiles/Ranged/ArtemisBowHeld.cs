@@ -6,6 +6,8 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
 {
     class ArtemisBowHeld : ChargedBowHeld
     {
+        protected override bool HasFullDrawPerk => true;
+
         protected override void SetStats()
         {
             Player owner = Main.LocalPlayer;
@@ -30,8 +32,8 @@ namespace tsorcRevamp.Content.Projectiles.Ranged
                 return;
             float velocity = LerpFloat(minVelocity, maxVelocity, charge);
             Vector2 inaccuracy = (aimVector * velocity).RotatedByRandom(MathHelper.ToRadians(18f - (15f * charge)));
-            int damage = (int)LerpFloat(minDamage, maxDamage, charge) + Projectile.damage;
-            Projectile.NewProjectile(player.GetSource_ItemUse(player.inventory[player.selectedItem]), player.Center, inaccuracy, ammoType, damage, Projectile.knockBack, Projectile.owner);
+            int damage = (int)LerpFloat(minDamage, maxDamage, charge);
+            SpawnChargedArrow(player, ammoType, inaccuracy, damage);
         }
     }
 }

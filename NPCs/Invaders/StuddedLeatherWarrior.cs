@@ -82,8 +82,8 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override int MeleeWeaponItemType => ModContent.ItemType<DualBladedAxe>();
         protected override int RangedWeaponItemType => ModContent.ItemType<EnemyFireFlask>();
 
-        protected override int MeleeDamage => 20;
-        protected override int RangedDamage => 15;
+        protected override int MeleeDamage => 16;
+        protected override int RangedDamage => 11;
 
         protected override int EstusChargesMax => 3;
         protected override int HealAnimationTicks => 180;
@@ -612,7 +612,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override Color RangedTelegraphFlashColor => new Color(255, 120, 40);
 
         protected override int SecondaryRangedWeaponItemType => ModContent.ItemType<HeavyCrossbow>();
-        protected override int SecondaryRangedDamage => 18;
+        protected override int SecondaryRangedDamage => 14;
         protected override RangedStyle SecondaryRangedAnimStyle => RangedStyle.Crossbow;
         protected override float SecondaryRangedRange => 560f;
         protected override float SecondaryRangedMinRange => 180f;

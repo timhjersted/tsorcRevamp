@@ -27,9 +27,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Witchking
         public const int OpeningTelegraphTicks = 40;
         public const int BlightPerHit = 15;
 
-        private static readonly Rectangle HandleFrame = new Rectangle(0, 0, 30, 36);
-        private static readonly Rectangle LinkFrame = new Rectangle(0, 48, 30, 18);
-        private static readonly Rectangle HeadFrame = new Rectangle(0, 70, 30, 50);
+        internal static readonly Rectangle HandleFrame = new Rectangle(0, 0, 30, 36);
+        internal static readonly Rectangle LinkFrame = new Rectangle(0, 48, 30, 18);
+        internal static readonly Rectangle HeadFrame = new Rectangle(0, 70, 30, 50);
 
         protected override int SegmentCount => 19;
         protected override float MaximumReach => ReachPixels;

@@ -56,7 +56,11 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
         // Phase Rush: from beyond 220px, 10s apart; 45t dimmed drift to beside the player, the last 20t marked.
         private const float PhaseRushMinRange = 220f;
-        private const int PhaseRushTicks = 45;
+        // Max rush length. The emerge spot follows the player until the last PhaseRushMarkTicks, and arriving early
+        // skips straight to that mark tell, so a long rush only plays out against a fleeing player.
+        private const int PhaseRushTicks = 135;
+        // Within this many px of the emerge spot the rush counts as arrived.
+        private const float PhaseRushArrivalRadius = 32f;
         private const int PhaseRushMarkTicks = 20;
         private const int PhaseRushCooldownTicks = 10 * 60;
         private const float PhaseRushSpeed = 12f;
@@ -83,6 +87,8 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
         private int _phaseRushCooldown = PhaseRushCooldownTicks / 2;
         private bool _phaseRushing;
         private Vector2 _phaseRushTarget;
+        // Which side of the player (-1 or 1) the rush emerges on. Synced, so every machine re-aims the same way.
+        private float _phaseRushSide = 1f;
 
         /// <summary>0..1: ramps in over the arrival, out over the exit; Phase Rush dims it to 15%.</summary>
         private float VisibleFraction
@@ -460,6 +466,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             }
 
             float side = Main.rand.NextBool() ? 1f : -1f;
+            _phaseRushSide = side;
             _phaseRushTarget = target.Center + new Vector2(side * PhaseRushStandoff, -8f);
             _phaseRushCooldown = PhaseRushCooldownTicks;
             _phaseRushing = true;
@@ -477,6 +484,25 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             if (!_phaseRushing)
             {
                 return;
+            }
+
+            // Chase phase: re-aim beside the player every tick, on every machine (player positions are synced).
+            // The spot locks once the mark tell starts, so the rising-dust tell shows where it will really emerge.
+            bool chasing = ticksRemaining > PhaseRushMarkTicks;
+            if (chasing && NPC.HasValidTarget)
+            {
+                Player target = Main.player[NPC.target];
+                _phaseRushTarget = target.Center + new Vector2(_phaseRushSide * PhaseRushStandoff, -8f);
+
+                // Server: arrived early, so jump to the mark tell instead of hovering out the rest of the rush.
+                float distanceToSpot = NPC.Distance(_phaseRushTarget);
+                bool arrived = distanceToSpot < PhaseRushArrivalRadius;
+                if (arrived && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    PhaseTimer = PhaseRushMarkTicks;
+                    NPC.netUpdate = true;
+                    RequestNetworkSnapshot();
+                }
             }
 
             RunMovementAI(1f);
@@ -540,6 +566,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.SendExtraAI(writer);
             writer.Write(_phaseRushing);
             writer.WriteVector2(_phaseRushTarget);
+            writer.Write((sbyte)_phaseRushSide);
             writer.Write((sbyte)_hoverSide);
         }
 
@@ -548,6 +575,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
             base.ReceiveExtraAI(reader);
             _phaseRushing = reader.ReadBoolean();
             _phaseRushTarget = reader.ReadVector2();
+            _phaseRushSide = reader.ReadSByte();
             _hoverSide = reader.ReadSByte();
         }
     }
