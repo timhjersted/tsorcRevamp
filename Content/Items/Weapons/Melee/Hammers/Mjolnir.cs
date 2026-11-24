@@ -19,9 +19,9 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Hammers
             Item.width = 58;
             Item.height = 59;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 33;
+            Item.useAnimation = 42;
             Item.useTime = 10;
-            Item.damage = 50;
+            Item.damage = 42;
             Item.knockBack = 15;
             Item.autoReuse = true;
             Item.useTurn = false;

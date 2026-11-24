@@ -375,12 +375,18 @@ namespace tsorcRevamp
         public bool UsesWeaponStamina => (BearerOfTheCurse || Unkindled)
             && !(NPCs.FriendlyPuppets.MirrorPuppetSwap.Active
                 && NPCs.FriendlyPuppets.MirrorPuppetSwap.Current?.UsesFixedCombatResources == true);
+
+        public const float ExpBotCCost = 1.25f;
+        public const float NormalBotCCost = 1f;
+        public const float ExpUnkindCost = 1f;
+        public const float NormalUnkindCost = 0.85f;
+        
         public float WeaponStaminaMult(Item item)
         {
             bool experimentalStaminaValues = ModContent.GetInstance<tsorcRevampConfig>().NewSoulsModeStaminaSystem;
             float classStaminaMult = BearerOfTheCurse
-                ? (experimentalStaminaValues ? 1.5f : 1.15f)
-                : (Unkindled ? (experimentalStaminaValues ? 1f : 0.85f) : 0f);
+                ? (experimentalStaminaValues ? ExpBotCCost : NormalBotCCost)
+                : (Unkindled ? (experimentalStaminaValues ? ExpUnkindCost : NormalUnkindCost) : 0f);
             float weaponStaminaMult = 1f;
             if (FlailItems.Contains(item.type))
             {

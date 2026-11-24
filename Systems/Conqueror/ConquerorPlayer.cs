@@ -51,6 +51,10 @@ public class ConquerorPlayer : ModPlayer
             }
         }
     }
+    public override void UpdateDead()
+    {
+        Stacks = 0;
+    }
 
     public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
     {

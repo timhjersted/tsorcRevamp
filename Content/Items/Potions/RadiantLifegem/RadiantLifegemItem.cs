@@ -156,13 +156,21 @@ namespace tsorcRevamp.Content.Items.Potions.RadiantLifegem
         }
         public override void AddRecipes()
         {
-            Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ItemID.GreaterHealingPotion, 33);
-            recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>());
-            recipe.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
-            recipe.AddTile(TileID.Bottles);
+            Recipe recipe0 = CreateRecipe();
+            recipe0.AddIngredient(ItemID.RestorationPotion, 15);
+            recipe0.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe0.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
+            recipe0.AddTile(TileID.Bottles);
 
-            recipe.Register();
+            recipe0.Register();
+            
+            Recipe recipe1 = CreateRecipe();
+            recipe1.AddIngredient(ItemID.GreaterHealingPotion, 33);
+            recipe1.AddIngredient(ModContent.ItemType<DarkSoulItem>());
+            recipe1.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
+            recipe1.AddTile(TileID.Bottles);
+
+            recipe1.Register();
 
             Recipe recipe2 = CreateRecipe();
             recipe2.AddIngredient(ItemID.SuperHealingPotion, 24);
@@ -173,20 +181,12 @@ namespace tsorcRevamp.Content.Items.Potions.RadiantLifegem
             recipe2.Register();
 
             Recipe recipe3 = CreateRecipe();
-            recipe3.AddIngredient(ItemID.RestorationPotion, 40);
+            recipe3.AddIngredient(ItemID.LifeCrystal, 3);
             recipe3.AddIngredient(ModContent.ItemType<DarkSoulItem>());
             recipe3.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
             recipe3.AddTile(TileID.Bottles);
 
             recipe3.Register();
-
-            Recipe recipe4 = CreateRecipe();
-            recipe4.AddIngredient(ItemID.LifeCrystal, 3);
-            recipe4.AddIngredient(ModContent.ItemType<DarkSoulItem>());
-            recipe4.AddCondition(tsorcRevampWorld.BearerOfTheCurseEnabled);
-            recipe4.AddTile(TileID.Bottles);
-
-            recipe4.Register();
         }
     }
 }

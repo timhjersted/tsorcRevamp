@@ -115,7 +115,7 @@ Mods: {
 				/* Hasty:
 					'''
 					[c/6cac6c:+{0}% movement speed]
-					[c/9b6263:-{1} crit chance]
+					[c/9b6263:-{1}% crit chance]
 					''' */
 				// Quick: "[c/6cac6c:+{0}% movement speed]"
 				/* Wild:
@@ -12628,7 +12628,8 @@ Mods: {
 			// KhaiosFrozenTearBolt.DisplayName: Frozen Tear III
 			// KhaiosGrandCometZone.DisplayName: Grand Comet Shockwave
 			// KhaiosGrandCometMeteor.DisplayName: Grand Comet
-			// KhaiosGrandCometShard.DisplayName: Cosmic Stardust Shard
+			// DarkExplosionX.DisplayName: Dark Cosmic Explosion
+			// AzureBlaze.DisplayName: Azure Blaze
 			// KhaiosThunderArrow.DisplayName: Forgotten Thunder Arrow
 			// KhaiosThunderLance.DisplayName: Forgotten Thunder Lance
 			// KhaiosOrbitStar.DisplayName: Celestial Orbit Star
@@ -12859,6 +12860,7 @@ Mods: {
 			// ElementalFireball.DisplayName: Elemental Fireball
 			// LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 			// NitoSlamCloud.DisplayName: Nito Slam Cloud
+			// WitchkingMaceFlail.DisplayName: Witchking Mace Flail
 		}
 
 		NPCs: {

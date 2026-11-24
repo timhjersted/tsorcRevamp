@@ -207,6 +207,7 @@ namespace tsorcRevamp
         {
             ItemID.Mace,
             ItemID.FlamingMace,
+            ModContent.ItemType<DiamondCrusher>(),
             ItemID.BallOHurt,
             ItemID.TheMeatball,
             ItemID.BlueMoon,

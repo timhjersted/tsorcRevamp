@@ -115,7 +115,7 @@ Mods: {
 				Hasty:
 					'''
 					[c/6cac6c:+{0}% movement speed]
-					[c/9b6263:-{1} crit chance]
+					[c/9b6263:-{1}% crit chance]
 					'''
 				Quick: "[c/6cac6c:+{0}% movement speed]"
 				Wild:
@@ -12817,6 +12817,7 @@ Mods: {
 			ElementalFireball.DisplayName: Elemental Fireball
 			LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 			NitoSlamCloud.DisplayName: Nito Slam Cloud
+			WitchkingMaceFlail.DisplayName: Witchking Mace Flail
 		}
 
 		NPCs: {

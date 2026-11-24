@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -128,6 +129,7 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
     {
         ProjectileID.Mace,
         ProjectileID.FlamingMace,
+        ModContent.ProjectileType<DiamondCrusherBall>(),
         ProjectileID.BallOHurt,
         ProjectileID.TheMeatball,
         ProjectileID.BlueMoon,
@@ -208,11 +210,11 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
             && modPlayer.LethalTempo && player.HasBuff(ModContent.BuffType<LethalTempo>()) 
             && !bannedCondition && modPlayer.Stacks == LethalTempoPlayer.MaxStacks)
         {
-            int dmg = (int)(hit.SourceDamage * LethalTempoPlayer.BoltDmgMult / 100f);
+            int dmg = Math.Max((int)(hit.SourceDamage * LethalTempoPlayer.BoltDmgMult / 100f), 1);
             Vector2 randPosition = new Vector2(Main.rand.Next(-50, 51), Main.rand.Next(-50, 51));
             Projectile.NewProjectile(projectile.GetSource_FromThis(), player.Center + randPosition,
                 Vector2.Zero, ModContent.ProjectileType<LethalTempoBolt>(),
-                dmg, 0, Main.myPlayer, target.whoAmI);
+                dmg, 0, Main.myPlayer, target.whoAmI, 0);
         }
     }
 }

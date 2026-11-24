@@ -10,6 +10,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Ranged;
+using tsorcRevamp.Systems.LethalTempo;
 
 namespace tsorcRevamp.NPCs
 {
@@ -24,6 +25,7 @@ namespace tsorcRevamp.NPCs
             NPCID.Sets.ImmuneToRegularBuffs[NPCID.EaterofWorldsBody] = true; //this only applies to the first head and tail segments, after killing them the new head/tail are still immune to debuffs, probably not worth fixing
         }
 
+        public const float JungleWyvernSwordReduction = 0.2f;
         public override void ModifyHitByItem(NPC npc, Player player, Item item, ref NPC.HitModifiers modifiers)
         {
             if (tsorcRevamp.GhostDragonSegments.Contains(npc.type) || tsorcRevamp.HellkiteDragonSegments.Contains(npc.type) || tsorcRevamp.SeathSegments.Contains(npc.type)) //destroyer sword/item dmg reduction (flat, can't alter item dmg because it's a permanent stat)
@@ -36,7 +38,7 @@ namespace tsorcRevamp.NPCs
             }
             if (tsorcRevamp.JungleWyvernSegments.Contains(npc.type)) 
             {
-                modifiers.FinalDamage *= 0.75f;
+                modifiers.FinalDamage *= JungleWyvernSwordReduction; //swords annihilate it wth
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))
             {
@@ -66,6 +68,11 @@ namespace tsorcRevamp.NPCs
                 if (projectile.IsMinionOrSentryRelated)
                 {
                     modifiers.FinalDamage *= 0.9f;
+                }
+
+                if (projectile.type == ModContent.ProjectileType<LethalTempoBolt>() && projectile.ai[1] == 1) //aislot1 == 1 means spawned from item swing
+                {
+                    modifiers.FinalDamage *= JungleWyvernSwordReduction;
                 }
             }
             if (tsorcRevamp.EaterOfWorldsSegments.Contains(npc.type))

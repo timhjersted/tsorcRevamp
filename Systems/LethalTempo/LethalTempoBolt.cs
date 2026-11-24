@@ -49,9 +49,14 @@ namespace tsorcRevamp.Systems.LethalTempo;
             float speedMult = 1.5f;
             
             DmgCounter++;
+            if (DmgCounter > MaxTicks)
+            {
+                DmgCounter += 2;
+                Projectile.extraUpdates = 2;
+            }
             float maxBonusSpeedMult = 2f; //can deal up to 33% bonus dmg based on lifetime
             float bonusSpeedMult = (maxBonusSpeedMult / MaxTicks) * DmgCounter;
-            speedMult *= MathF.Min(bonusSpeedMult, maxBonusSpeedMult);;
+            speedMult *= bonusSpeedMult;
 
             NPC target = Main.npc[(int)Projectile.ai[0]];
 
@@ -63,6 +68,10 @@ namespace tsorcRevamp.Systems.LethalTempo;
             }
 
             Projectile.rotation = Projectile.velocity.ToRotation();
+            if (!target.active)
+            {
+                Projectile.Kill();
+            }
         }
         public override float CollisionWidthFunction(float progress)
         {

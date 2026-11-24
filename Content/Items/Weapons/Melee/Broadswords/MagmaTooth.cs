@@ -23,11 +23,11 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
             Item.width = 58;
             Item.height = 58;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 33;
-            Item.useTime = 33;
+            Item.useAnimation = 39;
+            Item.useTime = 39;
             Item.scale = 1.25f;
-            Item.damage = 44;
-            Item.crit = 4;
+            Item.damage = 41;
+            Item.crit = 1;
             Item.knockBack = 7.5f;
             Item.UseSound = SoundID.Item1;
             Item.rare = ItemRarityID.Orange;

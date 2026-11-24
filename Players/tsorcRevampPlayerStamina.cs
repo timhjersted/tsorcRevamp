@@ -479,8 +479,8 @@ namespace tsorcRevamp
             // Check both representations so a hit on the exact overdraw frame cannot slip through the seam.
             if (info.Damage > 0 && (staminaResourceCurrent < 0f || staminaDebt > 0f))
             {
-                Buffs.Debuffs.Stagger.Apply(Player);
-                PauseStaminaRegen(Buffs.Debuffs.Stagger.DebtHitRegenDelayTicks);
+                //Buffs.Debuffs.Stagger.Apply(Player);
+                //PauseStaminaRegen(Buffs.Debuffs.Stagger.DebtHitRegenDelayTicks);
 
                 /*
                 // Ensure the player is visibly and physically bumped on the initial debt hit, even if the attack had 0 knockback
@@ -570,7 +570,7 @@ namespace tsorcRevamp
         /// identity ever feels muted.
         /// </summary>
         internal const int StaminaRegenDelayTicks = 45;
-        internal const int StaminaRegenDelayTicksBotC = 60;
+        internal const int StaminaRegenDelayTicksBotC = 50;
 
         /// <summary>
         /// Regen pause applied when a hit is absorbed by a raised shield — ~1.33x the ordinary spend delay for both
@@ -776,7 +776,7 @@ namespace tsorcRevamp
         const float FlailActiveHitDrainPerFrame = 0.5f;
         internal const int FlailActiveHitWindowTicks = 30;
         internal int flailActiveHitTimer = 0;
-        const float YoyoDrainPerFrame = 0.25f;
+        const float YoyoDrainPerFrame = 0.4f;
         const float ChargedWhipDrainPerFrame = 0.2f;
 
         // Lets do all our logic for the custom resource here, such as limiting it, increasing it and so on.

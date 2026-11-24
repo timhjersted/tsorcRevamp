@@ -53,8 +53,17 @@ public class LethalTempoPlayer : ModPlayer
                                                                 (Stacks * BonusAttackSpeedPerStack);
                 }
             }
+            if (Player.dead)
+            {
+                Stacks = 0;
+            }
 
         }
+    }
+
+    public override void UpdateDead()
+    {
+        Stacks = 0;
     }
 
     public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone)
@@ -91,11 +100,11 @@ public class LethalTempoPlayer : ModPlayer
 
         if (LethalTempo && Player.HasBuff(ModContent.BuffType<LethalTempo>()) && Stacks == MaxStacks)
         {
-            int dmg = (int)(hit.SourceDamage * BoltDmgMult / 100f);
+            int dmg = Math.Max((int)(hit.SourceDamage * BoltDmgMult / 100f), 1);
             Vector2 randPosition = new Vector2(Main.rand.Next(-50, 51), Main.rand.Next(-50, 51));
             Projectile.NewProjectile(Player.GetSource_OnHit(target), Player.Center + randPosition,
                 Vector2.Zero, ModContent.ProjectileType<LethalTempoBolt>(),
-                dmg, 0, Main.myPlayer, target.whoAmI);
+                dmg, 0, Main.myPlayer, target.whoAmI, 1);
         }
     }
 }
