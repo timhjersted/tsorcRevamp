@@ -5821,19 +5821,19 @@ Mods: {
 			}
 
 			PermanentPoisonImbuement: {
-				DisplayName: Permanent Poison Imbuement
+				DisplayName: Permanent Flask of Poison
 				Tooltip: ""
 				BuffName: Weapon Imbue: Poison
 			}
 
 			PermanentVenomImbuement: {
-				DisplayName: Permanent Venom Imbuement
+				DisplayName: Permanent Flask of Venom
 				Tooltip: ""
 				BuffName: Weapon Imbue: Acid Venom
 			}
 
 			PermanentAbyssImbuement: {
-				DisplayName: Permanent Abyssal Imbuement
+				DisplayName: Permanent Flask of the Abyss
 				Tooltip: ""
 				BuffName: Weapon Imbue: Abyss
 			}
