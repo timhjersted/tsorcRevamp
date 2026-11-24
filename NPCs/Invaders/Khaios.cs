@@ -1115,15 +1115,6 @@ namespace tsorcRevamp.NPCs.Invaders
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
-
-            // Brief icy first-segment sightline so the player reads the ricochet bank surface cleanly.
-            if (sightlineTicksRemaining > 0)
-            {
-                float alpha = MathHelper.Clamp(sightlineTicksRemaining / (float)FrozenTearSightlineTicks, 0f, 1f);
-                Color lineStartColor = new Color(110, 235, 255) * (0.72f * alpha);
-                Color lineEndColor = new Color(35, 110, 255) * (0.18f * alpha);
-                Utils.DrawLine(spriteBatch, sightlineStart, sightlineEnd, lineStartColor, lineEndColor, 2.2f);
-            }
         }
 
         private void SpawnEmeraldSwordCrescent(MeleeComboStep step, int duration, float bladeReach)

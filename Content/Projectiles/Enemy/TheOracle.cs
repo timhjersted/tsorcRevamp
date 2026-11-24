@@ -12,7 +12,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         {
             Projectile.friendly = false;
             Projectile.hostile = true;
-            Projectile.tileCollide = false;
+            // Stops at walls (bursts via the Grenade kill in PreKill); it used to fly through terrain at the player.
+            Projectile.tileCollide = true;
             Projectile.height = 16;
             Projectile.width = 16;
             Projectile.timeLeft = 250;

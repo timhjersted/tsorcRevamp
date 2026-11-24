@@ -944,17 +944,6 @@ namespace tsorcRevamp.NPCs.Invaders
             Color bodyColor = Color.Lerp(drawColor, Color.White, 0.35f) * alphaScale;
             frontBody.Draw(bodyColor);
 
-            // Brief cosmic sightline during BreathTell so the player reads the exact opening cone angle.
-            if (state == DragonState.BreathTell && stateTimer >= 12)
-            {
-                float tellProgress = MathHelper.Clamp((stateTimer - 12f) / (BreathTellTicks - 12f), 0f, 1f);
-                Vector2 lineStart = mouth.finalPosition != Vector2.Zero ? mouth.finalPosition : NPC.Center;
-                Vector2 lineEnd = lineStart + breathAngle.ToRotationVector2() * BreathRangePixels;
-                Color lineColor = Color.Lerp(new Color(140, 70, 220), new Color(255, 200, 70), tellProgress)
-                    * (0.35f + 0.45f * tellProgress);
-                Utils.DrawLine(spriteBatch, lineStart, lineEnd, lineColor, Color.Transparent, 2.5f);
-            }
-
             if (breathOpacity > 0.02f)
             {
                 DrawPixelatedCosmicBreath();

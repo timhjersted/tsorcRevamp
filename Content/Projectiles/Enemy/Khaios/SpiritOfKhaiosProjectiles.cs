@@ -578,12 +578,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
             }
 
             float spawnScale = MathHelper.Clamp(ageTicks / (float)SpawnFadeTicks, 0f, 1f);
-            if (!launched && launchLocked)
-            {
-                Vector2 aimEnd = Projectile.Center + lockedLaunchDir * 280f;
-                Utils.DrawLine(Main.spriteBatch, Projectile.Center, aimEnd, new Color(255, 225, 110) * 0.65f, Color.Transparent, 2.2f);
-            }
-
             Texture2D starTex = TextureAssets.Projectile[Projectile.type].Value;
             Vector2 origin = starTex.Size() * 0.5f;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
@@ -746,6 +740,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
                         SoundEngine.PlaySound(
                             new SoundStyle("tsorcRevamp/Sounds/DST/DarkSwordSummon1") with { Volume = 0.34f, Pitch = 0.32f },
                             Projectile.Center);
+
+                        // Bright white-gold glint burst on the blade itself when its aim locks before launch.
+                        for (int i = 0; i < 10; i++)
+                        {
+                            Dust lockGlint = Dust.NewDustPerfect(
+                                Projectile.Center + Main.rand.NextVector2Circular(10f, 10f),
+                                i % 2 == 0 ? DustID.WhiteTorch : DustID.GoldFlame,
+                                Main.rand.NextVector2Circular(3.2f, 3.2f),
+                                0,
+                                Color.White,
+                                Main.rand.NextFloat(1.05f, 1.55f));
+                            lockGlint.noGravity = true;
+                        }
                     }
                 }
 
@@ -837,15 +844,11 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
         {
             float birthScale = MathHelper.Clamp(ageTicks / (float)BirthTicks, 0f, 1f);
             int launchTick = Math.Max(BirthTicks + GlintLeadTicks, (int)Math.Round(Projectile.ai[2]));
-
-            if (!launched && ageTicks >= launchTick - GlintLeadTicks)
-            {
-                Vector2 aimEnd = Projectile.Center + lockedAimDir * 240f;
-                Utils.DrawLine(Main.spriteBatch, Projectile.Center, aimEnd, new Color(130, 235, 255) * 0.65f, Color.Transparent, 1.8f);
-            }
+            bool inGlint = !launched && ageTicks >= launchTick - GlintLeadTicks;
 
             Texture2D bladeTex = TextureAssets.Projectile[Projectile.type].Value;
-            Color tint = Color.Lerp(Color.White, new Color(255, 230, 130), 0.28f) * birthScale;
+            Color tint = Color.Lerp(Color.White, new Color(255, 230, 130), inGlint ? 0.55f : 0.28f) * birthScale;
+            float drawScale = birthScale * (inGlint ? 1.26f : 1.15f);
 
             Main.EntitySpriteDraw(
                 bladeTex,
@@ -854,7 +857,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
                 tint,
                 Projectile.rotation,
                 bladeTex.Size() * 0.5f,
-                birthScale * 1.15f,
+                drawScale,
                 SpriteEffects.None,
                 0);
             return false;
@@ -933,17 +936,33 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
                 }
             }
 
-            if (!Main.dedServ && elapsedTicks % 3 == 0)
+            if (!Main.dedServ)
             {
-                // dust-lint: ok (stationary spirit echo ambient motes)
-                Dust mote = Dust.NewDustPerfect(
-                    Projectile.Center + Main.rand.NextVector2Circular(16f, 22f),
-                    Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Ghost,
-                    new Vector2(0f, Main.rand.NextFloat(-1.4f, -0.3f)),
-                    70,
-                    new Color(255, 232, 130),
-                    Main.rand.NextFloat(0.85f, 1.35f));
-                mote.noGravity = true;
+                if (elapsedTicks >= 16 && elapsedTicks < FireTick)
+                {
+                    // Converging golden-cyan bow sparks replace any straight sightline before the echo fires.
+                    Vector2 sparkOffset = Main.rand.NextVector2CircularEdge(28f, 28f);
+                    Dust aimSpark = Dust.NewDustPerfect(
+                        Projectile.Center + lockedAimDir * 14f + sparkOffset,
+                        elapsedTicks % 2 == 0 ? DustID.GoldFlame : DustID.Electric,
+                        -sparkOffset * 0.14f,
+                        20,
+                        new Color(255, 232, 120),
+                        Main.rand.NextFloat(0.95f, 1.45f));
+                    aimSpark.noGravity = true;
+                }
+                else if (elapsedTicks % 3 == 0)
+                {
+                    // dust-lint: ok (stationary spirit echo ambient motes)
+                    Dust mote = Dust.NewDustPerfect(
+                        Projectile.Center + Main.rand.NextVector2Circular(16f, 22f),
+                        Main.rand.NextBool(3) ? DustID.GoldFlame : DustID.Ghost,
+                        new Vector2(0f, Main.rand.NextFloat(-1.4f, -0.3f)),
+                        70,
+                        new Color(255, 232, 130),
+                        Main.rand.NextFloat(0.85f, 1.35f));
+                    mote.noGravity = true;
+                }
             }
         }
 
@@ -952,13 +971,6 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
             float fadeIn = MathHelper.Clamp(elapsedTicks / 12f, 0f, 1f);
             float fadeOut = MathHelper.Clamp((TotalLifetimeTicks - elapsedTicks) / 14f, 0f, 1f);
             float alpha = fadeIn * fadeOut * 0.72f;
-
-            if (elapsedTicks >= 12 && elapsedTicks < FireTick)
-            {
-                float lineAlpha = MathHelper.Clamp((elapsedTicks - 12f) / (FireTick - 12f), 0f, 1f) * 0.7f;
-                Vector2 aimEnd = Projectile.Center + lockedAimDir * 360f;
-                Utils.DrawLine(Main.spriteBatch, Projectile.Center, aimEnd, new Color(255, 232, 120) * lineAlpha, Color.Transparent, 2.0f);
-            }
 
             Texture2D spiritTex = TextureAssets.Projectile[Projectile.type].Value;
             SpriteEffects flip = lockedAimDir.X < 0f ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
@@ -975,6 +987,605 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Khaios
                 flip,
                 0);
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Spirit of Khaios's Paladin's Shield Consecrated Light beam (uses EnemyConsecratedLight.png).
+    /// 60t growing golden 1x3-tile charge at the shield (no straight telegraph line) that locks aim
+    /// 20t before firing, then fires for 120t (2 seconds) while slowly sweeping toward the player.
+    /// Stops at 100 tiles (1600px), the first solid tile, or a living player, erupting with heavy
+    /// golden-white dusts at origin, along the shaft, and continuously on impact.
+    /// ai[0] = owner SpiritOfKhaios whoAmI.
+    /// </summary>
+    public class KhaiosShieldLightBeam : ModProjectile
+    {
+        public const int ChargeTicks = 60;
+        public const int LockLeadTicks = 20;
+        public const int FiringTicks = 120;
+        public const int FadeOutTicks = 10;
+        public const int TotalDurationTicks = ChargeTicks + FiringTicks + FadeOutTicks;
+
+        private const float MaxRangePixels = 100f * 16f;
+        private const float SweepTurnRateRadPerTick = 0.0145f;
+        private const float ChargeAimTurnRateRadPerTick = 0.14f;
+        private const float RayStepPixels = 8f;
+        private const float BeamHitWidthPixels = 22f;
+
+        private static readonly Rectangle HeadRect = new Rectangle(0, 0, 30, 24);
+        private static readonly Rectangle BodyRect = new Rectangle(0, 26, 30, 30);
+        private static readonly Rectangle TailRect = new Rectangle(0, 58, 30, 24);
+
+        private int elapsedTicks;
+        private float beamAngle;
+        private bool aimInitialized;
+        private float currentLength = 64f;
+        private bool hitSomething;
+
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyConsecratedLight));
+
+        public override void SetStaticDefaults()
+        {
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 2400;
+        }
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 24;
+            Projectile.height = 24;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = TotalDurationTicks + 8;
+        }
+
+        public override bool? CanDamage()
+        {
+            return elapsedTicks >= ChargeTicks && elapsedTicks < ChargeTicks + FiringTicks;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(elapsedTicks);
+            writer.Write(beamAngle);
+            writer.Write(aimInitialized);
+            writer.Write(currentLength);
+            writer.Write(hitSomething);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            elapsedTicks = reader.ReadInt32();
+            beamAngle = reader.ReadSingle();
+            aimInitialized = reader.ReadBoolean();
+            currentLength = reader.ReadSingle();
+            hitSomething = reader.ReadBoolean();
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (CanDamage() != true)
+            {
+                return false;
+            }
+
+            Vector2 origin = Projectile.Center;
+            Vector2 beamDir = beamAngle.ToRotationVector2();
+            // Extend collision segment slightly past the visual truncation so stopping on the player still registers hits.
+            Vector2 end = origin + beamDir * (currentLength + 14f);
+            float collisionPoint = 0f;
+            return Collision.CheckAABBvLineCollision(
+                targetHitbox.TopLeft(),
+                targetHitbox.Size(),
+                origin,
+                end,
+                BeamHitWidthPixels,
+                ref collisionPoint);
+        }
+
+        public override void AI()
+        {
+            int ownerIndex = (int)Projectile.ai[0];
+            bool ownerAlive = ownerIndex >= 0
+                && ownerIndex < Main.maxNPCs
+                && Main.npc[ownerIndex].active
+                && Main.npc[ownerIndex].type == ModContent.NPCType<SpiritOfKhaios>();
+
+            if (!ownerAlive)
+            {
+                Projectile.Kill();
+                return;
+            }
+
+            NPC owner = Main.npc[ownerIndex];
+            Player target = GetValidTarget(owner);
+
+            // Anchor directly at Spirit of Khaios's raised Paladin's Shield front.
+            int facingSide = owner.direction >= 0 ? 1 : -1;
+            Vector2 shieldOrigin = owner.Center + new Vector2(facingSide * 22f, -2f);
+            Projectile.Center = shieldOrigin;
+            Projectile.velocity = Vector2.Zero;
+
+            if (!aimInitialized)
+            {
+                aimInitialized = true;
+                if (target != null)
+                {
+                    beamAngle = (target.Center - shieldOrigin).SafeNormalize(new Vector2(facingSide, 0f)).ToRotation();
+                }
+                else
+                {
+                    beamAngle = facingSide > 0 ? 0f : MathF.PI;
+                }
+            }
+
+            elapsedTicks++;
+
+            // Phase 1: 60-tick growing golden 1x3-tile charge at shield point; locks aim 20t before firing.
+            if (elapsedTicks < ChargeTicks)
+            {
+                bool beforeLockWindow = elapsedTicks < ChargeTicks - LockLeadTicks;
+                if (beforeLockWindow && target != null && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    float desiredAngle = (target.Center - shieldOrigin).SafeNormalize(new Vector2(facingSide, 0f)).ToRotation();
+                    float step = MathHelper.Clamp(MathHelper.WrapAngle(desiredAngle - beamAngle), -ChargeAimTurnRateRadPerTick, ChargeAimTurnRateRadPerTick);
+                    beamAngle = MathHelper.WrapAngle(beamAngle + step);
+                    owner.direction = MathF.Cos(beamAngle) >= 0f ? 1 : -1;
+                }
+
+                if (elapsedTicks == ChargeTicks - LockLeadTicks)
+                {
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.netUpdate = true;
+                    }
+
+                    if (!Main.dedServ)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.36f, Pitch = 0.08f }, shieldOrigin);
+                        for (int i = 0; i < 16; i++)
+                        {
+                            Vector2 burstPos = shieldOrigin + new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-24f, 24f));
+                            Dust lockFlash = Dust.NewDustPerfect(
+                                burstPos,
+                                i % 2 == 0 ? DustID.WhiteTorch : DustID.GoldFlame,
+                                Main.rand.NextVector2Circular(4.2f, 4.2f),
+                                0,
+                                Color.White,
+                                Main.rand.NextFloat(1.1f, 1.75f));
+                            lockFlash.noGravity = true;
+                        }
+                    }
+                }
+
+                EmitShieldChargeDust(shieldOrigin, elapsedTicks / (float)ChargeTicks);
+                return;
+            }
+
+            // Ignition moment on tick 60.
+            if (elapsedTicks == ChargeTicks)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.netUpdate = true;
+                }
+
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.58f, Pitch = 0.22f }, shieldOrigin);
+                    SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.32f, Pitch = 0.12f }, shieldOrigin);
+                    UsefulFunctions.ScreenShake(shieldOrigin, 4.5f, 14, distanceFalloff: 850f);
+                }
+            }
+
+            // Phase 2: 2-second active beam slowly rotating toward the player.
+            bool isFiring = elapsedTicks < ChargeTicks + FiringTicks;
+            if (isFiring && target != null && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                float desiredAngle = (target.Center - shieldOrigin).SafeNormalize(Vector2.UnitX).ToRotation();
+                float turnStep = MathHelper.Clamp(MathHelper.WrapAngle(desiredAngle - beamAngle), -SweepTurnRateRadPerTick, SweepTurnRateRadPerTick);
+                beamAngle = MathHelper.WrapAngle(beamAngle + turnStep);
+                owner.direction = MathF.Cos(beamAngle) >= 0f ? 1 : -1;
+
+                if (elapsedTicks % 8 == 0)
+                {
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            // Keep shieldOrigin aligned if owner.direction flipped during the sweep.
+            int liveFacing = owner.direction >= 0 ? 1 : -1;
+            shieldOrigin = owner.Center + new Vector2(liveFacing * 22f, -2f);
+            Projectile.Center = shieldOrigin;
+
+            Vector2 beamDir = beamAngle.ToRotationVector2();
+            SolveBeamTermination(shieldOrigin, beamDir, out currentLength, out hitSomething);
+
+            if (!Main.dedServ && isFiring)
+            {
+                EmitActiveBeamDust(shieldOrigin, beamDir, currentLength, hitSomething);
+            }
+
+            if (elapsedTicks >= TotalDurationTicks)
+            {
+                Projectile.Kill();
+            }
+        }
+
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(BuffID.OnFire3, 180);
+        }
+
+        private static Player GetValidTarget(NPC owner)
+        {
+            if (owner.target >= 0 && owner.target < Main.maxPlayers)
+            {
+                Player target = Main.player[owner.target];
+                if (target.active && !target.dead)
+                {
+                    return target;
+                }
+            }
+
+            return null;
+        }
+
+        private static void SolveBeamTermination(Vector2 origin, Vector2 beamDir, out float beamLength, out bool stoppedOnTarget)
+        {
+            float solidStopDist = MaxRangePixels;
+            bool hitTile = false;
+
+            for (float dist = RayStepPixels; dist <= MaxRangePixels; dist += RayStepPixels)
+            {
+                Vector2 sample = origin + beamDir * dist;
+                int tileX = (int)(sample.X / 16f);
+                int tileY = (int)(sample.Y / 16f);
+
+                if (tileX < 2 || tileX >= Main.maxTilesX - 2 || tileY < 2 || tileY >= Main.maxTilesY - 2)
+                {
+                    solidStopDist = dist;
+                    hitTile = true;
+                    break;
+                }
+
+                Tile tile = Framing.GetTileSafely(tileX, tileY);
+                if (tile.HasUnactuatedTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType])
+                {
+                    solidStopDist = dist;
+                    hitTile = true;
+                    break;
+                }
+            }
+
+            // Also stop the beam right at the nearest living player it intersects.
+            float bestDist = solidStopDist;
+            bool hitPlayer = false;
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                if (!player.active || player.dead)
+                {
+                    continue;
+                }
+
+                Rectangle hitBox = player.Hitbox;
+                hitBox.Inflate(8, 8);
+                float hitDist = RayIntersectRectangle(origin, beamDir, bestDist, hitBox);
+                if (hitDist >= 0f && hitDist < bestDist)
+                {
+                    bestDist = hitDist;
+                    hitPlayer = true;
+                }
+            }
+
+            beamLength = Math.Max(20f, bestDist);
+            stoppedOnTarget = hitTile || hitPlayer;
+        }
+
+        private static float RayIntersectRectangle(Vector2 origin, Vector2 dir, float maxDist, Rectangle rect)
+        {
+            float tMin = 0f;
+            float tMax = maxDist;
+
+            if (MathF.Abs(dir.X) < 0.0001f)
+            {
+                if (origin.X < rect.Left || origin.X > rect.Right)
+                {
+                    return -1f;
+                }
+            }
+            else
+            {
+                float invX = 1f / dir.X;
+                float nearHit = (rect.Left - origin.X) * invX;
+                float farHit = (rect.Right - origin.X) * invX;
+                if (nearHit > farHit)
+                {
+                    (nearHit, farHit) = (farHit, nearHit);
+                }
+
+                tMin = Math.Max(tMin, nearHit);
+                tMax = Math.Min(tMax, farHit);
+                if (tMin > tMax)
+                {
+                    return -1f;
+                }
+            }
+
+            if (MathF.Abs(dir.Y) < 0.0001f)
+            {
+                if (origin.Y < rect.Top || origin.Y > rect.Bottom)
+                {
+                    return -1f;
+                }
+            }
+            else
+            {
+                float invY = 1f / dir.Y;
+                float nearHit = (rect.Top - origin.Y) * invY;
+                float farHit = (rect.Bottom - origin.Y) * invY;
+                if (nearHit > farHit)
+                {
+                    (nearHit, farHit) = (farHit, nearHit);
+                }
+
+                tMin = Math.Max(tMin, nearHit);
+                tMax = Math.Min(tMax, farHit);
+                if (tMin > tMax)
+                {
+                    return -1f;
+                }
+            }
+
+            return tMin;
+        }
+
+        private void EmitShieldChargeDust(Vector2 shieldOrigin, float progress)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            Lighting.AddLight(shieldOrigin, 0.95f * (0.4f + progress * 0.8f), 0.78f * (0.4f + progress * 0.8f), 0.28f);
+
+            // Growing 60-tick golden dust spread out across 1x3 tiles (16px wide x 48px tall) right at the shield.
+            int dustCount = 3 + (int)(progress * 9f);
+            float scaleMin = MathHelper.Lerp(0.85f, 1.35f, progress);
+            float scaleMax = MathHelper.Lerp(1.25f, 1.95f, progress);
+
+            for (int i = 0; i < dustCount; i++)
+            {
+                Vector2 boxOffset = new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-24f, 24f));
+                Vector2 inwardVel = -boxOffset * MathHelper.Lerp(0.03f, 0.09f, progress) + Main.rand.NextVector2Circular(0.8f, 0.8f);
+
+                int dustType = DustID.GoldFlame;
+                Color dustColor = new Color(255, 224, 90);
+                if (progress > 0.55f && i % 4 == 0)
+                {
+                    dustType = DustID.WhiteTorch;
+                    dustColor = Color.White;
+                }
+                else if (progress > 0.35f && i % 5 == 0)
+                {
+                    dustType = DustID.AncientLight;
+                    dustColor = new Color(255, 245, 190);
+                }
+
+                Dust chargeDust = Dust.NewDustPerfect(
+                    shieldOrigin + boxOffset,
+                    dustType,
+                    inwardVel,
+                    (int)MathHelper.Lerp(35f, 0f, progress),
+                    dustColor,
+                    Main.rand.NextFloat(scaleMin, scaleMax));
+                chargeDust.noGravity = true;
+            }
+        }
+
+        private void EmitActiveBeamDust(Vector2 origin, Vector2 beamDir, float beamLength, bool hitSurface)
+        {
+            Vector2 perpDir = new Vector2(-beamDir.Y, beamDir.X);
+            Vector2 impactPos = origin + beamDir * beamLength;
+
+            DelegateMethods.v3_1 = new Vector3(1.0f, 0.86f, 0.36f);
+            Utils.PlotTileLine(origin, impactPos, 24f, DelegateMethods.CastLight);
+
+            // Heavy radiant origin dusts erupting from the shield point (1x3 tile spread).
+            for (int i = 0; i < 7; i++)
+            {
+                int dustType = DustID.GoldFlame;
+                Color tint = new Color(255, 225, 95);
+                if (i == 0 || i == 3)
+                {
+                    dustType = DustID.WhiteTorch;
+                    tint = Color.White;
+                }
+                else if (i == 6)
+                {
+                    dustType = DustID.AncientLight;
+                    tint = new Color(255, 245, 195);
+                }
+
+                Vector2 spawnOffset = new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-22f, 22f));
+                Vector2 originVel = beamDir * Main.rand.NextFloat(2.5f, 7.5f) + Main.rand.NextVector2Circular(2.4f, 2.4f);
+                Dust originDust = Dust.NewDustPerfect(
+                    origin + spawnOffset,
+                    dustType,
+                    originVel,
+                    10,
+                    tint,
+                    Main.rand.NextFloat(1.05f, 1.75f));
+                originDust.noGravity = true;
+            }
+
+            // Luminous dusts streaming along the full active shaft.
+            int shaftDustCount = Math.Clamp((int)(beamLength / 52f), 4, 22);
+            for (int i = 0; i < shaftDustCount; i++)
+            {
+                float distAlong = Main.rand.NextFloat(16f, Math.Max(20f, beamLength - 8f));
+                float lateralOffset = Main.rand.NextFloat(-11f, 11f);
+                Vector2 shaftPos = origin + beamDir * distAlong + perpDir * lateralOffset;
+                Vector2 shaftVel = beamDir * Main.rand.NextFloat(1.8f, 4.6f) + perpDir * (lateralOffset * 0.12f);
+
+                int dustType = DustID.GoldFlame;
+                Color tint = new Color(255, 225, 95);
+                if (i % 3 == 0)
+                {
+                    dustType = DustID.WhiteTorch;
+                    tint = Color.White;
+                }
+                else if (i % 5 == 0)
+                {
+                    dustType = DustID.AncientLight;
+                    tint = new Color(255, 248, 200);
+                }
+
+                Dust shaftDust = Dust.NewDustPerfect(
+                    shaftPos,
+                    dustType,
+                    shaftVel,
+                    15,
+                    tint,
+                    Main.rand.NextFloat(0.85f, 1.45f));
+                shaftDust.noGravity = true;
+            }
+
+            // Constant heavy golden-white impact spray whenever the beam is searing a tile or player.
+            if (hitSurface)
+            {
+                Lighting.AddLight(impactPos, 1.15f, 0.94f, 0.45f);
+
+                for (int i = 0; i < 10; i++)
+                {
+                    int dustType = DustID.GoldFlame;
+                    Color tint = new Color(255, 225, 95);
+                    bool useGravity = i >= 8;
+
+                    if (i < 3)
+                    {
+                        dustType = DustID.WhiteTorch;
+                        tint = Color.White;
+                    }
+                    else if (i == 9)
+                    {
+                        dustType = DustID.AncientLight;
+                        tint = Color.White;
+                    }
+
+                    Vector2 impactVel = -beamDir * Main.rand.NextFloat(1.5f, 4.5f)
+                        + Main.rand.NextVector2Circular(6.5f, 6.5f);
+                    if (useGravity)
+                    {
+                        impactVel.Y -= 2.2f;
+                    }
+
+                    Dust impactDust = Dust.NewDustPerfect(
+                        impactPos + Main.rand.NextVector2Circular(10f, 10f),
+                        dustType,
+                        impactVel,
+                        5,
+                        tint,
+                        Main.rand.NextFloat(1.1f, 1.85f));
+                    impactDust.noGravity = !useGravity;
+                }
+            }
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            if (elapsedTicks < ChargeTicks)
+            {
+                return false;
+            }
+
+            Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+            Vector2 beamDir = beamAngle.ToRotationVector2();
+            // EnemyConsecratedLight.png points downward (+Y), so subtract Pi/2 to align with beamDir.
+            float drawRotation = beamAngle - MathHelper.PiOver2;
+            Vector2 originScreen = Projectile.Center - Main.screenPosition;
+
+            int fireAge = elapsedTicks - ChargeTicks;
+            float widthFactor = 1f;
+            float alphaFactor = 1f;
+            if (fireAge < 6)
+            {
+                widthFactor = MathHelper.Lerp(0.35f, 1.0f, fireAge / 6f);
+            }
+            else if (fireAge >= FiringTicks)
+            {
+                float fadeProgress = MathHelper.Clamp((fireAge - FiringTicks) / (float)FadeOutTicks, 0f, 1f);
+                widthFactor = MathHelper.Lerp(1.0f, 0.1f, fadeProgress);
+                alphaFactor = MathHelper.Lerp(1.0f, 0f, fadeProgress);
+            }
+
+            float pulse = 1.0f + 0.08f * MathF.Sin(Main.GlobalTimeWrappedHourly * 38f);
+            float coreWidth = 1.08f * widthFactor * pulse;
+            float glowWidth = 1.52f * widthFactor * pulse;
+
+            DrawBeamPass(texture, originScreen, beamDir, drawRotation, glowWidth, new Color(255, 215, 90, 0) * (0.58f * alphaFactor));
+            DrawBeamPass(texture, originScreen, beamDir, drawRotation, coreWidth, Color.White * alphaFactor);
+            return false;
+        }
+
+        private void DrawBeamPass(
+            Texture2D texture,
+            Vector2 originScreen,
+            Vector2 beamDir,
+            float drawRotation,
+            float widthScale,
+            Color tint)
+        {
+            Vector2 headOrigin = new Vector2(HeadRect.Width * 0.5f, HeadRect.Height * 0.5f);
+            Main.EntitySpriteDraw(
+                texture,
+                originScreen,
+                HeadRect,
+                tint,
+                drawRotation,
+                headOrigin,
+                new Vector2(widthScale, 1.0f),
+                SpriteEffects.None,
+                0);
+
+            float bodyStart = 12f;
+            float bodyEnd = Math.Max(bodyStart, currentLength - 12f);
+            float segmentStep = BodyRect.Height;
+            Vector2 bodyOrigin = new Vector2(BodyRect.Width * 0.5f, 0f);
+
+            for (float dist = bodyStart; dist < bodyEnd; dist += segmentStep)
+            {
+                float remaining = bodyEnd - dist;
+                int sliceHeight = remaining < segmentStep ? Math.Max(1, (int)MathF.Ceiling(remaining)) : BodyRect.Height;
+                Rectangle sliceRect = new Rectangle(BodyRect.X, BodyRect.Y, BodyRect.Width, sliceHeight);
+
+                Main.EntitySpriteDraw(
+                    texture,
+                    originScreen + beamDir * dist,
+                    sliceRect,
+                    tint,
+                    drawRotation,
+                    bodyOrigin,
+                    new Vector2(widthScale, 1.0f),
+                    SpriteEffects.None,
+                    0);
+            }
+
+            Vector2 tailOrigin = new Vector2(TailRect.Width * 0.5f, TailRect.Height * 0.75f);
+            Main.EntitySpriteDraw(
+                texture,
+                originScreen + beamDir * currentLength,
+                TailRect,
+                tint,
+                drawRotation,
+                tailOrigin,
+                new Vector2(widthScale, 1.0f),
+                SpriteEffects.None,
+                0);
         }
     }
 }

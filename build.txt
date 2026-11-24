@@ -2,5 +2,6 @@ displayName = The Story of Red Cloud
 author = Vibrent, Zeodexic, MarfMaster, Xelvaa, Urgiv
 version = 0.19.7
 homepage = https://discord.gg/kSptDbe
+sortBefore = TerrariaAmbience
 buildIgnore = Content\Projectiles\Enemy\UnusedAssets\*, Textures\Noise\Unused\*, Textures\Particles\Unused\*, Scripts\GenerateDevData\*, DevData\*, tsorcDocs\*, scratch\*, ArmorHelperLocal\*, CLAUDE.md, AGENTS.md, Localization\TranslationUpdates.md
 

@@ -70,8 +70,9 @@ namespace tsorcRevamp.NPCs.Invaders
         private const int StarRingCooldownTicks = 18 * 60;
 
         private const int AegisGuardTicks = 56;
-        private const int AegisCooldownTicks = 14 * 60;
-        private const int AegisHitWindowTicks = 90;
+        private const int AegisCooldownTicks = 7 * 60;
+        private const int AegisHitWindowTicks = 120;
+        private const int AegisBeamCooldownTicks = 9 * 60;
 
         private const int SeraphJudgmentTicks = 112;
         private const int SeraphJudgmentCooldownTicks = 22 * 60;
@@ -101,6 +102,7 @@ namespace tsorcRevamp.NPCs.Invaders
             StarRing = 2,
             AegisGuard = 3,
             SeraphJudgment = 4,
+            AegisBeam = 5,
         }
 
         private RangedMoveStyle rangedMoveStyle;
@@ -113,7 +115,8 @@ namespace tsorcRevamp.NPCs.Invaders
         private Vector2 lockedSplitShotDir = Vector2.UnitX;
         private int splitShotCooldown = 180;
         private int starRingCooldown = 260;
-        private int aegisCooldown = 240;
+        private int aegisCooldown = 140;
+        private int aegisBeamCooldown = 110;
         private int seraphJudgmentCooldown = 180;
         private int recentHitCount;
         private int recentHitWindowTimer;
@@ -129,7 +132,9 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             customMoveBag = new AttackBag<CustomMoveKind>(cards =>
             {
-                cards.Add(CustomMoveKind.SplitShot);
+                cards.Add(CustomMoveKind.AegisBeam);
+                cards.Add(CustomMoveKind.AegisBeam);
+                cards.Add(CustomMoveKind.AegisGuard);
                 cards.Add(CustomMoveKind.SplitShot);
                 cards.Add(CustomMoveKind.StarRing);
                 cards.Add(CustomMoveKind.SeraphJudgment);
@@ -683,6 +688,12 @@ namespace tsorcRevamp.NPCs.Invaders
                 {
                     DebugAttackLabel = aegisCounterCharged ? "Aegis of Light (Charged)" : "Aegis of Light";
                 }
+                else if (activeCustomMove == CustomMoveKind.AegisBeam)
+                {
+                    DebugAttackLabel = customMoveElapsed < KhaiosShieldLightBeam.ChargeTicks
+                        ? "Aegis of Light: Consecrated Beam (Charge)"
+                        : "Aegis of Light: Consecrated Beam";
+                }
                 else if (activeCustomMove == CustomMoveKind.SeraphJudgment)
                 {
                     DebugAttackLabel = "Seraph's Judgment";
@@ -715,6 +726,11 @@ namespace tsorcRevamp.NPCs.Invaders
                 aegisCooldown--;
             }
 
+            if (aegisBeamCooldown > 0)
+            {
+                aegisBeamCooldown--;
+            }
+
             if (seraphJudgmentCooldown > 0)
             {
                 seraphJudgmentCooldown--;
@@ -742,8 +758,8 @@ namespace tsorcRevamp.NPCs.Invaders
 
         private void TryStartPhaseTwoCustomMove(Player target)
         {
-            // Deterministic Aegis of Light guard trigger after taking 3+ hits within 90t.
-            if (recentHitCount >= 3 && aegisCooldown <= 0 && NPC.Distance(target.Center) < 420f)
+            // Reactive Aegis of Light guard trigger after taking 2+ hits within 120t.
+            if (recentHitCount >= 2 && aegisCooldown <= 0 && NPC.Distance(target.Center) < 640f)
             {
                 recentHitCount = 0;
                 recentHitWindowTimer = 0;
@@ -753,8 +769,8 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
-            // Don't interrupt every idle tick — roll a clean cadence check when drawing from the set-piece bag.
-            if (!Main.rand.NextBool(28))
+            // Don't interrupt every idle tick — roll a brisk cadence check when drawing from the set-piece bag.
+            if (!Main.rand.NextBool(18))
             {
                 return;
             }
@@ -765,6 +781,16 @@ namespace tsorcRevamp.NPCs.Invaders
 
             bool canDraw = customMoveBag.TryDraw(move =>
             {
+                if (move == CustomMoveKind.AegisBeam)
+                {
+                    return aegisBeamCooldown <= 0 && dist <= 1350f;
+                }
+
+                if (move == CustomMoveKind.AegisGuard)
+                {
+                    return aegisCooldown <= 0 && dist <= 640f;
+                }
+
                 if (move == CustomMoveKind.SplitShot)
                 {
                     return splitShotCooldown <= 0 && dist >= 180f && dist <= 920f;
@@ -788,7 +814,18 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
-            if (chosen == CustomMoveKind.SplitShot)
+            if (chosen == CustomMoveKind.AegisBeam)
+            {
+                aegisBeamCooldown = AegisBeamCooldownTicks;
+                BeginCustomMove(CustomMoveKind.AegisBeam, KhaiosShieldLightBeam.TotalDurationTicks, poseWeaponItemType: -1);
+            }
+            else if (chosen == CustomMoveKind.AegisGuard)
+            {
+                aegisCooldown = AegisCooldownTicks;
+                aegisCounterCharged = false;
+                BeginCustomMove(CustomMoveKind.AegisGuard, AegisGuardTicks, poseWeaponItemType: -1);
+            }
+            else if (chosen == CustomMoveKind.SplitShot)
             {
                 splitShotCooldown = SplitShotCooldownTicks;
                 lockedSplitShotDir = (target.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
@@ -879,6 +916,29 @@ namespace tsorcRevamp.NPCs.Invaders
                     new SoundStyle("tsorcRevamp/Sounds/Custom/BlindingPulse") with { Volume = 0.45f, Pitch = 0.14f },
                     NPC.Center);
             }
+            else if (activeCustomMove == CustomMoveKind.AegisBeam)
+            {
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(
+                        new SoundStyle("tsorcRevamp/Sounds/DarkSouls/harmonic-magic") with { Volume = 0.48f, Pitch = -0.08f },
+                        NPC.Center);
+                }
+
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Vector2 shieldOrigin = NPC.Center + new Vector2((NPC.direction >= 0 ? 1 : -1) * 22f, -2f);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        shieldOrigin,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<KhaiosShieldLightBeam>(),
+                        EnemyDamage.Projectile(250),
+                        4f,
+                        Main.myPlayer,
+                        NPC.whoAmI);
+                }
+            }
             else if (activeCustomMove == CustomMoveKind.SeraphJudgment)
             {
                 Flight?.RequestTakeoff();
@@ -920,13 +980,12 @@ namespace tsorcRevamp.NPCs.Invaders
                 CustomMoveKind finished = activeCustomMove;
                 activeCustomMove = CustomMoveKind.None;
 
-                // If frontal hits charged Aegis of Light, immediately punish with Forgotten Thunder Split-Shot!
+                // If frontal hits charged Aegis of Light, immediately punish with the shield's Consecrated Light beam!
                 if (finished == CustomMoveKind.AegisGuard && aegisCounterCharged && target != null && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     aegisCounterCharged = false;
-                    lockedSplitShotDir = (target.Center - NPC.Center).SafeNormalize(new Vector2(NPC.direction, 0f));
-                    ConfigureCustomRangedWeapon(ModContent.ItemType<ForgottenThunderBow>(), RangedStyle.Bow);
-                    BeginCustomMove(CustomMoveKind.SplitShot, SplitShotDurationTicks, ModContent.ItemType<ForgottenThunderBow>());
+                    aegisBeamCooldown = AegisBeamCooldownTicks;
+                    BeginCustomMove(CustomMoveKind.AegisBeam, KhaiosShieldLightBeam.TotalDurationTicks, poseWeaponItemType: -1);
                 }
             }
         }
@@ -941,18 +1000,23 @@ namespace tsorcRevamp.NPCs.Invaders
                 lockedSplitShotDir = (target.Center - origin).SafeNormalize(new Vector2(NPC.direction, 0f));
             }
 
-            if (!Main.dedServ && customMoveElapsed <= SplitShotFireLanceTick && customMoveElapsed % 2 == 0)
+            if (!Main.dedServ && customMoveElapsed <= SplitShotFireLanceTick)
             {
                 Vector2 bowOrigin = PuppetBowGripPosition != Vector2.Zero ? PuppetBowGripPosition : NPC.Center;
-                Vector2 offset = Main.rand.NextVector2CircularEdge(34f, 34f);
-                Dust charge = Dust.NewDustPerfect(
-                    bowOrigin + offset,
-                    customMoveElapsed % 4 == 0 ? DustID.GoldFlame : DustID.Electric,
-                    -offset * 0.14f,
-                    30,
-                    Color.Cyan,
-                    Main.rand.NextFloat(0.95f, 1.45f));
-                charge.noGravity = true;
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 offset = Main.rand.NextVector2CircularEdge(36f, 36f);
+                    int dustType = i == 0 ? DustID.GoldFlame : DustID.Electric;
+                    Color tint = i == 0 ? new Color(255, 228, 105) : Color.Cyan;
+                    Dust charge = Dust.NewDustPerfect(
+                        bowOrigin + offset,
+                        dustType,
+                        -offset * 0.14f,
+                        20,
+                        tint,
+                        Main.rand.NextFloat(0.95f, 1.5f));
+                    charge.noGravity = true;
+                }
             }
 
             if (customMoveElapsed == SplitShotFireArrowsTick)
@@ -1560,20 +1624,13 @@ namespace tsorcRevamp.NPCs.Invaders
         {
             base.PostDraw(spriteBatch, screenPos, drawColor);
 
-            // Split-Shot electric sightline preview during bow charge.
-            if (Phase == AttackPhase.Custom && activeCustomMove == CustomMoveKind.SplitShot && customMoveElapsed <= SplitShotFireLanceTick)
+            // Aegis of Light frontal golden barrier arc (shown during both Aegis guard and Consecrated Light beam).
+            bool showingShieldArc = Phase == AttackPhase.Custom
+                && (activeCustomMove == CustomMoveKind.AegisGuard || activeCustomMove == CustomMoveKind.AegisBeam);
+            if (showingShieldArc)
             {
-                float progress = MathHelper.Clamp(customMoveElapsed / (float)SplitShotFireArrowsTick, 0f, 1f);
-                Vector2 bowOrigin = PuppetBowGripPosition != Vector2.Zero ? PuppetBowGripPosition : NPC.Center;
-                Vector2 aimEnd = bowOrigin + lockedSplitShotDir * 560f;
-                Color coreLine = Color.Lerp(new Color(120, 235, 255), new Color(255, 230, 110), progress) * (0.42f + 0.45f * progress);
-                Utils.DrawLine(spriteBatch, bowOrigin, aimEnd, coreLine, Color.Transparent, 2.5f);
-            }
-
-            // Aegis of Light frontal golden barrier arc.
-            if (Phase == AttackPhase.Custom && activeCustomMove == CustomMoveKind.AegisGuard)
-            {
-                Color arcColor = aegisCounterCharged
+                bool brightGold = aegisCounterCharged || activeCustomMove == CustomMoveKind.AegisBeam;
+                Color arcColor = brightGold
                     ? new Color(255, 240, 130) * 0.92f
                     : new Color(255, 210, 80) * 0.72f;
                 float centerAngle = NPC.direction >= 0 ? 0f : MathF.PI;

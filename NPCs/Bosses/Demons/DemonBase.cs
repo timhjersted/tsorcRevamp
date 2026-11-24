@@ -55,7 +55,10 @@ namespace tsorcRevamp.NPCs.Bosses.Demons
         }
 
         // Per-tier tables, indexed by (int)Tier = { Oolacile, Defiled, Ancient }. Ticks unless noted.
-        static readonly int[] NeutralPauseTicks = { 150, 120, 100 };
+        // Walk time between attacks (+0..NeutralPauseRandom). Oolacile's legacy AI fired a volley every ~3s while walking,
+        // so its gap stays short enough that the next tell starts ~1.2-1.8s after a recovery (~0.8-1.5s after the roar).
+        static readonly int[] NeutralPauseTicks = { 70, 120, 100 };
+        static readonly int[] NeutralPausePhaseTwoTicks = { 50, 120, 100 };
         const int NeutralPauseRandom = 40;
 
         static readonly int[] BreathTellTicks = { 70, 60, 50 };
@@ -500,7 +503,13 @@ namespace tsorcRevamp.NPCs.Bosses.Demons
 
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                AttackCooldown = NeutralPauseTicks[TierIndex] + Main.rand.Next(NeutralPauseRandom + 1);
+                int pauseTicks = NeutralPauseTicks[TierIndex];
+                if (phaseTwo)
+                {
+                    pauseTicks = NeutralPausePhaseTwoTicks[TierIndex];
+                }
+
+                AttackCooldown = pauseTicks + Main.rand.Next(NeutralPauseRandom + 1);
                 NPC.netUpdate = true;
             }
         }
