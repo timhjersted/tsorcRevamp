@@ -574,6 +574,7 @@ namespace tsorcRevamp
             // elsewhere without re-checking that assumption.
             if (Main.netMode == NetmodeID.MultiplayerClient && ExpandedAdventure != priorExpandedAdventure)
             {
+                BossIDsAndCoordinatesInternal = null;
                 tsorcScriptedEvents.InitializeScriptedEvents();
                 tsorcScriptedEvents.LoadDynamicEvents();
             }
@@ -2961,6 +2962,10 @@ namespace tsorcRevamp
         {
             { NPCID.EyeofCthulhu, new Vector2(3886, 595) },
             { NPCID.BrainofCthulhu, new Vector2(5348, 1090) },
+            { ModContent.NPCType<NPCs.Bosses.Birds.TheRage>(), new Vector2(7000, 1845) },
+            { ModContent.NPCType<NPCs.Bosses.Death.Death>(), new Vector2(1066, 529) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.Witchking>(), new Vector2(2050, 1792) },
+            { ModContent.NPCType<NPCs.Bosses.SuperHardMode.GrandOccultist.GrandOccultist>(), new Vector2(6721, 1905) },
         };
 
 

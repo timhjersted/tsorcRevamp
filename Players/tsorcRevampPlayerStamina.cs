@@ -461,10 +461,23 @@ namespace tsorcRevamp
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
-            if (staminaResourceCurrent < 0f || staminaDebt > 0f
+            bool isVulnerable = staminaResourceCurrent < 0f || staminaDebt > 0f
                 || Player.HasBuff(ModContent.BuffType<Stagger>())
-                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>());
+
+            // Within 1s of the last forced knockback the player is fully knockback-immune, so chained hits
+            // can't stunlock. Knockback is zeroed outright, not just noKnockback, because some hits weaken
+            // immunity (KnockbackImmunityEffectiveness) or add base knockback after this hook.
+            if (!ForcedKnockbackReady)
             {
+                Player.noKnockback = true;
+                modifiers.Knockback *= 0f;
+                return;
+            }
+
+            if (isVulnerable)
+            {
+                lastForcedKnockbackTick = Main.GameUpdateCount;
                 Player.noKnockback = false;
                 if (modifiers.Knockback.Base < 0.5f)
                 {
@@ -501,9 +514,11 @@ namespace tsorcRevamp
 
         public override void PostUpdateEquips()
         {
-            if (staminaResourceCurrent < 0f || staminaDebt > 0f
+            bool isVulnerable = staminaResourceCurrent < 0f || staminaDebt > 0f
                 || Player.HasBuff(ModContent.BuffType<Stagger>())
-                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>()))
+                || Player.HasBuff(ModContent.BuffType<ShieldGuardBreak>());
+
+            if (isVulnerable && ForcedKnockbackReady)
             {
                 Player.noKnockback = false;
             }
@@ -634,6 +649,23 @@ namespace tsorcRevamp
         /// matches the Souls games, where the bar simply reads empty and never shows a negative.
         /// </summary>
         public float staminaDebt;
+
+        // Game tick of the last hit that had knockback forced on by overdraw, Stagger or Guard Break.
+        // Starts a full cooldown in the past so the first hit of a session is never skipped.
+        private long lastForcedKnockbackTick = -Stagger.ForcedKnockbackCooldownTicks;
+
+        /// <summary>
+        /// False for Stagger.ForcedKnockbackCooldownTicks after a forced-knockback hit. Every place that strips
+        /// knockback immunity checks this, so back-to-back hits can't chain knockback into a permanent stunlock.
+        /// </summary>
+        public bool ForcedKnockbackReady
+        {
+            get
+            {
+                long ticksSinceLast = (long)Main.GameUpdateCount - lastForcedKnockbackTick;
+                return ticksSinceLast >= Stagger.ForcedKnockbackCooldownTicks;
+            }
+        }
 
         /// <summary>Hard ceiling on debt, expressed in SECONDS of recovery rather than as a flat number or a
         /// share of the pool. Bounding the felt punishment directly means it stays ~2 seconds whatever your

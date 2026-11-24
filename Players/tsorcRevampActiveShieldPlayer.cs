@@ -656,7 +656,11 @@ namespace tsorcRevamp
                 Player.wingTime = 0f;
                 Player.canRocket = false;
                 Player.rocketTime = 0;
-                Player.noKnockback = false;
+
+                if (Player.GetModPlayer<tsorcRevampStaminaPlayer>().ForcedKnockbackReady)
+                {
+                    Player.noKnockback = false;
+                }
             }
 
             if (!RevampActive || !Player.GetModPlayer<tsorcRevampPlayer>().SoulsMode || usingSecondSlotItem)

@@ -22,6 +22,10 @@ namespace tsorcRevamp.Buffs.Debuffs
         // Stamina regen pause after a hit taken in stamina debt. Same for Unkindled and Bearer of the Curse.
         public const int DebtHitRegenDelayTicks = 15;
 
+        // After a hit with forced knockback (overdraw, Stagger or Guard Break), the player is fully knockback-immune
+        // for 60 ticks. Stops chained hits from knocking the player around forever.
+        public const int ForcedKnockbackCooldownTicks = 60;
+
         public override bool PlaysSoundOnLastTick => false;
 
         // Tooltip shows the slowdown as a whole percent: 0.75 multiplier -> "25".
@@ -58,7 +62,12 @@ namespace tsorcRevamp.Buffs.Debuffs
         {
             base.Update(player, ref buffIndex);
             // player.noItems = true;
-            player.noKnockback = false;
+
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().ForcedKnockbackReady)
+            {
+                player.noKnockback = false;
+            }
+
             player.wingTime = 0f;
             player.canRocket = false;
             player.rocketTime = 0;

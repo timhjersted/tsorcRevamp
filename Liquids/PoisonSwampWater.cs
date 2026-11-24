@@ -32,19 +32,12 @@ namespace tsorcRevamp.Liquids
     // ──────────────────────────────────────────────────────────────────────────
     internal static class PoisonSwampCondition
     {
-        //     Also active near an Eater of Worlds fight, whose toxic drips leave
-        //     real water behind (NPCs/EaterOfWorldsToxicDrip.cs).
         internal static bool IsUndergroundJungle(Player player) =>
             player.ZoneJungle && (player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight);
 
         internal static bool IsActive(Player player)
         {
-            if ((player.ZoneJungle && player.ZoneDungeon) || IsUndergroundJungle(player))
-            {
-                return true;
-            }
-
-            return NPCs.EaterOfWorldsToxicDrip.IsToxicFightNear(player);
+            return (player.ZoneJungle && player.ZoneDungeon) || IsUndergroundJungle(player);
         }
     }
 

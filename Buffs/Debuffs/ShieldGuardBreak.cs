@@ -23,7 +23,12 @@ namespace tsorcRevamp.Buffs.Debuffs
             // noItems blocks weapons and ordinary healing-item activation. The custom Souls quick-use paths
             // also check these debuffs explicitly because they begin flask animations without ItemCheck.
             player.noItems = true;
-            player.noKnockback = false;
+
+            if (player.GetModPlayer<tsorcRevampStaminaPlayer>().ForcedKnockbackReady)
+            {
+                player.noKnockback = false;
+            }
+
             player.wingTime = 0f;
             player.canRocket = false;
             player.rocketTime = 0;
