@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Buffs;
 using tsorcRevamp.Content.Items.Accessories.Runeterra.Goredrinker;
 using tsorcRevamp.Content.Items.Armor.Summon;
 using tsorcRevamp.Content.Items.Armor.Summon.AncientDemon;
@@ -39,7 +40,8 @@ public class WhipTipHit : ModPlayer
 
     public override void ModifyHitNPCWithProj(Projectile proj, NPC target, ref NPC.HitModifiers modifiers)
     {
-        if (ProjectileID.Sets.IsAWhip[proj.type] && Check(proj, proj.WhipPointsForCollision, target.Hitbox))
+        if (ProjectileID.Sets.IsAWhip[proj.type] && Check(proj, proj.WhipPointsForCollision, target.Hitbox)
+            && Main.player[proj.owner].GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse) //extra check for Urumi
         {
             modifiers.SourceDamage += WhipTipHitBonusDamage / 100f;
         }
