@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -31,7 +32,7 @@ public class SentientSetPlayer : ModPlayer
     {
         if (EquippedTorso != null)
         {
-            EquippedTorso.DamageTaken += info.SourceDamage;
+            EquippedTorso.DamageTaken += Math.Max(info.SourceDamage, info.Damage);
         }
     }
     public Vector2 LastPosition;
