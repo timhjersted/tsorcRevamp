@@ -26,11 +26,30 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
     [AutoloadBossHead]
     class TheRage : ModNPC
     {
-        int fireTrailsDamage = 30;
-        int rageBreathDamage = 30;
-        int demonBoltDamage = 33;
-        int homingFireDamage = 36;
-        int rageFirebombDamage = 39;
+        public const float EnragedDmgMult = 1.35f;
+        
+        public const int BaseFireTrailsDamage = 30;
+        public const int EnragedFireTrailsDamage = (int)(BaseFireTrailsDamage * EnragedDmgMult * 1.2f);
+        public int FireTrailsDamage = BaseFireTrailsDamage;
+
+        public const int BaseRageBreathDamage = 42;
+        public const int EnragedRageBreathDamage = (int)(BaseRageBreathDamage * EnragedDmgMult);
+        public int RageBreathDamage = BaseRageBreathDamage;
+
+        public const int BaseDemonBoltDamage = 33;
+        public const int EnragedDemonBoltDamage = (int)(BaseDemonBoltDamage * EnragedDmgMult);
+        public int DemonBoltDamage = BaseDemonBoltDamage;
+
+        public const int BaseHomingFireDamage = 36;
+        public const int EnragedHomingFireDamage = (int)(BaseHomingFireDamage * EnragedDmgMult);
+        public int HomingFireDamage = BaseHomingFireDamage;
+
+        public const int BaseRageFirebombDamage = 39;
+        public const int EnragedRageFirebombDamage = (int)(BaseRageFirebombDamage * EnragedDmgMult);
+        public int RageFirebombDamage = BaseRageFirebombDamage;
+
+        public const int BaseContactDamage = 120;
+        public const int EnragedContactDamage = (int)(BaseContactDamage * EnragedDmgMult * EnragedDmgMult);
 
         public override void SetStaticDefaults()
         {
@@ -44,7 +63,7 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
         {
             NPC.aiStyle = -1;
             NPC.lifeMax = BaseHP;
-            NPC.damage = 120;
+            NPC.damage = BaseContactDamage;
             NPC.defense = 22;
             NPC.knockBackResist = 0f;
             NPC.value = 120000;
@@ -198,7 +217,7 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 600 + Main.rand.Next(1200), (float)player.position.Y - 600f,
                         (float)(-40 + Main.rand.Next(80)) / 10, 2f, ModContent.ProjectileType<FireTrails>(),
-                        fireTrailsDamage, 2f, Main.myPlayer); //  ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>()
+                        FireTrailsDamage, 2f, Main.myPlayer); //  ModContent.ProjectileType<EnemySpellAbyssPoisonStrikeBall>()
                 }
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.9f, PitchVariance = 2 }, NPC.Center);
 
@@ -212,7 +231,7 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), (float)player.position.X - 200 + Main.rand.Next(400), (float)player.position.Y - 480f,
                         (float)(-40 + Main.rand.Next(80)) / 10, 3f, ProjectileID.CultistBossFireBall,
-                        homingFireDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
+                        HomingFireDamage, 3f, Main.myPlayer); //ProjectileID.NebulaBlaze2 would be cool to use at the end of attraidies or gwyn fight with the text, "The spirit of your father summons cosmic light to aid you!"
                 }
                 FlameShotTimer3 = 0;
                 FlameShotCounter3++;
@@ -246,7 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, breathVel, ModContent.ProjectileType<RageFireBreath>(),
-                        rageBreathDamage, 0f, Main.myPlayer);
+                        RageBreathDamage, 0f, Main.myPlayer);
                 }
             }
             if (breathTimer > 580)
@@ -290,9 +309,9 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1),
-                            ModContent.ProjectileType<RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer);
+                            ModContent.ProjectileType<RageFirebomb>(), RageFirebombDamage, 0.5f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity + Main.rand.NextVector2Circular(1, 1),
-                            ModContent.ProjectileType<RageFirebomb>(), rageFirebombDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
+                            ModContent.ProjectileType<RageFirebomb>(), RageFirebombDamage, 0.5f, Main.myPlayer); //ProjectileID.LostSoulHostile
                     }
                 }
             }
@@ -329,8 +348,13 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
             if (NPC.ai[3] == 0)
             {
                 // Normal Mode
+                RageBreathDamage = BaseRageBreathDamage;
+                DemonBoltDamage = BaseDemonBoltDamage;
+                FireTrailsDamage = BaseFireTrailsDamage;
+                HomingFireDamage = BaseHomingFireDamage;
+                RageFirebombDamage = BaseRageFirebombDamage;
+                NPC.damage = BaseContactDamage;
                 NPC.alpha = 0;
-                NPC.damage = 120;
                 //NPC.defense = 32;
                 FlameShotCounter = 0;
 
@@ -372,11 +396,11 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                         {
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 600, NPC.Center.Y - 120, 
                                 (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type,
-                                fireTrailsDamage, 0f, Main.myPlayer);
+                                FireTrailsDamage, 0f, Main.myPlayer);
                             //Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 120, (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type, fireTrailsDamage, 0f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 600, NPC.Center.Y - 120,
                                 (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type,
-                                fireTrailsDamage, 0f, Main.myPlayer);
+                                FireTrailsDamage, 0f, Main.myPlayer);
                         }
                         NPC.ai[1] = -90;
                         // Added some dust so the projectiles aren't just appearing out of thin air
@@ -425,11 +449,11 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                             Vector2 speed = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 1);
 
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(0.15f), 
-                                ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                                ModContent.ProjectileType<RageDemonBolt>(), DemonBoltDamage, 0f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed, 
-                                ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                                ModContent.ProjectileType<RageDemonBolt>(), DemonBoltDamage, 0f, Main.myPlayer);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, speed.RotatedBy(-0.15f),
-                                ModContent.ProjectileType<RageDemonBolt>(), demonBoltDamage, 0f, Main.myPlayer);
+                                ModContent.ProjectileType<RageDemonBolt>(), DemonBoltDamage, 0f, Main.myPlayer);
                         }
 
                         FlameShotTimer2 = 0;
@@ -484,7 +508,12 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 NPC.ai[3]++;
                 //NPC.alpha = 210; //No longer goes invisible
                 //NPC.defense = 32;
-                NPC.damage = 160;
+                RageBreathDamage = EnragedRageBreathDamage;
+                DemonBoltDamage = EnragedDemonBoltDamage;
+                FireTrailsDamage = EnragedFireTrailsDamage;
+                HomingFireDamage = EnragedHomingFireDamage;
+                RageFirebombDamage = EnragedRageFirebombDamage;
+                NPC.damage = EnragedContactDamage;
                 NPC.netUpdate = true;
 
                 // FlameShotCounter2 = 0;
@@ -511,7 +540,6 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 {
 
                     float speed = 7f;
-                    float invulnDamageMult = 1.64f;
                     int type = ModContent.ProjectileType<FireTrails>();
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     float rotation = (float)Math.Atan2(NPC.Center.Y - 600 - (Main.player[NPC.target].position.Y + (Main.player[NPC.target].height * 0.5f)),
@@ -521,13 +549,13 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                     {
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X + 300, NPC.Center.Y - 150,
                             (float)((Math.Cos(rotation) * speed) * -1), (float)((Math.Sin(rotation) * speed) * -0.45), type,
-                            (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                            (int)(FireTrailsDamage), 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y - 150,
                             (float)((Math.Cos(rotation + 0.2) * speed) * -1), (float)((Math.Sin(rotation + 0.4) * speed) * -0.45), type,
-                            (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                            (int)(FireTrailsDamage), 0f, Main.myPlayer);
                         Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X - 300, NPC.Center.Y - 150,
                             (float)((Math.Cos(rotation - 0.2) * speed) * -1), (float)((Math.Sin(rotation - 0.4) * speed) * -0.45), type,
-                            (int)(fireTrailsDamage * invulnDamageMult), 0f, Main.myPlayer);
+                            (int)(FireTrailsDamage), 0f, Main.myPlayer);
                     }
                     NPC.ai[1] = -90;
                     // Added some dust so the projectiles aren't just appearing out of thin air
@@ -549,8 +577,8 @@ namespace tsorcRevamp.NPCs.Bosses.Birds
                 {
                     NPC.ai[3] = 1;
 
-                    // Gains life on enrage: re-added to fit with rage theme                 
-                    NPC.life += 900;
+                    // Gains life on enrage: re-added to fit with rage theme      //removed again for being cringe           
+                    //NPC.life += 900;
 
                     if (NPC.life > NPC.lifeMax) NPC.life = NPC.lifeMax;
                 }
