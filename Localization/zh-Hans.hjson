@@ -7220,32 +7220,32 @@ Mods: {
 					'''
 			}
 
-			BerserkerNightmare: {
-				DisplayName: 狂战士梦魇
-				Tooltip: 在链球周围生成一圈魔法粒子
+			BerserkerNightmareItem: {
+				// DisplayName: Berserker Nightmare
+				// Tooltip: Creates a circle of particles around the ball
 			}
 
-			HeavensTear: {
-				DisplayName: 天堂之泪
-				Tooltip:
+			HeavensTearItem: {
+				// DisplayName: Heaven's Tear
+				/* Tooltip:
 					'''
-					每次的挥击都让天堂分崩离析
-					对法师、巫师和幽灵造成双倍伤害
-					'''
+					Heaven splits with each swing
+					Deals 40% more damage to mages and ghosts
+					''' */
 			}
 
-			Moonfury: {
-				DisplayName: 月怒
-				Tooltip: ""
+			MoonfuryItem: {
+				// DisplayName: Moonfury
+				// Tooltip: ""
 			}
 
-			SunderingLight: {
-				DisplayName: 消逝之光
-				Tooltip:
+			SunderingLightItem: {
+				// DisplayName: Sundering Light
+				/* Tooltip:
 					'''
-					撕裂生与死的边界
-					对法师、巫师和幽灵造成双倍伤害
-					'''
+					Rips apart the border of life and death
+					Deals 50% more damage to mages and ghosts
+					''' */
 			}
 
 			ForgottenRisingSun: {
@@ -9285,9 +9285,9 @@ Mods: {
 					''' */
 			}
 
-			DiamondCrusher: {
-				Tooltip: ""
-				DisplayName: 钻石粉碎者
+			DiamondCrusherItem: {
+				// Tooltip: Creates an shockwave upon hitting solid blocks that damages nearby enemies
+				// DisplayName: Diamond Crusher
 			}
 
 			BloodbaneRing: {
@@ -12635,6 +12635,7 @@ Mods: {
 			// KhaiosOrbitStar.DisplayName: Celestial Orbit Star
 			// KhaiosHaloBlade.DisplayName: Halo of Judgment
 			// KhaiosSeraphEcho.DisplayName: Seraphic Echo
+			// KhaiosShieldLightBeam.DisplayName: Consecrated Light
 			// PuppetFirefallPillar.DisplayName: Puppet Firefall Pillar
 			// GwynDescentColumn.DisplayName: Gwyn Descent Column
 			// HumanoidMeleeHitbox.DisplayName: Humanoid Melee Hitbox

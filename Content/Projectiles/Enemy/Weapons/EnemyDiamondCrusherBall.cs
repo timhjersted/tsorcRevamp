@@ -1,4 +1,4 @@
-using tsorcRevamp.Content.Projectiles.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.DiamondCrusher;
 
 namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 {

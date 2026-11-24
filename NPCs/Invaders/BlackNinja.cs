@@ -12,6 +12,7 @@ using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.DiamondCrusher;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using EnemyCaltrop = tsorcRevamp.Content.Items.Weapons.Enemy.EnemyCaltrop;
 
@@ -279,7 +280,7 @@ namespace tsorcRevamp.NPCs.Invaders
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaHood));
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaShirt));
             npcLoot.Add(ItemDropRule.Common(ItemID.NinjaPants));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DiamondCrusher>()));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DiamondCrusherItem>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Throwing.Caltrop>()));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkSoulItem>(), 1, 300, 500));
         }

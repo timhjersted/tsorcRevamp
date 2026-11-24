@@ -1,12 +1,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.DiamondCrusher;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemyDiamondCrusher : ModItem
     {
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DiamondCrusher));
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(DiamondCrusherItem));
 
         public override void SetDefaults()
         {

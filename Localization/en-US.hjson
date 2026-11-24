@@ -7172,12 +7172,12 @@ Mods: {
 					'''
 			}
 
-			BerserkerNightmare: {
+			BerserkerNightmareItem: {
 				DisplayName: Berserker Nightmare
 				Tooltip: Creates a circle of particles around the ball
 			}
 
-			HeavensTear: {
+			HeavensTearItem: {
 				DisplayName: Heaven's Tear
 				Tooltip:
 					'''
@@ -7186,12 +7186,12 @@ Mods: {
 					'''
 			}
 
-			Moonfury: {
+			MoonfuryItem: {
 				DisplayName: Moonfury
 				Tooltip: ""
 			}
 
-			SunderingLight: {
+			SunderingLightItem: {
 				DisplayName: Sundering Light
 				Tooltip:
 					'''
@@ -9244,7 +9244,7 @@ Mods: {
 					'''
 			}
 
-			DiamondCrusher: {
+			DiamondCrusherItem: {
 				Tooltip: Creates an shockwave upon hitting solid blocks that damages nearby enemies
 				DisplayName: Diamond Crusher
 			}

@@ -7,8 +7,10 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare;
+using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Melee.Flails
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails.HeavensTear
 {
 
     public class HeavensTearBall : ModProjectile

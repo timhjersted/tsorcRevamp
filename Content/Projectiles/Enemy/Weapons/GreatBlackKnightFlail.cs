@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Projectiles.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare;
 using tsorcRevamp.NPCs.Enemies;
 using tsorcRevamp.Utilities;
 using tsorcRevamp.NPCs.Invaders;

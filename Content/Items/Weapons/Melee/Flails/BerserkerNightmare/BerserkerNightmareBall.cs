@@ -7,14 +7,15 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Melee.Flails
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare
 {
 
-    public class DiamondCrusherBall : ModProjectile
+    public class BerserkerNightmareBall : ModProjectile
     {
 
-        public string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(DiamondCrusherBall)) + "_Chain"; // The folder path to the flail chain sprite
+        private string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(BerserkerNightmareBall)) + "_Chain"; // The folder path to the flail chain sprite
 
         private enum AIState
         {
@@ -48,16 +49,21 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 26; // The width of your projectile
-            Projectile.height = 26; // The height of your projectile
+            Projectile.width = 30; // The width of your projectile
+            Projectile.height = 30; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
             Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage
             Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
             Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
 
-            // Vanilla flails all use aiStyle 15, but the code isn't customizable so an adaption of that aiStyle is used in the AI method	
+            // Vanilla flails all use aiStyle 15, but the code isn't customizable so an adaption of that aiStyle is used in the AI method
             Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail = true;
+        }
+        
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.Frostburn2, 4 * 60);
         }
 
         // This AI code was adapted from vanilla code: Terraria.Projectile.AI_015_Flails() 
@@ -79,13 +85,13 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             Vector2 mountedCenter = player.MountedCenter;
             bool doFastThrowDust = false;
             bool shouldOwnerHitCheck = false;
-            int launchTimeLimit = 12;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-            float launchSpeed = 16f; // How fast the projectile can move
-            float maxLaunchLength = 800f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-            float retractAcceleration = 6f; // How quickly the projectile will accelerate back towards the player while retracting
-            float maxRetractSpeed = 14f; // The max speed the projectile will have while retracting
-            float forcedRetractAcceleration = 12f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-            float maxForcedRetractSpeed = 40f; // The max speed the projectile will have while being forced to retract
+            int launchTimeLimit = 14;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
+            float launchSpeed = 23f; // How fast the projectile can move
+            float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
+            float retractAcceleration = 10f; // How quickly the projectile will accelerate back towards the player while retracting
+            float maxRetractSpeed = 30f; // The max speed the projectile will have while retracting
+            float forcedRetractAcceleration = 20f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+            float maxForcedRetractSpeed = 60f; // The max speed the projectile will have while being forced to retract
             float unusedRetractAcceleration = 1f;
             float unusedMaxRetractSpeed = 14f;
             int unusedChainLength = 60;
@@ -154,11 +160,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                             StateTimer = 0f;
                             Projectile.netUpdate = true;
                             Projectile.velocity *= 0.2f;
-                            // This is where Drippler Crippler spawns its projectile
-                            /*
-							if (Main.myPlayer == Projectile.owner)
-								Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, 928, Projectile.damage, Projectile.knockBack, Main.myPlayer);
-							*/
+
                             break;
                         }
                         if (shouldSwitchToRetracting)
@@ -167,7 +169,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                             StateTimer = 0f;
                             Projectile.netUpdate = true;
                             Projectile.velocity *= 0.3f;
-                            // This is also where Drippler Crippler spawns its projectile, see above code.
+                            // This is also where Drippler Crippler spawns its projectile, see above code. a
                         }
                         player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
                         Projectile.localNPCHitCooldown = movingHitCooldown;
@@ -332,21 +334,32 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             player.itemRotation = MathHelper.WrapAngle(player.itemRotation);
 
             // Spawning dust. We spawn dust more often when in the LaunchingForward state
-            int dustRate = 12;
+            int dustRate = 15;
             if (doFastThrowDust)
                 dustRate = 1;
 
             if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Silver, 0f, 0f, 150, default(Color), 1.1f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, 180, 0f, 0f, 150, default(Color), 1.3f);
+
+            if (Projectile.localAI[0]++ >= 3)
+            {
+                Projectile.localAI[0] = 0;
+
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<BerserkerNightmareAura>(),
+                    Projectile.damage / 4,
+                    0f,
+                    Projectile.owner,
+                    Projectile.whoAmI
+                );
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
-            if (CurrentAIState != AIState.Dropping)
-            {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DiamondCrusherShockwave>(), Projectile.damage / 2, 0f, Projectile.owner);
-            }
-
             int defaultLocalNPCHitCooldown = 10;
             int impactIntensity = 0;
             Vector2 velocity = Projectile.velocity;
@@ -412,7 +425,7 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             //if (Projectile.wet)
             //	wetVelocity = Projectile.velocity;
 
-            return false;           
+            return false;
         }
 
         public override bool? CanDamage()
@@ -539,57 +552,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                 }
             }
             return true;
-        }
-    }
-
-    public class DiamondCrusherShockwave : ModProjectile
-    {
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
-
-        public override void SetDefaults()
-        {
-            Projectile.width = 100;   
-            Projectile.height = 100;
-            Projectile.friendly = true;
-            Projectile.penetrate = -1;
-            Projectile.tileCollide = false;
-            Projectile.timeLeft = 4;
-            Projectile.usesIDStaticNPCImmunity = true;
-            Projectile.idStaticNPCHitCooldown = 10;
-            Projectile.DamageType = DamageClass.Melee;
-            Projectile.hide = true;
-            Projectile.ArmorPenetration = 5;
-        }
-
-        public override void AI()
-        {
-            for (int i = 0; i < 12; i++)
-            {
-                Vector2 velocity = Main.rand.NextVector2Circular(8.5f, 8.5f);
-                Dust dust = Dust.NewDustPerfect(
-                    Projectile.Center + Main.rand.NextVector2Circular(21f, 21f),
-                    DustID.Stone,
-                    velocity,
-                    0,
-                    default,
-                    Main.rand.NextFloat(1.0f, 1.4f)
-                );
-                dust.noGravity = true;
-            }
-
-            for (int i = 0; i < 12; i++)
-            {
-                Vector2 velocity = Main.rand.NextVector2Circular(8.5f, 8.5f);
-                Dust dust2 = Dust.NewDustPerfect(
-                    Projectile.Center + Main.rand.NextVector2Circular(21f, 21f),
-                    DustID.Silver,
-                    velocity,
-                    0,
-                    default,
-                    Main.rand.NextFloat(1.0f, 1.4f)
-                );
-                dust2.noGravity = true;
-            }
         }
     }
 }

@@ -3,8 +3,9 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Melee.Flails
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare
 {
 
     public class BerserkerNightmareAura : ModProjectile

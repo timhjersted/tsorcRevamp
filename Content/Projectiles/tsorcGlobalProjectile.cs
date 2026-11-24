@@ -12,6 +12,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Content.Items.Armor.Ranged;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Armor.Ranged.KrakenSet;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.HeavensTear;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Utilities;
 using MiakodaCrescent = tsorcRevamp.Content.Projectiles.Pets.MiakodaCrescent;
@@ -723,7 +724,7 @@ namespace tsorcRevamp.Content.Projectiles
                     || projectile.type == ProjectileID.Anchor
                     || ModdedFlail
                     || (projectile.type == ProjectileID.RainFriendly
-                        && player.ownedProjectileCounts[ModContent.ProjectileType<Melee.Flails.HeavensTearBall>()] > 0);
+                        && player.ownedProjectileCounts[ModContent.ProjectileType<HeavensTearBall>()] > 0);
 
                 if (isFlailHit && !fromFriendlyPuppet)
                 {

@@ -7,14 +7,16 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Projectiles;
 
-namespace tsorcRevamp.Content.Projectiles.Melee.Flails
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails.Moonfury
 {
 
-    public class SunderingLightBall : ModProjectile
+    public class MoonfuryBall : ModProjectile
     {
 
-        private static readonly string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(SunderingLightBall)) + "_Chain";
+        private static readonly string ChainTexturePath = UsefulFunctions.RefactorableFilepath(typeof(MoonfuryBall)) + "_Chain"; // The folder path to the flail chain sprite
+        private static readonly string ChainTextureExtraPath = UsefulFunctions.RefactorableFilepath(typeof(MoonfuryBall)) + "_Chain2";  // This texture and related code is optional and used for a unique effect
 
         private enum AIState
         {
@@ -48,16 +50,21 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
         public override void SetDefaults()
         {
             Projectile.netImportant = true; // This ensures that the projectile is synced when other players join the world.
-            Projectile.width = 34; // The width of your projectile
-            Projectile.height = 34; // The height of your projectile
+            Projectile.width = 29; // The width of your projectile
+            Projectile.height = 29; // The height of your projectile
             Projectile.friendly = true; // Deals damage to enemies
-            Projectile.penetrate = -1; // Infinite pierce 
+            Projectile.penetrate = -1; // Infinite pierce
             Projectile.DamageType = DamageClass.Melee; // Deals melee damage
             Projectile.usesLocalNPCImmunity = true; // Used for hit cooldown changes in the ai hook
             Projectile.localNPCHitCooldown = 10; // This facilitates custom hit cooldown logic
 
-            // Vanilla flails all use aiStyle 15, but the code isn't customizable so an adaption of that aiStyle is used in the AI method
+            // Vanilla flails all use aiStyle 15, but the code isn't customizable so an adaption of that aiStyle is used in the AI method	
             Projectile.GetGlobalProjectile<tsorcGlobalProjectile>().ModdedFlail = true;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            target.AddBuff(BuffID.ShadowFlame, 4 * 60);
         }
 
         // This AI code was adapted from vanilla code: Terraria.Projectile.AI_015_Flails() 
@@ -80,12 +87,12 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             bool doFastThrowDust = false;
             bool shouldOwnerHitCheck = false;
             int launchTimeLimit = 14;  // How much time the projectile can go before retracting (speed and shootTimer will set the flail's range)
-            float launchSpeed = 26f; // How fast the projectile can move
+            float launchSpeed = 20f; // How fast the projectile can move
             float maxLaunchLength = 1000f; // How far the projectile's chain can stretch before being forced to retract when in launched state
-            float retractAcceleration = 11f; // How quickly the projectile will accelerate back towards the player while retracting
-            float maxRetractSpeed = 33f; // The max speed the projectile will have while retracting
-            float forcedRetractAcceleration = 22f; // How quickly the projectile will accelerate back towards the player while being forced to retract
-            float maxForcedRetractSpeed = 66f; // The max speed the projectile will have while being forced to retract
+            float retractAcceleration = 8f; // How quickly the projectile will accelerate back towards the player while retracting
+            float maxRetractSpeed = 24f; // The max speed the projectile will have while retracting
+            float forcedRetractAcceleration = 16f; // How quickly the projectile will accelerate back towards the player while being forced to retract
+            float maxForcedRetractSpeed = 48f; // The max speed the projectile will have while being forced to retract
             float unusedRetractAcceleration = 1f;
             float unusedMaxRetractSpeed = 14f;
             int unusedChainLength = 60;
@@ -154,7 +161,11 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                             StateTimer = 0f;
                             Projectile.netUpdate = true;
                             Projectile.velocity *= 0.2f;
-
+                            // This is where Drippler Crippler spawns its projectile
+                            /*
+							if (Main.myPlayer == Projectile.owner)
+								Projectile.NewProjectile(Projectile.GetProjectileSource_FromThis(), Projectile.Center, Projectile.velocity, 928, Projectile.damage, Projectile.knockBack, Main.myPlayer);
+							*/
                             break;
                         }
                         if (shouldSwitchToRetracting)
@@ -164,30 +175,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                             Projectile.netUpdate = true;
                             Projectile.velocity *= 0.3f;
                             // This is also where Drippler Crippler spawns its projectile, see above code.
-                            Vector2 dropletvector = new Vector2(0, 5);
-                            if (Main.myPlayer == Projectile.owner)
-                            {
-                                int infernoBlast = Projectile.NewProjectile(
-                                    Projectile.GetSource_FromThis(),
-                                    Projectile.Center,
-                                    Vector2.Zero, 
-                                    ProjectileID.InfernoFriendlyBlast,
-                                    (int)player.GetTotalDamage(DamageClass.Melee).ApplyTo(Projectile.damage / 2), 
-                                    Projectile.knockBack, 
-                                    Main.myPlayer
-                                );
-                                if (infernoBlast >= 0 && Main.projectile[infernoBlast] != null)
-                                {
-                                    Projectile proj = Main.projectile[infernoBlast];
-                                    proj.scale *= 2f; 
-                                    proj.timeLeft = 60; 
-
-                                    for (int i = 0; i < 10; i++)
-                                    {
-                                        Dust.NewDust(proj.position, proj.width, proj.height, DustID.GoldFlame, 0f, 0f, 150, Color.Yellow, 1.5f);
-                                    }
-                                }
-                            }
                         }
                         player.ChangeDir((player.Center.X < Projectile.Center.X) ? 1 : (-1));
                         Projectile.localNPCHitCooldown = movingHitCooldown;
@@ -351,29 +338,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             }
             player.itemRotation = MathHelper.WrapAngle(player.itemRotation);
 
-            // Spawning dust. We spawn dust more often when in the LaunchingForward state
-            int dustRate = 15;
-            if (doFastThrowDust)
-                dustRate = 1;
-
-            if (Main.rand.NextBool(dustRate))
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.GoldFlame, 0f, 0f, 150, default(Color), 1.3f);
-
-            if (Projectile.localAI[0]++ >= 3)
-            {
-                Projectile.localAI[0] = 0;
-
-                Projectile.NewProjectile(
-                    Projectile.GetSource_FromThis(),
-                    Projectile.Center,
-                    Vector2.Zero,
-                    ModContent.ProjectileType<SunderingLightAura>(),
-                    Projectile.damage / 2,
-                    0f,
-                    Projectile.owner,
-                    Projectile.whoAmI
-                );
-            }
+            int dustIndex = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Shadowflame, 0f, 0f, 150, default(Color), 2.3f);
+            Main.dust[dustIndex].noGravity = true;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -484,10 +450,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             {
                 modifiers.Knockback *= 0.5f;
             }
-            if (tsorcRevamp.MageNPCs.Contains(target.type) && tsorcRevamp.GhostNPCs.Contains(target.type))
-            {
-                modifiers.FinalDamage *= 1.5f;
-            }
         }
 
         // PreDraw is used to draw a chain and trail before the projectile is drawn normally.
@@ -499,44 +461,63 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
             playerArmPosition.Y -= Main.player[Projectile.owner].gfxOffY;
 
             Asset<Texture2D> chainTexture = ModContent.Request<Texture2D>(ChainTexturePath);
-            Vector2 chainOrigin = chainTexture.Size() / 2f;
+            Asset<Texture2D> chainTextureExtra = ModContent.Request<Texture2D>(ChainTextureExtraPath); // This texture and related code is optional and used for a unique effect
+
+            Rectangle? chainSourceRectangle = null;
+            // Drippler Crippler customizes sourceRectangle to cycle through sprite frames: sourceRectangle = asset.Frame(1, 6);
+            float chainHeightAdjustment = 0f; // Use this to adjust the chain overlap. 
+
+            Vector2 chainOrigin = chainSourceRectangle.HasValue ? (chainSourceRectangle.Value.Size() / 2f) : (chainTexture.Size() / 2f);
             Vector2 chainDrawPosition = Projectile.Center;
             Vector2 vectorFromProjectileToPlayerArms = playerArmPosition.MoveTowards(chainDrawPosition, 4f) - chainDrawPosition;
             Vector2 unitVectorFromProjectileToPlayerArms = vectorFromProjectileToPlayerArms.SafeNormalize(Vector2.Zero);
-            float chainSegmentLength = chainTexture.Height();
-
-            // Keep the draw loop advancing if the asynchronous texture request has no dimensions yet.
-            if (chainSegmentLength == 0f)
-            {
-                chainSegmentLength = 10f;
-            }
-
+            float chainSegmentLength = (chainSourceRectangle.HasValue ? chainSourceRectangle.Value.Height : chainTexture.Height()) + chainHeightAdjustment;
+            if (chainSegmentLength == 0)
+                chainSegmentLength = 10; // When the chain texture is being loaded, the height is 0 which would cause infinite loops.
             float chainRotation = unitVectorFromProjectileToPlayerArms.ToRotation() + MathHelper.PiOver2;
             int chainCount = 0;
             float chainLengthRemainingToDraw = vectorFromProjectileToPlayerArms.Length() + chainSegmentLength / 2f;
 
+            // This while loop draws the chain texture from the projectile to the player, looping to draw the chain texture along the path
             while (chainLengthRemainingToDraw > 0f)
             {
-                int tileX = (int)chainDrawPosition.X / 16;
-                int tileY = (int)(chainDrawPosition.Y / 16f);
-                Color chainDrawColor = Lighting.GetColor(tileX, tileY);
+                // This code gets the lighting at the current tile coordinates
+                Color chainDrawColor = Lighting.GetColor((int)chainDrawPosition.X / 16, (int)(chainDrawPosition.Y / 16f));
 
-                // Keep the links nearest the head bright, then blend back to tile lighting over two links.
-                if (chainCount < 2)
+                // Flaming Mace and Drippler Crippler use code here to draw custom sprite frames with custom lighting.
+                // Cycling through frames: sourceRectangle = asset.Frame(1, 6, 0, chainCount % 6);
+                // This example shows how Flaming Mace works. It checks chainCount and changes chainTexture and draw color at different values
+
+                var chainTextureToDraw = chainTexture;
+                if (chainCount >= 4)
                 {
+                    // Use normal chainTexture and lighting, no changes
+                }
+                else if (chainCount >= 2)
+                {
+                    // Near to the ball, we draw a custom chain texture and slightly make it glow if unlit.
+                    chainTextureToDraw = chainTextureExtra;
+                    byte minValue = 140;
+                    if (chainDrawColor.R < minValue)
+                        chainDrawColor.R = minValue;
+
+                    if (chainDrawColor.G < minValue)
+                        chainDrawColor.G = minValue;
+
+                    if (chainDrawColor.B < minValue)
+                        chainDrawColor.B = minValue;
+                }
+                else
+                {
+                    // Close to the ball, we draw a custom chain texture and draw it at full brightness glow.
+                    chainTextureToDraw = chainTextureExtra;
                     chainDrawColor = Color.White;
                 }
-                else if (chainCount < 4)
-                {
-                    const byte MinimumLight = 140;
-                    chainDrawColor.R = Math.Max(chainDrawColor.R, MinimumLight);
-                    chainDrawColor.G = Math.Max(chainDrawColor.G, MinimumLight);
-                    chainDrawColor.B = Math.Max(chainDrawColor.B, MinimumLight);
-                }
 
-                Vector2 chainScreenPosition = chainDrawPosition - Main.screenPosition;
-                Main.spriteBatch.Draw(chainTexture.Value, chainScreenPosition, null, chainDrawColor, chainRotation, chainOrigin, 1f, SpriteEffects.None, 0f);
+                // Here, we draw the chain texture at the coordinates
+                Main.spriteBatch.Draw(chainTextureToDraw.Value, chainDrawPosition - Main.screenPosition, chainSourceRectangle, chainDrawColor, chainRotation, chainOrigin, 1f, SpriteEffects.None, 0f);
 
+                // chainDrawPosition is advanced along the vector back to the player by the chainSegmentLength
                 chainDrawPosition += unitVectorFromProjectileToPlayerArms * chainSegmentLength;
                 chainCount++;
                 chainLengthRemainingToDraw -= chainSegmentLength;
@@ -548,12 +529,8 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                 Texture2D projectileTexture = TextureAssets.Projectile[Projectile.type].Value;
                 Vector2 drawOrigin = new Vector2(projectileTexture.Width * 0.5f, Projectile.height * 0.5f);
                 SpriteEffects spriteEffects = SpriteEffects.None;
-
                 if (Projectile.spriteDirection == -1)
-                {
                     spriteEffects = SpriteEffects.FlipHorizontally;
-                }
-
                 for (int k = 0; k < Projectile.oldPos.Length && k < StateTimer; k++)
                 {
                     Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
@@ -561,7 +538,6 @@ namespace tsorcRevamp.Content.Projectiles.Melee.Flails
                     Main.spriteBatch.Draw(projectileTexture, drawPos, null, color, Projectile.rotation, drawOrigin, Projectile.scale - k / (float)Projectile.oldPos.Length / 3, spriteEffects, 0f);
                 }
             }
-
             return true;
         }
     }

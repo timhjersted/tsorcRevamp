@@ -1,14 +1,13 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
-using tsorcRevamp.Content.Projectiles.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare;
 
-namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails.HeavensTear
 {
-    public class HeavensTear : ModItem
+    public class HeavensTearItem : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -46,7 +45,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Flails
             Recipe recipe = CreateRecipe();
 
             recipe.AddIngredient(ItemID.FlowerPow, 1);
-            recipe.AddIngredient(ModContent.ItemType<BerserkerNightmare>(), 1);
+            recipe.AddIngredient(ModContent.ItemType<BerserkerNightmareItem>(), 1);
             recipe.AddIngredient(ModContent.ItemType<GuardianSoul>(), 1);
             //recipe.AddIngredient(ModContent.ItemType<CursedSoul>(), 10);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 90000);

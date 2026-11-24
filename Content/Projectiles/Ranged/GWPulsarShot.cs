@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Projectiles.Melee.Flails;
 
 namespace tsorcRevamp.Content.Projectiles.Ranged
 {

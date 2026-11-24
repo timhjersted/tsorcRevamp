@@ -11,6 +11,11 @@ using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.BerserkerNightmare;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.DiamondCrusher;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.HeavensTear;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.Moonfury;
+using tsorcRevamp.Content.Items.Weapons.Melee.Flails.SunderingLight;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Flamethrowers;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Projectiles;
@@ -207,19 +212,19 @@ namespace tsorcRevamp
         {
             ItemID.Mace,
             ItemID.FlamingMace,
-            ModContent.ItemType<DiamondCrusher>(),
+            ModContent.ItemType<DiamondCrusherItem>(),
             ItemID.BallOHurt,
             ItemID.TheMeatball,
             ItemID.BlueMoon,
             ItemID.Sunfury,
-            ModContent.ItemType<Moonfury>(),
+            ModContent.ItemType<MoonfuryItem>(),
             ItemID.DaoofPow,
             ItemID.DripplerFlail,
             ItemID.FlowerPow,
             //ItemID.Flairon,
-            ModContent.ItemType<HeavensTear>(),
-            ModContent.ItemType<BerserkerNightmare>(),
-            ModContent.ItemType<SunderingLight>()
+            ModContent.ItemType<HeavensTearItem>(),
+            ModContent.ItemType<BerserkerNightmareItem>(),
+            ModContent.ItemType<SunderingLightItem>()
         };
 
         // Last tick's itemAnimation. A rise means "a new use started" and charges weapon stamina (PreItemCheck).
