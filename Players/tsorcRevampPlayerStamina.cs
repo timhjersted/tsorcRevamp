@@ -189,7 +189,7 @@ namespace tsorcRevamp
             => weaponOutputStates.TryGetValue(itemType, out WeaponOutputState state) ? state.DamagePerUseEma : 0f;
 
         /// <summary>The legacy swing-speed-only stamina cost, kept for the DebugMode side-by-side comparison
-        /// in the item tooltip. Not used for gameplay any more — output-based cost is the only live path.</summary>
+        /// in the item tooltip. Used in gameplay currently — output-based cost was a failed experiment.</summary>
         public static float LegacyWeaponStaminaCost(int scaledUseAnimation)
             => tsorcRevampPlayer.ReduceStamina(scaledUseAnimation);
 
@@ -773,7 +773,7 @@ namespace tsorcRevamp
         const float HeldProjectileDrainPerFrame = 0.5f;
         const float SpecialHeldProjectileDrainPerFrame = 0.4f;
         const float FlailDrainPerFrame = 0.2f;
-        const float FlailActiveHitDrainPerFrame = 0.4f;
+        const float FlailActiveHitDrainPerFrame = 0.5f;
         internal const int FlailActiveHitWindowTicks = 30;
         internal int flailActiveHitTimer = 0;
         const float YoyoDrainPerFrame = 0.25f;
@@ -862,8 +862,11 @@ namespace tsorcRevamp
 
                     {
                         float flailDrain = flailActiveHitTimer > 0 ? FlailActiveHitDrainPerFrame : FlailDrainPerFrame;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= flailDrain * mult;
-                        Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
+                        if (Main.projectile[p].ai[0] < 2 || Main.projectile[p].ai[0] > 4) //retracting, unusedstate and forcedretracting don't need to drain stamina
+                        {
+                            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent -= flailDrain * mult;
+                            Player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceRegenRate *= 0f;
+                        }
                         if (staminaResourceCurrent < 1)
                         {
                             Main.projectile[p].Kill();

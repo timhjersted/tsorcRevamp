@@ -276,7 +276,9 @@ namespace tsorcRevamp.Content.Items
                         {      
                             tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "LethalTempo", LangUtils.GetTextValue("LethalTempoExplanation", 
                                 LethalTempoPlayer.BaseAttackSpeedMult, (int)(LethalTempoPlayer.BonusAttackSpeedPerStack * 100f), 
-                                MathF.Round(LethalTempoPlayer.MaxAttackSpeedMult, 2), LethalTempoPlayer.MaxStacks)));
+                                MathF.Round(LethalTempoPlayer.MaxAttackSpeedMult, 2), LethalTempoPlayer.MaxStacks, 
+                                LethalTempoPlayer.BoltDmgMult, MathF.Round(LethalTempoPlayer.MaxBoltDmgMult, 0),
+                                LethalTempoPlayer.StaminaRestorationOnHit)));
                         }
                         break;
                     }

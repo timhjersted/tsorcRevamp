@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -115,8 +116,9 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         81, //idk why but Longinus uses id 81 somehow
         ModContent.ProjectileType<Bolt1Revamped>(), //Doomhammer
         ModContent.ProjectileType<DoomhammerFireball>(), //^^^^^^^^^^
-        ModContent.ProjectileType<AncientFireAxeFireballBurst>() //^^
+        ModContent.ProjectileType<AncientFireAxeFireballBurst>(), //^^
         
+        ModContent.ProjectileType<LethalTempoBolt>() //so it doesn't keep spawning itself
     };
     public List<int> Exceptions = new List<int>()
     {
@@ -180,10 +182,37 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
                     { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.003f }, player.Center);
             }
             player.AddBuff(ModContent.BuffType<LethalTempo>(), LethalTempoPlayer.Duration * 60);
+            modPlayer.FallOffStarted  = false;
             if (!Exceptions.Contains(projectile.type) && !flailCondition)
             {
                 AppliedLethalTempo = true;
             }
+            
+            if (modPlayer.Stacks < LethalTempoPlayer.MaxStacks)
+            {
+                var staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+                var tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
+                Item item = player.HeldItem;
+                int scaledUseAnimation = (int)(item.useAnimation / player.GetAttackSpeed(item.DamageType));
+                bool isToolWeapon = (item.pick != 0 || item.axe != 0 || item.hammer != 0)
+                                    && (tsorcRevamp.WeaponClassifiedTools == null || !tsorcRevamp.WeaponClassifiedTools.Contains(item.type));
+                float staminaMult = tsorcPlayer.WeaponStaminaMult(item);
+                float staminaCost = tsorcRevampStaminaPlayer.LegacyWeaponStaminaCost(scaledUseAnimation) * staminaMult;
+
+                staminaPlayer.RestoreStamina(staminaCost * LethalTempoPlayer.StaminaRestorationOnHit / 100f, "LethalTempoStack");
+            }
+            
+        }
+        
+        if (projectile.DamageType == DamageClass.Melee 
+            && modPlayer.LethalTempo && player.HasBuff(ModContent.BuffType<LethalTempo>()) 
+            && !bannedCondition && modPlayer.Stacks == LethalTempoPlayer.MaxStacks)
+        {
+            int dmg = (int)(hit.SourceDamage * LethalTempoPlayer.BoltDmgMult / 100f);
+            Vector2 randPosition = new Vector2(Main.rand.Next(-50, 51), Main.rand.Next(-50, 51));
+            Projectile.NewProjectile(projectile.GetSource_FromThis(), player.Center + randPosition,
+                Vector2.Zero, ModContent.ProjectileType<LethalTempoBolt>(),
+                dmg, 0, Main.myPlayer, target.whoAmI);
         }
     }
 }

@@ -2072,8 +2072,6 @@ namespace tsorcRevamp.NPCs
                         npc.value = 42250;
                         npc.defense = 20; // vanilla 12
                         npc.knockBackResist = 0f;
-                        npc.buffImmune[BuffID.Frostburn] = true;
-                        npc.buffImmune[BuffID.CursedInferno] = true;
                         npc.rarity = 5;
                         break;
                     }
@@ -2082,6 +2080,8 @@ namespace tsorcRevamp.NPCs
                     {
                         //npc.lifeMax = ;
                         npc.value = 0; //*20 per brain, making 1420
+                        npc.buffImmune[BuffID.Frostburn] = true;
+                        npc.buffImmune[BuffID.CursedInferno] = true;
                         break;
                     }
                 #endregion

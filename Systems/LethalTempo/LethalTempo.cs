@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.Localization;
@@ -13,7 +14,7 @@ namespace tsorcRevamp.Systems.LethalTempo
     public class LethalTempo : ModBuff
     {
         public const bool Enabled = true;
-        public const int FrameCount = LethalTempoPlayer.MaxStacks + 1;
+        public const int FrameCount = 20 + 1;
         private Asset<Texture2D> animatedTexture;
         public override void SetStaticDefaults()
         {
@@ -40,6 +41,16 @@ namespace tsorcRevamp.Systems.LethalTempo
                     {
                         modPlayer.Stacks--;
                         player.buffTime[buffIndex] = (int)(((float)LethalTempoPlayer.Duration / 6f) * 60f);
+                        if (modPlayer.Stacks == 0)
+                        {
+                            modPlayer.FallOffStarted  = false;
+                        }
+                        if (!modPlayer.FallOffStarted)
+                        {
+                            SoundEngine.PlaySound(new SoundStyle(UsefulFunctions.RefactorableFilepath(typeof(LethalTempo)) + "_FallOff") with 
+                                { Volume = ModContent.GetInstance<tsorcRevampConfig>().BotCMechanicsVolume * 0.004f }, player.Center);
+                            modPlayer.FallOffStarted  = true;
+                        }
                     }
                 }
                 if (modPlayer.Stacks == 0 && modPlayer.LethalTempo)

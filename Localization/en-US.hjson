@@ -39,7 +39,8 @@ Mods: {
 			[c/ff8400:Hitting enemies with true melee attacks will grant stacks of Lethal Tempo,]
 			[c/ff8400:these increase your attack speed temporarily and fall off after a few seconds, if not refreshed.]
 			[c/ff8400:Each stack grants {1}% multiplicative attack speed, up to a total of {2}x at the maximum of {3} stacks.]
-			[c/ff8400:At max stacks, also gain...]
+			[c/ff8400:Restores {6}% of weapon stamina cost on-hit before it's fully stacked.]
+			[c/ff8400:At max stacks, each true melee hit will spawn a bolt dealing {4}-{5}% bonus damage based on distance travelled.]
 			'''
 		ElectrocuteExplanation:
 			'''
@@ -12800,6 +12801,7 @@ Mods: {
 			GrandOolacileJudgmentBlaze.DisplayName: Grand Oolacile Judgment Blaze
 			ElementalBoulder.DisplayName: Elemental Boulder
 			ElementalFireball.DisplayName: Elemental Fireball
+			LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 		}
 
 		NPCs: {
