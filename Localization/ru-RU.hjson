@@ -7061,16 +7061,16 @@ Mods: {
 					'''
 			}
 
-			LionheartGunblade: {
-				DisplayName: Оружейный клинок "Львиное сердце"
-				Tooltip:
+			LionheartGunbladeItem: {
+				// DisplayName: Lionheart Gunblade
+				/* Tooltip:
 					'''
-					"Из всех оружейных клинков лучшей моделью является Львиное сердце".
-					Удар клинком по врагу добавляет метку
-					При  {0} метках - стреляйте по врагу, чтобы нанести ему значительный урон
-					Дополнительный урон от метки зависит от расстояния до врага
-					Преимущества при всех типах урона
-					'''
+					"Of gunblades, the finest model is the Lionheart."
+					Hitting an enemy with the Blade adds a mark
+					At {0} marks, shoot the enemy to consume them for massive damage
+					Mark bonus damage is based on distance to the enemy
+					Benefits from all damage types
+					''' */
 			}
 
 			MagmaTooth: {
@@ -7327,47 +7327,46 @@ Mods: {
 			}
 
 			BloodLanceItem: {
-				// DisplayName: Ancient Blood Lance
+				// DisplayName: Blood Lance
 				/* Tooltip:
 					'''
-					Inflicts Crimson Burn in a small radius
-					If the owner has the Crimson Potion effect, has a {0}% chance to heal {1} hp on hit
-					Increases Resistance against contact damage by {2}
+					Inflicts Crimson Burn in a small radius around the hit enemy
+					Has a {0}% chance to heal {1} hp on hit
+					Heal is guaranteed on enemies afflicted with Crimson Burn
 					''' */
 			}
 
-			AncientDragonLance: {
-				DisplayName: Древнее драконье копьё
-				Tooltip:
+			DragonLanceItem: {
+				// DisplayName: Dragon Lance
+				/* Tooltip:
 					'''
-					Говорят, что оно пробивает любую броню ({0} пробиваемость брони)
-					Наследует водный эффект трезубца
-					'''
+					Said to pierce any armor({0} armor penetration)
+					Inherits Tridents water effect
+					''' */
 			}
 
-			AncientHolyLance: {
-				DisplayName: Древнее Священное копьё
-				Tooltip: Стреляет лучом светового копья
+			HolyLanceItem: {
+				// DisplayName: Holy Lance
+				// Tooltip: Shoots a light spear beam
 			}
 
-			CelestialLance: {
-				DisplayName: Небесное копье
-				Tooltip:
+			CelestialLanceItem: {
+				// DisplayName: Celestial Lance
+				/* Tooltip:
 					'''
-					Считается, что Небесное копье правит миром.
-					При попадании по врагу вызывает звёздный дождь.
-					Урон при падении увеличивается на {0}%, а при попадании появляется шанс восстановить {1} здоровья
-					'''
+					Ruler of stars
+					Rains fallen stars on direct hits
+					''' */
 			}
 
-			CobaltHalberd: {
-				DisplayName: Кобальтовая алебарда
-				Tooltip: ""
+			CobaltHalberdItem: {
+				// DisplayName: Cobalt Halberd
+				// Tooltip: ""
 			}
 
-			DragoonLance: {
-				DisplayName: Копье драгуна
-				Tooltip: Копьё, выкованное из клыка змеи-драгуна.
+			DragoonLanceItem: {
+				// DisplayName: Dragoon Lance
+				// Tooltip: A spear forged from the fang of the Dragoon Serpent.
 			}
 
 			FetidExhaust: {
@@ -7386,21 +7385,14 @@ Mods: {
 					'''
 			}
 
-			WingedSpear: {
-				DisplayName: Крылатое копьё
-				Tooltip: Лёгкое, как ветер
+			WingedSpearItem: {
+				// DisplayName: Winged Spear
+				// Tooltip: A spear as light as the wind
 			}
 
-			PilgrimSpontoon: {
-				DisplayName: Эспонтон Пилигрима
-				Tooltip:
-					'''
-					Наследует водяной эффект трезубца и пробивает {0} ед. брони
-					Нажмите ПКМ, чтобы активировать магические способности копья, ценой в 60 ед. маны, усиливая его способности на короткое время
-					Увеличивает скорость оружия, позволяет метательным снарядам пробивать врагов насквозь и накладывает дебафф во время усиления
-					Удары копьём по врагам ускоряют перезарядку
-					Перезарядка 18 секунд
-					'''
+			PilgrimSpontoonItem: {
+				// DisplayName: Pilgrim's Spontoon
+				// Tooltip: ""
 				/* Tooltip0:
 					'''
 					Inherits Tridents water effect and pierces {0} armor penetration
@@ -7411,33 +7403,38 @@ Mods: {
 					''' */
 			}
 
-			GaeBolg: {
-				DisplayName: Гэ Болг
-				Tooltip: Пронзает реальность
+			GaeBolgItem: {
+				// DisplayName: Gae Bolg
+				/* Tooltip:
+					'''
+					Pierce reality 
+					Click to stab, or hold to charge a throw
+					''' */
 			}
 
-			HiRyuuSpear: {
-				DisplayName: Копье Хирюу
-				Tooltip:
+			HiRyuuSpearItem: {
+				// DisplayName: HiRyuu Spear
+				/* Tooltip:
 					'''
-					Повелитель неба
-					Наносит {0}% дополнительного урона врагам, находящимся в воздухе
-					'''
+					Ruler of the sky
+					{0}% increased damage while falling and has a {3}% chance to heal {1} HP on hit
+					Deal {2}% extra damage to airborne enemies
+					''' */
 			}
 
-			Longinus: {
-				DisplayName: Лонгинус
-				Tooltip:
+			LonginusItem: {
+				// DisplayName: Longinus
+				/* Tooltip:
 					'''
-					Легендарное копье, которое, по слухам, правит миром.
-					При попадании во врага вызывает с неба красную энергию.
-					Увеличивает урон от атаки на {0}% при падении и даёт шанс восстановить {1} здоровья при попадании.
-					'''
+					Legendary spear fabled to hold sway over the world.
+					Click to stab, or hold to charge a throw
+					Fully charged spears create large powerful explosions
+					''' */
 			}
 
-			SupremeDragoonLance: {
-				DisplayName: Превосходное копьё драгуна
-				Tooltip: Всемогущее копьё, выкованное из клыка Змея-драгуна.
+			SupremeDragoonLanceItem: {
+				// DisplayName: Supreme Dragoon Lance
+				// Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
 			}
 
 			ThrowingAxe: {
@@ -7573,15 +7570,15 @@ Mods: {
 					'''
 			}
 
-			DarkTrident: {
-				DisplayName: Тёмный трезубец
-				Tooltip:
+			DarkTridentItem: {
+				// DisplayName: Dark Trident
+				/* Tooltip:
 					'''
-					Пронзает врагов тёмной магией
-					Удерживайте нажатым ЛКМ, чтобы зарядить бросок, а при нажатии ПКМ наносит колющий удар
-					В зависимости от ваших самых высоких характеристик, тип урона меняется между дальним и ближним боями
-					При полностью заряженном броске трезумец воспламеняется, поджигая поражённых врагов
-					'''
+					Pierces enemies with dark magic
+					Click to stab, or hold to charge a throw
+					Changes its damage type between ranged or melee depending your highest stats
+					Fully charged tridents ignite, setting hit enemies ablaze
+					''' */
 			}
 
 			Freezethrower: {
@@ -9177,13 +9174,13 @@ Mods: {
 					'''
 			}
 
-			OldHalberd: {
-				DisplayName: Старая алебарда
-				Tooltip:
+			OldHalberdItem: {
+				// DisplayName: Old Halberd
+				/* Tooltip:
 					'''
-					Наносит случайный урон от 0 до {0}
-					Максимальный урон увеличивается с помощью модификаторов урона.
-					'''
+					Does random damage from 0 to {0}
+					Maximum damage is increased by damage modifiers. 
+					''' */
 			}
 
 			WitchkingMace: {
@@ -10049,9 +10046,9 @@ Mods: {
 				// DisplayName: Great Royal Halberd
 			}
 
-			OrnsteinSpear: {
-				DisplayName: Копьё Орнштейна
-				Tooltip: Удерживайте правую кнопку мыши для зарядки выпада, затем отпустите для рывка к курсору. При полной зарядке первая поражённая цель проводит молнию вдоль линии удара.
+			OrnsteinSpearItem: {
+				// DisplayName: Ornstein's Spear
+				// Tooltip: Hold right-click to charge Dragonslayer's Lunge and release to thrust toward the cursor. At full charge, the first enemy hit conducts a bolt down the thrust line.
 			}
 
 			SmoughGreatHammer: {
@@ -12145,8 +12142,8 @@ Mods: {
 			Soulsplosion.DisplayName: Взрыв души
 			SoulsplosionLarge.DisplayName: Большой взрыв души
 			// BloodLanceProj.DisplayName: Ancient Blood Lance
-			AncientDragonLanceProj.DisplayName: Древнее копье Дракона
-			AncientHolyLanceProj.DisplayName: Древнее Священное Копье
+			// DragonLanceProj.DisplayName: Dragon Lance
+			// HolyLanceProj.DisplayName: Holy Lance
 			CelestialLanceProj.DisplayName: Небесное копье
 			CobaltHalberdProj.DisplayName: Кобальтовая алебарда
 			DarkTridentHeld.DisplayName: Заряженный лук
@@ -12413,7 +12410,7 @@ Mods: {
 			RedRainProj.DisplayName: Красный дождь
 			SmallRedLightning.DisplayName: Маленькая красная молния
 			WyvernIcicle.DisplayName: Ледяная глыба виверны
-			PilgrimArcaneBall.DisplayName: Чародейский шар пилигрима
+			// PilgrimSpontoonProjArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Заражённая стрела
 			DoomhammerFireball.DisplayName: Огненный шар молота рока
 			NecromanticSerpentBody.DisplayName: Тело некромантской змеи

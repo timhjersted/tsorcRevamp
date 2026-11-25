@@ -11,6 +11,7 @@ using tsorcRevamp.Content.Items;
 using tsorcRevamp.Content.Items.Armor.Magic;
 using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Weapons;
+using tsorcRevamp.Content.Items.Weapons.Classless;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Scrolls;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;

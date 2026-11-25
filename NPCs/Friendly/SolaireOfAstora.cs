@@ -14,6 +14,7 @@ using tsorcRevamp.Content.Items.ItemCrates;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.HiRyuuSpear;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -162,7 +163,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId
             }, new Condition("", () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<Bosses.Birds.TheHunter>()))));
 
-            shop.Add(new Item(ModContent.ItemType<HiRyuuSpear>())
+            shop.Add(new Item(ModContent.ItemType<HiRyuuSpearItem>())
             {
                 shopCustomPrice = 50000,
                 shopSpecialCurrency = tsorcRevamp.DarkSoulCustomCurrencyId

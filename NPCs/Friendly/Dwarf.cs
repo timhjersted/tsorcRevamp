@@ -18,6 +18,7 @@ using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Melee.Hammers;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.OldHalberd;
 
 namespace tsorcRevamp.NPCs.Friendly
 {
@@ -162,7 +163,7 @@ namespace tsorcRevamp.NPCs.Friendly
                 case 1:  
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.GoldCoin, 1);
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<SoulCoin>(), 150); 
-                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<OldHalberd>(), 1); 
+                    player.QuickSpawnItem(NPC.GetSource_Loot(), ModContent.ItemType<OldHalberdItem>(), 1); 
                     player.QuickSpawnItem(NPC.GetSource_Loot(), ItemID.LifeCrystal, 1);
                     break;
 

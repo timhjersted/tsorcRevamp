@@ -7090,16 +7090,16 @@ Mods: {
 					'''
 			}
 
-			LionheartGunblade: {
-				DisplayName: 狮子心枪刃
-				Tooltip:
+			LionheartGunbladeItem: {
+				// DisplayName: Lionheart Gunblade
+				/* Tooltip:
 					'''
-					“在最终幻想Ⅷ的枪刃中，狮子心是最好的型号”
-					被剑刃攻击的敌人会获得一层狮心印记堆叠
-					在 {0} 层堆叠时，右键射击会消耗狮心印记并造成大量伤害
-					印记加持的伤害取决于玩家与敌人之间的距离
-					获得所有职业的加成效果
-					'''
+					"Of gunblades, the finest model is the Lionheart."
+					Hitting an enemy with the Blade adds a mark
+					At {0} marks, shoot the enemy to consume them for massive damage
+					Mark bonus damage is based on distance to the enemy
+					Benefits from all damage types
+					''' */
 			}
 
 			MagmaTooth: {
@@ -7356,47 +7356,46 @@ Mods: {
 			}
 
 			BloodLanceItem: {
-				// DisplayName: Ancient Blood Lance
+				// DisplayName: Blood Lance
 				/* Tooltip:
 					'''
-					Inflicts Crimson Burn in a small radius
-					If the owner has the Crimson Potion effect, has a {0}% chance to heal {1} hp on hit
-					Increases Resistance against contact damage by {2}
+					Inflicts Crimson Burn in a small radius around the hit enemy
+					Has a {0}% chance to heal {1} hp on hit
+					Heal is guaranteed on enemies afflicted with Crimson Burn
 					''' */
 			}
 
-			AncientDragonLance: {
-				DisplayName: 远古龙枪
-				Tooltip:
+			DragonLanceItem: {
+				// DisplayName: Dragon Lance
+				/* Tooltip:
 					'''
-					据说可以穿透任何盔甲（{0} 护甲穿透）
-					继承三叉戟的水中移动效果
-					'''
+					Said to pierce any armor({0} armor penetration)
+					Inherits Tridents water effect
+					''' */
 			}
 
-			AncientHolyLance: {
-				DisplayName: 古代圣矛
-				Tooltip: 攻击时射出一道圣矛光束
+			HolyLanceItem: {
+				// DisplayName: Holy Lance
+				// Tooltip: Shoots a light spear beam
 			}
 
-			CelestialLance: {
-				DisplayName: 天界之矛
-				Tooltip:
+			CelestialLanceItem: {
+				// DisplayName: Celestial Lance
+				/* Tooltip:
 					'''
-					传说中的天界之矛掌管着世界
-					命中时召唤坠星
-					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
-					'''
+					Ruler of stars
+					Rains fallen stars on direct hits
+					''' */
 			}
 
-			CobaltHalberd: {
-				DisplayName: 钴戟
-				Tooltip: ""
+			CobaltHalberdItem: {
+				// DisplayName: Cobalt Halberd
+				// Tooltip: ""
 			}
 
-			DragoonLance: {
-				DisplayName: 龙骑枪
-				Tooltip: 用龙蛇的毒牙锻造的长矛
+			DragoonLanceItem: {
+				// DisplayName: Dragoon Lance
+				// Tooltip: A spear forged from the fang of the Dragoon Serpent.
 			}
 
 			FetidExhaust: {
@@ -7415,20 +7414,14 @@ Mods: {
 					'''
 			}
 
-			WingedSpear: {
-				DisplayName: 翼矛
-				Tooltip: 像风一样轻的长矛
+			WingedSpearItem: {
+				// DisplayName: Winged Spear
+				// Tooltip: A spear as light as the wind
 			}
 
-			PilgrimSpontoon: {
-				DisplayName: 朝圣者三叉戟
-				Tooltip:
-					'''
-					继承三叉戟的水中移动效果，{0}点护甲穿透
-					右键消耗60点魔力催化三叉戟，短时间内提升性能
-					提升攻击速度，射弹获得穿透效果，攻击施加减益
-					18 秒冷却，命中敌人加速冷却
-					'''
+			PilgrimSpontoonItem: {
+				// DisplayName: Pilgrim's Spontoon
+				// Tooltip: ""
 				/* Tooltip0:
 					'''
 					Inherits Tridents water effect and pierces {0} armor penetration
@@ -7439,33 +7432,38 @@ Mods: {
 					''' */
 			}
 
-			GaeBolg: {
-				DisplayName: 盖博尔格
-				Tooltip: 刺穿现实
+			GaeBolgItem: {
+				// DisplayName: Gae Bolg
+				/* Tooltip:
+					'''
+					Pierce reality 
+					Click to stab, or hold to charge a throw
+					''' */
 			}
 
-			HiRyuuSpear: {
-				DisplayName: 空域之矛
-				Tooltip:
+			HiRyuuSpearItem: {
+				// DisplayName: HiRyuu Spear
+				/* Tooltip:
 					'''
-					空域统治者
-					对空中的敌人造成 {0}% 额外伤害
-					'''
+					Ruler of the sky
+					{0}% increased damage while falling and has a {3}% chance to heal {1} HP on hit
+					Deal {2}% extra damage to airborne enemies
+					''' */
 			}
 
-			Longinus: {
-				DisplayName: 朗基努斯
-				Tooltip:
+			LonginusItem: {
+				// DisplayName: Longinus
+				/* Tooltip:
 					'''
-					称霸世界的传说长矛
-					命中时召唤星火
-					坠落时增加 {0}% 伤害，每次攻击有机会回复 {1} 生命值
-					'''
+					Legendary spear fabled to hold sway over the world.
+					Click to stab, or hold to charge a throw
+					Fully charged spears create large powerful explosions
+					''' */
 			}
 
-			SupremeDragoonLance: {
-				DisplayName: 至尊龙骑枪
-				Tooltip: 由龙蛇的毒牙锻造而成的全能长矛
+			SupremeDragoonLanceItem: {
+				// DisplayName: Supreme Dragoon Lance
+				// Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
 			}
 
 			ThrowingAxe: {
@@ -7601,15 +7599,15 @@ Mods: {
 					'''
 			}
 
-			DarkTrident: {
-				DisplayName: 黑暗之戟
-				Tooltip:
+			DarkTridentItem: {
+				// DisplayName: Dark Trident
+				/* Tooltip:
 					'''
-					用黑魔法刺穿敌人
-					左键像长矛一样戳刺，右键挥舞
-					根据你的最高属性在远程或近战之间改变其伤害类型
-					满充能的武器附加燃烧效果，使被击中的敌人燃烧
-					'''
+					Pierces enemies with dark magic
+					Click to stab, or hold to charge a throw
+					Changes its damage type between ranged or melee depending your highest stats
+					Fully charged tridents ignite, setting hit enemies ablaze
+					''' */
 			}
 
 			Freezethrower: {
@@ -9210,13 +9208,13 @@ Mods: {
 					'''
 			}
 
-			OldHalberd: {
-				DisplayName: 旧戟
-				Tooltip:
+			OldHalberdItem: {
+				// DisplayName: Old Halberd
+				/* Tooltip:
 					'''
-					造成从 0 到 {0} 的随机伤害
-					随伤害词缀的最大伤害变化而变化
-					'''
+					Does random damage from 0 to {0}
+					Maximum damage is increased by damage modifiers. 
+					''' */
 			}
 
 			WitchkingMace: {
@@ -10082,9 +10080,9 @@ Mods: {
 				// DisplayName: Great Royal Halberd
 			}
 
-			OrnsteinSpear: {
-				DisplayName: 翁斯坦的长枪
-				Tooltip: 按住右键蓄力，松开后朝光标方向突刺。满蓄力突刺命中的首个敌人会沿突刺路线导出闪电。
+			OrnsteinSpearItem: {
+				// DisplayName: Ornstein's Spear
+				// Tooltip: Hold right-click to charge Dragonslayer's Lunge and release to thrust toward the cursor. At full charge, the first enemy hit conducts a bolt down the thrust line.
 			}
 
 			SmoughGreatHammer: {
@@ -12178,8 +12176,8 @@ Mods: {
 			Soulsplosion.DisplayName: 灵魂爆破
 			SoulsplosionLarge.DisplayName: 大型灵魂爆破
 			// BloodLanceProj.DisplayName: Ancient Blood Lance
-			AncientDragonLanceProj.DisplayName: 远古血矛
-			AncientHolyLanceProj.DisplayName: 古代圣枪
+			// DragonLanceProj.DisplayName: Dragon Lance
+			// HolyLanceProj.DisplayName: Holy Lance
 			CelestialLanceProj.DisplayName: 天国长枪
 			CobaltHalberdProj.DisplayName: 钴蓝长戟
 			DarkTridentHeld.DisplayName: 充能箭
@@ -12446,7 +12444,7 @@ Mods: {
 			RedRainProj.DisplayName: Red Rain Proj
 			SmallRedLightning.DisplayName: Small Red Lightning
 			WyvernIcicle.DisplayName: Wyvern Icicle
-			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
+			// PilgrimSpontoonProjArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 			DoomhammerFireball.DisplayName: Doomhammer Fireball
 			NecromanticSerpentBody.DisplayName: 巫妖骨蟒

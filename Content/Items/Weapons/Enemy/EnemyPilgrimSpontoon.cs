@@ -1,12 +1,13 @@
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.PilgrimSpontoon;
 
 namespace tsorcRevamp.Content.Items.Weapons.Enemy
 {
     public class EnemyPilgrimSpontoon : ModItem
     {
-        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PilgrimSpontoon));
+        public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PilgrimSpontoonItem));
 
         public override void SetDefaults()
         {

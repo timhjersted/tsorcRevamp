@@ -10,6 +10,8 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Flails.DiamondCrusher;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails.HeavensTear;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails.Moonfury;
 using tsorcRevamp.Content.Items.Weapons.Melee.Flails.SunderingLight;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.Longinus;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.PilgrimSpontoon;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Melee;
 using tsorcRevamp.Content.Projectiles.Melee.Axes;
@@ -103,7 +105,7 @@ public class LethalTempoGlobalProjectile : GlobalProjectile
         ModContent.ProjectileType<ThornDecapitatorThorn>(),
         ModContent.ProjectileType<CMSCrescent>(),
         ModContent.ProjectileType<CrescentTrue>(),
-        ModContent.ProjectileType<PilgrimArcaneBall>(),
+        ModContent.ProjectileType<PilgrimSpontoonProjArcaneBall>(),
         ModContent.ProjectileType<StarstormProjectile>(),
         ModContent.ProjectileType<AbyssalStarProj>(),
         ModContent.ProjectileType<YianBlaze>(),

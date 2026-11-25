@@ -14,6 +14,7 @@ using tsorcRevamp.Content.Items.Armor.TibianValkyrieSet;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.OldHalberd;
 using tsorcRevamp.Content.Items.Weapons.Throwing;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
@@ -3154,7 +3155,7 @@ namespace tsorcRevamp.NPCs.Enemies
             npcLoot.Add(ItemDropRule.Common(ItemID.Torch, 10, 10, 20));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThrowingSpear>(), 1, 20, 75));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<IronShield>(), 30));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OldHalberd>(), 30));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<OldHalberdItem>(), 30));
             npcLoot.Add(ItemDropRule.Common(ItemID.Diamond, 5));
             npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<DeadChicken>(), 10));
         }

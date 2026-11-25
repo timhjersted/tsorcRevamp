@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Armor.Enemy;
 using tsorcRevamp.Content.Items.Weapons.Enemy;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.OrnsteinSpear;
 using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
 using tsorcRevamp.Content.Projectiles.VFX;
@@ -31,7 +32,7 @@ namespace tsorcRevamp.NPCs.Bosses.Ornsmough
         protected override int HeadArmorItemType => ModContent.ItemType<OrnsteinHead>();
         protected override int BodyArmorItemType => ModContent.ItemType<OrnsteinBody>();
         protected override int LegsArmorItemType => ModContent.ItemType<OrnsteinLegs>();
-        protected override int MeleeWeaponItemType => ModContent.ItemType<OrnsteinSpear>();
+        protected override int MeleeWeaponItemType => ModContent.ItemType<OrnsteinSpearItem>();
 
         // ── Damage (Expert, before defense) ──────────────────────────────────────
         public const int LightExpert = 180;

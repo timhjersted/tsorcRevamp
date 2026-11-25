@@ -51,6 +51,7 @@ using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Melee.Runeterra.Yasuo.Buffs;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.PilgrimSpontoon;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Bows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Crossbows;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
@@ -1448,7 +1449,7 @@ namespace tsorcRevamp
         }
         public override void ModifyWeaponDamage(Item item, ref StatModifier damage)
         {
-            if (item.type == ModContent.ItemType<PilgrimSpontoon>() && PilgrimSpontoonBuff)
+            if (item.type == ModContent.ItemType<PilgrimSpontoonItem>() && PilgrimSpontoonBuff)
             {
                 Player.GetAttackSpeed(DamageClass.Melee) *= 27f / 21f; //reduced the use time of pilgrim spontoon
             }

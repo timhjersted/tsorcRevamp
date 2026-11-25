@@ -41,6 +41,7 @@ using tsorcRevamp.Content.Items.Potions.StarlightShard;
 using tsorcRevamp.Content.Items.VanillaItems;
 using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Classless;
+using tsorcRevamp.Content.Items.Weapons.Generic.LionheartGunblade;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Magic.Runeterra.Ahri;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
@@ -268,7 +269,6 @@ namespace tsorcRevamp.NPCs
         // the afflicted enemy's attacks inflict Cursed Inferno on the player it hits. Mirrors PlaguesmithBuff.
         public bool SorrowfulCurse;
 
-        public int LionheartMarks = 0;
 
 
         public bool Venomized;
@@ -4277,7 +4277,6 @@ namespace tsorcRevamp.NPCs
             }
             return base.CanBeHitByProjectile(npc, projectile);
         }
-        Texture2D LionheartMarksSprite;
         public override bool? DrawHealthBar(NPC npc, byte hbPosition, ref float scale, ref Vector2 position)
         {
             if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyHealthBars)
@@ -4295,40 +4294,6 @@ namespace tsorcRevamp.NPCs
 
         public override bool PreDraw(NPC npc, SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (npc.HasBuff(ModContent.BuffType<LionheartMark>()) && npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks > 0)
-            {
-                LionheartMarksSprite = (Texture2D)ModContent.Request<Texture2D>("tsorcRevamp/Buffs/Weapons/LionheartMarkVisual");
-                Rectangle LionheartSourceRectangle = new Rectangle(0, 0 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                switch (npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks)
-                {
-                    case 1:
-                        {
-                            LionheartSourceRectangle = new Rectangle(0, 4 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                            break;
-                        }
-                    case 2:
-                        {
-                            LionheartSourceRectangle = new Rectangle(0, 3 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                            break;
-                        }
-                    case 3:
-                        {
-                            LionheartSourceRectangle = new Rectangle(0, 2 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                            break;
-                        }
-                    case 4:
-                        {
-                            LionheartSourceRectangle = new Rectangle(0, 1 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                            break;
-                        }
-                    case 5:
-                        {
-                            LionheartSourceRectangle = new Rectangle(0, 0 * LionheartMarksSprite.Height / 5, LionheartMarksSprite.Width, LionheartMarksSprite.Height / 5);
-                            break;
-                        }
-                }
-                Main.EntitySpriteDraw(LionheartMarksSprite, npc.Center - Main.screenPosition - new Vector2(0, npc.GetGlobalNPC<tsorcRevampGlobalNPC>().LionheartMarks * LionheartMarksSprite.Height / 5 - 100), LionheartSourceRectangle, Color.White, 0, LionheartSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
-            }
 
             if (DodgeTimer > 0 && !SuppressDodgeBlink && Main.GameUpdateCount % 10 < 5)
             {

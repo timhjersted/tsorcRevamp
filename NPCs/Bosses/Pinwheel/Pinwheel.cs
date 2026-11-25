@@ -17,6 +17,7 @@ using tsorcRevamp.Content.Items.Potions.Lifegem;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.WingedSpear;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.VFX;
 using tsorcRevamp.Systems;
@@ -1024,7 +1025,7 @@ namespace tsorcRevamp.NPCs.Bosses.Pinwheel
                         }
                         else
                         {
-                            drops.Add(ModContent.ItemType<WingedSpear>());
+                            drops.Add(ModContent.ItemType<WingedSpearItem>());
                             drops.Add(ModContent.ItemType<WandOfFire2>());
                             drops.Add(ModContent.ItemType<MaskOfTheChild>());
                             drops.Add(ModContent.ItemType<MaskOfTheFather>());

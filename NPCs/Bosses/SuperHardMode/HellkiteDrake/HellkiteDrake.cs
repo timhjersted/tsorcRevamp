@@ -17,6 +17,7 @@ using tsorcRevamp.Content.Items.BossItems;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.HiRyuuSpear;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
 using tsorcRevamp.Content.Projectiles.Enemy.DemonFamily;
@@ -702,7 +703,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.HellkiteDrake
 
             LeadingConditionRule classicLoot = new LeadingConditionRule(new Conditions.NotExpert());
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
-            classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
+            classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpearItem>()));
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 12, 16));
             classicLoot.OnSuccess(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 600, 700));
             bossLoot.OnSuccess(classicLoot);

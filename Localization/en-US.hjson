@@ -7041,7 +7041,7 @@ Mods: {
 					'''
 			}
 
-			LionheartGunblade: {
+			LionheartGunbladeItem: {
 				DisplayName: Lionheart Gunblade
 				Tooltip:
 					'''
@@ -7317,8 +7317,8 @@ Mods: {
 					'''
 			}
 
-			AncientDragonLance: {
-				DisplayName: Ancient Dragon Lance
+			DragonLanceItem: {
+				DisplayName: Dragon Lance
 				Tooltip:
 					'''
 					Said to pierce any armor({0} armor penetration)
@@ -7326,12 +7326,12 @@ Mods: {
 					'''
 			}
 
-			AncientHolyLance: {
-				DisplayName: Ancient Holy Lance
+			HolyLanceItem: {
+				DisplayName: Holy Lance
 				Tooltip: Shoots a light spear beam
 			}
 
-			CelestialLance: {
+			CelestialLanceItem: {
 				DisplayName: Celestial Lance
 				Tooltip:
 					'''
@@ -7340,12 +7340,12 @@ Mods: {
 					'''
 			}
 
-			CobaltHalberd: {
+			CobaltHalberdItem: {
 				DisplayName: Cobalt Halberd
 				Tooltip: ""
 			}
 
-			DragoonLance: {
+			DragoonLanceItem: {
 				DisplayName: Dragoon Lance
 				Tooltip: A spear forged from the fang of the Dragoon Serpent.
 			}
@@ -7366,12 +7366,12 @@ Mods: {
 					'''
 			}
 
-			WingedSpear: {
+			WingedSpearItem: {
 				DisplayName: Winged Spear
 				Tooltip: A spear as light as the wind
 			}
 
-			PilgrimSpontoon: {
+			PilgrimSpontoonItem: {
 				DisplayName: Pilgrim's Spontoon
 				Tooltip: ""
 				Tooltip0:
@@ -7384,7 +7384,7 @@ Mods: {
 					'''
 			}
 
-			GaeBolg: {
+			GaeBolgItem: {
 				DisplayName: Gae Bolg
 				Tooltip:
 					'''
@@ -7393,17 +7393,17 @@ Mods: {
 					'''
 			}
 
-			HiRyuuSpear: {
+			HiRyuuSpearItem: {
 				DisplayName: HiRyuu Spear
 				Tooltip:
 					'''
-					Ruler of sky
-					{0}% increased damage while falling and has a chance to heal {1} HP on hit
+					Ruler of the sky
+					{0}% increased damage while falling and has a {3}% chance to heal {1} HP on hit
 					Deal {2}% extra damage to airborne enemies
 					'''
 			}
 
-			Longinus: {
+			LonginusItem: {
 				DisplayName: Longinus
 				Tooltip:
 					'''
@@ -7413,7 +7413,7 @@ Mods: {
 					'''
 			}
 
-			SupremeDragoonLance: {
+			SupremeDragoonLanceItem: {
 				DisplayName: Supreme Dragoon Lance
 				Tooltip: An all-powerful spear forged from the fang of the Dragoon Serpent.
 			}
@@ -7551,7 +7551,7 @@ Mods: {
 					'''
 			}
 
-			DarkTrident: {
+			DarkTridentItem: {
 				DisplayName: Dark Trident
 				Tooltip:
 					'''
@@ -9161,7 +9161,7 @@ Mods: {
 					'''
 			}
 
-			OldHalberd: {
+			OldHalberdItem: {
 				DisplayName: Old Halberd
 				Tooltip:
 					'''
@@ -10042,7 +10042,7 @@ Mods: {
 				DisplayName: Great Royal Halberd
 			}
 
-			OrnsteinSpear: {
+			OrnsteinSpearItem: {
 				DisplayName: Ornstein's Spear
 				Tooltip: Hold right-click to charge Dragonslayer's Lunge and release to thrust toward the cursor. At full charge, the first enemy hit conducts a bolt down the thrust line.
 			}
@@ -12134,8 +12134,8 @@ Mods: {
 			Soulsplosion.DisplayName: Soulsplosion
 			SoulsplosionLarge.DisplayName: Large Soulsplosion
 			BloodLanceProj.DisplayName: Ancient Blood Lance
-			AncientDragonLanceProj.DisplayName: Ancient Dragon Lance
-			AncientHolyLanceProj.DisplayName: Ancient Holy Lance
+			DragonLanceProj.DisplayName: Dragon Lance
+			HolyLanceProj.DisplayName: Holy Lance
 			CelestialLanceProj.DisplayName: Celestial Lance
 			CobaltHalberdProj.DisplayName: Cobalt Halberd
 			DarkTridentHeld.DisplayName: Charged Bow
@@ -12402,7 +12402,7 @@ Mods: {
 			RedRainProj.DisplayName: Red Rain Proj
 			SmallRedLightning.DisplayName: Small Red Lightning
 			WyvernIcicle.DisplayName: Wyvern Icicle
-			PilgrimArcaneBall.DisplayName: Pilgrim Arcane Ball
+			PilgrimSpontoonProjArcaneBall.DisplayName: Pilgrim Arcane Ball
 			TaintedArrowProjectile.DisplayName: Tainted Arrow Projectile
 			DoomhammerFireball.DisplayName: Doomhammer Fireball
 			NecromanticSerpentBody.DisplayName: Necromantic Serpent Body

@@ -10,6 +10,8 @@ using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.BossBags;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Potions.Lifegem;
+using tsorcRevamp.Content.Items.Weapons.Mixed;
+using tsorcRevamp.Content.Items.Weapons.Mixed.DarkTrident;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Specialist;
 using tsorcRevamp.Content.Items.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -469,7 +471,7 @@ namespace tsorcRevamp.NPCs.Bosses
             npcLoot.Add(ItemDropRule.BossBagByCondition(new SlograDropCondition(), ModContent.ItemType<SlograBag>()));
             IItemDropRule notExpertCondition = new LeadingConditionRule(new Conditions.NotExpert());
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<BloodbaneRing>()));
-            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<DarkTrident>()));
+            notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<DarkTridentItem>()));
             notExpertCondition.OnSuccess(ItemDropRule.ByCondition(new SlograDropCondition(), ModContent.ItemType<SunsetQuasar>()));
             npcLoot.Add(notExpertCondition);
             npcLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.CursedRule, ModContent.ItemType<LifegemItem>(), 1, 3, 6));

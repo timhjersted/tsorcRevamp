@@ -31,6 +31,8 @@ using tsorcRevamp.Content.Items.VanillaItems.Summoner;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords.BroadswordRework.Common.Melee._Animations;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.DragonLance;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.PilgrimSpontoon;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Projectiles;
 using tsorcRevamp.Content.Projectiles.Enemy;
@@ -2038,12 +2040,12 @@ namespace tsorcRevamp
 
         private static void On_Player_UpdateEquips(On_Player.orig_UpdateEquips orig, Player self, int i) 
         {
-            if (self.inventory[self.selectedItem].type == ModContent.ItemType<AncientDragonLance>())
+            if (self.inventory[self.selectedItem].type == ModContent.ItemType<DragonLanceItem>())
             {
                 self.trident = true;
             }
 
-            if (self.inventory[self.selectedItem].type == ModContent.ItemType<PilgrimSpontoon>())
+            if (self.inventory[self.selectedItem].type == ModContent.ItemType<PilgrimSpontoonItem>())
             {
                 self.trident = true;
             }

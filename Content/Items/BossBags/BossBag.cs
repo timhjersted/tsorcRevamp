@@ -34,11 +34,17 @@ using tsorcRevamp.Content.Items.Materials.Titanite;
 using tsorcRevamp.Content.Items.Potions;
 using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Vanity;
+using tsorcRevamp.Content.Items.Weapons.Generic;
+using tsorcRevamp.Content.Items.Weapons.Generic.LionheartGunblade;
 using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Items.Weapons.Magic.Tomes;
 using tsorcRevamp.Content.Items.Weapons.Magic.Wands;
 using tsorcRevamp.Content.Items.Weapons.Melee.Shortswords;
 using tsorcRevamp.Content.Items.Weapons.Melee.Spears;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.HiRyuuSpear;
+using tsorcRevamp.Content.Items.Weapons.Melee.Spears.WingedSpear;
+using tsorcRevamp.Content.Items.Weapons.Mixed;
+using tsorcRevamp.Content.Items.Weapons.Mixed.DarkTrident;
 using tsorcRevamp.Content.Items.Weapons.Summon.NullSpriteStaff;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips;
 
@@ -108,7 +114,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WingedSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WingedSpearItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<WandOfFire2>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EstusRing>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<MaskOfTheChild>()));
@@ -172,7 +178,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BurningStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbaneRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Specialist.DarkTrident>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkTridentItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
     }
@@ -187,7 +193,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BurningAura>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<BloodbaneRing>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Ranged.Specialist.DarkTrident>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DarkTridentItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Summon.SunsetQuasar>()));
         }
     }
@@ -369,7 +375,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.LionheartGunblade>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<LionheartGunbladeItem>()));
             itemLoot.Add(ItemDropRule.Common(ItemID.AngelWings));
             itemLoot.Add(ItemDropRule.Common(ItemID.DemonWings));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<GemBox>()));
@@ -569,7 +575,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonStone>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HellkiteStone>()));
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpear>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HiRyuuSpearItem>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<DragonEssence>(), 1, 16, 20));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<SoulCoin>(), 1, 800, 900));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
