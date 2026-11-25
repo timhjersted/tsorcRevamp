@@ -12,4 +12,9 @@ public class ElectrocuteCooldown : CooldownDebuff
         LastTickSoundPath = UsefulFunctions.RefactorableFilepath(typeof(Electrocute)) + "_Ready";
         soundVolume = 2f;
     }
+
+    public override void DoStuffOnLastTick(Player player, ref int buffIndex)
+    {
+        player.GetModPlayer<ElectrocutePlayer>().RangedDmgRestored = 0;
+    }
 }

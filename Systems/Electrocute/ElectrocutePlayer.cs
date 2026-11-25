@@ -15,7 +15,9 @@ namespace tsorcRevamp.Systems.Electrocute;
 
 public class ElectrocutePlayer : ModPlayer
 {
-    public const float BadRangedDmg = 10f;
+    public const float BadRangedDmg = 20f;
+    public const float MaxRangedDmgRestore = 25f;
+    public float RangedDmgRestored;
     public const float TimeWindowInSec = 2.5f;
     public bool CanElectrocute;
 
@@ -50,6 +52,213 @@ public class ElectrocutePlayer : ModPlayer
     public override void ResetEffects()
     {
         CanElectrocute = false;
+    }
+
+    public override void PreUpdateBuffs()
+    {
+        if (Electrocute.Enabled)
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                if (Player.HeldItem.DamageType == DamageClass.Ranged && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Electrocute>(), 3);
+                }
+                CanElectrocute  = true;
+            }
+        }
+    }
+
+    public override void PostUpdateEquips()
+    {
+        if (Electrocute.Enabled)
+        {
+            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
+            {
+                Player.GetDamage(DamageClass.Ranged) *= 1f - (BadRangedDmg / 100f) + (RangedDmgRestored / 100f);
+                if (Player.HeldItem.DamageType == DamageClass.Ranged && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()))
+                {
+                    Player.AddBuff(ModContent.BuffType<Electrocute>(), 3);
+                }
+                CanElectrocute  = true;
+            }
+        }
+    }
+
+    public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        if (Player.HasBuff(ModContent.BuffType<Electrocute>()) && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()) 
+            && proj.DamageType == DamageClass.Ranged)
+        {
+            int tT = target.whoAmI;
+            int electrocuteType = ModContent.ProjectileType<ElectrocuteProjectile>();
+            
+            bool hasSameType = ElectrocuteProjectileType1[tT] == proj.type || ElectrocuteProjectileType2[tT] == proj.type || ElectrocuteProjectileType3[tT] == proj.type || proj.type == electrocuteType;
+        
+            bool isException = ElectrocuteExceptions.Contains(proj.type);
+        
+            bool isMolotov = MolotovList.Contains(proj.type);
+            bool isCeleb2 = CelebrationMK2List.Contains(proj.type);
+            bool isToxicCat = ToxicCatalyzerList.Contains(proj.type);
+            bool isViruCat = VirulentCatalyzerList.Contains(proj.type);
+            bool isBiohazard = BiohazardList.Contains(proj.type);
+        
+            if (!hasSameType && !isException && !isMolotov && !isCeleb2 && !isToxicCat && !isViruCat && !isBiohazard)
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+            }
+
+            if (isMolotov && !HasMolotov[tT])
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+                HasMolotov[tT] = true;
+            }
+            if (isCeleb2 && !HasCeleb2[tT])
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+                HasCeleb2[tT] = true;
+            }
+            if (isToxicCat && !HasToxicCat[tT])
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+                HasToxicCat[tT] = true;
+            }
+            if (isViruCat && !HasViruCat[tT])
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+                HasViruCat[tT] = true;
+            }
+            if (isBiohazard && !HasBiohazard[tT])
+            {
+                AddElectrocuteProjectile(target, proj, hit);
+                HasBiohazard[tT] = true;
+            }
+            
+            ResetTimer(target, proj);
+            
+            if (CheckForElectrocuteProc(target))
+            {
+                CalculateDamageAndCritChance(target, out int damage, out int critChance, out float scale);
+                Projectile.NewProjectile(Projectile.GetSource_None(), target.Top, Vector2.Zero,
+                    electrocuteType, damage, 0, proj.owner, critChance, scale);
+                RangedDmgRestored = scale / ScaleMult * MaxRangedDmgRestore;
+                Player.AddBuff(ModContent.BuffType<ElectrocuteCooldown>(), Electrocute.Cooldown * 60);
+                ResetElectrocuteFields(target);
+            }
+        }
+    }
+
+    public void AddElectrocuteProjectile(NPC npc, Projectile proj, NPC.HitInfo hit)
+    {
+        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
+        var nT = npc.whoAmI;
+        var pT = Player.whoAmI;
+        if (ElectrocuteProjectileType1[nT] == 0)
+        {
+            ElectrocuteProjectileType1[nT] = proj.type;
+            ElectrocuteProjectileDamage1[nT] = hit.SourceDamage;
+            ElectrocuteProjectileCritChance1[nT] = proj.CritChance;
+            globalNpc.ElectrocuteTimer1[pT] = 1;
+        }
+        else if (ElectrocuteProjectileType2[nT] == 0)
+        {
+            ElectrocuteProjectileType2[nT] = proj.type;
+            ElectrocuteProjectileDamage2[nT] = hit.SourceDamage;
+            ElectrocuteProjectileCritChance2[nT] = proj.CritChance;
+            globalNpc.ElectrocuteTimer2[pT] = 1;
+        }
+        else if (ElectrocuteProjectileType3[nT] == 0)
+        {
+            ElectrocuteProjectileType3[nT] = proj.type;
+            ElectrocuteProjectileDamage3[nT] = hit.SourceDamage;
+            ElectrocuteProjectileCritChance3[nT] = proj.CritChance;
+            globalNpc.ElectrocuteTimer3[pT] = 1;
+        }
+    }
+
+    public void ResetTimer(NPC npc, Projectile proj)
+    {
+        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
+        var pT = Player.whoAmI;
+        if (proj.type == ElectrocuteProjectileType1[npc.whoAmI])
+        {
+            globalNpc.ElectrocuteTimer1[pT] = 1;
+        }
+        if (proj.type == ElectrocuteProjectileType2[npc.whoAmI])
+        {
+            globalNpc.ElectrocuteTimer2[pT] = 1;
+        }
+        if (proj.type == ElectrocuteProjectileType3[npc.whoAmI])
+        {
+            globalNpc.ElectrocuteTimer3[pT] = 1;
+        }
+    }
+
+    public bool CheckForElectrocuteProc(NPC npc)
+    {
+        if (ElectrocuteProjectileType1[npc.whoAmI] != 0 && ElectrocuteProjectileType2[npc.whoAmI] != 0 && ElectrocuteProjectileType3[npc.whoAmI] != 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public const float MaxDistanceForMaxDmg = 250f;
+    public const float MaxDistanceMult = 3f;
+    public const float MinDistanceForMinDmg = MaxDistanceForMaxDmg * MaxDistanceMult;
+    public const float ScaleLossDivisor = ((MinDistanceForMinDmg - MaxDistanceForMaxDmg) / 100f) / (1f - MinScaleCap);
+    public const float MinScaleCap = 0.2f;
+    public const float ScaleMult = 2f;
+    public void CalculateDamageAndCritChance(NPC npc, out int damage, out int critChance, out float distanceScaling)
+    {
+        distanceScaling = 1f - (((MathF.Max(Player.Center.Distance(npc.Center) - MaxDistanceForMaxDmg, 0) / 100f) / ScaleLossDivisor));
+        if (Player.Center.Distance(npc.Center) > MinDistanceForMinDmg)
+        {
+            distanceScaling = MinScaleCap;
+        }
+
+        distanceScaling *= ScaleMult;
+        
+        int baseDamage = ElectrocuteProjectileDamage1[npc.whoAmI] + ElectrocuteProjectileDamage2[npc.whoAmI] + ElectrocuteProjectileDamage3[npc.whoAmI];
+        damage = (int)(baseDamage * distanceScaling); //baseDamage is already scaled by ranged dmg mods(total dmg)
+        List<int> critChances = new List<int>()
+        {
+            ElectrocuteProjectileCritChance1[npc.whoAmI],
+            ElectrocuteProjectileCritChance2[npc.whoAmI],
+            ElectrocuteProjectileCritChance3[npc.whoAmI]
+        };
+        critChance = 0;
+        foreach (int listedCritChance in critChances)
+        {
+            if (listedCritChance >= critChance)
+            {
+                critChance = listedCritChance;
+            }
+        }
+    }
+
+    public void ResetElectrocuteFields(NPC npc)
+    {
+        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
+        var nT = npc.whoAmI;
+        var pT = Player.whoAmI;
+        ElectrocuteProjectileType1[npc.whoAmI] = 0;
+        ElectrocuteProjectileType2[npc.whoAmI] = 0;
+        ElectrocuteProjectileType3[npc.whoAmI] = 0;
+        ElectrocuteProjectileDamage1[npc.whoAmI] = 0;
+        ElectrocuteProjectileDamage2[npc.whoAmI] = 0;
+        ElectrocuteProjectileDamage3[npc.whoAmI] = 0;
+        ElectrocuteProjectileCritChance1[npc.whoAmI] = 0;
+        ElectrocuteProjectileCritChance2[npc.whoAmI] = 0;
+        ElectrocuteProjectileCritChance3[npc.whoAmI] = 0;
+        globalNpc.ElectrocuteTimer1[pT] = 0;
+        globalNpc.ElectrocuteTimer2[pT] = 0;
+        globalNpc.ElectrocuteTimer3[pT] = 0;
+        HasMolotov[nT] = false;
+        HasCeleb2[nT] = false;
+        HasToxicCat[nT] = false;
+        HasViruCat[nT] = false;
+        HasBiohazard[nT] = false;
     }
 
     public override void Load()
@@ -128,181 +337,5 @@ public class ElectrocutePlayer : ModPlayer
         ToxicCatalyzerList.Clear();
         VirulentCatalyzerList.Clear();
         BiohazardList.Clear();
-    }
-
-    public override void PreUpdateBuffs()
-    {
-        if (Electrocute.Enabled)
-        {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
-                if (Player.HeldItem.DamageType == DamageClass.Ranged && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()))
-                {
-                    Player.AddBuff(ModContent.BuffType<Electrocute>(), 3);
-                }
-                CanElectrocute  = true;
-            }
-        }
-    }
-
-    public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)
-    {
-        if (Player.HasBuff(ModContent.BuffType<Electrocute>()) && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()) 
-            && proj.DamageType == DamageClass.Ranged)
-        {
-            int tT = target.whoAmI;
-            int electrocuteType = ModContent.ProjectileType<ElectrocuteProjectile>();
-            
-            bool hasSameType = ElectrocuteProjectileType1[tT] == proj.type || ElectrocuteProjectileType2[tT] == proj.type || ElectrocuteProjectileType3[tT] == proj.type || proj.type == electrocuteType;
-        
-            bool isException = ElectrocuteExceptions.Contains(proj.type);
-        
-            bool isMolotov = MolotovList.Contains(proj.type);
-            bool isCeleb2 = CelebrationMK2List.Contains(proj.type);
-            bool isToxicCat = ToxicCatalyzerList.Contains(proj.type);
-            bool isViruCat = VirulentCatalyzerList.Contains(proj.type);
-            bool isBiohazard = BiohazardList.Contains(proj.type);
-        
-            if (!hasSameType && !isException && !isMolotov && !isCeleb2 && !isToxicCat && !isViruCat && !isBiohazard)
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-            }
-
-            if (isMolotov && !HasMolotov[tT])
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-                HasMolotov[tT] = true;
-            }
-            if (isCeleb2 && !HasCeleb2[tT])
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-                HasCeleb2[tT] = true;
-            }
-            if (isToxicCat && !HasToxicCat[tT])
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-                HasToxicCat[tT] = true;
-            }
-            if (isViruCat && !HasViruCat[tT])
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-                HasViruCat[tT] = true;
-            }
-            if (isBiohazard && !HasBiohazard[tT])
-            {
-                AddElectrocuteProjectile(target, proj, hit);
-                HasBiohazard[tT] = true;
-            }
-            
-            ResetTimer(target, proj);
-            
-            if (CheckForElectrocuteProc(target))
-            {
-                CalculateDamageAndCritChance(target, out int damage, out int critChance);
-                Projectile.NewProjectile(Projectile.GetSource_None(), target.Top, Vector2.Zero,
-                    electrocuteType, damage, 0, proj.owner, critChance);
-                Player.AddBuff(ModContent.BuffType<ElectrocuteCooldown>(), Electrocute.Cooldown * 60);
-                ResetElectrocuteFields(target);
-            }
-        }
-    }
-
-    public void AddElectrocuteProjectile(NPC npc, Projectile proj, NPC.HitInfo hit)
-    {
-        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
-        var nT = npc.whoAmI;
-        var pT = Player.whoAmI;
-        if (ElectrocuteProjectileType1[nT] == 0)
-        {
-            ElectrocuteProjectileType1[nT] = proj.type;
-            ElectrocuteProjectileDamage1[nT] = hit.SourceDamage;
-            ElectrocuteProjectileCritChance1[nT] = proj.CritChance;
-            globalNpc.ElectrocuteTimer1[pT] = 1;
-        }
-        else if (ElectrocuteProjectileType2[nT] == 0)
-        {
-            ElectrocuteProjectileType2[nT] = proj.type;
-            ElectrocuteProjectileDamage2[nT] = hit.SourceDamage;
-            ElectrocuteProjectileCritChance2[nT] = proj.CritChance;
-            globalNpc.ElectrocuteTimer2[pT] = 1;
-        }
-        else if (ElectrocuteProjectileType3[nT] == 0)
-        {
-            ElectrocuteProjectileType3[nT] = proj.type;
-            ElectrocuteProjectileDamage3[nT] = hit.SourceDamage;
-            ElectrocuteProjectileCritChance3[nT] = proj.CritChance;
-            globalNpc.ElectrocuteTimer3[pT] = 1;
-        }
-    }
-
-    public void ResetTimer(NPC npc, Projectile proj)
-    {
-        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
-        var pT = Player.whoAmI;
-        if (proj.type == ElectrocuteProjectileType1[npc.whoAmI])
-        {
-            globalNpc.ElectrocuteTimer1[pT] = 1;
-        }
-        if (proj.type == ElectrocuteProjectileType2[npc.whoAmI])
-        {
-            globalNpc.ElectrocuteTimer2[pT] = 1;
-        }
-        if (proj.type == ElectrocuteProjectileType3[npc.whoAmI])
-        {
-            globalNpc.ElectrocuteTimer3[pT] = 1;
-        }
-    }
-
-    public bool CheckForElectrocuteProc(NPC npc)
-    {
-        if (ElectrocuteProjectileType1[npc.whoAmI] != 0 && ElectrocuteProjectileType2[npc.whoAmI] != 0 && ElectrocuteProjectileType3[npc.whoAmI] != 0)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public void CalculateDamageAndCritChance(NPC npc, out int damage, out int critChance)
-    {
-        int baseDamage = ElectrocuteProjectileDamage1[npc.whoAmI] + ElectrocuteProjectileDamage2[npc.whoAmI]  + ElectrocuteProjectileDamage3[npc.whoAmI];
-        critChance = 0;
-        damage = baseDamage; //baseDamage is already scaled by ranged dmg mods(total dmg)
-        List<int> critChances = new List<int>()
-        {
-            ElectrocuteProjectileCritChance1[npc.whoAmI],
-            ElectrocuteProjectileCritChance2[npc.whoAmI],
-            ElectrocuteProjectileCritChance3[npc.whoAmI]
-        };
-        foreach (int listedCritChance in critChances)
-        {
-            if (listedCritChance >= critChance)
-            {
-                critChance = listedCritChance;
-            }
-        }
-    }
-
-    public void ResetElectrocuteFields(NPC npc)
-    {
-        var globalNpc = npc.GetGlobalNPC<ElectrocuteNpc>();
-        var nT = npc.whoAmI;
-        var pT = Player.whoAmI;
-        ElectrocuteProjectileType1[npc.whoAmI] = 0;
-        ElectrocuteProjectileType2[npc.whoAmI] = 0;
-        ElectrocuteProjectileType3[npc.whoAmI] = 0;
-        ElectrocuteProjectileDamage1[npc.whoAmI] = 0;
-        ElectrocuteProjectileDamage2[npc.whoAmI] = 0;
-        ElectrocuteProjectileDamage3[npc.whoAmI] = 0;
-        ElectrocuteProjectileCritChance1[npc.whoAmI] = 0;
-        ElectrocuteProjectileCritChance2[npc.whoAmI] = 0;
-        ElectrocuteProjectileCritChance3[npc.whoAmI] = 0;
-        globalNpc.ElectrocuteTimer1[pT] = 0;
-        globalNpc.ElectrocuteTimer2[pT] = 0;
-        globalNpc.ElectrocuteTimer3[pT] = 0;
-        HasMolotov[nT] = false;
-        HasCeleb2[nT] = false;
-        HasToxicCat[nT] = false;
-        HasViruCat[nT] = false;
-        HasBiohazard[nT] = false;
     }
 }

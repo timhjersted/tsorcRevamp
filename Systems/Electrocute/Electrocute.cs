@@ -16,9 +16,4 @@ public class Electrocute : ModBuff
         Main.buffNoSave[Type] = true;
         BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
     }
-
-    public override void Update(Player player, ref int buffIndex)
-    {
-        player.GetDamage(DamageClass.Ranged) *= 1f - (ElectrocutePlayer.BadRangedDmg / 100f);
-    }
 }
