@@ -7,6 +7,7 @@ using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Items.Potions;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes.DevilsScythe;
 using tsorcRevamp.Content.Items.Weapons.Melee;
 using tsorcRevamp.Content.Items.Weapons.Melee.Axes;
 using tsorcRevamp.Content.Items.Weapons.Melee.Broadswords;

@@ -6381,9 +6381,9 @@ Mods: {
 				Tooltip: 卷轴上写着"Exori mort"（注：这是游戏Tibia中的一句话
 			}
 
-			DevilsScythe: {
-				DisplayName: 恶魔之镰
-				Tooltip: 施放地狱火镰
+			DevilsScytheItem: {
+				// DisplayName: Devil's Scythe
+				// Tooltip: Casts a hellfire scythe that will stick to tiles
 			}
 
 			DivineBoomCannon: {

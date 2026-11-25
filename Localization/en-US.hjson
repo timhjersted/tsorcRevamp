@@ -6333,9 +6333,9 @@ Mods: {
 				Tooltip: The scroll reads "Exori mort."
 			}
 
-			DevilsScythe: {
+			DevilsScytheItem: {
 				DisplayName: Devil's Scythe
-				Tooltip: Casts a hellfire scythe.
+				Tooltip: Casts a hellfire scythe that will stick to tiles
 			}
 
 			DivineBoomCannon: {
@@ -6624,7 +6624,7 @@ Mods: {
 				Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
-			MeteorShower: {
+			MeteorShowerItem: {
 				DisplayName: Meteor Shower
 				Tooltip: Causes meteorites to rain from the sky
 			}

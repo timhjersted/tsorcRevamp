@@ -2,19 +2,12 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes.MeteorShower
 {
-    public class MeteorShower : ModItem
+    public class MeteorShowerItem : ModItem
     {
-
-        public override void SetStaticDefaults()
-        {
-            // Tooltip.SetDefault("Causes meteorites to rain from the sky.");
-        }
         public override void SetDefaults()
         {
             Item.width = 24;
@@ -26,8 +19,8 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             Item.UseSound = SoundID.Item20;
             Item.rare = ItemRarityID.Orange;
             Item.knockBack = 3;
-            Item.mana = 10;
-            Item.damage = 45;
+            Item.mana = 19;
+            Item.damage = 35;
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.value = PriceByRarity.Orange_3;
@@ -63,7 +56,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
                     player.GetSource_ItemUse(Item),
                     spawnPosition,
                     direction,
-                    ModContent.ProjectileType<Projectiles.MeteorShower>(),
+                    ModContent.ProjectileType<MeteorShower>(),
                     (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(Item.damage)),
                     2.0f,
                     player.whoAmI

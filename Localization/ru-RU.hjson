@@ -6344,9 +6344,9 @@ Mods: {
 				Tooltip: На свитке написано "Изгнать смерть".
 			}
 
-			DevilsScythe: {
-				DisplayName: Коса дьявола
-				Tooltip: Создает косу адского пламени.
+			DevilsScytheItem: {
+				// DisplayName: Devil's Scythe
+				// Tooltip: Casts a hellfire scythe that will stick to tiles
 			}
 
 			DivineBoomCannon: {

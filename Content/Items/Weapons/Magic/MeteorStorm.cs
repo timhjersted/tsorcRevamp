@@ -5,6 +5,7 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Items.Weapons.Magic.Tomes.MeteorShower;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
@@ -38,7 +39,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();
-            recipe.AddIngredient(ModContent.ItemType<Items.Weapons.Magic.Tomes.MeteorShower>());
+            recipe.AddIngredient(ModContent.ItemType<MeteorShowerItem>());
             recipe.AddIngredient(ItemID.MeteorStaff);
             recipe.AddIngredient(ItemID.SoulofMight, 1);
             recipe.AddIngredient(ModContent.ItemType<DarkSoulItem>(), 35000);

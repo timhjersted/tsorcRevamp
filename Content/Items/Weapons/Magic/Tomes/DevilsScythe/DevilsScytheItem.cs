@@ -3,19 +3,12 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 
-namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes.DevilsScythe
 {
-    class DevilsScythe : ModItem
+    class DevilsScytheItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Devil's Scythe");
-            // Tooltip.SetDefault("Casts a hellfire scythe.");
-        }
         public override void SetDefaults()
         {
             Item.width = 26;
@@ -30,7 +23,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             Item.UseSound = SoundID.Item8;
             Item.crit = 8;
             Item.rare = ItemRarityID.Orange;
-            Item.mana = 14;
+            Item.mana = 15;
             Item.noMelee = true;
             Item.value = PriceByRarity.Orange_3;
             Item.DamageType = DamageClass.Magic;
@@ -47,7 +40,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes
             speedY *= num51;
             if (Main.myPlayer == player.whoAmI)
             {
-                Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<Projectiles.Magic.DevilSickle>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.inventory[player.selectedItem].damage)), 3, player.whoAmI);
+                Projectile.NewProjectile(player.GetSource_ItemUse(Item), new Vector2(player.position.X + (player.width * 0.5f), player.position.Y + (player.height * 0.5f)), new Vector2((float)speedX, (float)speedY), ModContent.ProjectileType<DevilSickle>(), (int)(player.GetTotalDamage(DamageClass.Magic).ApplyTo(player.inventory[player.selectedItem].damage)), 3, player.whoAmI);
             }
             return true;
         }

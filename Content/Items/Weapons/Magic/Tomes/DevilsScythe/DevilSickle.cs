@@ -4,31 +4,32 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Projectiles.Magic
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes.DevilsScythe
 {
     public class DevilSickle : ModProjectile
     {
         public override void SetDefaults()
         {
-            Projectile.width = 40;
-            Projectile.height = 40;
+            Projectile.width = 10;
+            Projectile.height = 10;
             Projectile.scale = 1.05f;
             Projectile.alpha = 200;
-            Projectile.timeLeft = 500;
+            Projectile.timeLeft = 300;
             Projectile.friendly = true;
             Projectile.penetrate = 5;
             Projectile.tileCollide = true;
             Projectile.DamageType = DamageClass.Magic;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
+            //Projectile.usesIDStaticNPCImmunity = true; used to be local but honestly this works best with normal/global iframes
+            //Projectile.idStaticNPCHitCooldown = 22; would be insanely op with local now
         }
         public override void AI()
         {
+            bool isStickingToTile = Projectile.velocity == Vector2.Zero;
             int dust = Dust.NewDust(
-            Projectile.position,
-            Projectile.width,
-            Projectile.height,
-            6,
+            Projectile.position - (isStickingToTile ? new Vector2(Projectile.width * 4, Projectile.height * 4) : new Vector2(Projectile.width * 2, Projectile.height * 2)),
+            Projectile.width * (isStickingToTile ? 8 : 4),
+            Projectile.height * (isStickingToTile ? 8 : 4),
+            DustID.Torch,
             Projectile.velocity.X,
             Projectile.velocity.Y,
             90,
@@ -36,14 +37,30 @@ namespace tsorcRevamp.Content.Projectiles.Magic
             2f
             );
             Main.dust[dust].noGravity = true;
-            Projectile.rotation += Projectile.direction * 0.8f;
             Lighting.AddLight(Projectile.Center, 0.9f, 0.5f, 0f);
+
+            if (!isStickingToTile)
+            {
+                Projectile.rotation += Projectile.direction * 0.8f;
+            }
 
             if (Projectile.velocity.X <= 12f && Projectile.velocity.Y <= 12f && Projectile.velocity.X >= -12f && Projectile.velocity.Y >= -12f)
             {
                 Projectile.velocity.X *= 1.05f;
                 Projectile.velocity.Y *= 1.05f;
             }
+        }
+
+        public bool collided;
+        public override bool OnTileCollide(Vector2 oldVelocity)
+        {
+            Projectile.velocity = Vector2.Zero;
+            return false;
+        }
+
+        public override void ModifyDamageHitbox(ref Rectangle hitbox)
+        {
+            hitbox.Inflate(Projectile.width * 2, Projectile.height * 2);
         }
 
         public override bool PreDraw(ref Color lightColor)

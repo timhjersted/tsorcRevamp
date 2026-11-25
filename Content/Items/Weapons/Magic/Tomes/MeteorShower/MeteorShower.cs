@@ -2,7 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
-namespace tsorcRevamp.Content.Projectiles
+namespace tsorcRevamp.Content.Items.Weapons.Magic.Tomes.MeteorShower
 {
     class MeteorShower : ModProjectile
     {
