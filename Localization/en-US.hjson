@@ -7307,12 +7307,13 @@ Mods: {
 					'''
 			}
 
-			AncientBloodLance: {
-				DisplayName: Ancient Blood Lance
+			BloodLanceItem: {
+				DisplayName: Blood Lance
 				Tooltip:
 					'''
-					Inflicts Crimson Burn in a small radius
-					If the owner has the Crimson Potion effect, has a 50% chance to heal 1 hp on hit 
+					Inflicts Crimson Burn in a small radius around the hit enemy
+					Has a {0}% chance to heal {1} hp on hit
+					Heal is guaranteed on enemies afflicted with Crimson Burn
 					'''
 			}
 
@@ -12132,7 +12133,7 @@ Mods: {
 			SoulSickle.DisplayName: Soul Sickle
 			Soulsplosion.DisplayName: Soulsplosion
 			SoulsplosionLarge.DisplayName: Large Soulsplosion
-			AncientBloodLanceProj.DisplayName: Ancient Blood Lance
+			BloodLanceProj.DisplayName: Ancient Blood Lance
 			AncientDragonLanceProj.DisplayName: Ancient Dragon Lance
 			AncientHolyLanceProj.DisplayName: Ancient Holy Lance
 			CelestialLanceProj.DisplayName: Celestial Lance
@@ -12818,6 +12819,7 @@ Mods: {
 			LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 			NitoSlamCloud.DisplayName: Nito Slam Cloud
 			WitchkingMaceFlail.DisplayName: Witchking Mace Flail
+			EaterToxicGlob.DisplayName: Eater Toxic Glob
 		}
 
 		NPCs: {

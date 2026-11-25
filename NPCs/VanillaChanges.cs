@@ -5992,7 +5992,7 @@ namespace tsorcRevamp.NPCs
         {
             if (npc.type == NPCID.WallofFlesh || npc.type == NPCID.WallofFleshEye || npc.type == NPCID.TheHungry || npc.type == NPCID.TheHungryII)
             {
-                modifiers.FinalDamage *= 2;
+                modifiers.FinalDamage *= 1.8f;
             }
             base.ModifyHitByItem(npc, player, item, ref modifiers);
         }
@@ -6004,7 +6004,7 @@ namespace tsorcRevamp.NPCs
                 //Spears
                 if (projectile.aiStyle == 19 && projectile.DamageType == DamageClass.Melee == true)
                 {
-                    modifiers.FinalDamage *= 2;
+                    modifiers.FinalDamage *= 1.8f;
                 }
             }
             base.ModifyHitByProjectile(npc, projectile, ref modifiers);

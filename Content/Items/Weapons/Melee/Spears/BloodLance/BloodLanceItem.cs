@@ -1,17 +1,22 @@
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
-using tsorcRevamp.Content.Items.Materials;
-using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
 using tsorcRevamp.Content.Projectiles.Melee.Spears;
 
-namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
+namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears.BloodLance
 {
-    public class AncientBloodLance : ModdedSpearItem
+    public class BloodLanceItem : ModdedSpearItem
     {
-        public override int ProjectileID => ModContent.ProjectileType<AncientBloodLanceProj>();
+        public const int OnHitHealChance = 50;
+        public const int OnHitHealAmount = 3;
+        public const int BurnDuration = 5;
+
+        public override LocalizedText Tooltip =>
+            base.Tooltip.WithFormatArgs(OnHitHealChance, OnHitHealAmount);
+        public override int ProjectileID => ModContent.ProjectileType<BloodLanceProj>();
         public override int Width => 64;
         public override int Height => 64;
         public override int BaseDmg => 42;
@@ -22,7 +27,6 @@ namespace tsorcRevamp.Content.Items.Weapons.Melee.Spears
         public override int Rarity => ItemRarityID.Orange;
         public override int Value => PriceByRarity.fromItem(Item);
         public override SoundStyle UseSoundID => SoundID.Item71;
-        public const int BurnDuration = 5;
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

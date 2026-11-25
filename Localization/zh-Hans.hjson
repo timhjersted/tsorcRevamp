@@ -7355,13 +7355,14 @@ Mods: {
 					'''
 			}
 
-			AncientBloodLance: {
-				DisplayName: 远古血矛
-				Tooltip:
+			BloodLanceItem: {
+				// DisplayName: Ancient Blood Lance
+				/* Tooltip:
 					'''
-					在小范围内施加猩红燃火
-					如果使用了猩红药水，则有 50% 概率在命中时恢复 1 点生命值
-					'''
+					Inflicts Crimson Burn in a small radius
+					If the owner has the Crimson Potion effect, has a {0}% chance to heal {1} hp on hit
+					Increases Resistance against contact damage by {2}
+					''' */
 			}
 
 			AncientDragonLance: {
@@ -12176,7 +12177,7 @@ Mods: {
 			SoulSickle.DisplayName: 灵魂收割
 			Soulsplosion.DisplayName: 灵魂爆破
 			SoulsplosionLarge.DisplayName: 大型灵魂爆破
-			AncientBloodLanceProj.DisplayName: 远古血矛
+			// BloodLanceProj.DisplayName: Ancient Blood Lance
 			AncientDragonLanceProj.DisplayName: 远古血矛
 			AncientHolyLanceProj.DisplayName: 古代圣枪
 			CelestialLanceProj.DisplayName: 天国长枪
@@ -12862,6 +12863,7 @@ Mods: {
 			// LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 			// NitoSlamCloud.DisplayName: Nito Slam Cloud
 			// WitchkingMaceFlail.DisplayName: Witchking Mace Flail
+			// EaterToxicGlob.DisplayName: Eater Toxic Glob
 		}
 
 		NPCs: {

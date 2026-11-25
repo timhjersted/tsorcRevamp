@@ -7326,13 +7326,14 @@ Mods: {
 					'''
 			}
 
-			AncientBloodLance: {
-				DisplayName: Древнее копьё крови
-				Tooltip:
+			BloodLanceItem: {
+				// DisplayName: Ancient Blood Lance
+				/* Tooltip:
 					'''
-					Накладывает багряный ожог в небольшом радиусе
-					Если на владельца наложен эффект багряного зелья, у него есть 50% шанс восстановить 1 ед. здоровье при попадании
-					'''
+					Inflicts Crimson Burn in a small radius
+					If the owner has the Crimson Potion effect, has a {0}% chance to heal {1} hp on hit
+					Increases Resistance against contact damage by {2}
+					''' */
 			}
 
 			AncientDragonLance: {
@@ -12143,7 +12144,7 @@ Mods: {
 			SoulSickle.DisplayName: Серп души
 			Soulsplosion.DisplayName: Взрыв души
 			SoulsplosionLarge.DisplayName: Большой взрыв души
-			AncientBloodLanceProj.DisplayName: Древнее Кровавое копье
+			// BloodLanceProj.DisplayName: Ancient Blood Lance
 			AncientDragonLanceProj.DisplayName: Древнее копье Дракона
 			AncientHolyLanceProj.DisplayName: Древнее Священное Копье
 			CelestialLanceProj.DisplayName: Небесное копье
@@ -12829,6 +12830,7 @@ Mods: {
 			// LethalTempoBolt.DisplayName: Lethal Tempo Bolt
 			// NitoSlamCloud.DisplayName: Nito Slam Cloud
 			// WitchkingMaceFlail.DisplayName: Witchking Mace Flail
+			// EaterToxicGlob.DisplayName: Eater Toxic Glob
 		}
 
 		NPCs: {
