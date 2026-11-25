@@ -287,7 +287,8 @@ namespace tsorcRevamp.Content.Items
                         if (Electrocute.Enabled)
                         {
                             tooltips.Insert(tooltips.Count, new TooltipLine(Mod, "Electrocute", LangUtils.GetTextValue("ElectrocuteExplanation", 
-                                ElectrocutePlayer.TimeWindowInSec, Electrocute.Cooldown, ElectrocutePlayer.BadRangedDmg)));
+                                ElectrocutePlayer.TimeWindowInSec, Electrocute.Cooldown, ElectrocutePlayer.BadRangedDmg,
+                                ElectrocutePlayer.MinRangedDmgRestore, ElectrocutePlayer.MaxRangedDmgRestore, ElectrocutePlayer.ScaleMult)));
                         }
                         break;
                     }

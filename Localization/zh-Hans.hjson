@@ -46,8 +46,10 @@ Mods: {
 			'''
 			[c/22dd96:Electrocute: Whenever you hit an enemy with 3 unique ranged projectiles in a span of {0} seconds,]
 			[c/22dd96:shock that enemy for the combined damage of those 3 projectiles. ({$CommonItemTooltip.Cooldown@1})]
-			[c/22dd96:Uses highest crit chance of the 3 projectiles.]
+			[c/22dd96:Damage and size scales up to {5}x based on your proximity to the enemy. Uses highest crit chance of the 3 projectiles.]
 			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
+			[c/22dd96:Refunds {3}-{4}% ranged damage while Electrocute is on cooldown, based on the damage it dealt.]
+			[c/22dd96:]
 			''' */
 		/* ArcaneSorceryExplanation:
 			'''
@@ -6680,9 +6682,9 @@ Mods: {
 				// Tooltip0: Deals +1 damage for every {1} max mana the user has over {0}
 			}
 
-			MeteorShower: {
-				DisplayName: 流星雨
-				Tooltip: 使陨石从天而降
+			MeteorShowerItem: {
+				// DisplayName: Meteor Shower
+				// Tooltip: Causes meteorites to rain from the sky
 			}
 
 			PoisonBombRune: {

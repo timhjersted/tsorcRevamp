@@ -1,6 +1,7 @@
 using System.Linq;
 using Terraria;
 using Terraria.GameContent.UI.ResourceSets;
+using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs;
 
@@ -33,7 +34,6 @@ public class ArcaneSorceryPlayer : ModPlayer
         CeruleanFlatManaGainMult = 1f;
         CeruleanFlaskMaxManaScalingMult = 1f;
     }
-
     public override void PreUpdateBuffs()
     {
         if (ArcaneSorcery.Enabled)
@@ -89,5 +89,14 @@ public class ArcaneSorceryPlayer : ModPlayer
         {
             Player.manaCost *= ManaBurnCostMult;
         }
+    }
+
+    public override bool CanUseItem(Item item)
+    {
+        if (ArcaneSorcerer && Player.HasBuff(BuffID.ManaSickness) && Player.HeldItem.mana > 0)
+        {
+            return false;
+        }
+        return base.CanUseItem(item);
     }
 }

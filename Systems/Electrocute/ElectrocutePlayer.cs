@@ -17,6 +17,7 @@ public class ElectrocutePlayer : ModPlayer
 {
     public const float BadRangedDmg = 20f;
     public const float MaxRangedDmgRestore = 25f;
+    public const float MinRangedDmgRestore = MaxRangedDmgRestore * MinScaleCap;
     public float RangedDmgRestored;
     public const float TimeWindowInSec = 2.5f;
     public bool CanElectrocute;
