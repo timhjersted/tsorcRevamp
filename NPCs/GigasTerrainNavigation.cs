@@ -689,7 +689,7 @@ namespace tsorcRevamp.NPCs
 
         static void Log(NPC npc, string action, string detail)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || Main.netMode == NetmodeID.MultiplayerClient)
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }

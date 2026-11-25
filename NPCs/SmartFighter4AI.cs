@@ -5267,7 +5267,7 @@ namespace tsorcRevamp.NPCs
             {
                 File.AppendAllText(path,
                     $"[{DateTime.Now:HH:mm:ss}] ==== nav log opened (tick {Main.GameUpdateCount}, "
-                    + $"DebugMode={ModContent.GetInstance<tsorcRevampConfig>().DebugMode}) ===="
+                    + $"EnemyDebug={ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug}) ===="
                     + Environment.NewLine);
             }
             catch { }
@@ -5278,7 +5278,7 @@ namespace tsorcRevamp.NPCs
         {
             // Developer diagnostic only, like the [fsm] nav log: without this every player reopened the log file several
             // times a second per SF4 enemy and built the full diagnostic string each time.
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug)
             {
                 return;
             }

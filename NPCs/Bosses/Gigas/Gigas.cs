@@ -1641,7 +1641,7 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 
         void LogTerrainLeap(string action, string detail)
         {
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode || Main.netMode == NetmodeID.MultiplayerClient)
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug || Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
             }

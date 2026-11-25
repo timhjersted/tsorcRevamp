@@ -79,6 +79,11 @@ namespace tsorcRevamp.NPCs.Enemies
         private const float VenomMinRange = 160f;
         private const int VenomCooldownTicks = 420;
         private const int VenomApproachTimeout = 180;
+
+        // Telegraph aim tracking turns at most this far per tick (radians, ~5.7 deg = ~340 deg/s). Stops the staff snapping
+        // when the player crosses over or under the Illusion; still fast enough to track any dodge in the 24t before lock.
+        private const float AimTurnPerTick = 0.1f;
+
         private readonly List<Spell> _spellBag = new List<Spell>();
         private Spell _spell, _lastSpell = Spell.EchoShot;
         private Vector2 _aim = Vector2.UnitX, _portal, _blinkDestination, _echoAnchor;
@@ -281,18 +286,58 @@ namespace tsorcRevamp.NPCs.Enemies
                 && !SafeDestination(_blinkDestination, requireGround: true))
             {
                 CancelBlink();
+
+                // Recovery eases the staff from CastRotation, i.e. from _aim. Point _aim along the blink pose's end
+                // (-1.2 rad, facing-local) so a cancelled blink settles from where the staff is instead of snapping.
+                float blinkEndAngle = -1.2f;
+
+                if (_facing != 1)
+                {
+                    blinkEndAngle = MathHelper.Pi - blinkEndAngle;
+                }
+
+                _aim = blinkEndAngle.ToRotationVector2();
                 EnterPhase(AttackPhase.MagicRecovery, 40);
                 NPC.netUpdate = true;
             }
-            if (server && Phase == AttackPhase.MagicTelegraph && !_blinkPending)
+            // Telegraph aim tracking. Runs on every machine so the staff turns smoothly between syncs; only the server
+            // locks the aim (12t before release) and sends it. The aim turns at most AimTurnPerTick toward the player's
+            // lead point, and facing follows the aim's side, so the staff can never point behind the body.
+            if (Phase == AttackPhase.MagicTelegraph && !_blinkPending && !_aimLocked && NPC.HasValidTarget)
             {
-                if (!_aimLocked && NPC.HasValidTarget)
+                Player target = Main.player[NPC.target];
+                Vector2 leadPoint = target.Center + target.velocity * 9f;
+                Vector2 toLead = leadPoint - NPC.Center;
+
+                if (toLead != Vector2.Zero)
                 {
-                    Player target = Main.player[NPC.target];
-                    _facing = target.Center.X >= NPC.Center.X ? 1 : -1;
-                    _aim = (target.Center + target.velocity * 9f - NPC.Center).SafeNormalize(Vector2.UnitX * _facing);
-                    if (PhaseTimer <= 12) { _aimLocked = true; NPC.netUpdate = true; }
-                    else if (PhaseTimer % 6 == 0) NPC.netUpdate = true;
+                    float currentAngle = _aim.ToRotation();
+                    float desiredAngle = toLead.ToRotation();
+                    float turnedAngle = currentAngle.AngleTowards(desiredAngle, AimTurnPerTick);
+                    _aim = turnedAngle.ToRotationVector2();
+                }
+
+                // Straight up/down reads the same for either facing, so an exactly vertical aim keeps the current one.
+                if (_aim.X > 0f)
+                {
+                    _facing = 1;
+                }
+                else if (_aim.X < 0f)
+                {
+                    _facing = -1;
+                }
+
+                if (server)
+                {
+                    if (PhaseTimer <= 12)
+                    {
+                        _aimLocked = true;
+                        NPC.netUpdate = true;
+                    }
+                    else if (PhaseTimer % 6 == 0)
+                    {
+                        NPC.netUpdate = true;
+                    }
                 }
             }
             if (!IsNeutral) NPC.direction = NPC.spriteDirection = _facing;
@@ -465,7 +510,9 @@ namespace tsorcRevamp.NPCs.Enemies
             Player target = Main.player[NPC.target];
             _facing = target.Center.X >= NPC.Center.X ? 1 : -1;
             NPC.direction = NPC.spriteDirection = _facing;
-            _aim = (target.Center + target.velocity * 9f - NPC.Center).SafeNormalize(Vector2.UnitX * _facing);
+            // Start aimed at the player's body, not the lead point, so the first aim is on the same side as _facing.
+            // The telegraph tracking then turns it toward the lead point.
+            _aim = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitX * _facing);
             DebugAttackLabel = CurrentSpell.Name;
             SetDisplayWeapon(MagicWeaponItemType, false);
             if (spell == Spell.Mirrorstep)

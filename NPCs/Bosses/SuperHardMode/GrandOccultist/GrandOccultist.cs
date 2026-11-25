@@ -1056,6 +1056,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
 
         public override void OnStagger(NPC npc)
         {
+            // Desperation is a scripted death sequence and must never be cancelled into Idle,
+            // or dontTakeDamage stays true permanently at 1 HP.
+            if (_desperationStarted)
+            {
+                return;
+            }
+
             // Cancel whatever the subclass owns, then let the base clear the shared puppet state. Corruption
             // Surge is the only Custom set-piece a stagger can reach (the rest are hyper-armored), and its
             // one-shot flag stays set so it cannot re-fire.
@@ -1546,7 +1553,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
         private void TryStartPhaseTransition()
         {
             bool belowHalf = NPC.life > 0 && NPC.life <= NPC.lifeMax / 2;
-            if (!belowHalf || _phase2Triggered)
+            if (!belowHalf || _phase2Triggered || _desperationStarted)
             {
                 return;
             }
@@ -2300,34 +2307,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
             }
 
             _desperationComplete = true;
+            _setPiece = SetPiece.None;
+            NPC.noGravity = false;
             NPC.dontTakeDamage = false;
-            /*if (Main.netMode != NetmodeID.MultiplayerClient)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
                 NPC.StrikeInstantKill();
-                if (Main.rand.NextBool(240))
-                {
-                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 2);
-                    projVelocity.Y -= 5;
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<OolacileDarkOrb>(), darkOrbDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item24, NPC.Center);
-                    NPCSpawningTimer = 1f;
-                    SecondAttackCounter = 0;
-                }
-
-                if (Main.rand.NextBool(30))
-                {
-                    Vector2 projVelocity = UsefulFunctions.Aim(NPC.Center, Main.player[NPC.target].Center, 8);
-                    if (Main.netMode != NetmodeID.MultiplayerClient)
-                    {
-                        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center.X, NPC.Center.Y, projVelocity.X, projVelocity.Y, ModContent.ProjectileType<OolacileSeeker>(), seekerDamage, 0f, Main.myPlayer);
-                    }
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
-                    NPCSpawningTimer = 1f;
-                }
-            }*/
+            }
         }
 
         private void TickWingedAxeRush(int elapsed, int ticksRemaining)
@@ -3078,6 +3064,13 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
 
             _desperationStarted = true;
             _setPiece = SetPiece.Desperation;
+            // Lock hyper-armor and clear any active stun immediately: CheckDead runs before
+            // OnHitByItem/Projectile poise checks, so without this the killing blow could stagger
+            // and cancel desperation before the next AI() tick sets AttackCommitted.
+            tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            globalNPC.AttackCommitted = true;
+            globalNPC.AttackTelegraphing = false;
+            globalNPC.StaggerTimer = 0;
             SetAttackLabel("The Abyss Consumes", DesperationTotalTicks);
             StartCustomAttack(DesperationTotalTicks, ModContent.ItemType<EnemyOccultistStaff>());
             NPC.netUpdate = true;
@@ -3196,7 +3189,6 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
             for (int i = 0; i < SpellCount; i++)
             {
                 _spellCooldowns[i] = reader.ReadInt16();
-                Projectile.NewProjectileDirect(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<BossDeath>(), 0, 0, Main.myPlayer, 1, UsefulFunctions.ColorToFloat(Color.OrangeRed));
             }
         }
         #endregion

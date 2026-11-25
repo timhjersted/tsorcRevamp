@@ -15124,6 +15124,11 @@ Mods: {
 						Only disable if it is hard-incompatible with another mod
 						'''
 				}
+
+				EnemyDebug: {
+					Label: Enemy Debug Logging
+					Tooltip: Developer only. Writes puppet attack telemetry and enemy pathfinding logs to the Logs folder. Puppet telemetry takes effect on world load.
+				}
 			}
 
 			tsorcRevampSoundConfig: {

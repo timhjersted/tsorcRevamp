@@ -1596,7 +1596,7 @@ namespace tsorcRevamp.NPCs
         {
             // Now covers ALL tiers (was tier >= 1 only) so the tier-0 baseline AI — the one with the
             // stuck-jumping / falling-into-pits problems we want to fix — is diagnosable too.
-            if (!ModContent.GetInstance<tsorcRevampConfig>().DebugMode)
+            if (!ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug)
             {
                 return;
             }

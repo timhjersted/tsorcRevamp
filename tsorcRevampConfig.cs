@@ -488,6 +488,11 @@ namespace tsorcRevamp
         [ReloadRequired]
         [DefaultValue(true)]
         public bool GravityFix { get; set; }
+
+        // Dev-only: writes per-attack puppet telemetry (Logs/tsorcRevamp-puppet-attack-*.jsonl, read at world load;
+        // /swingarm can still toggle it) and the enemy nav logs (tsorcRevamp-smartfighter4.log / -nav.log) on this machine.
+        [DefaultValue(false)]
+        public bool EnemyDebug { get; set; }
     }
 
     public enum HurtSoundMode

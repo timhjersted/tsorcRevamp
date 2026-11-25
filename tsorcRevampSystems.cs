@@ -1757,8 +1757,14 @@ namespace tsorcRevamp
             visualLife = -1f;
             visualMana = -1f;
             visualStamina = -1f;
-            PuppetNPC.SwingDebugLog = true;
-            PuppetAttackTelemetry.StartSession("world-load");
+            // Puppet attack telemetry is dev-only. Off by default so normal players don't get a log file per world load.
+            bool enemyDebug = ModContent.GetInstance<tsorcRevampVisualConfig>().EnemyDebug;
+            PuppetNPC.SwingDebugLog = enemyDebug;
+
+            if (enemyDebug)
+            {
+                PuppetAttackTelemetry.StartSession("world-load");
+            }
         }
 
         public override void OnWorldUnload()
