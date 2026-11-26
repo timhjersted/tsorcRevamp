@@ -1084,7 +1084,7 @@ namespace tsorcRevamp
                 if (item.type == ItemID.EoCShield) return;
                 // Its own tooltip reports all three swing prices and the per-rotation price.
                 if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>()) return;
-                if (item.type == ModContent.ItemType<DiamondPickaxe>()) return;
+                if (item.type == ModContent.ItemType<DiamondPickaxe>() || item.type == ModContent.ItemType<SleepwalkerPickaxe>()) return;
                 StringBuilder tipToAdd = new();
                 // Checked against WeaponClassifiedTools directly, NOT UsesOutputBasedWeaponCost — that
                 // function now only distinguishes CoinGun from everything else, so it can't be used to

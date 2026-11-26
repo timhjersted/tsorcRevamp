@@ -221,7 +221,7 @@ public class ElectrocutePlayer : ModPlayer
         distanceScaling *= ScaleMult;
         
         int baseDamage = ElectrocuteProjectileDamage1[npc.whoAmI] + ElectrocuteProjectileDamage2[npc.whoAmI] + ElectrocuteProjectileDamage3[npc.whoAmI];
-        damage = (int)(baseDamage * distanceScaling); //baseDamage is already scaled by ranged dmg mods(total dmg)
+        damage = (int)(baseDamage * distanceScaling / ScaleMult); //baseDamage is already scaled by ranged dmg mods(total dmg)
         List<int> critChances = new List<int>()
         {
             ElectrocuteProjectileCritChance1[npc.whoAmI],

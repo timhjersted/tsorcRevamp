@@ -1090,19 +1090,20 @@ Mods: {
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
 				// TitanPotion: "{$CommonItemTooltip.Melee.Size}"
 				AmmoBox: 以弹药基础伤害值的一半增加弹药暴击几率
-				HerosShirt:
+				/* HeroSetBonus:
 					'''
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
+					{$CommonItemTooltip.MaxStamina@1}
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
-					'''
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
+					''' */
 				// NinjaHood: "{$CommonItemTooltip.PercentIncreasedCritChance} to melee and ranged"
 				// NinjaShirt: "{$CommonItemTooltip.PercentIncreasedDamage} to melee and ranged"
-				/* NinjaPants:
+				// NinjaPants: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+				/* NinjaSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
-					{$CommonItemTooltip.StaminaRegen@2}
+					{$CommonItemTooltip.MaxStamina}
+					{$CommonItemTooltip.StaminaRegen@1}            
 					''' */
 				RedClothRobe:
 					'''
@@ -4940,6 +4941,17 @@ Mods: {
 					令人难以置信的轻松...事实上，它在你手中挥舞得如此之快
 					你几乎看不到它，但使用它却感觉毫不费力...
 					'''
+			}
+
+			SleepwalkerPickaxe: {
+				// DisplayName: Sleepwalker Pickaxe
+				/* Tooltip:
+					'''
+					An ideal pickaxe for exploring...
+					The diamond tip has been further imbued with remains of a corrupt being.
+					It can now break through stronger materials,
+					 but still won't harm any living creatures.
+					''' */
 			}
 
 			DisabledRecipe: {

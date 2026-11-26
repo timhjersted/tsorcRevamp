@@ -1091,19 +1091,20 @@ Mods: {
 				AmmoReservationPotion: "{$CommonItemTooltip.Ranged.CritDmg}"
 				TitanPotion: "{$CommonItemTooltip.Melee.Size}"
 				AmmoBox: Increases critical strike chance by your ammo's base damage
-				HerosShirt:
+				HeroSetBonus:
 					'''
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
+					{$CommonItemTooltip.MaxStamina@1}
 					{$CommonItemTooltip.StaminaRegen@2}
 					{$CommonItemTooltip.PercentIncreasedCritChance}
+					{$CommonItemTooltip.PercentIncreasedMovementSpeed@3}
 					'''
 				NinjaHood: "{$CommonItemTooltip.PercentIncreasedCritChance} to melee and ranged"
 				NinjaShirt: "{$CommonItemTooltip.PercentIncreasedDamage} to melee and ranged"
-				NinjaPants:
+				NinjaPants: "{$CommonItemTooltip.PercentIncreasedMovementSpeed}"
+				NinjaSetBonus:
 					'''
-					{$CommonItemTooltip.PercentIncreasedMovementSpeed}
-					{$CommonItemTooltip.SetBonus}{$CommonItemTooltip.MaxStamina@1}
-					{$CommonItemTooltip.StaminaRegen@2}
+					{$CommonItemTooltip.MaxStamina}
+					{$CommonItemTooltip.StaminaRegen@1}            
 					'''
 				RedClothRobe:
 					'''
@@ -4897,6 +4898,17 @@ Mods: {
 					Because of this, it can do no harm to living creatures, but its tip breaks through blocks
 					with incredible ease... In fact, it moves so fast in your hand,
 					you can hardly see it, yet using it feels effortless...
+					'''
+			}
+
+			SleepwalkerPickaxe: {
+				DisplayName: Sleepwalker Pickaxe
+				Tooltip:
+					'''
+					An ideal pickaxe for exploring...
+					The diamond tip has been further imbued with remains of a corrupt being.
+					It can now break through stronger materials,
+					 but still won't harm any living creatures.
 					'''
 			}
 
