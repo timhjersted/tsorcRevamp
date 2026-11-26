@@ -9,6 +9,7 @@ using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.Accessories.Defensive.Rings;
 using tsorcRevamp.Content.Items.Accessories.Mobility;
+using tsorcRevamp.Content.Items.Tools;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra;
 using tsorcRevamp.Content.Items.Weapons.Ranged.Runeterra.Bases;
 using tsorcRevamp.Content.Items.Weapons.Summon.Whips.ModdedWhip;
@@ -1083,6 +1084,7 @@ namespace tsorcRevamp
                 if (item.type == ItemID.EoCShield) return;
                 // Its own tooltip reports all three swing prices and the per-rotation price.
                 if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>()) return;
+                if (item.type == ModContent.ItemType<DiamondPickaxe>()) return;
                 StringBuilder tipToAdd = new();
                 // Checked against WeaponClassifiedTools directly, NOT UsesOutputBasedWeaponCost — that
                 // function now only distinguishes CoinGun from everything else, so it can't be used to

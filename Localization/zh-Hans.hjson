@@ -49,7 +49,6 @@ Mods: {
 			[c/22dd96:Damage and size scales up to {5}x based on your proximity to the enemy. Uses highest crit chance of the 3 projectiles.]
 			[c/22dd96:Ranged damage is reduced by {2}% while Electrocute is not on cooldown.]
 			[c/22dd96:Refunds {3}-{4}% ranged damage while Electrocute is on cooldown, based on the damage it dealt.]
-			[c/22dd96:]
 			''' */
 		/* ArcaneSorceryExplanation:
 			'''
@@ -15162,6 +15161,11 @@ Mods: {
 						WARNING! Some parts of the mod rely on this, and will be very disorienting otherwise
 						Only disable if it is hard-incompatible with another mod
 						''' */
+				}
+
+				EnemyDebug: {
+					// Label: Enemy Debug Logging
+					// Tooltip: Developer only. Writes puppet attack telemetry and enemy pathfinding logs to the Logs folder. Puppet telemetry takes effect on world load.
 				}
 			}
 

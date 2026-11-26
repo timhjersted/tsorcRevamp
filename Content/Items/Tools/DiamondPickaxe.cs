@@ -1,10 +1,11 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace tsorcRevamp.Content.Items.Tools
 {
-    class DiamondPickaxe : ModItem
+    public class DiamondPickaxe : ModItem
     {
         public override void SetStaticDefaults()
         {
@@ -21,12 +22,32 @@ namespace tsorcRevamp.Content.Items.Tools
             Item.useTurn = true;
             Item.damage = 0;
             Item.pick = 54;
-            Item.knockBack = 1;
+            Item.damage = 1;
+            Item.DamageType = DamageClass.Default;
         }
 
         public override bool? CanHitNPC(Player player, NPC target)
         {
             return false;
+        }
+
+        public override bool CanHitPvp(Player player, Player target)
+        {
+            return false;
+        }
+
+        public override bool AllowPrefix(int pre)
+        {
+            return false;
+        }
+
+        public override void ModifyTooltips(List<TooltipLine> tooltips)
+        {
+            int ttindex = tooltips.FindIndex(t => t.Name == "Damage");
+            if (ttindex != -1)
+            {
+                tooltips.RemoveRange(ttindex, 3);
+            }
         }
 
         public override void AddRecipes()
