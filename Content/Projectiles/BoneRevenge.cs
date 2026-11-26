@@ -20,6 +20,7 @@ namespace tsorcRevamp.Content.Projectiles
             Projectile.penetrate = 2;
             Projectile.timeLeft = 120;
             Projectile.scale = .9f;
+            Projectile.DamageType = DamageClass.Generic;
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {

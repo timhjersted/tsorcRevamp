@@ -21,7 +21,7 @@ namespace tsorcRevamp.Content.Items.Tools
             Item.autoReuse = true;
             Item.useTurn = true;
             Item.damage = 0;
-            Item.pick = 54;
+            Item.pick = 55;
             Item.damage = 1;
             Item.DamageType = DamageClass.Default;
         }

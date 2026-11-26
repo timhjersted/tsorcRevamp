@@ -16,7 +16,7 @@ public class SentientHead : ModItem
     public float Level = 0;
     public const float Divisor = 1700;
     
-    public const float BaseRegen = 6;
+    public const float BaseRegen = 4;
     public const float BaseDmg = 9;
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs();
 
