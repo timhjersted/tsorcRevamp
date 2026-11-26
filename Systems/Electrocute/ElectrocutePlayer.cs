@@ -65,23 +65,8 @@ public class ElectrocutePlayer : ModPlayer
                 {
                     Player.AddBuff(ModContent.BuffType<Electrocute>(), 3);
                 }
-                CanElectrocute  = true;
-            }
-        }
-    }
-
-    public override void PostUpdateEquips()
-    {
-        if (Electrocute.Enabled)
-        {
-            if (Player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse)
-            {
+                CanElectrocute = true;
                 Player.GetDamage(DamageClass.Ranged) *= 1f - (BadRangedDmg / 100f) + (RangedDmgRestored / 100f);
-                if (Player.HeldItem.DamageType == DamageClass.Ranged && !Player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>()))
-                {
-                    Player.AddBuff(ModContent.BuffType<Electrocute>(), 3);
-                }
-                CanElectrocute  = true;
             }
         }
     }
@@ -236,6 +221,25 @@ public class ElectrocutePlayer : ModPlayer
                 critChance = listedCritChance;
             }
         }
+    }
+
+    public bool HasResetElectrocuteFields;
+    public override void UpdateDead()
+    {
+        if (!HasResetElectrocuteFields)
+        {
+            foreach (var npc in Main.npc)
+            {
+                ResetElectrocuteFields(npc);
+            }
+
+            HasResetElectrocuteFields = true;
+        }
+    }
+
+    public override void OnRespawn()
+    {
+        HasResetElectrocuteFields = false;
     }
 
     public void ResetElectrocuteFields(NPC npc)

@@ -138,6 +138,7 @@ using tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist;
 using tsorcRevamp.NPCs.Bosses.Triad;
 using tsorcRevamp.NPCs.Enemies.Archer;
 using tsorcRevamp.NPCs.Invaders;
+using tsorcRevamp.Systems.Electrocute;
 using DemonSpirit = tsorcRevamp.NPCs.Enemies.DemonSpirit;
 
 namespace tsorcRevamp
@@ -2519,6 +2520,26 @@ namespace tsorcRevamp
                         }
                         break;
                     }
+                case tsorcPacketID.SyncElectrocuteVars:
+                {
+                    byte player = reader.ReadByte(); //player.whoAmI
+                    var modPlayer = Main.player[player].GetModPlayer<ElectrocutePlayer>();
+                    byte npc = reader.ReadByte(); //npc.whoAmI
+                    var globalNPC = Main.npc[npc].GetGlobalNPC<ElectrocuteNpc>();
+                    globalNPC.ElectrocuteTimer1[player] = reader.ReadByte();
+                    globalNPC.ElectrocuteTimer2[player] = reader.ReadByte();
+                    globalNPC.ElectrocuteTimer3[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileType1[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileDamage1[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileCritChance1[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileType2[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileDamage2[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileCritChance2[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileType3[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileDamage3[player] = reader.ReadByte();
+                    modPlayer.ElectrocuteProjectileCritChance3[player] = reader.ReadByte();
+                    break;
+                }
                 case tsorcPacketID.SyncOwnerCursor:
                     {
                         byte player = reader.ReadByte(); //player.whoAmI
@@ -5461,6 +5482,8 @@ namespace tsorcRevamp
         public const byte RequestEnemyWhipLatch = 55;
         /// <summary>Server to clients: play a scripted event's NPC materialization dust burst at the spawn footprint.</summary>
         public const byte EventMaterializationBurst = 56;
+
+        public const byte SyncElectrocuteVars = 57;
     }
 
     //config moved to separate file
