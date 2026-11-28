@@ -122,8 +122,8 @@ namespace tsorcRevamp
 
             // Boss Checklist entries which are not currently represented in the Tome's arena lists.
             Register(ModContent.NPCType<GravelordNito>(), 11, 11, 12, BossClassification.RequiredMajor, BossEncounterEra.PreHardmode);
-            Register(ModContent.NPCType<IceGigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.Hardmode);
-            Register(ModContent.NPCType<Gigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.Hardmode);
+            Register(ModContent.NPCType<IceGigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.SuperHardmode);
+            Register(ModContent.NPCType<Gigas>(), 0, 0, 0, BossClassification.OptionalField, BossEncounterEra.SuperHardmode);
             Register(ModContent.NPCType<BlackKnight>(), 0, 0, 0, BossClassification.EliteEnemy, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<NPCs.Bosses.Attraidies.BrokenOkiku>(), 0, 29, 30, BossClassification.RequiredMajor, BossEncounterEra.Hardmode);
             Register(ModContent.NPCType<Marik>(), 47, 47, 48, BossClassification.OptionalMajor, BossEncounterEra.SuperHardmode, true);

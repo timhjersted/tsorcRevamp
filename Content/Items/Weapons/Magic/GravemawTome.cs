@@ -8,6 +8,8 @@ using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Materials;
 using tsorcRevamp.Content.Items.Materials.Souls;
 using tsorcRevamp.Content.Items.Materials.Souls.DarkSoul;
+using tsorcRevamp.Content.Projectiles.Magic.Gravemaw;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Items.Weapons.Magic
 {
@@ -19,12 +21,13 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
     ///  • Cursor low tap:   Gravemaw Orb — lob an orb that opens a brief black hole, then bursts
     ///  • Cursor low hold:  Hungering Maw — channel a short INHALE cone that pulls foes in, damages
     ///                                       them rapidly, and trickles a little life back (soul eating)
-    ///Placeholder art: vanilla Water Bolt book. Crafted from 1 Soul of the Vessel + 4000 Dark Souls.
+    ///Crafted from 1 Soul of the Vessel + 4000 Dark Souls.
     ///</summary>
     class GravemawTome : ModItem
     {
         public const int BaseUseTime = 27;
-        public override string Texture => "Terraria/Images/Item_" + ItemID.WaterBolt;
+        public const byte ShadowflamePerkLevel = 3;
+        public const int ShadowflameDurationTicks = 180;
 
         public override void SetDefaults()
         {
@@ -32,7 +35,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Item.DamageType = DamageClass.Magic;
             Item.mana = 8;
             Item.width = 28;
-            Item.height = 30;
+            Item.height = 32;
             Item.useTime = BaseUseTime;
             Item.useAnimation = BaseUseTime;
             Item.useStyle = ItemUseStyleID.Shoot;
@@ -43,12 +46,12 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
             Item.rare = ItemRarityID.Green;
             Item.UseSound = SoundID.Item20;
             Item.autoReuse = false;
-            Item.shoot = ModContent.ProjectileType<Projectiles.Magic.Gravemaw.GravemawController>();
+            Item.shoot = ModContent.ProjectileType<GravemawController>();
             Item.shootSpeed = 1f;
         }
 
         public override bool CanUseItem(Player player) =>
-            player.ownedProjectileCounts[ModContent.ProjectileType<Projectiles.Magic.Gravemaw.GravemawController>()] == 0;
+            player.ownedProjectileCounts[ModContent.ProjectileType<GravemawController>()] == 0;
 
         public override bool AltFunctionUse(Player player) => FourAttackWeaponControls.UsesAltFunction;
 
@@ -64,9 +67,23 @@ namespace tsorcRevamp.Content.Items.Weapons.Magic
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int mode = FourAttackWeaponControls.GetAttackMode(player);
-            Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback,
-                player.whoAmI, mode, player.altFunctionUse == 2 ? 1f : 0f,
-                Item.useTime * CombinedHooks.TotalUseTimeMultiplier(player, Item));
+            float rightClickFlag = player.altFunctionUse == 2 ? 1f : 0f;
+            float effectiveUseTime = Item.useTime * CombinedHooks.TotalUseTimeMultiplier(player, Item);
+
+            int projectileIndex = Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback,
+                player.whoAmI, mode, rightClickFlag, effectiveUseTime);
+
+            // Forward reinforcement level onto the controller so the +3 milestone perk applies and syncs cleanly in MP.
+            if (projectileIndex >= 0 && projectileIndex < Main.maxProjectiles)
+            {
+                Projectile controllerProjectile = Main.projectile[projectileIndex];
+                if (controllerProjectile.ModProjectile is GravemawController controller)
+                {
+                    controller.ReinforcementLevel = WeaponReinforcement.GetDisplayedLevel(player.HeldItem);
+                    controllerProjectile.netUpdate = true;
+                }
+            }
+
             return false;
         }
 

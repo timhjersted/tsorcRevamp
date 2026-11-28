@@ -66,7 +66,6 @@ namespace tsorcRevamp.Content.Items.Armor.DragoonSet
             player.lavaRose = true;
             player.fireWalk = true;
             player.breath = 9999999;
-            player.waterWalk = true;
             player.noKnockback = true;
             player.GetCritChance(DamageClass.Generic) += CritChance;
             //player.wings = 34; // looks like Jim's Wings

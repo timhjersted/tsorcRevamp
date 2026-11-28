@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -71,18 +72,179 @@ namespace tsorcRevamp.NPCs.Invaders
 
         public bool InDominionDeathSequence => dominionDeathTimer >= 0;
 
+        // ── Extended Great Red Knight melee combos ──────────────────────────────────────────────
+        // Built on the shared spear/lance thrust & sweep engine, tuned for boss aggression:
+        //
+        // Crimson Flurry — close (<= 145px), 3-hit extended spear combo.
+        //   Step 1: JoustDash thrust. Tell 28t on screen | 24t attack (punch 6t, live 6..15 = 10t, rollable) | pause 22t.
+        //   Step 2: UnderhandArc sweep (1.13 -> -0.11). 26t Weighted 5/21 k6 -> HitWindowEnd 0.354 (~9t live, rollable).
+        //           Starts 31t after Step 1 live ends (>= 30t, re-rollable). Pause 24t (re-faces player).
+        //   Step 3: Heavy JoustDash finisher. 28t attack (punch 6t, live 6..16 = 11t, rollable), 1.65x push, 1.25x dmg.
+        //           Starts 47t after Step 2 live ends (>= 30t, and >= 40t after Step 2 start so both can damage).
+        //   Recovery 28t. Continues Step 2 within 195px, Step 3 within 215px.
+        //
+        // Bloodlance Rush — mid (130-360px, RangedStartOnly), distance-solved dash thrust into rising sweep.
+        //   Step 1: JoustDash (authored 30t dash, +150px overshoot, live 6..19 = 13t, rollable). Tell 34t | pause 22t.
+        //   Step 2: UnderhandArc sweep (24t Weighted 4/20 k6, HitWindowEnd 0.334 = 8t live, rollable).
+        //           Starts 33t after Step 1 live ends (>= 30t). Continues if target stays within 175px after dash.
+        //   Recovery 30t.
+        //
+        // Double Spear Lunge / Rising Skewer — faster boss-paced versions of the close-range lance staples.
+        const string CrimsonFlurryName = "Crimson Flurry";
+        const string BloodlanceRushName = "Bloodlance Rush";
+        const string GreatDoubleLungeName = "Double Spear Lunge";
+        const string GreatRisingSkewerName = "Rising Skewer";
+        const int GreatThrustTicks = 24;
+        const int GreatThrustLiveEndTick = 15;
+        const int GreatHeavyThrustTicks = 28;
+        const int GreatHeavyThrustLiveEndTick = 16;
+        const int GreatChargeTicks = 30;
+        const int GreatChargeLiveEndTick = 19;
+        const float GreatMeleeEngageRange = 145f;
+        const float GreatChargeMaxRange = 360f;
+        const float FlurryStep2Range = 195f;
+        const float FlurryStep3Range = 215f;
+        const float RushFollowUpRange = 175f;
+
+        static readonly MeleeCombo[] GreatRedKnightCombos = new MeleeCombo[]
+        {
+            new MeleeCombo
+            {
+                Name = CrimsonFlurryName, BaseWeight = 115, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Crimson, CooldownAfterUse = 75, RecoveryTicks = 28,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 28, AttackTicks = GreatThrustTicks,
+                        PostStepPause = 22, DamageMult = 1f, ReachMult = 1f, ForwardPushMult = 1.35f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatThrustLiveEndTick / (float)GreatThrustTicks,
+                    },
+                    // HitWindowEnd = (5 + 21 * ln(1/0.3) / 6) / 26 = 0.354f.
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.UnderhandArc, TelegraphTicks = 0, AttackTicks = 26,
+                        PostStepPause = 24, DamageMult = 1.05f, ReachMult = 1f, ForwardPushMult = 1.1f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Weighted,
+                        EaseInTicks = 5, EaseOutTicks = 21, EaseOutDecay = 6f,
+                        HitWindowEnd = 0.354f,
+                    },
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 0, AttackTicks = GreatHeavyThrustTicks,
+                        DamageMult = 1.25f, ReachMult = 1.05f, ForwardPushMult = 1.65f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatHeavyThrustLiveEndTick / (float)GreatHeavyThrustTicks,
+                    },
+                },
+            },
+            new MeleeCombo
+            {
+                Name = BloodlanceRushName, BaseWeight = 120, Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Crimson, RangedStartOnly = true, CooldownAfterUse = 95, RecoveryTicks = 30,
+                Steps = new[]
+                {
+                    // Step 0 uses RedKnightPuppet's distance-solved dash velocity, so ForwardPushMult stays 0.
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 34, AttackTicks = GreatChargeTicks,
+                        PostStepPause = 22, DamageMult = 1.25f, ReachMult = 1f, ForwardPushMult = 0f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatChargeLiveEndTick / (float)GreatChargeTicks,
+                    },
+                    // HitWindowEnd = (4 + 20 * ln(1/0.3) / 6) / 24 = 0.334f.
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.UnderhandArc, TelegraphTicks = 0, AttackTicks = 24,
+                        DamageMult = 1.15f, ReachMult = 1f, ForwardPushMult = 1f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Weighted,
+                        EaseInTicks = 4, EaseOutTicks = 20, EaseOutDecay = 6f,
+                        HitWindowEnd = 0.334f,
+                    },
+                },
+            },
+            new MeleeCombo
+            {
+                Name = GreatDoubleLungeName, BaseWeight = 85, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 60, RecoveryTicks = 26,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 28, AttackTicks = GreatThrustTicks,
+                        PostStepPause = 22, DamageMult = 1f, ReachMult = 1f, ForwardPushMult = 1.35f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatThrustLiveEndTick / (float)GreatThrustTicks,
+                    },
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 0, AttackTicks = GreatThrustTicks,
+                        DamageMult = 0.95f, ReachMult = 1f, ForwardPushMult = 1.35f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatThrustLiveEndTick / (float)GreatThrustTicks,
+                    },
+                },
+            },
+            new MeleeCombo
+            {
+                Name = GreatRisingSkewerName, BaseWeight = 70, Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed, CooldownAfterUse = 90, RecoveryTicks = 26,
+                Steps = new[]
+                {
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.JoustDash, TelegraphTicks = 26, AttackTicks = GreatThrustTicks,
+                        PostStepPause = 14, DamageMult = 1f, ReachMult = 1f, ForwardPushMult = 0.9f,
+                        SwingSpeedMult = 1f, Ease = SwingEaseStyle.Smooth,
+                        HitWindowEnd = GreatThrustLiveEndTick / (float)GreatThrustTicks,
+                    },
+                    new MeleeComboStep
+                    {
+                        Motion = ComboMotion.UnderhandArc, TelegraphTicks = 0, AttackTicks = 22,
+                        DamageMult = 1.15f, ReachMult = 1f, ForwardPushMult = 0.7f, SwingSpeedMult = 1f,
+                        Ease = SwingEaseStyle.Weighted, EaseInTicks = 4, EaseOutTicks = 18, EaseOutDecay = 6f,
+                        HitWindowEnd = 0.346f,
+                    },
+                },
+            },
+        };
+
+        // ── Aggression spike / breather tempo (server-authoritative; breatherActive synced for stalk speed) ──
+        // Chains 2-3 (P1), 3-4 (<= 60% HP), or 3-5 (Dominion) melee/throw/dash attacks tightly,
+        // then takes a deliberate stalking breather so the player has real punish/heal windows.
+        const float BreatherWalkSpeedMult = 0.72f;
+        int aggressionBurstRemaining;
+        int breatherTicks;
+        bool breatherActive;
+        bool preferAggressiveChainSpecial;
+
+        bool IsInMeleeComboPhase => Phase == AttackPhase.MeleeComboTelegraph
+            || Phase == AttackPhase.MeleeComboAttack
+            || Phase == AttackPhase.MeleeComboPause
+            || Phase == AttackPhase.MeleeComboRecovery;
+
         #region Defaults
         protected override string InvaderTitle => "Great Red Knight";
         protected override bool UsesGreatKnightPoses => true;
         protected override bool HoldsFinalePose => dominionDeathTimer >= 0;
+        protected override Color KnightAccentColor => new Color(206, 16, 34);
+        protected override int KnightGlintDust => DustID.RedTorch;
 
         // The family armour, darkened to Destined Death black-and-crimson.
         protected override int HeadArmorDyeItemType => ItemID.RedandBlackDye;
         protected override int BodyArmorDyeItemType => ItemID.RedandBlackDye;
         protected override int LegsArmorDyeItemType => ItemID.RedandBlackDye;
 
-        // Dominion speeds the knight up for its closing melee (was FighterAI 2 / 2.6).
-        protected override float TopSpeed => specialAttacks.DominionEngaged ? 2.6f : 2f;
+        // Boss-paced movement matching Owl Father's tempo and accelerating further in Crimson Dominion.
+        protected override float TopSpeed => specialAttacks.DominionEngaged ? 3.3f : 2.75f;
+        protected override float Acceleration => 0.105f;
+        protected override MeleeCombo[] MeleeComboPoolOverride => GreatRedKnightCombos;
+        protected override float MeleeEngageRange => GreatMeleeEngageRange;
+        protected override float ComboMaxStartRange => 150f;
+        protected override float RangedStartComboMaxRange => GreatChargeMaxRange;
+        protected override int RangedStartMeleeComboChance => 65;
+        protected override float ComboTelegraphAdvanceSpeedMult => 0.85f;
 
         // EnemyAncientBloodLanceProj.png measured: 108x108, head (red blade) at texel (0,0), butt at (107,107). Same
         // top-left-head diagonal as Crystal Knight's North Pole, so the same +90 degree draw offset. At 0.75 the lance
@@ -173,12 +335,14 @@ namespace tsorcRevamp.NPCs.Invaders
             base.SendExtraAI(writer);
             // CheckDead only ever runs server-side, so without this a multiplayer client would never pose the finale.
             writer.Write(dominionDeathTimer);
+            writer.Write(breatherActive);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             base.ReceiveExtraAI(reader);
             dominionDeathTimer = reader.ReadInt32();
+            breatherActive = reader.ReadBoolean();
         }
 
         #region AI
@@ -191,6 +355,19 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             Player target = Main.player[NPC.target];
+            bool specialActiveBefore = specialAttacks.Active;
+            KnightSpecialAttack activeSpecialBefore = specialAttacks.Attack;
+            bool inMeleeBefore = IsInMeleeComboPhase;
+
+            if (Main.netMode != NetmodeID.MultiplayerClient && breatherTicks > 0)
+            {
+                breatherTicks--;
+                if (breatherTicks == 0 && breatherActive)
+                {
+                    breatherActive = false;
+                    NPC.netUpdate = true;
+                }
+            }
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             if (dominionDeathTimer < 0)
@@ -202,8 +379,9 @@ namespace tsorcRevamp.NPCs.Invaders
                 specialAttacks.TickDominionSequence(NPC, target, attackStats);
             }
 
-            // Dominion owns a narrow vocabulary: Crimson Advance, Firebomb Reversal and Royal Spear Throw. Generic
-            // evasive dashes, fallback hops and teleports are shut down so their tells cannot compete with it.
+            // Dominion owns a narrow vocabulary: Crimson Advance, Firebomb Reversal, Royal Spear Throw,
+            // plus Great Red Knight's extended lance combos. Generic evasive dashes, fallback hops and
+            // teleports are shut down so their tells cannot compete with it.
             if (specialAttacks.DominionEngaged)
             {
                 globalNPC.EvasiveRetreatJump = false;
@@ -220,6 +398,11 @@ namespace tsorcRevamp.NPCs.Invaders
 
             base.AI();
 
+            if (Main.netMode != NetmodeID.MultiplayerClient && dominionDeathTimer < 0)
+            {
+                UpdateAggressionTempo(target, specialActiveBefore, activeSpecialBefore, inMeleeBefore);
+            }
+
             // The finale is immune throughout; re-assert after the base tick in case anything in it cleared the flag.
             if (dominionDeathTimer >= 0)
             {
@@ -228,6 +411,153 @@ namespace tsorcRevamp.NPCs.Invaders
 
             Lighting.AddLight(NPC.Center, new Color(190, 35, 30).ToVector3() * 0.3f);
             DebugAttackLabel = DominionDebugLabel();
+        }
+
+        // Tracks aggression spikes (2-5 tightly chained melee/throw/dash moves) and deliberate breathers
+        // between spikes so the fight has Owl-Father-plus pressure spikes without erasing punish windows.
+        void UpdateAggressionTempo(Player target, bool specialActiveBefore,
+            KnightSpecialAttack activeSpecialBefore, bool inMeleeBefore)
+        {
+            bool specialStarted = !specialActiveBefore && specialAttacks.Active;
+            bool meleeStarted = !inMeleeBefore && IsInMeleeComboPhase;
+            if (specialStarted || meleeStarted)
+            {
+                if (aggressionBurstRemaining <= 0)
+                {
+                    if (specialAttacks.DominionEngaged)
+                    {
+                        aggressionBurstRemaining = Main.rand.Next(3, 6);
+                    }
+                    else if (NPC.life <= NPC.lifeMax * 0.6f)
+                    {
+                        aggressionBurstRemaining = Main.rand.Next(3, 5);
+                    }
+                    else
+                    {
+                        aggressionBurstRemaining = Main.rand.Next(2, 4);
+                    }
+                }
+
+                // Forced phase transitions (heralds, Dominion plant) break any active breather cleanly.
+                if (specialStarted && breatherActive)
+                {
+                    breatherTicks = 0;
+                    breatherActive = false;
+                    NPC.netUpdate = true;
+                }
+            }
+
+            bool specialFinished = specialActiveBefore && !specialAttacks.Active;
+            bool meleeFinished = inMeleeBefore && !IsInMeleeComboPhase;
+            if (!specialFinished && !meleeFinished)
+            {
+                return;
+            }
+
+            // Major phase transitions end the current spike cleanly without piling on a long breather.
+            bool phaseTransition = specialFinished
+                && (activeSpecialBefore == KnightSpecialAttack.FurnaceHerald
+                    || activeSpecialBefore == KnightSpecialAttack.StormHerald
+                    || activeSpecialBefore == KnightSpecialAttack.CrimsonDominion);
+            if (phaseTransition)
+            {
+                aggressionBurstRemaining = 0;
+                preferAggressiveChainSpecial = false;
+                if (activeSpecialBefore != KnightSpecialAttack.CrimsonDominion)
+                {
+                    specialAttacks.SetCooldown(75);
+                }
+                return;
+            }
+
+            if (aggressionBurstRemaining > 0)
+            {
+                aggressionBurstRemaining--;
+            }
+
+            if (aggressionBurstRemaining > 0)
+            {
+                float distance = target.active && !target.dead
+                    ? NPC.Distance(target.Center)
+                    : 0f;
+                int chainDelay = specialAttacks.DominionEngaged || NPC.life <= NPC.lifeMax * 0.6f
+                    ? Main.rand.Next(8, 15)
+                    : Main.rand.Next(12, 20);
+
+                if (meleeFinished)
+                {
+                    // Chain out of melee into Spear Throw, Crimson Advance dash, Firebomb Reversal, or Royal Standard
+                    // most of the time; at point-blank occasionally allow a back-to-back melee combo instead.
+                    bool chainDirectMelee = distance <= 155f && Main.rand.NextBool(3);
+                    if (chainDirectMelee)
+                    {
+                        preferAggressiveChainSpecial = false;
+                        specialAttacks.SetCooldown(45);
+                    }
+                    else
+                    {
+                        preferAggressiveChainSpecial = true;
+                        specialAttacks.SetCooldown(chainDelay);
+                    }
+                }
+                else
+                {
+                    // After a special, give melee combos / Bloodlance Rush a brief window to follow up
+                    // when in dash range; otherwise immediately chain another aggressive special.
+                    preferAggressiveChainSpecial = false;
+                    if (distance <= GreatChargeMaxRange)
+                    {
+                        int meleeFollowUpWindow = specialAttacks.DominionEngaged ? 32 : 42;
+                        specialAttacks.SetCooldown(meleeFollowUpWindow);
+                    }
+                    else
+                    {
+                        specialAttacks.SetCooldown(chainDelay);
+                    }
+                }
+                return;
+            }
+
+            // Spike complete: take a deliberate stalking breather so the player can heal, recover stamina, or punish.
+            if (specialAttacks.DominionEngaged)
+            {
+                breatherTicks = Main.rand.Next(85, 130);
+            }
+            else if (NPC.life <= NPC.lifeMax * 0.6f)
+            {
+                breatherTicks = Main.rand.Next(110, 160);
+            }
+            else
+            {
+                breatherTicks = Main.rand.Next(135, 195);
+            }
+            breatherActive = true;
+            preferAggressiveChainSpecial = false;
+            specialAttacks.SetCooldown(breatherTicks);
+            NPC.netUpdate = true;
+        }
+
+        protected override void RunMovementAI(float speedMult)
+        {
+            if (breatherActive)
+            {
+                speedMult *= BreatherWalkSpeedMult;
+            }
+            base.RunMovementAI(speedMult);
+        }
+
+        public override void OnStagger(NPC npc)
+        {
+            base.OnStagger(npc);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                aggressionBurstRemaining = 0;
+                preferAggressiveChainSpecial = false;
+                breatherTicks = 60;
+                breatherActive = true;
+                specialAttacks.SetCooldown(60);
+                NPC.netUpdate = true;
+            }
         }
 
         // The base labels controller attacks; Dominion is a permanent phase, so surface its stage and the finale.
@@ -260,17 +590,47 @@ namespace tsorcRevamp.NPCs.Invaders
             {
                 return specialAttacks.TryStartDominion(NPC, target, globalNPC);
             }
-            return specialAttacks.TryStartGreat(NPC, target, globalNPC);
+            bool started = specialAttacks.TryStartGreat(NPC, target, globalNPC, preferAggressiveChainSpecial);
+            if (started)
+            {
+                preferAggressiveChainSpecial = false;
+            }
+            return started;
         }
 
-        // The shared spear combos are phase-one only; Dominion fights from its own pool.
+        protected override bool IsChargingThrustCombo(string comboName)
+        {
+            return comboName == BloodlanceRushName || base.IsChargingThrustCombo(comboName);
+        }
+
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
-            if (specialAttacks.DominionEngaged)
+            if (breatherTicks > 0)
             {
                 return false;
             }
             return base.CanSelectMeleeCombo(combo, distance, healthFraction);
+        }
+
+        protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
+        {
+            if (!target.active || target.dead)
+            {
+                return false;
+            }
+
+            if (comboName == CrimsonFlurryName)
+            {
+                float maxRange = nextStepIndex == 1 ? FlurryStep2Range : FlurryStep3Range;
+                return NPC.Distance(target.Center) <= maxRange;
+            }
+
+            if (comboName == BloodlanceRushName)
+            {
+                return NPC.Distance(target.Center) <= RushFollowUpRange;
+            }
+
+            return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
         }
 
         protected override void DoCustomTick(int ticksRemaining)
@@ -283,6 +643,60 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             base.DoCustomTick(ticksRemaining);
+
+            if (!Main.dedServ && specialAttacks.Active && specialAttacks.SpearDamageWake)
+            {
+                EmitDestinedDeathLanceDust(count: 3, spread: 8f, speedScale: 2.2f);
+            }
+        }
+
+        protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboTelegraphTick(combo, step, elapsed, total);
+
+            if (!Main.dedServ && elapsed >= total - 24)
+            {
+                EmitDestinedDeathLanceDust(count: 2, spread: 6f, speedScale: 1.1f);
+            }
+        }
+
+        protected override void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
+        {
+            base.OnMeleeComboAttackTick(combo, step, elapsed, total);
+
+            float progress = elapsed / (float)Math.Max(1, total);
+            if (!Main.dedServ && CanDamageWithMeleeStep(step, progress))
+            {
+                int moteCount = IsChargingThrustCombo(combo.Name) && step.Motion == ComboMotion.JoustDash ? 4 : 3;
+                EmitDestinedDeathLanceDust(count: moteCount, spread: 7f, speedScale: 2.4f);
+            }
+        }
+
+        // On-brand Destined Death red & black embers along the Blood Lance tip and upper shaft:
+        // crimson RedTorch (alpha 45) paired with dark Shadowflame soot (alpha 70, noLight).
+        void EmitDestinedDeathLanceDust(int count, float spread, float speedScale)
+        {
+            Vector2 handPos = PuppetHandPosition;
+            Vector2 tipPos = PuppetSpearTipPosition;
+            Vector2 trailVelocity = -NPC.velocity * 0.25f;
+
+            for (int i = 0; i < count; i++)
+            {
+                bool soot = i % 3 == 1;
+                float alongShaft = MathHelper.Lerp(0.55f, 1f, Main.rand.NextFloat());
+                Vector2 spawnPos = Vector2.Lerp(handPos, tipPos, alongShaft)
+                    + Main.rand.NextVector2Circular(spread, spread);
+                Vector2 velocity = trailVelocity + Main.rand.NextVector2Circular(speedScale, speedScale);
+                Dust mote = Dust.NewDustPerfect(
+                    spawnPos,
+                    soot ? DustID.Shadowflame : DustID.RedTorch,
+                    velocity,
+                    soot ? 70 : 45,
+                    soot ? new Color(18, 4, 10) : new Color(206, 16, 34),
+                    soot ? Main.rand.NextFloat(0.95f, 1.35f) : Main.rand.NextFloat(0.85f, 1.35f));
+                mote.noGravity = true;
+                mote.noLight = soot;
+            }
         }
 
         protected override void ModifyControllerPoseInput(ref ControllerPoseInput input)
@@ -428,14 +842,15 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         #region Debuffs
-        // PuppetMeleeHitbox calls this on the hit player's machine after Hurt.
+        // PuppetMeleeHitbox and RedKnightLungeHitbox both call this on the hit player's machine after Hurt.
         public void OnHumanoidMeleeHit(Player target)
         {
             target.AddBuff(BuffID.OnFire, 30 * 60, false);
             target.AddBuff(ModContent.BuffType<BrokenSpirit>(), 6 * 60, false); // knockback on hit
-            target.AddBuff(ModContent.BuffType<DarkInferno>(), 6 * 60, false); // no health regen
+            target.AddBuff(ModContent.BuffType<DarkInferno>(), 3 * 60, false); // no health regen (halved from 6s)
             target.AddBuff(ModContent.BuffType<Crippled>(), 6 * 60, false); // loss of flight mobility
             target.AddBuff(BuffID.BrokenArmor, 6 * 60, false);
+            target.AddBuff(ModContent.BuffType<DestinedDeath>(), DestinedDeath.DefaultDurationTicks, false); // 1 stack per hit
         }
         #endregion
 

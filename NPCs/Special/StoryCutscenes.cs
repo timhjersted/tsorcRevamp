@@ -37,6 +37,9 @@ namespace tsorcRevamp.NPCs.Special
         BuriedAlive,
         UnmarkedGraves,
         WhatRemains,
+        DryadGift,
+        MysticSanctuary,
+        SolaireTower,
     }
 
     public enum StoryCue : byte
@@ -132,6 +135,8 @@ namespace tsorcRevamp.NPCs.Special
             Elijah,
             ElijahVoice,
             Miakoda,
+            Dryad,
+            Solaire,
         }
 
         private enum Shot : byte
@@ -185,6 +190,16 @@ namespace tsorcRevamp.NPCs.Special
         private const float WellStopTile = 4208.6f;
         private const float WellShaftTile = 4205.5f;
         private const float WellSpeckRowY = 735f;
+
+        // The well memory's shot of the burned street: centered 6 rows above the road at 1.5x, so the road sits in the
+        // lower third and the world-scale figures read clearly.
+        private const int WellMemoryRowsAboveStreet = 6;
+
+        // Title pan: about 72 tiles from the street shot to Red over 11 seconds (1.7 px/tick on average). The title starts
+        // 2 seconds in; control returns once the camera has settled on Red.
+        private const int TitlePanTicks = 660;
+        private const int TitleLeadInTicks = 120;
+        private const float WellMemoryZoom = 1.5f;
         private const int ElijahRowY = 1744;
         private const int ElijahDoorTileX = 4454;
         private const float ElijahDoorStopTile = 4455.8f;
@@ -194,6 +209,21 @@ namespace tsorcRevamp.NPCs.Special
         private const float FireReadTile = 4249.2f;
         private const float FireBookTile = 4251f;
         private const float FireBookRowY = 1827.4f;
+
+        // The Dryad's downstairs room (Adventure map): she stands beside her table, Red stops on the stair hatch, and the
+        // gifts glint from the dresser beside her bed upstairs. Rows are legacy; her mark row is scanned down to the floor.
+        private const float DryadStandTile = 5163.5f;
+        private const int DryadRowY = 952;
+        private const float DryadRedTile = 5165.8f;
+        private static readonly Vector2 DryadDresserTile = new Vector2(5158.5f, 946f);
+
+        // Solaire's watch tower (Adventure map): he waits by the east wall, Red stops in front of the clock.
+        private const float SolaireStandTile = 4375.5f;
+        private const int SolaireRowY = 666;
+        private const float SolaireRedTile = 4371f;
+
+        // The sanctuary's stage hand only darkens the screen, so it just needs to sit near the scene.
+        private static readonly Vector2 SanctuaryPropTile = new Vector2(611f, 1557f);
         private const int GraveDarkTicks = 180;
         private const float GraveZoom = 1.7f;
 
@@ -409,7 +439,11 @@ namespace tsorcRevamp.NPCs.Special
                         Wait(50),
                         Say(Speaker.Red, "Line02"),
 
-                        // The village as he last saw it, then the army that burned it.
+                        // The village as he last saw it, then the army that burned it. Staged on the real ruins:
+                        // TitleView is the village street shot, so the camera pulls back there for the memory.
+                        Zoom(1f, 70),
+                        CameraAt(marks.TitleView.X, marks.TitleView.Y, 70),
+                        Wait(70),
                         Prop(StoryCue.VillageMemory),
                         Wait(60),
                         Say(Speaker.RedVoice, "Line03"),
@@ -420,18 +454,20 @@ namespace tsorcRevamp.NPCs.Special
                         Prop(StoryCue.VillageMemoryEnd),
                         Turn(marks.HouseDirection),
                         Wait(StoryPropActor.VillageMemoryFadeTicks),
+                        // The camera stays on the street: the memory fades off the same ruins, then the title card plays there.
                         Say(Speaker.Red, "Line05"),
 
                         new Beat { Kind = BeatKind.SkipLanding },
                         Turn(marks.HouseDirection).If(WasSkipped),
+                        // One slow pan from the street back to Red, with the title revealed partway through it. The camera
+                        // eases in and out, so it drifts off the ruins, crosses under the title and settles on Red last.
                         Prop(StoryCue.HouseSmoke),
                         Zoom(1f, 100),
-                        CameraAt(marks.TitleView.X, marks.TitleView.Y, 140),
-                        Wait(140),
+                        Camera(Shot.Red, TitlePanTicks),
+                        Wait(TitleLeadInTicks),
                         Prop(StoryCue.TitleCard),
                         Wait(StoryPropActor.TitleCardTicks),
-                        Camera(Shot.Red, 60),
-                        Wait(60),
+                        Wait(TitlePanTicks - TitleLeadInTicks - StoryPropActor.TitleCardTicks),
                     };
                 }
 
@@ -713,17 +749,23 @@ namespace tsorcRevamp.NPCs.Special
                         Say(Speaker.RedVoice, "Line01"),
                         Wait(15),
 
+                        // Black closes over the well; under it the camera cuts to the burned village street, where the
+                        // memory fades up in fog.
                         Prop(StoryCue.Memory),
-                        Wait(StoryPropActor.MemoryCryTick),
+                        Wait(StoryPropActor.MemoryCutTick),
+                        CameraAt(Opening.TitleView.X, Opening.SurfaceRow - WellMemoryRowsAboveStreet, 0),
+                        Zoom(WellMemoryZoom, 0),
+                        Wait(StoryPropActor.MemoryCryTick - StoryPropActor.MemoryCutTick),
                         Say(Speaker.RedVoice, "Line02"),
 
-                        // The white flash hides the camera returning to the surface.
+                        // The knight's blow fades the memory to black; under it the camera returns to Red at the well.
                         Prop(StoryCue.MemoryStrike),
+                        Wait(StoryPropActor.MemoryReturnTick),
                         Camera(Shot.Red, 0),
-                        Zoom(1f, 8),
+                        Zoom(1f, 0),
                         Wait(10),
                         WalkTo(WellStopTile + 1.1f, -1),
-                        Wait(StoryPropActor.MemoryStrikeTicks),
+                        Wait(StoryPropActor.MemoryStrikeTicks - StoryPropActor.MemoryReturnTick),
                         Wait(70),
                         Say(Speaker.Red, "Line03"),
                         Wait(20),
@@ -961,6 +1003,83 @@ namespace tsorcRevamp.NPCs.Special
                         Zoom(1f),
                         Wait(ZoomTicks),
                     };
+
+                case StoryScene.DryadGift:
+                    return new List<Beat>
+                    {
+                        Wait(25),
+                        Camera(Shot.RedAndActor, CameraEaseTicks),
+                        WalkTo(DryadRedTile, -1),
+                        Zoom(TalkZoom),
+                        Say(Speaker.Dryad, "Line01"),
+                        Say(Speaker.Red, "Line02"),
+                        Say(Speaker.Dryad, "Line03"),
+                        Say(Speaker.Dryad, "Line04"),
+                        Say(Speaker.Dryad, "Line05"),
+
+                        // A skip still shows where the gifts wait.
+                        new Beat { Kind = BeatKind.SkipEnd },
+                        Prop(StoryCue.LoftGlint),
+                        CameraAt(DryadDresserTile.X, DryadDresserTile.Y, 45),
+                        Wait(50),
+                        Say(Speaker.Dryad, "Line06"),
+                        Camera(Shot.RedAndActor, 40),
+                        Zoom(1f),
+                        Wait(ZoomTicks),
+                    };
+
+                case StoryScene.MysticSanctuary:
+                    return new List<Beat>
+                    {
+                        // Red alone with his thoughts: a slow push in, then a while of quiet under black.
+                        Wait(45),
+                        Camera(Shot.Red, CameraEaseTicks),
+                        Zoom(ResolveZoom, 120),
+                        Say(Speaker.RedVoice, "Line01").WithRemixText(),
+                        Say(Speaker.RedVoice, "Line02"),
+                        Say(Speaker.RedVoice, "Line03"),
+                        Prop(StoryCue.TimePasses),
+                        Wait(StoryPropActor.TimePassesTicks),
+
+                        // Miakoda's counsel names the paths ahead, so a skip still lands on it.
+                        new Beat { Kind = BeatKind.SkipEnd },
+                        Camera(Shot.RedAndActor, CameraEaseTicks),
+                        Zoom(TalkZoom),
+                        Say(Speaker.Miakoda, "Line04"),
+                        Say(Speaker.Miakoda, "Line05"),
+                        Say(Speaker.Red, "Line06"),
+                        Say(Speaker.Miakoda, "Line07"),
+                        Zoom(1f),
+                        Wait(ZoomTicks),
+                    };
+
+                case StoryScene.SolaireTower:
+                    return new List<Beat>
+                    {
+                        Wait(25),
+                        Camera(Shot.RedAndActor, CameraEaseTicks),
+                        WalkTo(SolaireRedTile, 1),
+                        Zoom(TalkZoom),
+
+                        // His greeting is a prayer for the sun: the first frame of his swing, arm raised high.
+                        Cue(StoryCue.Reaching),
+                        Say(Speaker.Solaire, "Line01"),
+                        Cue(StoryCue.Standing),
+                        Say(Speaker.Solaire, "Line02"),
+                        Say(Speaker.Solaire, "Line03"),
+
+                        // The directions (Jade, the western caverns) survive a skip.
+                        new Beat { Kind = BeatKind.SkipEnd },
+                        Cue(StoryCue.Standing),
+                        Camera(Shot.RedAndActor, 30),
+                        Zoom(TalkZoom),
+                        Say(Speaker.Solaire, "Line04"),
+                        Say(Speaker.Solaire, "Line05"),
+                        Say(Speaker.Solaire, "Line06"),
+                        Say(Speaker.Solaire, "Line07"),
+                        Zoom(1f),
+                        Wait(ZoomTicks),
+                    };
             }
 
             return new List<Beat>();
@@ -1122,6 +1241,9 @@ namespace tsorcRevamp.NPCs.Special
 
         private static bool OnOpeningMap => tsorcRevampWorld.OnlyAdventureMap || tsorcRevampWorld.RemixMap;
 
+        /// <summary>The village street under the title shot, in this world's tile space: the road the memory's army walks.</summary>
+        internal static Point VillageStreetTile => ExpandedWorldTransform.MapTile((int)Opening.TitleView.X, Opening.SurfaceRow);
+
         private static bool AnyBossSlain => tsorcRevampWorld.NewSlain != null && tsorcRevampWorld.NewSlain.Count > 0;
 
         private static bool RedRightOfPit()
@@ -1249,6 +1371,8 @@ namespace tsorcRevamp.NPCs.Special
                 // A scene that cannot get an NPC slot is given up, so it can never leave the screen waiting in black.
                 if (!Play(dueScene, i))
                 {
+                    // Logged so a silently skipped opening can be told apart from one that was watched.
+                    ModContent.GetInstance<tsorcRevamp>().Logger.Warn("Opening scene " + dueScene + " could not start (no NPC slot for its prop); marked as seen.");
                     CutsceneSystem.MarkSeen(SceneId(dueScene));
                 }
 
@@ -1356,6 +1480,11 @@ namespace tsorcRevamp.NPCs.Special
             { new Point(2354, 843), StoryScene.DesertPaths },
             { new Point(7095, 1457), StoryScene.RageWarning },
             { new Point(7102, 1457), StoryScene.RageWarning },
+            { new Point(5167, 952), StoryScene.DryadGift },
+            { new Point(611, 1559), StoryScene.MysticSanctuary },
+            { new Point(571, 1552), StoryScene.MysticSanctuary },
+            { new Point(4363, 666), StoryScene.SolaireTower },
+            { new Point(4374, 666), StoryScene.SolaireTower },
             { new Point(4092, 709), StoryScene.Idol },
             { new Point(4089, 713), StoryScene.Idol },
             { new Point(4080, 713), StoryScene.Idol },
@@ -1389,7 +1518,8 @@ namespace tsorcRevamp.NPCs.Special
 
         private static bool IsMiakodaScene(StoryScene scene)
         {
-            return scene == StoryScene.FireTemple || scene == StoryScene.ShadowRumors || scene == StoryScene.DesertPaths || scene == StoryScene.RageWarning;
+            return scene == StoryScene.FireTemple || scene == StoryScene.ShadowRumors || scene == StoryScene.DesertPaths || scene == StoryScene.RageWarning
+                || scene == StoryScene.MysticSanctuary;
         }
 
         public static bool IsMiakodaPet(int projectileType)
@@ -1410,7 +1540,8 @@ namespace tsorcRevamp.NPCs.Special
 
             string sceneId = CutsceneSystem.SceneId;
             return sceneId == SceneId(StoryScene.FireTemple) || sceneId == SceneId(StoryScene.ShadowRumors)
-                || sceneId == SceneId(StoryScene.DesertPaths) || sceneId == SceneId(StoryScene.RageWarning);
+                || sceneId == SceneId(StoryScene.DesertPaths) || sceneId == SceneId(StoryScene.RageWarning)
+                || sceneId == SceneId(StoryScene.MysticSanctuary);
         }
 
         private static bool ConversationReady(StoryScene scene)
@@ -1437,6 +1568,21 @@ namespace tsorcRevamp.NPCs.Special
         public static bool RageWarningReady()
         {
             return ConversationReady(StoryScene.RageWarning);
+        }
+
+        public static bool DryadGiftReady()
+        {
+            return tsorcRevampWorld.OnlyAdventureMap && ConversationReady(StoryScene.DryadGift);
+        }
+
+        public static bool MysticSanctuaryReady()
+        {
+            return ConversationReady(StoryScene.MysticSanctuary);
+        }
+
+        public static bool SolaireTowerReady()
+        {
+            return tsorcRevampWorld.OnlyAdventureMap && ConversationReady(StoryScene.SolaireTower);
         }
 
         public static bool HomecomingReady()
@@ -1594,11 +1740,13 @@ namespace tsorcRevamp.NPCs.Special
 
             bool bodhi = npc.type == NPCID.ArmsDealer && CutsceneSystem.SceneId == SceneId(StoryScene.Homecoming);
             bool aaron = npc.type == NPCID.Guide && CutsceneSystem.SceneId == SceneId(StoryScene.Idol);
-            return bodhi || aaron;
+            bool dryad = npc.type == NPCID.Dryad && CutsceneSystem.SceneId == SceneId(StoryScene.DryadGift);
+            bool solaire = npc.type == ModContent.NPCType<Friendly.SolaireOfAstora>() && CutsceneSystem.SceneId == SceneId(StoryScene.SolaireTower);
+            return bodhi || aaron || dryad || solaire;
         }
 
         /// <summary>Puts the real villager on their mark. If they have died, this brings them back under the same name.</summary>
-        private static int PlaceVillager(int npcType, string nameKey, float tileX, int facing)
+        private static int PlaceVillager(int npcType, string nameKey, float tileX, int legacyRowY, int facing)
         {
             int villagerIndex = NPC.FindFirstNPC(npcType);
             if (villagerIndex < 0)
@@ -1617,7 +1765,7 @@ namespace tsorcRevamp.NPCs.Special
             }
 
             // Search for the real floor. Tables count as standable elsewhere, but a villager belongs beside them.
-            Vector2 markPoint = ExpandedWorldTransform.MapWorld(new Vector2(tileX, VillageRowY) * 16f);
+            Vector2 markPoint = ExpandedWorldTransform.MapWorld(new Vector2(tileX, legacyRowY) * 16f);
             Point floorTile = markPoint.ToTileCoordinates();
             while (floorTile.Y < Main.maxTilesY - 1 && !(Main.tile[floorTile.X, floorTile.Y].HasUnactuatedTile && Main.tileSolid[Main.tile[floorTile.X, floorTile.Y].TileType] && !Main.tileSolidTop[Main.tile[floorTile.X, floorTile.Y].TileType]))
             {
@@ -1833,7 +1981,7 @@ namespace tsorcRevamp.NPCs.Special
             switch (scene)
             {
                 case StoryScene.Homecoming:
-                    spawnedActor = PlaceVillager(NPCID.ArmsDealer, "Cutscenes.Speakers.Bodhi", Marks.BodhiChair, 1);
+                    spawnedActor = PlaceVillager(NPCID.ArmsDealer, "Cutscenes.Speakers.Bodhi", Marks.BodhiChair, VillageRowY, 1);
                     spawnedProp = SpawnProp(Marks.LoftChest, lead);
                     break;
 
@@ -1855,8 +2003,17 @@ namespace tsorcRevamp.NPCs.Special
                     break;
 
                 case StoryScene.Idol:
-                    spawnedActor = PlaceVillager(NPCID.Guide, "Cutscenes.Speakers.Aaron", Marks.AaronStart, -Marks.EntryDirection);
+                    spawnedActor = PlaceVillager(NPCID.Guide, "Cutscenes.Speakers.Aaron", Marks.AaronStart, VillageRowY, -Marks.EntryDirection);
                     spawnedProp = SpawnProp(new Vector2(Marks.Skull.X + 1f, Marks.Skull.Y + 1f), lead);
+                    break;
+
+                case StoryScene.DryadGift:
+                    spawnedActor = PlaceVillager(NPCID.Dryad, "Cutscenes.Speakers.Dryad", DryadStandTile, DryadRowY, 1);
+                    spawnedProp = SpawnProp(DryadDresserTile, lead);
+                    break;
+
+                case StoryScene.SolaireTower:
+                    spawnedActor = PlaceVillager(ModContent.NPCType<Friendly.SolaireOfAstora>(), "Cutscenes.Speakers.Solaire", SolaireStandTile, SolaireRowY, -1);
                     break;
 
                 case StoryScene.ElijahRescue:
@@ -1897,11 +2054,16 @@ namespace tsorcRevamp.NPCs.Special
                 {
                     spawnedProp = SpawnProp(new Vector2(FireBookTile, FireBookRowY), lead);
                 }
+                else if (scene == StoryScene.MysticSanctuary)
+                {
+                    spawnedProp = SpawnProp(SanctuaryPropTile, lead);
+                }
             }
 
             bool openingScene = scene == StoryScene.BuriedAlive || scene == StoryScene.UnmarkedGraves || scene == StoryScene.WhatRemains;
             bool needsActor = scene != StoryScene.ThroughGate && scene != StoryScene.Well && !openingScene;
-            bool needsProp = openingScene || scene == StoryScene.Homecoming || scene == StoryScene.Well || scene == StoryScene.Idol || scene == StoryScene.ElijahRescue || scene == StoryScene.FireTemple;
+            bool needsProp = openingScene || scene == StoryScene.Homecoming || scene == StoryScene.Well || scene == StoryScene.Idol || scene == StoryScene.ElijahRescue || scene == StoryScene.FireTemple
+                || scene == StoryScene.DryadGift || scene == StoryScene.MysticSanctuary;
             bool actorMissing = needsActor && (spawnedActor < 0 || spawnedActor >= Main.maxNPCs);
             bool propMissing = needsProp && (spawnedProp < 0 || spawnedProp >= Main.maxNPCs);
             if (actorMissing || propMissing)
@@ -2005,6 +2167,14 @@ namespace tsorcRevamp.NPCs.Special
                     line = CutsceneLine.FromNpc(actorIndex, MiakodaName, textKey);
                     break;
 
+                case Speaker.Dryad:
+                    line = CutsceneLine.FromNpc(actorIndex, "Cutscenes.Speakers.Dryad", textKey);
+                    break;
+
+                case Speaker.Solaire:
+                    line = CutsceneLine.FromNpc(actorIndex, "Cutscenes.Speakers.Solaire", textKey);
+                    break;
+
                 default:
                     line = CutsceneLine.FromNpc(actorIndex, VoiceName, textKey);
                     break;
@@ -2053,7 +2223,42 @@ namespace tsorcRevamp.NPCs.Special
                     }
                     else if (beat.CameraShot == Shot.Tile)
                     {
-                        focus = CutsceneFocus.AtPoint(ExpandedWorldTransform.MapWorld(beat.Tile * 16f));
+                        Vector2 shotPoint = ExpandedWorldTransform.MapWorld(beat.Tile * 16f);
+                        focus = CutsceneFocus.AtPoint(shotPoint);
+
+                        // A shot far from the players (the well memory's village) shows map sections MP clients were
+                        // never sent. The server sends the sections around the shot first, so the view is never empty.
+                        // 3x3 sections (600x450 tiles) covers any zoom; already-loaded sections just get re-sent.
+                        const float DistantShotPixels = 100f * 16f;
+                        bool distantShot = lead.Distance(shotPoint) > DistantShotPixels;
+                        if (Main.netMode == NetmodeID.Server && distantShot)
+                        {
+                            int shotSectionX = Netplay.GetSectionX((int)(shotPoint.X / 16f));
+                            int shotSectionY = Netplay.GetSectionY((int)(shotPoint.Y / 16f));
+                            int firstSectionX = Math.Max(shotSectionX - 1, 0);
+                            int lastSectionX = Math.Min(shotSectionX + 1, Main.maxSectionsX - 1);
+                            int firstSectionY = Math.Max(shotSectionY - 1, 0);
+                            int lastSectionY = Math.Min(shotSectionY + 1, Main.maxSectionsY - 1);
+
+                            for (int client = 0; client < Main.maxPlayers; client++)
+                            {
+                                bool connected = Main.player[client].active && Netplay.Clients[client] != null && Netplay.Clients[client].IsActive;
+                                if (!connected)
+                                {
+                                    continue;
+                                }
+
+                                for (int sectionX = firstSectionX; sectionX <= lastSectionX; sectionX++)
+                                {
+                                    for (int sectionY = firstSectionY; sectionY <= lastSectionY; sectionY++)
+                                    {
+                                        NetMessage.SendSection(client, sectionX, sectionY);
+                                    }
+                                }
+
+                                NetMessage.SendData(MessageID.TileFrameSection, client, -1, null, firstSectionX, firstSectionY, lastSectionX, lastSectionY);
+                            }
+                        }
                     }
 
                     CutsceneSystem.SetFocus(focus, beat.Ticks);
@@ -2833,7 +3038,7 @@ namespace tsorcRevamp.NPCs.Special
 
         public override bool AppliesToEntity(NPC entity, bool lateInstantiation)
         {
-            return entity.type == NPCID.ArmsDealer || entity.type == NPCID.Guide;
+            return entity.type == NPCID.ArmsDealer || entity.type == NPCID.Guide || entity.type == NPCID.Dryad || entity.type == ModContent.NPCType<Friendly.SolaireOfAstora>();
         }
 
         public override bool PreAI(NPC npc)
@@ -2937,14 +3142,36 @@ namespace tsorcRevamp.NPCs.Special
 
             return null;
         }
+
+        // The cue lives in ai[0], and StoryCue.Walking is 12: vanilla's "shooting" state, so ranged villagers (Aaron's
+        // bow, Bodhi's gun) drew their weapon while walking. Scale 0 draws nothing.
+        public override void DrawTownAttackGun(NPC npc, ref Texture2D item, ref Rectangle itemFrame, ref float scale, ref int horizontalHoldoutOffset)
+        {
+            if (StoryCutscenes.HoldsNpc(npc))
+            {
+                scale = 0f;
+            }
+        }
     }
 
     /// <summary>An invisible stage hand for one scene: the loft glint, the protection stone, and the memory at the well.</summary>
     public class StoryPropActor : StoryActor
     {
         public const int StoneTravelTicks = 40;
-        public const int MemoryCryTick = 450;
-        public const int MemoryStrikeTicks = 70;
+        // Well memory: black closes in over MemoryBlackInTicks, the camera cuts at MemoryCutTick, and black lifts from
+        // MemoryRevealTick. The family's timeline runs MemoryStageOffset ticks behind the cue, so it starts once visible.
+        public const int MemoryCutTick = 40;
+        public const int MemoryCryTick = 520;
+        private const int MemoryBlackInTicks = 30;
+        private const int MemoryRevealTick = 60;
+        private const int MemoryRevealTicks = 40;
+        private const int MemoryStageOffset = 60;
+
+        // The blow: the memory fades to black, the camera returns at MemoryReturnTick, and the present fades up.
+        public const int MemoryReturnTick = 25;
+        public const int MemoryStrikeTicks = 95;
+        private const int StrikeBlackTicks = 20;
+        private const int StrikeHoldEndTick = 45;
         public const int TimePassesTicks = 170;
         public const int IdolStrikeTicks = 100;
         public const int GraveRevealTicks = 90;
@@ -2958,11 +3185,27 @@ namespace tsorcRevamp.NPCs.Special
         private const int CoughIntervalTicks = 80;
         private const float RaisedArmAngle = -1.25f;
         private const int KnightCrossTicks = 180;
-        private const int KnightCount = 5;
-        private const float KnightSpacing = 150f;
+
+        // The village memory's army walks the real street at world scale: 44 px apart (under 3 tiles), 1.8 px per tick,
+        // starting 66 tiles left of the street shot so the head of the column walks in from off screen.
+        private const float KnightSpacing = 44f;
+        private const float MarchPixelsPerTick = 1.8f;
+        private const float ArmyStartTilesLeft = 66f;
+        private const int KnightFrameCount = 16;
+
+        // The old Black Knight sheet: frame 0 stands, 1 jumps, 2-15 are the walk cycle.
+        private const int WalkFirstFrame = 2;
+        private const int WalkFrameCount = 14;
+        private const int WalkFrameTicks = 4;
+        private const float KnightFootGapPixels = 2f;
+        private const float KnightEyeOffsetPixels = 2f;
+
+        // Client-side state of the running village memory, advanced in PerformCue and read by its overlay.
+        private static int villageMemoryTicks;
+        private static int sigilFlareTick = -1;
+        private static List<Vector2> villageFirePoints;
         private const int VillageFadeInTicks = 30;
         private const int TitleFadeTicks = 60;
-        private const int HouseCount = 5;
 
         private const int IdolImpactTick = 34;
         private const int TimeFadeTicks = 50;
@@ -2971,8 +3214,7 @@ namespace tsorcRevamp.NPCs.Special
         private const float StoneHoverHeight = 34f;
         private const int SpeckGrowTicks = 90;
 
-        // The memory's timeline, in ticks from when the ash closes in.
-        private const int MemoryFadeTicks = 30;
+        // The memory's timeline, in ticks of stage time (cue time minus MemoryStageOffset).
         private const int AssassinEnterTick = 90;
         private const int KnifeTick = 150;
         private const int KnifeFlashTicks = 12;
@@ -2981,14 +3223,20 @@ namespace tsorcRevamp.NPCs.Special
         private const int JoltTicks = 20;
         private const int FirstKnightTick = 295;
         private const int KnightInterval = 50;
-        private const int StrikeHoldTicks = 10;
 
         private const float FigureScale = 3f;
         private const int BloodDrops = 18;
-        private const int FogBanks = 14;
+
+        // The well memory's look: a pale ash haze over the street, fog 1.6x as thick as the village memory's smoke, and a
+        // steady low glow in the knights' eyes (0 = smallest glow, 1 = the village army's full flare).
+        private const float MemoryHazeOpacity = 0.5f;
+        private const float MemoryFogDensity = 1.6f;
+        private const float MemoryKnightEyeFlare = 0.3f;
 
         private static readonly Color SilhouetteColor = new Color(16, 14, 17);
         private static readonly Color AshColor = new Color(62, 58, 56);
+        private static readonly Color VillageFogColor = new Color(52, 46, 46);
+        private static readonly Color MemoryFogColor = new Color(122, 116, 110);
 
         public override string Texture => "Terraria/Images/Extra_98";
 
@@ -3106,6 +3354,95 @@ namespace tsorcRevamp.NPCs.Special
                 }
             }
 
+            // Red's memory of the raid, staged on the real street: the topmost solid tile of each ruin column burns.
+            // Points are found from the tiles once per memory, so map edits move the fire with the houses.
+            // The well memory is staged on the same burning street.
+            bool villageMemoryCue = cue == StoryCue.VillageMemory || cue == StoryCue.VillageMemoryMark || cue == StoryCue.VillageMemoryEnd;
+            bool wellMemoryCue = cue == StoryCue.Memory || cue == StoryCue.MemoryStrike;
+            if (villageMemoryCue || wellMemoryCue)
+            {
+                // A fresh memory: restart the army's clock and re-read the ruins. Compared against the cue timer rather than
+                // waiting for tick 0, because an MP client can receive the cue a few ticks late.
+                bool memoryOpeningCue = cue == StoryCue.VillageMemory || cue == StoryCue.Memory;
+                if (memoryOpeningCue && villageMemoryTicks > cueTimer)
+                {
+                    villageMemoryTicks = cueTimer;
+                    sigilFlareTick = -1;
+                    villageFirePoints = null;
+                }
+
+                villageMemoryTicks++;
+                if (cue == StoryCue.VillageMemoryMark && cueTimer == KnightCrossTicks)
+                {
+                    sigilFlareTick = villageMemoryTicks;
+                }
+
+                if (villageFirePoints == null)
+                {
+                    villageFirePoints = new List<Vector2>();
+                    Point streetTile = StoryCutscenes.VillageStreetTile;
+                    const int HalfSpanTiles = 70;
+                    const int RoofScanTiles = 34;
+                    const int MinRoofHeightTiles = 3;
+
+                    // Every second column: the topmost solid, non-earth tile at least 3 rows above the street is a roof.
+                    for (int x = streetTile.X - HalfSpanTiles; x <= streetTile.X + HalfSpanTiles; x += 2)
+                    {
+                        for (int y = streetTile.Y - RoofScanTiles; y <= streetTile.Y - MinRoofHeightTiles; y++)
+                        {
+                            if (!WorldGen.InWorld(x, y, 2))
+                            {
+                                continue;
+                            }
+
+                            Tile roofTile = Main.tile[x, y];
+                            ushort roofType = roofTile.TileType;
+                            bool earth = roofType == TileID.Dirt || roofType == TileID.Grass || roofType == TileID.Stone || roofType == TileID.Ash || roofType == TileID.Mud;
+                            bool buildingTile = roofTile.HasTile && Main.tileSolid[roofType] && !Main.tileSolidTop[roofType] && !earth;
+                            if (buildingTile)
+                            {
+                                villageFirePoints.Add(new Vector2(x * 16f + 8f, y * 16f));
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // The fire dies down as the memory fades back to the present.
+                float fireStrength = 1f;
+                if (cue == StoryCue.VillageMemoryEnd)
+                {
+                    fireStrength = 1f - MathHelper.Clamp(cueTimer / (float)VillageMemoryFadeTicks, 0f, 1f);
+                }
+                else if (cue == StoryCue.MemoryStrike)
+                {
+                    // Out by the time the camera leaves the village under the black.
+                    fireStrength = 1f - MathHelper.Clamp(cueTimer / (float)MemoryReturnTick, 0f, 1f);
+                }
+
+                foreach (Vector2 firePoint in villageFirePoints)
+                {
+                    Lighting.AddLight(firePoint, 0.9f * fireStrength, 0.42f * fireStrength, 0.12f * fireStrength);
+
+                    // Random rolls per point keep the tongues from pulsing in step: about one flame every 4 ticks.
+                    if (Main.rand.NextFloat() < 0.28f * fireStrength)
+                    {
+                        Vector2 flamePoint = firePoint + new Vector2(Main.rand.NextFloat(-10f, 10f), Main.rand.NextFloat(-2f, 4f));
+                        Vector2 flameVelocity = new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-2.6f, -1.2f));
+                        Dust flame = Dust.NewDustPerfect(flamePoint, DustID.Torch, flameVelocity, 0, default, Main.rand.NextFloat(1.4f, 2.2f));
+                        flame.noGravity = true;
+                    }
+
+                    if (Main.rand.NextFloat() < 0.07f * fireStrength)
+                    {
+                        Vector2 smokeVelocity = new Vector2(Main.rand.NextFloat(0.1f, 0.6f), Main.rand.NextFloat(-1.6f, -0.8f));
+                        Dust smoke = Dust.NewDustPerfect(firePoint + new Vector2(0f, -18f), DustID.Smoke, smokeVelocity, 120, new Color(34, 30, 30), Main.rand.NextFloat(1.4f, 2.1f));
+                        smoke.noGravity = true;
+                        smoke.noLight = true;
+                    }
+                }
+            }
+
             bool houseCue = cue >= StoryCue.HouseEmbers && cue <= StoryCue.PaintingAsh;
             if (houseCue)
             {
@@ -3129,7 +3466,8 @@ namespace tsorcRevamp.NPCs.Special
             switch (cue)
             {
                 case StoryCue.GraveCough:
-                    // Two visible coughs. Only the first is heard, using one fixed hurt sound until a real cough is recorded.
+                    // Two visible coughs. Only the first is heard, using the Lite Realistic hurt-1 voice line
+                    // (same file the minimal hurt-sound mode plays) until a real cough is recorded.
                     for (int coughIndex = 0; coughIndex < CoughCount; coughIndex++)
                     {
                         if (cueTimer != coughIndex * CoughIntervalTicks)
@@ -3139,7 +3477,13 @@ namespace tsorcRevamp.NPCs.Special
 
                         if (coughIndex == 0)
                         {
-                            SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Player_Hit_0") with { Volume = 0.8f, Pitch = -0.15f }, Lead.Center);
+                            string coughSoundPath = "tsorcRevamp/Sounds/DarkSouls/Voices/Female/f-hurt-1";
+                            if (Lead.Male)
+                            {
+                                coughSoundPath = "tsorcRevamp/Sounds/DarkSouls/Voices/Male/m-hurt-1";
+                            }
+
+                            SoundEngine.PlaySound(new SoundStyle(coughSoundPath) with { Volume = 0.5f }, Lead.Center);
                         }
 
                         Vector2 mouthPoint = Lead.Center + new Vector2(Lead.direction * 6f, -10f);
@@ -3230,9 +3574,9 @@ namespace tsorcRevamp.NPCs.Special
                     break;
 
                 case StoryCue.TitleCard:
+                    // Silent on purpose: the returning map music (music mod) carries the title.
                     if (cueTimer == 0)
                     {
-                        SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/DarkSouls/new-area") with { Volume = 0.5f });
                         StoryCutscenes.OnTitleCardShown();
                     }
                     break;
@@ -3384,35 +3728,41 @@ namespace tsorcRevamp.NPCs.Special
                 }
 
                 case StoryCue.Memory:
+                {
+                    // The swell plays as the black closes in; the rest follow the family's stage clock.
+                    int stageTimer = cueTimer - MemoryStageOffset;
                     if (cueTimer == 0)
                     {
                         SoundEngine.PlaySound(SoundID.Item103 with { Volume = 0.6f, Pitch = -0.7f });
                     }
-                    else if (cueTimer == KnifeTick)
+                    else if (stageTimer == KnifeTick)
                     {
                         SoundEngine.PlaySound(SoundID.Item1 with { Pitch = 0.3f });
                         SoundEngine.PlaySound(SoundID.NPCHit1);
                     }
-                    else if (cueTimer == JoltTick)
+                    else if (stageTimer == JoltTick)
                     {
                         SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.8f, Pitch = -0.5f });
                     }
 
                     for (int i = 0; i < 3; i++)
                     {
-                        if (cueTimer == FirstKnightTick + i * KnightInterval)
+                        if (stageTimer == FirstKnightTick + i * KnightInterval)
                         {
                             SoundEngine.PlaySound(SoundID.NPCHit4 with { Volume = 0.5f, Pitch = -0.6f });
                         }
                     }
                     break;
+                }
 
                 case StoryCue.MemoryStrike:
                     if (cueTimer == 0)
                     {
+                        // The camera is still on the village here, so the punch is centered on the view, not on Red.
+                        Vector2 viewCenter = Main.screenPosition + Main.ScreenSize.ToVector2() * 0.5f;
                         SoundEngine.PlaySound(SoundID.Item71 with { Pitch = -0.4f });
                         SoundEngine.PlaySound(SoundID.NPCHit4 with { Pitch = -0.3f });
-                        Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(Lead.Center, Main.rand.NextVector2Unit(), 12f, 6f, 24, 1200f, "StoryMemory"));
+                        Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(viewCenter, Main.rand.NextVector2Unit(), 12f, 6f, 24, 1200f, "StoryMemory"));
                     }
                     break;
             }
@@ -3571,10 +3921,10 @@ namespace tsorcRevamp.NPCs.Special
             return true;
         }
 
-        private static void DrawFigure(Texture2D sheet, int frameCount, float centerX, float feetY, bool faceRight, float alpha)
+        private static void DrawFigure(Texture2D sheet, int frameCount, float centerX, float feetY, bool faceRight, float alpha, int frameIndex = 0, float scale = FigureScale)
         {
             int frameHeight = sheet.Height / frameCount;
-            Rectangle frame = new Rectangle(0, 0, sheet.Width, frameHeight);
+            Rectangle frame = new Rectangle(0, frameIndex * frameHeight, sheet.Width, frameHeight);
             Vector2 origin = new Vector2(sheet.Width * 0.5f, frameHeight);
 
             SpriteEffects flip = SpriteEffects.None;
@@ -3583,7 +3933,7 @@ namespace tsorcRevamp.NPCs.Special
                 flip = SpriteEffects.FlipHorizontally;
             }
 
-            Main.spriteBatch.Draw(sheet, new Vector2(centerX, feetY), frame, SilhouetteColor * alpha, 0f, origin, FigureScale, flip, 0f);
+            Main.spriteBatch.Draw(sheet, new Vector2(centerX, feetY), frame, SilhouetteColor * alpha, 0f, origin, scale, flip, 0f);
         }
 
         private static Texture2D TownSheet(int npcType)
@@ -3660,211 +4010,316 @@ namespace tsorcRevamp.NPCs.Special
                 return;
             }
 
-            // The knight's blow: solid white, then the world shows through again.
+            // The blow: the memory fades to black, the camera returns to Red under it, then the present fades back up.
+            // The memory keeps drawing, held at its last moment, until the cut, so the black closes over it and not the well.
             if (cue == StoryCue.MemoryStrike)
             {
-                float whiteAlpha = 1f - MathHelper.Clamp((timer - StrikeHoldTicks) / (float)(MemoryStrikeTicks - StrikeHoldTicks), 0f, 1f);
-                spriteBatch.Draw(pixel, fullScreen, pixelSource, Color.White * whiteAlpha);
+                if (timer < MemoryReturnTick)
+                {
+                    DrawWellMemory(MemoryCryTick - MemoryStageOffset, uiWidth, uiHeight);
+                }
+
+                float strikeBlack = MathHelper.Clamp(timer / (float)StrikeBlackTicks, 0f, 1f);
+                if (timer >= StrikeHoldEndTick)
+                {
+                    strikeBlack = 1f - MathHelper.Clamp((timer - StrikeHoldEndTick) / (float)(MemoryStrikeTicks - StrikeHoldEndTick), 0f, 1f);
+                }
+
+                spriteBatch.Draw(pixel, fullScreen, pixelSource, Color.Black * strikeBlack);
                 return;
             }
 
-            float alpha = MathHelper.Clamp(timer / (float)MemoryFadeTicks, 0f, 1f);
-            spriteBatch.Draw(pixel, fullScreen, pixelSource, AshColor * alpha);
+            // Into the memory: black closes over the well, the camera cuts to the village under it, then the black lifts.
+            if (timer >= MemoryCutTick)
+            {
+                DrawWellMemory(timer - MemoryStageOffset, uiWidth, uiHeight);
+            }
+
+            float memoryBlack = MathHelper.Clamp(timer / (float)MemoryBlackInTicks, 0f, 1f);
+            if (timer >= MemoryRevealTick)
+            {
+                memoryBlack = 1f - MathHelper.Clamp((timer - MemoryRevealTick) / (float)MemoryRevealTicks, 0f, 1f);
+            }
+
+            spriteBatch.Draw(pixel, fullScreen, pixelSource, Color.Black * memoryBlack);
+        }
+
+        /// <summary>
+        /// The well memory, staged on the real burned street: a pale haze and heavy fog over the world, the family as
+        /// silhouettes on the road, the assassin's strike, and three knights walking out of the smoke. Draws in UI space.
+        /// </summary>
+        private static void DrawWellMemory(int stageTimer, float uiWidth, float uiHeight)
+        {
+            SpriteBatch spriteBatch = Main.spriteBatch;
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
+
+            // A pale ash haze: the street shows through dimly, like a half-remembered place.
+            Rectangle fullScreen = new Rectangle(0, 0, (int)uiWidth + 2, (int)uiHeight + 2);
+            spriteBatch.Draw(pixel, fullScreen, pixelSource, AshColor * MemoryHazeOpacity);
+
+            // World to UI, as in the village memory. The staging below was laid out for 3x screen figures; "unit" turns
+            // those offsets into world scale at the current zoom.
+            Matrix worldToScreen = Main.GameViewMatrix.TransformationMatrix;
+            float figureScale = Main.GameViewMatrix.Zoom.X / Main.UIScale;
+            float unit = figureScale / FigureScale;
+            Vector2 streetWorld = StoryCutscenes.VillageStreetTile.ToWorldCoordinates(8f, 0f);
+            Vector2 streetUi = Vector2.Transform(streetWorld - Main.screenPosition, worldToScreen) / Main.UIScale;
+
+            DrawVillageFog(MemoryFogDensity, uiWidth, streetUi.Y, false, MemoryFogColor);
 
             float shakeX = 0f;
-            if (timer >= JoltTick && timer < JoltTick + JoltTicks)
+            if (stageTimer >= JoltTick && stageTimer < JoltTick + JoltTicks)
             {
-                float jolt = 1f - (timer - JoltTick) / (float)JoltTicks;
-                shakeX = (float)Math.Sin(timer * 2.3f) * 12f * jolt;
+                float jolt = 1f - (stageTimer - JoltTick) / (float)JoltTicks;
+                shakeX = (float)Math.Sin(stageTimer * 2.3f) * 12f * jolt;
             }
 
-            float centerX = uiWidth * 0.5f + shakeX;
-            float floorY = uiHeight * 0.68f;
-            Rectangle floorBand = new Rectangle(0, (int)floorY, (int)uiWidth + 2, (int)(uiHeight - floorY) + 2);
-            spriteBatch.Draw(pixel, floorBand, pixelSource, new Color(32, 29, 29) * alpha);
+            float centerX = streetUi.X + shakeX * unit;
+            float floorY = streetUi.Y;
 
             // The family stands to the right, facing the danger coming from the left.
-            float shove = Ease((timer - ShoveTick) / 18f);
-            float fatherX = centerX + 40f;
-            if (timer >= KnifeTick)
+            float shove = Ease((stageTimer - ShoveTick) / 18f);
+            float fatherX = centerX + 40f * unit;
+            if (stageTimer >= KnifeTick)
             {
-                fatherX += 14f * Ease((timer - KnifeTick) / 10f);
+                fatherX += 14f * unit * Ease((stageTimer - KnifeTick) / 10f);
             }
 
-            float childX = MathHelper.Lerp(centerX + 110f, centerX + 300f, shove);
-            float motherX = MathHelper.Lerp(centerX + 165f, centerX + 375f, shove);
-            DrawFigure(TownSheet(NPCID.Nurse), Main.npcFrameCount[NPCID.Nurse], motherX, floorY, false, alpha);
-            DrawFigure(TownSheet(NPCID.Guide), Main.npcFrameCount[NPCID.Guide], childX, floorY, false, alpha);
-            DrawFigure(TownSheet(NPCID.ArmsDealer), Main.npcFrameCount[NPCID.ArmsDealer], fatherX, floorY, false, alpha);
+            float childX = MathHelper.Lerp(centerX + 110f * unit, centerX + 300f * unit, shove);
+            float motherX = MathHelper.Lerp(centerX + 165f * unit, centerX + 375f * unit, shove);
+            DrawFigure(TownSheet(NPCID.Nurse), Main.npcFrameCount[NPCID.Nurse], motherX, floorY, false, 1f, 0, figureScale);
+            DrawFigure(TownSheet(NPCID.Guide), Main.npcFrameCount[NPCID.Guide], childX, floorY, false, 1f, 0, figureScale);
+            DrawFigure(TownSheet(NPCID.ArmsDealer), Main.npcFrameCount[NPCID.ArmsDealer], fatherX, floorY, false, 1f, 0, figureScale);
 
             // The assassin glides in, strikes, and slips back into the fog with only its eyes showing.
-            if (timer >= AssassinEnterTick)
+            if (stageTimer >= AssassinEnterTick)
             {
-                float enter = Ease((timer - AssassinEnterTick) / (float)(KnifeTick - AssassinEnterTick));
-                float retreat = Ease((timer - KnifeTick - 30) / 50f);
-                float assassinX = MathHelper.Lerp(centerX - 560f, centerX - 35f, enter) - retreat * 190f;
+                float enter = Ease((stageTimer - AssassinEnterTick) / (float)(KnifeTick - AssassinEnterTick));
+                float retreat = Ease((stageTimer - KnifeTick - 30) / 50f);
+                float assassinX = MathHelper.Lerp(centerX - 560f * unit, centerX - 35f * unit, enter) - retreat * 190f * unit;
                 Texture2D assassinSheet = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(Enemies.Archer.Assassin)), ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                DrawFigure(assassinSheet, 20, assassinX, floorY, true, alpha);
+                DrawFigure(assassinSheet, 20, assassinX, floorY, true, 1f, 0, figureScale);
 
-                float eyeGlow = 0.75f + 0.25f * (float)Math.Sin(timer * 0.2f);
-                Color eyeColor = new Color(255, 215, 50) * (eyeGlow * alpha);
-                Rectangle nearEye = new Rectangle((int)assassinX + 10, (int)floorY - 132, 7, 4);
-                Rectangle farEye = new Rectangle((int)assassinX + 26, (int)floorY - 132, 7, 4);
+                // Eyes 44 sprite pixels up the frame; each about 2x1 sprite pixels, never under 2x1 screen pixels.
+                float eyeGlow = 0.75f + 0.25f * (float)Math.Sin(stageTimer * 0.2f);
+                Color eyeColor = new Color(255, 215, 50) * eyeGlow;
+                int eyeWidth = Math.Max(2, (int)(7f * unit));
+                int eyeHeight = Math.Max(1, (int)(4f * unit));
+                int eyeY = (int)(floorY - 132f * unit);
+                Rectangle nearEye = new Rectangle((int)(assassinX + 10f * unit), eyeY, eyeWidth, eyeHeight);
+                Rectangle farEye = new Rectangle((int)(assassinX + 26f * unit), eyeY, eyeWidth, eyeHeight);
                 spriteBatch.Draw(pixel, nearEye, pixelSource, eyeColor);
                 spriteBatch.Draw(pixel, farEye, pixelSource, eyeColor);
 
-                if (timer >= KnifeTick && timer < KnifeTick + KnifeFlashTicks)
+                if (stageTimer >= KnifeTick && stageTimer < KnifeTick + KnifeFlashTicks)
                 {
-                    Vector2 slashStart = new Vector2(fatherX - 80f, floorY - 112f);
-                    spriteBatch.Draw(pixel, slashStart, pixelSource, Color.White * alpha, 0.5f, Vector2.Zero, new Vector2(110f, 3f), SpriteEffects.None, 0f);
+                    Vector2 slashStart = new Vector2(fatherX - 80f * unit, floorY - 112f * unit);
+                    Vector2 slashSize = new Vector2(110f * unit, Math.Max(1f, 3f * unit));
+                    spriteBatch.Draw(pixel, slashStart, pixelSource, Color.White, 0.5f, Vector2.Zero, slashSize, SpriteEffects.None, 0f);
                 }
             }
 
             // Fixed arcs rather than random rolls, so the spray holds still from frame to frame.
-            if (timer >= KnifeTick && timer < KnifeTick + 55)
+            if (stageTimer >= KnifeTick && stageTimer < KnifeTick + 55)
             {
-                int age = timer - KnifeTick;
+                int age = stageTimer - KnifeTick;
+                int dropSize = Math.Max(2, (int)(4f * unit));
                 for (int i = 0; i < BloodDrops; i++)
                 {
                     float spread = i / (float)BloodDrops;
                     float speedX = -0.6f + spread * 3.4f;
                     float speedY = -3.6f + (i % 4) * 0.6f;
-                    Vector2 dropPoint = new Vector2(fatherX - 10f + speedX * age, floorY - 100f + speedY * age + 0.11f * age * age);
-                    Rectangle drop = new Rectangle((int)dropPoint.X, (int)dropPoint.Y, 4, 4);
-                    spriteBatch.Draw(pixel, drop, pixelSource, new Color(135, 20, 22) * (alpha * (1f - age / 55f)));
+                    float dropOffsetX = (-10f + speedX * age) * unit;
+                    float dropOffsetY = (-100f + speedY * age + 0.11f * age * age) * unit;
+                    Rectangle drop = new Rectangle((int)(fatherX + dropOffsetX), (int)(floorY + dropOffsetY), dropSize, dropSize);
+                    spriteBatch.Draw(pixel, drop, pixelSource, new Color(135, 20, 22) * (1f - age / 55f));
                 }
             }
 
+            // Three knights walk out of the smoke behind the assassin, then stand. Red eyes, as in the village memory.
             Texture2D knightSheet = ModContent.Request<Texture2D>(KnightSheetPath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            int knightFrameHeight = knightSheet.Height / KnightFrameCount;
             for (int i = 0; i < 3; i++)
             {
                 int knightStart = FirstKnightTick + i * KnightInterval;
-                if (timer < knightStart)
+                if (stageTimer < knightStart)
                 {
                     continue;
                 }
 
-                float emerge = Ease((timer - knightStart) / 40f);
-                float knightX = centerX - 170f - i * 125f - (1f - emerge) * 90f;
-                DrawFigure(knightSheet, 16, knightX, floorY, true, alpha * emerge);
+                float emerge = Ease((stageTimer - knightStart) / 40f);
+                float knightX = centerX + (-170f - i * 125f - (1f - emerge) * 90f) * unit;
+                float knightFeetY = floorY + KnightFootGapPixels * figureScale;
+
+                int knightFrame = 0;
+                if (emerge < 1f)
+                {
+                    int walkStep = (stageTimer - knightStart) / WalkFrameTicks;
+                    knightFrame = WalkFirstFrame + walkStep % WalkFrameCount;
+                }
+
+                DrawFigure(knightSheet, KnightFrameCount, knightX, knightFeetY, true, emerge, knightFrame, figureScale);
+                DrawKnightEye(new Vector2(knightX, knightFeetY), knightFrame, knightFrameHeight, figureScale, emerge, MemoryKnightEyeFlare);
             }
 
-            DrawAshFog(timer, alpha, uiWidth, floorY);
+            DrawVillageFog(MemoryFogDensity, uiWidth, streetUi.Y, true, MemoryFogColor);
         }
 
-        // Ash banks roll across last, so the figures seem to stand inside the fog.
-        private static void DrawAshFog(int timer, float alpha, float uiWidth, float floorY)
+        // The knight sheet's own 2x2 red eye: sprite pixels x 36-37, rows 18-19, two rows higher in the head-bob frames.
+        // Knights are drawn mirrored, so the eye lands 2 pixels behind the frame center. flare 0-1 grows the glow.
+        private static void DrawKnightEye(Vector2 feetUi, int frame, int frameHeight, float scale, float alpha, float flare)
         {
-            Texture2D fogTexture = TextureAssets.Extra[98].Value;
-            Vector2 fogOrigin = fogTexture.Size() * 0.5f;
-            float fogSpan = uiWidth + 500f;
-            for (int i = 0; i < FogBanks; i++)
+            Texture2D pixel = TextureAssets.MagicPixel.Value;
+            Texture2D glowTexture = TextureAssets.Extra[98].Value;
+            Vector2 glowOrigin = glowTexture.Size() * 0.5f;
+
+            float eyeCenterRow = 19f;
+            bool headBobFrame = (frame >= 3 && frame <= 5) || (frame >= 10 && frame <= 12);
+            if (headBobFrame)
             {
-                float travel = timer * (0.25f + i * 0.03f) + i * 173f;
-                float fogX = travel % fogSpan - 250f;
-                float fogY = floorY - 30f - i * 11 % 150;
-                Main.spriteBatch.Draw(fogTexture, new Vector2(fogX, fogY), null, new Color(150, 144, 138, 0) * (0.2f * alpha), i * 0.7f, fogOrigin, 2.4f + i % 3 * 0.5f, SpriteEffects.None, 0f);
+                eyeCenterRow = 17f;
             }
+
+            float eyeHeightAboveBottom = (frameHeight - eyeCenterRow) * scale;
+            Vector2 eyePoint = new Vector2(feetUi.X - KnightEyeOffsetPixels * scale, feetUi.Y - eyeHeightAboveBottom);
+            int eyeSide = Math.Max(2, (int)(2f * scale));
+            Rectangle eyeCore = new Rectangle((int)eyePoint.X - eyeSide / 2, (int)eyePoint.Y - eyeSide / 2, eyeSide, eyeSide);
+            float glowScale = (0.06f + 0.1f * flare) * scale;
+            Main.spriteBatch.Draw(glowTexture, eyePoint, null, new Color(255, 30, 24, 0) * alpha, 0f, glowOrigin, glowScale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(pixel, eyeCore, new Rectangle(0, 0, 1, 1), new Color(225, 34, 30) * alpha);
         }
 
-        /// <summary>Red's last memory of the village: burning house shapes, then the army crossing with its red sigils.</summary>
+        /// <summary>
+        /// Red's last memory of the village, laid over the real street: the world darkens under a smoky tint while the
+        /// ruins burn (world dust from PerformCue), and the army walks the road with its red sigils. Draws in UI space.
+        /// </summary>
         private static void DrawVillageMemory(StoryCue cue, int timer, float uiWidth, float uiHeight)
         {
             SpriteBatch spriteBatch = Main.spriteBatch;
             Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Texture2D glowTexture = TextureAssets.Extra[98].Value;
-            Vector2 glowOrigin = glowTexture.Size() * 0.5f;
             Rectangle pixelSource = new Rectangle(0, 0, 1, 1);
 
-            // The army's clock: not started in the first cue, frozen at its end while the memory fades.
+            // Memory strength: eases in over the first cue, full while the army crosses, fades with the last cue.
             float alpha = MathHelper.Clamp(timer / (float)VillageFadeInTicks, 0f, 1f);
-            int armyTimer = -1;
+            bool armyMarching = false;
             if (cue == StoryCue.VillageMemoryMark)
             {
                 alpha = 1f;
-                armyTimer = timer;
+                armyMarching = true;
             }
             else if (cue == StoryCue.VillageMemoryEnd)
             {
                 alpha = 1f - MathHelper.Clamp(timer / (float)VillageMemoryFadeTicks, 0f, 1f);
-                armyTimer = KnightCrossTicks + 30;
+                armyMarching = true;
             }
 
-            float centerX = uiWidth * 0.5f;
-            float floorY = uiHeight * 0.68f;
+            // A smoky dark wash over the whole view, heavier toward the top so the burning roofs and the road read best.
+            // 16 bands of 0-0.4 extra black over the top 45% of the screen; each step is too small to show as an edge.
             Rectangle fullScreen = new Rectangle(0, 0, (int)uiWidth + 2, (int)uiHeight + 2);
-            Rectangle floorBand = new Rectangle(0, (int)floorY, (int)uiWidth + 2, (int)(uiHeight - floorY) + 2);
-            spriteBatch.Draw(pixel, fullScreen, pixelSource, AshColor * alpha);
-            spriteBatch.Draw(pixel, floorBand, pixelSource, new Color(32, 29, 29) * alpha);
-
-            float flameClock = Main.GlobalTimeWrappedHourly;
-            for (int houseIndex = 0; houseIndex < HouseCount; houseIndex++)
+            spriteBatch.Draw(pixel, fullScreen, pixelSource, new Color(16, 11, 12) * (0.5f * alpha));
+            const int SkyBands = 16;
+            float bandHeight = uiHeight * 0.45f / SkyBands;
+            for (int band = 0; band < SkyBands; band++)
             {
-                // Fixed proportions per house, so the street holds still from frame to frame.
-                float houseX = uiWidth * (0.1f + houseIndex * 0.2f);
-                int houseWidth = 120 + houseIndex * 37 % 60;
-                int wallHeight = 75 + houseIndex * 53 % 45;
-                Rectangle wall = new Rectangle((int)houseX - houseWidth / 2, (int)floorY - wallHeight, houseWidth, wallHeight);
-                spriteBatch.Draw(pixel, wall, pixelSource, SilhouetteColor * alpha);
-
-                // A stepped roof keeps the silhouette as chunky as the game's own pixels.
-                const int RoofSteps = 5;
-                const int RoofStepHeight = 10;
-                for (int step = 0; step < RoofSteps; step++)
-                {
-                    int stepWidth = houseWidth + 14 - step * (houseWidth + 14) / RoofSteps;
-                    Rectangle roofRow = new Rectangle((int)houseX - stepWidth / 2, wall.Y - (step + 1) * RoofStepHeight, stepWidth, RoofStepHeight);
-                    spriteBatch.Draw(pixel, roofRow, pixelSource, SilhouetteColor * alpha);
-                }
-
-                float roofTop = wall.Y - RoofSteps * RoofStepHeight;
-                for (int flameIndex = 0; flameIndex < 3; flameIndex++)
-                {
-                    float flicker = 0.75f + 0.25f * (float)Math.Sin(flameClock * 7f + houseIndex * 1.7f + flameIndex * 2.1f);
-                    Vector2 flamePoint = new Vector2(houseX + (flameIndex - 1) * houseWidth * 0.28f, roofTop + 24f - 16f * flicker);
-                    spriteBatch.Draw(glowTexture, flamePoint, null, new Color(255, 96, 28, 0) * (0.75f * alpha * flicker), 0f, glowOrigin, new Vector2(0.55f, 0.95f * flicker), SpriteEffects.None, 0f);
-                    spriteBatch.Draw(glowTexture, flamePoint + new Vector2(0f, 10f), null, new Color(255, 196, 80, 0) * (0.65f * alpha * flicker), 0f, glowOrigin, new Vector2(0.25f, 0.5f * flicker), SpriteEffects.None, 0f);
-                }
-
-                // Sparks rise on fixed paths for the same reason the houses hold still.
-                for (int sparkIndex = 0; sparkIndex < 6; sparkIndex++)
-                {
-                    float rise = (flameClock * (32f + sparkIndex * 7f) + sparkIndex * 41f + houseIndex * 67f) % 180f;
-                    float sparkX = houseX + (float)Math.Sin(rise * 0.04f + sparkIndex) * (18f + sparkIndex * 9f);
-                    Rectangle spark = new Rectangle((int)sparkX, (int)(roofTop - rise), 3, 3);
-                    spriteBatch.Draw(pixel, spark, pixelSource, new Color(255, 130, 45) * (alpha * (1f - rise / 180f)));
-                }
+                float bandDarkness = 0.4f * (1f - band / (float)SkyBands);
+                Rectangle bandRect = new Rectangle(0, (int)(band * bandHeight), (int)uiWidth + 2, (int)bandHeight + 1);
+                spriteBatch.Draw(pixel, bandRect, pixelSource, Color.Black * (bandDarkness * alpha));
             }
 
-            if (armyTimer >= 0)
+            // World to UI space: the world's own view transform, then out of the UI layer's scale.
+            Matrix worldToScreen = Main.GameViewMatrix.TransformationMatrix;
+            float knightScale = Main.GameViewMatrix.Zoom.X / Main.UIScale;
+            Point streetTile = StoryCutscenes.VillageStreetTile;
+            Vector2 streetWorld = streetTile.ToWorldCoordinates(8f, 0f);
+            Vector2 streetUi = Vector2.Transform(streetWorld - Main.screenPosition, worldToScreen) / Main.UIScale;
+
+            DrawVillageFog(alpha, uiWidth, streetUi.Y, false, VillageFogColor);
+
+            if (armyMarching)
             {
                 Texture2D knightSheet = ModContent.Request<Texture2D>(KnightSheetPath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
-                int knightFrameHeight = knightSheet.Height / 16;
-                float crossing = Ease(armyTimer / (float)KnightCrossTicks);
-                float leaderX = MathHelper.Lerp(-120f, centerX, crossing);
-                float chestY = floorY - knightFrameHeight * FigureScale * 0.58f;
-                float flare = Ease((armyTimer - KnightCrossTicks) / 24f);
+                int knightFrameHeight = knightSheet.Height / KnightFrameCount;
 
-                for (int i = 0; i < KnightCount; i++)
+                // The column never stops: the leader walks in from off screen left and the ranks behind it go on for ever.
+                float leaderWorldX = streetWorld.X - ArmyStartTilesLeft * 16f + villageMemoryTicks * MarchPixelsPerTick;
+                Vector2 leaderUi = Vector2.Transform(new Vector2(leaderWorldX, streetWorld.Y) - Main.screenPosition, worldToScreen) / Main.UIScale;
+                float spacingUi = KnightSpacing * knightScale;
+
+                // Every sigil flares together on the ominous cue, and stays lit.
+                float flare = 0f;
+                if (sigilFlareTick >= 0)
                 {
-                    float knightX = leaderX - i * KnightSpacing;
-                    DrawFigure(knightSheet, 16, knightX, floorY, true, alpha);
+                    flare = Ease((villageMemoryTicks - sigilFlareTick) / 24f);
+                }
 
-                    // Every chest carries the sigil. The leader's flares once the column has come to a stop.
-                    float markScale = 0.18f;
-                    if (i == 0)
+                // Skip the knights still off screen to the right; stop once they are off screen to the left.
+                const float OffScreenMargin = 100f;
+                int firstKnight = Math.Max(0, (int)Math.Ceiling((leaderUi.X - uiWidth - OffScreenMargin) / spacingUi));
+                for (int i = firstKnight; ; i++)
+                {
+                    float knightUiX = leaderUi.X - i * spacingUi;
+                    if (knightUiX < -OffScreenMargin)
                     {
-                        markScale += 0.42f * flare;
+                        break;
                     }
 
-                    Vector2 markPoint = new Vector2(knightX + 4f, chestY);
-                    Rectangle markCore = new Rectangle((int)markPoint.X - 4, (int)markPoint.Y - 4, 8, 8);
-                    spriteBatch.Draw(glowTexture, markPoint, null, new Color(255, 30, 24, 0) * alpha, 0f, glowOrigin, markScale, SpriteEffects.None, 0f);
-                    spriteBatch.Draw(pixel, markCore, pixelSource, new Color(225, 34, 30) * alpha);
+                    // One rank on the road itself: the street row is solid ground the whole way through the village. Snapping
+                    // to the first solid tile above it put knights on house floors and roofs, flickering between levels.
+                    // The sheet leaves KnightFootGapPixels empty below the boots, so the frame is drawn that much lower.
+                    float knightWorldX = leaderWorldX - i * KnightSpacing;
+                    Vector2 feetUi = Vector2.Transform(new Vector2(knightWorldX, streetWorld.Y) - Main.screenPosition, worldToScreen) / Main.UIScale;
+                    feetUi.Y += KnightFootGapPixels * knightScale;
+
+                    // 14-frame walk cycle, each knight 5 frames behind the one ahead so the column does not step in unison.
+                    int walkStep = villageMemoryTicks / WalkFrameTicks + i * 5;
+                    int walkFrame = WalkFirstFrame + walkStep % WalkFrameCount;
+                    DrawFigure(knightSheet, KnightFrameCount, feetUi.X, feetUi.Y, true, alpha, walkFrame, knightScale);
+
+                    DrawKnightEye(feetUi, walkFrame, knightFrameHeight, knightScale, alpha, flare);
                 }
             }
 
-            DrawAshFog(timer, alpha, uiWidth, floorY);
+            DrawVillageFog(alpha, uiWidth, streetUi.Y, true, VillageFogColor);
+        }
+
+        // Slow banks of smoke drifting across the street. The back layer hangs over the roofs behind the figures; the
+        // front layer rolls low along the road in front of them. Soft cloud sprites in normal alpha, so a dark tint darkens
+        // and a pale one hazes. density scales every bank's opacity (1 = the village memory's smoke, which is 0.3 / 0.4).
+        private static void DrawVillageFog(float density, float uiWidth, float streetUiY, bool frontLayer, Color tint)
+        {
+            const int BankCount = 9;
+            float clock = Main.GlobalTimeWrappedHourly;
+            float fogSpan = uiWidth + 700f;
+
+            for (int i = 0; i < BankCount; i++)
+            {
+                Texture2D cloud = ModContent.Request<Texture2D>("tsorcRevamp/Textures/Clouds/Cloud_" + i % 4, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+                Vector2 cloudOrigin = cloud.Size() * 0.5f;
+
+                float driftSpeed = 6f + i * 1.5f;
+                float bankY = streetUiY - 90f - i * 37 % 150;
+                float bankScale = 1.6f + i % 3 * 0.4f;
+                float bankOpacity = 0.3f;
+                if (frontLayer)
+                {
+                    driftSpeed = 14f + i * 2f;
+                    bankY = streetUiY - 10f - i * 13 % 40;
+                    bankScale = 2f + i % 3 * 0.5f;
+                    bankOpacity = 0.4f;
+                }
+
+                // Fixed offsets per bank, wrapped across the screen, so the fog never pops in.
+                float bankX = (clock * driftSpeed + i * 397f) % fogSpan - 350f;
+                SpriteEffects flip = SpriteEffects.None;
+                if (i % 2 == 1)
+                {
+                    flip = SpriteEffects.FlipHorizontally;
+                }
+
+                Color fogColor = tint * MathHelper.Clamp(bankOpacity * density, 0f, 1f);
+                Main.spriteBatch.Draw(cloud, new Vector2(bankX, bankY), null, fogColor, 0f, cloudOrigin, bankScale, flip, 0f);
+            }
         }
 
         // No class owns this older sheet any more, so its path cannot come from a type.
@@ -4065,7 +4520,7 @@ namespace tsorcRevamp.NPCs.Special
     {
         public override CommandType Type => CommandType.World;
         public override string Command => "storyscene";
-        public override string Usage => "/storyscene buried|graves|remains|gate|reunion|wisp|counsel|homecoming|well|idol|elijah|firetemple|shadow|desert|rage|credits";
+        public override string Usage => "/storyscene buried|graves|remains|gate|reunion|wisp|counsel|homecoming|well|idol|elijah|firetemple|shadow|desert|rage|dryad|sanctuary|solaire|credits";
         public override string Description => "Debug: moves you to a story cutscene and plays it, or plays the credits.";
 
         public override void Action(CommandCaller caller, string input, string[] args)
@@ -4157,6 +4612,21 @@ namespace tsorcRevamp.NPCs.Special
                 case "well":
                     scene = StoryScene.Well;
                     legacyTile = new Vector2(4211f, 712f);
+                    break;
+
+                case "dryad":
+                    scene = StoryScene.DryadGift;
+                    legacyTile = new Vector2(5168f, 953f);
+                    break;
+
+                case "sanctuary":
+                    scene = StoryScene.MysticSanctuary;
+                    legacyTile = new Vector2(611f, 1557f);
+                    break;
+
+                case "solaire":
+                    scene = StoryScene.SolaireTower;
+                    legacyTile = new Vector2(4365f, 667f);
                     break;
 
                 case "idol":

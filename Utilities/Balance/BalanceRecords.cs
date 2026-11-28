@@ -14,6 +14,10 @@ namespace tsorcRevamp.Utilities.Balance
         public int prefix;
         public string prefixName;
         public int baseDamage;
+        public bool reinforceable;
+        public int reinforcementLevel;
+        public int reinforcementUpgrades;
+        public int reinforcedBaseDamage;
         public string damageClass;
         public int useTime;
 
@@ -740,6 +744,146 @@ namespace tsorcRevamp.Utilities.Balance
         /// <summary>Stamina the player got back during the fight, by source, largest first. Shows whether stamina debt
         /// is paid by regen or skipped by refills (Cerulean, droplets). Only real gains count: a refill at a full bar is 0.</summary>
         public List<StaminaGain> staminaGained = new();
+
+        /// <summary>Bearer of the Curse class mechanics over the whole fight. Each is null (not written) unless the player is a
+        /// Bearer of the Curse, the only mode where these mechanics apply. They track the whole fight whatever is held, since
+        /// players swap classes mid-fight.</summary>
+        public ConquerorUsage conqueror;
+        public LethalTempoUsage lethalTempo;
+        public ElectrocuteUsage electrocute;
+        public ArcaneSorceryUsage arcaneSorcery;
+    }
+
+    /// <summary>Shared shape of a stacking Bearer of the Curse mechanic (Conqueror, Lethal Tempo). Index i of each array is
+    /// "at i stacks".</summary>
+    internal class StackMechanicUsage
+    {
+        /// <summary>Stack count when the fight began, and the highest it reached.</summary>
+        public int stacksAtStart;
+        public int peakStacks;
+
+        /// <summary>Ticks spent at each stack count. Divide by 60 for seconds.</summary>
+        public int[] ticksAtStacks;
+
+        /// <summary>Time-weighted average stack count over the fight.</summary>
+        public float meanStacks;
+
+        /// <summary>Share of the fight spent at 0 stacks and at full stacks.</summary>
+        public float zeroStacksFraction;
+        public float maxStacksFraction;
+
+        /// <summary>Times the stack count climbed to full during the fight, including being full at the start.</summary>
+        public int timesReachedMax;
+
+        /// <summary>Boss damage from the class the mechanic scales, split by the stack count at the moment of each hit.
+        /// Each subclass says which damage counts.</summary>
+        public long[] damageAtStacks;
+
+        /// <summary>Stack count once per second, on the same cadence as the other timelines.</summary>
+        public List<int> stacksTimeline = new();
+
+        public StackMechanicUsage(int maxStacks)
+        {
+            ticksAtStacks = new int[maxStacks + 1];
+            damageAtStacks = new long[maxStacks + 1];
+        }
+    }
+
+    /// <summary>Conqueror (summoner): minion damage is multiplied by 0.4 at 0 stacks up to 0.8 at 12, whips up to 1.2; whip
+    /// hits add stacks. damageAtStacks is minion and sentry damage (summon class, not whips, not magic/summon hybrids, which
+    /// Conqueror leaves alone).</summary>
+    internal sealed class ConquerorUsage : StackMechanicUsage
+    {
+        public ConquerorUsage() : base(Systems.Conqueror.ConquerorPlayer.MaxStacks)
+        {
+        }
+
+        /// <summary>The minion damage multiplier that meanStacks gives.</summary>
+        public float meanMinionMult;
+
+        /// <summary>Boss damage from minions and sentries, and from whips.</summary>
+        public long minionDamageToBoss;
+        public long whipDamageToBoss;
+    }
+
+    /// <summary>Lethal Tempo (melee): melee attack speed is multiplied by 0.8 at 0 stacks up to 1.1 at 15, but only while a
+    /// melee weapon is held. Melee hits add stacks and refund stamina (staminaGained source "LethalTempoStack"); at full
+    /// stacks each melee hit also fires a bolt. damageAtStacks is melee damage, bolts excluded.</summary>
+    internal sealed class LethalTempoUsage : StackMechanicUsage
+    {
+        public LethalTempoUsage() : base(Systems.LethalTempo.LethalTempoPlayer.MaxStacks)
+        {
+        }
+
+        /// <summary>Ticks a melee weapon was held (the only time the attack speed multiplier applies), and the average
+        /// multiplier over those ticks.</summary>
+        public int ticksHoldingMelee;
+        public float meanAttackSpeedMultWhileHoldingMelee;
+
+        /// <summary>Boss damage from melee weapons (bolts excluded), and from the full-stack bolts.</summary>
+        public long meleeDamageToBoss;
+        public long boltDamageToBoss;
+        public int boltHitsOnBoss;
+
+        /// <summary>Running total behind the held-melee average; not written.</summary>
+        [Newtonsoft.Json.JsonIgnore]
+        public long heldStackTickSum;
+    }
+
+    /// <summary>Electrocute (ranged): ranged damage is multiplied by 0.8, plus up to 25% back after a proc until the 13 s
+    /// cooldown ends. A proc needs three different ranged projectiles to hit one target within 2.5 s; it strikes for the
+    /// sum of those three hits, scaled down with distance (full within 250 px, 20% at 750 px and beyond).</summary>
+    internal sealed class ElectrocuteUsage
+    {
+        /// <summary>Procs during the fight, split by whether the target was part of the boss fight.</summary>
+        public int procsOnBoss;
+        public int procsOnOthers;
+
+        /// <summary>Average distance scale of the procs: 1 = point blank, 0.2 = 750 px or more away.</summary>
+        public float meanProcDistanceScale;
+
+        /// <summary>Boss damage from the proc strike, and from ranged weapons (the proc excluded).</summary>
+        public long procDamageToBoss;
+        public long rangedDamageToBoss;
+
+        /// <summary>Ticks on cooldown, and ticks ready to proc while a ranged weapon was held: ready time is time a proc
+        /// was available and not landed.</summary>
+        public int ticksOnCooldown;
+        public int ticksReadyHoldingRanged;
+
+        /// <summary>Time-weighted ranged damage multiplier from Electrocute over the fight (0.8 base plus the post-proc
+        /// restore).</summary>
+        public float meanRangedMult;
+
+        /// <summary>All procs per minute of fight. One proc per cooldown is the ceiling, about 4.6 per minute.</summary>
+        public float procsPerMinute;
+
+        /// <summary>Running totals behind the averages; not written.</summary>
+        [Newtonsoft.Json.JsonIgnore]
+        public float procDistanceScaleSum;
+
+        [Newtonsoft.Json.JsonIgnore]
+        public double rangedMultTickSum;
+    }
+
+    /// <summary>Arcane Sorcery (magic): no mana regen during boss fights, x2.5 mana cost, a larger mana pool. Mana Burn (stamina
+    /// under 33% while casting) adds +10% magic damage at x3 mana cost and -100 resistance. The encounter's manaBurn* fields
+    /// cover its uptime and damage dealt; this block covers what the mechanic costs the player.</summary>
+    internal sealed class ArcaneSorceryUsage
+    {
+        /// <summary>Damage and hits taken while Mana Burn was up: the price of its -100 resistance.</summary>
+        public long damageTakenDuringManaBurn;
+        public int hitsTakenDuringManaBurn;
+
+        /// <summary>Mana spent by every weapon, and the part spent during Mana Burn (at x3 cost).</summary>
+        public long manaSpent;
+        public long manaSpentDuringManaBurn;
+
+        /// <summary>Ticks a magic weapon was held; ticks a mana weapon was held with less mana than it costs; ticks a
+        /// mana weapon was held under Mana Sickness, which blocks casting for a Bearer of the Curse.</summary>
+        public int ticksHoldingMagic;
+        public int ticksOutOfMana;
+        public int ticksManaSickLocked;
     }
 
     /// <summary>Stamina gained from one source over an encounter. Sources are the BalanceLog.StaminaFrom* names:
@@ -790,6 +934,10 @@ namespace tsorcRevamp.Utilities.Balance
         public int prefix;
         public string prefixName;
         public int baseDamage;
+        public bool reinforceable;
+        public int reinforcementLevel;
+        public int reinforcementUpgrades;
+        public int reinforcedBaseDamage;
         public int baseCrit;
         public int useTime;
         public string damageClass;

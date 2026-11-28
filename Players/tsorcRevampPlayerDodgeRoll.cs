@@ -230,6 +230,8 @@ namespace tsorcRevamp
         // Last tick's itemAnimation. A rise means "a new use started" and charges weapon stamina (PreItemCheck).
         // Internal so code that deliberately extends an in-progress use (ChargedSpearHeld's stab) can raise it too.
         internal int oldItemAnimation = 0;
+        // Ticks a vanilla jousting lance has been channelled since its last stamina charge (PreItemCheck).
+        int joustingLanceHoldTicks = 0;
         bool wasJustRolling = false;
         int blockVisuals; //Block the remaining itemAnimation visuals after a roll, to prevent visual jank
         public override bool PreItemCheck()
@@ -289,6 +291,52 @@ namespace tsorcRevamp
 
                 bool startedAnimation = (Player.itemAnimation > oldItemAnimation && Player.itemAnimationMax > 0);
                 oldItemAnimation = Player.itemAnimation;
+
+                // Snapshot stamina before this use's charge (every branch below), so a charged bow can refund part
+                // of what an early release actually paid. Branches that charge nothing leave the snapshot equal.
+                if (startedAnimation && !puppetSwap)
+                {
+                    modPlayer.staminaBeforeUseCharge = modPlayer.staminaResourceCurrent;
+                    modPlayer.staminaUseChargeTick = Main.GameUpdateCount;
+                }
+
+                // Vanilla jousting lances (AI_019) pin itemAnimation with SetDummyItemTime while channelled, so it never
+                // rises again and a held lance paid once forever. Count held ticks and treat each scaledUseAnimation
+                // ticks as a fresh use, the same rate as re-clicking. Skipped for mirror-puppet passes: the counter is
+                // shared with the real player and would tick twice per frame.
+                bool isJoustingLance = item.type == ItemID.JoustingLance
+                    || item.type == ItemID.ShadowJoustingLance
+                    || item.type == ItemID.HallowJoustingLance;
+
+                if (isJoustingLance && !puppetSwap)
+                {
+                    bool lanceHeld = Player.channel && Player.itemAnimation > 0;
+
+                    if (startedAnimation || !lanceHeld)
+                    {
+                        joustingLanceHoldTicks = 0;
+                    }
+                    else
+                    {
+                        joustingLanceHoldTicks++;
+
+                        int holdCycleTicks = Math.Max(1, scaledUseAnimation);
+
+                        if (joustingLanceHoldTicks >= holdCycleTicks)
+                        {
+                            joustingLanceHoldTicks = 0;
+                            startedAnimation = true;
+                        }
+                    }
+
+                    // Out of stamina: release the channel so the lance retracts instead of being held for free.
+                    bool canKeepHolding = modPlayer.CanUseWeapon;
+
+                    if (lanceHeld && !canKeepHolding && Player.whoAmI == Main.myPlayer)
+                    {
+                        Player.channel = false;
+                    }
+                }
 
                 // The held halberd pays once per committed strike/rotation; ItemCheck must not charge its channel too.
                 if (item.type == ModContent.ItemType<global::tsorcRevamp.Content.Items.Weapons.Melee.Halberds.DarkrootHalberd>())
@@ -730,6 +778,25 @@ namespace tsorcRevamp
 
             dodgeDuration = DodgeTimeMax;
 
+            if (CloakingSerpentScaleEquipped && serpentCloakCooldownTicks <= 0)
+            {
+                serpentCloakCooldownTicks = Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleItem.CloakCooldownSeconds * 60;
+                int cloakTicks = (int)(Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleItem.CloakDurationSeconds * 60f);
+                Player.AddBuff(ModContent.BuffType<Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleBuff>(), cloakTicks);
+
+                if (!Main.dedServ)
+                {
+                    SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.45f, Pitch = 0.35f }, Player.Center);
+
+                    for (int i = 0; i < 12; i++)
+                    {
+                        Vector2 mistVel = Main.rand.NextVector2Circular(2.8f, 2.8f);
+                        Dust mist = Dust.NewDustPerfect(Player.Center, DustID.AncientLight, mistVel, 55, new Color(175, 90, 245), Main.rand.NextFloat(0.9f, 1.2f));
+                        mist.noGravity = true;
+                    }
+                }
+            }
+
             if (dodgeIsGhostStep)
             {
                 // Ghost Step and the Ornstein set give one dash between them, so their bonuses never stack.
@@ -1141,6 +1208,11 @@ namespace tsorcRevamp
 
         public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot)
         {
+            if (serpentsFangContactGraceTicks > 0)
+            {
+                return false;
+            }
+
             return !isDodging;
         }
 

@@ -517,8 +517,8 @@ namespace tsorcRevamp.Systems
         // Jungle or meteor ground with no dungeon or evil biome or snow mixed in: where the Dworc family lives.
         private static readonly SpawnCondition DworcLand = (Zone.Jungle | Zone.Meteor) & !Zone.Dungeon & !Evil & !Zone.Snow;
 
-        // Dry jungle outside the dungeon and snow: the two Dworc hunters.
-        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle & !Zone.Snow;
+        // Dry jungle outside the dungeon, evil biomes, and snow: the two Dworc hunters.
+        private static readonly SpawnCondition HunterJungle = Water.Dry & !Zone.Dungeon & Zone.Jungle & !Evil & !Zone.Snow;
 
         // The same jungle in the lower half of the map (row 1000 and below on the 2000-tall map). Their underground lines only
         // fire there, a limit added to keep them out of the sky.
@@ -912,13 +912,13 @@ namespace tsorcRevamp.Systems
             Spawn("Byakhee", QuietArea & Weather.RainZone & Depth.Surface & Time.Day, hm: 0.0433f, shm: 0.0433f);
             Spawn("Byakhee", QuietArea & Weather.RainZone & Depth.Surface & Time.Night, hm: 0.0855f, shm: 0.0855f);
 
-            // Hardmode and later; gates (one in 15 to one in 40) are folded in as 1/N. Plain hallow gets richer as it goes deeper; the
-            // east coast is the Sorrow's, more often until it has been slain.
-            Spawn("ClericOfSorrow", Town.None & PlainHallow, hm: 0.025f, shm: 0.025f);
-            Spawn("ClericOfSorrow", Town.None & PlainHallow & Depth.Underground, hm: 0.0286f, shm: 0.0286f);
-            Spawn("ClericOfSorrow", Town.None & PlainHallow & Depth.Cavern, hm: 0.04f, shm: 0.04f);
-            Spawn("ClericOfSorrow", Town.None & Region.FrozenOcean & !Slain.TheSorrow, hm: 0.0667f, shm: 0.0667f);
-            Spawn("ClericOfSorrow", Town.None & Region.FrozenOcean & Slain.TheSorrow, hm: 0.04f, shm: 0.04f);
+            // Hardmode and later, dry land only, no town NPCs near. Plain hallow uses a lower cavern rate (!Depth.Cavern on the
+            // base line so it does not outbid cavern); the east coast is the Sorrow's, more often until it has been slain.
+            Spawn("ClericOfSorrow", Town.None & Water.Dry & PlainHallow & !Depth.Cavern, hm: 0.025f, shm: 0.025f);
+            Spawn("ClericOfSorrow", Town.None & Water.Dry & PlainHallow & Depth.Underground, hm: 0.0286f, shm: 0.0286f);
+            Spawn("ClericOfSorrow", Town.None & Water.Dry & PlainHallow & Depth.Cavern, hm: 0.01f, shm: 0.01f);
+            Spawn("ClericOfSorrow", Town.None & Water.Dry & Region.FrozenOcean & !Slain.TheSorrow, hm: 0.03f, shm: 0.03f);
+            Spawn("ClericOfSorrow", Town.None & Water.Dry & Region.FrozenOcean & Slain.TheSorrow, hm: 0.01f, shm: 0.01f);
 
             // Was 0.2 times vanilla's sky-spawn chance, which is about 1 in the sky.
             Spawn("CloudBat", Depth.Sky, hm: 0.2f, shm: 0.2f);
@@ -1002,7 +1002,7 @@ namespace tsorcRevamp.Systems
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Surface & Time.Night, hm: 0.035f, shm: 0.035f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Underground, hm: 0.025f, shm: 0.025f, max: 1);
             Spawn("DworcVoodooShaman", Water.Dry & DworcLand & Depth.Cavern, hm: 0.03f, shm: 0.03f, max: 1);
-            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle & !Zone.Snow, hm: 0.045f, shm: 0.045f, max: 1);
+            Spawn("DworcVoodooShaman", Water.Dry & Region.TropicalOcean & Zone.Jungle & !Evil & !Zone.Snow, hm: 0.045f, shm: 0.045f, max: 1);
 
             // Underground jungle only, never inside the Golem's temple: Zone.Lihzahrd is the player standing on Lihzahrd wall,
             // and the Wall.Is catches a spawn tile inside the temple while the player is just outside it.
@@ -1250,9 +1250,9 @@ namespace tsorcRevamp.Systems
 
             // The old gates (one in 44 to one in 3000) are folded in as 1/N. Underworld is the old by-tile bottom fifth and Caves the
             // old Underground and Cavern bands (30-60% of map height). Hardmode lines also apply in Super Hardmode.
-            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, phm: 0.00033f, hm: 0.01f, shm: 0.01f, max: 2);
-            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, phm: 0.0045f, hm: 0.0227f, shm: 0.0227f, max: 2);
-            Spawn("Necromancer", NecromancerLand & Region.OutsideSpan(0.35f, 0.75f) & Depth.Caves, phm: 0.0005f, max: 2);
+            // Hardmode-only: no phm rates. The old prehardmode-only outer-caves line was removed with them.
+            Spawn("Necromancer", NecromancerLand & Zone.Dungeon, hm: 0.01f, shm: 0.01f, max: 2);
+            Spawn("Necromancer", NecromancerLand & Depth.BottomFifth, hm: 0.0227f, shm: 0.0227f, max: 2);
             Spawn("Necromancer", NecromancerLand & Zone.Hallow & Depth.Caves, hm: 0.0111f, shm: 0.0111f, max: 2);
             Spawn("Necromancer", NecromancerLand & (Evil | Zone.UndergroundDesert) & Depth.Caves, hm: 0.01f, shm: 0.01f, max: 2);
 
@@ -1314,8 +1314,7 @@ namespace tsorcRevamp.Systems
             Spawn("QuaraPincher", Town.None & Invasion.NoMoonEvent & !Zone.Dungeon & Zone.UndergroundDesert, hm: 0.0222f, shm: 0.0455f);
 
             // The old rule is a list of early returns, so every line stops, in the old order: in Super Hardmode an evil overworld
-            // spot still gets the 0.0125 line before the 0.13 one.
-            Spawn("RedCloudHunter", Zone.Dungeon, phm: 0.01f, stop: true);
+            // spot still gets the 0.0125 line before the 0.13 one. Hardmode and Super Hardmode only.
             Spawn("RedCloudHunter", !Evil & !Zone.Beach & Zone.Jungle, hm: 0.02f, shm: 0.02f, stop: true);
             Spawn("RedCloudHunter", Zone.Hallow & !Zone.Dungeon, hm: 0.01f, shm: 0.01f, stop: true);
             Spawn("RedCloudHunter", Depth.Surface & (Zone.Desert | Evil | Zone.Beach | Zone.Jungle), hm: 0.0125f, shm: 0.0125f, stop: true);

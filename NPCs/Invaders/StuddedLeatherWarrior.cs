@@ -20,7 +20,7 @@ using EnemyFireFlask = tsorcRevamp.Content.Items.Weapons.Enemy.EnemyFireFlask;
 namespace tsorcRevamp.NPCs.Invaders
 {
     [AutoloadBossHead]
-    public class StuddedLeatherWarrior : PuppetNPC, IPuppetSnareSource
+    public class StuddedLeatherWarrior : PuppetNPC, IPuppetSnareSource, IHumanoidMeleeHitEffects
     {
         public override string BossHeadTexture => UsefulFunctions.RefactorableFilepath(typeof(StuddedLeatherWarrior)) + "_Head_Boss";
 
@@ -522,14 +522,16 @@ namespace tsorcRevamp.NPCs.Invaders
             return base.ShouldContinueMeleeCombo(comboName, nextStepIndex, target, previousStepHit);
         }
 
-        protected override void OnBladeHit(Player player)
+        // Seismic Pursuit's leap slam slows on a hit that deals damage. Applied from PuppetMeleeHitbox's OnHitPlayer
+        // (victim's machine, only when damage lands), not OnBladeHit, which fires on overlap even through roll
+        // i-frames. Combo name and step reach clients through the puppet snapshot.
+        public void OnHumanoidMeleeHit(Player target)
         {
             if (ActiveMeleeComboName == SeismicPursuitName
                 && ActiveMeleeComboMotion == ComboMotion.LeapSlam)
             {
-                player.AddBuff(BuffID.Slow, 90);
+                target.AddBuff(BuffID.Slow, 90);
             }
-            base.OnBladeHit(player);
         }
 
         protected override void ModifyNextMeleeComboStep(

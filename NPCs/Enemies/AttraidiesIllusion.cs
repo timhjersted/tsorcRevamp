@@ -306,25 +306,42 @@ namespace tsorcRevamp.NPCs.Enemies
             if (Phase == AttackPhase.MagicTelegraph && !_blinkPending && !_aimLocked && NPC.HasValidTarget)
             {
                 Player target = Main.player[NPC.target];
-                Vector2 leadPoint = target.Center + target.velocity * 9f;
-                Vector2 toLead = leadPoint - NPC.Center;
 
-                if (toLead != Vector2.Zero)
+                if (IsRune)
                 {
-                    float currentAngle = _aim.ToRotation();
-                    float desiredAngle = toLead.ToRotation();
-                    float turnedAngle = currentAngle.AngleTowards(desiredAngle, AimTurnPerTick);
-                    _aim = turnedAngle.ToRotationVector2();
+                    // Rune Blade Conjuration drives its staff pose from RuneBladeConjuration.Tell rather than _aim,
+                    // so face the player directly instead of lagging behind the slow lead-point turn.
+                    if (target.Center.X > NPC.Center.X)
+                    {
+                        _facing = 1;
+                    }
+                    else if (target.Center.X < NPC.Center.X)
+                    {
+                        _facing = -1;
+                    }
                 }
+                else
+                {
+                    Vector2 leadPoint = target.Center + target.velocity * 9f;
+                    Vector2 toLead = leadPoint - NPC.Center;
 
-                // Straight up/down reads the same for either facing, so an exactly vertical aim keeps the current one.
-                if (_aim.X > 0f)
-                {
-                    _facing = 1;
-                }
-                else if (_aim.X < 0f)
-                {
-                    _facing = -1;
+                    if (toLead != Vector2.Zero)
+                    {
+                        float currentAngle = _aim.ToRotation();
+                        float desiredAngle = toLead.ToRotation();
+                        float turnedAngle = currentAngle.AngleTowards(desiredAngle, AimTurnPerTick);
+                        _aim = turnedAngle.ToRotationVector2();
+                    }
+
+                    // Straight up/down reads the same for either facing, so an exactly vertical aim keeps the current one.
+                    if (_aim.X > 0f)
+                    {
+                        _facing = 1;
+                    }
+                    else if (_aim.X < 0f)
+                    {
+                        _facing = -1;
+                    }
                 }
 
                 if (server)
@@ -446,10 +463,39 @@ namespace tsorcRevamp.NPCs.Enemies
             }
             float distance = NPC.Distance(target.Center);
             if (distance > MagicRange) return;
+
+            // Close-range Rune Blade priority: at <= 240px on level ground, strongly prefer Rune Blade Conjuration
+            // over cycling through the full ranged spell bag.
+            bool runeCloseReady = distance <= 240f
+                && _runeCooldown <= 0
+                && _lastSpell != Spell.RuneBlade
+                && Math.Abs(target.Center.Y - NPC.Center.Y) <= 96f
+                && (Flight == null || !Flight.IsAirborne);
+            if (runeCloseReady && Main.rand.NextFloat() < 0.65f)
+            {
+                _spellBag.Remove(Spell.RuneBlade);
+                _lastSpell = Spell.RuneBlade;
+
+                if (Math.Abs(target.Center.X - NPC.Center.X) <= RuneStartDistance
+                    && Math.Abs(target.Center.Y - NPC.Center.Y) <= 56f)
+                {
+                    BeginSpell(Spell.RuneBlade);
+                    return;
+                }
+
+                _runeApproach = true;
+                _runeApproachTicks = 0;
+                _runeLowHover = TryRuneHoverFloor(NPC.Center.X, out _runeHoverY);
+                _facing = target.Center.X >= NPC.Center.X ? 1 : -1;
+                DebugAttackLabel = "Rune Blade: closing distance";
+                NPC.netUpdate = true;
+                return;
+            }
+
             if (_spellBag.Count == 0)
             {
-                _spellBag.AddRange(new[] { Spell.OracleVolley, Spell.OracleFan, Spell.SuspendedCrystal, Spell.Mirrorstep, Spell.RuneBlade,
-                    Spell.DemonSpiritVolley, Spell.VenomOrb });
+                _spellBag.AddRange(new[] { Spell.OracleVolley, Spell.OracleFan, Spell.SuspendedCrystal, Spell.SuspendedCrystal,
+                    Spell.Mirrorstep, Spell.RuneBlade, Spell.DemonSpiritVolley, Spell.VenomOrb });
                 for (int i = _spellBag.Count - 1; i > 0; i--)
                 { int j = Main.rand.Next(i + 1); Spell swap = _spellBag[i]; _spellBag[i] = _spellBag[j]; _spellBag[j] = swap; }
             }
@@ -458,11 +504,11 @@ namespace tsorcRevamp.NPCs.Enemies
                 Spell candidate = _spellBag[i];
                 if (candidate == _lastSpell) continue;
                 if (candidate == Spell.RuneBlade && (_runeCooldown > 0 || distance > 480f
-                    || Math.Abs(target.Center.Y - NPC.Center.Y) > 80f
+                    || Math.Abs(target.Center.Y - NPC.Center.Y) > 96f
                     || Flight != null && Flight.IsAirborne)) continue;
                 if (candidate == Spell.OracleFan && distance > 240f) continue;
                 if ((candidate == Spell.OracleVolley || candidate == Spell.Mirrorstep) && distance < 128f) continue;
-                if (candidate == Spell.SuspendedCrystal && (_crystalCooldown > 0 || distance < 160f
+                if (candidate == Spell.SuspendedCrystal && (_crystalCooldown > 0 || distance < 120f
                     || HasCrystal() || !TryFindPortal(target, out _portal))) continue;
                 if (candidate == Spell.Mirrorstep && (_blinkCooldown > 0 || NPC.velocity.Y != 0f
                     || (Flight != null && Flight.IsAirborne) || !TryFindBlinkDestination(target, out _blinkDestination))) continue;
@@ -523,7 +569,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 _blinkCooldown = NPC.life <= NPC.lifeMax * 0.33f ? 360 : NPC.life <= NPC.lifeMax * 0.75f ? 480 : 600;
                 if (!_blinkPending) _spell = Spell.OracleVolley;
             }
-            if (spell == Spell.SuspendedCrystal) _crystalCooldown = 300;
+            if (spell == Spell.SuspendedCrystal)
+            {
+                _crystalCooldown = 160;
+            }
 
             if (spell == Spell.DemonSpiritVolley)
             {
@@ -540,7 +589,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 _runeRecoveryPose = RuneBladeConjuration.Carry;
                 _runeFirstUnderhand = Main.rand.NextBool();
                 _runeCount = Main.rand.Next(1, NPC.life <= NPC.lifeMax * 0.33f ? 5 : 3);
-                _runeCooldown = 300;
+                _runeCooldown = 150;
             }
             EnterPhase(AttackPhase.MagicTelegraph, MagicTelegraphTicks);
             NPC.netUpdate = true;
@@ -592,14 +641,24 @@ namespace tsorcRevamp.NPCs.Enemies
                 if (tick == RuneBladeConjuration.SweepTicks && step < _runeCount)
                 {
                     bool underhand = RuneBladeConjuration.Underhand(_runeFirstUnderhand, step);
-                    if (!RuneCanReach(underhand))
+
+                    // Always conjure the opening blade (step 0) after the full tell + staff sweep; only cancel
+                    // follow-up cuts (step > 0) when the player has genuinely disengaged out of reach.
+                    if (step > 0 && !RuneCanReach(underhand))
                     {
-                        // Never conjure a guaranteed whiff; disengagement can cancel the remaining cuts.
-                        _runeLowHover = false; NPC.noGravity = false;
+                        _runeLowHover = false;
+                        NPC.noGravity = false;
                         _runeRecoveryPose = RuneBladeConjuration.End(underhand);
                         EnterPhase(AttackPhase.MagicRecovery, MagicRecoveryTicks);
-                        NPC.netUpdate = true; return;
+                        NPC.netUpdate = true;
+                        return;
                     }
+
+                    if (!NPC.HasValidTarget)
+                    {
+                        return;
+                    }
+
                     _runeStride = (Main.player[NPC.target].Center.X - NPC.Center.X) * _facing > 72f ? RuneCastSpeed * _facing : 0f;
                     NPC.netUpdate = true;
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + RuneBladeConjuration.Offset(underhand, _facing),
@@ -764,7 +823,10 @@ namespace tsorcRevamp.NPCs.Enemies
                 Vector2 direction = RuneBladeConjuration.WorldAngle(MathHelper.Lerp(start, end, i / (float)samples), _facing).ToRotationVector2();
                 float point = 0f;
                 if (Collision.CheckAABBvLineCollision(target.Hitbox.TopLeft(), target.Hitbox.Size(),
-                    pivot + direction * 14f, pivot + direction * RuneBladeConjuration.Reach, 10f, ref point)) return true;
+                    pivot + direction * 14f, pivot + direction * (RuneBladeConjuration.Reach + 36f), 10f, ref point))
+                {
+                    return true;
+                }
             }
             return false;
         }

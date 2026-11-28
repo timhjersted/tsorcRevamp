@@ -15,11 +15,13 @@ using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 {
+    [AutoloadBossHead]
     public class GravelordNito : ModNPC, IStaggerable, NPCs.IDebugAttackLabel
     {
         public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNitoAttacking";
-        // Explicit head path — [AutoloadBossHead] can't be used because it would derive the head from the
-        // Texture above (GravelordNitoAttacking_Head_Boss), which doesn't exist.
+        // [AutoloadBossHead] is what registers the head icon, and with it the boss health bar (the common
+        // bar needs a boss head). It loads BossHeadTexture, so this override points it at the real icon
+        // instead of the default Texture + "_Head_Boss" (GravelordNitoAttacking_Head_Boss, which doesn't exist).
         public override string BossHeadTexture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordNito_Head_Boss";
 
         enum AttackState : byte
@@ -51,6 +53,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             ReaperWeave,       // chained underhand/overhand swings in a random pole-to-pole order
             ReapersPendulum,   // fast strict back-and-forth chain: side / backhand / side ...
             SwordLineDance,    // rows of sky spikes walking in from the outside edge toward Nito
+            Dying,             // killing blow landed: 90-tick charge, then a visual-only body explosion
         }
 
         enum AttackFamily : byte
@@ -88,9 +91,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         const int ThrustFlashLeadTicks = 30;
         const int ThrustFlashTicks = 15;
 
-        // Fixed arena boundaries: sample the floor once, 30 tiles either side of the spawn point.
+        // Fixed arena boundaries: sample the floor once, 30 tiles left and 60 tiles right of the spawn point.
         // Individual puffs still drift, but boss movement never drags the hazard away from that floor.
-        const float MiasmaHemOffsetPixels = 30f * 16f;
+        const float MiasmaHemLeftOffsetPixels = 30f * 16f;
+        const float MiasmaHemRightOffsetPixels = 60f * 16f;
         const int MiasmaHemFadeInTicks = 60; // the one-time "don't pop in" fade right as the fight starts
         const float MiasmaHemWidthPixels = 144f;  // 9 tiles — unchanged
         const float MiasmaHemHeightPixels = 96f;  // 6 tiles — was 3; doubled puffs need the extra room
@@ -163,6 +167,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         // (QuickSlashMeleeAnimation.cs) — guaranteed back-and-forth, never the same direction twice in
         // a row, instead of leaving kind 4 to only ever appear as a reactive vertical-read substitute.
         bool NextOverheadIsRising;
+        // A full Miasma meter from Ossric's fog or breath drains for 1 minute (the standard proc is 2).
+        internal const int MiasmaProcTicks = 60 * 60;
+        bool DeathSequenceDone; // set the tick the death explosion fires, so CheckDead lets him die
+        float ArenaFloorY; // world Y of his feet when last grounded; falling spikes start hitting tiles there
         bool DragRunLeapLaunched; // one-shot: has DraggingAdvance's rising-uppercut leap fired yet this attack?
         // How many ticks ImpalingThrust dashes before the release, solved from the gap at dash start.
         // Synced: it decides WHEN the slash releases, so every machine must agree on it.
@@ -449,8 +457,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 return;
             }
 
-            Vector2 leftFloorOrigin = NPC.Bottom - new Vector2(MiasmaHemOffsetPixels, 0f);
-            Vector2 rightFloorOrigin = NPC.Bottom + new Vector2(MiasmaHemOffsetPixels, 0f);
+            Vector2 leftFloorOrigin = NPC.Bottom - new Vector2(MiasmaHemLeftOffsetPixels, 0f);
+            Vector2 rightFloorOrigin = NPC.Bottom + new Vector2(MiasmaHemRightOffsetPixels, 0f);
             FindGroundSurface(leftFloorOrigin, out Vector2 leftFloor, 120);
             FindGroundSurface(rightFloorOrigin, out Vector2 rightFloor, 120);
             MiasmaHemLeftCenter = leftFloor - new Vector2(0f, MiasmaHemHeightPixels * 0.5f);
@@ -527,7 +535,9 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         public override void AI()
         {
             NPC.damage = 0;
-            if (Main.netMode != NetmodeID.MultiplayerClient)
+            // Once dying, the death sequence owns him: the despawn handler would otherwise delete him
+            // mid-explosion if the player died in the same moment.
+            if (Main.netMode != NetmodeID.MultiplayerClient && State != AttackState.Dying)
             {
                 despawnHandler.TargetAndDespawn(NPC.whoAmI);
                 if (!IsDespawning && despawnHandler.IsDespawning)
@@ -554,9 +564,22 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 return;
             }
 
+            if (State == AttackState.Dying)
+            {
+                RunDying();
+                return;
+            }
+
             // Always on, regardless of State — including staggers and phase transitions — so there is
             // never a gap in the fight where the fog isn't present.
             UpdateMiasmaHem();
+
+            // Arena floor = his feet the last time he stood on ground, so a leap does not raise it.
+            // Only the server reads it (to aim falling spikes), so it is not synced.
+            if (NPC.velocity.Y == 0f || ArenaFloorY <= 0f)
+            {
+                ArenaFloorY = NPC.Bottom.Y;
+            }
 
             if (!NPC.HasValidTarget)
             {
@@ -609,9 +632,19 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 // footing near the player's level, but CanFallThroughPlatforms drops him through one
                 // whenever it has left him meaningfully above the fight.
                 float idleStalkSpeed = PhaseTwo ? 1.45f : 1.15f;
+                int facingBeforeWalk = NPC.spriteDirection;
                 tsorcRevampAIs.FighterAI(NPC, topSpeed: idleStalkSpeed, acceleration: 0.45f, canTeleport: false, lavaJumping: true, canDodgeroll: false, canPounce: false, minSurfaceWidth: 4, canWalkBackwards: false);
                 StayGroundedRelativeTo(player);
                 MaintainRecoveryPursuit(player);
+
+                // FighterAI re-faces toward the target every tick with no deadzone. Undo its turn
+                // while the player stands on his centre line, or he flips back and forth each frame.
+                bool playerOnCentreLine = Math.Abs(player.Center.X - NPC.Center.X) <= FacingDeadzone;
+                if (playerOnCentreLine && facingBeforeWalk != 0)
+                {
+                    NPC.direction = facingBeforeWalk;
+                    NPC.spriteDirection = facingBeforeWalk;
+                }
                 FootstepEffects();
 
                 if (AttackCooldown > 0)
@@ -653,6 +686,28 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             float horizontal = Math.Abs(player.Center.X - NPC.Center.X);
             float vertical = Math.Abs(player.Center.Y - NPC.Center.Y);
             bool sameLevel = vertical < 125f;
+
+            // Anti-air: a player hanging on a grapple or hovering above his head is out of every sword's
+            // reach, so answer with an attack that aims anywhere (Miasma Breath, Bone Volley). A player
+            // standing on a ledge (feet still, no hook) gets the normal pool's leaps and sword rain.
+            bool playerAboveHead = player.Bottom.Y < NPC.Top.Y - 32f;
+            bool playerStanding = player.velocity.Y == 0f && player.grapCount == 0;
+            bool playerFloatingAbove = playerAboveHead && !playerStanding;
+            if (playerFloatingAbove && dist <= BoneVolleyMaxRange)
+            {
+                AttackState antiAir = AttackState.MiasmaBreath;
+                if (Main.rand.NextBool())
+                {
+                    antiAir = AttackState.BoneVolley;
+                }
+                if (antiAir == LastAttack)
+                {
+                    antiAir = antiAir == AttackState.MiasmaBreath ? AttackState.BoneVolley : AttackState.MiasmaBreath;
+                }
+                StartAttack(antiAir, player);
+                return;
+            }
+
             List<(AttackState state, float weight)> pool = new();
 
             // Invalid attacks are excluded rather than left in the bag at a token weight. This is the
@@ -695,8 +750,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             AddAttackOption(pool, AttackState.DeathNova, horizontal <= 480f,
                 ProximityWeight(dist, 225f, 360f, deathNovaPeakWeight));
             AddAttackOption(pool, AttackState.MiasmaBreath,
-                horizontal >= 140f && horizontal <= 560f && vertical < 180f,
-                ProximityWeight(dist, 335f, 280f, 6f));
+                horizontal >= 110f && horizontal <= 620f && vertical < 240f,
+                ProximityWeight(dist, 335f, 320f, 9f));
             AddAttackOption(pool, AttackState.BonePillarCage,
                 PhaseTwo && horizontal >= 140f && horizontal <= 620f,
                 ProximityWeight(dist, 340f, 360f, 9f));
@@ -1243,7 +1298,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 {
                     int damage = lastStep ? HeavySlashDamage : SlashDamage;
                     NPC.velocity.X = lockedDir * SwipePush(kind) * SwipePushScale;
-                    SpawnSlash(kind, damage, style);
+                    // Reaper Weave throws up to 5 cuts; only its last one leaves phase-2 fire, or the
+                    // chain paves the arena in it.
+                    bool leavesFire = State != AttackState.ReaperWeave || lastStep;
+                    SpawnSlash(kind, damage, style, leavesFire);
                     NPC.netUpdate = true;
                 }
                 else if (AttackTimer > cursor && AttackTimer < tailEnd)
@@ -1614,7 +1672,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 Vector2 pos = new Vector2(predictedCenterX + Main.rand.NextFloat(-175f, 175f), player.Center.Y - 330f);
                 Vector2 aimTarget = new Vector2(predictedCenterX + Main.rand.NextFloat(-36f, 36f), player.Center.Y);
                 Vector2 velocity = UsefulFunctions.Aim(pos, aimTarget, 11f);
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 14f);
+                Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, velocity, ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 14f, ArenaFloorY);
             }
             if (AttackTimer >= cast + RainTicks + 8)
             {
@@ -1722,7 +1780,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                         {
                             Vector2 spawnPosition = new Vector2(columnX + side * SpikeSpread, target.Center.Y - spawnHeight);
                             Projectile.NewProjectile(NPC.GetSource_FromThis(), spawnPosition, new Vector2(0f, 8.5f),
-                                ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, delay);
+                                ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, delay, ArenaFloorY);
                         }
                     }
                 }
@@ -2044,10 +2102,14 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                     {
                         Vector2 pos = mouth + MiasmaAimDirection * Main.rand.NextFloat(16f, 64f)
                             + sideways * Main.rand.NextFloat(-16f, 16f);
-                        int dustType = i % 2 == 0 ? DustID.Poisoned : DustID.CursedTorch;
-                        Dust dust = Dust.NewDustPerfect(pos, dustType,
+                        Color breathColor = MiasmaPlayer.MiasmaColor;
+                        if (i % 2 == 0)
+                        {
+                            breathColor = MiasmaPlayer.MiasmaPinkColor;
+                        }
+                        Dust dust = Dust.NewDustPerfect(pos, DustID.RainbowMk2,
                             MiasmaAimDirection * Main.rand.NextFloat(1.6f, 3.8f) + sideways * Main.rand.NextFloat(-0.6f, 0.6f),
-                            Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.9f, 1.35f));
+                            Main.rand.Next(35, 60), breathColor, Main.rand.NextFloat(0.9f, 1.35f));
                         dust.noGravity = true;
                     }
                 }
@@ -2117,7 +2179,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 // Flush on the shared interval even after the player has stepped out, so brief grazes still count.
                 if (reportTick && MiasmaHemPendingBuildup[i] > 0)
                 {
-                    Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaHemPendingBuildup[i]);
+                    Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaHemPendingBuildup[i], MiasmaProcTicks);
                     MiasmaHemPendingBuildup[i] = 0;
                 }
             }
@@ -2177,13 +2239,13 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
                 // 100x92 base size — twice the original 50x46 puffs.
                 NitoVFX.DrawMiasma(puffCenter, new Vector2(100f, 92f) * puffScale, puffRotation,
-                    shaderProgress, puffFade * envelope, puffIndex * 0.41f);
+                    shaderProgress, puffFade * envelope, puffIndex * 0.41f, miasmaPalette: true);
             }
         }
 
         // Cheap deterministic 0..1 hash (GLSL-style sine hash) so every puff gets its own stable
         // period/amplitude/scale from nothing but its index — no arrays to allocate or sync.
-        static float HashToUnit(int index)
+        internal static float HashToUnit(int index)
         {
             float value = (float)(Math.Sin(index * 12.9898) * 43758.5453);
             return value - (float)Math.Floor(value);
@@ -2298,12 +2360,36 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 NPC.velocity.X *= 0.91f;
             }
-            if (AttackTimer == 90 && Main.netMode != NetmodeID.MultiplayerClient)
+
+            // Body explosion: a 90-tick charge after the overhead lands. The charge is not committed,
+            // so a stagger during it cancels the blast. Dust is drawn in toward him and a dust ring
+            // marks the blast's 210px reach, so the player can see both the timing and the size.
+            const int NovaChargeStart = 60;
+            const int NovaChargeTicks = 90;
+            const float QuietusNovaRadius = 210f;
+            int novaTick = NovaChargeStart + NovaChargeTicks;
+            if (AttackTimer == NovaChargeStart + 1)
             {
-                Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-                    ModContent.ProjectileType<NitoDeathNova>(), DeathDamage, 5f, Main.myPlayer, 210f);
+                TelegraphCue(new Color(205, 54, 62));
+                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, Pitch = -0.5f }, NPC.Center);
             }
-            if (AttackTimer >= 128)
+            if (AttackTimer > NovaChargeStart && AttackTimer < novaTick)
+            {
+                NovaChargeDust(AttackTimer - NovaChargeStart, NovaChargeTicks, QuietusNovaRadius);
+            }
+            if (AttackTimer == novaTick)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                        ModContent.ProjectileType<NitoDeathNova>(), DeathDamage, 5f, Main.myPlayer, QuietusNovaRadius);
+                }
+                if (!Main.dedServ)
+                {
+                    UsefulFunctions.ScreenShake(NPC.Center, 7f, 16);
+                }
+            }
+            if (AttackTimer >= novaTick + 38)
             {
                 EndAttack(72);
             }
@@ -2425,7 +2511,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
                 float predictedCenterX = player.Center.X + player.velocity.X * 16f;
                 Vector2 pos = new Vector2(predictedCenterX + Main.rand.NextFloat(-220f, 220f), player.Center.Y - 360f);
                 Projectile.NewProjectile(NPC.GetSource_FromThis(), pos, new Vector2(Main.rand.NextFloat(-0.9f, 0.9f), 11.5f),
-                    ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 12f);
+                    ModContent.ProjectileType<NitoCeilingSpike>(), BoneDamage, 1f, Main.myPlayer, 12f, ArenaFloorY);
             }
 
             if (AttackTimer == leapTick)
@@ -2532,6 +2618,11 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             State = state;
             AttackTimer = 0;
             lockedDir = player.Center.X >= NPC.Center.X ? 1 : -1;
+            if (Math.Abs(player.Center.X - NPC.Center.X) <= FacingDeadzone && NPC.spriteDirection != 0)
+            {
+                // Player is standing on his centre line: keep the way he already faces.
+                lockedDir = NPC.spriteDirection;
+            }
             NPC.direction = lockedDir;
             NPC.spriteDirection = lockedDir;
             // Vertical read, locked once at attack-start (mirrors lockedDir) so the windup pose,
@@ -2705,6 +2796,10 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         const float PlatformHeightTolerance = 56f; // 3.5 tiles of foot-height separation
 
+        // Keep the current facing while the player stands within this many pixels of Nito's centre
+        // line. Without it a player inside his 118px-wide body flips him every frame.
+        const float FacingDeadzone = 36f;
+
         // Platforms are useful arena footing, so Nito stands on them while his feet are roughly level
         // with the player's. If a jump or a moving target strands him above the fight, he deliberately
         // drops through instead of pacing on the upper platform indefinitely.
@@ -2728,7 +2823,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
         void MaintainRecoveryPursuit(Player player)
         {
             int towardPlayer = Math.Sign(player.Center.X - NPC.Center.X);
-            if (towardPlayer == 0)
+            if (towardPlayer == 0 || Math.Abs(player.Center.X - NPC.Center.X) <= FacingDeadzone)
             {
                 towardPlayer = NPC.spriteDirection == 0 ? 1 : NPC.spriteDirection;
             }
@@ -2814,7 +2909,8 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
 
         void FacePlayer(Player player)
         {
-            if (player.Center.X != NPC.Center.X)
+            float horizontalGap = Math.Abs(player.Center.X - NPC.Center.X);
+            if (horizontalGap > FacingDeadzone)
             {
                 int oldLockedDirection = lockedDir;
                 int oldDirection = NPC.direction;
@@ -2854,7 +2950,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             FootstepEffects();
         }
 
-        void SpawnSlash(int kind, int damage, int style = StyleLegacy)
+        void SpawnSlash(int kind, int damage, int style = StyleLegacy, bool leavesFire = true)
         {
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.9f, Pitch = kind == 1 ? -0.25f : 0.05f }, NPC.Center);
             // The loose sword layer now plays the visible swing itself (see PreDraw's active-window);
@@ -2891,7 +2987,7 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             {
                 Vector2 impact = NPC.Bottom + new Vector2(lockedDir * (kind == 2 ? 150f : 105f), -18f);
                 NitoVFX.PyreBurst(impact, kind == 1 || kind == 4 ? 18 : 11, 3.8f, 1.05f, 44f, 24f);
-                if (kind == 1 || kind == 4)
+                if ((kind == 1 || kind == 4) && leavesFire)
                 {
                     SpawnPhaseTwoPyre(NPC.Bottom + new Vector2(lockedDir * 105f, 0f), finalDamage / 2);
                 }
@@ -3666,14 +3762,182 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             return false;
         }
 
+        ///<summary>Shared 90-tick blast tell for Quietus and the death sequence: red/shadowflame dust pulled
+        ///in toward his centre from a shrinking radius, plus a dust ring at the blast's reach that thickens
+        ///in the last third. ticksIntoCharge runs 1..chargeTicks-1.</summary>
+        void NovaChargeDust(int ticksIntoCharge, int chargeTicks, float reachRadius)
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+            float chargeProgress = ticksIntoCharge / (float)chargeTicks;
+            float suctionRadius = MathHelper.Lerp(200f, 40f, chargeProgress);
+            int suctionCount = 2 + (int)(chargeProgress * 4f);
+            for (int i = 0; i < suctionCount; i++)
+            {
+                Vector2 suctionPos = NPC.Center + Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2() * suctionRadius;
+                int suctionType = i % 2 == 0 ? DustID.RedTorch : DustID.Shadowflame;
+                Vector2 suctionVelocity = UsefulFunctions.Aim(suctionPos, NPC.Center, 3f + chargeProgress * 4f);
+                Dust suction = Dust.NewDustPerfect(suctionPos, suctionType, suctionVelocity,
+                    Main.rand.Next(35, 60), default, Main.rand.NextFloat(0.95f, 1.4f));
+                suction.noGravity = true;
+            }
+
+            int ringCount = chargeProgress > 0.66f ? 6 : 3;
+            for (int i = 0; i < ringCount; i++)
+            {
+                Vector2 ringPos = NPC.Center + Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2() * reachRadius;
+                Dust ring = Dust.NewDustPerfect(ringPos, DustID.RedTorch, Vector2.Zero, 60, default, 1.15f);
+                ring.noGravity = true;
+            }
+        }
+
+        const int DeathChargeTicks = 90;
+        const int DeathStreamTicks = 60; // smoke keeps pouring out this long after the blast
+        const float DeathBlastRadius = 260f;
+
+        // One dark smoke cloud thrown out along angle, starting just off his body. -(33, 31) is half the
+        // 66x62 sprite so the cloud's centre starts on the body.
+        void SpawnDeathSmoke(Vector2 bodyCenter, float angle, int smokeType)
+        {
+            Vector2 direction = angle.ToRotationVector2();
+            Vector2 spawnPosition = bodyCenter + direction * Main.rand.NextFloat(10f, 60f) - new Vector2(33f, 31f);
+            Vector2 smokeVelocity = direction * Gores.NitoDeathSmoke.SpeedFor20Tiles * Main.rand.NextFloat(0.8f, 1f);
+            Gore.NewGorePerfect(NPC.GetSource_Death(), spawnPosition, smokeVelocity, smokeType, Main.rand.NextFloat(0.9f, 1.3f));
+        }
+
+        // One black mote from somewhere across his whole body, flung outward. Scale 2.2-3.4.
+        void SpawnDeathBlackDust(Vector2 bodyCenter)
+        {
+            Vector2 offset = new Vector2(Main.rand.NextFloat(-100f, 100f), Main.rand.NextFloat(-130f, 130f));
+            Vector2 blackVelocity = offset.SafeNormalize(Vector2.UnitY) * Main.rand.NextFloat(2f, 9f);
+            Dust black = Dust.NewDustPerfect(bodyCenter + offset, DustID.Wraith, blackVelocity,
+                110, new Color(10, 2, 14), Main.rand.NextFloat(2.2f, 3.4f));
+            black.noGravity = true;
+            black.noLight = true;
+        }
+
+        ///<summary>The killing blow does not kill him outright: CheckDead parks him at 1 HP in the Dying
+        ///state, untouchable, for this 90-tick charge. Then his body bursts (smoke gores, black dust, the
+        ///five-ring Destined Death blast as a harmless visual) and the server lands the real kill.</summary>
+        void RunDying()
+        {
+            AttackTimer++;
+            NPC.velocity.X *= 0.85f;
+            NPC.dontTakeDamage = true;
+            tsorcRevampGlobalNPC dyingGlobalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
+            dyingGlobalNPC.AttackTelegraphing = false;
+            dyingGlobalNPC.AttackCommitted = false;
+
+            if (AttackTimer == 1)
+            {
+                SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 1f, Pitch = -0.5f }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, Pitch = -0.5f }, NPC.Center);
+            }
+            if (AttackTimer < DeathChargeTicks)
+            {
+                NovaChargeDust(AttackTimer, DeathChargeTicks, DeathBlastRadius);
+                return;
+            }
+
+            // Body burst: the blast tick throws the big ring of 20 smoke clouds and 300 black motes,
+            // then a 60-tick stream keeps pouring smoke (50 more clouds) and dust out of him while the
+            // visual blast plays. He only dies once the stream ends.
+            int burstTick = DeathChargeTicks;
+            int streamEndTick = burstTick + DeathStreamTicks;
+            Vector2 bodyCenter = NPC.Center + new Vector2(0f, -30f);
+            int smokeType = ModContent.GoreType<Gores.NitoDeathSmoke>();
+            if (AttackTimer == burstTick && !Main.dedServ)
+            {
+                UsefulFunctions.ScreenShake(NPC.Center, 12f, 30);
+                SoundEngine.PlaySound(SoundID.Item14 with { Volume = 1f, Pitch = -0.45f }, NPC.Center);
+
+                // 20 dark smoke clouds evenly round him, ~20 tiles out over 90 ticks
+                // (NitoDeathSmoke handles drag, spin, fade and tile pass-through).
+                for (int i = 0; i < 20; i++)
+                {
+                    float angle = MathHelper.TwoPi * i / 20f + Main.rand.NextFloat(-0.12f, 0.12f);
+                    SpawnDeathSmoke(bodyCenter, angle, smokeType);
+                }
+
+                // 300 black motes from across the whole body, at double the old 1.1-1.7 scale.
+                for (int i = 0; i < 300; i++)
+                {
+                    SpawnDeathBlackDust(bodyCenter);
+                }
+            }
+            if (AttackTimer > burstTick && AttackTimer <= streamEndTick && !Main.dedServ)
+            {
+                // 50 clouds over the 60 ticks: one on 5 of every 6 ticks, random directions.
+                int streamTick = AttackTimer - burstTick;
+                if (streamTick % 6 != 0)
+                {
+                    SpawnDeathSmoke(bodyCenter, Main.rand.NextFloat(MathHelper.TwoPi), smokeType);
+                }
+                for (int i = 0; i < 5; i++)
+                {
+                    SpawnDeathBlackDust(bodyCenter);
+                }
+            }
+            if (AttackTimer < streamEndTick)
+            {
+                if (AttackTimer == burstTick && Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    // ai[1] = 2: the big five-ring Destined Death blast as a visual only, no damage.
+                    Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
+                        ModContent.ProjectileType<NitoDeathNova>(), 0, 0f, Main.myPlayer, DeathBlastRadius, 2f);
+                }
+                return;
+            }
+
+            // The real kill is server-authoritative. Leave life at 1: StrikeInstantKill takes it and reaches
+            // CheckDead, which now returns true (setting life to 0 by hand deletes the NPC with no loot).
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                DeathSequenceDone = true;
+                NPC.dontTakeDamage = false;
+                NPC.StrikeInstantKill();
+            }
+        }
+
+        public override bool CheckDead()
+        {
+            if (DeathSequenceDone)
+            {
+                return true;
+            }
+            if (State != AttackState.Dying)
+            {
+                State = AttackState.Dying;
+                AttackTimer = 0;
+                SlashWindupActive = false;
+                SlashActiveKind = -1;
+                KillOwnedSwordSlashes();
+                NPC.dontTakeDamage = true;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    NPC.netUpdate = true;
+                }
+            }
+            NPC.life = 1;
+            return false;
+        }
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<GravelordSword>()));
+            // Expert/Master: everything is in the treasure bag. Otherwise the sword and Miakoda (freed
+            // when he falls) drop directly.
+            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Content.Items.BossBags.GravelordNitoBag>()));
+            IItemDropRule notExpert = new LeadingConditionRule(new Conditions.NotExpert());
+            notExpert.OnSuccess(ItemDropRule.Common(ModContent.ItemType<OssricsGreatsword>()));
+            notExpert.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Content.Items.Pets.MiakodaFull>()));
+            npcLoot.Add(notExpert);
         }
 
         ///<summary>Nito stands in Skeletron's progression slot while Skeletron remains an optional,
-        ///separately tracked boss. downedBoss3 is Terraria's required dungeon-unlock compatibility bit;
-        ///NewSlain records only Nito here, preserving Skeletron's real first-kill rewards and history.</summary>
+        ///separately tracked boss. downedBoss3 is Terraria's required dungeon-unlock compatibility bit.
+        ///Skeletron's own NewSlain entry is never touched, preserving its real first-kill rewards.</summary>
         public override void OnKill()
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
@@ -3682,20 +3946,23 @@ namespace tsorcRevamp.NPCs.Bosses.GravelordNito
             }
             NPC.downedBoss3 = true;
 
-            RegisterFirstKill(NPC.type);
+            // Outside Expert there is no bag, so the first kill drops Sublime Bone Dust directly in
+            // Souls Mode (the bag's FirstBagCursedRule covers Expert). Must run before DarkSoulNPC
+            // records him in NewSlain, which it does after this hook.
+            Player killer = Main.player[NPC.target];
+            bool firstKill = !tsorcRevampWorld.NewSlain.ContainsKey(new Terraria.ModLoader.Config.NPCDefinition(NPC.type));
+            if (!Main.expertMode && firstKill && killer.GetModPlayer<tsorcRevampPlayer>().SoulsMode)
+            {
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Content.Items.SublimeBoneDust>());
+            }
+
+            // NewSlain is NOT written here. ModNPC.OnKill runs before DarkSoulNPC.OnKill, which pays a
+            // boss's Dark Souls only if he is not yet in NewSlain and then records him itself. Writing
+            // it here first made every kill, even the first, count as a repeat and pay 0 souls.
 
             if (Main.netMode == NetmodeID.Server)
             {
                 NetMessage.SendData(MessageID.WorldData);
-            }
-        }
-
-        static void RegisterFirstKill(int npcType)
-        {
-            Terraria.ModLoader.Config.NPCDefinition definition = new(npcType);
-            if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
-            {
-                tsorcRevampWorld.NewSlain.Add(definition, 1);
             }
         }
 

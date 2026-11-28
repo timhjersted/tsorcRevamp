@@ -8,12 +8,20 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using tsorcRevamp.Buffs.Weapons.Summon;
 using tsorcRevamp.Content.Projectiles.Summon.Archer;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Content.Items.Weapons.Summon
 {
     public class ArcherSpiritBell : ModItem
     {
         public const float SlotsRequired = 2f;
+        public const int BaseDamage = 24;
+
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(
+            ArcherSpirit.BaseManaPerArrow,
+            ArcherSpirit.BotcManaMultiplier,
+            ArcherSpirit.SummonerFreeMinionThreshold,
+            (int)SlotsRequired);
 
         public override void SetStaticDefaults()
         {
@@ -25,7 +33,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
 
         public override void SetDefaults()
         {
-            Item.damage = 10; // Custom scaling applied in projectile
+            Item.damage = BaseDamage;
             Item.knockBack = 2f;
             Item.width = 30;
             Item.height = 30;
@@ -55,9 +63,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
             TooltipLine damageLine = tooltips.Find(line => line.Mod == "Terraria" && line.Name == "Damage");
             if (damageLine != null)
             {
-                // Shots use current maximum mana, rather than the bell's nominal item damage or summon bonuses.
+                // Live arrow damage reflects both boss progression tier and the player's summon damage bonuses.
+                int effectiveBaseDamage = WeaponReinforcement.GetEffectiveBaseDamage(Item);
                 damageLine.Text = Language.GetTextValue("Mods.tsorcRevamp.Items.ArcherSpiritBell.ArrowDamage",
-                    ArcherSpirit.CalculateArrowDamage(Main.LocalPlayer));
+                    ArcherSpirit.CalculateArrowDamage(Main.LocalPlayer, effectiveBaseDamage));
             }
         }
 
@@ -83,8 +92,10 @@ namespace tsorcRevamp.Content.Items.Weapons.Summon
 
             if (Main.myPlayer == player.whoAmI)
             {
-                var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer);
-                projectile.originalDamage = Item.damage;
+                byte reinforcementLevel = WeaponReinforcement.GetDisplayedLevel(Item);
+                int effectiveBaseDamage = WeaponReinforcement.GetEffectiveBaseDamage(Item);
+                var projectile = Projectile.NewProjectileDirect(source, position, velocity, type, damage, knockback, Main.myPlayer, reinforcementLevel);
+                projectile.originalDamage = effectiveBaseDamage;
             }
 
             return false;

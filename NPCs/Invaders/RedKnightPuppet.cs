@@ -395,6 +395,8 @@ namespace tsorcRevamp.NPCs.Invaders
             return MathHelper.Clamp(swingPose, MinimumSwingPose, MaximumSwingPose);
         }
 
+        protected virtual bool IsChargingThrustCombo(string comboName) => comboName == ChargingThrustName;
+
         protected override float? OverrideSpearGrip(float swingClockT)
         {
             if (FrontHandHoldsProp)
@@ -428,7 +430,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 return SpearGripExtended;
             }
 
-            return ThrustGrip(swingClockT, ActiveMeleeComboName == ChargingThrustName);
+            return ThrustGrip(swingClockT, IsChargingThrustCombo(ActiveMeleeComboName));
         }
 
         protected override void OnLandingTimedLeapSlamSwingTick(MeleeComboStep step, float progress)
@@ -487,7 +489,7 @@ namespace tsorcRevamp.NPCs.Invaders
         protected override bool CanDamageWithMeleeStep(MeleeComboStep step, float progress)
         {
             // A charge whose path broke at the lock tick plays out harmlessly into its recovery.
-            if (ActiveMeleeComboName == ChargingThrustName && _chargeDistance <= 0f)
+            if (IsChargingThrustCombo(ActiveMeleeComboName) && step.Motion == ComboMotion.JoustDash && _chargeDistance <= 0f)
             {
                 return false;
             }
@@ -503,13 +505,13 @@ namespace tsorcRevamp.NPCs.Invaders
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)
         {
-            if (combo.Name == ChargingThrustName)
+            if (IsChargingThrustCombo(combo.Name))
             {
-                bool inBand = distance >= ChargeMinimumRange && distance <= ChargeMaximumRange;
+                bool inBand = distance >= ChargeMinimumRange && distance <= RangedStartComboMaxRange;
                 return inBand && NPC.HasValidTarget && CanChargeTo(Main.player[NPC.target]);
             }
 
-            return distance <= CloseComboMaximumRange;
+            return distance <= MeleeEngageRange;
         }
 
         protected override bool ShouldContinueMeleeCombo(string comboName, int nextStepIndex, Player target, bool previousStepHit)
@@ -562,7 +564,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
-            if (combo.Name != ChargingThrustName)
+            if (!IsChargingThrustCombo(combo.Name))
             {
                 return;
             }
@@ -598,7 +600,7 @@ namespace tsorcRevamp.NPCs.Invaders
 
         protected override void OnMeleeComboAttackTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {
-            if (combo.Name != ChargingThrustName || _chargeDistance <= 0f)
+            if (!IsChargingThrustCombo(combo.Name) || step.Motion != ComboMotion.JoustDash || _chargeDistance <= 0f)
             {
                 return;
             }
@@ -859,11 +861,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 input.DominionTimer = input.Timer;
             }
 
-            // A standard flies on its own solved arc; aim the heave down that line from the first tick of the tell.
+            // Royal Standard aims directly at the player; Crimson Standard still flies on its solved lob arc.
             if (input.StandardRelease >= 0)
             {
                 bool royal = input.Attack == KnightSpecialAttack.RoyalStandard;
-                Vector2 flight = RedKnightStandard.InitialFlightDirection(AttackHandWorld, specialAttacks.LockedTarget, royal);
+                Vector2 flight = royal
+                    ? RedKnightStandard.RoyalDirectThrowVelocity(AttackHandWorld, specialAttacks.LockedTarget)
+                    : RedKnightStandard.InitialFlightDirection(AttackHandWorld, specialAttacks.LockedTarget, false);
                 input.ThrowAim = FacingAngleOf(flight, NPC.direction);
             }
 

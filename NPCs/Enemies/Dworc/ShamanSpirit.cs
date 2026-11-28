@@ -21,6 +21,10 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         public const int PursuitTicks = 320;
         public const int FuseTicks = 24;
         public const float BlastRadius = 92f;
+        private const float PursuitSpeed = 4.5f;
+        // 0.045 rad/tick (~2.6 deg/tick, ~100px turn radius at 4.5 px/t) lets the spirit sweep past
+        // overhead and curve smoothly downward instead of snapping left/right in a deadzone.
+        private const float PursuitTurnRate = 0.045f;
         private int ownerIndex = -1;
         private int ownerToken;
         private bool abyss;
@@ -128,6 +132,8 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                     state = 1;
                     age = 0;
                     targetIndex = NPC.target;
+                    Vector2 launchTarget = Main.player[targetIndex].Center + new Vector2(0f, arcSide * 96f);
+                    NPC.velocity = (launchTarget - NPC.Center).SafeNormalize(Vector2.UnitX) * PursuitSpeed;
                     NPC.netUpdate = true;
                 }
             }
@@ -139,13 +145,18 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                     Player target = Main.player[targetIndex];
                     if (age < PursuitTicks - 60)
                     {
-                        Vector2 point = target.Center;
-                        if (age < PursuitTicks / 2)
+                        Vector2 toTarget = target.Center - NPC.Center;
+                        if (NPC.velocity.LengthSquared() < 0.01f)
                         {
-                            point.Y += arcSide * 160f;
+                            NPC.velocity = toTarget.SafeNormalize(Vector2.UnitX) * PursuitSpeed;
                         }
-
-                        NPC.velocity = (point - NPC.Center).SafeNormalize(Vector2.UnitY) * 4.5f;
+                        else if (toTarget.LengthSquared() > 1f)
+                        {
+                            float currentAngle = NPC.velocity.ToRotation();
+                            float desiredAngle = toTarget.ToRotation();
+                            float nextAngle = currentAngle.AngleTowards(desiredAngle, PursuitTurnRate);
+                            NPC.velocity = nextAngle.ToRotationVector2() * PursuitSpeed;
+                        }
                     }
 
                     if (Authority && (NPC.Distance(target.Center) <= 40f || age >= PursuitTicks))
@@ -189,7 +200,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                 }
             }
 
-            if (Math.Abs(NPC.velocity.X) > 0.1f)
+            if (Math.Abs(NPC.velocity.X) > 0.6f)
             {
                 NPC.spriteDirection = NPC.velocity.X > 0f ? 1 : -1;
             }

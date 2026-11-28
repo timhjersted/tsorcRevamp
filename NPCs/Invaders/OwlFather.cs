@@ -35,7 +35,7 @@ namespace tsorcRevamp.NPCs.Invaders
     /// greatfire crescents and the final-phase firefall array.
     /// </summary>
     [AutoloadBossHead]
-    public class OwlFather : PuppetNPC
+    public class OwlFather : PuppetNPC, IHumanoidMeleeHitEffects
     {
         private const string HighLeapingSlamName = "High Leaping Slam";
         private const string HighLeapFollowUpName = "High Leaping Slam - Rising Follow-Up";
@@ -1231,11 +1231,16 @@ namespace tsorcRevamp.NPCs.Invaders
                 Main.myPlayer);
         }
 
-        // Every confirmed axe hit (plain swings, combos) sets the target ablaze — matches the
-        // player AncientFireAxe's own fire theme (that one applies 12s; 6s here per the enemy tuning).
-        protected override void OnBladeHit(Player player)
+        private const int AxeOnFireTicks = 6 * 60;
+
+        // Every axe hit that actually deals damage (plain swings, combos) sets the target ablaze, matching the
+        // player AncientFireAxe's fire theme (that one applies 12s; 6s here). Applied from PuppetMeleeHitbox's
+        // OnHitPlayer, not OnBladeHit: OnBladeHit fires on blade/hitbox overlap even while the player is in roll
+        // i-frames, so a dodged swing still set them on fire. OnHitPlayer runs on the victim's machine only when
+        // damage lands, and vanilla syncs the buff from there.
+        public void OnHumanoidMeleeHit(Player target)
         {
-            player.AddBuff(BuffID.OnFire, 6 * 60);
+            target.AddBuff(BuffID.OnFire, AxeOnFireTicks);
         }
 
         protected override bool CanSelectMeleeCombo(MeleeCombo combo, float distance, float healthFraction)

@@ -109,11 +109,15 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             DrawLight("DarkmoonShard", center, direction.ToRotation(), new Vector2(length, width), opacity);
         }
 
-        public static void DrawExplosion(Vector2 center, float progress, float arrivalAngle, float scale = 1f, float opacity = 1f)
+        public static void DrawExplosion(Vector2 center, float progress, float arrivalAngle, float scale = 1f, float opacity = 1f, bool additive = false)
         {
-            if (Main.dedServ) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
+
             explosion ??= ModContent.Request<Effect>("tsorcRevamp/Effects/DarkmoonExplosion", AssetRequestMode.ImmediateLoad);
-            Draw(explosion.Value, "DarkmoonExplosion", center, new Vector2(512) * scale, arrivalAngle, progress, opacity, progress >= 0.1f && progress < 0.35f ? 1 : 0, 0);
+            Draw(explosion.Value, "DarkmoonExplosion", center, new Vector2(512) * scale, arrivalAngle, progress, opacity, progress >= 0.1f && progress < 0.35f ? 1 : 0, 0, additive);
         }
 
         /// <summary>
@@ -159,13 +163,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
 
             global::tsorcRevamp.VFX.VFX.Burst(center, Color.White, (int)(28 * strength), 9f * strength);
         }
-        static void Draw(Effect effect, string technique, Vector2 center, Vector2 size, float rotation, float progress, float opacity, float active, float direction)
+        static void Draw(Effect effect, string technique, Vector2 center, Vector2 size, float rotation, float progress, float opacity, float active, float direction, bool additive = false)
         {
             swirl ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/SwirlyNoise");
             fractures ??= ModContent.Request<Texture2D>("tsorcRevamp/Textures/Noise/VoronoiNoise");
             var gd = Main.instance.GraphicsDevice;
             Texture previousTexture = gd.Textures[1];
             SamplerState previousSampler = gd.SamplerStates[1];
+            BlendState blendState = additive ? BlendState.Additive : BlendState.AlphaBlend;
             Main.spriteBatch.End();
             try
             {
@@ -177,7 +182,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                 effect.Parameters["Growth"]?.SetValue(MathHelper.Clamp(progress * 10f, 0, 1));
                 effect.Parameters["Fade"]?.SetValue(MathHelper.Clamp((1 - progress) * 1.54f, 0, 1));
                 effect.Parameters["PixelGrid"]?.SetValue(new Vector4(size.X / 2, size.Y / 2, 2 / size.X, 2 / size.Y));
-                Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearWrap,
+                Main.spriteBatch.Begin(SpriteSortMode.Immediate, blendState, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullNone, effect, Main.GameViewMatrix.TransformationMatrix);
                 Main.spriteBatch.Draw(swirl.Value, center - Main.screenPosition, null, Color.White, rotation, swirl.Value.Size() * 0.5f, size / swirl.Value.Size(), SpriteEffects.None, 0);
                 Main.spriteBatch.End();

@@ -17,11 +17,11 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
     public abstract class HunterArcherPuppet : PuppetNPC
     {
         // ── Bow carry and raise ──────────────────────────────────────────────────────────────────────────────
-        // Facing-space angles (0 = level forward, +PiOver2 = hanging straight down). At 1.2 rad the far forearm
-        // points down-forward and the bow, kept perpendicular to it, lies almost flat with its string on top.
-        // The near hand rests on the bow.
-        protected const float RestCarryAngle = 1.20f;
-        protected const float RestFrontHandAngle = 1.00f;
+        // Facing-space angles (0 = level forward, +PiOver2 = hanging straight down). At 1.42 rad the far forearm
+        // hangs slightly forward (~2px closer to body center than 1.20 rad) and the bow, kept perpendicular to it,
+        // lies nearly flat at the waist with its string on top. The near hand rests on the bow.
+        protected const float RestCarryAngle = 1.42f;
+        protected const float RestFrontHandAngle = 1.18f;
         protected const int RaiseTicks = 12;
         protected const int LowerTicks = 12;
         // Composite-arm string hand at release, relative to the bow axis: base BowPulledAngle 2.2 + flick 0.25.

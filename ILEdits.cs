@@ -28,6 +28,9 @@ namespace tsorcRevamp
             Terraria.GameContent.Drawing.IL_TileDrawing.DrawSingleTile += RainbowBrick_NoColorCycle;
             Terraria.GameContent.Drawing.IL_WallDrawing.DrawWalls += RainbowBrickWall_NoColorCycle;
 
+            //Shrink the Frostburn / Frostbite dust drawn on afflicted NPCs
+            Terraria.IL_NPC.UpdateNPC_BuffApplyVFX += FrostburnDust_Shrink;
+
             // NOTE: the SoulsMode crystal system deliberately does NOT raise vanilla's 15/9 consumed-crystal
             // clamps. Those clamps are exactly what keeps the saved player file well-formed — see
             // tsorcRevampPlayer.soulsLifeGranted. Raising them (which this file used to do) is what caused the
@@ -380,6 +383,34 @@ namespace tsorcRevamp
             {
                 c.Remove();
                 c.EmitDelegate<Func<int>>(() => ModContent.GetInstance<tsorcRevampConfig>().UseCustomResourceBars ? 90 : 22);
+            }
+        }
+
+        // Scale of the Frostburn dust on NPCs. Vanilla spawns DustID 135 at 3.5, which buries small enemies in ice puffs.
+        private const float FrostburnDustScale = 1.75f;
+
+        internal static void FrostburnDust_Shrink(ILContext il)
+        {
+            var cursor = new ILCursor(il);
+            int patchedCount = 0;
+
+            // Both onFrostBurn and onFrostBurn2 call NewDustDirect(..., 135, ..., 100, default, 3.5f).
+            // Find each dust-135 load, then rewrite the next 3.5f literal (the scale argument) in place.
+            while (cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdcI4(DustID.IceTorch)))
+            {
+                if (!cursor.TryGotoNext(MoveType.Before, instr => instr.MatchLdcR4(3.5f)))
+                {
+                    break;
+                }
+
+                cursor.Next.Operand = FrostburnDustScale;
+                patchedCount++;
+            }
+
+            // Cosmetic only, so a vanilla change must not stop the mod loading; just log it.
+            if (patchedCount == 0)
+            {
+                ModContent.GetInstance<tsorcRevamp>().Logger.Warn("FrostburnDust_Shrink: no dust 135 scale found to patch");
             }
         }
 

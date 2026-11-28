@@ -60,6 +60,39 @@ namespace tsorcRevamp.NPCs.Special
         private static int curseActorIndex;
         private static int chainGoneTicks;
 
+        // Landing gate: a player must stand on the arena surface this long before either scene starts.
+        private const int LandedSettleTicks = 12;
+        private const int ArenaWaitTicks = 30 * 60;
+        private static int landedSettleTicks;
+        private static int arenaWaitTicks;
+
+        /// <summary>A living player near the ring standing on the arena surface (or a pillar above it), or -1. The surface
+        /// is the first floor straight below the ring center, so anyone in the pit below it does not count.</summary>
+        private static int FindPlayerLandedOnArena(Vector2 ringCenter)
+        {
+            float arenaFloorY = FindFloorY(ringCenter.X, ringCenter.Y);
+
+            for (int i = 0; i < Main.maxPlayers; i++)
+            {
+                Player player = Main.player[i];
+                bool nearRing = player.active && !player.dead && player.Distance(ringCenter) <= AudienceRadius;
+                if (!nearRing)
+                {
+                    continue;
+                }
+
+                // Grounded: no vertical motion and not hanging from a hook (which also zeroes velocity).
+                bool grounded = player.velocity.Y == 0f && player.grappling[0] < 0;
+                bool onOrAboveSurface = player.Bottom.Y <= arenaFloorY + 2f;
+                if (grounded && onOrAboveSurface)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         public static bool RingCondition()
         {
             return tsorcScriptedEvents.OnlyAdventureMapCondition()
@@ -159,6 +192,37 @@ namespace tsorcRevamp.NPCs.Special
         {
             if (ringEvent.eventTimer == 0)
             {
+                // The ring reaches below the arena floor, so a player climbing out of the pit would trigger it mid-jump.
+                // Hold at timer 0 (the event adds 1 after this returns) until someone has stood on the arena surface for
+                // LandedSettleTicks; that player leads. Give up after ArenaWaitTicks so the ring re-arms normally.
+                int landedPlayer = FindPlayerLandedOnArena(ringEvent.centerpoint);
+                if (landedPlayer < 0)
+                {
+                    landedSettleTicks = 0;
+                }
+                else
+                {
+                    landedSettleTicks++;
+                }
+
+                if (landedSettleTicks < LandedSettleTicks)
+                {
+                    arenaWaitTicks++;
+                    if (arenaWaitTicks >= ArenaWaitTicks)
+                    {
+                        arenaWaitTicks = 0;
+                        landedSettleTicks = 0;
+                        return EventActionStatus.FailedEvent;
+                    }
+
+                    ringEvent.eventTimer = -1;
+                    return EventActionStatus.Continue;
+                }
+
+                arenaWaitTicks = 0;
+                landedSettleTicks = 0;
+                ringEvent.TriggeringPlayer = landedPlayer;
+
                 activeScript = RingScript.None;
                 scriptTimer = 0;
                 chainGoneTicks = 0;
@@ -571,7 +635,9 @@ namespace tsorcRevamp.NPCs.Special
                     NPC.alpha = 0;
                     if (authority && stageTimer == 0)
                     {
-                        CutsceneLine taunt = CutsceneLine.FromNpc(NPC.whoAmI, "Cutscenes.Speakers.Attraidies", "Cutscenes.Curse.Taunt");
+                        // No speaker anchor: the line sits centered at the top of the screen. Anchored to him, the bubble
+                        // covered his own sprite, which overhangs the hitbox top it was placed above.
+                        CutsceneLine taunt = CutsceneLine.FromNobody("Cutscenes.Speakers.Attraidies", "Cutscenes.Curse.Taunt");
                         CutsceneSystem.ShowLine(taunt, TauntAutoTicks);
                     }
 
@@ -718,10 +784,10 @@ namespace tsorcRevamp.NPCs.Special
         // A client may receive the kill packet slightly before its own timer reaches the blast.
         private const int DetonateTolerance = 20;
 
-        // Throw: 100 tiles over about 67 ticks of air. Tune the distance here.
-        private const int ThrowDistanceTiles = 100;
-        private const int ThrowAirTicks = 67;
-        private const float ThrowLaunchVelocityY = -11f;
+        // Launch velocity in pixels per tick. Vanilla physics takes over from there: gravity, air drag of about 0.1 per
+        // tick and the player's own steering. 15 stays under one tile per tick, so walls stop the player instead of being skipped.
+        private const float LaunchSpeedX = 15f;
+        private const float LaunchVelocityY = -9f;
         private const int CrippleTicks = 6 * 60;
 
         public int ActorIndex = -1;
@@ -998,11 +1064,16 @@ namespace tsorcRevamp.NPCs.Special
                 victim.statLife = 1;
                 victim.AddBuff(ModContent.BuffType<Crippled>(), CrippleTicks);
 
-                CutscenePlayer cutscenePlayer = victim.GetModPlayer<CutscenePlayer>();
-                cutscenePlayer.BeginThrow(throwDirection, ThrowDistanceTiles * 16f, ThrowAirTicks, ThrowLaunchVelocityY);
+                // Unpin, then launch with a real velocity and hand control straight back. Vanilla physics carries the
+                // player from here, fall damage included: a long drop at 1 HP can kill, and that is intended.
+                tsorcRevampPlayer pinnedPlayer = victim.GetModPlayer<tsorcRevampPlayer>();
+                pinnedPlayer.ImpaleFreezeTimer = 0;
+                pinnedPlayer.ImpaleDrawRotation = 0f;
+                victim.velocity = new Vector2(throwDirection * LaunchSpeedX, LaunchVelocityY);
 
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                 {
+                    NetMessage.SendData(MessageID.PlayerControls, -1, -1, null, victim.whoAmI);
                     NetMessage.SendData(MessageID.PlayerLifeMana, -1, -1, null, victim.whoAmI);
                     NetMessage.SendData(MessageID.PlayerBuffs, -1, -1, null, victim.whoAmI);
                 }

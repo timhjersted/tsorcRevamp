@@ -48,7 +48,14 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            target.AddBuff(BuffID.Frostburn2, 180); // Inflicts Frostburn for 3 seconds
+            // +2 milestone perk (ai[0] >= 1f) upgrades Frostburn into Frostbite.
+            int debuffId = BuffID.Frostburn;
+            if (Projectile.ai[0] >= 1f)
+            {
+                debuffId = BuffID.Frostburn2;
+            }
+
+            target.AddBuff(debuffId, 180);
         }
     }
 }

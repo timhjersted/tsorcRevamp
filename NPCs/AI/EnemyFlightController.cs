@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.IO;
 using Terraria;
+using Terraria.ID;
 
 namespace tsorcRevamp.NPCs.AI
 {
@@ -255,6 +256,15 @@ namespace tsorcRevamp.NPCs.AI
             float sideOffset = npc.Center.X < target.Center.X ? -Config.HoverSideOffset : Config.HoverSideOffset;
             Vector2 desired = new Vector2(target.Center.X + sideOffset, target.Center.Y - Config.HoverAltitude);
 
+            // When ceiling awareness is on and the player is not above the ceiling, clamp before
+            // checking wantsToClimb so a ceiling bump drops back to room height instead of routing
+            // sideways looking for a hole in the roof.
+            bool targetAboveCeiling = target.Center.Y < npc.position.Y - 16f;
+            if (Config.CeilingClearanceFraction > 0f && !targetAboveCeiling)
+            {
+                desired.Y = ClampBelowCeiling(npc, desired.X, desired.Y);
+            }
+
             // ── Ceiling-clearance and wall-climb routing ──────────────────────
             // Under a bridge or roof while trying to rise, find the nearest body-wide opening
             // (up to 64 tiles away), steer under it, then climb straight through until feet clear.
@@ -471,18 +481,19 @@ namespace tsorcRevamp.NPCs.AI
         {
             // Scan across the full hitbox width (not just center X) so a rock catching the left or right foot
             // registers as the landing surface.
-            FindFootprintGround(npc, out float groundY, out bool groundHasLiquid);
+            FindFootprintGround(npc, out float groundY, out bool groundHasLiquid, out bool groundHasLava);
             bool groundFound = groundY < npc.Center.Y + NoGroundDistance;
-            bool dryLanding = groundFound && !groundHasLiquid;
+            bool allowSubmergedLanding = Config.Amphibious && !npc.lavaWet && !groundHasLava;
+            bool safeLanding = groundFound && (!groundHasLiquid || allowSubmergedLanding);
 
-            // If Terraria tile collision has already set the NPC down on a dry surface (solid ledge or platform,
+            // If Terraria tile collision has already set the NPC down on a safe surface (solid ledge or platform,
             // never a ceiling bounce), finish landing immediately instead of flapping forever in Land mode.
             bool feetTouchingSolid = Collision.SolidCollision(new Vector2(npc.position.X, npc.Bottom.Y), npc.width, 4);
             bool standableUnderFeet = feetTouchingSolid || (groundFound && (groundY - npc.Bottom.Y) <= 4f);
-            bool stoppedOnDryFloor = !npc.wet && !groundHasLiquid && standableUnderFeet
+            bool stoppedOnSafeFloor = (!npc.wet || allowSubmergedLanding) && safeLanding && standableUnderFeet
                 && (npc.collideY || (Math.Abs(npc.velocity.Y) < 0.1f && ModeTimer < Config.LandTicks - 5));
 
-            if (stoppedOnDryFloor)
+            if (stoppedOnSafeFloor)
             {
                 npc.noGravity = false;
                 WingsActiveThisTick = false;
@@ -491,17 +502,24 @@ namespace tsorcRevamp.NPCs.AI
                 return;
             }
 
-            // Never descend into a pit or liquid: hold altitude and glide toward the nearest column with dry ground.
-            // Infinite-flight flyers return to Hover if no dry ground exists in range instead of freezing in Land.
-            if (!dryLanding)
+            // Never descend into a pit or unsafe liquid: hold altitude and glide toward the nearest safe column.
+            // If no safe column exists in range or the land timer expires (e.g. walled off), resume Hover instead
+            // of freezing in place in Land mode. Replenish FlightTicksRemaining so Tick() does not immediately
+            // force Land again on the same tick.
+            if (!safeLanding)
             {
                 if (_landSeekDirection == 0)
                 {
                     _landSeekDirection = FindDryGroundDirection(npc, target);
                 }
 
-                if (_landSeekDirection == 0 && Config.InfiniteFlight)
+                if (_landSeekDirection == 0 || ModeTimer <= 0)
                 {
+                    if (!Config.InfiniteFlight && FlightTicksRemaining <= 0)
+                    {
+                        FlightTicksRemaining = Config.HoverDwellTicks;
+                    }
+
                     EnterMode(FlightMode.Hover, Config.HoverDwellTicks);
                     return;
                 }
@@ -846,9 +864,10 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>Columns searched each side for dry ground when Land starts over a pit or liquid (tiles).</summary>
         private const int DryGroundSearchTiles = 40;
 
-        /// <summary>True when the tile resting on the ground at groundY holds liquid (water, lava, honey, shimmer).</summary>
-        private static bool IsLiquidAbove(float worldX, float groundY)
+        /// <summary>True when the tile resting on the ground at groundY holds liquid, with isLava set for lava.</summary>
+        private static bool IsLiquidAbove(float worldX, float groundY, out bool isLava)
         {
+            isLava = false;
             int x = (int)(worldX / 16f);
             int y = (int)(groundY / 16f) - 1;
 
@@ -857,18 +876,26 @@ namespace tsorcRevamp.NPCs.AI
                 return false;
             }
 
-            return Framing.GetTileSafely(x, y).LiquidAmount > 0;
+            Tile tile = Framing.GetTileSafely(x, y);
+            if (tile.LiquidAmount <= 0)
+            {
+                return false;
+            }
+
+            isLava = tile.LiquidType == LiquidID.Lava;
+            return true;
         }
 
         /// <summary>Scans every tile column under the NPC's hitbox width for the highest standable surface
         /// (solid tile or platform), so landing on a rock edge detects the surface supporting the outer foot.</summary>
-        private void FindFootprintGround(NPC npc, out float highestGroundY, out bool groundHasLiquid)
+        private void FindFootprintGround(NPC npc, out float highestGroundY, out bool groundHasLiquid, out bool groundHasLava)
         {
             int leftTile = (int)(npc.position.X / 16f);
             int rightTile = (int)((npc.position.X + npc.width - 1f) / 16f);
             float scanStartY = Math.Max(npc.Center.Y, npc.Bottom.Y - 4f);
             highestGroundY = npc.Center.Y + NoGroundDistance;
             groundHasLiquid = false;
+            groundHasLava = false;
 
             for (int column = leftTile; column <= rightTile; column++)
             {
@@ -878,13 +905,14 @@ namespace tsorcRevamp.NPCs.AI
                 if (columnGroundY < highestGroundY)
                 {
                     highestGroundY = columnGroundY;
-                    groundHasLiquid = IsLiquidAbove(columnWorldX, columnGroundY);
+                    groundHasLiquid = IsLiquidAbove(columnWorldX, columnGroundY, out bool columnHasLava);
+                    groundHasLava = columnHasLava;
                 }
             }
         }
 
-        /// <summary>Nearest side (-1/+1) with dry ground under the NPC's current height, checking outward tile by tile
-        /// and preferring the side toward target on ties; 0 if neither side has any within DryGroundSearchTiles.</summary>
+        /// <summary>Nearest side (-1/+1) with safe landing ground under the NPC's current height, checking outward
+        /// tile by tile and preferring the side toward target on ties; 0 if neither side has any within DryGroundSearchTiles.</summary>
         private int FindDryGroundDirection(NPC npc, Player target)
         {
             int firstSide = -1;
@@ -903,9 +931,15 @@ namespace tsorcRevamp.NPCs.AI
                     // Ground must be below the feet: a hit at body height is a wall, not somewhere to land.
                     bool columnHasGround = columnGroundY < npc.Center.Y + NoGroundDistance && columnGroundY > npc.Bottom.Y;
 
-                    if (columnHasGround && !IsLiquidAbove(columnX, columnGroundY))
+                    if (columnHasGround)
                     {
-                        return side;
+                        bool columnHasLiquid = IsLiquidAbove(columnX, columnGroundY, out bool columnHasLava);
+                        bool liquidSafe = !columnHasLiquid || (Config.Amphibious && !columnHasLava);
+
+                        if (liquidSafe)
+                        {
+                            return side;
+                        }
                     }
                 }
             }
@@ -1007,6 +1041,9 @@ namespace tsorcRevamp.NPCs.AI
         /// <summary>When true, FlightTicksRemaining never forces a landing — the owner controls landing explicitly
         /// (used by flyers that must cross large gaps or climb out of deep pits to reach the player).</summary>
         public bool  InfiniteFlight;
+        /// <summary>When true, non-lava liquid (water/honey/shimmer) counts as valid ground during Land so the
+        /// flyer can fight and recover underwater without abandoning a submerged target to seek dry land.</summary>
+        public bool  Amphibious;
         /// <summary>Cooldown after landing before next takeoff allowed.</summary>
         public int   CooldownTicks;
 

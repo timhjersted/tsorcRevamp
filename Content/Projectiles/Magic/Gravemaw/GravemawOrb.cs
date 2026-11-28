@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
@@ -12,12 +13,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
     ///Gravemaw Orb: a slow soul-orb that drags nearby enemies toward it (a pocket black hole), then
     ///BURSTS on impact/expiry into a friendly Soul Nova ring. The player's take on the boss's gravity
     ///well. Reuses the PurpleSkull sprite, drawn larger. Deals light contact damage while travelling.
+    ///ai[0] = 1 when the +3 Shadowflame milestone perk is active.
     ///</summary>
     class GravemawOrb : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PurpleSkull));
 
         const float PullRadius = 240f;
+        bool InflictsShadowflame => Projectile.ai[0] >= 1f;
 
         public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
 
@@ -71,6 +74,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             return false;
         }
 
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (InflictsShadowflame)
+            {
+                target.AddBuff(BuffID.ShadowFlame, GravemawTome.ShadowflameDurationTicks);
+            }
+        }
+
         public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.7f, Pitch = -0.2f }, Projectile.Center);
@@ -80,9 +91,13 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 int d = Dust.NewDust(Projectile.Center - new Vector2(10f), 20, 20, Main.rand.NextBool() ? DustID.Shadowflame : DustID.PurpleTorch, vel.X, vel.Y, 60, default, 1.6f);
                 Main.dust[d].noGravity = true;
             }
+
             if (Main.myPlayer == Projectile.owner)
+            {
+                float shadowflameFlag = InflictsShadowflame ? 1f : 0f;
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
-                    ModContent.ProjectileType<GravemawNova>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 200f);
+                    ModContent.ProjectileType<GravemawNova>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 200f, shadowflameFlag);
+            }
         }
 
         public override bool PreDraw(ref Color lightColor)

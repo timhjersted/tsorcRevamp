@@ -21,7 +21,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
     /// Super Hardmode blood elite rebuilt on the puppet foundation. Its sword and whip are
     /// deliberately dodgeable commitments; its Tendon Bow plays fixed, learnable shot phrases.
     /// </summary>
-    public class DarkBloodKnight : PuppetNPC, IEnemyWhipOwner
+    public class DarkBloodKnight : PuppetNPC, IEnemyWhipOwner, IHumanoidMeleeHitEffects
     {
         private const string ScarletHewName = "Scarlet Hew";
         private const string ButchersReversalName = "Butcher's Reversal";
@@ -574,10 +574,12 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 .SafeNormalize(new Vector2(NPC.direction, 0f));
         }
 
-        protected override void OnBladeHit(Player player)
+        // Bleeding only on a hit that deals damage. Applied from PuppetMeleeHitbox's OnHitPlayer (victim's machine), not
+        // OnBladeHit: that fires on the server on overlap, where the old player.immune check did not reliably see the
+        // victim's roll i-frames.
+        public void OnHumanoidMeleeHit(Player target)
         {
-            if (!player.immune)
-                player.AddBuff(BuffID.Bleeding, BleedingDuration);
+            target.AddBuff(BuffID.Bleeding, BleedingDuration);
         }
 
         protected override void DoMeleeAttack()

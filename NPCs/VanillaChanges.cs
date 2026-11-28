@@ -2043,13 +2043,6 @@ namespace tsorcRevamp.NPCs
                         }
                         if (Main.player[Main.myPlayer].ZoneJungle)
                         {
-                            // Skipped under New Enemy Balance: the registry already targets 4000 Expert HP everywhere,
-                            // and this jungle value would be multiplied again on top of it.
-                            if (Main.expertMode && !EnemyBalance.Enabled)
-                            {
-                                npc.lifeMax = 3077; // Which is actually 4k hp in expert mode
-                                //npc.lifeMax = 5000; 
-                            }
                             npc.scale = 1.1f;
                         }
                         break;
@@ -3831,7 +3824,8 @@ namespace tsorcRevamp.NPCs
                     || npc.type == NPCID.BloodCrawlerWall
                     || npc.type == NPCID.Herpling
                     || npc.type == NPCID.Crimslime
-                    || npc.type == NPCID.FloatyGross)
+                    || npc.type == NPCID.FloatyGross
+                    || npc.type == NPCID.AngryNimbus)
                 {
                     npc.active = false;
                 }
@@ -6106,13 +6100,7 @@ namespace tsorcRevamp.NPCs
 
             }
 
-            if (npc.type == NPCID.SkeletronHead && !Main.expertMode)
-            {
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<MiakodaFull>());
-                if (!tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(NPCID.SkeletronHead)) && player.GetModPlayer<tsorcRevampPlayer>().SoulsMode) Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<SublimeBoneDust>());
-
-            }
+            // Skeletron's first-kill Sublime Bone Dust now belongs to Barrowlord Ossric (GravelordNito.OnKill).
             if (npc.type == NPCID.SkeletronPrime && !Main.expertMode)
             {
                 Item.NewItem(npc.GetSource_Loot(), npc.getRect(), ModContent.ItemType<CrestOfSteel>(), 2);

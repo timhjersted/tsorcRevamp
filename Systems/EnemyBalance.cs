@@ -15,7 +15,7 @@ namespace tsorcRevamp.Systems
     }
 
     /// <summary>
-    /// Registry of enemy health, switched by the "New Enemy Balance" gameplay config (default on).
+    /// Registry of enemy health.
     ///
     /// Bosses (BuildRegistry): every entry is the Expert health the boss had before the pass and the Expert health it
     /// should have now. The pair becomes a multiplier on lifeMax during SetDefaults, which runs BEFORE vanilla's
@@ -35,15 +35,6 @@ namespace tsorcRevamp.Systems
     /// </summary>
     public class EnemyBalance : ModSystem
     {
-        public static bool Enabled
-        {
-            get
-            {
-                tsorcRevampGameplayConfig config = ModContent.GetInstance<tsorcRevampGameplayConfig>();
-                return config != null && config.NewEnemyBalance;
-            }
-        }
-
         // npc type -> lifeMax multiplier, derived from the (old, new) pair of each registration below.
         private static readonly Dictionary<int, float> LifeMultipliers = new();
 
@@ -80,18 +71,18 @@ namespace tsorcRevamp.Systems
             EnemyHpEntries.Clear();
         }
 
-        /// <summary>True when the type has an entry in the regular-enemy HP registry, whether or not the New Enemy Balance toggle is on. The balance logger samples kills of exactly these enemies.</summary>
+        /// <summary>True when the type has an entry in the regular-enemy HP registry. The balance logger samples kills of exactly these enemies.</summary>
         public static bool IsRegisteredEnemy(int npcType)
         {
             return EnemyHpEntries.ContainsKey(npcType);
         }
 
-        /// <summary>The registered Expert health for a regular enemy in the current world stage. False when the toggle is off or the type is unlisted.</summary>
+        /// <summary>The registered Expert health for a regular enemy in the current world stage. False when the type is unlisted.</summary>
         public static bool TryGetEnemyExpertHp(int npcType, out int expertHp)
         {
             expertHp = 0;
 
-            if (!Enabled || !EnemyHpEntries.TryGetValue(npcType, out EnemyHpEntry entry))
+            if (!EnemyHpEntries.TryGetValue(npcType, out EnemyHpEntry entry))
             {
                 return false;
             }
@@ -204,14 +195,9 @@ namespace tsorcRevamp.Systems
             }
         }
 
-        /// <summary>Multiplier to apply to an authored health value for this NPC type. 1 when the toggle is off or the type is unlisted.</summary>
+        /// <summary>Multiplier to apply to an authored health value for this NPC type. 1 when the type is unlisted.</summary>
         public static float LifeMultiplier(int npcType)
         {
-            if (!Enabled)
-            {
-                return 1f;
-            }
-
             if (!LifeMultipliers.TryGetValue(npcType, out float multiplier))
             {
                 return 1f;
@@ -220,14 +206,9 @@ namespace tsorcRevamp.Systems
             return multiplier;
         }
 
-        /// <summary>Multiplier for a later life bar (2 = the second) that the boss sets itself. 1 when the toggle is off or the bar is unlisted.</summary>
+        /// <summary>Multiplier for a later life bar (2 = the second) that the boss sets itself. 1 when the bar is unlisted.</summary>
         public static float PhaseLifeMultiplier(int npcType, int bar)
         {
-            if (!Enabled)
-            {
-                return 1f;
-            }
-
             if (!PhaseLifeMultipliers.TryGetValue((npcType, bar), out float multiplier))
             {
                 return 1f;

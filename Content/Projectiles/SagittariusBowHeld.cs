@@ -8,6 +8,8 @@ namespace tsorcRevamp.Content.Projectiles
     {
         protected override bool HasFullDrawPerk => true;
 
+        protected override bool HasQuickShot => true;
+
         protected override void SetStats()
         {
             Player owner = Main.LocalPlayer;
@@ -34,10 +36,9 @@ namespace tsorcRevamp.Content.Projectiles
 
             for (int i = 0; i < 2; i++)
             {
-                float velocity = LerpFloat(minVelocity, maxVelocity, charge);
                 int damage = (int)LerpFloat(minDamage, maxDamage, charge);
-                Vector2 inaccuracy = (aimVector * velocity).RotatedByRandom(MathHelper.ToRadians(18f - (15f * charge)));
-                SpawnChargedArrow(player, arrow, inaccuracy, damage);
+                Vector2 arrowVelocity = GetChargedArrowVelocity();
+                SpawnChargedArrow(player, arrow, arrowVelocity, damage);
             }
 
         }

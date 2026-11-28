@@ -45,6 +45,32 @@ namespace tsorcRevamp.Content.Projectiles
         // Opt-in per bow. Off by default so spears (which also derive from this class) and Cernos Prime are untouched.
         protected virtual bool HasFullDrawPerk => false;
 
+        // Quick-shot floor for bows that opt in (HasQuickShot): an early release still flies at least this percent of
+        // the bow's shootSpeed and deals at least this percent of its full damage, so a tap is a usable weak shot.
+        // Without it a tap leaves at 10% speed (~2 px/tick for Artemis) and drops at the player's feet.
+        public const int QuickShotDamagePercent = 20;
+        public const int QuickShotVelocityPercent = 55;
+
+        // A tap pays only this percent of the draw's stamina price; the rest is refunded on release, shrinking
+        // linearly to no refund at full draw. Running stamina dry mid-draw refunds nothing.
+        public const int QuickShotStaminaCostPercent = 40;
+
+        // What this draw's use actually cost (read from the stamina player's snapshot), and whether it's been read yet.
+        float drawStaminaPaid = 0f;
+        bool readDrawStaminaPaid = false;
+
+        // Default damage floor for bows without the quick shot (Cernos Prime): 10% on a tap. Their speed floor stays in SetStats.
+        const int DefaultMinChargePercent = 10;
+
+        // Arrow spread in degrees, narrowing linearly to FullDrawSpreadDegrees at full charge.
+        // Quick-shot bows start much tighter than the 18 degree default so a tap actually goes where it's aimed.
+        const float DefaultTapSpreadDegrees = 18f;
+        const float QuickShotTapSpreadDegrees = 8f;
+        const float FullDrawSpreadDegrees = 3f;
+
+        // Opt-in per bow, same reasoning as HasFullDrawPerk.
+        protected virtual bool HasQuickShot => false;
+
         bool playedFullDrawCue = false;
 
         protected int ammoType
@@ -90,7 +116,35 @@ namespace tsorcRevamp.Content.Projectiles
             int ammoDamage = Math.Max(0, Projectile.damage - weaponOnlyDamage);
 
             maxDamage += ammoDamage;
-            minDamage = maxDamage / 10;
+
+            // Tap floors: quick-shot bows get the stronger floor on both damage and speed.
+            // maxVelocity is the bow's shootSpeed, set in SetStats.
+            if (HasQuickShot)
+            {
+                minDamage = maxDamage * QuickShotDamagePercent / 100;
+                minVelocity = maxVelocity * QuickShotVelocityPercent / 100f;
+            }
+            else
+            {
+                minDamage = maxDamage * DefaultMinChargePercent / 100;
+            }
+        }
+
+        // Aimed, charge-scaled launch velocity for one arrow: speed lerps min->max with charge and the random spread
+        // narrows from the tap spread to FullDrawSpreadDegrees. Call per arrow so multi-arrow bows get separate spreads.
+        protected Vector2 GetChargedArrowVelocity()
+        {
+            float speed = LerpFloat(minVelocity, maxVelocity, charge);
+
+            float tapSpreadDegrees = DefaultTapSpreadDegrees;
+            if (HasQuickShot)
+            {
+                tapSpreadDegrees = QuickShotTapSpreadDegrees;
+            }
+
+            float spreadDegrees = LerpFloat(tapSpreadDegrees, FullDrawSpreadDegrees, charge);
+            Vector2 launchVelocity = (aimVector * speed).RotatedByRandom(MathHelper.ToRadians(spreadDegrees));
+            return launchVelocity;
         }
 
         // Spawns one arrow, applying the full-draw reward when this bow has it and the shot is fully charged.
@@ -155,7 +209,18 @@ namespace tsorcRevamp.Content.Projectiles
             if (!player.channel)
                 Projectile.Kill();
 
-            float stamina = player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent;
+            tsorcRevampStaminaPlayer staminaPlayer = player.GetModPlayer<tsorcRevampStaminaPlayer>();
+
+            // The draw's price is charged in PreItemCheck the tick after this projectile spawns (that's when
+            // itemAnimation is seen rising), and players update before projectiles, so read it on that tick.
+            // Stamina is owner-local state, so only the owner tracks it.
+            if (HasQuickShot && !readDrawStaminaPaid && Projectile.owner == Main.myPlayer && staminaPlayer.staminaUseChargeTick == Main.GameUpdateCount)
+            {
+                drawStaminaPaid = Math.Max(0f, staminaPlayer.staminaBeforeUseCharge - staminaPlayer.staminaResourceCurrent);
+                readDrawStaminaPaid = true;
+            }
+
+            float stamina = staminaPlayer.staminaResourceCurrent;
             if (stamina <= 0)
             {
                 if (!fired)
@@ -209,6 +274,15 @@ namespace tsorcRevamp.Content.Projectiles
                 Shoot();
                 SoundEngine.PlaySound(soundtype, player.Center);
                 fired = true;
+
+                // Quick-shot refund: a tap gets back (100 - QuickShotStaminaCostPercent)% of the draw price, scaling
+                // to nothing at full charge. drawStaminaPaid is 0 if the price was never read, so that refunds nothing.
+                if (HasQuickShot && Projectile.owner == Main.myPlayer)
+                {
+                    float refundFraction = (100 - QuickShotStaminaCostPercent) / 100f * (1f - charge);
+                    float refund = drawStaminaPaid * refundFraction;
+                    staminaPlayer.staminaResourceCurrent = Math.Min(staminaPlayer.staminaResourceCurrent + refund, staminaPlayer.staminaResourceMax2);
+                }
             }
         }
 

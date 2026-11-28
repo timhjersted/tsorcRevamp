@@ -27,7 +27,7 @@ namespace tsorcRevamp.Systems
     ///
     /// Enemy HP (LifeScale): every non-boss enemy in the EnemyBalance registry, modded and vanilla.
     ///   Before SHM it ramps 1.0 -> 2.0 over the Hardmode bosses. In SHM it starts again at 1.0 and ramps to 1.5 over the
-    ///   SHM bosses; the registry's shm values are the bump at SHM start. Gated by the New Enemy Balance toggle.
+    ///   SHM bosses; the registry's shm values are the bump at SHM start.
     ///   Applied wherever EnemyBalance writes lifeMax (ModeScaledLife, ApplyEnemySetDefaults). Every machine runs SetDefaults
     ///   on its own NPC copy, and a client keeps its own lifeMax when the spawn packet says life == lifeMax, so the value must
     ///   come from synced world state, never from a server-only hook.
@@ -210,18 +210,13 @@ namespace tsorcRevamp.Systems
         }
 
         /// <summary>
-        /// The HP multiplier an in-scope enemy gets right now: the Hardmode ramp before SHM, the SHM ramp in SHM, 1 with the
-        /// toggle off. World-level (no eligibility check) so the balance logs can record it without an NPC; use LifeScale for one.
+        /// The HP multiplier an in-scope enemy gets right now: the Hardmode ramp before SHM, the SHM ramp in SHM.
+        /// World-level (no eligibility check) so the balance logs can record it without an NPC; use LifeScale for one.
         /// </summary>
         public static float CurrentLifeScale
         {
             get
             {
-                if (!EnemyBalance.Enabled)
-                {
-                    return 1f;
-                }
-
                 if (tsorcRevampWorld.SuperHardMode)
                 {
                     return ShmScale;

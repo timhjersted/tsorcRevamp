@@ -10,6 +10,7 @@ using tsorcRevamp.Content.Projectiles.Magic;
 using tsorcRevamp.Content.Projectiles.Ranged;
 using tsorcRevamp.Content.Projectiles.Ranged.Ammo;
 using tsorcRevamp.Content.Projectiles.Throwing;
+using tsorcRevamp.Utilities.Balance;
 
 namespace tsorcRevamp.Systems.Electrocute;
 
@@ -128,6 +129,10 @@ public class ElectrocutePlayer : ModPlayer
                 Projectile.NewProjectile(Projectile.GetSource_None(), target.Top, Vector2.Zero,
                     electrocuteType, damage, 0, proj.owner, critChance, scale);
                 RangedDmgRestored = scale / ScaleMult * MaxRangedDmgRestore;
+
+                // Balance log: scale is the distance scale times ScaleMult, so dividing gives 0.2-1.
+                float distanceScale = scale / ScaleMult;
+                BalanceLog.RecordElectrocuteProc(Player, target, distanceScale);
                 Player.AddBuff(ModContent.BuffType<ElectrocuteCooldown>(), Electrocute.Cooldown * 60);
                 ResetElectrocuteFields(target);
             }

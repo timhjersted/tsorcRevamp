@@ -448,7 +448,17 @@ namespace tsorcRevamp.NPCs
             }
         }
 
-        public bool TryStartGreat(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC)
+        public void SetCooldown(int ticks)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                return;
+            }
+            attackCooldown = Math.Max(0, ticks);
+        }
+
+        public bool TryStartGreat(NPC npc, Player target, tsorcRevampGlobalNPC globalNPC,
+            bool preferAggressiveChain = false)
         {
             if (!CanStart(npc, target, globalNPC))
             {
@@ -508,6 +518,55 @@ namespace tsorcRevamp.NPCs
 
             float distance = npc.Distance(target.Center);
             bool hasLineOfSight = Collision.CanHitLine(npc.Center, 1, 1, target.Center, 1, 1);
+
+            // Mid-aggression-spike chain: bias directly toward fast melee dashes, spear throws,
+            // firebomb reversals, and aimed Royal Standards so extended combos flow tightly.
+            if (preferAggressiveChain)
+            {
+                KnightSpecialAttack[] chainCandidates = new KnightSpecialAttack[4];
+                int chainCount = 0;
+                if (hasLineOfSight && distance <= 460f)
+                {
+                    chainCandidates[chainCount++] = KnightSpecialAttack.CrimsonAdvance;
+                }
+                if (hasLineOfSight && distance >= 110f && distance <= 900f)
+                {
+                    chainCandidates[chainCount++] = KnightSpecialAttack.SpearThrow;
+                }
+                if (hasLineOfSight && distance <= 230f)
+                {
+                    chainCandidates[chainCount++] = KnightSpecialAttack.FirebombReversal;
+                }
+                if (hasLineOfSight && distance >= 120f && distance <= 900f)
+                {
+                    chainCandidates[chainCount++] = KnightSpecialAttack.RoyalStandard;
+                }
+
+                if (chainCount > 0)
+                {
+                    KnightSpecialAttack[] nonRepeat = new KnightSpecialAttack[chainCount];
+                    int nonRepeatCount = 0;
+                    for (int i = 0; i < chainCount; i++)
+                    {
+                        if (chainCandidates[i] != lastGreatAttack)
+                        {
+                            nonRepeat[nonRepeatCount++] = chainCandidates[i];
+                        }
+                    }
+
+                    KnightSpecialAttack chainSelected = nonRepeatCount > 0
+                        ? nonRepeat[Main.rand.Next(nonRepeatCount)]
+                        : chainCandidates[Main.rand.Next(chainCount)];
+                    lastGreatAttack = chainSelected;
+                    if (chainSelected == KnightSpecialAttack.RoyalStandard)
+                    {
+                        LockedTarget = target.Center;
+                    }
+                    Begin(npc, target, globalNPC, chainSelected);
+                    return true;
+                }
+            }
+
             KnightSpecialAttack[] candidates = new KnightSpecialAttack[10];
             int count = 0;
 
@@ -517,18 +576,17 @@ namespace tsorcRevamp.NPCs
             {
                 candidates[count++] = KnightSpecialAttack.FirebombReversal;
             }
-            if (distance <= 330f)
+            if (hasLineOfSight && distance <= 460f)
             {
                 candidates[count++] = KnightSpecialAttack.CrimsonAdvance;
             }
-            if (hasLineOfSight && distance >= 120f && distance <= 900f)
+            if (hasLineOfSight && distance >= 110f && distance <= 900f)
             {
                 candidates[count++] = KnightSpecialAttack.SpearThrow;
             }
 
-            // Royal Standard now throws one centre lance. Requiring two obsolete side-lance
-            // landing points made a valid centre throw unavailable near arena walls.
-            if (TryFindGround(target.Bottom, 10, 30, out Vector2 royalCenter))
+            // Royal Standard throws one centre lance aimed directly at the player.
+            if (hasLineOfSight && distance >= 120f && distance <= 900f)
             {
                 candidates[count++] = KnightSpecialAttack.RoyalStandard;
             }
@@ -575,7 +633,7 @@ namespace tsorcRevamp.NPCs
             KnightSpecialAttack selected = ChooseFromBag(npc, candidates, count, KnightAttackDeck.Great);
             if (selected == KnightSpecialAttack.RoyalStandard)
             {
-                LockedTarget = royalCenter;
+                LockedTarget = target.Center;
             }
             else if (selected == KnightSpecialAttack.FurnacePincer)
             {
@@ -1694,45 +1752,29 @@ namespace tsorcRevamp.NPCs
 
             if (Timer == RoyalFirstThrow)
             {
-                // Capture the landing point on the actual fire tick. RedKnightStandard owns a
-                // deterministic ballistic parabola, so this exact point is also its impact.
-                if (!TryFindGround(target.Bottom, 10, 30, out Vector2 fireTarget))
-                {
-                    fireTarget = target.Bottom;
-                }
-                else
-                {
-                    // Ground search supplies only the plant height; do not quantize the fire-time
-                    // player X coordinate to the centre of a 16px tile.
-                    fireTarget.X = target.Bottom.X;
-                }
-                LockedTarget = fireTarget;
+                // Aim the single Royal Standard directly at the player's center so it threatens
+                // grounded and airborne players alike before embedding into the tile behind them.
+                LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
-                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f);
+                Vector2 launchSource = SpearLaunchSource(npc, Direction);
+                LockedVelocity = RedKnightStandard.RoyalDirectThrowVelocity(launchSource, LockedTarget);
+                ThrowRoyalSpear(npc, LockedTarget, stats.GreatDamage, KnightStandardMode.GreatCenter, -0.05f, LockedVelocity);
                 ReleaseDetachedStandard(npc);
             }
             else
             {
-                // The held lance tracks during windup, but this is presentation-only; the
-                // authoritative target is captured above when the projectile is released.
-                if (!TryFindGround(target.Bottom, 10, 30, out Vector2 telegraphTarget))
-                {
-                    telegraphTarget = target.Bottom;
-                }
-                else
-                {
-                    telegraphTarget.X = target.Bottom.X;
-                }
-                LockedTarget = telegraphTarget;
+                // Track the player's center during windup so the held lance visibly aims at them.
+                LockedTarget = target.Center;
                 Direction = LockedTarget.X >= npc.Center.X ? 1 : -1;
             }
         }
 
-        void ThrowRoyalSpear(NPC npc, Vector2 target, int damage, KnightStandardMode mode, float pitch)
+        void ThrowRoyalSpear(NPC npc, Vector2 target, int damage, KnightStandardMode mode, float pitch,
+            Vector2? directVelocity = null)
         {
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                SpawnStandard(npc, target, damage, mode);
+                SpawnStandard(npc, target, damage, mode, directVelocity);
             }
             PlaySound(SoundID.Item1 with { Volume = 1f, Pitch = pitch }, npc.Center);
         }
@@ -2414,11 +2456,14 @@ namespace tsorcRevamp.NPCs
         public float GetSpearRotation(Vector2 handWorld, Vector2 launchSource)
         {
             Vector2 direction = new Vector2(Direction, 0f);
-            if ((Attack == KnightSpecialAttack.CrimsonStandard || Attack == KnightSpecialAttack.RoyalStandard)
-                    && Timer >= 45)
+            if (Attack == KnightSpecialAttack.RoyalStandard && Timer >= 45)
+            {
+                direction = RedKnightStandard.RoyalDirectThrowVelocity(launchSource, LockedTarget);
+            }
+            else if (Attack == KnightSpecialAttack.CrimsonStandard && Timer >= 45)
             {
                 direction = RedKnightStandard.InitialFlightDirection(
-                    launchSource, LockedTarget, Attack == KnightSpecialAttack.RoyalStandard);
+                    launchSource, LockedTarget, weightyRoyalArc: false);
             }
             else if (Attack == KnightSpecialAttack.CrimsonDominion)
             {
@@ -3096,11 +3141,14 @@ namespace tsorcRevamp.NPCs
             return npc.Center + new Vector2(Direction * fallbackOffset.X, fallbackOffset.Y);
         }
 
-        // The standard lerps along its arc from where it spawns, so spawning it in the hand releases it from the pose.
-        static void SpawnStandard(NPC npc, Vector2 target, int damage, KnightStandardMode mode)
+        // The standard spawns in the hand. GreatCenter flies on its solved direct velocity toward
+        // the player; legacy CrimsonStandard lerps along its fixed lob arc from Vector2.Zero.
+        static void SpawnStandard(NPC npc, Vector2 target, int damage, KnightStandardMode mode,
+            Vector2? directVelocity = null)
         {
             Vector2 launchSource = SpearLaunchSource(npc, npc.direction);
-            Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, Vector2.Zero,
+            Vector2 launchVelocity = directVelocity ?? Vector2.Zero;
+            Projectile.NewProjectile(npc.GetSource_FromThis(), launchSource, launchVelocity,
                 ModContent.ProjectileType<RedKnightStandard>(), EnemyDamage.Projectile(damage), 0f, Main.myPlayer,
                 target.X, target.Y, (float)mode);
         }

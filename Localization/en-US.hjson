@@ -447,6 +447,8 @@ Mods: {
 				Aaron: Aaron
 				Elijah: Elijah
 				Miakoda: Miakoda
+				Dryad: Dryad
+				Solaire: Solaire
 			}
 
 			UI: {
@@ -633,6 +635,36 @@ Mods: {
 				Line03: As my father often told me, sometimes retreating, even for a moment, is the best way to advance.
 				Line04: You will know the Rage is about to enrage when its body glows brightly with fire.
 				Line05: When it enrages, it will heal itself, and it will also be far more dangerous for a brief moment. Be prepared to evade! Mobility is key!
+			}
+
+			DryadGift: {
+				Line01: You look weary, traveler. You have been fighting hard to defend our mother, haven't you?
+				Line02: Our mother?
+				Line03: This wondrous Earth, vibrant with the life of all our relatives. She has felt every step of your struggle.
+				Line04: Well, take this! A spirit guide that will travel with you always, lighting your way in times of despair.
+				Line05: And take this as well: the Staff of Regrowth. Use it to heal this world of the sickness that has corrupted this land.
+				Line06: Both of these gifts may be found in the chest by my bed, upstairs.
+			}
+
+			MysticSanctuary: {
+				Line01: Such peace... I haven't felt this since the day my parents died. Since the day I lost my wife.
+				Line01Remix: A memorial to Elengad, the ancient great king of the Desert... I haven't felt such peace since the day my parents died. Since the day I lost my wife.
+				Line02: So much love... and so much sadness with it.
+				Line03: I'll stay a moment longer. I need to reflect on this journey... and summon all my courage for the path ahead.
+				Line04: Now that we can break Chlorophyte Gates, there are three, perhaps four paths we can take.
+				Line05: It is up to you to decide.
+				Line06: Which would you take?
+				Line07: There is no ideal path, only the path that is most true to you.
+			}
+
+			SolaireTower: {
+				Line01: Praise the Sun! Well met, Red!
+				Line02: The Earth Temple below the village is full of dangerous traps and undead creatures. I'm embarrassed to admit I barely made it back here!
+				Line03: I'm sure you'll fare better than me, though!
+				Line04: Have you spoken with Jade yet? The woman who keeps watch outside the village. Go and speak with her, my friend! She has many important things to tell you, and perhaps something to help you on your journey.
+				Line05: And if the temple proves too much, explore the mountain caverns to the west of the village. It's safer there, and you may find a few things to aid your journey!
+				Line06: Go on...
+				Line07: For the sake of jolly cooperation!
 			}
 
 			BuriedAlive.Line01: Something sharp... a broken shard of Father's pickaxe.
@@ -843,11 +875,48 @@ Mods: {
 			AccessPiggyBank: Access Piggy Bank
 			AccessSafe: Access Safe
 			BonfireTravel: Travel
+			BonfireReinforce: Reinforce Weapon
 			AccuracyHit: Hit! {0}%
 			AccuracyMiss: Miss! {0}%
 			Rebound: Rebound!
 			MinionInfoDisplay: "{0} / {1} Minion Slots"
 			SentryInfoDisplay: "{0} / {1} Sentry Slots"
+
+			WeaponReinforcement: {
+				Title: Weapon Reinforcement
+				ReinforceButton: Reinforce
+				EmptySlotPrompt: Place an iconic weapon in the slot
+				WorldCapFull: World Reinforcement Cap: +{0}
+				WorldCapShort: World Cap: +{0}
+				StoragePullHint: Materials & Dark Souls pull from all storage
+				InvalidWeapon: Not a reinforceable iconic weapon
+				MaxHeader: "{0} +{1} (MAX)"
+				BaseDamageCurrent: Base Damage: {0}
+				MaxReached: Maximum reinforcement reached
+				UpgradeHeader: "{0}  +{1} -> +{2}"
+				BaseDamageUpgrade: Base Damage: {0} -> {1}
+				MaterialCost: "{0}: {1}  (Have {2})"
+				DarkSoulsCost: Dark Souls: {0}  (Have {1})
+				LockedLine: Locked - {0}
+				PerkPreviewLine: +{0} Perk: {1}
+				GateSkeletron: Defeat a lord beneath the jungle ruins
+				GateWallOfFlesh: Defeat a monstrosity of the underworld
+				GateHardmodeProgress: Defeat {0} legendary beings ({1} / {0})
+				GateShmBefore: Defeat Attraidies
+				GateShmProgress: Defeat {0} lords of the abyss ({1} / {0})
+				ErrorDisabled: Weapon Reinforcement is disabled in config.
+				ErrorNotReinforceable: This item cannot be reinforced.
+				ErrorMaxReached: Maximum reinforcement reached.
+				ErrorLocked: Locked - {0} to unlock +{1}
+				ErrorNeedMaterial: Need {0} {1} (have {2})
+				ErrorNeedSouls: Need {0} Dark Souls
+				ReinforcedSuccess: Reinforced to +{0}!
+				CapUnlocked: Bonfire Weapon Reinforcement cap has risen to +{0}!
+				CapUnlockedRadiant: Radiant Embers unlocked! Bonfire Weapon Reinforcement cap has risen to +{0}!
+				TooltipBadge: "[c/e8c168:Iconic Weapon — Reinforceable at Bonfires (+{0} / +{1})]"
+				TooltipPerkActive: "[c/90f0a0:+{0} Perk Active: {1}]"
+				TooltipPerkLocked: "[c/a09a92:+{0} Perk: {1}]"
+			}
 		}
 
 		World: {
@@ -878,9 +947,11 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:Only drops in Super Hardmode]"
+			SHMFirstKill: "[c/ff9999:Guaranteed on the first kill in Super Hardmode]"
 			NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
+			PreHardmodeOnly: "[c/99ccff:Only drops in Pre-Hardmode]"
 			FirstBagOnly: "[c/ff9999: Only drops from the first opened specific Bag]"
 			BotCOnly: "[c/ff9999: Only drops when the player is Unkindled or a Bearer of the Curse]"
 			FirstBagBotCOnly: "[c/ff9999: Only drops from the first opened specific Bag while the player is Unkindled or a Bearer of the Curse]"
@@ -889,8 +960,8 @@ Mods: {
 			FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: Only drops on the first kill outside of Expert Mode]"
 			DownedSkeletron: "[c/ff9999: Drops after defeating Skeletron]"
-			DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
-			IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
+			DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Barrowlord Ossric]"
+			IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Barrowlord Ossric is defeated]"
 		}
 
 		Quest: {
@@ -940,7 +1011,7 @@ Mods: {
 			OolacileDemonDesc: Legends mention the Oolacile Forest...
 			SlograAndGaibonName: Slogra and Gaibon
 			SlograAndGaibonDesc: Found in the depths of the Meteor Temple.
-			GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
+			GravelordNitoDesc: A lord of the barrows stirs deep below the jungle ruins.
 			JungleWyvernDesc: Found in the depths of the Forgotten City.
 			AncientDemonDesc: A secret lair in hell awaits you...
 			TheRageDesc: Found in the depths of the Hallowed Caverns.
@@ -2017,6 +2088,17 @@ Mods: {
 					'''
 			}
 
+			CloakingSerpentScaleItem: {
+				DisplayName: Cloaking Serpent Scale
+				Tooltip:
+					'''
+					Dodge rolling shrouds you in serpentine stealth for {0} seconds
+					While cloaked, enemies are less likely to target you
+					Your next strike out of stealth gains +{1}% critical strike chance and +{2}% damage
+					{3} second cooldown
+					'''
+			}
+
 			SilverSerpentRingItem: {
 				DisplayName: Covetous Silver Serpent Ring
 				Tooltip:
@@ -2814,9 +2896,10 @@ Mods: {
 					{$CommonItemTooltip.IncreasesMaxManaBy}
 					{$CommonItemTooltip.PercentReducedManaCost@1}
 					{$CommonItemTooltip.Magic.ManaRegen@2}
-					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
-					Provides immunity to drowning and invulnerability to lava
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements:
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
+					{$CommonItemTooltip.ObsidianShield}, plus reduced damage from lava
+					Immunity to drowning, free movement in water, and ice traction
 					Retains this set bonus even if only one or two pieces of the armor are upgraded to their supreme form
 					'''
 			}
@@ -2853,8 +2936,10 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					Grants Philosopher's Stone effect
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements:
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
+					{$CommonItemTooltip.ObsidianShield}, plus {5} seconds of lava immunity
+					Immunity to drowning, free movement in water, and ice traction
 					'''
 			}
 
@@ -4000,6 +4085,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
+			GravelordNitoBag: {
+				DisplayName: Treasure Bag (Barrowlord Ossric)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
 			AttraidiesBag: {
 				DisplayName: Treasure Bag (Attraidies)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
@@ -4045,8 +4135,13 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
-			OolacileSerpentBag: {
+			GreatSerpentBag: {
 				DisplayName: Treasure Bag (Great Serpent)
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileSerpentBag: {
+				DisplayName: Treasure Bag (Great Abyssal Serpent)
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4322,8 +4417,8 @@ Mods: {
 			}
 
 			GravelordNitoSpawner: {
-				DisplayName: Gravelord's Effigy
-				Tooltip: Summons Gravelord Nito in sandbox worlds.
+				DisplayName: Barrowlord's Effigy
+				Tooltip: Summons Barrowlord Ossric in sandbox worlds.
 			}
 
 			VesselOfSoulsSpawner: {
@@ -4334,6 +4429,29 @@ Mods: {
 			SoulOfTheVessel: {
 				DisplayName: Soul of the Vessel
 				Tooltip: The stolen souls of the Vessel, bound into a single essence.
+			}
+
+			PaleEmber: {
+				DisplayName: Pale Ember
+				Tooltip:
+					'''
+					Used to reinforce iconic weapons (+1 to +5) at any lit bonfire
+					Automatically pulled from your inventory or storage when reinforcing
+					'''
+			}
+
+			RadiantEmber: {
+				DisplayName: Radiant Ember
+				Tooltip:
+					'''
+					A luminous ember used to reinforce iconic weapons (+6 to +10) at any lit bonfire
+					Automatically pulled from your inventory or storage when reinforcing
+					'''
+			}
+
+			GreatSerpentSoul: {
+				DisplayName: Great Serpent Soul
+				Tooltip: Soul of the Great Serpent. Used to forge venomous weapons and stealth gear at a Demon Altar.
 			}
 
 			SoulReliquaryBell: {
@@ -4349,6 +4467,7 @@ Mods: {
 			GravemawTome: {
 				DisplayName: Gravemaw Tome
 				TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
+				ReinforcementPerk3: Spells inflict Shadowflame and Reliquary Nova charges faster
 				Tooltip:
 					'''
 					Four spells bound in one tome
@@ -6265,6 +6384,17 @@ Mods: {
 					'''
 			}
 
+			CausticMawItem: {
+				DisplayName: Caustic Maw
+				ReinforcementPerk3: Inflicts Acid Venom; pools last {0:0.#}s and tick faster
+				ReinforcementPerk6: Direct hits erupt {0} caustic droplets; pools are wider and stronger
+				Tooltip:
+					'''
+					Lobs boiling purple venom globs that splash into a {0}s caustic puddle
+					Grounded enemies in the puddle take rapid acid damage and become poisoned
+					'''
+			}
+
 			Bolt1Tome: {
 				DisplayName: Bolt 1 Tome
 				Tooltip:
@@ -6779,6 +6909,7 @@ Mods: {
 
 			HeartOfWinter: {
 				DisplayName: Heart of Winter
+				TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
 				Tooltip:
 					'''
 					The Ice Gigas's spell tome — four of its moves bound in one book
@@ -6802,6 +6933,7 @@ Mods: {
 
 			WrathOfGold: {
 				DisplayName: Wrath of Gold
+				TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
 				Tooltip:
 					'''
 					The Holy Gigas's spell tome — four of its moves bound in one book
@@ -6956,8 +7088,8 @@ Mods: {
 				Tooltip: "'A blade of sharpened bone'"
 			}
 
-			GravelordSword: {
-				DisplayName: Gravelord Sword
+			OssricsGreatsword: {
+				DisplayName: Ossric's Greatsword
 				Tooltip:
 					'''
 					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
@@ -7280,6 +7412,18 @@ Mods: {
 					'''
 			}
 
+			SerpentsFangItem: {
+				DisplayName: Serpent's Fang
+				ReinforcementPerk3: Thrusts inflict Acid Venom; Lunge costs {0} stamina
+				ReinforcementPerk6: Lunges erupt {0} venom droplets and deal +{1}% crit damage
+				Tooltip:
+					'''
+					Left-click steps forward into a fast piercing thrust that poisons for {1}s
+					Right-click spends {0} stamina for a coiled lunge that always crits and inflicts Acid Venom for {2}s
+					Stops cleanly on impact so you do not slide into enemies
+					'''
+			}
+
 			BarrowBlade: {
 				DisplayName: Barrow Blade
 				Tooltip:
@@ -7491,6 +7635,8 @@ Mods: {
 					Hold FIRE to charge
 					Arrows are faster and more accurate when the bow is charged
 					Fully drawn shots deal {0}% more damage and pierce {1} more enemy
+					Quick releases still loose a usable arrow with at least {2}% damage and {3}% speed
+					Quick releases cost as little as {4}% of the draw's stamina
 					'''
 			}
 
@@ -7501,6 +7647,17 @@ Mods: {
 					Always aim for the heart
 					Shoots 2 extra elfin arrows every 3 shots
 					Converts wooden arrows into holy arrows
+					'''
+			}
+
+			SerpentsCoilItem: {
+				DisplayName: Serpent's Coil
+				ReinforcementPerk3: Converts all arrows, inflicts Acid Venom, and bursts {0} droplets
+				ReinforcementPerk6: Every {0}rd shot fires a twin-arrow volley; droplets deal {1}% damage
+				Tooltip:
+					'''
+					Converts wooden arrows into fast piercing Venom Fang Arrows
+					Venom Fang Arrows poison targets and burst into {0} acid droplets on impact
 					'''
 			}
 
@@ -7550,6 +7707,8 @@ Mods: {
 					Hold FIRE to charge
 					Arrows are faster and more accurate when the bow is charged
 					Fully drawn shots deal {0}% more damage and pierce {1} more enemy
+					Quick releases still loose a usable arrow with at least {2}% damage and {3}% speed
+					Quick releases cost as little as {4}% of the draw's stamina
 					'''
 			}
 
@@ -7841,14 +8000,15 @@ Mods: {
 
 			ArcherSpiritBell: {
 				DisplayName: Archer Spirit Bell
-				ArrowDamage: "{0} damage per arrow"
+				ArrowDamage: "{0} summon damage per arrow"
+				ReinforcementPerk2: Arrows inflict Frostbite and fire faster
 				Tooltip:
 					'''
 					Summons an Archer Spirit to fight for you
-					Looses frostburn arrows that inflict Frostburn on hit
-					Arrow damage scales with maximum mana (1 damage per 4 mana)
-					Bearer of the Curse's mana multiplier does not increase arrow damage
-					Uses 2 summoner slots
+					Looses frostburn arrows that scale with summon damage
+					Drains {0} mana per arrow ({1}x in Bearer of the Curse) unless holding another summon weapon or having {2}+ minion slots
+					Becomes dormant and translucent when out of mana
+					Uses {3} summoner slots
 					The spirit targets the highest HP enemy nearby
 					'''
 			}
@@ -8004,6 +8164,32 @@ Mods: {
 					Thorns are released by enemies hit by summons
 					Thorns scale with {0}% whip damage and have {1} armor penetration
 					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			SerpentsTailLashItem: {
+				DisplayName: Serpent's Tail Lash
+				ReinforcementPerk3: +{0} tag damage (+{1}% crit), Acid Venom on all hits, longer reach
+				ReinforcementPerk6: Needle Strike every {0}nd crack ({1} droplets at {2}%), +{3} tag (+{4}% crit)
+				Tooltip:
+					'''
+					{0} summon tag damage
+					Strikes poison enemies
+					Every {1}rd crack unleashes a longer needle thrust dealing +{2}% damage, inflicting Acid Venom for {3}s, and flicking {4} venom droplets
+					{$CommonItemTooltip.Whips}
+					'''
+			}
+
+			UhlansSiegebowItem: {
+				DisplayName: Ulhan's Siegebow
+				ReinforcementPerk2: Blasts inflict Hellfire and tag damage scales higher
+				Tooltip:
+					'''
+					{0} summon tag damage
+					Fires short-range explosive bolts up to {1} tiles that focus minions and ignite enemies
+					Missed bolts lodge into tiles as proximity traps (max {2})
+					Minion strikes on tagged foes trigger a fiery powder burst for {3}% weapon damage
+					Uses no ammo
 					'''
 			}
 
@@ -10708,22 +10894,22 @@ Mods: {
 
 			Miakoda: {
 				DisplayName: Miakoda
-				Description: An ancient being freed from Skeletron.
+				Description: An ancient being freed from Barrowlord Ossric.
 			}
 
 			MiakodaCrescent: {
 				DisplayName: Miakoda - Crescent Moon Form
-				Description: An ancient being freed from Skeletron.
+				Description: An ancient being freed from Barrowlord Ossric.
 			}
 
 			MiakodaFull: {
 				DisplayName: Miakoda - Full Moon Form
-				Description: An ancient being freed from Skeletron.
+				Description: An ancient being freed from Barrowlord Ossric.
 			}
 
 			MiakodaNew: {
 				DisplayName: Miakoda - New Moon Form
-				Description: An ancient being freed from Skeletron.
+				Description: An ancient being freed from Barrowlord Ossric.
 			}
 
 			PhazonContamination: {
@@ -11042,6 +11228,16 @@ Mods: {
 
 			DominatrixDebuff: {
 				DisplayName: Dominatrix Debuff
+				Description: ""
+			}
+
+			SerpentsTailLashDebuff: {
+				DisplayName: Serpent's Tail Lash
+				Description: ""
+			}
+
+			UhlansSiegebowDebuff: {
+				DisplayName: Ulhan's Siegebow
 				Description: ""
 			}
 
@@ -11501,6 +11697,11 @@ Mods: {
 			Riposte: {
 				DisplayName: Riposte
 				Description: Your next attack deals {0}% more damage
+			}
+
+			CloakingSerpentScaleBuff: {
+				DisplayName: Serpent Cloak
+				Description: Reduced enemy aggro; next strike gains +{0}% crit chance and +{1}% damage
 			}
 
 			ShieldGuardBreak: {
@@ -11975,11 +12176,11 @@ Mods: {
 			NecroSiphonPulse.DisplayName: Soul Siphon
 			NecroCurseNova.DisplayName: Curse Nova
 			GigasIceWaveSegment.DisplayName: Hoarfrost Creep
-			NitoSwordSlash.DisplayName: Gravelord Sword
-			NitoBoneShard.DisplayName: Gravelord Bone Shard
+			NitoSwordSlash.DisplayName: Ossric's Greatsword
+			NitoBoneShard.DisplayName: Barrow Bone Shard
 			NitoDeathNova.DisplayName: Death Nova
-			NitoGraveSpike.DisplayName: Gravelord Spike
-			NitoCeilingSpike.DisplayName: Falling Gravelord Spike
+			NitoGraveSpike.DisplayName: Barrow Spike
+			NitoCeilingSpike.DisplayName: Falling Barrow Spike
 			NitoGraveHand.DisplayName: Grave Hand
 			NitoMiasmaCloud.DisplayName: Miasma
 			QuaraTidalCrest.DisplayName: Tidal Crest
@@ -12630,7 +12831,7 @@ Mods: {
 			EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
 			ElandVenomSplash.DisplayName: Eland Venom Splash
 			GreatBlackKnightSpearHitbox.DisplayName: Great Black Knight Spear Hitbox
-			NitoPyreFire.DisplayName: Nito Pyre Fire
+			NitoPyreFire.DisplayName: Ossric's Pyre Fire
 			BlackKnightBombExplosionSprite.DisplayName: Black Knight Bomb Explosion Sprite
 			BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
 			DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
@@ -12695,7 +12896,7 @@ Mods: {
 			OolacileCultistDeathExplosion.DisplayName: Oolacile Cultist Death Explosion
 			BasiliskLeechTongueTelegraph.DisplayName: Basilisk Leech Tongue Telegraph
 			CursedDragonPoisonCloud.DisplayName: Cursed Dragon Poison Cloud
-			NitoMiasmaWall.DisplayName: Nito Miasma Wall
+			NitoMiasmaWall.DisplayName: Ossric's Miasma Wall
 			ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
@@ -12830,9 +13031,17 @@ Mods: {
 			ElementalBoulder.DisplayName: Elemental Boulder
 			ElementalFireball.DisplayName: Elemental Fireball
 			LethalTempoBolt.DisplayName: Lethal Tempo Bolt
-			NitoSlamCloud.DisplayName: Nito Slam Cloud
+			NitoSlamCloud.DisplayName: Ossric's Slam Cloud
 			WitchkingMaceFlail.DisplayName: Witchking Mace Flail
 			EaterToxicGlob.DisplayName: Eater Toxic Glob
+			CausticMawAcidPoolProj.DisplayName: Caustic Maw Acid Pool Proj
+			CausticMawProj.DisplayName: Caustic Maw Proj
+			SerpentsFangProj.DisplayName: Serpents Fang Proj
+			SerpentsCoilArrowProj.DisplayName: Serpents Coil Arrow Proj
+			SerpentsTailLashProj.DisplayName: Serpents Tail Lash Proj
+			UhlansSiegebowBoltProj.DisplayName: Uhlans Siegebow Bolt Proj
+			UhlansSiegebowExplosionProj.DisplayName: Uhlans Siegebow Explosion Proj
+			SerpentVenomDropletProj.DisplayName: Serpent Venom Droplet Proj
 		}
 
 		NPCs: {
@@ -13197,6 +13406,7 @@ Mods: {
 
 			GreatSerpentHead: {
 				DisplayName: Great Serpent
+				SHMDisplayName: Great Abyssal Serpent
 				DespawnHandler: The Great Serpent slithers away into the dark...
 			}
 
@@ -13736,7 +13946,7 @@ Mods: {
 					He shackled me into this doll just because I refused to serve that God of his...
 					It calls itself The Moon Lord? Only in its dreams!
 					'''
-				BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Skeletron! {0}, you should go and find them in the depths of The Forgotten City.
+				BrotherNotRescued: I could sense an Aura similar to yours right after you freed me from Barrowlord Ossric! {0}, you should go and find them in the depths of The Forgotten City.
 				JungleWyvern:
 					'''
 					An ancient beast guards The Forgotten City. It holds a Ring that was enchanted with powerful revitalizing magic.
@@ -13807,7 +14017,7 @@ Mods: {
 				ShadowKeyHint:
 					'''
 					Certain chests require a certain kind of key, given only to those acknowledged by Skeletron, the first of the dead.
-					While I was imprisoned by Skeletron, I overheard he left one Shadow Key deep below the Frozen Ocean.
+					While I was imprisoned by Barrowlord Ossric, I overheard that Skeletron left one Shadow Key deep below the Frozen Ocean.
 					I have also heard rumors that the Wyvern Mage offers one to those who play a rather twisted game of his, hosted within his fortress atop the mountains to the East...
 					'''
 				HardmodeLorePart1:
@@ -14553,7 +14763,7 @@ Mods: {
 			Eland.DisplayName: Eland
 			EvilEye.DisplayName: Evil Eye
 			Gigas.DisplayName: Holy Gigas
-			GravelordNito.DisplayName: Gravelord Nito
+			GravelordNito.DisplayName: Barrowlord Ossric
 
 			VesselOfSouls: {
 				DisplayName: Vessel of Souls
@@ -14880,16 +15090,6 @@ Mods: {
 						'''
 				}
 
-				NewEnemyBalance: {
-					Label: New Enemy Balance
-					Tooltip:
-						'''
-						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
-						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
-						Turn off to keep the original health values. Defaults to On.
-						'''
-				}
-
 				NewSoulsModeStaminaSystem: {
 					Label: Experimental Stamina Values
 					Tooltip:
@@ -14903,6 +15103,11 @@ Mods: {
 				DebugMode: {
 					Label: Debug Mode
 					Tooltip: ""
+				}
+
+				NewWeaponReinforcement: {
+					Label: Iconic Weapon Reinforcement
+					Tooltip: Enables reinforcing select iconic weapons at lit bonfires using Tempering Shards and Dark Souls.
 				}
 
 				DisableGloveAutoswing: {

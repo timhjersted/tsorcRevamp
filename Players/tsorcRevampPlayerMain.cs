@@ -1307,6 +1307,11 @@ namespace tsorcRevamp
             {
                 modifiers.CritDamage += Content.Items.Armor.MaskOfTheFather.CritDmgIncrease / 100f;
             }
+
+            if (Player.HasBuff(ModContent.BuffType<Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleBuff>()))
+            {
+                modifiers.FinalDamage += Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleItem.AmbushDamageBonus / 100f;
+            }
         }
         public override void ModifyHitNPCWithItem(Item item, NPC target, ref NPC.HitModifiers modifiers)/* tModPorter If you don't need the Item, consider using ModifyHitNPC instead */
         {
@@ -1475,6 +1480,21 @@ namespace tsorcRevamp
             {
                 MagicPlatingStacks = MagicPlating.ManageStacks(MagicPlatingStacks);
             }
+
+            int serpentCloakType = ModContent.BuffType<Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleBuff>();
+            if (Player.HasBuff(serpentCloakType))
+            {
+                Player.ClearBuff(serpentCloakType);
+                if (!Main.dedServ)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 ambushVel = Main.rand.NextVector2Circular(3.2f, 3.2f);
+                        Dust ambush = Dust.NewDustPerfect(target.Center, DustID.AncientLight, ambushVel, 50, new Color(200, 110, 255), 1.1f);
+                        ambush.noGravity = true;
+                    }
+                }
+            }
         }
 
         public override void OnHitNPCWithProj(Projectile proj, NPC target, NPC.HitInfo hit, int damageDone)/* tModPorter If you don't need the Projectile, consider using OnHitNPC instead */
@@ -1507,6 +1527,21 @@ namespace tsorcRevamp
                 {
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item113, Player.Center);
                     UsefulFunctions.DustRing(Player.Center, 70, DustID.FireworkFountain_Red, 100, 18);
+                }
+            }
+
+            int serpentCloakType = ModContent.BuffType<Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleBuff>();
+            if (!proj.IsMinionOrSentryRelated && !Main.projPet[proj.type] && Player.HasBuff(serpentCloakType))
+            {
+                Player.ClearBuff(serpentCloakType);
+                if (!Main.dedServ)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        Vector2 ambushVel = Main.rand.NextVector2Circular(3.2f, 3.2f);
+                        Dust ambush = Dust.NewDustPerfect(target.Center, DustID.AncientLight, ambushVel, 50, new Color(200, 110, 255), 1.1f);
+                        ambush.noGravity = true;
+                    }
                 }
             }
         }

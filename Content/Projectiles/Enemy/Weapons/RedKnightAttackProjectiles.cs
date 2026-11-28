@@ -305,10 +305,16 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         Vector2 startPosition;
         bool initialized;
         int dynamicFlightTicks;
+        // Direct-aimed Royal Standard (GreatCenter) flies on real velocity + light gravity until it
+        // hits a solid tile, then plants at that impact point and fires its ground waves.
+        bool directPlanted;
+        int directPlantedAge;
+        Vector2 directGroundPoint;
 
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(EnemyAncientBloodLanceProj));
 
         KnightStandardMode Mode => (KnightStandardMode)(int)Projectile.ai[2];
+        bool IsDirectAimedRoyal => Mode == KnightStandardMode.GreatCenter;
         int FlightTicks => Mode == KnightStandardMode.RedKnight ? 24 : 30;
         int ResolvedFlightTicks => dynamicFlightTicks > 0
             ? dynamicFlightTicks
@@ -316,7 +322,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         // Great mode is Royal Standard's stronger centre throw; the ordinary Red Knight keeps the
         // shorter charge used by Crimson Standard.
         int ChargeTicks => Mode == KnightStandardMode.RedKnight ? 60 : 120;
-        Vector2 GroundPoint => new Vector2(Projectile.ai[0], Projectile.ai[1]);
+        Vector2 GroundPoint => IsDirectAimedRoyal && directPlanted
+            ? directGroundPoint
+            : new Vector2(Projectile.ai[0], Projectile.ai[1]);
         // +5px versus the first pass: the spear was reading as hovering just above the floor
         // instead of driven into it.
         Vector2 PlantedCenter => GroundPoint - new Vector2(0f, 10f);
@@ -324,6 +332,18 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
         Vector2 FlameAnchor => GroundPoint + new Vector2(0f, 5f);
 
         const float RoyalGravityPerTick = 0.28f;
+        internal const float RoyalDirectThrowSpeed = 16.5f;
+        internal const float RoyalDirectGravity = 0.14f;
+        const int RoyalDirectGraceTicks = 4;
+        const int RoyalDirectMaxFlightTicks = 95;
+
+        /// <summary>Solves the direct, weighty throw velocity for Great Red Knight's single Royal Standard
+        /// aimed at the player's center. Used by both the held heave pose and projectile spawn.</summary>
+        internal static Vector2 RoyalDirectThrowVelocity(Vector2 source, Vector2 targetCenter)
+        {
+            return UsefulFunctions.BallisticTrajectory(source, targetCenter,
+                RoyalDirectThrowSpeed, RoyalDirectGravity, highAngle: false, fallback: true);
+        }
 
         static float CalculateArcHeight(Vector2 source, Vector2 plantedCenter)
             => MathHelper.Clamp(Vector2.Distance(source, plantedCenter) * 0.35f, 64f, 320f);
@@ -401,6 +421,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override bool? CanDamage()
         {
+            if (IsDirectAimedRoyal)
+            {
+                return !directPlanted;
+            }
             int age = (int)Projectile.localAI[0];
             bool physicalSpear = Mode == KnightStandardMode.RedKnight || Mode == KnightStandardMode.GreatCenter;
             return physicalSpear && age < ResolvedFlightTicks;
@@ -420,11 +444,17 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), Buffs.Debuffs.DestinedDeath.DefaultDurationTicks);
         }
 
         public override void AI()
         {
+            if (IsDirectAimedRoyal)
+            {
+                TickDirectAimedRoyal();
+                return;
+            }
+
             if (!initialized)
             {
                 initialized = true;
@@ -466,6 +496,124 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
             Projectile.Center = PlantedCenter;
             int plantedAge = age - flightDuration;
+            TickPlantedStandard(plantedAge);
+        }
+
+        void TickDirectAimedRoyal()
+        {
+            if (!initialized)
+            {
+                initialized = true;
+                startPosition = Projectile.Center;
+                Projectile.timeLeft = RoyalDirectMaxFlightTicks + ChargeTicks + 80;
+                if (Projectile.velocity.LengthSquared() < 0.01f)
+                {
+                    Projectile.velocity = RoyalDirectThrowVelocity(startPosition, new Vector2(Projectile.ai[0], Projectile.ai[1]));
+                }
+                if (Main.netMode == NetmodeID.Server)
+                {
+                    Projectile.netUpdate = true;
+                }
+            }
+
+            if (!directPlanted)
+            {
+                int age = (int)Projectile.localAI[0]++;
+                Vector2 previousCenter = Projectile.Center;
+                Projectile.velocity.Y += RoyalDirectGravity;
+
+                // Check for solid tile impact along this tick's step after a brief grace window
+                // so launching near the knight's own feet does not immediately clip the floor.
+                Vector2 stepVelocity = Projectile.velocity;
+                bool hitTile = false;
+                if (age >= RoyalDirectGraceTicks)
+                {
+                    Vector2 allowedMove = Collision.TileCollision(
+                        Projectile.position, stepVelocity, Projectile.width, Projectile.height);
+                    if (allowedMove != stepVelocity)
+                    {
+                        Projectile.position += allowedMove;
+                        hitTile = true;
+                    }
+                    else
+                    {
+                        Projectile.position += stepVelocity;
+                    }
+                }
+                else
+                {
+                    Projectile.position += stepVelocity;
+                }
+
+                if (Projectile.velocity.LengthSquared() > 0.01f)
+                {
+                    Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+                }
+
+                // Continuous red & black Destined Death trail interpolated along the step (gap <= 6px).
+                if (!Main.dedServ)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float fraction = (i + 0.5f) / 3f;
+                        bool soot = i == 1;
+                        Vector2 motePos = Vector2.Lerp(previousCenter, Projectile.Center, fraction)
+                            + Main.rand.NextVector2Circular(4f, 4f);
+                        Dust ember = Dust.NewDustPerfect(
+                            motePos,
+                            soot ? DustID.Shadowflame : DustID.RedTorch,
+                            -Projectile.velocity * 0.12f + Main.rand.NextVector2Circular(0.65f, 0.65f),
+                            soot ? 70 : 45,
+                            soot ? new Color(18, 4, 10) : new Color(206, 16, 34),
+                            soot ? Main.rand.NextFloat(0.95f, 1.4f) : Main.rand.NextFloat(1.0f, 1.45f));
+                        ember.noGravity = true;
+                        ember.noLight = soot;
+                    }
+                }
+
+                if (hitTile)
+                {
+                    directPlanted = true;
+                    directPlantedAge = 0;
+                    if (KnightHopPlanner.TryFindGround(Projectile.Bottom, 3, 4, out Vector2 surface))
+                    {
+                        directGroundPoint = new Vector2(Projectile.Center.X, surface.Y);
+                    }
+                    else
+                    {
+                        directGroundPoint = Projectile.Bottom;
+                    }
+                    Projectile.velocity = Vector2.Zero;
+                    Projectile.Center = PlantedCenter;
+                    Projectile.timeLeft = ChargeTicks + 60;
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        Projectile.netUpdate = true;
+                    }
+                    TickPlantedStandard(0);
+                    directPlantedAge = 1;
+                    return;
+                }
+
+                if (age >= RoyalDirectMaxFlightTicks)
+                {
+                    // Fired into open sky without hitting a tile: deliberate burst death, never silently vanish.
+                    if (!DestinedDeathExplosion.TrySpawn(Projectile.GetSource_FromThis(), Projectile.Center, 0.85f))
+                    {
+                        SpawnBurst(RedKnightBurstKind.StandardImpact, Projectile.Center, 0.85f);
+                    }
+                    EmitPlantDust();
+                    Projectile.Kill();
+                }
+                return;
+            }
+
+            Projectile.Center = PlantedCenter;
+            TickPlantedStandard(directPlantedAge++);
+        }
+
+        void TickPlantedStandard(int plantedAge)
+        {
             if (plantedAge == 0)
             {
                 PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.15f }, GroundPoint);
@@ -507,6 +655,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             writer.Write(startPosition.X);
             writer.Write(startPosition.Y);
             writer.Write(dynamicFlightTicks);
+            writer.Write(directPlanted);
+            writer.Write(directPlantedAge);
+            writer.Write(directGroundPoint.X);
+            writer.Write(directGroundPoint.Y);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -514,6 +666,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             initialized = reader.ReadBoolean();
             startPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             dynamicFlightTicks = reader.ReadInt32();
+            directPlanted = reader.ReadBoolean();
+            directPlantedAge = reader.ReadInt32();
+            directGroundPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
 
         void FireWaves()
@@ -566,10 +721,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override bool PreDraw(ref Color lightColor)
         {
-            int age = (int)Projectile.localAI[0];
-            if (age < FlightTicks)
+            bool airborne = IsDirectAimedRoyal
+                ? !directPlanted
+                : (int)Projectile.localAI[0] < ResolvedFlightTicks;
+            if (airborne)
             {
-                Vector2 direction = (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY);
+                Vector2 direction = Projectile.velocity.SafeNormalize(
+                    (PlantedCenter - startPosition).SafeNormalize(Vector2.UnitY));
                 // Was RedKnightVFX.DrawSpearWake; now the shared Black Knight grey wake. The old
                 // `empowered` (non-RedKnight standards) becomes a larger, stronger quad.
                 bool empoweredStandard = Mode != KnightStandardMode.RedKnight;
@@ -584,7 +742,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             // over the top of it, so the fire engulfs the planted spear instead of the spear
             // sitting flatly on top of its own flame.
             DrawSpearSprite(lightColor);
-            float progress = MathHelper.Clamp((age - FlightTicks) / (float)Math.Max(1, ChargeTicks), 0f, 1f);
+            int plantedAge = IsDirectAimedRoyal
+                ? directPlantedAge
+                : (int)Projectile.localAI[0] - ResolvedFlightTicks;
+            float progress = MathHelper.Clamp(plantedAge / (float)Math.Max(1, ChargeTicks), 0f, 1f);
             RedKnightVFX.DrawStandardCharge(FlameAnchor, progress, Mode);
             return false;
         }
@@ -653,7 +814,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), Buffs.Debuffs.DestinedDeath.DefaultDurationTicks);
         }
 
         public override void AI()

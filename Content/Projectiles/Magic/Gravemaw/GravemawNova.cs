@@ -2,11 +2,12 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
     ///<summary>Reliquary Nova: a friendly expanding true-annulus ring (the player's version of the boss's
-    ///Soul Nova). Colliding() only hits the current radius band, so it sweeps outward once. ai[0]=max radius.</summary>
+    ///Soul Nova). Colliding() only hits the current radius band, so it sweeps outward once. ai[0]=max radius, ai[1]=shadowflame perk.</summary>
     class GravemawNova : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(InvisibleNothingProj));
@@ -15,6 +16,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         const float RingHalfThickness = 24f;
 
         float MaxRadius => Projectile.ai[0] > 0f ? Projectile.ai[0] : 360f;
+        bool InflictsShadowflame => Projectile.ai[1] >= 1f;
         float Radius => Projectile.localAI[0];
 
         public override void SetDefaults()
@@ -60,6 +62,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Left, targetHitbox.Bottom)));
             distFarthest = System.Math.Max(distFarthest, Vector2.Distance(Projectile.Center, new Vector2(targetHitbox.Right, targetHitbox.Bottom)));
             return distClosest <= Radius + RingHalfThickness && distFarthest >= Radius - RingHalfThickness;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (InflictsShadowflame)
+            {
+                target.AddBuff(BuffID.ShadowFlame, GravemawTome.ShadowflameDurationTicks);
+            }
         }
     }
 }

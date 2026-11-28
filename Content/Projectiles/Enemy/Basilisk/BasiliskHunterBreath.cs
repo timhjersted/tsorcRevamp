@@ -24,8 +24,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
         {
             Projectile.width = 16;
             Projectile.height = 16;
-            Projectile.aiStyle = 8;
-            AIType = 96;
+            Projectile.aiStyle = -1;
             Projectile.timeLeft = LifetimeTicks;
             Projectile.friendly = false;
             Projectile.hostile = true;
@@ -37,6 +36,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Basilisk
 
         public override void AI()
         {
+            // Replaces vanilla aiStyle 8 / AIType 96 gravity without its per-projectile SoundID.Item20 spam.
+            Projectile.ai[0]++;
+            if (Projectile.ai[0] > 20f)
+            {
+                Projectile.velocity.Y = MathHelper.Min(Projectile.velocity.Y + 0.2f, 16f);
+            }
+
             Projectile.rotation += 3f;
 
             float lifeProgress = 1f - Projectile.timeLeft / (float)LifetimeTicks;

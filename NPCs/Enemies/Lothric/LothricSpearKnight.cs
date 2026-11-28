@@ -41,7 +41,7 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
         {
             NPC.timeLeft = 60;
             NPC.npcSlots = 5;
-            NPC.knockBackResist = 0.1f;
+            NPC.knockBackResist = 0.05f;
             NPC.aiStyle = -1;
             NPC.damage = 40;
             NPC.defense = 40;
@@ -54,6 +54,7 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
                 NPC.lifeMax = 1200;
                 NPC.defense = 60;
                 NPC.value = 6000;
+                NPC.knockBackResist = 0.02f;
                 lothricDamage = 30;
                 lothricSmallDamage = 23;
                 lothricBigDamage = 40;
@@ -82,7 +83,7 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
             globalNPC.CanUseRopes = true;
             globalNPC.MaxJumpPower = 9.5f;
             globalNPC.RemembersLastKnownPos = true;
-            globalNPC.PoiseMax = 32f;
+            globalNPC.PoiseMax = 45f;
             // Evasion: a telegraphed hyper-armored RunningDash "greatshield charge" that flows into a thrust on
             // arrival. No hops/leaps (it has LungeThrust as its built-in gap-closer already).
             globalNPC.EvasiveRunningDash = true;
@@ -193,15 +194,15 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
 
             #endregion
 
-            // poise labels
+            // Poise labels: commit hyper-armor from the white flash (tick 9) through the 3-stab thrust, for the full
+            // jump-thrust through impact (<= 85; landing recovery > 85 is punishable), and for the full lunge (< 56;
+            // braking recovery >= 56 is punishable). Matches LothricKnight so spam cannot cancel committed attacks.
             globalNPC.AttackTelegraphing =
-                (AI_State == State_Thrusting && AI_Timer < 34)
-                || (AI_State == State_JumpThrust && AI_Timer < 82)
-                || (AI_State == State_LungeThrust && AI_Timer < 30);
+                (AI_State == State_Thrusting && AI_Timer < 9);
             globalNPC.AttackCommitted =
-                (AI_State == State_Thrusting && AI_Timer >= 34 && AI_Timer <= 90)
-                || (AI_State == State_JumpThrust && AI_Timer >= 82)
-                || (AI_State == State_LungeThrust && AI_Timer >= 30 && AI_Timer < 56);
+                (AI_State == State_Thrusting && AI_Timer >= 9 && AI_Timer <= 90)
+                || (AI_State == State_JumpThrust && AI_Timer <= 85)
+                || (AI_State == State_LungeThrust && AI_Timer < 56);
             globalNPC.ShieldGuarding = ((AI_State == State_Shielding || AI_State == State_Thrusting) && playerMeleeLevel)
                 || globalNPC.ReactiveBlockTimer > 0;
 
@@ -321,6 +322,7 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
             // THRUSTING (while shielding)
             if (AI_State == State_Thrusting)
             {
+                NPC.knockBackResist = 0f;
                 AI_Timer++;
                 AI_Timer_Shielding = 400;
                 NPC.velocity.X = 0;
@@ -589,7 +591,11 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                         modifiers.FinalDamage.Flat -= 80;
-                        if (AI_Timer_Shielding > 340) AI_Timer_Shielding -= 35;
+                        modifiers.Knockback *= 0f;
+                        if (AI_Timer_Shielding > 340)
+                        {
+                            AI_Timer_Shielding -= 35;
+                        }
                     }
                 }
                 else
@@ -598,7 +604,11 @@ namespace tsorcRevamp.NPCs.Enemies.Lothric
                     {
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit4 with { PitchVariance = 0.3f }, NPC.Center);
                         modifiers.FinalDamage.Flat -= 80;
-                        if (AI_Timer_Shielding > 340) AI_Timer_Shielding -= 35;
+                        modifiers.Knockback *= 0f;
+                        if (AI_Timer_Shielding > 340)
+                        {
+                            AI_Timer_Shielding -= 35;
+                        }
                     }
                 }
             }

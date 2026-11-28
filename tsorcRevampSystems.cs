@@ -360,6 +360,10 @@ namespace tsorcRevamp
 
                             mod._bonfireUIState.Draw(Main.spriteBatch, new GameTime());
                         }
+                        if (WeaponReinforcementUIState.Visible)
+                        {
+                            mod._weaponReinforcementUI.Draw(Main.spriteBatch, new GameTime());
+                        }
                         return true;
                     },
                     InterfaceScaleType.UI)
@@ -582,6 +586,15 @@ namespace tsorcRevamp
             if (BonfireUIState.Visible)
             {
                 mod._bonfireUIState?.Update(gameTime);
+            }
+            if (WeaponReinforcementUIState.Visible)
+            {
+                mod._weaponReinforcementUI?.Update(gameTime);
+            }
+            else if (mod.WeaponReinforcementUI != null && mod.WeaponReinforcementUI.HasSlottedItem)
+            {
+                // Safety net: if the menu ever closed without emptying the slot, immediately return the weapon.
+                mod.WeaponReinforcementUI.ReturnSlottedItem(playSound: true, allowWorldDrop: true);
             }
             if (DarkSoulCounterUIState.Visible)
             {

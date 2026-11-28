@@ -139,8 +139,9 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
         protected override bool IndependentBackHandWeapon => true;
         protected override float IndependentBackHandFacingAngle => StaffAngle;
         protected override float IndependentBackHandDrawRotation => StaffRotation;
-        protected override bool UseFrontArmSpriteForBack => true;
-        protected override float BackArmPivotOffsetX => 2f;
+        // Full-stretch rear-arm cell (col 8): painted fist (26, 40) minus shoulder pivot (26, 30), symmetric left/right.
+        protected override Vector2? IndependentBackHandGripFromPivot => new Vector2(0f, 10f);
+        protected override int TeleportTelegraphTicks => 30;
         protected override bool SlowDownDuringCustom => true;
         protected override bool CustomAttackCommitted
         {
@@ -238,23 +239,24 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             }
         }
 
-        // Lift the rear hand without laying the upright source sprite along the forearm.
+        // Tilt the upright staff forward so the ornament top clears the head/mask while the hand stays on the shaft.
         // The same facing-space texture rotation drives rendering and the spell-tip offset.
         private float StaffRotation
         {
             get
             {
-                float desired = 0.04f;
+                float restRotation = 0.42f;
+                float desired = restRotation;
                 if (!Neutral && !Throwing)
                 {
-                    desired = -0.12f;
+                    desired = 0.30f;
                     if (move == CasterMove.Strike)
                     {
-                        desired = 0.1f;
+                        desired = 0.50f;
                     }
                     else if (move == CasterMove.Spirit)
                     {
-                        desired = 0.04f + SpiritShake;
+                        desired = 0.38f + SpiritShake;
                     }
                 }
 
@@ -265,7 +267,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                     blend = 1f - MathHelper.Clamp((elapsed - tellTicks - tailTicks) / 20f, 0f, 1f);
                 }
 
-                return MathHelper.SmoothStep(0.04f, desired, blend);
+                return MathHelper.SmoothStep(restRotation, desired, blend);
             }
         }
 
@@ -383,6 +385,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
             global.CanHealAllies = false;
             global.CanGoInvisible = true;
             global.CanTeleport = true;
+            global.TeleportTelegraphTime = 30;
             global.CanWalkBackwards = true;
             global.PoiseStaggerResetsAI = true;
             global.InvisibleAlpha = 205;
@@ -410,7 +413,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                 return;
             }
 
-            SmartFighter4AI.Run(NPC, TopSpeed * speedMult, Acceleration, doorBreakingDamage: 0, attackRange: 700f);
+            SmartFighter4AI.Run(NPC, TopSpeed * speedMult, Acceleration, doorBreakingDamage: 10, attackRange: 700f);
         }
 
         public override void AI()
@@ -1071,8 +1074,38 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                     CasterMove.SelfHeal or CasterMove.AllyHeal => DustID.TintableDustLighted,
                     _ => DustID.CursedTorch
                 };
-                Dust dust = Dust.NewDustPerfect(origin + offset, dustType, -offset * 0.12f, 120, ActionColor, 0.8f);
+                Dust dust = Dust.NewDustPerfect(origin + offset, dustType, -offset * 0.12f, 60, ActionColor, 0.8f);
                 dust.noGravity = true;
+
+                // 1-2 tile (16-32px) directional tell from the staff tip / throw hand instead of a solid aim line.
+                if (move == CasterMove.Strike || (Throwing && launchVelocity.LengthSquared() > 0f))
+                {
+                    Vector2 direction = aim;
+                    if (Throwing)
+                    {
+                        direction = launchVelocity.SafeNormalize(new Vector2(facing, 0f));
+                    }
+
+                    Vector2 sideways = new Vector2(-direction.Y, direction.X);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 spawnPos = origin + direction * Main.rand.NextFloat(4f, 32f)
+                            + sideways * Main.rand.NextFloat(-2f, 2f);
+                        Vector2 moteVelocity = direction * Main.rand.NextFloat(1.4f, 2.8f);
+                        Dust stream = Dust.NewDustPerfect(spawnPos, dustType, moteVelocity, 40, ActionColor,
+                            Main.rand.NextFloat(0.75f, 1.15f));
+                        stream.noGravity = true;
+                    }
+
+                    if (elapsed % 2 == 0)
+                    {
+                        Vector2 sparkPos = origin + direction * Main.rand.NextFloat(8f, 32f);
+                        Dust spark = Dust.NewDustPerfect(sparkPos, DustID.AncientLight,
+                            direction * Main.rand.NextFloat(2.2f, 3.6f), 20, ActionColor,
+                            Main.rand.NextFloat(0.45f, 0.7f));
+                        spark.noGravity = true;
+                    }
+                }
                 if (move == CasterMove.Storm)
                 {
                     float radius = tellTicks - elapsed;
@@ -1132,36 +1165,7 @@ namespace tsorcRevamp.NPCs.Enemies.Dworc
                 return;
             }
 
-            // MagicPixel is 1x1000: every draw below samples one texel, or a null source rect paints 1000px-tall blocks.
-            Texture2D pixel = TextureAssets.MagicPixel.Value;
-            Rectangle onePixel = new Rectangle(0, 0, 1, 1);
             Vector2 origin = StaffTip;
-            if (Throwing && launchVelocity.LengthSquared() > 0f)
-            {
-                origin = PuppetFrontHandPositionAt(-0.1f);
-                Vector2 point = origin;
-                Vector2 velocity = launchVelocity;
-                float gravity = DworcFlask.GravityFor(move);
-                for (int i = 0; i < 90; i++)
-                {
-                    velocity.Y += gravity;
-                    point += velocity;
-                    if (i % 3 == 0)
-                    {
-                        spriteBatch.Draw(pixel, point - screenPos, onePixel, ActionColor * 0.35f, 0f, Vector2.Zero, new Vector2(2f), SpriteEffects.None, 0f);
-                    }
-
-                    if (Collision.SolidCollision(point - Vector2.One * 3f, 6, 6))
-                    {
-                        break;
-                    }
-                }
-            }
-            else if (move == CasterMove.Strike)
-            {
-                spriteBatch.Draw(pixel, origin - screenPos, onePixel, ActionColor * 0.35f, aim.ToRotation(), Vector2.Zero, new Vector2(480f, 1f), SpriteEffects.None, 0f);
-            }
-
             float scale = MathHelper.Lerp(0.25f, 1f, MathHelper.Clamp((elapsed - tellTicks + 20) / 20f, 0f, 1f));
             if (!Throwing && !Utility)
             {

@@ -2014,6 +2014,13 @@ namespace tsorcRevamp.NPCs
                     {
                         continue;  // outside this NPC's jump reach
                     }
+                    // A 1-2 tile step down onto an adjacent span is a normal slope walk/drop — never jump up
+                    // into the air just to step down uneven terrain.
+                    bool touchingHorizontally = b.LeftX <= a.RightX + 1 && b.RightX >= a.LeftX - 1;
+                    if (dy <= 0 && dy >= -2 && touchingHorizontally)
+                    {
+                        continue;
+                    }
                     if (TryFindJumpEdge(a, b, dy, out int launchX, out int landX, out int absDx))
                     {
                         EdgeKind kind = dy >= 1 ? EdgeKind.JumpUp : EdgeKind.JumpGap;
@@ -2027,8 +2034,23 @@ namespace tsorcRevamp.NPCs
                         int landingWidth = b.RightX - b.LeftX + 1;
                         int tightPenalty = landingWidth <= 2 ? 15 : 0;
                         int badPenalty = BadEdgePenalty(landX, b.Y, badEdges);
-                        if (_stableHeavyTerrain && badPenalty >= FailedEdgeCost) continue;
-                        int baseCost = kind == EdgeKind.JumpUp ? 5 + dy * 2 : 5 + absDx;
+                        if (_stableHeavyTerrain && badPenalty >= FailedEdgeCost)
+                        {
+                            continue;
+                        }
+                        // Higher fixed jump cost (10) with lower per-tile rise (+1/tile) makes A* walk mild
+                        // slopes and prefer one decisive higher jump over chaining multiple short hops.
+                        // Downward JumpGaps carry an extra penalty (+8) so walking/dropping down slopes wins.
+                        int baseCost;
+                        if (kind == EdgeKind.JumpUp)
+                        {
+                            baseCost = 10 + dy;
+                        }
+                        else
+                        {
+                            int downwardJumpPenalty = dy < 0 ? 8 : 0;
+                            baseCost = 10 + absDx + downwardJumpPenalty;
+                        }
                         a.Edges.Add(new Edge(b, kind, baseCost + wrongDirPenalty + tightPenalty + badPenalty, launchX, landX));
                     }
                 }
@@ -4412,16 +4434,15 @@ namespace tsorcRevamp.NPCs
             // in (e.g. a wide enemy skips the 3-wide pit). Only suppresses the gap-jump for the below-player case;
             // horizontal pursuit (allowCliffDrop false) still jumps gaps normally.
             string gapDiag = null;
-            if (drop >= 2 && !allowCliffDrop)
+            // Only treat drops of 3+ tiles as a gap/pit: a 1-2 tile step down on an uneven slope is safe
+            // to walk off normally (cliff-halt begins at drop >= 4) and should never trigger short hops.
+            if (drop >= 3 && !allowCliffDrop)
             {
                 bool gapFound = TryMeasureGap(frontX, feetY, direction, out int gap, out int landDrop, out int landX, out gapDiag);
-                if (gapFound && gap == 1 && landDrop <= 1)
+                if (gapFound && gap == 1 && landDrop <= 2)
                 {
-                    // A single missing tile with a flush (or near-flush) landing needs no jump at all — normal
-                    // walking momentum carries the body across it, same as a player strolling over a 1-block
-                    // notch. Requiring gap>=2 here used to fall through every width-1 gap straight to the
-                    // ledge self-catch below, freezing the NPC dead at the edge of the easiest gap there is.
-                    // Just don't brake; let the caller's ApplyChase keep walking it forward.
+                    // A single missing tile with a shallow landing (<= 2 tiles down) needs no jump — walking
+                    // momentum carries the body across cleanly without short-hopping down slopes.
                     action = "";
                     reason = "";
                     return false;

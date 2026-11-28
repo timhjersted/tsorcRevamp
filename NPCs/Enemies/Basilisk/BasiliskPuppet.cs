@@ -135,7 +135,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             {
                 if (Kind == FamilyKind.Hunter)
                 {
-                    return 2.6f;
+                    return 3.2f;
                 }
 
                 if (Kind == FamilyKind.Shifter)
@@ -153,7 +153,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             {
                 if (Kind == FamilyKind.Hunter)
                 {
-                    return 0.10f;
+                    return 0.12f;
                 }
 
                 return Kind == FamilyKind.Shifter ? 0.08f : 0.05f;
@@ -415,34 +415,34 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.NavSearchRadius = 80;
-            globalNPC.KiteRangeMin = 4f;
-            globalNPC.KiteRangeMax = 10f;
-            globalNPC.KiteLooseness = 0.7f;
             if (Kind == FamilyKind.Walker)
             {
                 globalNPC.NavSearchRadius = 70;
                 globalNPC.KiteRangeMin = 6f;
                 globalNPC.KiteRangeMax = 12f;
+                globalNPC.KiteLooseness = 0.5f;
                 globalNPC.CanTeleport = true;
                 globalNPC.TeleportMaxCharges = 2;
+                EvasiveProfile.Basilisk(globalNPC);
             }
-            else
+            else if (Kind == FamilyKind.Shifter)
             {
                 globalNPC.PatrolMode = PatrolMode.Wander;
                 globalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
-                if (Kind == FamilyKind.Shifter)
-                {
-                    globalNPC.KiteRangeMin = 8f;
-                    globalNPC.KiteRangeMax = 14f;
-                }
-            }
-
-            if (Kind != FamilyKind.Hunter)
-            {
+                globalNPC.KiteRangeMin = 8f;
+                globalNPC.KiteRangeMax = 14f;
                 globalNPC.KiteLooseness = 0.5f;
+                EvasiveProfile.Basilisk(globalNPC);
             }
-
-            EvasiveProfile.Basilisk(globalNPC);
+            else
+            {
+                // Hunter pursues aggressively instead of kiting or hopping away on hit.
+                globalNPC.PatrolMode = PatrolMode.Wander;
+                globalNPC.PatrolAnchorSource = PatrolAnchorSource.GiveUpLocation;
+                globalNPC.KiteRangeMin = 0f;
+                globalNPC.KiteRangeMax = 0f;
+                globalNPC.KiteLooseness = 0f;
+            }
         }
 
         protected override void RunMovementAI(float speedMult)
@@ -469,9 +469,17 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 if (move == Move.None)
                 {
                     NPC.TargetClosest(false);
-                    if (NPC.HasValidTarget && globalNPC.StaggerTimer == 0 && selectionDelay == 0)
+                    if (NPC.HasValidTarget && globalNPC.StaggerTimer == 0)
                     {
-                        SelectMove(Main.player[NPC.target]);
+                        Player targetPlayer = Main.player[NPC.target];
+                        bool hunterInBiteRange = Kind == FamilyKind.Hunter
+                            && cooldowns[(int)Move.Bite] == 0
+                            && NPC.Distance(targetPlayer.Center) < 72f
+                            && Math.Abs(targetPlayer.Center.Y - NPC.Center.Y) < 48f;
+                        if (selectionDelay == 0 || hunterInBiteRange)
+                        {
+                            SelectMove(targetPlayer);
+                        }
                     }
                 }
                 else if (targetIndex >= Main.maxPlayers || !Main.player[targetIndex].active || Main.player[targetIndex].dead)
@@ -581,7 +589,17 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             cards.Add(Move.Tongue);
             cards.Add(Move.Disrupter);
             cards.Add(Move.Spit);
-            cards.Add(Move.Spit);
+            if (Kind != FamilyKind.Hunter)
+            {
+                cards.Add(Move.Spit);
+            }
+            else
+            {
+                // Extra melee/leap cards so Hunter regularly closes with a leaping swipe or bite.
+                cards.Add(Move.Bite);
+                cards.Add(Move.Bound);
+            }
+
             if (Kind != FamilyKind.Walker)
             {
                 cards.Add(Move.Lob);
@@ -596,6 +614,7 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 cards.Clear();
                 cards.Add(Move.Desperate);
                 cards.Add(Move.Bite);
+                cards.Add(Move.Bound);
                 cards.Add(Move.Tongue);
             }
         }
@@ -615,7 +634,9 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 case Move.Bite:
                     return distance < 72f && Math.Abs(target.Center.Y - NPC.Center.Y) < 48f;
                 case Move.Bound:
-                    return distance >= 120f && distance <= 360f && NPC.velocity.Y == 0f && SolveBound(target);
+                    float minBoundRange = Kind == FamilyKind.Hunter ? 96f : 120f;
+                    float maxBoundRange = Kind == FamilyKind.Hunter ? 440f : 360f;
+                    return distance >= minBoundRange && distance <= maxBoundRange && NPC.velocity.Y == 0f && SolveBound(target);
                 case Move.Tongue:
                     return distance >= 120f && distance <= BasiliskLeechTongue.MaxLaunchRange && lineOfSight && FamilyHazardAvailable(false, target);
                 case Move.Breath:
@@ -741,9 +762,20 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
                 NPC.velocity.X *= 0.8f;
                 if (authority && stageTimer >= stageDuration)
                 {
+                    Move finishedMove = move;
                     move = Move.None;
                     stage = Stage.None;
-                    selectionDelay = 1;
+                    // Give Hunter a brief pursuit window after attacks so it actively runs down the player
+                    // instead of immediately rooting for another ranged cast on the next tick.
+                    if (Kind == FamilyKind.Hunter && finishedMove != Move.Bite)
+                    {
+                        selectionDelay = 45;
+                    }
+                    else
+                    {
+                        selectionDelay = 1;
+                    }
+
                     EnterPhase(AttackPhase.Idle, 0);
                     NPC.netUpdate = true;
                     RequestNetworkSnapshot();
@@ -1156,6 +1188,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             stage = Stage.Recovery;
             stageTimer = 0;
             stageDuration = downtime;
+            if (Kind == FamilyKind.Hunter)
+            {
+                stageDuration = 30;
+            }
+
             if (move == Move.Bite)
             {
                 stageDuration = 30;
@@ -1179,44 +1216,61 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
             }
 
             int facing = destination.X >= NPC.Center.X ? 1 : -1;
-            int tileX = (int)((destination.X + facing * 32f) / 16f);
             int startY = (int)((destination.Y + target.height * 0.5f) / 16f) - 4;
-            for (int y = startY; y < startY + 12; y++)
+            // Try landing slightly past the player, on them, or just short (handles walls/ledges),
+            // and fall back to a flatter 28-tick pounce when a low ceiling blocks the 40-tick arc.
+            float[] horizontalOffsets = { facing * 32f, 0f, -facing * 32f };
+            int[] flightOptions = { 40, 28 };
+            for (int offsetIndex = 0; offsetIndex < horizontalOffsets.Length; offsetIndex++)
             {
-                if (!WorldGen.InWorld(tileX, y, 10) || !UsefulFunctions.IsTileReallySolid(tileX, y))
+                int tileX = (int)((destination.X + horizontalOffsets[offsetIndex]) / 16f);
+                for (int y = startY; y < startY + 12; y++)
                 {
-                    continue;
-                }
-
-                Vector2 landing = new Vector2(tileX * 16f - NPC.width * 0.5f, y * 16f - NPC.height);
-                if (Collision.SolidCollision(landing, NPC.width, NPC.height))
-                {
-                    continue;
-                }
-
-                const int flightTicks = 40;
-                Vector2 velocity = SolveArc(NPC.position, landing, 0.4f, flightTicks);
-                if (Math.Abs(velocity.X) > 10.5f)
-                {
-                    return false;
-                }
-
-                Vector2 sample = NPC.position;
-                Vector2 step = velocity;
-                for (int i = 0; i < flightTicks - 1; i++)
-                {
-                    step.Y += 0.4f;
-                    sample += step;
-                    if (Collision.SolidCollision(sample, NPC.width, NPC.height))
+                    if (!WorldGen.InWorld(tileX, y, 10) || !UsefulFunctions.IsTileReallySolid(tileX, y))
                     {
-                        return false;
+                        continue;
                     }
-                }
 
-                landingPosition = landing;
-                boundVelocity = velocity;
-                boundFlightTicks = flightTicks;
-                return true;
+                    Vector2 landing = new Vector2(tileX * 16f - NPC.width * 0.5f, y * 16f - NPC.height);
+                    if (Collision.SolidCollision(landing, NPC.width, NPC.height))
+                    {
+                        continue;
+                    }
+
+                    for (int flightIndex = 0; flightIndex < flightOptions.Length; flightIndex++)
+                    {
+                        int flightTicks = flightOptions[flightIndex];
+                        Vector2 velocity = SolveArc(NPC.position, landing, 0.4f, flightTicks);
+                        if (Math.Abs(velocity.X) > 12.5f)
+                        {
+                            continue;
+                        }
+
+                        bool blocked = false;
+                        Vector2 sample = NPC.position;
+                        Vector2 step = velocity;
+                        for (int i = 0; i < flightTicks - 1; i++)
+                        {
+                            step.Y += 0.4f;
+                            sample += step;
+                            if (Collision.SolidCollision(sample, NPC.width, NPC.height))
+                            {
+                                blocked = true;
+                                break;
+                            }
+                        }
+
+                        if (!blocked)
+                        {
+                            landingPosition = landing;
+                            boundVelocity = velocity;
+                            boundFlightTicks = flightTicks;
+                            return true;
+                        }
+                    }
+
+                    break;
+                }
             }
 
             return false;
@@ -1404,6 +1458,11 @@ namespace tsorcRevamp.NPCs.Enemies.Basilisk
 
                     SoundEngine.PlaySound(sound, MouthPosition);
                 }
+            }
+
+            if (stage == Stage.Action && move == Move.Breath && stageTimer > 0 && stageTimer % 24 == 0)
+            {
+                SoundEngine.PlaySound(SoundID.Item34 with { Volume = 0.25f, Pitch = -0.2f }, MouthPosition);
             }
 
             if (move == Move.Disrupter)

@@ -29,19 +29,38 @@ namespace tsorcRevamp.NPCs.Enemies
         }
 
         public const int SpearTellTicks = 48;
+        public const int SpearFlashLeadTicks = 30;
         public const int SpearStrokeTicks = 22;
         public const int SpearSecondTellStart = SpearTellTicks + SpearStrokeTicks;
         public const int SpearSecondStrike = SpearSecondTellStart + SpearTellTicks;
         public const int SingleSpearTicks = SpearSecondTellStart + 32;
         public const int DoubleSpearTicks = SpearSecondStrike + SpearStrokeTicks + 44;
         public const float SpearCarryRotation = -0.30f;
-        public const float SpearCarryGrip = 0.65f;
-        public const float SpearDrawnGrip = 0.20f;
-        public const float SpearExtendedGrip = 0.88f;
+        public const float SpearCarryGrip = 0.55f;
+        public const float SpearDrawnGrip = 0.45f;
+        public const float SpearExtendedGrip = 0.62f;
+        public const float SpearJumpHorizontalSpeed = 3.0f;
+        public const float SpearJumpVerticalSpeed = -2.6f;
         public const float SpearHeadLength = 20f;
         public const float SpearWidth = 10f;
         public static readonly Vector2 SpearHeadTexel = new Vector2(1f, 1f);
         public static readonly Vector2 SpearButtTexel = new Vector2(68f, 68f);
+
+        // Matches HunterArcherPuppet's relaxed waist carry (~2px closer to body center than 1.20 rad).
+        private const float BowRestCarryAngle = 1.42f;
+        private const float BowRestFrontHandAngle = 1.18f;
+        private const int BowRaiseTicks = 12;
+        private const int BowLowerTicks = 12;
+        private const float ReleasedStringHandOffset = 2.45f;
+        // Installed Demon Bow: 18x40, riser (14,20), inset string x2..3/y10..29; retain both decorated limb tips.
+        private static readonly Vector2 DemonBowGripNorm = new Vector2(14f / 18f, 0.5f);
+        // Damage 0 and no swing hand selects the back slot, so the carried bow never tests a blade capsule.
+        private static readonly PuppetWeapon CarriedDemonBow = new PuppetWeapon(
+            ItemID.DemonBow,
+            damage: 0,
+            handleNorm: DemonBowGripNorm,
+            drawScale: 1f,
+            bladeWidth: 1f);
 
         private static readonly int[] ExpertLife = { 600, 1200, 10000 };
         private static readonly int[] Defense = { 10, 24, 42 };
@@ -81,6 +100,10 @@ namespace tsorcRevamp.NPCs.Enemies
         private bool hasPreviousBlade;
         private Vector2 previousOrigin;
         private Vector2 previousTip;
+        // Visual only, re-derived on every peer from synced phase transitions so the bow lowers smoothly.
+        private float bowLowerFromAngle = BowRestCarryAngle;
+        private int bowRecoveryTicksElapsed;
+        private AttackPhase lastVisualPhase = AttackPhase.Idle;
 
         protected override string InvaderTitle => "Obsidian Guard";
         protected override bool AnnounceInvasion => false;
@@ -109,15 +132,18 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override int RangedAttackTicks => move == Move.DrawnShot ? 8 : 6;
         protected override int RangedCooldownAfterUse => 0;
         protected override RangedStyle RangedAnimStyle => RangedStyle.Bow;
-        protected override bool ShowRangedWeaponDuringRecovery => true;
-        protected override bool ShowWeaponDuringNeutral => true;
+        protected override bool ShowRangedWeaponDuringRecovery => false;
+        protected override bool ShowWeaponDuringNeutral => spearEquipped;
         protected override bool HoldNeutralWeaponOnCompositeArm => spearEquipped;
         protected override bool UseCompositeArmSwing => true;
-        protected override bool UseCompositeArmForAdditionalPhase => Phase == AttackPhase.Custom
+        protected override bool UseCompositeArmForAdditionalPhase => (Phase == AttackPhase.Custom && spearEquipped)
             || Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack;
         protected override bool UseBowStringDrawPose => true;
         protected override bool HasRangedJumpOverride => true;
-        protected override bool SlowDownDuringCustom => !retreating;
+        protected override bool SlowDownDuringCustom => !retreating && !IsSpearLunging;
+        protected override bool IndependentBackHandWeapon => !spearEquipped && !IsBowAction;
+        protected override float IndependentBackHandFacingAngle => BowCarryAngle;
+        protected override float IndependentBackHandDrawRotation => BowCarryAngle;
         protected override bool DrawWeaponAsSpear => spearEquipped;
         protected override bool MirrorSpearRotationByFacing => true;
         protected override bool MirrorMeleeSwingRotationByFacing => true;
@@ -127,15 +153,93 @@ namespace tsorcRevamp.NPCs.Enemies
         protected override Vector2 SpearBaseNorm => SpearButtTexel / 70f;
         protected override float SpearDrawRotationOffset => MathHelper.PiOver2;
         protected override string NockedBowArrowTexture => "Terraria/Images/Projectile_" + ProjectileID.UnholyArrow;
-        // Installed Demon Bow: 18x40, riser (14,20), inset string x2..3/y10..29; retain both decorated limb tips.
-        protected override Vector2 GetHeldRangedGripNorm(int itemType) => new Vector2(14f / 18f, 0.5f);
+        protected override Vector2 GetHeldRangedGripNorm(int itemType) => DemonBowGripNorm;
         protected override float GetHeldRangedDrawScale(int itemType) => 1f;
         protected override Rectangle GetBowStringTexels(int itemType) => new Rectangle(2, 10, 2, 20);
-        protected override float BowAimAngle => (float)Math.Atan2(shotAim.Y, shotAim.X * facing);
+
+        protected override float BowAimAngle
+        {
+            get
+            {
+                float aim = (float)Math.Atan2(shotAim.Y, shotAim.X * facing);
+
+                if (Phase != AttackPhase.RangedTelegraph)
+                {
+                    return aim;
+                }
+
+                int elapsed = RangedTelegraphTicks - PhaseTimer;
+                float raise = MathHelper.Clamp(elapsed / (float)BowRaiseTicks, 0f, 1f);
+                float blend = MathHelper.SmoothStep(0f, 1f, raise);
+                return MathHelper.Lerp(BowRestCarryAngle, aim, blend);
+            }
+        }
+
+        private float BowCarryAngle
+        {
+            get
+            {
+                if (Phase != AttackPhase.RangedRecovery)
+                {
+                    return BowRestCarryAngle;
+                }
+
+                float lower = MathHelper.Clamp(bowRecoveryTicksElapsed / (float)BowLowerTicks, 0f, 1f);
+                float blend = MathHelper.SmoothStep(0f, 1f, lower);
+                return MathHelper.Lerp(bowLowerFromAngle, BowRestCarryAngle, blend);
+            }
+        }
+
+        protected override float? FreeFrontArmFacingAngle
+        {
+            get
+            {
+                if (spearEquipped)
+                {
+                    return null;
+                }
+
+                if (IsNeutral || Phase == AttackPhase.Custom)
+                {
+                    return BowRestFrontHandAngle;
+                }
+
+                if (Phase != AttackPhase.RangedRecovery)
+                {
+                    return null;
+                }
+
+                float releasedHand = bowLowerFromAngle - ReleasedStringHandOffset;
+                float lower = MathHelper.Clamp(bowRecoveryTicksElapsed / (float)BowLowerTicks, 0f, 1f);
+                float blend = MathHelper.SmoothStep(0f, 1f, lower);
+                return MathHelper.Lerp(releasedHand, BowRestFrontHandAngle - MathHelper.TwoPi, blend);
+            }
+        }
 
         private bool IsNeutral => Phase == AttackPhase.Idle || Phase == AttackPhase.CasualStroll;
         private bool IsBowAction => Phase == AttackPhase.RangedTelegraph || Phase == AttackPhase.RangedAttack;
         private int CustomElapsed => actionTicks - PhaseTimer;
+
+        private bool IsSpearLunging
+        {
+            get
+            {
+                if (Phase != AttackPhase.Custom || move != Move.SpearCheck || equipping)
+                {
+                    return false;
+                }
+
+                int strike = SpearTellTicks;
+
+                if (followup && CustomElapsed >= SpearSecondTellStart)
+                {
+                    strike = SpearSecondStrike;
+                }
+
+                int stroke = CustomElapsed - strike;
+                return stroke >= 0 && stroke < 14;
+            }
+        }
 
         protected override float? CustomWeaponRotation
         {
@@ -206,6 +310,7 @@ namespace tsorcRevamp.NPCs.Enemies
             NPC.value = SoulValue[0];
             NPC.knockBackResist = Knockback[0];
             NPC.npcSlots = 2f;
+            NPC.lavaImmune = true;
             NPC.HitSound = SoundID.NPCHit4;
             NPC.DeathSound = SoundID.NPCDeath2;
             EnemyDamage.SetContact(NPC, 0);
@@ -266,6 +371,7 @@ namespace tsorcRevamp.NPCs.Enemies
             tsorcRevampGlobalNPC globalNPC = NPC.GetGlobalNPC<tsorcRevampGlobalNPC>();
             globalNPC.PoiseMax = Poise[stage];
             ConfigureCustomRangedWeapon(RangedWeaponItemType, RangedStyle.Bow);
+            EquipWeapon(PuppetHandSlot.Back, CarriedDemonBow);
 
             if (authority)
             {
@@ -401,17 +507,24 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // Recovery keeps the weapon that performed the action; the next equip gets its own harmless 30t.
-            if (IsNeutral || Phase == AttackPhase.RangedRecovery)
+            if (spearEquipped && (IsNeutral || Phase == AttackPhase.RangedRecovery))
             {
-                int itemType = RangedWeaponItemType;
-
-                if (spearEquipped)
-                {
-                    itemType = MeleeWeaponItemType;
-                }
-
-                SetDisplayWeapon(itemType, false);
+                SetDisplayWeapon(MeleeWeaponItemType, false);
             }
+
+            if (IsBowAction)
+            {
+                bowLowerFromAngle = BowAimAngle;
+            }
+
+            bowRecoveryTicksElapsed++;
+
+            if (Phase == AttackPhase.RangedRecovery && lastVisualPhase != AttackPhase.RangedRecovery)
+            {
+                bowRecoveryTicksElapsed = 0;
+            }
+
+            lastVisualPhase = Phase;
 
             if (Phase == AttackPhase.RangedRecovery)
             {
@@ -437,7 +550,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 spearEquipped = wantsSpear;
                 equipping = true;
                 actionTicks = 30;
-                int itemType = RangedWeaponItemType;
+                int itemType = -1;
 
                 if (spearEquipped)
                 {
@@ -497,7 +610,7 @@ namespace tsorcRevamp.NPCs.Enemies
                     retreating = true;
                     retreatStart = NPC.Center;
                     actionTicks = (int)Math.Ceiling(retreatDistance / 3f);
-                    StartCustomAttack(actionTicks, RangedWeaponItemType, false);
+                    StartCustomAttack(actionTicks, -1, false);
                     return;
                 }
             }
@@ -684,15 +797,15 @@ namespace tsorcRevamp.NPCs.Enemies
 
         protected override void DoCustomTick(int ticksRemaining)
         {
-            NPC.velocity.X = 0f;
-
             if (equipping)
             {
+                NPC.velocity.X = 0f;
                 return;
             }
 
             if (retreating)
             {
+                NPC.velocity.X = 0f;
                 float travelled = Math.Abs(NPC.Center.X - retreatStart.X);
                 Vector2 nextPosition = NPC.position - new Vector2(facing * 3f, 0f);
                 bool safe = !Collision.SolidCollision(nextPosition, NPC.width, NPC.height)
@@ -708,11 +821,61 @@ namespace tsorcRevamp.NPCs.Enemies
 
             if (move != Move.SpearCheck)
             {
+                NPC.velocity.X = 0f;
                 return;
             }
 
             int elapsed = CustomElapsed;
             bool authority = Main.netMode != NetmodeID.MultiplayerClient;
+
+            // Deterministic forward hop on each thrust (driven by synced elapsed/followup/facing on all peers)
+            // so the shorter center-hand grip still covers the same ~90px stab reach and lands before followup.
+            int strike = SpearTellTicks;
+
+            if (followup && elapsed >= SpearSecondTellStart)
+            {
+                strike = SpearSecondStrike;
+            }
+
+            int stroke = elapsed - strike;
+
+            if (stroke == 0)
+            {
+                if (NPC.velocity.Y >= 0f)
+                {
+                    NPC.velocity.Y = SpearJumpVerticalSpeed;
+                }
+
+                NPC.velocity.X = facing * SpearJumpHorizontalSpeed;
+            }
+            else if (stroke > 0 && stroke < 9)
+            {
+                NPC.velocity.X = facing * SpearJumpHorizontalSpeed;
+            }
+            else if (stroke >= 9 && stroke < 14)
+            {
+                NPC.velocity.X *= 0.75f;
+
+                if (Math.Abs(NPC.velocity.X) < 0.2f)
+                {
+                    NPC.velocity.X = 0f;
+                }
+            }
+            else
+            {
+                NPC.velocity.X = 0f;
+            }
+
+            if (authority)
+            {
+                bool flashTick = elapsed == SpearTellTicks - SpearFlashLeadTicks
+                    || (followup && elapsed == SpearSecondStrike - SpearFlashLeadTicks);
+
+                if (flashTick)
+                {
+                    SpawnTelegraphFlash(Color.White);
+                }
+            }
 
             if (authority && NPC.HasValidTarget)
             {
@@ -766,8 +929,8 @@ namespace tsorcRevamp.NPCs.Enemies
             }
         }
 
-        // One authored pose feeds the game and offline preview. Each 48t tell ends on the 2t harmless drive;
-        // live t2..9, 4t end hold, 8t withdrawal, then exposed recovery. No body push or electric payload.
+        // One authored pose feeds the game and offline preview. Each 48t tell (white flash 30t before strike)
+        // ends on the 2t harmless drive; live t2..9 with forward hop, 4t end hold, 8t withdrawal, then recovery.
         public static void ResolveSpearPose(int elapsed, bool secondThrust, out float rotation, out float grip, out bool live)
         {
             int strike = SpearTellTicks;

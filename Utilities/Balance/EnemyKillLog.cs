@@ -287,7 +287,7 @@ namespace tsorcRevamp.Utilities.Balance
                 stage = stageCode,
                 killNumber = killNumber,
                 gameMode = Main.GameMode,
-                newEnemyBalance = EnemyBalance.Enabled,
+                newEnemyBalance = true,
                 remixMap = tsorcRevampWorld.RemixMap,
                 shmScale = tsorcRevampWorld.SHMScale,
                 hmBossesDowned = ProgressionScaling.HardmodeBossesDowned,

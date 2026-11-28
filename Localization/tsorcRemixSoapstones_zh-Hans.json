@@ -229,7 +229,8 @@
   "tileX": 571,
   "tileY": 1552,
   "textWidth": 600,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "你感到恶魔近在咫尺。四周弥漫着灼热凝滞的空气，几乎令你窒息昏厥… --NEWLINE   --NEWLINE \u0022左侧通道虽被封锁，但应是通往大地恶魔的捷径，或许上层通道能找到开启之法。\u0022",
@@ -252,7 +253,8 @@
   "tileY": 1559,
   "textWidth": 740,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "- 你发现了灰烬之王葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败七个恶魔领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
@@ -1338,7 +1340,7 @@
   "category": "location"
 }
 {
-  "text": "\u0022Miakoda，在你的旅行中，你遇到过暗影钥匙吗？\u0022 --NEWLINE   --NEWLINE \u0022在我被骷髅王囚禁之前，我曾经从冰冻海洋深处获得过一个。 --NEWLINE   --NEWLINE 我也听过传言，飞龙法师会向那些玩他的游戏的人提供一个， --NEWLINE   --NEWLINE 这个游戏是在他位于东部山巅的堡垒里举办的……\u0022",
+  "text": "\u0022Miakoda，在你的旅行中，你遇到过暗影钥匙吗？\u0022 --NEWLINE   --NEWLINE \u0022在我被冢王奥斯里克囚禁之前，我曾经从冰冻海洋深处获得过一个。 --NEWLINE   --NEWLINE 我也听过传言，飞龙法师会向那些玩他的游戏的人提供一个， --NEWLINE   --NEWLINE 这个游戏是在他位于东部山巅的堡垒里举办的……\u0022",
   "tileX": 4236,
   "tileY": 1749,
   "textWidth": 500,

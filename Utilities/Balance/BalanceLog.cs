@@ -18,6 +18,10 @@ using Terraria.ModLoader.Default;
 using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 using tsorcRevamp.Systems.CeruleanFlask;
+using tsorcRevamp.Systems.Conqueror;
+using tsorcRevamp.Systems.Electrocute;
+using tsorcRevamp.Systems.LethalTempo;
+using ElectrocuteReadyBuff = tsorcRevamp.Systems.Electrocute.Electrocute;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -125,8 +129,14 @@ namespace tsorcRevamp.Utilities.Balance
         /// Cataluminance, Mecha Dragon under Wyvern Mage, Eater of Worlds body and tail now count as boss damage), bosses spawned by a
         /// participant join at spawn (Serris X, the Okiku chain), a fight first hit on a body segment is named after its head, and a
         /// boss bag only ends the fight when a participant dropped it and no other participant is alive. New encounter field
-        /// bossesInFight; new "heartbeat" lines (play and active time every 5 minutes and on world exit).</summary>
-        internal const int LoggerRevision = 9;
+        /// bossesInFight; new "heartbeat" lines (play and active time every 5 minutes and on world exit).
+        /// Revision 10: track iconic weapon reinforcement (reinforceable, reinforcementLevel 0-10,
+        /// reinforcementUpgrades, reinforcedBaseDamage) on WeaponUsage and WeaponBenchmark records.
+        /// Revision 11: Bearer of the Curse class mechanics through the fight. Encounter conqueror and lethalTempo: time at each
+        /// stack count, 1 Hz stack line, boss damage by stack count, whip / bolt damage. Encounter electrocute: procs, proc
+        /// distance scale and damage, cooldown vs ready time, average ranged multiplier. Encounter arcaneSorcery: damage taken
+        /// and mana spent during Mana Burn, out-of-mana and Mana Sickness lockout time.</summary>
+        internal const int LoggerRevision = 11;
 
         private const int SampleIntervalTicks = 60;
         private const int MaxEncounterTicks = 60 * 60 * 30;   // 30 minutes, runaway guard
@@ -141,8 +151,12 @@ namespace tsorcRevamp.Utilities.Balance
         private const int EchoSuppressionTicks = 60 * 5;
 
         // Kill-time target the fights are designed around. A kill under 60% of the minimum is flagged as bypassed.
+        // Master has its own, longer band: bosses carry about 1.27x Expert HP there, so holding Master to the Expert band
+        // would push HP tuning down and leave Expert too short. Every other mode uses the Expert band.
         private const int TargetTtkMinSeconds = 120;
         private const int TargetTtkMaxSeconds = 180;
+        private const int MasterTargetTtkMinSeconds = 150;
+        private const int MasterTargetTtkMaxSeconds = 225;
         private const float BypassedFightFraction = 0.6f;
 
         private const int MaxHitsTakenKept = 300;
@@ -204,6 +218,8 @@ namespace tsorcRevamp.Utilities.Balance
         private static int _manaBurnTicks;
         private static int _manaBurnActivations;
         private static long _damageDuringManaBurn;
+        private static int _lastConquerorStacks;
+        private static int _lastLethalTempoStacks;
         private static int _ceruleanDrinks;
         private static long _ceruleanManaRestored;
 
@@ -308,7 +324,8 @@ namespace tsorcRevamp.Utilities.Balance
         }
 
         /// <param name="projectileType">The projectile that dealt the hit, or -1 for a melee swing.</param>
-        internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone, bool crit, int projectileType = -1)
+        internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone, bool crit,
+            int projectileType = -1, int reinforcementLevel = -1, int reinforcementUpgrades = -1)
         {
             if (!Active || damageDone <= 0 || npc == null || player == null || player.whoAmI != Main.myPlayer)
                 return;
@@ -357,7 +374,7 @@ namespace tsorcRevamp.Utilities.Balance
             bucket.damage += damageDone;
             bucket.hits++;
 
-            WeaponUsage weapon = GetWeapon(itemType);
+            WeaponUsage weapon = GetWeapon(itemType, reinforcementLevel, reinforcementUpgrades);
             if (weapon != null)
             {
                 if (ammoType > 0)
@@ -426,6 +443,68 @@ namespace tsorcRevamp.Utilities.Balance
                 if (player.HasBuff(ModContent.BuffType<ManaBurn>()))
                 {
                     _damageDuringManaBurn += damageDone;
+                }
+
+                // Class mechanics. The class is the source item's, so a minion hit counts as summon even while a sword is
+                // held. The Electrocute strike and the Lethal Tempo bolt carry the held weapon as their source, so they are
+                // picked out by projectile type first and kept out of the weapon-class buckets.
+                bool hasSourceItem = itemType > 0 && itemType < ItemLoader.ItemCount;
+                DamageClass hitClass = null;
+                if (hasSourceItem)
+                {
+                    hitClass = ContentSamples.ItemsByType[itemType].DamageType;
+                }
+
+                bool isElectrocuteStrike = projectileType == ModContent.ProjectileType<ElectrocuteProjectile>();
+                bool isLethalTempoBolt = projectileType == ModContent.ProjectileType<LethalTempoBolt>();
+                bool isWeaponHit = hitClass != null && !isElectrocuteStrike && !isLethalTempoBolt;
+
+                // Conqueror: minion damage by stack count, whips apart. Hybrids are skipped because Conqueror divides its
+                // multiplier back out of them.
+                if (_current.conqueror != null && isWeaponHit)
+                {
+                    int conquerorStacks = Math.Clamp(player.GetModPlayer<ConquerorPlayer>().Stacks, 0, ConquerorPlayer.MaxStacks);
+
+                    if (hitClass == DamageClass.SummonMeleeSpeed)
+                    {
+                        _current.conqueror.whipDamageToBoss += damageDone;
+                    }
+                    else if (hitClass != DamageClass.MagicSummonHybrid && hitClass.CountsAsClass(DamageClass.Summon))
+                    {
+                        _current.conqueror.minionDamageToBoss += damageDone;
+                        _current.conqueror.damageAtStacks[conquerorStacks] += damageDone;
+                    }
+                }
+
+                // Lethal Tempo: melee damage by stack count (the same two classes the mechanic checks), bolts apart.
+                if (_current.lethalTempo != null)
+                {
+                    bool isMeleeHit = isWeaponHit && (hitClass == DamageClass.Melee || hitClass == DamageClass.MeleeNoSpeed);
+
+                    if (isLethalTempoBolt)
+                    {
+                        _current.lethalTempo.boltDamageToBoss += damageDone;
+                        _current.lethalTempo.boltHitsOnBoss++;
+                    }
+                    else if (isMeleeHit)
+                    {
+                        int tempoStacks = Math.Clamp(player.GetModPlayer<LethalTempoPlayer>().Stacks, 0, LethalTempoPlayer.MaxStacks);
+                        _current.lethalTempo.meleeDamageToBoss += damageDone;
+                        _current.lethalTempo.damageAtStacks[tempoStacks] += damageDone;
+                    }
+                }
+
+                // Electrocute: the strike apart from ordinary ranged damage.
+                if (_current.electrocute != null)
+                {
+                    if (isElectrocuteStrike)
+                    {
+                        _current.electrocute.procDamageToBoss += damageDone;
+                    }
+                    else if (isWeaponHit && hitClass.CountsAsClass(DamageClass.Ranged))
+                    {
+                        _current.electrocute.rangedDamageToBoss += damageDone;
+                    }
                 }
 
                 _damageThisSecond += damageDone;
@@ -613,6 +692,12 @@ namespace tsorcRevamp.Utilities.Balance
             _current.hitsTaken++;
             _current.largestHitTaken = Math.Max(_current.largestHitTaken, info.Damage);
 
+            if (_current.arcaneSorcery != null && Main.LocalPlayer.HasBuff(ModContent.BuffType<ManaBurn>()))
+            {
+                _current.arcaneSorcery.damageTakenDuringManaBurn += info.Damage;
+                _current.arcaneSorcery.hitsTakenDuringManaBurn++;
+            }
+
             if (!DamageSources.TryGetValue(sourceName, out DamageSourceUsage usage))
             {
                 usage = new DamageSourceUsage { source = sourceName };
@@ -667,6 +752,82 @@ namespace tsorcRevamp.Utilities.Balance
             if (weapon != null)
             {
                 weapon.manaSpent += manaConsumed;
+            }
+
+            if (_current.arcaneSorcery != null)
+            {
+                _current.arcaneSorcery.manaSpent += manaConsumed;
+
+                if (Main.LocalPlayer.HasBuff(ModContent.BuffType<ManaBurn>()))
+                {
+                    _current.arcaneSorcery.manaSpentDuringManaBurn += manaConsumed;
+                }
+            }
+        }
+
+        /// <summary>An Electrocute strike fired. distanceScale is 0.2-1 (1 = within 250 px). Called by ElectrocutePlayer
+        /// on the owner's client.</summary>
+        internal static void RecordElectrocuteProc(Player player, NPC target, float distanceScale)
+        {
+            if (_current?.electrocute == null || player.whoAmI != Main.myPlayer)
+            {
+                return;
+            }
+
+            if (IsFightPart(target))
+            {
+                _current.electrocute.procsOnBoss++;
+            }
+            else
+            {
+                _current.electrocute.procsOnOthers++;
+            }
+
+            _current.electrocute.procDistanceScaleSum += distanceScale;
+        }
+
+        /// <summary>One tick of a stacking class mechanic: time at the current stack count, the peak, and climbs to full.
+        /// lastStacks is the previous tick's count, -1 at the start of the fight.</summary>
+        private static void TrackStacks(StackMechanicUsage usage, int stacks, ref int lastStacks)
+        {
+            int maxStacks = usage.ticksAtStacks.Length - 1;
+            int clampedStacks = Math.Clamp(stacks, 0, maxStacks);
+            usage.ticksAtStacks[clampedStacks]++;
+            usage.peakStacks = Math.Max(usage.peakStacks, clampedStacks);
+
+            bool justReachedMax = clampedStacks == maxStacks && lastStacks < maxStacks;
+            if (justReachedMax)
+            {
+                usage.timesReachedMax++;
+            }
+
+            lastStacks = clampedStacks;
+        }
+
+        /// <summary>End of fight for a stacking class mechanic: averages over the ticks actually counted, and the stack line
+        /// trimmed like the other timelines.</summary>
+        private static void FinishStacks(StackMechanicUsage usage, int maxSamples)
+        {
+            int maxStacks = usage.ticksAtStacks.Length - 1;
+            int countedTicks = 0;
+            long stackTicks = 0;
+
+            for (int stacks = 0; stacks <= maxStacks; stacks++)
+            {
+                countedTicks += usage.ticksAtStacks[stacks];
+                stackTicks += (long)stacks * usage.ticksAtStacks[stacks];
+            }
+
+            if (countedTicks > 0)
+            {
+                usage.meanStacks = stackTicks / (float)countedTicks;
+                usage.zeroStacksFraction = usage.ticksAtStacks[0] / (float)countedTicks;
+                usage.maxStacksFraction = usage.ticksAtStacks[maxStacks] / (float)countedTicks;
+            }
+
+            if (usage.stacksTimeline.Count > maxSamples)
+            {
+                usage.stacksTimeline.RemoveRange(maxSamples, usage.stacksTimeline.Count - maxSamples);
             }
         }
 
@@ -859,6 +1020,70 @@ namespace tsorcRevamp.Utilities.Balance
 
             _lastManaBurnActive = manaBurnActive;
 
+            // Bearer of the Curse class mechanics, counted per tick whatever is held.
+            bool holdingWeapon = held != null && !held.IsAir;
+
+            if (_current.conqueror != null)
+            {
+                TrackStacks(_current.conqueror, player.GetModPlayer<ConquerorPlayer>().Stacks, ref _lastConquerorStacks);
+            }
+
+            if (_current.lethalTempo != null)
+            {
+                int tempoStacks = player.GetModPlayer<LethalTempoPlayer>().Stacks;
+                TrackStacks(_current.lethalTempo, tempoStacks, ref _lastLethalTempoStacks);
+
+                // The attack speed multiplier only applies while a melee weapon is held, so its average is taken over those ticks.
+                bool holdingMelee = holdingWeapon && (held.DamageType == DamageClass.Melee || held.DamageType == DamageClass.MeleeNoSpeed);
+                if (holdingMelee)
+                {
+                    _current.lethalTempo.ticksHoldingMelee++;
+                    _current.lethalTempo.heldStackTickSum += tempoStacks;
+                }
+            }
+
+            if (_current.electrocute != null)
+            {
+                // The ready buff is only on while a ranged weapon is held and the cooldown is off, so it reads as "a proc was
+                // available". The multiplier mirrors ElectrocutePlayer: 0.8 base plus the post-proc restore (in percent).
+                bool onCooldown = player.HasBuff(ModContent.BuffType<ElectrocuteCooldown>());
+                if (onCooldown)
+                {
+                    _current.electrocute.ticksOnCooldown++;
+                }
+                else if (player.HasBuff(ModContent.BuffType<ElectrocuteReadyBuff>()))
+                {
+                    _current.electrocute.ticksReadyHoldingRanged++;
+                }
+
+                float restoredPercent = player.GetModPlayer<ElectrocutePlayer>().RangedDmgRestored;
+                float rangedMult = 1f - ElectrocutePlayer.BadRangedDmg / 100f + restoredPercent / 100f;
+                _current.electrocute.rangedMultTickSum += rangedMult;
+            }
+
+            if (_current.arcaneSorcery != null && holdingWeapon)
+            {
+                bool holdingMagic = held.DamageType == DamageClass.Magic || held.DamageType == DamageClass.MagicSummonHybrid;
+                if (holdingMagic)
+                {
+                    _current.arcaneSorcery.ticksHoldingMagic++;
+                }
+
+                // GetManaCost includes Arcane Sorcery's x2.5 (and Mana Burn's x3), unlike the item's listed mana.
+                if (held.mana > 0)
+                {
+                    if (player.statMana < player.GetManaCost(held))
+                    {
+                        _current.arcaneSorcery.ticksOutOfMana++;
+                    }
+
+                    if (player.HasBuff(BuffID.ManaSickness))
+                    {
+                        _current.arcaneSorcery.ticksManaSickLocked++;
+                    }
+                }
+            }
+
             // Every buff's uptime and activations. A buff missing on the previous tick has come on (again).
             long tickNow = Main.GameUpdateCount;
             for (int i = 0; i < player.buffType.Length; i++)
@@ -970,6 +1195,16 @@ namespace tsorcRevamp.Utilities.Balance
                 _current.staminaTimeline.Add((int)Math.Max(0f, player.GetModPlayer<tsorcRevampStaminaPlayer>().staminaResourceCurrent));
                 _current.damageTimeline.Add(_damageThisSecond);
                 _damageThisSecond = 0;
+
+                if (_current.conqueror != null)
+                {
+                    _current.conqueror.stacksTimeline.Add(player.GetModPlayer<ConquerorPlayer>().Stacks);
+                }
+
+                if (_current.lethalTempo != null)
+                {
+                    _current.lethalTempo.stacksTimeline.Add(player.GetModPlayer<LethalTempoPlayer>().Stacks);
+                }
             }
 
             if (player.dead)
@@ -1175,6 +1410,16 @@ namespace tsorcRevamp.Utilities.Balance
                 }
             }
 
+            // Master is judged against its own band; see MasterTargetTtkMinSeconds.
+            int targetTtkMin = TargetTtkMinSeconds;
+            int targetTtkMax = TargetTtkMaxSeconds;
+
+            if (Main.masterMode)
+            {
+                targetTtkMin = MasterTargetTtkMinSeconds;
+                targetTtkMax = MasterTargetTtkMaxSeconds;
+            }
+
             _current = new BalanceEncounter
             {
                 session = SessionId,
@@ -1194,7 +1439,7 @@ namespace tsorcRevamp.Utilities.Balance
                 enemyProgressLifeScale = ProgressionScaling.CurrentLifeScale,
                 damageTakenScale = ProgressionScaling.DamageTakenScale,
                 gameModeLifeMult = Main.GameModeInfo.EnemyMaxLifeMultiplier,
-                newEnemyBalance = EnemyBalance.Enabled,
+                newEnemyBalance = true,
                 enemyDamageMult = Main.GameModeInfo.EnemyDamageMultiplier,
                 downedBossCount = downedBossTypes.Count,
                 downedBossTypes = downedBossTypes,
@@ -1208,10 +1453,42 @@ namespace tsorcRevamp.Utilities.Balance
                 lifeMaxMultVsBase = lifeMaxMultVsBase,
                 bossContactDamage = boss.damage,
                 baseContactDamage = baseContactDamage,
-                targetTtkMinSeconds = TargetTtkMinSeconds,
-                targetTtkMaxSeconds = TargetTtkMaxSeconds,
+                targetTtkMinSeconds = targetTtkMin,
+                targetTtkMaxSeconds = targetTtkMax,
                 gear = CaptureGear(player),
             };
+
+            // The class mechanics only exist for a Bearer of the Curse; everyone else's encounter leaves the blocks out.
+            // lastStacks of -1 makes full stacks at the start count as reaching full.
+            bool bearerOfTheCurse = player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse;
+            _lastConquerorStacks = -1;
+            _lastLethalTempoStacks = -1;
+
+            if (bearerOfTheCurse && global::tsorcRevamp.Systems.Conqueror.Conqueror.Enabled)
+            {
+                _current.conqueror = new ConquerorUsage
+                {
+                    stacksAtStart = player.GetModPlayer<ConquerorPlayer>().Stacks,
+                };
+            }
+
+            if (bearerOfTheCurse && global::tsorcRevamp.Systems.LethalTempo.LethalTempo.Enabled)
+            {
+                _current.lethalTempo = new LethalTempoUsage
+                {
+                    stacksAtStart = player.GetModPlayer<LethalTempoPlayer>().Stacks,
+                };
+            }
+
+            if (bearerOfTheCurse && ElectrocuteReadyBuff.Enabled)
+            {
+                _current.electrocute = new ElectrocuteUsage();
+            }
+
+            if (bearerOfTheCurse && ArcaneSorcery.Enabled)
+            {
+                _current.arcaneSorcery = new ArcaneSorceryUsage();
+            }
 
             EncounterPresentationRegistry.TryGetByMember(boss.type, out _fightEntry);
             PendingSpawnJoins.Clear();
@@ -1328,6 +1605,43 @@ namespace tsorcRevamp.Utilities.Balance
                 if (encounter.totalDamageToBoss > 0)
                 {
                     encounter.manaBurnDamageFraction = _damageDuringManaBurn / (float)encounter.totalDamageToBoss;
+                }
+
+                // Class mechanic averages, from the per-tick counts.
+                if (encounter.conqueror != null)
+                {
+                    ConquerorUsage conqueror = encounter.conqueror;
+                    FinishStacks(conqueror, maxSamples);
+                    conqueror.meanMinionMult = ConquerorPlayer.BaseDamageMult + conqueror.meanStacks * ConquerorPlayer.BonusDmgPerStack;
+                }
+
+                if (encounter.lethalTempo != null)
+                {
+                    LethalTempoUsage lethalTempo = encounter.lethalTempo;
+                    FinishStacks(lethalTempo, maxSamples);
+
+                    if (lethalTempo.ticksHoldingMelee > 0)
+                    {
+                        float meanHeldStacks = lethalTempo.heldStackTickSum / (float)lethalTempo.ticksHoldingMelee;
+                        lethalTempo.meanAttackSpeedMultWhileHoldingMelee = LethalTempoPlayer.BaseAttackSpeedMult + meanHeldStacks * LethalTempoPlayer.BonusAttackSpeedPerStack;
+                    }
+                }
+
+                if (encounter.electrocute != null)
+                {
+                    ElectrocuteUsage electrocute = encounter.electrocute;
+                    int procs = electrocute.procsOnBoss + electrocute.procsOnOthers;
+
+                    if (procs > 0)
+                    {
+                        electrocute.meanProcDistanceScale = electrocute.procDistanceScaleSum / procs;
+                    }
+
+                    if (ticks > 0)
+                    {
+                        electrocute.meanRangedMult = (float)(electrocute.rangedMultTickSum / ticks);
+                        electrocute.procsPerMinute = procs / (ticks / 3600f);
+                    }
                 }
 
                 foreach (KeyValuePair<int, (int Ticks, int Activations, long LastTick)> tracked in BuffTracking.OrderByDescending(pair => pair.Value.Ticks))
@@ -1489,9 +1803,9 @@ namespace tsorcRevamp.Utilities.Balance
                 // Time-to-kill against the design target. Only meaningful for a finished fight.
                 if (finalOutcome == "kill" && encounter.durationSeconds > 0f)
                 {
-                    float targetMidpoint = (TargetTtkMinSeconds + TargetTtkMaxSeconds) * 0.5f;
+                    float targetMidpoint = (encounter.targetTtkMinSeconds + encounter.targetTtkMaxSeconds) * 0.5f;
                     encounter.ttkRatio = encounter.durationSeconds / targetMidpoint;
-                    encounter.bypassedFight = encounter.durationSeconds < TargetTtkMinSeconds * BypassedFightFraction;
+                    encounter.bypassedFight = encounter.durationSeconds < encounter.targetTtkMinSeconds * BypassedFightFraction;
                     encounter.hpForTargetAtObservedDps = (long)(encounter.bossDps * targetMidpoint);
                 }
 
@@ -1846,7 +2160,7 @@ namespace tsorcRevamp.Utilities.Balance
             return bucket;
         }
 
-        private static WeaponUsage GetWeapon(int itemType)
+        private static WeaponUsage GetWeapon(int itemType, int reinforcementLevel = -1, int reinforcementUpgrades = -1)
         {
             if (itemType <= 0 || itemType >= ItemLoader.ItemCount)
                 return null;
@@ -1861,41 +2175,97 @@ namespace tsorcRevamp.Utilities.Balance
                     item = probe.ModItem?.Name ?? probe.Name,
                     itemMod = probe.ModItem?.Mod?.Name ?? "Terraria",
                     baseDamage = probe.damage,
+                    reinforcedBaseDamage = probe.damage,
                     damageClass = probe.DamageType?.Name ?? "Default",
                     useTime = probe.useTime,
                     outlier = OutlierItemNames.Contains(probe.ModItem?.Name ?? probe.Name) || probe.damage >= OutlierBaseDamage,
                 };
 
-                // Prefer the live inventory copy's prefix — a reforge is a real slice of the DPS
-                // being measured, and the freshly-defaulted probe has none.
-                Item live = FindHeldOrInventory(itemType);
+                // Prefer the live inventory copy's prefix and reinforcement level — both are real slices of the DPS
+                // being measured, and the freshly-defaulted probe has neither.
+                Item live = FindHeldOrInventory(itemType, reinforcementLevel);
                 if (live != null)
                 {
                     weapon.prefix = live.prefix;
                     weapon.prefixName = PrefixName(live.prefix);
                 }
 
-                // What one use really deals with the player's current multipliers and this item's prefix.
+                bool reinforceable = Systems.WeaponReinforcement.CanEverReinforce(live ?? probe);
+                weapon.reinforceable = reinforceable;
+                if (reinforceable)
+                {
+                    int displayedLevel = reinforcementLevel >= 0
+                        ? reinforcementLevel
+                        : Systems.WeaponReinforcement.GetDisplayedLevel(live ?? probe);
+                    int upgradesEarned = reinforcementUpgrades >= 0
+                        ? reinforcementUpgrades
+                        : Systems.WeaponReinforcement.GetUpgradesEarned(live ?? probe);
+
+                    weapon.reinforcementLevel = displayedLevel;
+                    weapon.reinforcementUpgrades = upgradesEarned;
+                    if (Systems.WeaponReinforcement.TryGetEntry(itemType, out Systems.WeaponReinforcementEntry entry))
+                    {
+                        weapon.reinforcedBaseDamage = Systems.WeaponReinforcement.GetDamageForLevel(entry, (byte)displayedLevel);
+                    }
+                }
+
+                // What one use really deals with the player's current multipliers, prefix, and reinforcement level.
                 weapon.effectiveDamage = Main.LocalPlayer.GetWeaponDamage(live ?? probe);
 
                 Weapons[itemType] = weapon;
             }
+            else if (weapon.reinforceable && reinforcementLevel >= 0 && reinforcementLevel != weapon.reinforcementLevel)
+            {
+                weapon.reinforcementLevel = reinforcementLevel;
+                if (reinforcementUpgrades >= 0)
+                {
+                    weapon.reinforcementUpgrades = reinforcementUpgrades;
+                }
+
+                if (Systems.WeaponReinforcement.TryGetEntry(itemType, out Systems.WeaponReinforcementEntry entry))
+                {
+                    weapon.reinforcedBaseDamage = Systems.WeaponReinforcement.GetDamageForLevel(entry, (byte)reinforcementLevel);
+                }
+            }
+
             return weapon;
         }
 
-        private static Item FindHeldOrInventory(int itemType)
+        private static Item FindHeldOrInventory(int itemType, int expectedReinforcementLevel = -1)
         {
             Player player = Main.LocalPlayer;
             if (player == null)
                 return null;
+
+            Item fallback = null;
             if (player.HeldItem != null && player.HeldItem.type == itemType)
-                return player.HeldItem;
+            {
+                if (expectedReinforcementLevel < 0 || Systems.WeaponReinforcement.GetDisplayedLevel(player.HeldItem) == expectedReinforcementLevel)
+                {
+                    return player.HeldItem;
+                }
+
+                fallback = player.HeldItem;
+            }
+
             for (int i = 0; i < player.inventory.Length; i++)
             {
-                if (player.inventory[i] != null && player.inventory[i].type == itemType)
-                    return player.inventory[i];
+                Item candidate = player.inventory[i];
+                if (candidate != null && candidate.type == itemType)
+                {
+                    if (expectedReinforcementLevel < 0 || Systems.WeaponReinforcement.GetDisplayedLevel(candidate) == expectedReinforcementLevel)
+                    {
+                        return candidate;
+                    }
+
+                    if (fallback == null)
+                    {
+                        fallback = candidate;
+                    }
+                }
             }
-            return null;
+
+            return fallback;
         }
 
         /// <summary>One equipped item flattened for the log. Shared by the armor/accessory loop and the

@@ -31,6 +31,13 @@ namespace tsorcRevamp
 
         internal void AddBuildupLocal(int buildup)
         {
+            // Locked while Poisoned: the meter cannot refill until the debuff is gone. Poisoned lives on this
+            // (owning) client, the same machine that owns the meter, so the check needs no sync.
+            if (Player.HasBuff(BuffID.Poisoned))
+            {
+                return;
+            }
+
             int clampedBuildup = Math.Clamp(buildup, 1, PoisonBuildup.MaximumBuildup);
             PoisonLevel = Math.Min(PoisonLevel + clampedBuildup, PoisonBuildup.MaximumBuildup);
 

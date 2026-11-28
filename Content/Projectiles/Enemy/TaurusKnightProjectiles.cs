@@ -446,7 +446,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
         private const int FadeTicks = 15;
         private const int FrameCount = 5;
         private const int TicksPerFrame = 5;
-        public const int DestinedDeathTicks = 600;
+        public const int DestinedDeathTicks = DestinedDeath.DefaultDurationTicks;
 
         // Red Knight Destined Death palette (RedKnightAttackProjectiles): crimson body, black soot, hot sparks.
         public static readonly Color CrimsonBody = new Color(214, 22, 42);

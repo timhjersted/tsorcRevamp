@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.IO;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
@@ -8,7 +9,7 @@ using Terraria.ModLoader;
 
 namespace tsorcRevamp.NPCs.Enemies
 {
-    public class Sandsprog : ModNPC
+    public class Sandsprog : ModNPC, IStaggerable
     {
         bool whirling = false;
         int whirlingTimer;
@@ -147,10 +148,12 @@ namespace tsorcRevamp.NPCs.Enemies
                 whirlingTimer++;
             }
 
-            if (NPC.HasValidTarget && whirlingTimer > 300 && Main.player[NPC.target].Distance(NPC.Center) < 350f && Main.player[NPC.target].position.Y + 16 >= NPC.position.Y && standing_on_solid_tile && lineOfSight && !whirling)
+            // Starting the whirl is a decision: server only. Clients follow it through SendExtraAI.
+            if (Main.netMode != NetmodeID.MultiplayerClient && NPC.HasValidTarget && whirlingTimer > 300 && Main.player[NPC.target].Distance(NPC.Center) < 350f && Main.player[NPC.target].position.Y + 16 >= NPC.position.Y && standing_on_solid_tile && lineOfSight && !whirling)
             {
                 whirling = true;
                 whirlingTimer = 1;
+                NPC.netUpdate = true;
             }
 
             if (!whirling)
@@ -168,9 +171,7 @@ namespace tsorcRevamp.NPCs.Enemies
                 }
                 else
                 {
-                    NPC.defense = 10;
-                    if (Main.hardMode) { NPC.defense = 18; }
-                    if (tsorcRevampWorld.SuperHardMode) { NPC.defense = 45; }
+                    NPC.defense = TierBaseDefense();
                 }
 
 
@@ -201,6 +202,11 @@ namespace tsorcRevamp.NPCs.Enemies
 
                 if (NPC.collideX)
                 {
+                    if (whirlingTimer < 300 && Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        NPC.netUpdate = true;
+                    }
+
                     whirlingTimer = 300;
                 }
 
@@ -216,6 +222,51 @@ namespace tsorcRevamp.NPCs.Enemies
                     knife2timer = 15; //So that the knives come out alternating sides
                 }
             }
+        }
+
+        // Whirl defense outside the 420-defense blade window. Same per-tier values as SetDefaults.
+        private static int TierBaseDefense()
+        {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                return 45;
+            }
+
+            if (Main.hardMode)
+            {
+                return 18;
+            }
+
+            return 10;
+        }
+
+        // A poise break cancels the whirl at any point, wind-up (timer 1-95) or spin (95-300). There is no hyper-armor
+        // window: the 420 defense blocks damage, not poise, which is built from knockback. Restarts the whirl
+        // cooldown (timer 1 -> 300, ~5s) so it does not re-whirl the moment the 120-tick stun ends. Server only;
+        // the netUpdate carries the cancelled state to clients.
+        public void OnStagger(NPC npc)
+        {
+            whirling = false;
+            whirlingTimer = 1;
+            knife2timer = 15;
+            NPC.knockBackResist = 0.65f;
+            NPC.defense = TierBaseDefense();
+            NPC.alpha = 0;
+            NPC.netUpdate = true;
+        }
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(whirling);
+            writer.Write((short)whirlingTimer);
+            writer.Write((short)knife2timer);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            whirling = reader.ReadBoolean();
+            whirlingTimer = reader.ReadInt16();
+            knife2timer = reader.ReadInt16();
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color lightColor)

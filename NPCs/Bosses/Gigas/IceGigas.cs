@@ -405,14 +405,13 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas
             }
         }
 
-        ///<summary>Unique weapon: the Heart of Winter tome — guaranteed on the first kill, 25% on
-        ///repeat HM kills. SHM rare-event respawns pay out purely in Dark Souls (via NPC.value)
-        ///instead. OnKill registers the type in NewSlain (loot rules resolve first, so the
-        ///first-kill guarantee sees the pre-kill state).</summary>
+        ///<summary>Unique weapon: the Heart of Winter tome — guaranteed on the first Super Hardmode kill.
+        ///OnKill registers the type in NewSlain (loot rules resolve first, so the first-kill guarantee
+        ///sees the pre-kill state).</summary>
         public override void ModifyNPCLoot(Terraria.ModLoader.NPCLoot npcLoot)
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
-                new NonSHMFirstKillRule(), ModContent.ItemType<HeartOfWinter>()));
+                new SHMFirstKillRule(), ModContent.ItemType<HeartOfWinter>()));
         }
 
         public override void SendExtraAI(BinaryWriter writer)

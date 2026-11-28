@@ -10,6 +10,9 @@ namespace tsorcRevamp.Buffs.Debuffs
 {
     public class DestinedDeath : ModBuff
     {
+        // Base duration and stack refresh timer (20s, doubled from the original 10s).
+        public const int DefaultDurationTicks = 1200;
+
         // Description numbers come from DestinedDeathPlayer: {0}% per stack, {1}% cap, {2}% damage bonus at the cap.
         public override LocalizedText Description => base.Description.WithFormatArgs(DestinedDeathPlayer.LossPercentPerStack,
             DestinedDeathPlayer.MaxStacks * DestinedDeathPlayer.LossPercentPerStack, DestinedDeathPlayer.DamageBonusPercent);
@@ -48,7 +51,7 @@ namespace tsorcRevamp.Buffs.Debuffs
             DestinedDeathPlayer deathPlayer = player.GetModPlayer<DestinedDeathPlayer>();
             int previousStacks = Math.Max(1, deathPlayer.Stacks);
             deathPlayer.Stacks = Math.Min(previousStacks + 1, DestinedDeathPlayer.MaxStacks);
-            player.buffTime[buffIndex] = time;
+            player.buffTime[buffIndex] = Math.Max(player.buffTime[buffIndex], time);
             return true;
         }
 

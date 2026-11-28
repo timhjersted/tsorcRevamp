@@ -28,6 +28,12 @@ namespace tsorcRevamp
         private int procSequence;
         private int lastResolvedProc;
 
+        // Server-side lock grace after a proc, in ticks. The server's copy of the Miasma buff can be briefly
+        // overwritten by the owner's buff-list sync before the owner has received the proc, so the lock does not
+        // rely on HasBuff alone for the first second.
+        private const int ProcLockGraceTicks = 60;
+        private int procLockGraceTimer;
+
         // procDurationTicks: drain length if this hit fills the meter; 0 = the standard Miasma.DurationTicks.
         // Sent as a ushort (max 65535 ticks ≈ 18 min).
         public void RequestBuildup(int buildup, int procDurationTicks = 0)
@@ -39,6 +45,12 @@ namespace tsorcRevamp
             {
                 // Hostile hits execute on the victim. Never report another player's buildup.
                 if (Player.whoAmI != Main.myPlayer)
+                {
+                    return;
+                }
+
+                // Meter is locked while Miasma drains: skip the report and the hit burst. The server re-checks.
+                if (Player.HasBuff(ModContent.BuffType<Miasma>()))
                 {
                     return;
                 }
@@ -66,6 +78,14 @@ namespace tsorcRevamp
                 return;
             }
 
+            // Locked while Miasma drains: the meter cannot refill until the debuff is gone.
+            bool miasmaActive = Player.HasBuff(ModContent.BuffType<Miasma>());
+            bool inProcGrace = procLockGraceTimer > 0;
+            if (miasmaActive || inProcGrace)
+            {
+                return;
+            }
+
             int clampedBuildup = Math.Clamp(buildup, 1, MiasmaBuildup.MaximumBuildup);
             MiasmaLevel = Math.Clamp(MiasmaLevel + clampedBuildup, 0, MiasmaBuildup.MaximumBuildup);
 
@@ -88,6 +108,7 @@ namespace tsorcRevamp
                 MiasmaLevel = 0;
                 decayTimer = 0;
                 procSequence++;
+                procLockGraceTimer = ProcLockGraceTicks;
                 Player.ClearBuff(buildupType);
                 Player.AddBuff(ModContent.BuffType<Miasma>(), drainTicks);
 
@@ -167,6 +188,11 @@ namespace tsorcRevamp
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
                 return;
+            }
+
+            if (procLockGraceTimer > 0)
+            {
+                procLockGraceTimer--;
             }
 
             if (MiasmaLevel <= 0)

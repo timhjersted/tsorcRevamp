@@ -56,7 +56,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), Buffs.Debuffs.DestinedDeath.DefaultDurationTicks);
         }
 
         public override void OnSpawn(IEntitySource source)

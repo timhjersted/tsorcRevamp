@@ -15,18 +15,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
         public override string Texture => "Terraria/Images/Projectile_0";
         public const int SliverExpertDamage = 256, ExplosionExpertDamage = 360;
 
-        // Moon hunt (before the crash): top drift speed px/t, how close it gets before committing to the final
-        // 18-tick glide onto the player, and the longest it hunts before committing anyway.
-        const float HuntTopSpeed = 6.5f;
-        const float HuntCommitDistance = 112f;
-        const int HuntMaxTicks = 210;
-        const float TerminalMaxGlide = 160f; // the 18-tick final glide covers at most this (about 9 px/t)
+        // Moon hunt (before the crash): drift speed scales from HuntTopSpeed near the player up to HuntFarSpeed
+        // when far away so a running player cannot outrun the moon before it reaches them at least once.
+        const float HuntTopSpeed = 9.5f;
+        const float HuntFarSpeed = 14.5f;
+        const float HuntCommitDistance = 104f;
+        const int HuntMaxTicks = 360;
+        const int HuntStuckLimit = 15;
+        const float TerminalMaxGlide = 200f;
         enum Stage : byte { Dormant, Pursuit, ChargeTell, Hunt, Terminal, Exploded, Finished, Fade }
         sealed class Moon
         {
             public Stage Stage;
             public Vector2 Position, Velocity, Aim = Vector2.UnitX, CrashPoint;
-            public int Timer, Fans, SafeAfter;
+            public int Timer, Fans, SafeAfter, StuckTicks;
             public bool Locked, TerrainHold;
         }
         readonly Moon[] moons = { new Moon(), new Moon() };
@@ -59,8 +61,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 2;
-            Projectile.aiStyle = -1; Projectile.timeLeft = 2400; Projectile.tileCollide = false;
-            Projectile.penetrate = -1; Projectile.netImportant = true; Projectile.extraUpdates = 0;
+            Projectile.aiStyle = -1;
+            Projectile.timeLeft = 3600;
+            Projectile.tileCollide = false;
+            Projectile.penetrate = -1;
+            Projectile.netImportant = true;
+            Projectile.extraUpdates = 0;
         }
         public override bool? CanDamage() => false;
         public override bool ShouldUpdatePosition() => false;
@@ -116,7 +122,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                     x = m.Position.X, y = m.Position.Y, secondActivation }));
         }
         void Change(Moon m, Stage stage)
-        { m.Stage = stage; m.Timer = 0; m.Locked = false; Trace("transition", m); Projectile.netUpdate = true; }
+        {
+            m.Stage = stage;
+            m.Timer = 0;
+            m.StuckTicks = 0;
+            m.Locked = false;
+            Trace("transition", m);
+            Projectile.netUpdate = true;
+        }
         void Advance(Moon m, int slot)
         {
             if (m.Stage == Stage.Dormant || m.Stage == Stage.Finished) { m.Velocity = Vector2.Zero; return; }
@@ -138,12 +151,19 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                 else
                 {
                     Vector2 hover = target.Center + new Vector2(slot == 0 ? -120 : 120, -96);
-                    Vector2 desired = (hover - m.Position).SafeNormalize(Vector2.Zero) * Math.Min(1.4f, Vector2.Distance(hover, m.Position) * 0.03f);
-                    m.Velocity = Approach(m.Velocity, desired, 0.04f);
+                    float hoverDistance = Vector2.Distance(hover, m.Position);
+                    float desiredSpeed = Math.Min(4.5f, hoverDistance * 0.03f);
+                    Vector2 desired = (hover - m.Position).SafeNormalize(Vector2.Zero) * desiredSpeed;
+                    m.Velocity = Approach(m.Velocity, desired, 0.08f);
                     Vector2 allowed = Collision.TileCollision(m.Position - new Vector2(56), m.Velocity, 112, 112);
-                    m.Position += allowed; m.Velocity = allowed;
+                    m.Position += allowed;
+                    m.Velocity = allowed;
                 }
-                if (m.Timer >= 340) { m.Velocity = Vector2.Zero; Change(m, Stage.ChargeTell); }
+                if (m.Timer >= 340)
+                {
+                    m.Velocity = Vector2.Zero;
+                    Change(m, Stage.ChargeTell);
+                }
             }
             else if (m.Stage == Stage.ChargeTell)
             {
@@ -155,32 +175,52 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
             else if (m.Stage == Stage.Hunt)
             {
                 Vector2 lead = target.velocity * 8f;
-                if (lead.Length() > 64) lead = lead.SafeNormalize(Vector2.Zero) * 64;
-                Vector2 delta = target.Center + lead - m.Position;
-                float distance = delta.Length();
+                if (lead.Length() > 64f)
+                {
+                    lead = lead.SafeNormalize(Vector2.Zero) * 64f;
+                }
 
-                // A slow, relentless drift: speed builds 1.4 -> HuntTopSpeed px/t over 45 ticks. The turn tightens
-                // as it closes (0.05 rad/t far, 0.15 rad/t point-blank) so it cannot orbit a player at its turn
-                // radius instead of reaching them.
-                float speed = MathHelper.Lerp(1.4f, HuntTopSpeed, MathHelper.Clamp(m.Timer / 45f, 0, 1));
-                float closeness = 1f - MathHelper.Clamp(distance / 300f, 0f, 1f);
-                float turnRate = MathHelper.Lerp(0.05f, 0.15f, closeness);
+                Vector2 delta = target.Center + lead - m.Position;
+                float distanceToPlayer = Vector2.Distance(m.Position, target.Center);
+
+                // Scale top speed up when far from the player (HuntTopSpeed -> HuntFarSpeed over 120..420px) so a
+                // running player cannot outrun the moon before it reaches them. Tighten turn rate as it closes.
+                float farFactor = MathHelper.Clamp((distanceToPlayer - 120f) / 300f, 0f, 1f);
+                float targetTopSpeed = MathHelper.Lerp(HuntTopSpeed, HuntFarSpeed, farFactor);
+                float ramp = MathHelper.Clamp(m.Timer / 35f, 0f, 1f);
+                float speed = MathHelper.Lerp(2.5f, targetTopSpeed, ramp);
+                float closeness = 1f - MathHelper.Clamp(distanceToPlayer / 300f, 0f, 1f);
+                float turnRate = MathHelper.Lerp(0.08f, 0.22f, closeness);
                 float heading = m.Velocity.LengthSquared() > 0.01f ? m.Velocity.ToRotation() : delta.ToRotation();
                 float desired = delta.ToRotation();
                 heading += MathHelper.Clamp(MathHelper.WrapAngle(desired - heading), -turnRate, turnRate);
                 m.Velocity = heading.ToRotationVector2() * speed;
+
+                // Slide along floors/ceilings instead of detonating on the first tile graze (the 112x112 box touches
+                // the floor 35px above a grounded player's center). Only stop early if genuinely pinned by terrain.
                 Vector2 allowed = Collision.TileCollision(m.Position - new Vector2(56), m.Velocity, 112, 112);
                 m.Position += allowed;
-                if (Vector2.DistanceSquared(allowed, m.Velocity) > 0.01f)
-                { BeginTerminal(m, m.Position, true); return; }
+                if (allowed.LengthSquared() < 0.25f)
+                {
+                    m.StuckTicks++;
+                    if (m.StuckTicks >= HuntStuckLimit)
+                    {
+                        BeginTerminal(m, m.Position, true);
+                        return;
+                    }
+                }
+                else
+                {
+                    m.StuckTicks = 0;
+                }
 
-                // Commit once it is nearly on top of the player (or after HuntMaxTicks): the last glide ends ON the
-                // player's centre, under the 18t warning, instead of a fixed distance short of them.
-                bool closeEnough = m.Timer >= 30 && distance <= HuntCommitDistance;
+                // Commit once it actually reaches the player (measured to target.Center, not lead) or after HuntMaxTicks.
+                bool closeEnough = m.Timer >= 24 && distanceToPlayer <= HuntCommitDistance;
                 if (closeEnough || m.Timer >= HuntMaxTicks)
                 {
                     Vector2 toPlayer = target.Center - m.Position;
-                    BeginTerminal(m, m.Position + toPlayer.SafeNormalize(Vector2.UnitX) * Math.Min(TerminalMaxGlide, toPlayer.Length()), false);
+                    float glideDistance = Math.Min(TerminalMaxGlide, toPlayer.Length());
+                    BeginTerminal(m, m.Position + toPlayer.SafeNormalize(Vector2.UnitX) * glideDistance, false);
                 }
             }
             else if (m.Stage == Stage.Terminal)
@@ -189,10 +229,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                 {
                     Vector2 allowed = Collision.TileCollision(m.Position - new Vector2(56), m.Velocity, 112, 112);
                     m.Position += allowed;
-                    if (Vector2.DistanceSquared(allowed, m.Velocity) > 0.01f)
-                    { BeginTerminal(m, m.Position, true); return; }
                 }
-                if (m.Timer >= 18) Explode(m, slot);
+
+                if (m.Timer >= 18)
+                {
+                    Explode(m, slot);
+                }
             }
         }
         void BeginTerminal(Moon m, Vector2 point, bool terrain)

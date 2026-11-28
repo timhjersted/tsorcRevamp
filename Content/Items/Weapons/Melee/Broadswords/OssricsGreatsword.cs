@@ -4,7 +4,7 @@ using Terraria.Localization;
 
 namespace tsorcRevamp.Content.Items.Weapons.Melee.Broadswords
 {
-    public class GravelordSword : Greatsword
+    public class OssricsGreatsword : Greatsword
     {
         protected internal override Vector2 Grip => new(17f, 121f);
         protected internal override Vector2 HiltTop => new(33f, 105f);

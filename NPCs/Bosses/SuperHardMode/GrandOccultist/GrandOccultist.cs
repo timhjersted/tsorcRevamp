@@ -44,7 +44,7 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
     /// </summary>
     [AutoloadBossHead]
     [LegacyName("AbysmalOolacileSorcerer")]
-    class GrandOccultist : PuppetNPC
+    class GrandOccultist : PuppetNPC, IHumanoidMeleeHitEffects
     {
         // PuppetNPC points Texture at the shared puppet placeholder, so [AutoloadBossHead]'s
         // Texture + "_Head_Boss" convention would look for "PuppetPlaceholder_Head_Boss".
@@ -2767,10 +2767,12 @@ namespace tsorcRevamp.NPCs.Bosses.SuperHardMode.GrandOccultist
             base.DoComboMeleeHit(step);
         }
 
-        protected override void OnBladeHit(Player player)
+        // Melee Madness buildup only on a hit that deals damage. Applied from PuppetMeleeHitbox's OnHitPlayer (victim's
+        // machine), not OnBladeHit, which fires on overlap even through roll i-frames. MadnessBuildup.Apply reports
+        // the gain to the server, which owns the meter.
+        public void OnHumanoidMeleeHit(Player target)
         {
-            base.OnBladeHit(player);
-            MadnessBuildup.Apply(player, MeleeMadnessBuildup, MeleeMadnessWindowTicks);
+            MadnessBuildup.Apply(target, MeleeMadnessBuildup, MeleeMadnessWindowTicks);
         }
 
         protected override void OnMeleeComboStarted(MeleeCombo combo)

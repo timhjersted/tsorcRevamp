@@ -280,6 +280,22 @@ namespace tsorcRevamp.Content.Items.BossBags
 
         }
     }
+    public class GravelordNitoBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
+        }
+
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            // Same items Barrowlord Ossric drops directly outside Expert. Dark Souls come from the
+            // shared bag registry (BossBagIDtoNPCID), paid once per player at his NPC.value.
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.OssricsGreatsword>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Pets.MiakodaFull>()));
+        }
+    }
     public class TheRageBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -612,6 +628,21 @@ namespace tsorcRevamp.Content.Items.BossBags
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<HolyWarElixir>()));
         }
     }
+    public class GreatSerpentBag : BossBag
+    {
+        public override void SetStaticDefaults()
+        {
+            ItemID.Sets.BossBag[Type] = true;
+            ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
+        }
+
+        public override void ModifyItemLoot(ItemLoot itemLoot)
+        {
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Materials.Souls.GreatSerpentSoul>(), 1, 4, 4));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 3, 3));
+        }
+    }
+
     public class OolacileSerpentBag : BossBag
     {
         public override void SetStaticDefaults()
@@ -620,7 +651,7 @@ namespace tsorcRevamp.Content.Items.BossBags
         }
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Weapons.Melee.Broadswords.AbyssalFang>()));
+            itemLoot.Add(ItemDropRule.ByCondition(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule, ModContent.ItemType<Weapons.Melee.Broadswords.AbyssalFang>()));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Humanity>(), 1, 3, 6));
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Potions.HolyWarElixir>(), 1, 2, 4));
         }
@@ -686,8 +717,21 @@ namespace tsorcRevamp.Content.Items.BossBags
             }
             NPC boss = new NPC();
             boss.SetDefaults(tsorcRevamp.BossBagIDtoNPCID[bossBagID]);
+            float bossValue = boss.value;
+            // Pin the Great Serpent PHM and SHM bags to their own soul values so opening a saved PHM bag
+            // in SHM never pays out SHM souls (and vice versa).
+            float expertValueScale = Main.expertMode ? 2.5f : 1f;
+            if (bossBagID == ModContent.ItemType<GreatSerpentBag>())
+            {
+                bossValue = 100000f * expertValueScale;
+            }
+            else if (bossBagID == ModContent.ItemType<OolacileSerpentBag>())
+            {
+                bossValue = 350000f * expertValueScale;
+            }
+
             float multiplier = player.GetModPlayer<DarkSoulPlayer>().SoulsMultiplier();
-            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoulItem>(), (int)(multiplier * boss.value));
+            player.QuickSpawnItem(player.GetSource_Loot(), ModContent.ItemType<DarkSoulItem>(), (int)(multiplier * bossValue));
             modPlayer.bagsOpened.Add(bossBagID);
         }
 

@@ -464,11 +464,25 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
             float progress = TipProgress(Age);
 
             // Server: a wall that appeared across the marked corridor retracts the lash from where it stopped.
+            // Sample SolidCollision along the step (matching BuildLashPath) rather than CanHitLine, which checks a
+            // 3-tile-tall band and falsely hits the solid floor 8px below the vine's ground origin.
             if (Main.netMode != NetmodeID.MultiplayerClient && Age <= ExtendTicks)
             {
                 Vector2 previousTip = PointAt(previousProgress);
                 Vector2 tip = PointAt(progress);
-                bool blocked = !Collision.CanHitLine(previousTip - new Vector2(4f), 8, 8, tip - new Vector2(4f), 8, 8);
+                float stepLength = Vector2.Distance(previousTip, tip);
+                int checks = Math.Max(1, (int)Math.Ceiling(stepLength / 8f));
+                bool blocked = false;
+
+                for (int i = 1; i <= checks; i++)
+                {
+                    Vector2 samplePoint = Vector2.Lerp(previousTip, tip, i / (float)checks);
+                    if (Collision.SolidCollision(samplePoint - new Vector2(4f), 8, 8))
+                    {
+                        blocked = true;
+                        break;
+                    }
+                }
 
                 if (blocked)
                 {
@@ -488,12 +502,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 return;
             }
 
-            // Leafy splinters run along the spine behind the tip while it extends.
-            if (!Main.dedServ && Age <= ExtendTicks && (int)Age % 2 == 0)
+            // Leafy splinters and sap sparks run along the extending tip so the moving lash reads clearly in motion.
+            if (!Main.dedServ && Age <= ExtendTicks)
             {
-                Vector2 behindTip = PointAt(progress * Main.rand.NextFloat(0.4f, 0.95f));
-                Dust splinter = Dust.NewDustPerfect(behindTip, DustID.GrassBlades, Main.rand.NextVector2Circular(0.6f, 0.6f), 90, default, 0.8f);
-                splinter.noGravity = true;
+                Vector2 previousTip = PointAt(previousProgress);
+                Vector2 currentTip = PointAt(progress);
+                Vector2 tangent = (currentTip - previousTip).SafeNormalize(Vector2.UnitX);
+
+                for (int i = 0; i < 2; i++)
+                {
+                    float lerpFraction = (i + Main.rand.NextFloat()) / 2f;
+                    Vector2 motePos = Vector2.Lerp(previousTip, currentTip, lerpFraction);
+                    Dust leaf = Dust.NewDustPerfect(motePos, DustID.GrassBlades,
+                        tangent * Main.rand.NextFloat(0.4f, 1.4f) + Main.rand.NextVector2Circular(0.7f, 0.7f),
+                        50, default, Main.rand.NextFloat(0.85f, 1.15f));
+                    leaf.noGravity = true;
+                }
+
+                Dust glint = Dust.NewDustPerfect(currentTip, DustID.TintableDustLighted,
+                    tangent * Main.rand.NextFloat(0.8f, 1.8f) + Main.rand.NextVector2Circular(0.5f, 0.5f),
+                    25, DarkrootWoodVFX.Sap, Main.rand.NextFloat(0.55f, 0.85f));
+                glint.noGravity = true;
             }
         }
 
@@ -597,7 +626,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 return;
             }
 
-            segmentTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Segment");
+            segmentTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Segment", AssetRequestMode.ImmediateLoad);
             Texture2D texture = segmentTexture.Value;
             int length = (int)MathHelper.Clamp(growth * 16f, 2f, texture.Width);
             Rectangle frame = new(0, 0, length, texture.Height);
@@ -616,8 +645,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.DarkrootSentrySpells
                 return;
             }
 
-            segmentTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Segment");
-            thornTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Thorn");
+            segmentTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Segment", AssetRequestMode.ImmediateLoad);
+            thornTexture ??= ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DarkrootVine)) + "_Thorn", AssetRequestMode.ImmediateLoad);
             Texture2D segment = segmentTexture.Value;
             Texture2D thorn = thornTexture.Value;
             Vector2 segmentOrigin = segment.Size() * 0.5f;

@@ -9,7 +9,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
     /// <summary>Networked one-shot visual used when a teleport illusion expires.</summary>
     public class TeleportIllusionDissolve : ModProjectile
     {
-        private const int GoreHoldTicks = 90;
+        private const int GoreHoldTicks = 30;
         private const int GoreFadeTicks = 30;
         private const int TotalLifetimeTicks = GoreHoldTicks + GoreFadeTicks + 4;
 
@@ -54,7 +54,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
                     if (goreIndex >= 0 && goreIndex < Main.maxGore)
                     {
-                        // Cap vanilla gore lifetime to 90 ticks as a fallback if this projectile clears early.
+                        // Cap vanilla gore lifetime to 30 ticks as a fallback if this projectile clears early.
                         Main.gore[goreIndex].timeLeft = GoreHoldTicks;
                         spawnedGoreIndices[i] = goreIndex;
                         spawnedGoreTypes[i] = goreType;
@@ -79,7 +79,7 @@ namespace tsorcRevamp.Content.Projectiles.VFX
 
             elapsedTicks++;
 
-            // Vanilla sticky gores fade at 1 alpha/tick (~4.25s) after timeLeft hits 0; fade smoothly over 30 ticks starting at tick 90.
+            // Vanilla sticky gores fade at 1 alpha/tick (~4.25s) after timeLeft hits 0; fade smoothly over 30 ticks starting at tick 30.
             if (elapsedTicks >= GoreHoldTicks)
             {
                 float fadeFraction = MathHelper.Clamp((elapsedTicks - GoreHoldTicks) / (float)GoreFadeTicks, 0f, 1f);

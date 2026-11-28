@@ -69,6 +69,27 @@ namespace tsorcRevamp.NPCs.Enemies
         // it is a valid aerial target. The base default (96px) only permits casting at level-or-higher
         // targets, so a grounded player below the hovering cleric would never be shot at.
         protected override float AerialRangedVerticalBand => 2000f;
+
+        protected override EnemyFlightConfig FlightConfig
+        {
+            get
+            {
+                EnemyFlightConfig config = EnemyFlightConfig.Default;
+                config.HoverAltitude = 120f;
+                config.HoverSideOffset = 140f;
+                config.HoverTopSpeed = 4f;
+                config.TakeOffSpeed = 6f;
+                config.LandSpeed = 4f;
+                config.CooldownTicks = 120;
+                // Amphibious aerial caster: stays airborne in air and underwater, and keeps the top 30% of
+                // indoor/flooded rooms clear so it never pins against ceilings or abandons a submerged player.
+                config.InfiniteFlight = true;
+                config.Amphibious = true;
+                config.CeilingClearanceFraction = 0.30f;
+                config.CeilingMinPadding = 24f;
+                return config;
+            }
+        }
         #endregion
 
         #region Magic pacing / ranges

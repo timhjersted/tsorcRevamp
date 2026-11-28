@@ -6,7 +6,9 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Buffs.Debuffs;
 using tsorcRevamp.Content.Items.BossBags;
@@ -44,14 +46,28 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             NPC.defense = 100;
             NPC.HitSound = SoundID.NPCHit13;
             NPC.DeathSound = SoundID.Item119;
-            NPC.lifeMax = (int)(650000 * (Main.masterMode ? 1.5f : 1));
+            //Scale health and Dark Soul value by progression tier (SHM / HM / PHM).
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                NPC.lifeMax = (int)(650000 * (Main.masterMode ? 1.5f : 1));
+                NPC.value = 350000;
+            }
+            else if (Main.hardMode)
+            {
+                NPC.lifeMax = 50000;
+                NPC.value = 75000;
+            }
+            else
+            {
+                NPC.lifeMax = 20000;
+                NPC.value = 100000;
+            }
             Music = 12;
             NPC.boss = true;
             NPC.noGravity = true;
             NPC.noTileCollide = true;
             NPC.behindTiles = true;
             NPC.hide = true;
-            NPC.value = 250000;
             NPC.lavaImmune = true;
             NPC.rarity = 46;
             Color textColor = new Color(175, 75, 255);
@@ -167,7 +183,21 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             BiteTelegraph, BiteLunge, BiteRecover,
             PounceTelegraph, PounceLunge, PounceRecover,
             BreathTelegraph, BreathSweep, BreathRecover,
-            SpitTelegraph, SpitCombo, SpitRecover
+            SpitTelegraph, SpitCombo, SpitRecover,
+            CoilTelegraph, CoilBurst, CoilRecover,
+            MortarTelegraph, MortarVolley, MortarRecover,
+            FissureTelegraph, FissureSlam, FissureRecover
+        }
+        public enum SerpentAttackCard
+        {
+            Bite,
+            Pounce,
+            Breath,
+            Spit,
+            Mortar,
+            CoilBurst,
+            FeintLunge,
+            Fissure
         }
         public AttackState Attack = AttackState.None;
         public int AttackTimer;          //counts down within the current attack phase
@@ -177,6 +207,12 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
         public float BreathBaseAngle;
         public int SpitVariation;
         public int SpitTick;             //elapsed ticks within the spit combo
+        public bool FeintToTailStab;     //below 50% HP: BiteLunge stops short of player and chains into a single fast TailStab
+        public bool FissureWaveFired;    //true once FissureSlam has released its forward Destined Death ground wave
+
+        //Server/singleplayer-only shuffled grab bag so every move surfaces regularly without immediate repeats.
+        public AttackBag<SerpentAttackCard> AttackBag;
+        public bool AttackBagPhaseTwo;
 
         public const int HeadFrameCount = 5;
         public const int MouthFrameTicks = 3;
@@ -184,11 +220,19 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
         public int MouthTransitionTimer;
 
         public bool IsLunging => Attack == AttackState.BiteLunge || Attack == AttackState.PounceLunge;
+        public bool IsTelegraphing =>
+            Attack == AttackState.BiteTelegraph || Attack == AttackState.PounceTelegraph ||
+            Attack == AttackState.BreathTelegraph || Attack == AttackState.SpitTelegraph ||
+            Attack == AttackState.CoilTelegraph || Attack == AttackState.MortarTelegraph ||
+            Attack == AttackState.FissureTelegraph;
         public bool IsMouthAttackActive =>
             Attack == AttackState.BiteTelegraph || Attack == AttackState.BiteLunge ||
             Attack == AttackState.PounceTelegraph || Attack == AttackState.PounceLunge ||
             Attack == AttackState.BreathTelegraph || Attack == AttackState.BreathSweep ||
-            Attack == AttackState.SpitTelegraph || Attack == AttackState.SpitCombo;
+            Attack == AttackState.SpitTelegraph || Attack == AttackState.SpitCombo ||
+            Attack == AttackState.CoilTelegraph || Attack == AttackState.CoilBurst ||
+            Attack == AttackState.MortarTelegraph || Attack == AttackState.MortarVolley ||
+            Attack == AttackState.FissureTelegraph || Attack == AttackState.FissureSlam;
 
         //-- AcidBody (below 50% HP): body pieces trail purple dust + acid pools while slithering --
         public int AcidBodyTimer;      //>0 = actively trailing acid
@@ -201,7 +245,8 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
         public enum TailStabKind
         {
             OverheadC,
-            LowArch
+            LowArch,
+            TailWhip
         }
         public TailStabState TailStab = TailStabState.None;
         public TailStabKind TailStabMode = TailStabKind.OverheadC;
@@ -220,6 +265,7 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
         //Two different depths: a light cloak while hunting without line of sight, a much deeper one during the
         //scripted ambush below. See SerpentAI's IdleCloakAlpha/AmbushCloakAlpha/CloakCooldownTicks.
         public int CloakAlphaTarget;
+        public int CloakTimer;    //ticks remaining in the 7s invisibility window (persists through attacks)
         public int CloakCooldown; //ticks left before the hunting cloak (not the ambush) may trigger again
 
         //Retreat-then-sneak-attack: at each 30%-of-max-HP step lost, vanish, sneak back in from the shadows,
@@ -368,6 +414,8 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             writer.Write((byte)Math.Clamp(SpitVariation, 0, byte.MaxValue));
             writer.Write((short)Math.Clamp(SpitTick, 0, short.MaxValue));
             writer.Write((byte)Math.Clamp(MouthTransitionTimer, 0, byte.MaxValue));
+            writer.Write(FeintToTailStab);
+            writer.Write(FissureWaveFired);
 
             writer.Write((byte)TailStab);
             writer.Write((byte)TailStabMode);
@@ -385,6 +433,7 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             writer.Write((short)Math.Clamp(AmbushTimer, short.MinValue, short.MaxValue));
             writer.Write((byte)Math.Clamp(AmbushThresholdsTriggered, 0, byte.MaxValue));
             writer.Write((short)Math.Clamp(CloakAlphaTarget, 0, short.MaxValue));
+            writer.Write((short)Math.Clamp(CloakTimer, 0, short.MaxValue));
             writer.Write((short)Math.Clamp(CloakCooldown, 0, short.MaxValue));
 
             writer.Write((short)Math.Clamp(ChargeTelegraphTimer, 0, short.MaxValue));
@@ -431,6 +480,8 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             SpitVariation = reader.ReadByte();
             SpitTick = reader.ReadInt16();
             MouthTransitionTimer = reader.ReadByte();
+            FeintToTailStab = reader.ReadBoolean();
+            FissureWaveFired = reader.ReadBoolean();
 
             TailStab = (TailStabState)reader.ReadByte();
             TailStabMode = (TailStabKind)reader.ReadByte();
@@ -448,6 +499,7 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             AmbushTimer = reader.ReadInt16();
             AmbushThresholdsTriggered = reader.ReadByte();
             CloakAlphaTarget = reader.ReadInt16();
+            CloakTimer = reader.ReadInt16();
             CloakCooldown = reader.ReadInt16();
 
             ChargeTelegraphTimer = reader.ReadInt16();
@@ -488,7 +540,10 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             }
             else if (Attack == AttackState.PounceLunge)
             {
-                target.AddBuff(BuffID.Venom, 10 * 60, false);
+                // Keep Acid Venom at 5s real duration across Classic, Expert (2x), and Master (2.5x).
+                float debuffMultiplier = Main.expertMode ? Main.GameModeInfo.DebuffTimeMultiplier : 1f;
+                int venomTicks = Math.Max(1, (int)Math.Round(5f * 60f / debuffMultiplier));
+                target.AddBuff(BuffID.Venom, venomTicks, false);
             }
         }
 
@@ -566,10 +621,16 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
 
             if (IsLunging)
             {
+                //When cloaked, draw a ghostly violet-white phantom afterimage trail ignoring cloak alpha so the strike
+                //reads clearly in the dark (Phantom / Cloak Double-Strike synergy).
+                bool cloakedLunge = CloakAlphaTarget > 0;
                 for (int k = 0; k < NPC.oldPos.Length; k++)
                 {
                     Vector2 drawPos = NPC.oldPos[k] + new Vector2(NPC.width / 2f, NPC.height / 2f) - screenPos;
-                    Color color = NPC.GetAlpha(drawColor) * ((float)(NPC.oldPos.Length - k) / NPC.oldPos.Length) * 0.6f;
+                    float trailFade = (float)(NPC.oldPos.Length - k) / NPC.oldPos.Length;
+                    Color baseColor = cloakedLunge ? new Color(205, 130, 255) : NPC.GetAlpha(drawColor);
+                    float trailOpacity = cloakedLunge ? 0.5f : 0.6f;
+                    Color color = baseColor * trailFade * trailOpacity;
                     spriteBatch.Draw(texture, drawPos, NPC.frame, color, NPC.rotation, HeadDrawOrigin, NPC.scale, effects, 0f);
                 }
             }
@@ -578,9 +639,42 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
             return false;
         }
 
+        public override void ModifyTypeName(ref string typeName)
+        {
+            if (tsorcRevampWorld.SuperHardMode)
+            {
+                typeName = Language.GetTextValue("Mods.tsorcRevamp.NPCs.GreatSerpentHead.SHMDisplayName");
+            }
+        }
+
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<OolacileSerpentBag>()));
+            //SHM ("Great Abyssal Serpent"): drops OolacileSerpentBag (35,000 first-bag Dark Souls + Abyssal Fang).
+            LeadingConditionRule shmRule = new LeadingConditionRule(tsorcRevamp.tsorcItemDropRuleConditions.SuperHardmodeRule);
+            shmRule.OnSuccess(ItemDropRule.BossBag(ModContent.ItemType<OolacileSerpentBag>()));
+            npcLoot.Add(shmRule);
+
+            //PHM ("Great Serpent"): drops GreatSerpentBag (10,000 first-bag Dark Souls + Stamina Vessel + 3 Holy War Elixirs).
+            LeadingConditionRule phmRule = new LeadingConditionRule(new PreHardmodeRule());
+            phmRule.OnSuccess(ItemDropRule.BossBag(ModContent.ItemType<GreatSerpentBag>()));
+            npcLoot.Add(phmRule);
+        }
+
+        public override void OnKill()
+        {
+            //Record the kill in NewSlain so the one-time PHM Dark Soul bonus only drops once.
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                NPCDefinition definition = new NPCDefinition(NPC.type);
+                if (!tsorcRevampWorld.NewSlain.ContainsKey(definition))
+                {
+                    tsorcRevampWorld.NewSlain.Add(definition, 1);
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.WorldData);
+                    }
+                }
+            }
         }
 
         //Poise break: cancel whatever SerpentAI was mid-doing so the flop doesn't fight leftover state.
@@ -589,6 +683,7 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
         {
             SerpentAI.OnStagger(npc);
             CloakAlphaTarget = 0;
+            CloakTimer = 0;
             npc.alpha = 0;
         }
     }

@@ -816,7 +816,56 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
             }
 
             float offsetX = (firstOffset + spacing * arrowIndex) * _lobSweepDir;
-            landing = new Vector2(_lobAnchor.X + offsetX + _lobJitter[arrowIndex], _lobAnchor.Y);
+            float landingX = _lobAnchor.X + offsetX + _lobJitter[arrowIndex];
+            float landingY = _lobAnchor.Y;
+
+            // Pin each landing point to actual ground (solid tile or platform) so jumping mid-volley never floats
+            // the fire-dust telegraph in midair, and uneven terrain stays grounded per arrow.
+            int tileX = Utils.Clamp((int)(landingX / 16f), 10, Main.maxTilesX - 10);
+            int startTileY = Utils.Clamp((int)(landingY / 16f), 10, Main.maxTilesY - 10);
+            Tile startTile = Framing.GetTileSafely(tileX, startTileY);
+            bool startedInsideSolid = startTile.HasUnactuatedTile && Main.tileSolid[startTile.TileType] && !Main.tileSolidTop[startTile.TileType];
+
+            if (startedInsideSolid)
+            {
+                for (int offsetY = 1; offsetY <= 16; offsetY++)
+                {
+                    int checkY = startTileY - offsetY;
+                    if (checkY < 10)
+                    {
+                        break;
+                    }
+
+                    Tile checkTile = Framing.GetTileSafely(tileX, checkY);
+                    bool solidBlock = checkTile.HasUnactuatedTile && Main.tileSolid[checkTile.TileType] && !Main.tileSolidTop[checkTile.TileType];
+                    if (!solidBlock)
+                    {
+                        landingY = (checkY + 1) * 16f - 4f;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int offsetY = 0; offsetY <= 40; offsetY++)
+                {
+                    int checkY = startTileY + offsetY;
+                    if (checkY >= Main.maxTilesY - 10)
+                    {
+                        break;
+                    }
+
+                    Tile checkTile = Framing.GetTileSafely(tileX, checkY);
+                    bool isGround = checkTile.HasUnactuatedTile && (Main.tileSolid[checkTile.TileType] || Main.tileSolidTop[checkTile.TileType]);
+                    if (isGround)
+                    {
+                        landingY = checkY * 16f - 4f;
+                        break;
+                    }
+                }
+            }
+
+            landing = new Vector2(landingX, landingY);
             descentDirection = LobDescentPattern[(arrowIndex + _slot) % LobDescentPattern.Length];
         }
 

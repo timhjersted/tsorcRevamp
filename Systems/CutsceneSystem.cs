@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.DataStructures;
@@ -106,6 +107,13 @@ namespace tsorcRevamp.Systems
         public int LeadPlayer = -1;
         public bool AllowSkip;
         public List<int> Players = new List<int>();
+
+        /// <summary>Ticks the camera takes to glide from the player to the opening shot. 0 = the bars' own 20-tick ease.</summary>
+        public int CameraInTicks;
+
+        /// <summary>Above 0: the scene ends by fading to black over the first half of these ticks, cutting the camera back to
+        /// the player while the screen is black, then fading back in over the second half. 0 = glide back with the bars.</summary>
+        public int FadeOutTicks;
     }
 
     /// <summary>
@@ -161,6 +169,14 @@ namespace tsorcRevamp.Systems
         private static readonly bool[] frozen = new bool[PlayerSlots];
         private static int leadPlayer = -1;
         private static bool allowSkip;
+
+        // Per-scene camera timing from the cast (see CutsceneCast.CameraInTicks / FadeOutTicks); reset to the defaults
+        // in ResetSceneState.
+        private static int cameraInTicks = BarEaseTicks;
+        private static int fadeOutTicks;
+
+        // Local only: Enter's state last frame, so holding Enter fires one skip request, not one per tick.
+        private static bool enterWasDown;
 
         private static bool lineActive;
         private static CutsceneLine currentLine;
@@ -270,6 +286,9 @@ namespace tsorcRevamp.Systems
                 {
                     packet.Write((byte)playerIndex);
                 }
+
+                packet.Write((short)cast.CameraInTicks);
+                packet.Write((short)cast.FadeOutTicks);
             }
 
             packet.Send();
@@ -548,6 +567,9 @@ namespace tsorcRevamp.Systems
                 {
                     cast.Players.Add(reader.ReadByte());
                 }
+
+                cast.CameraInTicks = reader.ReadInt16();
+                cast.FadeOutTicks = reader.ReadInt16();
             }
 
             Begin(sceneId, duration, focus, anchor, cast);
@@ -600,6 +622,12 @@ namespace tsorcRevamp.Systems
             {
                 leadPlayer = cast.LeadPlayer;
                 allowSkip = cast.AllowSkip;
+                fadeOutTicks = cast.FadeOutTicks;
+
+                if (cast.CameraInTicks > 0)
+                {
+                    cameraInTicks = cast.CameraInTicks;
+                }
 
                 foreach (int playerIndex in cast.Players)
                 {
@@ -626,6 +654,8 @@ namespace tsorcRevamp.Systems
         {
             leadPlayer = -1;
             allowSkip = false;
+            cameraInTicks = BarEaseTicks;
+            fadeOutTicks = 0;
             lineActive = false;
             LineFinished = false;
             SkipRequested = false;
@@ -738,6 +768,39 @@ namespace tsorcRevamp.Systems
             }
         }
 
+        // Enter skips the scene for the lead, through the same request path as the Skip button.
+        // Runs in PostUpdateInput, before vanilla's Enter-opens-chat check that same frame; clearing
+        // Main.chatRelease makes vanilla treat Enter as still held, so one press never both skips and opens chat.
+        public override void PostUpdateInput()
+        {
+            if (Main.dedServ)
+            {
+                return;
+            }
+
+            KeyboardState keyboard = Keyboard.GetState();
+            bool enterDown = keyboard.IsKeyDown(Keys.Enter);
+            bool altDown = keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt);
+            bool enterJustPressed = enterDown && !enterWasDown;
+            enterWasDown = enterDown;
+
+            if (!enterJustPressed || altDown || !Main.hasFocus || Main.gameMenu)
+            {
+                return;
+            }
+
+            // Leave Enter to chat, signs, chests and other text boxes whenever any of them owns the keyboard.
+            bool textInputBusy = Main.drawingPlayerChat || Main.editSign || Main.editChest || Main.CurrentInputTextTakerOverride != null;
+            bool canSkip = IsActive && allowSkip && IsLead(Main.LocalPlayer);
+            if (textInputBusy || !canSkip)
+            {
+                return;
+            }
+
+            Main.chatRelease = false;
+            PressSkip();
+        }
+
         private static void ClearHostileProjectiles()
         {
             Vector2 center = FocusPoint(Main.LocalPlayer);
@@ -831,7 +894,8 @@ namespace tsorcRevamp.Systems
             return cameraPoint;
         }
 
-        /// <summary>0 outside a scene, easing to 1 over the first and back over the last BarEaseTicks.</summary>
+        /// <summary>0 outside a scene, easing to 1 over the first and back over the last BarEaseTicks. A fade-out scene drops
+        /// its bars at once while the screen is fully black, so they are already gone as the picture fades back in.</summary>
         public static float BarProgress
         {
             get
@@ -841,8 +905,52 @@ namespace tsorcRevamp.Systems
                     return 0f;
                 }
 
+                int remainingTicks = Duration - Timer;
+
+                if (fadeOutTicks > 0 && remainingTicks <= fadeOutTicks / 2)
+                {
+                    return 0f;
+                }
+
                 float easeIn = Timer / (float)BarEaseTicks;
-                float easeOut = (Duration - Timer) / (float)BarEaseTicks;
+                float easeOut = remainingTicks / (float)BarEaseTicks;
+                float progress = MathHelper.Clamp(Math.Min(easeIn, easeOut), 0f, 1f);
+                return progress * progress * (3f - 2f * progress);
+            }
+        }
+
+        /// <summary>
+        /// How far the camera has moved from the player to the scene's focus: 0 = on the player, 1 = on the focus. Eases in over
+        /// the cast's CameraInTicks. On the way out it follows the bars, or for a fade-out scene it holds on the focus until the
+        /// screen is fully black and then cuts straight back to the player.
+        /// </summary>
+        public static float CameraProgress
+        {
+            get
+            {
+                if (!IsActive)
+                {
+                    return 0f;
+                }
+
+                int remainingTicks = Duration - Timer;
+                float easeIn = Timer / (float)cameraInTicks;
+                float easeOut;
+
+                if (fadeOutTicks > 0)
+                {
+                    easeOut = 1f;
+
+                    if (remainingTicks <= fadeOutTicks / 2)
+                    {
+                        easeOut = 0f;
+                    }
+                }
+                else
+                {
+                    easeOut = remainingTicks / (float)BarEaseTicks;
+                }
+
                 float progress = MathHelper.Clamp(Math.Min(easeIn, easeOut), 0f, 1f);
                 return progress * progress * (3f - 2f * progress);
             }
@@ -1017,6 +1125,28 @@ namespace tsorcRevamp.Systems
 
             Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, topBar, pixelSource, Color.Black);
             Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, bottomBar, pixelSource, Color.Black);
+
+            // Fade-out scenes: over the last fadeOutTicks the screen goes to black in the first half (rising opacity) and
+            // comes back in the second (falling), smoothstepped. CameraProgress cuts back to the player at the midpoint.
+            int remainingTicks = Duration - Timer;
+
+            if (IsActive && fadeOutTicks > 0 && remainingTicks <= fadeOutTicks)
+            {
+                float halfTicks = fadeOutTicks / 2f;
+                float blackness = remainingTicks / halfTicks;
+
+                if (remainingTicks > halfTicks)
+                {
+                    blackness = (fadeOutTicks - remainingTicks) / halfTicks;
+                }
+
+                blackness = MathHelper.Clamp(blackness, 0f, 1f);
+                blackness = blackness * blackness * (3f - 2f * blackness);
+
+                Rectangle wholeScreen = new Rectangle(0, 0, Main.screenWidth, Main.screenHeight);
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, wholeScreen, pixelSource, Color.Black * blackness);
+            }
+
             return true;
         }
 
@@ -1478,7 +1608,7 @@ namespace tsorcRevamp.Systems
                 return;
             }
 
-            float blend = CutsceneSystem.BarProgress;
+            float blend = CutsceneSystem.CameraProgress;
             if (blend <= 0f)
             {
                 return;

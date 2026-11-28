@@ -84,11 +84,16 @@ namespace tsorcRevamp.NPCs.Invaders
         const string EmberLungeName = "Ember Lunge";
         const string ThreeHitStandardName = "3-Hit Standard";
         const string FiveHitFinisherName = "5-Hit Finisher";
+        const string BlazingAdvanceName = "Blazing Advance";
+        const string CinderPursuitName = "Cinder Pursuit";
+        const string CrimsonTempoName = "Crimson Tempo";
 
         const float ArcHighRad = -1.85f;
         const float ArcLowRad = 1.90f;
         const float EmberLungeMinRange = 140f;
         const float EmberLungeMaxRange = 280f;
+        const float CinderPursuitMinRange = 110f;
+        const float CinderPursuitMaxRange = 260f;
 
         protected override float TopSpeed => 3f;
         protected override float Acceleration => 0.11f;
@@ -397,6 +402,70 @@ namespace tsorcRevamp.NPCs.Invaders
                     HeroCut(ComboMotion.OverheadArc, 0, 10, 38, 0, stepInDistance: 64f, damageMult: 1.50f, reachMult: 1.22f),
                 },
             },
+            // Blazing Advance — 3-hit advancing press; 215 deg envelope (~172 deg live), swings spaced 56t / 58t apart,
+            // shaped step-in 76 / 84 / 96px (< 110px roll travel). Live 13.9 / 13.9 / 15.2t (< 22t roll i-frames),
+            // post-live gaps 42.1 / 44.1t (>= 30t Rule 3 safe). Finisher throws HeroFireArc; 30t recovery (~60t open).
+            // Cancels in ShouldContinueMeleeCombo on whiff if target out-spaces reach + step-in.
+            new MeleeCombo
+            {
+                Name = BlazingAdvanceName,
+                BaseWeight = 85,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.Orange,
+                CooldownAfterUse = 110,
+                RecoveryTicks = 30,
+                MoveBrake = 0.10f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.OverheadArc, 32, 8, 34, 14, stepInDistance: 76f, damageMult: 0.95f, reachMult: 1.05f),
+                    HeroCut(ComboMotion.UnderhandArc, 0, 8, 34, 16, stepInDistance: 84f, damageMult: 1.05f, reachMult: 1.08f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 9, 36, 0, stepInDistance: 96f, damageMult: 1.25f, reachMult: 1.15f),
+                },
+            },
+            // Cinder Pursuit (RangedStartOnly 110..260px) — 2-hit grounded rush; swings spaced 62t apart,
+            // shaped step-in 92 / 100px (< 110px roll travel). Live 14.2 / 16.5t (< 22t roll i-frames),
+            // post-live gap 47.8t (>= 30t Rule 3 safe). Finisher throws HeroFireArc; 28t recovery (~59.5t open).
+            // Cancels before Step 2 if Step 1 whiffs and target escapes beyond reach + step-in.
+            new MeleeCombo
+            {
+                Name = CinderPursuitName,
+                BaseWeight = 80,
+                Preferred = ComboRangeBand.Mid,
+                InitialFlashColor = Color.Gold,
+                CooldownAfterUse = 115,
+                HyperArmor = true,
+                RangedStartOnly = true,
+                RecoveryTicks = 28,
+                MoveBrake = 0.08f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.UnderhandArc, 34, 8, 36, 18, stepInDistance: 92f, damageMult: 1.05f, reachMult: 1.08f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 10, 38, 0, stepInDistance: 100f, damageMult: 1.30f, reachMult: 1.18f),
+                },
+            },
+            // Crimson Tempo — 4-hit deliberate advancing rhythm; swings spaced 60t / 62t / 67t apart,
+            // shaped step-in 72 / 80 / 84 / 98px (< 110px roll travel). Live 13.9 / 14.2 / 15.2 / 16.5t (< 22t roll i-frames),
+            // post-live gaps 46.1 / 47.8 / 51.8t (>= 30t Rule 3 safe). Finisher throws HeroFireArc; 40t recovery (~71.5t open).
+            // Cancels on any whiff if target out-spaces reach + step-in (ShouldContinueMeleeCombo).
+            new MeleeCombo
+            {
+                Name = CrimsonTempoName,
+                BaseWeight = 60,
+                Preferred = ComboRangeBand.Close,
+                InitialFlashColor = Color.OrangeRed,
+                CooldownAfterUse = 180,
+                HeavyCommit = true,
+                HyperArmor = true,
+                RecoveryTicks = 40,
+                MoveBrake = 0.14f,
+                Steps = new[]
+                {
+                    HeroCut(ComboMotion.UnderhandArc, 38, 8, 34, 18, stepInDistance: 72f, damageMult: 0.90f, reachMult: 1.05f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 8, 36, 18, stepInDistance: 80f, damageMult: 0.95f, reachMult: 1.05f),
+                    HeroCut(ComboMotion.UnderhandArc, 0, 9, 36, 22, stepInDistance: 84f, damageMult: 1.00f, reachMult: 1.08f),
+                    HeroCut(ComboMotion.OverheadArc, 0, 10, 38, 0, stepInDistance: 98f, damageMult: 1.35f, reachMult: 1.20f),
+                },
+            },
         };
 
         protected override void ModifySwordArcVFX(MeleeComboStep step, VanillaSwordArcSettings settings)
@@ -411,6 +480,11 @@ namespace tsorcRevamp.NPCs.Invaders
             if (combo.Name == EmberLungeName)
             {
                 return distance >= EmberLungeMinRange && distance <= EmberLungeMaxRange;
+            }
+
+            if (combo.Name == CinderPursuitName)
+            {
+                return distance >= CinderPursuitMinRange && distance <= CinderPursuitMaxRange;
             }
 
             return true;
@@ -444,8 +518,13 @@ namespace tsorcRevamp.NPCs.Invaders
                 return;
             }
 
+            // Preserve strong authored step-in on advancing combos while still adapting to the player's distance
+            // (capped at 106px so rolling away ~110px still clears a well-timed dodge).
+            float authoredStepIn = nextStep.StepInDistance;
+            float minStepIn = Math.Max(20f, authoredStepIn * 0.70f);
+            float maxStepIn = Math.Min(106f, Math.Max(68f, authoredStepIn * 1.15f));
             float horizontalGap = Math.Abs(target.Center.X - NPC.Center.X);
-            nextStep.StepInDistance = MathHelper.Clamp(horizontalGap - 44f, 20f, 68f);
+            nextStep.StepInDistance = MathHelper.Clamp(horizontalGap - 32f, minStepIn, maxStepIn);
         }
 
         protected override void ModifyMeleeArcEndpoints(ComboMotion motion,
@@ -831,8 +910,9 @@ namespace tsorcRevamp.NPCs.Invaders
 
                 case HeroSetPiece.Horn:
                     SetAttackLabel("Archer's Volley", 110);
-                    // War-cry / horn signal (swap for a dedicated horn sound if one is added).
-                    SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.55f, Pitch = 0.2f }, NPC.Center);
+                    SoundEngine.PlaySound(
+                        new SoundStyle("tsorcRevamp/Sounds/HollowKnight/horn_call") with { Volume = 0.75f, PitchVariance = 0.08f },
+                        NPC.Center);
                     break;
 
                 case HeroSetPiece.Rally:

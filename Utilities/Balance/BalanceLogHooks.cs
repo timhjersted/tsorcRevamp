@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using tsorcRevamp.Content.Items.Weapons;
+using tsorcRevamp.Systems;
 
 namespace tsorcRevamp.Utilities.Balance
 {
@@ -29,6 +30,8 @@ namespace tsorcRevamp.Utilities.Balance
         /// </summary>
         internal int SourceAttackMode;
         internal int SourceAltFunction;
+        internal int SourceReinforcementLevel;
+        internal int SourceReinforcementUpgrades;
 
         public override void OnSpawn(Projectile projectile, IEntitySource source)
         {
@@ -37,6 +40,8 @@ namespace tsorcRevamp.Utilities.Balance
             {
                 SourceItemType = withAmmo.Item.type;
                 SourceAmmoType = withAmmo.AmmoItemIdUsed;
+                SourceReinforcementLevel = WeaponReinforcement.GetDisplayedLevel(withAmmo.Item);
+                SourceReinforcementUpgrades = WeaponReinforcement.GetUpgradesEarned(withAmmo.Item);
                 CaptureAttackMode(withAmmo.Player);
                 return;
             }
@@ -44,6 +49,8 @@ namespace tsorcRevamp.Utilities.Balance
             if (source is EntitySource_ItemUse itemUse && itemUse.Item != null && !itemUse.Item.IsAir)
             {
                 SourceItemType = itemUse.Item.type;
+                SourceReinforcementLevel = WeaponReinforcement.GetDisplayedLevel(itemUse.Item);
+                SourceReinforcementUpgrades = WeaponReinforcement.GetUpgradesEarned(itemUse.Item);
                 CaptureAttackMode(itemUse.Player);
                 return;
             }
@@ -55,6 +62,8 @@ namespace tsorcRevamp.Utilities.Balance
                 SourceAmmoType = inherited.SourceAmmoType;
                 SourceAttackMode = inherited.SourceAttackMode;
                 SourceAltFunction = inherited.SourceAltFunction;
+                SourceReinforcementLevel = inherited.SourceReinforcementLevel;
+                SourceReinforcementUpgrades = inherited.SourceReinforcementUpgrades;
                 return;
             }
 
@@ -62,6 +71,8 @@ namespace tsorcRevamp.Utilities.Balance
                 && owner.HeldItem != null && !owner.HeldItem.IsAir)
             {
                 SourceItemType = owner.HeldItem.type;
+                SourceReinforcementLevel = WeaponReinforcement.GetDisplayedLevel(owner.HeldItem);
+                SourceReinforcementUpgrades = WeaponReinforcement.GetUpgradesEarned(owner.HeldItem);
                 CaptureAttackMode(owner);
             }
         }
@@ -95,7 +106,12 @@ namespace tsorcRevamp.Utilities.Balance
             if (!_counted && projectile.owner == Main.myPlayer)
             {
                 _counted = true;
-                WeaponBench.NotifyProjectileSpawned(SourceItemType, SourceAttackMode, SourceAltFunction, projectile.type);
+                WeaponBench.NotifyProjectileSpawned(
+                    SourceItemType,
+                    SourceAttackMode,
+                    SourceAltFunction,
+                    projectile.type,
+                    SourceReinforcementLevel);
             }
         }
 
@@ -107,15 +123,18 @@ namespace tsorcRevamp.Utilities.Balance
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             int itemType = item?.type ?? -1;
+            int reinforcementLevel = WeaponReinforcement.GetDisplayedLevel(item);
+            int reinforcementUpgrades = WeaponReinforcement.GetUpgradesEarned(item);
             // Direct melee has no projectile to carry the attack mode, so it's read live at hit time —
             // the swing that is landing right now is the one still in progress.
             int mode = WeaponBench.AttackModeOf(player);
             int alt = player.altFunctionUse == 2 ? 1 : 0;
 
-            BalanceLog.RecordHit(npc, player, itemType, -1, damageDone, hit.Crit);
+            BalanceLog.RecordHit(npc, player, itemType, -1, damageDone, hit.Crit, -1, reinforcementLevel, reinforcementUpgrades);
             EnemyKillLog.RecordHit(npc, player, itemType, damageDone);
             WeaponBench.RecordHit(npc, player, itemType, -1, damageDone, hit.Crit, mode, alt,
-                WeaponBench.MeleeAttackIndex(itemType, mode, alt, npc.whoAmI));
+                WeaponBench.MeleeAttackIndex(itemType, mode, alt, npc.whoAmI, reinforcementLevel),
+                -1, reinforcementLevel, reinforcementUpgrades);
         }
 
         public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone)
@@ -125,15 +144,22 @@ namespace tsorcRevamp.Utilities.Balance
 
             BalanceSourceProjectile attribution = projectile.GetGlobalProjectile<BalanceSourceProjectile>();
             int itemType = attribution.SourceItemType;
+            int reinforcementLevel = attribution.SourceReinforcementLevel;
+            int reinforcementUpgrades = attribution.SourceReinforcementUpgrades;
             Player owner = Main.player[projectile.owner];
             if (itemType <= 0 && owner?.HeldItem != null && !owner.HeldItem.IsAir)
+            {
                 itemType = owner.HeldItem.type;
+                reinforcementLevel = WeaponReinforcement.GetDisplayedLevel(owner.HeldItem);
+                reinforcementUpgrades = WeaponReinforcement.GetUpgradesEarned(owner.HeldItem);
+            }
 
-            BalanceLog.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit, projectile.type);
+            BalanceLog.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit,
+                projectile.type, reinforcementLevel, reinforcementUpgrades);
             EnemyKillLog.RecordHit(npc, owner, itemType, damageDone);
             WeaponBench.RecordHit(npc, owner, itemType, attribution.SourceAmmoType, damageDone, hit.Crit,
                 attribution.SourceAttackMode, attribution.SourceAltFunction,
-                attribution.RegisterHit(npc.whoAmI), projectile.type);
+                attribution.RegisterHit(npc.whoAmI), projectile.type, reinforcementLevel, reinforcementUpgrades);
         }
 
         public override void OnSpawn(NPC npc, IEntitySource source)

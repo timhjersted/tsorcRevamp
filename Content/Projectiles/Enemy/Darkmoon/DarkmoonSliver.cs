@@ -105,14 +105,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
     {
         public const int Radius = 160, VisualTicks = 60, DamageStart = 6, DamageEndExclusive = 21;
 
-        // The blast is three overlapping copies of the explosion shader, PulseSpacing ticks apart, each turned and
-        // sized differently so they never stack into one flat disc; each pulse also fires a white light burst.
-        // Damage timing is unchanged (DamageStart..DamageEndExclusive); the later pulses are visual only.
-        const int PulseCount = 5, PulseSpacing = 7;
-        static readonly float[] PulseScale = { 1f, 0.78f, 1.14f, 0.9f, 1.3f };
-        static readonly float[] PulseOpacity = { 1f, 0.85f, 0.7f, 0.6f, 0.45f };
-        static readonly float[] PulseTurn = { 0f, 1.1f, -0.8f, 2.3f, -2.0f };
-        const int Lifetime = VisualTicks + (PulseCount - 1) * PulseSpacing;
+        // The blast is nine staggered, continuously expanding layers of the explosion shader spaced 3 ticks apart.
+        // Inner layers use AlphaBlend to anchor the moonlight-blue core; outer layers use Additive with lower peak
+        // opacity so overlapping waves bloom into a smooth explosion of light instead of choppy static discs.
+        // Damage timing is unchanged (DamageStart..DamageEndExclusive); later layers are visual only.
+        const int LayerCount = 9;
+        const int LayerSpacing = 3;
+        const int BurstCount = 5;
+        const int BurstSpacing = 6;
+        static readonly float[] LayerStartScale = { 0.32f, 0.36f, 0.34f, 0.38f, 0.40f, 0.42f, 0.44f, 0.46f, 0.48f };
+        static readonly float[] LayerEndScale = { 0.96f, 1.04f, 1.10f, 1.16f, 1.22f, 1.28f, 1.34f, 1.40f, 1.48f };
+        static readonly float[] LayerPeakOpacity = { 0.72f, 0.56f, 0.46f, 0.38f, 0.32f, 0.27f, 0.22f, 0.18f, 0.14f };
+        static readonly float[] LayerTurn = { 0f, 0.85f, -0.65f, 1.65f, -1.40f, 2.35f, -2.15f, 0.45f, -1.05f };
+        static readonly float[] LayerSpin = { 0.22f, -0.26f, 0.30f, -0.24f, 0.28f, -0.32f, 0.25f, -0.20f, 0.18f };
+        const int Lifetime = VisualTicks + (LayerCount - 1) * LayerSpacing;
         readonly bool[] hit = new bool[Main.maxPlayers];
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetDefaults()
@@ -141,22 +147,22 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.8f, Pitch = 0.2f }, Projectile.Center);
                     UsefulFunctions.ScreenShake(Projectile.Center, 3f, 15, distanceFalloff: 650);
                 }
-                // Each pulse: a white light burst, strongest first. Later pulses add a bright chime.
-                bool pulseTick = age % PulseSpacing == 0 && age / PulseSpacing < PulseCount;
-                if (pulseTick)
+                // Each burst: a white light burst, strongest first. Later bursts add a bright chime.
+                bool burstTick = age % BurstSpacing == 0 && age / BurstSpacing < BurstCount;
+                if (burstTick)
                 {
-                    int pulse = age / PulseSpacing;
-                    float strength = 1f - pulse * 0.15f;
+                    int burst = age / BurstSpacing;
+                    float strength = 1f - burst * 0.15f;
                     DarkmoonVisuals.LightBurst(Projectile.Center, 16, Radius * strength, strength);
-                    if (pulse > 0)
+                    if (burst > 0)
                     {
-                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.45f, Pitch = 0.4f + pulse * 0.15f }, Projectile.Center);
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.45f, Pitch = 0.4f + burst * 0.15f }, Projectile.Center);
                     }
                 }
 
                 if (age >= 21 && age < 49) DarkmoonVisuals.Motes(Projectile.Center, Color.Silver, 3, 160);
 
-                // White flash for the first pulses, cooling to moonlight blue as it fades.
+                // White flash for the first bursts, cooling to moonlight blue as it fades.
                 float fade = MathHelper.Clamp(1 - age / (float)Lifetime, 0, 1);
                 float flash = MathHelper.Clamp(1 - age / 24f, 0, 1);
                 Vector3 light = Vector3.Lerp(new Vector3(0.3f, 0.65f, 1f), new Vector3(1.4f, 1.4f, 1.5f), flash) * fade;
@@ -167,18 +173,27 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Darkmoon
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            // Later pulses draw first so the primary blast stays on top.
-            for (int pulse = PulseCount - 1; pulse >= 0; pulse--)
+            // Draw inner AlphaBlend layers first (indices 0..1) to anchor the moonlight-blue core, then additive
+            // outer waves (indices 2..8) on top so overlapping faded layers bloom smoothly into an explosion of light.
+            for (int layer = 0; layer < LayerCount; layer++)
             {
-                float pulseAge = Projectile.ai[0] - pulse * PulseSpacing;
-                if (pulseAge < 0 || pulseAge > VisualTicks)
+                float layerAge = Projectile.ai[0] - layer * LayerSpacing;
+                if (layerAge < 0f || layerAge > VisualTicks)
                 {
                     continue;
                 }
 
-                float progress = MathHelper.Clamp(pulseAge / VisualTicks, 0, 1);
-                float rotation = Projectile.ai[2] + PulseTurn[pulse];
-                DarkmoonVisuals.DrawExplosion(Projectile.Center, progress, rotation, PulseScale[pulse], PulseOpacity[pulse]);
+                float progress = MathHelper.Clamp(layerAge / VisualTicks, 0f, 1f);
+                float growCurve = 1f - (float)Math.Pow(1f - progress, 2.3f);
+                float currentScale = MathHelper.Lerp(LayerStartScale[layer], LayerEndScale[layer], growCurve);
+
+                float fadeIn = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(progress / 0.14f, 0f, 1f));
+                float fadeOut = (float)Math.Pow(1f - progress, 1.35f);
+                float currentOpacity = LayerPeakOpacity[layer] * fadeIn * fadeOut;
+
+                float rotation = Projectile.ai[2] + LayerTurn[layer] + LayerSpin[layer] * progress;
+                bool useAdditive = layer >= 2;
+                DarkmoonVisuals.DrawExplosion(Projectile.Center, progress, rotation, currentScale, currentOpacity, useAdditive);
             }
 
             return false;

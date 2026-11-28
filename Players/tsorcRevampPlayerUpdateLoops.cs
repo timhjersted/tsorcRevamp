@@ -157,6 +157,14 @@ namespace tsorcRevamp
         public bool ChloranthyRing1 = false;
         public bool ChloranthyRing2 = false;
         public bool GhostStepEquipped = false;
+        public bool CloakingSerpentScaleEquipped = false;
+        public int serpentCloakCooldownTicks = 0;
+        public int serpentsTailLashCracks = 0;
+        public int serpentsCoilShots = 0;
+        public int serpentsFangDashTicks = 0;
+        public int serpentsFangContactGraceTicks = 0;
+        public Vector2 serpentsFangDashDir = Vector2.Zero;
+        public bool serpentsFangIsLunge = false;
 
         public bool DarkInferno = false;
         public bool AbyssInferno = false;
@@ -550,6 +558,7 @@ namespace tsorcRevamp
             ChloranthyRing1 = false;
             ChloranthyRing2 = false;
             GhostStepEquipped = false;
+            CloakingSerpentScaleEquipped = false;
             BarrierRing = false;
 
             BrokenSpirit = false;
@@ -1764,7 +1773,7 @@ namespace tsorcRevamp
                 Vector2 centerOffset = new Vector2(Player.Center.X + 2 - Player.width / 2, Player.Center.Y + 6 - Player.height / 2);
                 const float circleRadius = 150f;
                 int dustType = ModContent.DustType<CrimsonDrainDust>();
-                const int particleCount = 28;
+                const int particleCount = 20; // Loop starts at 1, so this spawns 19 ring dusts per tick.
 
                 for (int j = 1; j < particleCount; j++)
                 {
@@ -2223,35 +2232,71 @@ namespace tsorcRevamp
                 {
                     Player.lifeRegen = 0;
                 }
+
                 Player.lifeRegenTime = 0;
                 Player.lifeRegen -= 11;
-                for (int j = 0; j < 4; j++)
-                {
-                    int dust = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f);
-                    Main.dust[dust].noGravity = true;
 
-                    int dust2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f); //54 was 58
-                    Main.dust[dust2].noGravity = true;
-                }
-
-                if (Main.rand.NextBool(3))
+                if (!Main.dedServ)
                 {
-                    // Render fire particles [every frame]
-                    int particle = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 54, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 3f);
-                    Main.dust[particle].noGravity = true;
-                    Main.dust[particle].velocity *= 1.4f;
-                    int lol = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 58, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 160, default(Color), 3f);
-                    Main.dust[lol].noGravity = true;
-                    Main.dust[lol].velocity *= 1.4f;
-                }
+                    // Black flame body across the player; noLight keeps dark flames from brightening tiles.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float flameSpeedX = Player.velocity.X * 0.2f + Main.rand.NextFloat(-0.6f, 0.6f);
+                        float flameSpeedY = Player.velocity.Y * 0.2f + Main.rand.NextFloat(-1.8f, -0.5f);
+                        float flameScale = Main.rand.NextFloat(0.85f, 1.35f);
+                        Dust blackFlame = Dust.NewDustDirect(
+                            Player.position,
+                            Player.width,
+                            Player.height,
+                            DustID.Wraith,
+                            flameSpeedX,
+                            flameSpeedY,
+                            40,
+                            default,
+                            flameScale);
+                        blackFlame.noGravity = true;
+                        blackFlame.noLight = true;
+                    }
 
-                // Render smoke particles [every other frame]
-                if (Main.GameUpdateCount % 2 == 0)
-                {
-                    int particle2 = Dust.NewDust(Player.position, Player.width / 2, Player.height / 2, 58, (Player.velocity.X * 0.2f), Player.velocity.Y * 0.2f, 100, default, 1f + (float)Main.rand.Next(2));
-                    Main.dust[particle2].noGravity = true;
-                    Main.dust[particle2].noLight = true;
-                    Main.dust[particle2].fadeIn = 3f;
+                    // Smaller pink flame licks so the debuff reads as black-and-pink fire instead of white-cored stars.
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float sparkSpeedX = Player.velocity.X * 0.2f + Main.rand.NextFloat(-0.8f, 0.8f);
+                        float sparkSpeedY = Player.velocity.Y * 0.2f + Main.rand.NextFloat(-2.4f, -0.8f);
+                        float sparkScale = Main.rand.NextFloat(0.6f, 1.05f);
+                        Dust pinkFlame = Dust.NewDustDirect(
+                            Player.position,
+                            Player.width,
+                            Player.height,
+                            DustID.PinkTorch,
+                            sparkSpeedX,
+                            sparkSpeedY,
+                            45,
+                            default,
+                            sparkScale);
+                        pinkFlame.noGravity = true;
+                    }
+
+                    // Billowing dark smoke every other tick for lingering volume without oversized motes.
+                    if (Main.GameUpdateCount % 2 == 0)
+                    {
+                        float smokeSpeedX = Player.velocity.X * 0.15f + Main.rand.NextFloat(-0.4f, 0.4f);
+                        float smokeSpeedY = Player.velocity.Y * 0.15f + Main.rand.NextFloat(-1.2f, -0.4f);
+                        float smokeScale = Main.rand.NextFloat(0.55f, 0.75f);
+                        Dust darkSmoke = Dust.NewDustDirect(
+                            Player.position,
+                            Player.width,
+                            Player.height,
+                            DustID.Smoke,
+                            smokeSpeedX,
+                            smokeSpeedY,
+                            140,
+                            new Color(24, 14, 26),
+                            smokeScale);
+                        darkSmoke.noGravity = true;
+                        darkSmoke.noLight = true;
+                        darkSmoke.fadeIn = Main.rand.NextFloat(1.2f, 1.45f);
+                    }
                 }
             }
 
@@ -2651,6 +2696,45 @@ namespace tsorcRevamp
         }
 
         public Vector2 SavedVelocity;
+
+        /// <summary>
+        /// Stops Serpent's Fang forward push/lunge momentum cleanly in front of the struck enemy
+        /// and opens a short contact-damage grace window so the player never slides into body collision.
+        /// </summary>
+        public void HaltSerpentsFangDashOnEnemy(NPC target)
+        {
+            if (serpentsFangDashTicks <= 0 && serpentsFangContactGraceTicks >= 10)
+            {
+                return;
+            }
+
+            float awaySign = -1f;
+            if (Player.Center.X >= target.Center.X)
+            {
+                awaySign = 1f;
+            }
+
+            // Cancel forward speed into the target and apply a tiny rebound step away.
+            if (Player.velocity.X * awaySign < 0f)
+            {
+                Player.velocity.X = awaySign * 1.4f;
+            }
+            else if (System.Math.Abs(Player.velocity.X) > 2.5f)
+            {
+                Player.velocity.X *= 0.35f;
+            }
+
+            float verticalTowardsTarget = target.Center.Y - Player.Center.Y;
+            if (Player.velocity.Y * verticalTowardsTarget > 0f)
+            {
+                Player.velocity.Y = 0f;
+            }
+
+            serpentsFangDashTicks = 0;
+            serpentsFangIsLunge = false;
+            serpentsFangContactGraceTicks = 12;
+        }
+
         public override void PreUpdateMovement()
         {
             // This is the last tModLoader player hook before vanilla resolves collision and fall damage.
@@ -2714,6 +2798,57 @@ namespace tsorcRevamp
                 }
 
                 return;
+            }
+
+            if (serpentCloakCooldownTicks > 0)
+            {
+                serpentCloakCooldownTicks--;
+            }
+
+            if (serpentsFangContactGraceTicks > 0)
+            {
+                serpentsFangContactGraceTicks--;
+            }
+
+            if (serpentsFangDashTicks > 0)
+            {
+                if (serpentsFangIsLunge && !Main.dedServ)
+                {
+                    Dust lungeWake = Dust.NewDustPerfect(
+                        Player.Center + Main.rand.NextVector2Circular(8f, 12f),
+                        DustID.AncientLight,
+                        -Player.velocity * 0.15f,
+                        55,
+                        new Color(180, 80, 250),
+                        1.0f);
+                    lungeWake.noGravity = true;
+                }
+
+                // Predict next-tick body bounds with a 6px lead margin and stop before overlapping any hostile NPC.
+                Rectangle nextBounds = Player.Hitbox;
+                nextBounds.Offset((int)System.Math.Round(Player.velocity.X), (int)System.Math.Round(Player.velocity.Y));
+                nextBounds.Inflate(6, 4);
+
+                bool blockedByEnemy = false;
+                for (int i = 0; i < Main.maxNPCs; i++)
+                {
+                    NPC candidate = Main.npc[i];
+                    if (UsefulFunctions.IsHostileThreat(candidate) && !candidate.dontTakeDamage && nextBounds.Intersects(candidate.Hitbox))
+                    {
+                        HaltSerpentsFangDashOnEnemy(candidate);
+                        blockedByEnemy = true;
+                        break;
+                    }
+                }
+
+                if (!blockedByEnemy)
+                {
+                    serpentsFangDashTicks--;
+                    if (serpentsFangIsLunge && serpentsFangDashTicks <= 2)
+                    {
+                        Player.velocity.X *= 0.65f;
+                    }
+                }
             }
             /*if (ShunpoTimer == 3)
             {

@@ -127,6 +127,15 @@ namespace tsorcRevamp
                     b *= ghostScale;
                     a *= ghostScale;
                 }
+
+                if (Player.HasBuff(ModContent.BuffType<Content.Items.Accessories.Mobility.CloakingSerpentScale.CloakingSerpentScaleBuff>()))
+                {
+                    // Premultiplied translucent violet-slate shimmer while Cloaking Serpent Scale stealth is active.
+                    r *= 0.46f;
+                    g *= 0.36f;
+                    b *= 0.62f;
+                    a *= 0.42f;
+                }
             }
         }
 

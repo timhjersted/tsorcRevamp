@@ -119,8 +119,10 @@ namespace tsorcRevamp.NPCs.Bosses.GreatSerpent
 
         public override void OnHitPlayer(Player target, Player.HurtInfo hurtInfo)
         {
-            //The tail stab injects venom (matches the pounce's toxin theme)
-            target.AddBuff(BuffID.Venom, 8 * 60, false);
+            // Keep Acid Venom at 5s real duration across Classic, Expert (2x), and Master (2.5x).
+            float debuffMultiplier = Main.expertMode ? Main.GameModeInfo.DebuffTimeMultiplier : 1f;
+            int venomTicks = Math.Max(1, (int)Math.Round(5f * 60f / debuffMultiplier));
+            target.AddBuff(BuffID.Venom, venomTicks, false);
         }
         public override void AI()
         {

@@ -1365,6 +1365,46 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Snapshot();
             }
 
+            // Domino-style ground dust rush from the feet 3 tiles (48px) forward over 10t after lock, plus head glint.
+            if (elapsed >= AdvanceLock && elapsed < AdvanceTell && !Main.dedServ)
+            {
+                int rushTick = elapsed - AdvanceLock;
+                const int RushTicks = 10;
+                if (rushTick < RushTicks)
+                {
+                    Vector2 feet = NPC.Bottom + new Vector2(0f, -2f);
+                    float prevDistance = rushTick * (48f / RushTicks);
+                    float currDistance = (rushTick + 1) * (48f / RushTicks);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float sampleDistance = MathHelper.Lerp(prevDistance, currDistance, (i + Main.rand.NextFloat()) / 3f);
+                        Vector2 spawnPosition = feet + new Vector2(_lockFacing * sampleDistance, Main.rand.NextFloat(-4f, 0f));
+                        Vector2 moteVelocity = new Vector2(_lockFacing * Main.rand.NextFloat(0.4f, 1.1f), Main.rand.NextFloat(-2.0f, -0.7f));
+                        int dustType = i == 0 ? DustID.GrassBlades : DustID.TintableDustLighted;
+                        Color tint = dustType == DustID.TintableDustLighted ? Accent : default;
+                        Dust bodyMote = Dust.NewDustPerfect(spawnPosition, dustType, moteVelocity, 40, tint, Main.rand.NextFloat(0.85f, 1.25f));
+                        bodyMote.noGravity = true;
+                    }
+
+                    Vector2 leadPosition = feet + new Vector2(_lockFacing * currDistance, -2f);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 glintVelocity = new Vector2(_lockFacing * Main.rand.NextFloat(0.6f, 1.4f), Main.rand.NextFloat(-2.6f, -1.2f));
+                        Dust glintMote = Dust.NewDustPerfect(leadPosition + Main.rand.NextVector2Circular(3f, 2f),
+                            DustID.TintableDustLighted, glintVelocity, 20, DarkrootWoodVFX.Sap, Main.rand.NextFloat(0.55f, 0.85f));
+                        glintMote.noGravity = true;
+                    }
+
+                    Lighting.AddLight(leadPosition, 0.22f, 0.38f, 0.14f);
+                }
+
+                if (elapsed % 2 == 0)
+                {
+                    DarkrootWoodVFX.Motes(PuppetSpearTipPosition, 1, 3f, true, DustID.GreenTorch);
+                }
+            }
+
             int advance = elapsed - AdvanceTell;
             _customExpertDamage = AdvanceExpertDamage;
             _customLive = advance >= 18 && advance < AdvanceRetractStart;
@@ -1442,6 +1482,47 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Snapshot();
             }
 
+            // One-time directional dust burst in the three fan directions, 1-2 tiles (16-32px) forward, 12t before release.
+            bool firstBurst = elapsed == ThornLock;
+            bool secondBurst = _fanCount == 2 && elapsed == ThornSecondRelease - 12;
+            if ((firstBurst || secondBurst) && !Main.dedServ)
+            {
+                Vector2 muzzle = PuppetSpearTipPosition;
+                Vector2 baseAim = _thornAim;
+                if (firstBurst && !Server && target != null)
+                {
+                    baseAim = (target.Center - muzzle).SafeNormalize(new Vector2(_lockFacing, 0f));
+                }
+
+                for (int ray = -1; ray <= 1; ray++)
+                {
+                    Vector2 rayDirection = baseAim.RotatedBy(MathHelper.ToRadians(12f) * ray);
+                    Vector2 sideways = new Vector2(-rayDirection.Y, rayDirection.X);
+
+                    // 6 body motes + 3 leading sap glints per ray, placed 4-24px out with gentle forward drift (~16-32px total).
+                    for (int i = 0; i < 6; i++)
+                    {
+                        float stepFraction = (i + Main.rand.NextFloat()) / 6f;
+                        float forwardDistance = MathHelper.Lerp(4f, 22f, stepFraction);
+                        Vector2 spawnPosition = muzzle + rayDirection * forwardDistance + sideways * Main.rand.NextFloat(-1.5f, 1.5f);
+                        Vector2 moteVelocity = rayDirection * Main.rand.NextFloat(0.5f, 1.1f) + sideways * Main.rand.NextFloat(-0.15f, 0.15f);
+                        int dustType = i % 2 == 0 ? DustID.TintableDustLighted : DustID.GrassBlades;
+                        Color tint = dustType == DustID.TintableDustLighted ? Accent : default;
+                        Dust bodyMote = Dust.NewDustPerfect(spawnPosition, dustType, moteVelocity, 40, tint, Main.rand.NextFloat(0.8f, 1.15f));
+                        bodyMote.noGravity = true;
+                    }
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float forwardDistance = Main.rand.NextFloat(14f, 26f);
+                        Vector2 spawnPosition = muzzle + rayDirection * forwardDistance + sideways * Main.rand.NextFloat(-1.5f, 1.5f);
+                        Vector2 glintVelocity = rayDirection * Main.rand.NextFloat(0.7f, 1.3f);
+                        Dust glintMote = Dust.NewDustPerfect(spawnPosition, DustID.TintableDustLighted, glintVelocity, 20, DarkrootWoodVFX.Sap, Main.rand.NextFloat(0.55f, 0.85f));
+                        glintMote.noGravity = true;
+                    }
+                }
+            }
+
             bool firstRelease = elapsed == ThornRelease && (_releasedMask & 1) == 0;
             bool secondRelease = _fanCount == 2 && elapsed == ThornSecondRelease && (_releasedMask & 2) == 0;
 
@@ -1480,24 +1561,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 SoundEngine.PlaySound(SoundID.Item17 with { Pitch = -0.2f }, NPC.Center);
             }
 
-            // Before the lock, gather at the casting palm; afterward the committed earth source stirs.
-            if (elapsed < LashRelease && !Main.dedServ)
-            {
-                int moteCount = 1;
-                if (elapsed >= LashLock)
-                {
-                    moteCount = 2;
-                }
-
-                Vector2 gatheringPoint = PuppetBackHandPosition;
-                if (elapsed >= LashLock && _lashControls[0] != Vector2.Zero)
-                {
-                    gatheringPoint = _lashControls[0];
-                }
-
-                DarkrootWoodVFX.Motes(gatheringPoint, moteCount, 18f, true);
-            }
-
             if (elapsed == LashLock && Server)
             {
                 _pitch = LivePitch(LashPitchLimit);
@@ -1514,9 +1577,84 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 Snapshot();
             }
 
+            // Before the lock, gather at the casting palm; afterward sweep an organic leaf/sap dust wavefront along the
+            // committed Bezier curve so the lash's path reads naturally without dotted lines.
+            if (elapsed < LashLock && !Main.dedServ)
+            {
+                DarkrootWoodVFX.Motes(PuppetBackHandPosition, 1, 18f, true);
+            }
+
             bool groundReady = _lashControls[0] != Vector2.Zero;
             if (groundReady && !Main.dedServ)
             {
+                if (elapsed >= LashLock && elapsed < LashRelease)
+                {
+                    float tellDuration = LashRelease - LashLock;
+                    float prevFraction = (elapsed - LashLock) / tellDuration;
+                    float currFraction = (elapsed - LashLock + 1) / tellDuration;
+
+                    // Sweeping wavefront across this tick's curve segment: 3 body motes + 2 sap glints at the leading edge.
+                    for (int i = 0; i < 3; i++)
+                    {
+                        float sampleT = MathHelper.Lerp(prevFraction, currFraction, (i + Main.rand.NextFloat()) / 3f);
+                        float inverseT = 1f - sampleT;
+                        Vector2 curvePoint = inverseT * inverseT * inverseT * _lashControls[0]
+                            + 3f * inverseT * inverseT * sampleT * _lashControls[1]
+                            + 3f * inverseT * sampleT * sampleT * _lashControls[2]
+                            + sampleT * sampleT * sampleT * _lashControls[3];
+                        Vector2 tangent = (3f * inverseT * inverseT * (_lashControls[1] - _lashControls[0])
+                            + 6f * inverseT * sampleT * (_lashControls[2] - _lashControls[1])
+                            + 3f * sampleT * sampleT * (_lashControls[3] - _lashControls[2])).SafeNormalize(Vector2.UnitX);
+                        Vector2 sideways = new Vector2(-tangent.Y, tangent.X);
+
+                        int dustType = i == 0 ? DustID.GreenTorch : DustID.GrassBlades;
+                        Vector2 position = curvePoint + sideways * Main.rand.NextFloat(-5f, 5f);
+                        Vector2 velocity = tangent * Main.rand.NextFloat(0.6f, 1.6f) + sideways * Main.rand.NextFloat(-0.4f, 0.4f);
+                        Dust bodyMote = Dust.NewDustPerfect(position, dustType, velocity, 45, default, Main.rand.NextFloat(0.95f, 1.3f));
+                        bodyMote.noGravity = true;
+                    }
+
+                    float leadInverse = 1f - currFraction;
+                    Vector2 leadPoint = leadInverse * leadInverse * leadInverse * _lashControls[0]
+                        + 3f * leadInverse * leadInverse * currFraction * _lashControls[1]
+                        + 3f * leadInverse * currFraction * currFraction * _lashControls[2]
+                        + currFraction * currFraction * currFraction * _lashControls[3];
+                    Vector2 leadTangent = (3f * leadInverse * leadInverse * (_lashControls[1] - _lashControls[0])
+                        + 6f * leadInverse * currFraction * (_lashControls[2] - _lashControls[1])
+                        + 3f * currFraction * currFraction * (_lashControls[3] - _lashControls[2])).SafeNormalize(Vector2.UnitX);
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Vector2 glintPos = leadPoint + Main.rand.NextVector2Circular(4f, 4f);
+                        Vector2 glintVel = leadTangent * Main.rand.NextFloat(1.0f, 2.2f) + Main.rand.NextVector2Circular(0.4f, 0.4f);
+                        Dust glintMote = Dust.NewDustPerfect(glintPos, DustID.TintableDustLighted, glintVel, 20, DarkrootWoodVFX.Sap, Main.rand.NextFloat(0.65f, 0.95f));
+                        glintMote.noGravity = true;
+                    }
+
+                    // Keep the swept arc softly alive with drifting leaves and stir earth at the ground sprout.
+                    float trailT = Main.rand.NextFloat(0f, currFraction);
+                    float trailInverse = 1f - trailT;
+                    Vector2 trailPoint = trailInverse * trailInverse * trailInverse * _lashControls[0]
+                        + 3f * trailInverse * trailInverse * trailT * _lashControls[1]
+                        + 3f * trailInverse * trailT * trailT * _lashControls[2]
+                        + trailT * trailT * trailT * _lashControls[3];
+                    Dust driftLeaf = Dust.NewDustPerfect(trailPoint + Main.rand.NextVector2Circular(4f, 4f),
+                        DustID.GrassBlades, new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(-0.8f, -0.2f)),
+                        55, default, Main.rand.NextFloat(0.75f, 1.05f));
+                    driftLeaf.noGravity = true;
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int rootDustType = i == 0 ? DustID.Dirt : DustID.GrassBlades;
+                        Vector2 rootPos = _lashControls[0] + new Vector2(Main.rand.NextFloat(-8f, 8f), Main.rand.NextFloat(-2f, 6f));
+                        Vector2 rootVel = new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), Main.rand.NextFloat(-2.2f, -0.8f));
+                        Dust rootMote = Dust.NewDustPerfect(rootPos, rootDustType, rootVel, 45, default, Main.rand.NextFloat(0.85f, 1.2f));
+                        rootMote.noGravity = rootDustType == DustID.GrassBlades;
+                    }
+
+                    Lighting.AddLight(leadPoint, 0.25f, 0.42f, 0.16f);
+                }
+
                 if (elapsed == LashLock)
                 {
                     SoundEngine.PlaySound(SoundID.Grass with { Volume = 1f, Pitch = -0.5f }, _lashControls[0]);
@@ -1526,6 +1664,7 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                 {
                     SoundEngine.PlaySound(SoundID.Item152 with { Pitch = -0.3f }, _lashControls[0]);
                     DarkrootWoodVFX.Motes(_lashControls[0], 12, 10f, false, DustID.WoodFurniture);
+                    DarkrootWoodVFX.Motes(_lashControls[0], 8, 12f, false, DustID.GrassBlades);
                 }
             }
 
@@ -2064,7 +2203,6 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
 
             int elapsed = CustomElapsed;
             Vector2 head = PuppetSpearTipPosition;
-            Color corridor = Accent * 0.45f;
 
             switch (_custom)
             {
@@ -2083,68 +2221,16 @@ namespace tsorcRevamp.NPCs.Enemies.SuperHardMode
                         DarkrootWoodVFX.Draw("DarkrootBud", head - side, new Vector2(26f), 0f, new Vector2(0.5f), growth, growth, 0.85f);
                     }
 
-                    // Dotted fan corridor (three separate lanes) for the final 12t before each release.
-                    bool firstCorridor = elapsed >= ThornLock && elapsed < ThornRelease;
-                    bool secondCorridor = _fanCount == 2 && elapsed >= ThornSecondRelease - 12 && elapsed < ThornSecondRelease;
-                    if (firstCorridor || secondCorridor)
-                    {
-                        for (int ray = -1; ray <= 1; ray++)
-                        {
-                            Vector2 direction = _thornAim.RotatedBy(MathHelper.ToRadians(12f) * ray);
-                            DarkrootWoodVFX.DashedLine(head, head + direction * 640f, corridor, 1.5f);
-                        }
-                    }
-
-                    break;
-                }
-
-                case CustomAction.Advance:
-                {
-                    // Dim ground streak along the locked lane for the last 14t of the tell.
-                    if (elapsed >= AdvanceLock && elapsed < AdvanceTell)
-                    {
-                        Vector2 feet = NPC.Bottom + new Vector2(0f, -2f);
-                        DarkrootWoodVFX.DashedLine(feet, feet + new Vector2(_advanceDistance, 0f), corridor, 2f);
-                    }
-
-                    if (elapsed >= AdvanceLock && elapsed < AdvanceTell && elapsed % 2 == 0)
-                    {
-                        DarkrootWoodVFX.Motes(head, 1, 3f, true, DustID.GreenTorch);
-                    }
-
                     break;
                 }
 
                 case CustomAction.Lash:
                 {
-                    // The committed path for the last 20t: dashes that brighten and pulse (8t period) as the release
-                    // nears, a sprite sprouting at its ground source, and a ring at the committed target point.
+                    // Organic sprout emerging at the committed ground source while the dust wavefront sweeps the path.
                     if (elapsed >= LashLock && elapsed < LashRelease && _lashControls[0] != Vector2.Zero)
                     {
-                        Vector2[] samples = new Vector2[DarkrootVine.SampleCount + 1];
-                        float[] arcFraction = new float[DarkrootVine.SampleCount + 1];
-                        DarkrootVine.BuildSamples(_lashControls, samples, arcFraction, out _);
-
                         float ramp = (elapsed - LashLock) / (float)(LashRelease - LashLock);
                         DarkrootVine.DrawSprout(_lashControls[0] + new Vector2(0f, 8f), 0.35f + ramp * 0.65f, 1f);
-                        float pulse = 0.5f + 0.5f * (float)Math.Sin(elapsed * MathHelper.TwoPi / 8f);
-                        Color lane = Accent * (0.35f + 0.35f * ramp + 0.2f * pulse);
-
-                        for (int i = 1; i < samples.Length; i += 2)
-                        {
-                            Utils.DrawLine(spriteBatch, samples[i - 1], samples[i], lane, lane * 0.6f, 4f);
-                        }
-
-                        Vector2 endPoint = samples[DarkrootVine.SampleCount];
-                        float ringRadius = MathHelper.Lerp(28f, 12f, ramp);
-                        for (int i = 0; i < 12; i++)
-                        {
-                            float from = MathHelper.TwoPi * i / 12f;
-                            float to = from + MathHelper.TwoPi / 24f;
-                            Vector2 arcStart = endPoint + from.ToRotationVector2() * ringRadius;
-                            Vector2 arcEnd = endPoint + to.ToRotationVector2() * ringRadius;
-                            Utils.DrawLine(spriteBatch, arcStart, arcEnd, lane, lane, 3f);
-                        }
                     }
 
                     break;

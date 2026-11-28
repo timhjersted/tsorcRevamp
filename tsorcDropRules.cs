@@ -79,6 +79,31 @@ namespace tsorcRevamp
         public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMOnly");
     }
 
+    ///<summary>Guaranteed unique reward on the FIRST kill of this NPC type in Super Hardmode only
+    ///(tracked via NewSlain, which the NPC's OnKill registers after loot rolls resolve).</summary>
+    public class SHMFirstKillRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public bool CanDrop(DropAttemptInfo info)
+        {
+            if (!tsorcRevampWorld.SuperHardMode)
+            {
+                return false;
+            }
+
+            return !tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type));
+        }
+
+        public bool CanShowItemDropInUI()
+        {
+            return true;
+        }
+
+        public string GetConditionDescription()
+        {
+            return LangUtils.GetTextValue("DropRules.SHMFirstKill");
+        }
+    }
+
     ///<summary>Guaranteed unique reward on the FIRST kill of this NPC type (tracked via NewSlain, which
     ///the NPC's OnKill must register — loot rules resolve before OnKill, so the ordering works out).
     ///Non-boss-flag version of FirstBossKillRule, gated out of Super Hardmode. Pair with
@@ -98,6 +123,19 @@ namespace tsorcRevamp
             => !tsorcRevampWorld.SuperHardMode && tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(info.npc.type));
         public bool CanShowItemDropInUI() => true;
         public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.NonSHMRepeatKill");
+    }
+
+    ///<summary>Drops only in Pre-Hardmode (before Wall of Flesh is defeated).</summary>
+    public class PreHardmodeRule : IItemDropRuleCondition, IProvideItemConditionDescription
+    {
+        public bool CanDrop(DropAttemptInfo info)
+        {
+            return !Main.hardMode;
+        }
+
+        public bool CanShowItemDropInUI() => true;
+
+        public string GetConditionDescription() => LangUtils.GetTextValue("DropRules.PreHardmodeOnly");
     }
 
     public class FirstBagRule : IItemDropRuleCondition, IProvideItemConditionDescription

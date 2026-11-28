@@ -71,13 +71,49 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
         // Reflective Gold renders the string's dark sprite pixels pale gold; the live string matches that.
         private static readonly Color SpiritStringColor = new Color(255, 225, 140);
 
-        public static int CalculateArrowDamage(Player player)
+        public const int BaseManaPerArrow = 8;
+        public const int BotcManaMultiplier = 5;
+        public const int SummonerFreeMinionThreshold = 4;
+
+        public static int CalculateArrowDamage(Player player, int baseDamage = Content.Items.Weapons.Summon.ArcherSpiritBell.BaseDamage)
         {
-            // Remove only BotC's Arcane Sorcery multiplier; gear's max-mana bonuses still count.
-            float modeManaMultiplier = player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer
-                ? 1f + ArcaneSorceryPlayer.MaxManaAmplifier / 100f
-                : 1f;
-            return (int)(player.statManaMax2 / modeManaMultiplier / 4f);
+            int scaledDamage = (int)player.GetTotalDamage(DamageClass.Summon).ApplyTo(baseDamage);
+            if (scaledDamage < 1)
+            {
+                scaledDamage = 1;
+            }
+
+            return scaledDamage;
+        }
+
+        public static int CalculateArrowManaCost(Player player)
+        {
+            // Pure summoners (4+ minion slots or actively holding a summon/whip weapon) pay no mana per shot.
+            if (player.maxMinions >= SummonerFreeMinionThreshold)
+            {
+                return 0;
+            }
+
+            // The Bell itself is a summon-class item and is what the player holds right after summoning, so it is
+            // excluded: counting it made every shot free. damage > 0 keeps summon-tagged non-weapons out.
+            Item heldItem = player.HeldItem;
+            bool holdingItem = heldItem != null && !heldItem.IsAir;
+            bool holdingBell = holdingItem && heldItem.type == ModContent.ItemType<Content.Items.Weapons.Summon.ArcherSpiritBell>();
+            bool holdingSummonWeapon = holdingItem && heldItem.damage > 0 && heldItem.DamageType.CountsAsClass(DamageClass.Summon);
+            if (holdingSummonWeapon && !holdingBell)
+            {
+                return 0;
+            }
+
+            int manaCost = BaseManaPerArrow;
+            bool isBotc = player.GetModPlayer<tsorcRevampPlayer>().BearerOfTheCurse
+                || player.GetModPlayer<ArcaneSorceryPlayer>().ArcaneSorcerer;
+            if (isBotc)
+            {
+                manaCost *= BotcManaMultiplier;
+            }
+
+            return manaCost;
         }
 
         /// <summary>Set for exactly the duration of this spirit's DrawPlayer call, so ArcherSpiritBowLayer draws its bow.</summary>
@@ -100,6 +136,8 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
         private Vector2 _poseAimDirection = Vector2.UnitX;
         private int _poseWindup;
         private int _poseCooldown;
+        // True when the owner cannot pay the per-arrow mana cost: stops firing, idles, and draws at 50% opacity.
+        private bool _poseManaDormant;
         // Incremented on every shot; a remote client that sees it change plays the release.
         private byte _shotCount;
 
@@ -149,8 +187,21 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             // Fall through platforms if the player is below us (default idle/return behavior)
             Projectile.shouldFallThrough = player.position.Y + player.height > Projectile.position.Y + Projectile.height;
 
-            // Emit yellow light
-            Lighting.AddLight(Projectile.Center, 0.8f, 0.75f, 0.4f);
+            int arrowManaCost = CalculateArrowManaCost(player);
+            bool manaDormant = _poseManaDormant;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                manaDormant = arrowManaCost > 0 && player.statMana < arrowManaCost;
+            }
+
+            // Emit yellow light (halved while dormant without mana)
+            float lightScale = 1f;
+            if (manaDormant)
+            {
+                lightScale = 0.5f;
+            }
+
+            Lighting.AddLight(Projectile.Center, 0.8f * lightScale, 0.75f * lightScale, 0.4f * lightScale);
 
             float distToPlayer = Vector2.Distance(Projectile.Center, player.Center);
             if (isReturning)
@@ -170,7 +221,8 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
 
             NPC targetNPC = null;
             bool targetVisible = false;
-            if (distToPlayer < HardLeashDistance)
+            // While dormant without mana, ignore enemies so the spirit lowers its bow and follows in idle.
+            if (!manaDormant && distToPlayer < HardLeashDistance)
             {
                 targetNPC = FindTarget(player, out targetVisible);
             }
@@ -189,7 +241,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                 aimWindupTimer = 0;
                 isTryingToMove = true;
 
-                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 4.1f, acceleration: 0.5f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
+                bool navigating = SmartProjectileFighterAI.Run(Projectile, player, topSpeed: 4.1f, acceleration: 0.5f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f, canOpenDoors: true);
                 if (!navigating)
                 {
                     // Move towards player horizontally (slower returning speed: 2.4f)
@@ -288,7 +340,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                         aimWindupTimer = 0;
                         isTryingToMove = true;
 
-                        bool navigating = SmartProjectileFighterAI.Run(Projectile, targetNPC, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f);
+                        bool navigating = SmartProjectileFighterAI.Run(Projectile, targetNPC, topSpeed: 2.4f, acceleration: 0.1f, navSearchRadius: ArcherNavSearchRadius, gravity: 0.4f, canOpenDoors: true);
                         if (!navigating)
                         {
                             // Walk towards target to close distance (slower walk speed: 2.4f)
@@ -330,12 +382,20 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                                 aimWindupTimer++;
                                 if (aimWindupTimer >= AimWindupFrames)
                                 {
+                                    int reinforcementLevel = (int)Projectile.ai[0];
+                                    int cooldownTrim = Math.Min(5, reinforcementLevel) * 4;
                                     aimWindupTimer = 0;
-                                    shootCooldown = ShotCooldownTicks;
+                                    shootCooldown = Math.Max(36, ShotCooldownTicks - cooldownTrim);
                                     firedThisTick = true;
 
                                     if (Main.myPlayer == Projectile.owner)
                                     {
+                                        if (arrowManaCost > 0)
+                                        {
+                                            player.statMana = Math.Max(0, player.statMana - arrowManaCost);
+                                            player.manaRegenDelay = (int)player.maxRegenDelay;
+                                        }
+
                                         // The arrow leaves the drawn bow grip, aimed to intercept: lead the target by the
                                         // flight time and lift the aim point by the arrow's drop after its straight phase.
                                         Vector2 origin = GetBowGrip(Projectile.spriteDirection, _bowAngle);
@@ -353,7 +413,19 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
 
                                         Vector2 shotDirection = (aimAt - origin).SafeNormalize(new Vector2(Projectile.spriteDirection, 0f));
                                         Vector2 shootVel = shotDirection * ArrowSpeed;
-                                        int damage = CalculateArrowDamage(player);
+                                        int arrowBaseDamage = Content.Items.Weapons.Summon.ArcherSpiritBell.BaseDamage;
+                                        if (Projectile.originalDamage > 0)
+                                        {
+                                            arrowBaseDamage = Projectile.originalDamage;
+                                        }
+
+                                        int damage = CalculateArrowDamage(player, arrowBaseDamage);
+
+                                        float frostbitePerkFlag = 0f;
+                                        if (Projectile.ai[0] >= 2f)
+                                        {
+                                            frostbitePerkFlag = 1f;
+                                        }
 
                                         Projectile.NewProjectile(
                                             Projectile.GetSource_FromThis(),
@@ -362,7 +434,8 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                                             ModContent.ProjectileType<ArcherSpiritArrow>(),
                                             damage,
                                             2f,
-                                            Projectile.owner
+                                            Projectile.owner,
+                                            frostbitePerkFlag
                                         );
                                     }
 
@@ -457,6 +530,58 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                 }
             }
 
+            // Open closed doors immediately in front of the spirit when walking into them.
+            // Server/SP authority only; server broadcasts ToggleDoorState so all clients stay in sync.
+            if (isTryingToMove && Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                int moveDirection = 0;
+
+                if (Projectile.velocity.X > 0.05f)
+                {
+                    moveDirection = 1;
+                }
+                else if (Projectile.velocity.X < -0.05f)
+                {
+                    moveDirection = -1;
+                }
+                else if (Projectile.spriteDirection != 0)
+                {
+                    moveDirection = Projectile.spriteDirection;
+                }
+
+                if (moveDirection != 0)
+                {
+                    float frontEdgeX = moveDirection > 0
+                        ? Projectile.position.X + Projectile.width + 6f
+                        : Projectile.position.X - 6f;
+                    int frontTileX = (int)(frontEdgeX / 16f);
+                    int topTileY = (int)(Projectile.position.Y / 16f);
+                    int bottomTileY = (int)((Projectile.position.Y + Projectile.height - 1f) / 16f);
+
+                    for (int tileY = topTileY; tileY <= bottomTileY; tileY++)
+                    {
+                        if (!WorldGen.InWorld(frontTileX, tileY))
+                        {
+                            continue;
+                        }
+
+                        Tile frontTile = Main.tile[frontTileX, tileY];
+
+                        if (frontTile.HasTile && frontTile.TileType == TileID.ClosedDoor)
+                        {
+                            bool opened = WorldGen.OpenDoor(frontTileX, tileY, moveDirection);
+
+                            if (opened && Main.netMode == NetmodeID.Server)
+                            {
+                                NetMessage.SendData(MessageID.ToggleDoorState, -1, -1, null, 0, frontTileX, tileY, moveDirection);
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Stuck logic: Check oldVelocityX from the start of the frame so that
             // velocity adjustments made during AI() do not reset the stuckTimer.
             if (isTryingToMove && Math.Abs(oldVelocityX) < 0.1f)
@@ -521,7 +646,9 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             if (isOwner)
             {
                 bool wasAiming = _poseAiming;
-                _poseAiming = isAiming && targetNPC != null && !returningToPlayer;
+                bool wasManaDormant = _poseManaDormant;
+                _poseManaDormant = manaDormant;
+                _poseAiming = isAiming && targetNPC != null && !returningToPlayer && !manaDormant;
 
                 if (_poseAiming)
                 {
@@ -537,7 +664,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
                     _releaseTicks = ReleaseFlickTicks + ReleaseReturnTicks;
                 }
 
-                if (firedThisTick || wasAiming != _poseAiming)
+                if (firedThisTick || wasAiming != _poseAiming || wasManaDormant != _poseManaDormant)
                 {
                     Projectile.netUpdate = true;
                 }
@@ -778,11 +905,19 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             {
                 return false;
             }
-            // Check tile in front at feet/bottom level (height of block is 16 pixels, check 8 pixels up)
+            // Check tile in front at feet/bottom level (height of block is 16 pixels, check 8 pixels up).
+            // Ignore closed doors so the spirit opens them instead of jumping in front of them.
             int checkX = Projectile.spriteDirection < 0 ? -12 : 12;
             Vector2 checkPos = Projectile.Bottom + new Vector2(checkX, -8f);
             Point tilePos = checkPos.ToTileCoordinates();
-            return WorldGen.InWorld(tilePos.X, tilePos.Y) && Main.tile[tilePos.X, tilePos.Y].HasTile && Main.tileSolid[Main.tile[tilePos.X, tilePos.Y].TileType];
+
+            if (!WorldGen.InWorld(tilePos.X, tilePos.Y))
+            {
+                return false;
+            }
+
+            Tile frontTile = Main.tile[tilePos.X, tilePos.Y];
+            return frontTile.HasTile && Main.tileSolid[frontTile.TileType] && frontTile.TileType != TileID.ClosedDoor;
         }
 
         private bool CheckActive(Player owner)
@@ -805,6 +940,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(_poseAiming);
+            writer.Write(_poseManaDormant);
             writer.Write(_poseAimDirection.X);
             writer.Write(_poseAimDirection.Y);
             writer.Write((byte)_poseWindup);
@@ -815,6 +951,7 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             _poseAiming = reader.ReadBoolean();
+            _poseManaDormant = reader.ReadBoolean();
             _poseAimDirection = new Vector2(reader.ReadSingle(), reader.ReadSingle());
             _poseWindup = reader.ReadByte();
             _poseCooldown = reader.ReadByte();
@@ -871,7 +1008,14 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
 
             try
             {
-                Main.PlayerRenderer.DrawPlayer(Main.Camera, _rig, _rig.position, 0f, Vector2.Zero, 0f, 1f);
+                // DrawPlayer's shadow parameter scales the whole rig's opacity to (1 - shadow): 0.5f = 50% transparent.
+                float drawShadow = 0f;
+                if (_poseManaDormant)
+                {
+                    drawShadow = 0.5f;
+                }
+
+                Main.PlayerRenderer.DrawPlayer(Main.Camera, _rig, _rig.position, 0f, Vector2.Zero, drawShadow, 1f);
             }
             finally
             {
@@ -950,6 +1094,12 @@ namespace tsorcRevamp.Content.Projectiles.Summon.Archer
             int facing = RigFacing;
             Vector2 grip = GetBowGrip(facing, _bowAngle);
             Color light = Lighting.GetColor(grip.ToTileCoordinates());
+            if (_poseManaDormant)
+            {
+                // Premultiplied 50% opacity so the carried bow matches the dormant spirit's translucency.
+                light *= 0.5f;
+            }
+
             int goldShader = _rig.dye[1].dye;
 
             Texture2D bow = TextureAssets.Item[ItemID.ShadewoodBow].Value;

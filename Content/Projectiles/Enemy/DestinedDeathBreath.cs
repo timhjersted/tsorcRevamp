@@ -137,7 +137,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<DestinedDeath>(), 600);
+            target.AddBuff(ModContent.BuffType<DestinedDeath>(), DestinedDeath.DefaultDurationTicks);
             if (Main.rand.NextBool(2))
             {
                 target.AddBuff(BuffID.Bleeding, 1800);

@@ -272,6 +272,8 @@ namespace tsorcRevamp
 
         internal BonfireUIState BonfireUIState;
         internal UserInterface _bonfireUIState; //"but zeo!", you say
+        internal WeaponReinforcementUIState WeaponReinforcementUI;
+        internal UserInterface _weaponReinforcementUI;
         internal DarkSoulCounterUIState DarkSoulCounterUIState;
         internal UserInterface _darkSoulCounterUIState; //"prefacing a name with an underscore is supposed to be for private fields!"
         internal UserInterface EmeraldHeraldUserInterface;
@@ -398,6 +400,9 @@ namespace tsorcRevamp
             BonfireUIState = new BonfireUIState();
             _bonfireUIState = new UserInterface();
 
+            WeaponReinforcementUI = new WeaponReinforcementUIState();
+            _weaponReinforcementUI = new UserInterface();
+
             DarkSoulCounterUIState = new DarkSoulCounterUIState();
             //if (!Main.dedServ) DarkSoulCounterUIState.Activate();
             _darkSoulCounterUIState = new UserInterface();
@@ -446,6 +451,8 @@ namespace tsorcRevamp
 
             BonfireUIState.Activate();
             _bonfireUIState.SetState(BonfireUIState);
+            WeaponReinforcementUI.Activate();
+            _weaponReinforcementUI.SetState(WeaponReinforcementUI);
             _darkSoulCounterUIState.SetState(DarkSoulCounterUIState);
 
             _estusFlaskUIState.SetState(EstusFlaskUIState);
@@ -1159,7 +1166,7 @@ namespace tsorcRevamp
                 {   ItemID.EaterOfWorldsBossBag     , BossExtras.EstusFlaskShard    },
                 {   ItemID.BrainOfCthulhuBossBag    , BossExtras.StaminaVessel      },
                 {   ItemID.QueenBeeBossBag          , BossExtras.DarkSoulsOnly      },
-                {   ItemID.SkeletronBossBag         , BossExtras.SublimeBoneDust    },
+                {   ItemID.SkeletronBossBag         , BossExtras.DarkSoulsOnly      }, // Sublime Bone Dust moved to Barrowlord Ossric
                 {   ItemID.WallOfFleshBossBag       , BossExtras.EstusFlaskShard    },
                 {   ItemID.DestroyerBossBag         , BossExtras.EstusFlaskShard    },
                 {   ItemID.TwinsBossBag             , BossExtras.DarkSoulsOnly      },
@@ -1188,6 +1195,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<AncestralSpiritBag>()       , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<AncientDemonBag>()          , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<HeroOfLumeliaBag>()         , BossExtras.SublimeBoneDust    },
+                {   ModContent.ItemType<GravelordNitoBag>()         , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<TheRageBag>()               , BossExtras.StaminaVessel      },
                 {   ModContent.ItemType<TheSorrowBag>()             , BossExtras.EstusFlaskShard    },
                 {   ModContent.ItemType<TheHunterBag>()             , BossExtras.SublimeBoneDust    },
@@ -1217,7 +1225,8 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<HellkiteBag>()              , BossExtras.GuardianSoul       },
                 {   ModContent.ItemType<SeathBag>()                 , BossExtras.SublimeBoneDust    },
                 {   ModContent.ItemType<WitchkingBag>()             , BossExtras.GuardianSoul       },
-                {   ModContent.ItemType<OolacileSerpentBag>()        , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<GreatSerpentBag>()          , BossExtras.StaminaVessel      },
+                {   ModContent.ItemType<OolacileSerpentBag>()        , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<DarkCloudBag>()             , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<SoulOfCinderBag>()          , BossExtras.DarkSoulsOnly      },
                 {   ModContent.ItemType<GwynBag>()                  , BossExtras.DarkSoulsOnly      }
@@ -1265,6 +1274,7 @@ namespace tsorcRevamp
                 #region tsorc
                 {   ModContent.ItemType<PinwheelBag>()              , ModContent.NPCType<Pinwheel>()                                                    },
                 {   ModContent.ItemType<VesselOfSoulsBag>()         , ModContent.NPCType<NPCs.Bosses.VesselOfSouls.VesselOfSouls>()                    },
+                {   ModContent.ItemType<GravelordNitoBag>()         , ModContent.NPCType<NPCs.Bosses.GravelordNito.GravelordNito>()                    },
                 {   ModContent.ItemType<OolacileDemonBag>()         , ModContent.NPCType<OolacileDemon>()                                        },
                 {   ModContent.ItemType<SlograBag>()                , ModContent.NPCType<Slogra>()                                                      },
                 {   ModContent.ItemType<GaibonBag>()                , ModContent.NPCType<Gaibon>()                                                      },
@@ -1293,6 +1303,7 @@ namespace tsorcRevamp
                 {   ModContent.ItemType<HellkiteBag>()              , ModContent.NPCType<HellkiteDrake>()                                               },
                 {   ModContent.ItemType<SeathBag>()                 , ModContent.NPCType<SeathTheScalelessHead>()                                       },
                 {   ModContent.ItemType<WitchkingBag>()             , ModContent.NPCType<Witchking>()                                                   },
+                {   ModContent.ItemType<GreatSerpentBag>()          , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<OolacileSerpentBag>()        , ModContent.NPCType<GreatSerpentHead>()                                        },
                 {   ModContent.ItemType<DarkCloudBag>()             , ModContent.NPCType<DarkCloud>()                                                   },
                 {   ModContent.ItemType<SoulOfCinderBag>()          , ModContent.NPCType<NPCs.Invaders.Marik>()                      },
@@ -1365,10 +1376,7 @@ namespace tsorcRevamp
                                                          }                                                        },
                 {   ItemID.BrainOfCthulhuBossBag    ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.QueenBeeBossBag          ,   new List<IItemDropRule>()                                                        },
-                {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()
-                                                        {
-                                                            ItemDropRule.Common(ModContent.ItemType<MiakodaFull>())
-                                                        }                                                                                },
+                {   ItemID.SkeletronBossBag         ,   new List<IItemDropRule>()                                                        },
                 {   ItemID.WallOfFleshBossBag       ,   new List<IItemDropRule>()
                                                         {
                                                             ItemDropRule.Common(ItemID.MoltenPickaxe)
@@ -2632,6 +2640,16 @@ namespace tsorcRevamp
                             Tiles.SoulRewardSkull.TryOpen(tileX, tileY, whoAmI);
                         break;
                     }
+                case tsorcPacketID.OpenEmberVessel:
+                    {
+                        short tileX = reader.ReadInt16();
+                        short tileY = reader.ReadInt16();
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            Content.Items.Materials.Ember.EmberVessel.TryOpen(tileX, tileY, whoAmI);
+                        }
+                        break;
+                    }
                 case tsorcPacketID.ReportBlockedAttack:
                     {
                         int npcIndex = reader.ReadInt32();
@@ -3202,6 +3220,12 @@ namespace tsorcRevamp
                     break;
                 }
 
+                case tsorcPacketID.ArtoriasSewerDrainSync:
+                {
+                    Systems.ArtoriasSewerDrain.ReceivePacket(reader);
+                    break;
+                }
+
                 case tsorcPacketID.UseEmberOfTheFirstDawn:
                 {
                     if (Main.netMode == NetmodeID.Server)
@@ -3672,7 +3696,7 @@ namespace tsorcRevamp
                     "LogMiniBoss",
                     this,
                     nameof(NPCs.Bosses.Gigas.IceGigas),
-                    8.05f,
+                    20.12f,
                     () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>())),
                     ModContent.NPCType<NPCs.Bosses.Gigas.IceGigas>(),
                     new Dictionary<string, object>()
@@ -3687,7 +3711,7 @@ namespace tsorcRevamp
                     "LogMiniBoss",
                     this,
                     nameof(NPCs.Bosses.Gigas.Gigas),
-                    11.8f,
+                    20.13f,
                     () => tsorcRevampWorld.NewSlain.ContainsKey(new NPCDefinition(ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>())),
                     ModContent.NPCType<NPCs.Bosses.Gigas.Gigas>(),
                     new Dictionary<string, object>()
@@ -5484,6 +5508,11 @@ namespace tsorcRevamp
         public const byte EventMaterializationBurst = 56;
 
         public const byte SyncElectrocuteVars = 57;
+        /// <summary>Server to clients: Ruins of Artorias sewer drain progress (Systems/ArtoriasSewerDrain.cs). Payload: action byte,
+        /// row short, amount-or-finished byte.</summary>
+        public const byte ArtoriasSewerDrainSync = 58;
+        /// <summary>Client asks the server to open a 2x2 EmberVessel pickup and spawn its Pale or Radiant Ember.</summary>
+        public const byte OpenEmberVessel = 59;
     }
 
     //config moved to separate file

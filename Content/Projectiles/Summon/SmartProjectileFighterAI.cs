@@ -18,10 +18,15 @@ namespace tsorcRevamp.Content.Projectiles.Summon
 
         private static readonly Dictionary<int, NavState> States = new Dictionary<int, NavState>();
 
+        // Set per Run call so door-opening summons plan paths straight through closed doors.
+        private static bool _canOpenDoors = false;
+
         // High-level entry point to run the pathfinding AI for a Projectile.
         // Returns true if the projectile is currently navigating a path.
-        public static bool Run(Projectile projectile, Entity target, float topSpeed, float acceleration, int navSearchRadius = 24, float gravity = 0.4f, float maxJumpPower = 8.5f, float maxJumpBoost = 3.5f)
+        public static bool Run(Projectile projectile, Entity target, float topSpeed, float acceleration, int navSearchRadius = 24, float gravity = 0.4f, float maxJumpPower = 8.5f, float maxJumpBoost = 3.5f, bool canOpenDoors = false)
         {
+            _canOpenDoors = canOpenDoors;
+
             if (!IsTargetValid(target))
             {
                 projectile.velocity.X *= 0.9f;
@@ -1749,7 +1754,11 @@ namespace tsorcRevamp.Content.Projectiles.Summon
             {
                 return false;
             }
-            return !Main.tileFrameImportant[tile.TileType] || tile.TileType == TileID.ClosedDoor;
+            if (tile.TileType == TileID.ClosedDoor)
+            {
+                return !_canOpenDoors;
+            }
+            return !Main.tileFrameImportant[tile.TileType];
         }
 
         private static bool IsAligned(Projectile proj, int launchX)

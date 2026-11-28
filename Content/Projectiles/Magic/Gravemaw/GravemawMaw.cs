@@ -26,6 +26,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 
         bool UsesRightClick => Projectile.ai[0] == 1f;
         int AttackInterval => Projectile.ai[1] > 0f ? Math.Max(1, (int)Projectile.ai[1]) : ManaInterval;
+        bool InflictsShadowflame => Projectile.ai[2] >= 1f;
         float HealCooldown { get => Projectile.localAI[1]; set => Projectile.localAI[1] = value; }
 
         public override void SetDefaults()
@@ -153,6 +154,11 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            if (InflictsShadowflame)
+            {
+                target.AddBuff(BuffID.ShadowFlame, GravemawTome.ShadowflameDurationTicks);
+            }
+
             // Soul-eating lifesteal: a small, rate-capped trickle.
             if (Main.myPlayer == Projectile.owner && HealCooldown <= 0f && Main.player[Projectile.owner].statLife < Main.player[Projectile.owner].statLifeMax2)
             {

@@ -11,7 +11,8 @@ using Terraria.ModLoader;
 namespace tsorcRevamp.Liquids
 {
     // Water and shimmer pools become Blight Water when any tile in the connected pool has a shadow-painted
-    // background wall. The underlying liquid is unchanged - only its look and the buildup on contact differ.
+    // background wall. A closed door counts as part of the pool, so a flooded room behind a shut door shares the
+    // pool outside it. The underlying liquid is unchanged - only its look and the buildup on contact differ.
     // Streams falling out of a blighted pool are blighted too (drawn dark, cause buildup on touch).
     internal static class BlightWaterCondition
     {
@@ -113,9 +114,30 @@ namespace tsorcRevamp.Liquids
             return infected;
         }
 
+        // Adds a neighbour to the pool when it holds the same liquid, or when it is a closed door: the fill walks through
+        // the door's tiles and picks up whatever water touches the other side. Door tiles hold no liquid, so caching a
+        // result for them is harmless (IsInfected returns early for dry tiles).
         private static void AddConnected(int x, int y, int liquidType, Queue<int> queue, HashSet<int> component)
         {
-            if (!HasLiquidOfType(x, y, liquidType))
+            if (!WorldGen.InWorld(x, y))
+            {
+                return;
+            }
+
+            Tile tile = Main.tile[x, y];
+            bool sameLiquid = tile.LiquidAmount > 0 && tile.LiquidType == liquidType;
+            bool closedDoor = false;
+
+            if (tile.HasTile)
+            {
+                ushort tileType = tile.TileType;
+
+                // Vanilla doors, tall gates and trapdoors, plus any modded door (OpenDoorID is set only on closed doors).
+                closedDoor = tileType == TileID.ClosedDoor || tileType == TileID.TallGateClosed || tileType == TileID.TrapdoorClosed
+                    || TileID.Sets.OpenDoorID[tileType] > -1;
+            }
+
+            if (!sameLiquid && !closedDoor)
             {
                 return;
             }

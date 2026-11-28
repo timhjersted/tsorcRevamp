@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Projectiles.Enemy;
+using tsorcRevamp.Content.Projectiles.Enemy.Weapons;
 using tsorcRevamp.NPCs.Bosses.GreatSerpent;
 using tsorcRevamp.Utilities;
 
@@ -651,26 +652,86 @@ namespace tsorcRevamp.NPCs
         {
             Vector2 intendedEnd = npc.position + npc.velocity;
             Vector2 intendedMove = intendedEnd - positionBefore;
-            if (intendedMove == Vector2.Zero)
-            {
-                return;
-            }
-
-            bool endsInside = Collision.SolidCollision(intendedEnd, npc.width, npc.height);
-            if (!endsInside)
-            {
-                return;
-            }
-
             bool startedInside = Collision.SolidCollision(positionBefore, npc.width, npc.height);
-            if (startedInside)
+
+            if (!startedInside)
+            {
+                if (intendedMove == Vector2.Zero)
+                {
+                    return;
+                }
+
+                // Always sweep TileCollision rather than only checking the endpoint so fast lunges cannot tunnel
+                // through thin walls or slopes.
+                Vector2 allowedMove = Collision.TileCollision(positionBefore, intendedMove, npc.width, npc.height, true, true);
+                if (Collision.SolidCollision(positionBefore + allowedMove, npc.width, npc.height))
+                {
+                    allowedMove = Vector2.Zero;
+                }
+
+                npc.position = positionBefore;
+                npc.velocity = allowedMove;
+                return;
+            }
+
+            // Already overlapping solid terrain (e.g. a slope seam): allow any move that leaves solid tiles cleanly,
+            // otherwise push out toward the nearest open space instead of letting a dash bury the head underground.
+            if (!Collision.SolidCollision(intendedEnd, npc.width, npc.height))
             {
                 return;
             }
 
-            Vector2 allowedMove = Collision.TileCollision(positionBefore, intendedMove, npc.width, npc.height, true, true);
+            Vector2 escapePos = positionBefore;
+            bool foundEscape = false;
+            for (int tilesUp = 1; tilesUp <= 8; tilesUp++)
+            {
+                Vector2 candidate = positionBefore + new Vector2(0f, -tilesUp * TileSize);
+                if (!Collision.SolidCollision(candidate, npc.width, npc.height))
+                {
+                    escapePos = candidate;
+                    foundEscape = true;
+                    break;
+                }
+            }
+
+            if (!foundEscape)
+            {
+                for (int tilesSide = 1; tilesSide <= 6 && !foundEscape; tilesSide++)
+                {
+                    Vector2 rightCandidate = positionBefore + new Vector2(tilesSide * TileSize, 0f);
+                    if (!Collision.SolidCollision(rightCandidate, npc.width, npc.height))
+                    {
+                        escapePos = rightCandidate;
+                        foundEscape = true;
+                        break;
+                    }
+
+                    Vector2 leftCandidate = positionBefore + new Vector2(-tilesSide * TileSize, 0f);
+                    if (!Collision.SolidCollision(leftCandidate, npc.width, npc.height))
+                    {
+                        escapePos = leftCandidate;
+                        foundEscape = true;
+                        break;
+                    }
+                }
+            }
+
             npc.position = positionBefore;
-            npc.velocity = allowedMove;
+            if (foundEscape)
+            {
+                Vector2 escapeStep = escapePos - positionBefore;
+                float escapeDist = escapeStep.Length();
+                if (escapeDist > 6f)
+                {
+                    escapeStep *= 6f / escapeDist;
+                }
+
+                npc.velocity = escapeStep;
+            }
+            else
+            {
+                npc.velocity = Vector2.Zero;
+            }
         }
 
         const float TailExtendRate = 0.045f; //~1/rate ticks to fully pop out or retract
@@ -786,26 +847,36 @@ namespace tsorcRevamp.NPCs
                 data.StuckCheckPos = npc.Center;
             }
 
-            //Predator-style hunting cloak: cloaks the instant it loses line of sight to the player while
-            //actively hunting (not busy with an attack/tailstab/charge/ambush, and not mid-forced-wander), and
-            //only reveals again once LOS is reacquired -- a clean, deterministic transition, NOT a random
-            //per-frame blink (that's the VoodooShaman style, explicitly not wanted here). CloakCooldown then
-            //holds it off before it's allowed to cloak again, so a reveal can't immediately re-trigger on the
-            //next LOS flicker. RunAmbush drives CloakAlphaTarget itself while active, so leave it alone here.
+            //Predator-style hunting cloak: once cloaked (from losing LOS or exiting an ambush), stays invisible for
+            //CloakDurationTicks (7s) even while attacking, then reveals and enters CloakCooldown.
+            const int CloakDurationTicks = 7 * 60;
             if (data.Ambush == GreatSerpentHead.AmbushState.None)
             {
                 bool hasLOS = Collision.CanHit(npc.position, npc.width, npc.height, player.position, player.width, player.height);
-                if (data.CloakAlphaTarget > 0)
+                if (data.CloakTimer > 0)
                 {
-                    if (hasLOS)
+                    data.CloakTimer--;
+                    if (data.CloakTimer <= 0)
                     {
                         data.CloakAlphaTarget = 0;
                         data.CloakCooldown = CloakCooldownTicks;
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            npc.netUpdate = true;
+                        }
                     }
                 }
-                else if (!hasLOS && !busy && data.StuckWanderTimer <= 0 && data.CloakCooldown <= 0)
+                else if (data.CloakAlphaTarget > 0)
+                {
+                    data.CloakAlphaTarget = 0;
+                    data.CloakCooldown = CloakCooldownTicks;
+                }
+                else if (!hasLOS && !busy && data.StuckWanderTimer <= 0 && data.CloakCooldown <= 0
+                         && Main.netMode != NetmodeID.MultiplayerClient)
                 {
                     data.CloakAlphaTarget = IdleCloakAlpha;
+                    data.CloakTimer = CloakDurationTicks;
+                    npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
                 }
             }
             npc.alpha = data.CloakAlphaTarget;
@@ -1304,8 +1375,10 @@ namespace tsorcRevamp.NPCs
                     if ((closeEnough || data.AmbushTimer <= 0) && Main.netMode != NetmodeID.MultiplayerClient)
                     {
                         data.Ambush = GreatSerpentHead.AmbushState.None;
-                        data.CloakAlphaTarget = 0; //reveal exactly as the forced telegraph below begins
-                        npc.alpha = 0;
+                        //Stay invisible for 7 seconds (420 ticks) even as the ambush attack and follow-ups launch.
+                        data.CloakAlphaTarget = AmbushCloakAlpha;
+                        data.CloakTimer = 7 * 60;
+                        npc.alpha = data.CloakAlphaTarget;
 
                         bool pounce = Main.rand.NextBool(2);
                         data.Attack = pounce ? GreatSerpentHead.AttackState.PounceTelegraph : GreatSerpentHead.AttackState.BiteTelegraph;
@@ -1484,6 +1557,10 @@ namespace tsorcRevamp.NPCs
 
             int feetTileY = (int)((npc.position.Y + npc.height) / TileSize);
             int centerTileX = (int)(npc.Center.X / TileSize);
+            int leftTileX = (int)((npc.position.X + 1f) / TileSize);
+            int rightTileX = (int)((npc.position.X + npc.width - 1f) / TileSize);
+            int leadTileX = moveDir > 0 ? rightTileX : leftTileX;
+            int headTileY = (int)(npc.position.Y / TileSize);
 
             //Obstacle handling only matters when actually advancing. Check both 1 and 2 tiles ahead so a 50px-wide
             //head never hits a 1-2 tile step undetected.
@@ -1501,12 +1578,96 @@ namespace tsorcRevamp.NPCs
                         obstacleHeight = 0; //ignore lone 1-wide spikes
                     }
                 }
+
+                //Overhang lip check: after backing out from under a lip, the column directly ahead of the head's
+                //leading edge has air at feetTileY but solid tiles up near headTileY. Detect that lip when we are
+                //climbing toward a higher target so SnapHeadToGround does not pull us back down underneath it.
+                bool aimingHigher = (hasPlanStep && (stepKind == SmartSerpent4AI.StepKind.Climb || stepKind == SmartSerpent4AI.StepKind.WallScale))
+                    || steerTarget.Y < npc.Center.Y - 2 * TileSize;
+                if (obstacleHeight == 0 && aimingHigher)
+                {
+                    int aheadColumn = leadTileX + moveDir;
+                    int lipRow = -1;
+                    for (int row = feetTileY - 1; row >= headTileY - 1; row--)
+                    {
+                        if (IsSolidTile(aheadColumn, row))
+                        {
+                            lipRow = row;
+                            break;
+                        }
+                    }
+
+                    if (lipRow >= 0)
+                    {
+                        int topSolidRow = lipRow;
+                        int minScanRow = feetTileY - (MaxClimbHeightTiles + 2);
+                        while (topSolidRow - 1 >= minScanRow && IsSolidTile(aheadColumn, topSolidRow - 1))
+                        {
+                            topSolidRow--;
+                        }
+
+                        obstacleHeight = feetTileY - topSolidRow + 1;
+                    }
+                }
             }
 
-            //Headroom above the head: if solid sits right above us we must NOT keep rising, or we bore straight
-            //up into a ceiling and end up marooned in the room above.
-            int headTileY = (int)(npc.position.Y / TileSize);
-            bool hasHeadroom = !IsSolidTile(centerTileX, headTileY - 1) && !IsSolidTile(centerTileX, headTileY - 2);
+            //Headroom across the full 50px head width, not just centerTileX: a 1-tile overhang sitting over only
+            //the leading edge blocks TileCollision upward even while centerTileX has open sky above it.
+            bool ceilingBlocked = false;
+            for (int tileX = leftTileX; tileX <= rightTileX; tileX++)
+            {
+                if (IsSolidTile(tileX, headTileY - 1))
+                {
+                    ceilingBlocked = true;
+                    break;
+                }
+            }
+
+            //Distinguish a climbable 1-4 tile overhang lip from a true cave roof: if shifting 1..4 tiles away from
+            //the wall clears the ceiling above the full head width without hitting a wall behind us, we can back out
+            //and climb around the lip instead of wedging underneath it.
+            bool canClearOverhang = false;
+            if (ceilingBlocked && desiredX != 0f)
+            {
+                int backDir = -moveDir;
+                for (int shift = 1; shift <= 4; shift++)
+                {
+                    int trailEdgeX = backDir > 0 ? rightTileX + shift : leftTileX - shift;
+                    bool backBlocked = false;
+                    for (int row = headTileY; row < feetTileY; row++)
+                    {
+                        if (IsSolidTile(trailEdgeX, row))
+                        {
+                            backBlocked = true;
+                            break;
+                        }
+                    }
+
+                    if (backBlocked)
+                    {
+                        break;
+                    }
+
+                    bool shiftedCeilingClear = true;
+                    for (int tileX = leftTileX + backDir * shift; tileX <= rightTileX + backDir * shift; tileX++)
+                    {
+                        if (IsSolidTile(tileX, headTileY - 1))
+                        {
+                            shiftedCeilingClear = false;
+                            break;
+                        }
+                    }
+
+                    if (shiftedCeilingClear)
+                    {
+                        canClearOverhang = true;
+                        break;
+                    }
+                }
+            }
+
+            bool hasHeadroom = !ceilingBlocked;
+            bool lipOverHead = desiredX != 0f && IsSolidTile(leadTileX + moveDir, headTileY - 1);
             bool isSmallStep = desiredX != 0f && obstacleHeight >= 1 && obstacleHeight <= SmallStepTiles && hasHeadroom;
 
             if (isSmallStep)
@@ -1516,23 +1677,46 @@ namespace tsorcRevamp.NPCs
                 npc.velocity.Y = -ClimbRiseSpeed;
                 data.LastAction = isLowHealth ? "pursue-enraged" : "pursue";
             }
+            else if (obstacleHeight > SmallStepTiles && ceilingBlocked && canClearOverhang && data.ClimbBudget > 0)
+            {
+                //Pinned under a climbable overhang lip: slide back away from the wall while holding elevation until
+                //the full head width clears the lip, then the normal climb branch rises straight past it.
+                float backSpeed = -moveDir * effectiveMaxSpeed * 0.65f;
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, backSpeed, 0.25f);
+                npc.velocity.Y = 0f;
+                data.ClimbBudget--;
+                data.LastAction = "climb-overhang";
+            }
             else if (obstacleHeight > SmallStepTiles && obstacleHeight <= MaxClimbHeightTiles && hasHeadroom && data.ClimbBudget > 0)
             {
-                //Climbing: rise while advancing. Budget-limited so a mis-read wall can't send it into orbit.
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, desiredX * 0.7f, horizontalLerp);
+                //Climbing: rise while advancing. If an overhang lip sits right at our top-front corner, rise straight
+                //up without pushing back underneath it until the head clears the lip's bottom row.
+                float climbDesiredX = desiredX * 0.7f;
+                if (lipOverHead)
+                {
+                    climbDesiredX = 0f;
+                }
+
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, climbDesiredX, lipOverHead ? 0.25f : horizontalLerp);
                 npc.velocity.Y = -ClimbRiseSpeed * (isLowHealth ? 1.25f : 1f);
                 data.ClimbBudget--;
                 data.LastAction = "climb";
             }
             else if (obstacleHeight > SmallStepTiles && steerTarget.Y < npc.Center.Y - 4 * TileSize
-                     && !IsSolidTile(centerTileX, headTileY - 1))
+                     && hasHeadroom)
             {
                 //Tall wall AND the target (the player, or a plan waypoint on the ledge) is up above it: climb
                 //the wall face (hug it, rise), not just give up.
-                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, moveDir * 1.6f, 0.12f);
+                float wallDesiredX = moveDir * 1.6f;
+                if (lipOverHead)
+                {
+                    wallDesiredX = 0f;
+                }
+
+                npc.velocity.X = MathHelper.Lerp(npc.velocity.X, wallDesiredX, 0.12f);
                 npc.velocity.Y = -WallClimbSpeed;
-                bool wallStillAtHead = IsSolidTile(centerTileX + moveDir, headTileY) || IsSolidTile(centerTileX + moveDir, headTileY + 1);
-                if (!wallStillAtHead)
+                bool wallStillAtHead = IsSolidTile(leadTileX + moveDir, headTileY) || IsSolidTile(leadTileX + moveDir, headTileY + 1);
+                if (!wallStillAtHead && !lipOverHead)
                 {
                     npc.velocity.X = moveDir * effectiveMaxSpeed; //cleared the lip -> move onto the ledge
                     npc.velocity.Y = -1.5f;
@@ -1829,11 +2013,11 @@ namespace tsorcRevamp.NPCs
         //curves from the grounded anchor to the driven tail tip. Coil -> Aim -> Stab -> (Recover -> Aim)* -> Retract.
 
         const int TailStabCoilTicks = 120;     //slow rise into one stable arch
-        const int TailStabAimTicks = 60;       //hold the threat pose, then lock for the final 24 ticks
-        const int TailStabLockTicks = 24;
-        const int TailStabStabTicks = 24;      //the fast thrust through the target
-        const int TailStabLiveTicks = 18;      //six harmless acceleration ticks, then the blade's actual arrival
-        const int TailStabRecoverTicks = 66;   //unhurried return to the same perch between stings
+        const int TailStabAimTicks = 66;       //36 ticks tracking/perching, then 30 ticks locked & vibrating before launch
+        const int TailStabLockTicks = 30;
+        const int TailStabStabTicks = 18;      //fast, decisive thrust through the target
+        const int TailStabLiveTicks = 15;      //three harmless acceleration ticks, then the blade's arrival
+        const int TailStabRecoverTicks = 66;   //unhurried return to the perch between stings
         const int TailStabRetractTicks = 120;  //lower back to the original tail position
         const int TailStabMaxCombo = 3;
         const int TailStabCooldownTicks = 240;
@@ -1842,12 +2026,20 @@ namespace tsorcRevamp.NPCs
         const float TailStabReachTiles = 32f; //512px from the anchor, proven with the same 24 body links + tail; 592px cannot reach
         const float TailStabOverheadHeight = 175f; //C perch height above the head/player
         const float TailStabCoilLerp = 0.055f;
-        const float TailStabStrikeLerp = 0.42f;    //whip-fast extension during Stabbing so the tip reaches and pierces the target
+        const float TailStabStrikeLerp = 0.72f;    //fast snap extension during Stabbing so the tip drives through the player
         const float TailStabSettleSpeed = 6f;     //maximum driven-target movement during raise/recovery/lowering
-        const float TailStabStrikeSpeed = 26f;
+        const float TailStabStrikeSpeed = 48f;
+        const float TailStabOvershootPixels = 48f; //drive 3 tiles past the locked player center so stabs never stop short
         const float TailStabLowRise = 72f;     //lower poised tip when the player is alongside the rear half
 
-        static void StartTailStab(NPC npc, GreatSerpentHead data, Player player)
+        const int TailWhipCoilTicks = 80;      //snappier low coil behind the head for the anti-air sweep
+        const int TailWhipAimTicks = 50;       //20t tracking + 30t locked vibration before whip launch
+        const int TailWhipStabTicks = 22;      //wide 160-degree overhead lash
+        const int TailWhipLiveTicks = 19;
+        const int TailFeintCoilTicks = 36;     //short coil when chained directly off a Feint Lunge
+        const int TailFeintAimTicks = 42;      //12t tracking + 30t locked vibration
+
+        static void StartTailStab(NPC npc, GreatSerpentHead data, Player player, bool singleFeint = false)
         {
             NPC tail = FindTail(npc);
             NPC anchorSeg = FindTailAnchor(npc);
@@ -1861,11 +2053,30 @@ namespace tsorcRevamp.NPCs
 
             data.TailStabAnchor = anchorSeg.Center;
 
-            //A player alongside the rear section gets a lower perch. Both modes retain the same
-            //single arch instead of re-coiling the whole rear body into alternating S lobes.
+            //A player alongside the rear section gets a lower perch; an airborne or close player can draw the
+            //sweeping TailWhip anti-air lash (except on a single-stab Feint follow-up).
             bool straddles = (player.Center.X - npc.Center.X) * (player.Center.X - tail.Center.X) < 0f;
             bool cRoom = HasOverheadClearance(npc, (int)(TailStabOverheadHeight / TileSize) + 2);
-            if (straddles || !cRoom)
+            bool playerAbove = player.Center.Y < npc.Center.Y - 40f;
+            float distToPlayer = Vector2.Distance(npc.Center, player.Center);
+            bool useWhip = false;
+            if (!singleFeint && cRoom)
+            {
+                if (playerAbove && Main.rand.NextFloat() < 0.65f)
+                {
+                    useWhip = true;
+                }
+                else if (distToPlayer <= 22f * TileSize && Main.rand.NextFloat() < 0.4f)
+                {
+                    useWhip = true;
+                }
+            }
+
+            if (useWhip)
+            {
+                data.TailStabMode = GreatSerpentHead.TailStabKind.TailWhip;
+            }
+            else if (straddles || !cRoom)
             {
                 data.TailStabMode = GreatSerpentHead.TailStabKind.LowArch;
             }
@@ -1875,8 +2086,22 @@ namespace tsorcRevamp.NPCs
             }
 
             data.TailStab = GreatSerpentHead.TailStabState.Coiling;
-            data.TailStabTimer = TailStabCoilTicks;
-            data.TailStabCombo = 0;
+            if (singleFeint)
+            {
+                data.TailStabTimer = TailFeintCoilTicks;
+                data.TailStabCombo = TailStabMaxCombo - 1;
+            }
+            else if (data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip)
+            {
+                data.TailStabTimer = TailWhipCoilTicks;
+                data.TailStabCombo = TailStabMaxCombo - 1; //TailWhip is a single wide sweeping lash, not a 3x poke
+            }
+            else
+            {
+                data.TailStabTimer = TailStabCoilTicks;
+                data.TailStabCombo = 0;
+            }
+
             data.TailStabDamaging = false;
             data.RippleTimer = 0;
             Vector2 tailForward = DirectionFromRotation(tail.rotation);
@@ -1908,6 +2133,12 @@ namespace tsorcRevamp.NPCs
         {
             Vector2 anchor = data.TailStabAnchor == Vector2.Zero ? head.Center : data.TailStabAnchor;
             float dirToPlayer = player.Center.X >= anchor.X ? 1f : -1f;
+
+            if (data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip)
+            {
+                //Coil low behind the anchor away from the player so the upward-forward whip sweeps a wide 160-degree arc.
+                return anchor + new Vector2(-dirToPlayer * 110f, -45f);
+            }
 
             if (data.TailStabMode == GreatSerpentHead.TailStabKind.OverheadC)
             {
@@ -1957,16 +2188,48 @@ namespace tsorcRevamp.NPCs
             {
                 case GreatSerpentHead.TailStabState.Coiling:
                 {
+                    //Keep the perch and target fresh during the 2s coil so the tail rises into position for
+                    //where the player actually is, not where they stood when the attack started.
+                    if (authoritative)
+                    {
+                        Vector2 desiredPerchOffset = TailStabPerch(npc, data, player) - anchor;
+                        data.TailStabPerchOffset = Vector2.Lerp(data.TailStabPerchOffset, desiredPerchOffset, 0.08f);
+                        Vector2 desiredTarget = Vector2.Lerp(data.TailStabTarget, player.Center, 0.15f);
+                        Vector2 fromAnchor = desiredTarget - anchor;
+                        float maxTargetReach = TailStabReachTiles * TileSize;
+                        if (fromAnchor.Length() > maxTargetReach)
+                        {
+                            desiredTarget = anchor + Vector2.Normalize(fromAnchor) * maxTargetReach;
+                        }
+
+                        data.TailStabTarget = desiredTarget;
+                        if (data.TailStabTimer % 10 == 0)
+                        {
+                            npc.netUpdate = true;
+                        }
+                    }
+
                     if (!Main.dedServ && data.TailStabTimer % 3 == 0)
                     {
-                        int coilDust = Dust.NewDust(data.TailStabTip - new Vector2(8f, 8f), 16, 16, DustID.AncientLight, 0f, -1.5f, 120, Color.Purple, 1.25f);
+                        int coilDust = Dust.NewDust(data.TailStabTip - new Vector2(8f, 8f), 16, 16, DustID.AncientLight, 0f, -1.5f, 60, Color.Purple, 1.25f);
                         Main.dust[coilDust].noGravity = true;
                     }
 
                     if (data.TailStabTimer <= 0)
                     {
                         data.TailStab = GreatSerpentHead.TailStabState.Aiming;
-                        data.TailStabTimer = TailStabAimTicks;
+                        if (data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip)
+                        {
+                            data.TailStabTimer = TailWhipAimTicks;
+                        }
+                        else if (data.TailStabCombo == TailStabMaxCombo - 1)
+                        {
+                            data.TailStabTimer = TailFeintAimTicks;
+                        }
+                        else
+                        {
+                            data.TailStabTimer = TailStabAimTicks;
+                        }
                         if (authoritative)
                         {
                             data.TailStabTarget = player.Center;
@@ -1978,11 +2241,18 @@ namespace tsorcRevamp.NPCs
 
                 case GreatSerpentHead.TailStabState.Aiming:
                 {
-                    //Only the server tracks the player. The last 24 ticks use one locked target on every
-                    //machine; the perched body does not chase that target or rebuild its arch between stings.
+                    //Only the server tracks the player. Both target and perch adjust smoothly before lock so each
+                    //stab in the combo aims cleanly at the player's current position; the final 30 ticks lock both
+                    //while the tail vibrates before launch.
                     if (authoritative && data.TailStabTimer >= TailStabLockTicks)
                     {
-                        Vector2 desiredTarget = Vector2.Lerp(data.TailStabTarget, player.Center, 0.3f);
+                        Vector2 desiredPerchOffset = TailStabPerch(npc, data, player) - anchor;
+                        data.TailStabPerchOffset = Vector2.Lerp(data.TailStabPerchOffset, desiredPerchOffset, 0.15f);
+                        perch = anchor + data.TailStabPerchOffset;
+                        tipTarget = perch;
+
+                        float trackLerp = data.TailStabTimer == TailStabLockTicks ? 1f : 0.45f;
+                        Vector2 desiredTarget = Vector2.Lerp(data.TailStabTarget, player.Center, trackLerp);
                         Vector2 fromAnchor = desiredTarget - anchor;
                         float maxTargetReach = TailStabReachTiles * TileSize;
                         if (fromAnchor.Length() > maxTargetReach)
@@ -2005,10 +2275,10 @@ namespace tsorcRevamp.NPCs
                     if (!Main.dedServ && data.TailStabTimer % 3 == 0)
                     {
                         Vector2 dustPosition = data.TailStabTarget + new Vector2(Main.rand.NextFloat(-20f, 20f), -Main.rand.NextFloat(16f, 54f));
-                        int targetDust = Dust.NewDust(dustPosition, 6, 6, DustID.AncientLight, 0f, 2f, 120, Color.Purple, 1.2f);
+                        int targetDust = Dust.NewDust(dustPosition, 6, 6, DustID.AncientLight, 0f, 2f, 60, Color.Purple, 1.2f);
                         Main.dust[targetDust].noGravity = true;
 
-                        int tipDust = Dust.NewDust(data.TailStabTip - new Vector2(6f, 6f), 12, 12, DustID.Venom, 0f, -1f, 110, default, 1.15f);
+                        int tipDust = Dust.NewDust(data.TailStabTip - new Vector2(6f, 6f), 12, 12, DustID.Venom, 0f, -1f, 60, default, 1.15f);
                         Main.dust[tipDust].noGravity = true;
                     }
 
@@ -2025,7 +2295,7 @@ namespace tsorcRevamp.NPCs
                     if (data.TailStabTimer <= 0)
                     {
                         data.TailStab = GreatSerpentHead.TailStabState.Stabbing;
-                        data.TailStabTimer = TailStabStabTicks;
+                        data.TailStabTimer = data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip ? TailWhipStabTicks : TailStabStabTicks;
                         if (!Main.dedServ)
                         {
                             Terraria.Audio.SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.85f, Pitch = -0.25f }, data.TailStabTip);
@@ -2037,16 +2307,52 @@ namespace tsorcRevamp.NPCs
 
                 case GreatSerpentHead.TailStabState.Stabbing:
                 {
-                    Vector2 strikeDirection = data.TailStabTarget - perch;
-                    if (strikeDirection.LengthSquared() > 1f)
+                    if (data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip)
                     {
-                        strikeDirection.Normalize();
-                    }
+                        //Sweep a 160-degree overhead lash from low-behind across the air in front of the serpent,
+                        //flinging short-range venom droplets along the arc while only the tail blade deals melee damage.
+                        float sweepProgress = MathHelper.Clamp(1f - data.TailStabTimer / (float)TailWhipStabTicks, 0f, 1f);
+                        float sweepDir = data.TailStabTarget.X >= anchor.X ? 1f : -1f;
+                        float startAngle = sweepDir > 0f ? -MathHelper.Pi * 0.92f : -MathHelper.Pi * 0.08f;
+                        float endAngle = sweepDir > 0f ? -MathHelper.Pi * 0.05f : -MathHelper.Pi * 0.95f;
+                        float sweepAngle = MathHelper.Lerp(startAngle, endAngle, sweepProgress);
+                        float sweepRadius = MathHelper.Clamp(Vector2.Distance(anchor, data.TailStabTarget) + 48f, 180f, 360f);
+                        tipTarget = anchor + new Vector2((float)Math.Cos(sweepAngle), (float)Math.Sin(sweepAngle)) * sweepRadius;
+                        tipLerp = TailStabStrikeLerp;
+                        tipSpeed = TailStabStrikeSpeed;
+                        data.TailStabDamaging = data.TailStabTimer > 0 && data.TailStabTimer <= TailWhipLiveTicks;
 
-                    tipTarget = data.TailStabTarget + strikeDirection * 22f;
-                    tipLerp = TailStabStrikeLerp;
-                    tipSpeed = TailStabStrikeSpeed;
-                    data.TailStabDamaging = data.TailStabTimer > 0 && data.TailStabTimer <= TailStabLiveTicks;
+                        if (authoritative && (data.TailStabTimer == 16 || data.TailStabTimer == 12 || data.TailStabTimer == 8 || data.TailStabTimer == 4))
+                        {
+                            Vector2 outward = new Vector2((float)Math.Cos(sweepAngle), (float)Math.Sin(sweepAngle));
+                            Vector2 dropVel = outward * 9f + new Vector2(sweepDir * 2.5f, -2f);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), data.TailStabTip, dropVel, ModContent.ProjectileType<VenomSpit>(), SpitDamage, 1f, Main.myPlayer, 0.28f);
+                        }
+                    }
+                    else
+                    {
+                        Vector2 strikeDirection = data.TailStabTarget - perch;
+                        if (strikeDirection.LengthSquared() <= 1f)
+                        {
+                            strikeDirection = data.TailStabTarget - anchor;
+                        }
+                        if (strikeDirection.LengthSquared() > 1f)
+                        {
+                            strikeDirection.Normalize();
+                        }
+
+                        tipTarget = data.TailStabTarget + strikeDirection * TailStabOvershootPixels;
+                        Vector2 tipFromAnchor = tipTarget - anchor;
+                        float maxStrikeReach = TailStabReachTiles * TileSize;
+                        if (tipFromAnchor.Length() > maxStrikeReach)
+                        {
+                            tipTarget = anchor + Vector2.Normalize(tipFromAnchor) * maxStrikeReach;
+                        }
+
+                        tipLerp = TailStabStrikeLerp;
+                        tipSpeed = TailStabStrikeSpeed;
+                        data.TailStabDamaging = data.TailStabTimer > 0 && data.TailStabTimer <= TailStabLiveTicks;
+                    }
 
                     if (data.TailStabTimer <= 0)
                     {
@@ -2060,6 +2366,30 @@ namespace tsorcRevamp.NPCs
 
                 case GreatSerpentHead.TailStabState.Recover:
                 {
+                    //If another stab follows, begin repositioning the perch and tracking the player during recovery
+                    //so the blade is already lining up on the new position when Aiming starts.
+                    if (authoritative && data.TailStabCombo + 1 < TailStabMaxCombo)
+                    {
+                        Vector2 desiredPerchOffset = TailStabPerch(npc, data, player) - anchor;
+                        data.TailStabPerchOffset = Vector2.Lerp(data.TailStabPerchOffset, desiredPerchOffset, 0.08f);
+                        perch = anchor + data.TailStabPerchOffset;
+                        tipTarget = perch;
+
+                        Vector2 desiredTarget = Vector2.Lerp(data.TailStabTarget, player.Center, 0.15f);
+                        Vector2 fromAnchor = desiredTarget - anchor;
+                        float maxTargetReach = TailStabReachTiles * TileSize;
+                        if (fromAnchor.Length() > maxTargetReach)
+                        {
+                            desiredTarget = anchor + Vector2.Normalize(fromAnchor) * maxTargetReach;
+                        }
+
+                        data.TailStabTarget = desiredTarget;
+                        if (data.TailStabTimer % 10 == 0)
+                        {
+                            npc.netUpdate = true;
+                        }
+                    }
+
                     if (data.TailStabTimer <= 0)
                     {
                         data.TailStabCombo++;
@@ -2162,7 +2492,8 @@ namespace tsorcRevamp.NPCs
             float[] widths = new float[count];
             Vector2[] centers = new Vector2[count];
             float[] headings = new float[count];
-            float chainLength = anchorSegment.height * 0.5f - SegmentOverlap * 0.5f;
+            float anchorRearOverlap = SerpentChain.JointOverlap(-1, rear[0].height);
+            float chainLength = Math.Max(1f, anchorSegment.height * 0.5f - anchorRearOverlap * 0.5f);
 
             for (int i = 0; i < count; i++)
             {
@@ -2170,10 +2501,16 @@ namespace tsorcRevamp.NPCs
                 widths[i] = rear[i].width;
                 centers[i] = rear[i].Center;
                 headings[i] = rear[i].rotation - MathHelper.PiOver2;
-                float boneLength = heights[i] - SegmentOverlap;
+                float frontOverlap = SerpentChain.JointOverlap(-1, heights[i]);
+                float boneLength;
                 if (i == count - 1)
                 {
-                    boneLength = heights[i] - SegmentOverlap * 0.5f - 2f;
+                    boneLength = heights[i] - frontOverlap * 0.5f - 2f;
+                }
+                else
+                {
+                    float rearOverlap = SerpentChain.JointOverlap(-1, rear[i + 1].height);
+                    boneLength = heights[i] - (frontOverlap + rearOverlap) * 0.5f;
                 }
 
                 chainLength += Math.Max(2f, boneLength);
@@ -2201,9 +2538,31 @@ namespace tsorcRevamp.NPCs
                 archEnvelope = MathHelper.SmoothStep(0f, 1f, remainingRaise);
             }
 
+            //Align the curve's end tangent with the aim/thrust line so the 98px blade visibly points at the player
+            //during Aiming and drives point-first through the locked target during Stabbing.
+            Vector2? aimDirection = null;
+            if (data.TailStab != GreatSerpentHead.TailStabState.Retracting)
+            {
+                Vector2 rawAim;
+                if (data.TailStab == GreatSerpentHead.TailStabState.Stabbing)
+                {
+                    Vector2 stabPerch = anchorSegment.Center + data.TailStabPerchOffset;
+                    rawAim = data.TailStabTarget - stabPerch;
+                }
+                else
+                {
+                    rawAim = data.TailStabTarget - tip;
+                }
+
+                if (rawAim.LengthSquared() > 1f)
+                {
+                    aimDirection = Vector2.Normalize(rawAim);
+                }
+            }
+
             Vector2 control1;
             Vector2 control2;
-            SerpentChain.BuildTailStabCurve(anchorSegment.Center, tip, chainLength, archEnvelope, anchorSegment.rotation - MathHelper.PiOver2, out control1, out control2);
+            SerpentChain.BuildTailStabCurve(anchorSegment.Center, tip, chainLength, archEnvelope, anchorSegment.rotation - MathHelper.PiOver2, out control1, out control2, aimDirection);
 
             float turnLimit = SerpentChain.TailSettleTurnRadians;
             if (data.TailStab == GreatSerpentHead.TailStabState.Stabbing)
@@ -2213,6 +2572,25 @@ namespace tsorcRevamp.NPCs
 
             SerpentChain.PoseAlongCurve(anchorSegment.Center, anchorSegment.height, anchorSegment.width, anchorSegment.rotation - MathHelper.PiOver2,
                 heights, widths, centers, headings, 1.55f, control1, control2, tip, BodyTerrainProbe, turnLimit);
+
+            //Vibrate the poised tail section for the final 30 locked ticks before launch so the strike reads clearly.
+            bool lockedTremor = data.TailStab == GreatSerpentHead.TailStabState.Aiming
+                && data.TailStabTimer > 0 && data.TailStabTimer <= TailStabLockTicks;
+            float tremorProgress = 0f;
+            float tremorSign = 1f;
+            Vector2 tremorAxis = Vector2.UnitY;
+            if (lockedTremor)
+            {
+                tremorProgress = 1f - data.TailStabTimer / (float)TailStabLockTicks;
+                if (data.TailStabTimer % 2 == 0)
+                {
+                    tremorSign = -1f;
+                }
+                if (aimDirection.HasValue)
+                {
+                    tremorAxis = new Vector2(-aimDirection.Value.Y, aimDirection.Value.X);
+                }
+            }
 
             for (int i = 0; i < count; i++)
             {
@@ -2224,13 +2602,41 @@ namespace tsorcRevamp.NPCs
                     tailData.SweepReady = segment.damage > 0 && data.TailStabDamaging;
                 }
 
-                segment.rotation = headings[i] + MathHelper.PiOver2;
-                segment.Center = centers[i];
+                Vector2 finalCenter = centers[i];
+                float finalRotation = headings[i] + MathHelper.PiOver2;
+                if (lockedTremor && i >= count - 6)
+                {
+                    float segmentWeight = (i - (count - 7)) / 6f;
+                    float tremorOffset = tremorSign * MathHelper.Lerp(1.5f, 4.5f, tremorProgress) * segmentWeight;
+                    finalCenter += tremorAxis * tremorOffset;
+                    if (i == count - 1)
+                    {
+                        finalRotation += tremorSign * 0.045f * tremorProgress;
+                    }
+                }
+
+                segment.rotation = finalRotation;
+                segment.Center = finalCenter;
                 segment.velocity = Vector2.Zero;
                 segment.damage = 0;
                 if (segment.type == tailType && data.TailStabDamaging)
                 {
                     segment.damage = TailStabDamage;
+                    //Whip lash emits a dense venom trail along the active 98px blade so the damaging tip reads clearly
+                    //against the 0-damage body segments.
+                    if (data.TailStabMode == GreatSerpentHead.TailStabKind.TailWhip && !Main.dedServ)
+                    {
+                        Vector2 bladeDir = new Vector2((float)Math.Sin(finalRotation), -(float)Math.Cos(finalRotation));
+                        for (int dustIndex = 0; dustIndex < 3; dustIndex++)
+                        {
+                            float along = MathHelper.Lerp(-44f, 40f, (dustIndex + Main.rand.NextFloat()) / 3f);
+                            Vector2 dustPos = finalCenter - bladeDir * along;
+                            int dustType = dustIndex == 0 ? DustID.AncientLight : DustID.Venom;
+                            Color dustColor = dustIndex == 0 ? new Color(180, 70, 255) : default;
+                            Dust whipDust = Dust.NewDustPerfect(dustPos, dustType, Main.rand.NextVector2Circular(1.8f, 1.8f), 45, dustColor, Main.rand.NextFloat(0.95f, 1.35f));
+                            whipDust.noGravity = true;
+                        }
+                    }
                 }
             }
         }
@@ -2392,6 +2798,8 @@ namespace tsorcRevamp.NPCs
             data.Attack = GreatSerpentHead.AttackState.None;
             data.AttackTimer = 0;
             data.MouthTransitionTimer = 0;
+            data.FeintToTailStab = false;
+            data.FissureWaveFired = false;
             data.AttackCooldown = AttackCooldownBaseTicks;
             npc.damage = 0;
             ClearAttackPoise(npc.GetGlobalNPC<tsorcRevampGlobalNPC>());
@@ -2437,6 +2845,35 @@ namespace tsorcRevamp.NPCs
         const float SpitStraightSpeed = 12f;
         const float SpitLobSpeed = 12f;
         const float SpitLobGravity = 0.25f;
+
+        //Coiling Constriction / Defensive Ring: compact raised arch -> radial venom burst (no body contact damage).
+        const int CoilTelegraphTicks = 45;
+        const int CoilBurstTicks = 16;
+        const int CoilRecoverTicks = 45;
+        const float CoilArchPixels = 85f;
+        const int CoilRangeTiles = 16;
+
+        //Venom Mortar / Acid Rain Barrage: high upward rear -> 6 staggered high-arc shells landing on and past the player.
+        const int MortarTelegraphTicks = 55;
+        const int MortarVolleyTicks = 42;
+        const int MortarRecoverTicks = 55;
+        const float MortarArchPixels = 130f;
+        const int MortarMinRangeTiles = 14;
+        const int MortarShellCount = 6;
+        const int MortarShellInterval = 7;
+
+        //Feint Lunge -> single fast Tail Stab (below 50% HP): stops ~5 tiles short of player before whipping the tail.
+        const int FeintTelegraphTicks = 50;
+        const float FeintStopShortPixels = 80f;
+
+        //SHM-only Destined Death Ground Fissure: high crimson rear -> terrain-safe head slam -> forward ground waves.
+        const int FissureTelegraphTicks = 55;
+        const int FissureSlamTicks = 14;
+        const int FissureRecoverTicks = 55;
+        const float FissureArchPixels = 140f;
+        const int FissureRangeTiles = 42;
+        const int FissureDamage = 55;
+        const float FissureWaveTravelPixels = 680f;
 
         //The last TelegraphCommitTicks of a telegraph are hyper-armor (white flash fires here); before that the
         //windup is stagger-cancellable, matching the FighterAI AddAttack telegraph/commit convention.
@@ -2569,55 +3006,130 @@ namespace tsorcRevamp.NPCs
             }
 
             float distTiles = distanceToPlayer / TileSize;
-            GreatSerpentHead.AttackState chosen;
-            int telegraph;
-
-            if (distTiles <= BiteRangeTiles)
-            {
-                int roll = Main.rand.Next(100);
-                if (roll < 50)
-                {
-                    chosen = GreatSerpentHead.AttackState.BiteTelegraph;
-                    telegraph = BiteTelegraphTicks;
-                }
-                else if (roll < 70)
-                {
-                    chosen = GreatSerpentHead.AttackState.PounceTelegraph;
-                    telegraph = PounceTelegraphTicks;
-                }
-                else if (roll < 85)
-                {
-                    chosen = GreatSerpentHead.AttackState.BreathTelegraph;
-                    telegraph = BreathTelegraphTicks;
-                }
-                else
-                {
-                    chosen = GreatSerpentHead.AttackState.SpitTelegraph;
-                    telegraph = SpitTelegraphTicks;
-                }
-            }
-            else if (distTiles <= FarAttackRangeTiles)
-            {
-                int roll = Main.rand.Next(100);
-                if (roll < 30)
-                {
-                    chosen = GreatSerpentHead.AttackState.BreathTelegraph;
-                    telegraph = BreathTelegraphTicks;
-                }
-                else if (roll < 70)
-                {
-                    chosen = GreatSerpentHead.AttackState.SpitTelegraph;
-                    telegraph = SpitTelegraphTicks;
-                }
-                else
-                {
-                    chosen = GreatSerpentHead.AttackState.PounceTelegraph;
-                    telegraph = PounceTelegraphTicks;
-                }
-            }
-            else
+            if (distTiles > FarAttackRangeTiles)
             {
                 return;
+            }
+
+            if (data.AttackBag == null)
+            {
+                data.AttackBagPhaseTwo = isLowHealth;
+                data.AttackBag = new AttackBag<GreatSerpentHead.SerpentAttackCard>(cards =>
+                {
+                    bool phaseTwo = data.AttackBagPhaseTwo;
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Bite);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Bite);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Pounce);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Breath);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Spit);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.Mortar);
+                    cards.Add(GreatSerpentHead.SerpentAttackCard.CoilBurst);
+
+                    if (phaseTwo)
+                    {
+                        cards.Add(GreatSerpentHead.SerpentAttackCard.FeintLunge);
+                        cards.Add(GreatSerpentHead.SerpentAttackCard.FeintLunge);
+                        cards.Add(GreatSerpentHead.SerpentAttackCard.CoilBurst);
+                    }
+
+                    if (tsorcRevampWorld.SuperHardMode)
+                    {
+                        cards.Add(GreatSerpentHead.SerpentAttackCard.Fissure);
+                        if (phaseTwo)
+                        {
+                            cards.Add(GreatSerpentHead.SerpentAttackCard.Fissure);
+                        }
+                    }
+                });
+            }
+            else if (isLowHealth && !data.AttackBagPhaseTwo)
+            {
+                //Phase 2 transition: clear the bag so FeintLunge and extra close-pressure cards enter immediately.
+                data.AttackBagPhaseTwo = true;
+                data.AttackBag.Clear();
+            }
+
+            bool below75Hp = npc.life <= (int)(npc.lifeMax * 0.75f);
+            bool hasTailReach = false;
+            NPC anchorSeg = FindTailAnchor(npc);
+            if (anchorSeg != null)
+            {
+                hasTailReach = Vector2.Distance(anchorSeg.Center, player.Center) <= TailStabReachTiles * TileSize;
+            }
+
+            bool drewCard = data.AttackBag.TryDraw(card =>
+            {
+                switch (card)
+                {
+                    case GreatSerpentHead.SerpentAttackCard.Bite:
+                        return distTiles <= BiteRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.Pounce:
+                        return distTiles <= FarAttackRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.Breath:
+                        return distTiles <= FarAttackRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.Spit:
+                        return distTiles <= FarAttackRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.Mortar:
+                        return distTiles >= MortarMinRangeTiles && distTiles <= FarAttackRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.CoilBurst:
+                        return below75Hp && distTiles <= CoilRangeTiles;
+                    case GreatSerpentHead.SerpentAttackCard.FeintLunge:
+                        return isLowHealth && distTiles <= BiteRangeTiles && distTiles >= 6f
+                            && data.TailStabCooldown <= 0 && hasTailReach;
+                    case GreatSerpentHead.SerpentAttackCard.Fissure:
+                        return tsorcRevampWorld.SuperHardMode && distTiles <= FissureRangeTiles;
+                    default:
+                        return false;
+                }
+            }, out GreatSerpentHead.SerpentAttackCard chosenCard);
+
+            if (!drewCard)
+            {
+                return;
+            }
+
+            GreatSerpentHead.AttackState chosen;
+            int telegraph;
+            data.FeintToTailStab = false;
+            data.FissureWaveFired = false;
+
+            switch (chosenCard)
+            {
+                case GreatSerpentHead.SerpentAttackCard.Bite:
+                    chosen = GreatSerpentHead.AttackState.BiteTelegraph;
+                    telegraph = BiteTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.FeintLunge:
+                    chosen = GreatSerpentHead.AttackState.BiteTelegraph;
+                    telegraph = FeintTelegraphTicks;
+                    data.FeintToTailStab = true;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.Pounce:
+                    chosen = GreatSerpentHead.AttackState.PounceTelegraph;
+                    telegraph = PounceTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.Breath:
+                    chosen = GreatSerpentHead.AttackState.BreathTelegraph;
+                    telegraph = BreathTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.Spit:
+                    chosen = GreatSerpentHead.AttackState.SpitTelegraph;
+                    telegraph = SpitTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.Mortar:
+                    chosen = GreatSerpentHead.AttackState.MortarTelegraph;
+                    telegraph = MortarTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.CoilBurst:
+                    chosen = GreatSerpentHead.AttackState.CoilTelegraph;
+                    telegraph = CoilTelegraphTicks;
+                    break;
+                case GreatSerpentHead.SerpentAttackCard.Fissure:
+                    chosen = GreatSerpentHead.AttackState.FissureTelegraph;
+                    telegraph = FissureTelegraphTicks;
+                    break;
+                default:
+                    return;
             }
 
             data.Attack = chosen;
@@ -2636,6 +3148,14 @@ namespace tsorcRevamp.NPCs
                 data.BreathBaseAngle = (player.Center - MouthPosition(npc)).ToRotation();
                 Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.7f, Pitch = -0.35f }, npc.Center);
             }
+            else if (chosen == GreatSerpentHead.AttackState.MortarTelegraph)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.65f, Pitch = -0.45f }, npc.Center);
+            }
+            else if (chosen == GreatSerpentHead.AttackState.FissureTelegraph)
+            {
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.8f, Pitch = -0.55f }, npc.Center);
+            }
 
             npc.GetGlobalNPC<tsorcRevampGlobalNPC>().RequestNetworkSnapshot();
         }
@@ -2648,10 +3168,7 @@ namespace tsorcRevamp.NPCs
             //Cancel a WIND-UP (only the *Telegraph phases) if the player has left range/LOS -- the actual strike
             //(lunge / sweep / spit combo) is committed and always finishes. This is the "cancel attacks when the
             //player goes out of range unless already committed" behaviour.
-            bool telegraphing = data.Attack == GreatSerpentHead.AttackState.BiteTelegraph
-                || data.Attack == GreatSerpentHead.AttackState.PounceTelegraph
-                || data.Attack == GreatSerpentHead.AttackState.BreathTelegraph
-                || data.Attack == GreatSerpentHead.AttackState.SpitTelegraph;
+            bool telegraphing = data.IsTelegraphing;
             if (telegraphing)
             {
                 bool inRange = Vector2.Distance(npc.Center, player.Center) <= (FarAttackRangeTiles + 8) * TileSize
@@ -2661,6 +3178,26 @@ namespace tsorcRevamp.NPCs
                     EndAttack(npc, data, poise);
                     RunRecovery(npc);
                     return;
+                }
+
+                //Phantom / Cloak Double-Strike tell: while cloaked, flash a bright predatory eye glint during the
+                //commit window so attacks launched from invisibility remain fair and readable in the dark.
+                if (data.CloakAlphaTarget > 0 && data.AttackTimer <= TelegraphCommitTicks && !Main.dedServ)
+                {
+                    Vector2 eyePos = EyePosition(npc);
+                    Lighting.AddLight(eyePos, 0.75f, 0.3f, 0.95f);
+                    Color glintColor = tsorcRevampWorld.SuperHardMode ? new Color(255, 80, 145) : new Color(220, 140, 255);
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Dust glint = Dust.NewDustPerfect(
+                            eyePos + Main.rand.NextVector2Circular(3f, 3f),
+                            DustID.AncientLight,
+                            Main.rand.NextVector2Circular(1.4f, 1.4f),
+                            0,
+                            glintColor,
+                            Main.rand.NextFloat(0.65f, 0.95f));
+                        glint.noGravity = true;
+                    }
                 }
             }
 
@@ -2672,13 +3209,15 @@ namespace tsorcRevamp.NPCs
                     HoldArch(npc, data, player, BiteArchPixels);
                     if (data.AttackTimer == TelegraphCommitTicks)
                     {
-                        tsorcRevampAIs.SpawnTelegraphFlash(npc, Color.White, EyePosition(npc));
+                        Color flashColor = data.FeintToTailStab ? Color.MediumPurple : Color.White;
+                        tsorcRevampAIs.SpawnTelegraphFlash(npc, flashColor, EyePosition(npc));
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit23, npc.Center);
                     }
                     if (data.AttackTimer <= 0)
                     {
                         data.Attack = GreatSerpentHead.AttackState.BiteLunge;
-                        data.AttackTimer = StartLunge(npc, data, player, BiteLungeSpeed, BiteLungeTicks);
+                        float stopShort = data.FeintToTailStab ? FeintStopShortPixels : 0f;
+                        data.AttackTimer = StartLunge(npc, data, player, BiteLungeSpeed, BiteLungeTicks, stopShort);
                         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.8f, PitchVariance = 0.2f }, npc.Center);
                     }
                     break;
@@ -2686,11 +3225,30 @@ namespace tsorcRevamp.NPCs
                 case GreatSerpentHead.AttackState.BiteLunge:
                 {
                     SetCommittedPoise(poise);
-                    npc.velocity = data.LungeVelocity * (IsInWater(npc) ? WaterLungeMultiplier : 1f);
+                    Vector2 desiredLunge = data.LungeVelocity * (IsInWater(npc) ? WaterLungeMultiplier : 1f);
+                    Vector2 allowedLunge = Collision.TileCollision(npc.position, desiredLunge, npc.width, npc.height, true, true);
+                    bool hitTerrain = Vector2.DistanceSquared(allowedLunge, desiredLunge) > 1f
+                        || Collision.SolidCollision(npc.position + allowedLunge, npc.width, npc.height);
+                    npc.velocity = allowedLunge;
                     npc.damage = BiteContactDamage; //head contact damage is ON only during the lunge
-                    AimHead(npc, npc.velocity.X, npc.velocity.Y);
-                    if (data.AttackTimer <= 0)
+                    AimHead(npc, desiredLunge.X, desiredLunge.Y);
+                    if (hitTerrain || data.AttackTimer <= 0)
                     {
+                        npc.velocity *= 0.25f;
+                        if (data.FeintToTailStab)
+                        {
+                            //Feint complete: cancel into a single fast Tail Stab while the player watches the head.
+                            data.FeintToTailStab = false;
+                            data.Attack = GreatSerpentHead.AttackState.None;
+                            data.MouthTransitionTimer = 0;
+                            ClearAttackPoise(poise);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                StartTailStab(npc, data, player, singleFeint: true);
+                            }
+                            break;
+                        }
+
                         data.Attack = GreatSerpentHead.AttackState.BiteRecover;
                         data.AttackTimer = BiteRecoverTicks;
                     }
@@ -2729,12 +3287,17 @@ namespace tsorcRevamp.NPCs
                 case GreatSerpentHead.AttackState.PounceLunge:
                 {
                     SetCommittedPoise(poise);
-                    npc.velocity = data.LungeVelocity * (IsInWater(npc) ? WaterLungeMultiplier : 1f);
+                    Vector2 desiredLunge = data.LungeVelocity * (IsInWater(npc) ? WaterLungeMultiplier : 1f);
+                    Vector2 allowedLunge = Collision.TileCollision(npc.position, desiredLunge, npc.width, npc.height, true, true);
+                    bool hitTerrain = Vector2.DistanceSquared(allowedLunge, desiredLunge) > 1f
+                        || Collision.SolidCollision(npc.position + allowedLunge, npc.width, npc.height);
+                    npc.velocity = allowedLunge;
                     npc.damage = PounceContactDamage; //ON every tick of the lunge (baseline is reset to 0 each tick)
-                    AimHead(npc, npc.velocity.X, npc.velocity.Y);
+                    AimHead(npc, desiredLunge.X, desiredLunge.Y);
                     SpawnMouthVenomDust(npc);
-                    if (data.AttackTimer <= 0)
+                    if (hitTerrain || data.AttackTimer <= 0)
                     {
+                        npc.velocity *= 0.25f;
                         data.Attack = GreatSerpentHead.AttackState.PounceRecover;
                         data.AttackTimer = PounceRecoverTicks;
                     }
@@ -2939,6 +3502,314 @@ namespace tsorcRevamp.NPCs
                     }
                     break;
                 }
+
+                //-- Coiling Constriction / Defensive Ring --
+                case GreatSerpentHead.AttackState.CoilTelegraph:
+                {
+                    SetTelegraphPoise(poise, data.AttackTimer);
+                    HoldArch(npc, data, player, CoilArchPixels);
+                    if (!Main.dedServ)
+                    {
+                        float charge = 1f - data.AttackTimer / (float)CoilTelegraphTicks;
+                        for (int i = 0; i < 2; i++)
+                        {
+                            float angle = Main.rand.NextFloat(MathHelper.TwoPi);
+                            float dist = Main.rand.NextFloat(38f, 84f) * (1.15f - 0.55f * charge);
+                            Vector2 spawnPos = npc.Center + angle.ToRotationVector2() * dist;
+                            Vector2 pullVel = (npc.Center - spawnPos) * 0.12f;
+                            int dustType = i == 0 ? DustID.AncientLight : DustID.Venom;
+                            Color dustColor = i == 0 ? new Color(180, 70, 255) : default;
+                            Dust coilDust = Dust.NewDustPerfect(spawnPos, dustType, pullVel, 50, dustColor, MathHelper.Lerp(0.9f, 1.35f, charge));
+                            coilDust.noGravity = true;
+                        }
+                    }
+
+                    if (data.AttackTimer == TelegraphCommitTicks)
+                    {
+                        tsorcRevampAIs.SpawnTelegraphFlash(npc, Color.Purple, EyePosition(npc));
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit23, npc.Center);
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.CoilBurst;
+                        data.AttackTimer = CoilBurstTicks;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.CoilBurst:
+                {
+                    SetCommittedPoise(poise);
+                    npc.velocity.X *= 0.85f;
+                    SnapHeadToGround(npc, GroundFollowLerp);
+                    AimHead(npc, player.Center.X - npc.Center.X, 0f);
+
+                    if (data.AttackTimer == CoilBurstTicks - 1)
+                    {
+                        if (!Main.dedServ)
+                        {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.85f, Pitch = -0.25f }, npc.Center);
+                            //3-layer radial venom burst (body + fast sparks + billowing smoke).
+                            for (int i = 0; i < 36; i++)
+                            {
+                                Vector2 dir = Main.rand.NextVector2Unit();
+                                Dust body = Dust.NewDustPerfect(npc.Center + dir * Main.rand.NextFloat(8f, 24f), DustID.AncientLight, dir * Main.rand.NextFloat(3f, 7.5f), 45, new Color(180, 70, 255), Main.rand.NextFloat(0.95f, 1.45f));
+                                body.noGravity = true;
+                            }
+                            for (int i = 0; i < 18; i++)
+                            {
+                                Vector2 dir = Main.rand.NextVector2Unit();
+                                Dust spark = Dust.NewDustPerfect(npc.Center + dir * Main.rand.NextFloat(4f, 16f), DustID.Venom, dir * Main.rand.NextFloat(6.5f, 11f), 30, default, Main.rand.NextFloat(0.65f, 1.0f));
+                                spark.noGravity = true;
+                            }
+                            for (int i = 0; i < 12; i++)
+                            {
+                                Vector2 dir = Main.rand.NextVector2Unit();
+                                Dust mist = Dust.NewDustPerfect(npc.Center + dir * Main.rand.NextFloat(8f, 22f), DustID.Smoke, dir * Main.rand.NextFloat(1.2f, 3.2f), 150, new Color(105, 45, 150), Main.rand.NextFloat(0.6f, 0.8f));
+                                mist.noGravity = true;
+                                mist.noLight = true;
+                                mist.fadeIn = Main.rand.NextFloat(1.35f, 1.65f);
+                            }
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            //Upward radial fan (-155 deg to -25 deg) so shells arc out both sides into AcidPools without spawning into the floor.
+                            const int RingCount = 8;
+                            for (int i = 0; i < RingCount; i++)
+                            {
+                                float frac = i / (float)(RingCount - 1);
+                                float angle = MathHelper.ToRadians(MathHelper.Lerp(-155f, -25f, frac));
+                                float speed = MathHelper.Lerp(8.5f, 10.5f, (i % 2) * 0.7f);
+                                Vector2 shotVel = angle.ToRotationVector2() * speed;
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), npc.Center, shotVel, ModContent.ProjectileType<VenomSpit>(), SpitDamage, 1f, Main.myPlayer, SpitLobGravity);
+                            }
+                        }
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.CoilRecover;
+                        data.AttackTimer = CoilRecoverTicks;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.CoilRecover:
+                {
+                    ClearAttackPoise(poise);
+                    RunRecovery(npc);
+                    if (data.AttackTimer <= 0)
+                    {
+                        EndAttack(npc, data, poise);
+                    }
+                    break;
+                }
+
+                //-- Venom Mortar / Acid Rain Barrage --
+                case GreatSerpentHead.AttackState.MortarTelegraph:
+                {
+                    SetTelegraphPoise(poise, data.AttackTimer);
+                    HoldArch(npc, data, player, MortarArchPixels);
+                    int facingDir = player.Center.X >= npc.Center.X ? 1 : -1;
+                    AimHead(npc, facingDir, -2.5f);
+
+                    if (!Main.dedServ)
+                    {
+                        Vector2 mouthPos = MouthPosition(npc);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Vector2 offset = Main.rand.NextVector2CircularEdge(26f, 26f);
+                            Dust gulp = Dust.NewDustPerfect(mouthPos + offset, DustID.AncientLight, -offset * 0.14f, 50, new Color(180, 70, 255), Main.rand.NextFloat(0.95f, 1.3f));
+                            gulp.noGravity = true;
+                        }
+                        Dust bubble = Dust.NewDustPerfect(mouthPos + Main.rand.NextVector2Circular(8f, 8f), DustID.Venom, new Vector2(0f, -Main.rand.NextFloat(1.5f, 3f)), 40, default, Main.rand.NextFloat(0.85f, 1.2f));
+                        bubble.noGravity = true;
+                    }
+
+                    if (data.AttackTimer == TelegraphCommitTicks)
+                    {
+                        tsorcRevampAIs.SpawnTelegraphFlash(npc, Color.Purple, MouthPosition(npc));
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.MortarVolley;
+                        data.AttackTimer = MortarVolleyTicks;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.MortarVolley:
+                {
+                    SetCommittedPoise(poise);
+                    HoldArch(npc, data, player, MortarArchPixels);
+                    int facingDir = player.Center.X >= npc.Center.X ? 1 : -1;
+                    AimHead(npc, facingDir, -2.5f);
+
+                    int elapsed = MortarVolleyTicks - data.AttackTimer;
+                    if (elapsed % MortarShellInterval == 0)
+                    {
+                        int shellIndex = elapsed / MortarShellInterval;
+                        if (shellIndex < MortarShellCount)
+                        {
+                            Vector2 mouthPos = MouthPosition(npc);
+                            if (!Main.dedServ)
+                            {
+                                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.7f, Pitch = -0.35f }, mouthPos);
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    Dust puff = Dust.NewDustPerfect(mouthPos, DustID.Venom, new Vector2(facingDir * Main.rand.NextFloat(1f, 3.5f), -Main.rand.NextFloat(2.5f, 5.5f)), 45, default, Main.rand.NextFloat(0.9f, 1.3f));
+                                    puff.noGravity = true;
+                                }
+                            }
+
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                //Solve ballistic horizontal speed for gravity = 0.25 so shells carpet from 6 tiles before
+                                //to 10 tiles past the player's current X with staggered high-arc landing times.
+                                float frac = shellIndex / (float)(MortarShellCount - 1);
+                                float landX = player.Center.X + facingDir * MathHelper.Lerp(-96f, 160f, frac);
+                                float dy = player.Center.Y - mouthPos.Y;
+                                float launchVy = -13f - shellIndex * 0.45f;
+                                float disc = launchVy * launchVy + 2f * SpitLobGravity * dy;
+                                float flightTicks = (-launchVy + (float)Math.Sqrt(Math.Max(16f, disc))) / SpitLobGravity;
+                                float launchVx = MathHelper.Clamp((landX - mouthPos.X) / Math.Max(20f, flightTicks), -14f, 14f);
+                                Vector2 mortarVel = new Vector2(launchVx, launchVy);
+                                Projectile.NewProjectile(npc.GetSource_FromAI(), mouthPos, mortarVel, ModContent.ProjectileType<VenomSpit>(), SpitDamage, 1f, Main.myPlayer, SpitLobGravity);
+                            }
+                        }
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.MortarRecover;
+                        data.AttackTimer = MortarRecoverTicks;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.MortarRecover:
+                {
+                    ClearAttackPoise(poise);
+                    RunRecovery(npc);
+                    if (data.AttackTimer <= 0)
+                    {
+                        EndAttack(npc, data, poise);
+                    }
+                    break;
+                }
+
+                //-- SHM-Only Destined Death Ground Fissure (just ground in front) --
+                case GreatSerpentHead.AttackState.FissureTelegraph:
+                {
+                    SetTelegraphPoise(poise, data.AttackTimer);
+                    HoldArch(npc, data, player, FissureArchPixels);
+                    int facingDir = player.Center.X >= npc.Center.X ? 1 : -1;
+                    data.Facing = facingDir;
+                    npc.direction = facingDir;
+
+                    if (!Main.dedServ)
+                    {
+                        float charge = 1f - data.AttackTimer / (float)FissureTelegraphTicks;
+                        Vector2 mouthPos = MouthPosition(npc);
+                        Lighting.AddLight(mouthPos, 0.9f * charge, 0.1f * charge, 0.3f * charge);
+                        for (int i = 0; i < 2; i++)
+                        {
+                            Vector2 offset = Main.rand.NextVector2CircularEdge(48f * (1.15f - 0.55f * charge), 48f * (1.15f - 0.55f * charge));
+                            int dustType = i == 0 ? DustID.TintableDustLighted : DustID.Blood;
+                            Color dustColor = i == 0 ? new Color(255, 64, 140) : default;
+                            Dust gather = Dust.NewDustPerfect(mouthPos + offset, dustType, -offset * 0.14f, 55, dustColor, MathHelper.Lerp(0.95f, 1.45f, charge));
+                            gather.noGravity = true;
+                        }
+                        if (data.AttackTimer % 2 == 0)
+                        {
+                            Dust soot = Dust.NewDustPerfect(mouthPos + Main.rand.NextVector2Circular(18f, 18f), DustID.Wraith, new Vector2(0f, -1.2f), 145, default, 0.65f);
+                            soot.noGravity = true;
+                            soot.noLight = true;
+                            soot.fadeIn = 1.25f;
+                        }
+                    }
+
+                    if (data.AttackTimer == TelegraphCommitTicks)
+                    {
+                        tsorcRevampAIs.SpawnTelegraphFlash(npc, new Color(232, 30, 86), MouthPosition(npc));
+                        Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit23 with { Pitch = -0.35f }, npc.Center);
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.FissureSlam;
+                        data.AttackTimer = FissureSlamTicks;
+                        data.FissureWaveFired = false;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.FissureSlam:
+                {
+                    SetCommittedPoise(poise);
+                    Vector2 slamStep = new Vector2(0f, 14f);
+                    Vector2 allowedSlam = Collision.TileCollision(npc.position, slamStep, npc.width, npc.height, true, true);
+                    bool hitFloor = allowedSlam.Y < slamStep.Y - 1f
+                        || Collision.SolidCollision(npc.position + allowedSlam + new Vector2(0f, 4f), npc.width, npc.height);
+                    npc.velocity = allowedSlam;
+                    AimHead(npc, data.Facing, 1.2f);
+
+                    if (!data.FissureWaveFired && (hitFloor || data.AttackTimer <= 8))
+                    {
+                        data.FissureWaveFired = true;
+                        Vector2 impactOrigin = new Vector2(npc.Center.X + data.Facing * 36f, npc.Bottom.Y);
+
+                        if (!Main.dedServ)
+                        {
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item14 with { Volume = 0.85f, Pitch = -0.3f }, impactOrigin);
+                            Terraria.Audio.SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Volume = 0.65f, Pitch = -0.25f }, impactOrigin);
+                            //3-layer Destined Death floor-slam burst.
+                            for (int i = 0; i < 30; i++)
+                            {
+                                Vector2 vel = new Vector2(data.Facing * Main.rand.NextFloat(1.5f, 8.5f) + Main.rand.NextFloat(-2f, 2f), -Main.rand.NextFloat(1.5f, 6.5f));
+                                Dust body = Dust.NewDustPerfect(impactOrigin + Main.rand.NextVector2Circular(18f, 6f), i % 3 == 0 ? DustID.RedTorch : DustID.Blood, vel, 55, default, Main.rand.NextFloat(1.0f, 1.55f));
+                                body.noGravity = true;
+                            }
+                            for (int i = 0; i < 16; i++)
+                            {
+                                Vector2 vel = new Vector2(data.Facing * Main.rand.NextFloat(4f, 12f), -Main.rand.NextFloat(2.5f, 8f));
+                                Dust spark = Dust.NewDustPerfect(impactOrigin, DustID.TintableDustLighted, vel, 25, new Color(255, 72, 150), Main.rand.NextFloat(0.6f, 0.95f));
+                                spark.noGravity = true;
+                            }
+                            for (int i = 0; i < 12; i++)
+                            {
+                                Vector2 vel = new Vector2(data.Facing * Main.rand.NextFloat(0.8f, 3.5f), -Main.rand.NextFloat(0.6f, 2.2f));
+                                Dust soot = Dust.NewDustPerfect(impactOrigin + Main.rand.NextVector2Circular(16f, 6f), DustID.Wraith, vel, 145, default, Main.rand.NextFloat(0.6f, 0.8f));
+                                soot.noGravity = true;
+                                soot.noLight = true;
+                                soot.fadeIn = Main.rand.NextFloat(1.3f, 1.65f);
+                            }
+                        }
+
+                        if (Main.netMode != NetmodeID.MultiplayerClient)
+                        {
+                            //Two staggered forward Destined Death waves crawling strictly along the ground in front.
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), impactOrigin, new Vector2(data.Facing * 10.5f, 0f), ModContent.ProjectileType<RedKnightGroundWave>(), FissureDamage, 2f, Main.myPlayer, FissureWaveTravelPixels);
+                            Projectile.NewProjectile(npc.GetSource_FromAI(), impactOrigin - new Vector2(data.Facing * 16f, 0f), new Vector2(data.Facing * 7.5f, 0f), ModContent.ProjectileType<RedKnightGroundWave>(), FissureDamage, 2f, Main.myPlayer, FissureWaveTravelPixels);
+                            npc.netUpdate = true;
+                        }
+                    }
+
+                    if (data.AttackTimer <= 0)
+                    {
+                        data.Attack = GreatSerpentHead.AttackState.FissureRecover;
+                        data.AttackTimer = FissureRecoverTicks;
+                    }
+                    break;
+                }
+                case GreatSerpentHead.AttackState.FissureRecover:
+                {
+                    ClearAttackPoise(poise);
+                    RunRecovery(npc);
+                    if (data.AttackTimer <= 0)
+                    {
+                        EndAttack(npc, data, poise);
+                    }
+                    break;
+                }
             }
         }
 
@@ -2968,7 +3839,9 @@ namespace tsorcRevamp.NPCs
         {
             npc.velocity.X *= 0.9f;
             npc.velocity.Y = 0f;
-            npc.position.Y = MathHelper.Lerp(npc.position.Y, data.AttackAnchorY - archPixels, 0.08f);
+            float nextY = MathHelper.Lerp(npc.position.Y, data.AttackAnchorY - archPixels, 0.08f);
+            Vector2 riseMove = Collision.TileCollision(npc.position, new Vector2(0f, nextY - npc.position.Y), npc.width, npc.height, true, true);
+            npc.position.Y += riseMove.Y;
             npc.direction = player.Center.X >= npc.Center.X ? 1 : -1;
             AimHead(npc, player.Center.X - npc.Center.X, player.Center.Y - npc.Center.Y);
         }
@@ -2981,10 +3854,9 @@ namespace tsorcRevamp.NPCs
         const int MaxLungeExtraTicks = 60;
 
         ///<summary>Locks a straight-line lunge at the player's CURRENT position (no homing -- dodge by moving off
-        ///the line), scaling how long the lunge runs so it actually covers the distance at launch. Returns the
-        ///duration (in ticks) the caller should hold the Lunge state for -- normally `baseDuration`, longer only
-        ///if the base speed/duration wouldn't otherwise reach.</summary>
-        static int StartLunge(NPC npc, GreatSerpentHead data, Player player, float speed, int baseDuration)
+        ///the line), scaling how long the lunge runs so it actually covers the distance at launch. When
+        ///stopShortPixels > 0 (Feint Lunge), caps duration to brake short of the player before chaining.</summary>
+        static int StartLunge(NPC npc, GreatSerpentHead data, Player player, float speed, int baseDuration, float stopShortPixels = 0f)
         {
             Vector2 toPlayer = player.Center - npc.Center;
             float dist = toPlayer.Length();
@@ -2998,6 +3870,13 @@ namespace tsorcRevamp.NPCs
                 toPlayer /= dist;
             }
             data.LungeVelocity = toPlayer * speed; //locked at launch, no homing -- dodge by moving off the line
+
+            if (stopShortPixels > 0f)
+            {
+                float feintDist = Math.Max(32f, dist - stopShortPixels);
+                int feintTicks = (int)Math.Ceiling(feintDist / speed);
+                return Math.Clamp(feintTicks, 6, baseDuration + MaxLungeExtraTicks);
+            }
 
             float reach = speed * baseDuration;
             if (dist <= reach)
@@ -3019,6 +3898,8 @@ namespace tsorcRevamp.NPCs
         {
             data.Attack = GreatSerpentHead.AttackState.None;
             data.MouthTransitionTimer = 0;
+            data.FeintToTailStab = false;
+            data.FissureWaveFired = false;
             //Clients run this transition too (it is timer-driven), but only the server rolls the gap to the next
             //attack — that roll decides when the next telegraph starts, and it arrives with the snapshot.
             if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -3446,14 +4327,31 @@ namespace tsorcRevamp.NPCs
 
         //Faster turn rate used when actively posing the tail along the tail-stab Bezier arch and thrust line.
         public const float TailSettleTurnRadians = 0.045f;
-        public const float TailStrikeTurnRadians = 0.2f;
+        public const float TailStrikeTurnRadians = 0.55f;
 
         //Follower spacing = average neighbour sprite-length minus a fixed pixel overlap, so the tight-trimmed sprites sit
         //SegmentOverlap px on top of each other for a seamless tube. The first HeadGlueSegments pieces overlap much more
-        //so the head stays welded to the body on turns.
+        //so the head stays welded to the body on turns; the longer tapered tail segments (Body2/Body3/Tail) also need
+        //deeper overlap so sharper rear bends never open gaps on the outside of a curve.
         public const float SegmentOverlap = 9f;
+        public const float TailTaperOverlap = 16f;
         public const int HeadGlueSegments = 3;
         public const float HeadGlueOverlap = 18f;
+
+        public static float JointOverlap(int bodyIndex, float selfHeight)
+        {
+            if (bodyIndex >= 0 && bodyIndex < HeadGlueSegments)
+            {
+                return HeadGlueOverlap;
+            }
+
+            if (selfHeight >= 40f)
+            {
+                return TailTaperOverlap;
+            }
+
+            return SegmentOverlap;
+        }
 
         //How strongly a ground-hugging joint's pull leans toward the sensed floor each tick. Soft on purpose: the lean
         //only tilts the joint's heading (inside the bend limit), so a gentle settle looks like a body easing onto the ground.
@@ -3512,11 +4410,7 @@ namespace tsorcRevamp.NPCs
             bool curling, float curlJointRadians, float groundCenterY, Func<Vector2, bool> isBlocked, out Vector2 newCenter,
             float maxMovement = MaxBodyStepPixels)
         {
-            float overlap = SegmentOverlap;
-            if (bodyIndex < HeadGlueSegments)
-            {
-                overlap = HeadGlueOverlap;
-            }
+            float overlap = JointOverlap(bodyIndex, selfHeight);
 
             float linkLength = (selfHeight + aheadHeight) * 0.5f - overlap;
             if (linkLength < 2f)
@@ -3551,7 +4445,7 @@ namespace tsorcRevamp.NPCs
         //One upward arch replaces the alternating S lobes. Arc-length matching gives the existing
         //chain enough room without changing its curvature plane whenever the target moves.
         public static void BuildTailStabCurve(Vector2 anchor, Vector2 tip, float chainLength, float envelope, float anchorHeading,
-            out Vector2 control1, out Vector2 control2)
+            out Vector2 control1, out Vector2 control2, Vector2? aimDirection = null)
         {
             float lowBow = 0f;
             float highBow = chainLength;
@@ -3568,7 +4462,18 @@ namespace tsorcRevamp.NPCs
                 float bow = (lowBow + highBow) * 0.5f * envelope;
                 float peakY = Math.Min(anchor.Y, tip.Y) - bow;
                 control1 = new Vector2(anchor.X - rootDirection * bow * 1.1f, MathHelper.Lerp(anchor.Y, peakY, 0.65f));
-                control2 = new Vector2(tip.X - rootDirection * bow * 0.1f, peakY);
+                Vector2 defaultControl2 = new Vector2(tip.X - rootDirection * bow * 0.1f, peakY);
+                if (aimDirection.HasValue && envelope > 0.05f)
+                {
+                    //Place control2 behind the tip along -aimDirection so the Bezier end tangent points the 98px blade at the target.
+                    float aimHandle = MathHelper.Clamp(bow * 0.35f, 65f * envelope, 120f);
+                    Vector2 aimedControl2 = tip - aimDirection.Value * aimHandle;
+                    control2 = Vector2.Lerp(defaultControl2, aimedControl2, envelope);
+                }
+                else
+                {
+                    control2 = defaultControl2;
+                }
 
                 float arcLength = 0f;
                 Vector2 previous = anchor;
@@ -3603,18 +4508,24 @@ namespace tsorcRevamp.NPCs
             float[] arcLengths = new float[SampleCount + 1];
             float[] boneLengths = new float[count];
             Vector2[] joints = new Vector2[count + 1];
-            float anchorSocketLength = Math.Max(1f, anchorHeight * 0.5f - SegmentOverlap * 0.5f);
+            float anchorRearOverlap = count > 0 ? JointOverlap(-1, heights[0]) : SegmentOverlap;
+            float anchorSocketLength = Math.Max(1f, anchorHeight * 0.5f - anchorRearOverlap * 0.5f);
             Vector2 root = anchorCenter - HeadingToDirection(anchorHeading) * anchorSocketLength;
             curve[0] = root;
             float totalLength = 0f;
 
             for (int i = 0; i < count; i++)
             {
-                boneLengths[i] = Math.Max(2f, heights[i] - SegmentOverlap);
+                float frontOverlap = JointOverlap(-1, heights[i]);
                 if (i == count - 1)
                 {
                     //The endpoint is the visible needle point, two pixels inside the PNG's last row.
-                    boneLengths[i] = heights[i] - SegmentOverlap * 0.5f - 2f;
+                    boneLengths[i] = Math.Max(2f, heights[i] - frontOverlap * 0.5f - 2f);
+                }
+                else
+                {
+                    float rearOverlap = JointOverlap(-1, heights[i + 1]);
+                    boneLengths[i] = Math.Max(2f, heights[i] - (frontOverlap + rearOverlap) * 0.5f);
                 }
 
                 totalLength += boneLengths[i];
@@ -3685,26 +4596,31 @@ namespace tsorcRevamp.NPCs
             float aheadWidth = anchorWidth;
             for (int i = 0; i < count; i++)
             {
+                bool striking = turnLimit > TailSettleTurnRadians;
+                float effectiveHardBend = striking ? HardBendFactor * 1.4f : HardBendFactor;
                 Vector2 desiredDirection = joints[i] - joints[i + 1];
                 float desiredHeading = (float)Math.Atan2(desiredDirection.Y, desiredDirection.X);
-                float linkLength = (aheadHeight + heights[i]) * 0.5f - SegmentOverlap;
+                float frontOverlap = JointOverlap(-1, heights[i]);
+                float rearOverlap = i + 1 < count ? JointOverlap(-1, heights[i + 1]) : SegmentOverlap;
+                float linkLength = Math.Max(2f, (aheadHeight + heights[i]) * 0.5f - frontOverlap);
                 float comfort = ComfortBend(linkLength, widths[i], aheadWidth, int.MaxValue, flexibility);
                 float bend = MathHelper.WrapAngle(desiredHeading - aheadHeading);
-                desiredHeading = aheadHeading + MathHelper.Clamp(bend, -comfort * HardBendFactor, comfort * HardBendFactor);
+                desiredHeading = aheadHeading + MathHelper.Clamp(bend, -comfort * effectiveHardBend, comfort * effectiveHardBend);
                 float headingDelta = MathHelper.WrapAngle(desiredHeading - headings[i]);
-                float jointTurnLimit = turnLimit * MathHelper.Lerp(0.5f, 1f, i / (float)Math.Max(1, count - 1));
-                float headingFollow = 0.25f;
-                if (turnLimit > TailSettleTurnRadians)
-                {
-                    headingFollow = 0.5f;
-                }
+                float jointFraction = i / (float)Math.Max(1, count - 1);
+                float jointTurnLimit = turnLimit * MathHelper.Lerp(striking ? 0.85f : 0.5f, striking ? 1.45f : 1f, jointFraction);
+                float headingFollow = striking ? 0.92f : 0.25f;
 
                 float headingStep = MathHelper.Clamp(headingDelta * headingFollow, -jointTurnLimit, jointTurnLimit);
                 float newHeading = headings[i] + headingStep;
-                float ownSocketLength = Math.Max(1f, heights[i] * 0.5f - SegmentOverlap * 0.5f);
-                Vector2 newCenter = socket - HeadingToDirection(newHeading) * ownSocketLength;
+                float frontSocketLength = Math.Max(1f, heights[i] * 0.5f - frontOverlap * 0.5f);
+                float rearSocketLength = Math.Max(1f, heights[i] * 0.5f - rearOverlap * 0.5f);
+                Vector2 newCenter = socket - HeadingToDirection(newHeading) * frontSocketLength;
 
-                if (isBlocked != null && isBlocked(newCenter))
+                //Allow the terminal tail needle to pierce down to a grounded player during Stabbing instead of
+                //deflecting upward away from the floor.
+                bool checkTerrain = isBlocked != null && !(striking && i == count - 1);
+                if (checkTerrain && isBlocked(newCenter))
                 {
                     for (int j = 1; j <= 8; j++)
                     {
@@ -3717,7 +4633,7 @@ namespace tsorcRevamp.NPCs
                         float candidateStep = headingStep + side * ((j + 1) / 2) * jointTurnLimit * 0.25f;
                         candidateStep = MathHelper.Clamp(candidateStep, -jointTurnLimit, jointTurnLimit);
                         float candidateHeading = headings[i] + candidateStep;
-                        Vector2 candidateCenter = socket - HeadingToDirection(candidateHeading) * ownSocketLength;
+                        Vector2 candidateCenter = socket - HeadingToDirection(candidateHeading) * frontSocketLength;
                         if (!isBlocked(candidateCenter))
                         {
                             newHeading = candidateHeading;
@@ -3729,7 +4645,7 @@ namespace tsorcRevamp.NPCs
 
                 centers[i] = newCenter;
                 headings[i] = MathHelper.WrapAngle(newHeading);
-                socket = newCenter - HeadingToDirection(newHeading) * ownSocketLength;
+                socket = newCenter - HeadingToDirection(newHeading) * rearSocketLength;
                 aheadHeading = newHeading;
                 aheadHeight = heights[i];
                 aheadWidth = widths[i];

@@ -329,9 +329,6 @@ namespace tsorcRevamp
         [DefaultValue(true)]
         public bool ActiveShieldsRevamp { get; set; }
 
-        [DefaultValue(true)]
-        public bool NewEnemyBalance { get; set; }
-
         [DefaultValue(false)]
         public bool DebugMode { get; set; }
 
@@ -370,6 +367,9 @@ namespace tsorcRevamp
 
         [DefaultValue(false)]
         public bool NewSoulsModeStaminaSystem { get; set; }
+
+        [DefaultValue(true)]
+        public bool NewWeaponReinforcement { get; set; }
     }
 
     [Label("$Mods.tsorcRevamp.Configs.tsorcRevampVisualConfig.DisplayName")]

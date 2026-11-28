@@ -446,6 +446,8 @@ Mods: {
 				Aaron: 亚伦
 				Elijah: 以利亚
 				Miakoda: Miakoda
+				// Dryad: Dryad
+				// Solaire: Solaire
 			}
 
 			UI: {
@@ -632,6 +634,36 @@ Mods: {
 				Line03: 正如我父亲常说的，有时后退，哪怕只是一瞬，也是前进的最佳方式。
 				Line04: 当愤怒的身躯燃起耀眼的火焰时，你就知道它快要狂暴了。
 				Line05: 狂暴时它会自愈，并在短时间内变得更加危险。做好闪避的准备！机动性是关键！
+			}
+
+			DryadGift: {
+				// Line01: You look weary, traveler. You have been fighting hard to defend our mother, haven't you?
+				// Line02: Our mother?
+				// Line03: This wondrous Earth, vibrant with the life of all our relatives. She has felt every step of your struggle.
+				// Line04: Well, take this! A spirit guide that will travel with you always, lighting your way in times of despair.
+				// Line05: And take this as well: the Staff of Regrowth. Use it to heal this world of the sickness that has corrupted this land.
+				// Line06: Both of these gifts may be found in the chest by my bed, upstairs.
+			}
+
+			MysticSanctuary: {
+				// Line01: Such peace... I haven't felt this since the day my parents died. Since the day I lost my wife.
+				// Line01Remix: A memorial to Elengad, the ancient great king of the Desert... I haven't felt such peace since the day my parents died. Since the day I lost my wife.
+				// Line02: So much love... and so much sadness with it.
+				// Line03: I'll stay a moment longer. I need to reflect on this journey... and summon all my courage for the path ahead.
+				// Line04: Now that we can break Chlorophyte Gates, there are three, perhaps four paths we can take.
+				// Line05: It is up to you to decide.
+				// Line06: Which would you take?
+				// Line07: There is no ideal path, only the path that is most true to you.
+			}
+
+			SolaireTower: {
+				// Line01: Praise the Sun! Well met, Red!
+				// Line02: The Earth Temple below the village is full of dangerous traps and undead creatures. I'm embarrassed to admit I barely made it back here!
+				// Line03: I'm sure you'll fare better than me, though!
+				// Line04: Have you spoken with Jade yet? The woman who keeps watch outside the village. Go and speak with her, my friend! She has many important things to tell you, and perhaps something to help you on your journey.
+				// Line05: And if the temple proves too much, explore the mountain caverns to the west of the village. It's safer there, and you may find a few things to aid your journey!
+				// Line06: Go on...
+				// Line07: For the sake of jolly cooperation!
 			}
 
 			BuriedAlive.Line01: 有什么尖锐的东西……是父亲那把镐子的碎片。
@@ -842,11 +874,48 @@ Mods: {
 			AccessPiggyBank: 打开猪猪存钱罐
 			AccessSafe: 打开保险箱
 			// BonfireTravel: Travel
+			BonfireReinforce: 强化武器
 			// AccuracyHit: Hit! {0}%
 			// AccuracyMiss: Miss! {0}%
 			Rebound: 反弹！
 			MinionInfoDisplay: "{0}/{1} 召唤栏"
 			SentryInfoDisplay: "{0}/{1} 哨兵栏"
+
+			WeaponReinforcement: {
+				Title: 武器强化
+				ReinforceButton: 强化
+				EmptySlotPrompt: 将一件标志性武器放入槽位中
+				WorldCapFull: 世界强化上限: +{0}
+				WorldCapShort: 世界上限: +{0}
+				StoragePullHint: 材料与黑暗之魂将自动从所有储物中扣除
+				InvalidWeapon: 不是可强化的标志性武器
+				MaxHeader: "{0} +{1} (满级)"
+				BaseDamageCurrent: 基础伤害: {0}
+				MaxReached: 已达到最高强化等级
+				UpgradeHeader: "{0}  +{1} -> +{2}"
+				BaseDamageUpgrade: 基础伤害: {0} -> {1}
+				MaterialCost: "{0}: {1}  (拥有 {2})"
+				DarkSoulsCost: 黑暗之魂: {0}  (拥有 {1})
+				LockedLine: 未解锁 - {0}
+				PerkPreviewLine: +{0} 特性: {1}
+				GateSkeletron: 击败丛林遗迹之下的领主
+				GateWallOfFlesh: 击败地狱的怪物
+				GateHardmodeProgress: 击败 {0} 位传奇存在 ({1} / {0})
+				GateShmBefore: 击败阿卓迪斯
+				GateShmProgress: 击败 {0} 位深渊领主 ({1} / {0})
+				ErrorDisabled: 武器强化已在配置中禁用。
+				ErrorNotReinforceable: 此物品无法强化。
+				ErrorMaxReached: 已达到最高强化等级。
+				ErrorLocked: 未解锁 - {0}以解锁 +{1}
+				ErrorNeedMaterial: 需要 {0} 个{1} (拥有 {2})
+				ErrorNeedSouls: 需要 {0} 黑暗之魂
+				ReinforcedSuccess: 已强化至 +{0}！
+				CapUnlocked: 篝火武器强化上限已提升至 +{0}！
+				CapUnlockedRadiant: 辉光余烬已解锁！篝火武器强化上限已提升至 +{0}！
+				TooltipBadge: "[c/e8c168:标志性武器 — 可在篝火处强化 (+{0} / +{1})]"
+				TooltipPerkActive: "[c/90f0a0:+{0} 特性已激活: {1}]"
+				TooltipPerkLocked: "[c/a09a92:+{0} 特性: {1}]"
+			}
 		}
 
 		World: {
@@ -877,9 +946,11 @@ Mods: {
 
 		DropRules: {
 			SHMOnly: "[c/ff9999:仅在击败阿卓迪斯之后掉落]"
+			// SHMFirstKill: "[c/ff9999:Guaranteed on the first kill in Super Hardmode]"
 			// NonSHMOnly: "[c/99ccff:Does not drop in Super Hardmode]"
 			// NonSHMFirstKill: "[c/99ccff:Guaranteed on the first kill (not in Super Hardmode)]"
 			// NonSHMRepeatKill: "[c/99ccff:Repeat kills after the first (not in Super Hardmode)]"
+			// PreHardmodeOnly: "[c/99ccff:Only drops in Pre-Hardmode]"
 			FirstBagOnly: "[c/ff9999: 只能从第一个打开的特定袋子中掉落]"
 			BotCOnly: "[c/ff9999: 只有玩家是被诅咒者时掉落]"
 			FirstBagBotCOnly: "[c/ff9999: 当玩家是被诅咒者时，只能从第一个打开的特定袋子中掉落]"
@@ -888,8 +959,8 @@ Mods: {
 			// FirstBossKill: "[c/ff9999: Only drops on the first kill]"
 			NonExpertFirstKill: "[c/ff9999: 只在专家模式之外的第一次击杀时掉落]"
 			DownedSkeletron: "[c/ff9999: 击败骷髅王之后掉落]"
-			// DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Gravelord Nito]"
-			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Gravelord Nito is defeated]"
+			// DownedSkeletronOrNito: "[c/ff9999: Drops after defeating Skeletron or Barrowlord Ossric]"
+			// IllusionWandOfFrost: "[c/99ccff:Guaranteed once per world, after Skeletron or Barrowlord Ossric is defeated]"
 		}
 
 		Quest: {
@@ -939,7 +1010,7 @@ Mods: {
 			OolacileDemonDesc: 有传言提到了失落的乌拉席露森林...
 			SlograAndGaibonName: 斯洛格拉和盖波
 			SlograAndGaibonDesc: 在黑曜石神庙深处找到它们...
-			// GravelordNitoDesc: A lord of the grave stirs beneath the dungeon.
+			// GravelordNitoDesc: A lord of the barrows stirs deep below the jungle ruins.
 			JungleWyvernDesc: 探索失落之城废墟的深处...
 			AncientDemonDesc: 它在地狱中的秘密巢穴等着你...
 			TheRageDesc: 探索东边的神圣洞穴深处...
@@ -2014,6 +2085,17 @@ Mods: {
 					''' */
 			}
 
+			CloakingSerpentScaleItem: {
+				// DisplayName: Cloaking Serpent Scale
+				/* Tooltip:
+					'''
+					Dodge rolling shrouds you in serpentine stealth for {0} seconds
+					While cloaked, enemies are less likely to target you
+					Your next strike out of stealth gains +{1}% critical strike chance and +{2}% damage
+					{3} second cooldown
+					''' */
+			}
+
 			SilverSerpentRingItem: {
 				// DisplayName: Covetous Silver Serpent Ring
 				/* Tooltip:
@@ -2857,8 +2939,10 @@ Mods: {
 					{$CommonItemTooltip.Magic.ManaRegen@2}
 					Grants Philosopher's Stone effect
 					{$CommonItemTooltip.LifeRegen@4}
-					{$CommonItemTooltip.SetBonus}Harmonized with the four elements: fire, water, earth and air
+					{$CommonItemTooltip.SetBonus}Harmonized with the four elements:
 					{$CommonItemTooltip.PercentIncreasedCritChance@3}
+					{$CommonItemTooltip.ObsidianShield}, plus {5} seconds of lava immunity
+					Immunity to drowning, free movement in water, and ice traction
 					''' */
 			}
 
@@ -4043,6 +4127,11 @@ Mods: {
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
+			GravelordNitoBag: {
+				DisplayName: 宝藏袋（冢王奥斯里克）
+				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
 			AttraidiesBag: {
 				DisplayName: 宝藏袋（阿卓迪斯）
 				Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
@@ -4088,8 +4177,13 @@ Mods: {
 				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
-			OolacileSerpentBag: {
+			GreatSerpentBag: {
 				// DisplayName: Treasure Bag (Great Serpent)
+				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+			}
+
+			OolacileSerpentBag: {
+				// DisplayName: Treasure Bag (Great Abyssal Serpent)
 				// Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 			}
 
@@ -4366,8 +4460,8 @@ Mods: {
 			}
 
 			GravelordNitoSpawner: {
-				// DisplayName: Gravelord's Effigy
-				// Tooltip: Summons Gravelord Nito in sandbox worlds.
+				// DisplayName: Barrowlord's Effigy
+				// Tooltip: Summons Barrowlord Ossric in sandbox worlds.
 			}
 
 			VesselOfSoulsSpawner: {
@@ -4378,6 +4472,29 @@ Mods: {
 			SoulOfTheVessel: {
 				// DisplayName: Soul of the Vessel
 				// Tooltip: The stolen souls of the Vessel, bound into a single essence.
+			}
+
+			PaleEmber: {
+				// DisplayName: Pale Ember
+				/* Tooltip:
+					'''
+					Used to reinforce iconic weapons (+1 to +5) at any lit bonfire
+					Automatically pulled from your inventory or storage when reinforcing
+					''' */
+			}
+
+			RadiantEmber: {
+				// DisplayName: Radiant Ember
+				/* Tooltip:
+					'''
+					A luminous ember used to reinforce iconic weapons (+6 to +10) at any lit bonfire
+					Automatically pulled from your inventory or storage when reinforcing
+					''' */
+			}
+
+			GreatSerpentSoul: {
+				// DisplayName: Great Serpent Soul
+				// Tooltip: Soul of the Great Serpent. Used to forge venomous weapons and stealth gear at a Demon Altar.
 			}
 
 			SoulReliquaryBell: {
@@ -4393,6 +4510,7 @@ Mods: {
 			GravemawTome: {
 				// DisplayName: Gravemaw Tome
 				// TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
+				// ReinforcementPerk3: Spells inflict Shadowflame and Reliquary Nova charges faster
 				/* Tooltip:
 					'''
 					Four spells bound in one tome
@@ -6313,6 +6431,17 @@ Mods: {
 					'''
 			}
 
+			CausticMawItem: {
+				// DisplayName: Caustic Maw
+				// ReinforcementPerk3: Inflicts Acid Venom; pools last {0:0.#}s and tick faster
+				// ReinforcementPerk6: Direct hits erupt {0} caustic droplets; pools are wider and stronger
+				/* Tooltip:
+					'''
+					Lobs boiling purple venom globs that splash into a {0}s caustic puddle
+					Grounded enemies in the puddle take rapid acid damage and become poisoned
+					''' */
+			}
+
 			Bolt1Tome: {
 				DisplayName: 电火花
 				Tooltip:
@@ -6835,6 +6964,7 @@ Mods: {
 
 			HeartOfWinter: {
 				// DisplayName: Heart of Winter
+				// TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
 				/* Tooltip:
 					'''
 					The Ice Gigas's spell tome — four of its moves bound in one book
@@ -6858,6 +6988,7 @@ Mods: {
 
 			WrathOfGold: {
 				// DisplayName: Wrath of Gold
+				// TapSpeedTooltip: Tap cooldown: {0} ticks ({1:F2} seconds)
 				/* Tooltip:
 					'''
 					The Holy Gigas's spell tome — four of its moves bound in one book
@@ -7006,8 +7137,8 @@ Mods: {
 				Tooltip: 锋利的骨头刀片
 			}
 
-			GravelordSword: {
-				// DisplayName: Gravelord Sword
+			OssricsGreatsword: {
+				// DisplayName: Ossric's Greatsword
 				/* Tooltip:
 					'''
 					Alternating overhead and rising cuts, opening opposite your last swing, build into a crushing slam
@@ -7328,6 +7459,18 @@ Mods: {
 					'''
 			}
 
+			SerpentsFangItem: {
+				// DisplayName: Serpent's Fang
+				// ReinforcementPerk3: Thrusts inflict Acid Venom; Lunge costs {0} stamina
+				// ReinforcementPerk6: Lunges erupt {0} venom droplets and deal +{1}% crit damage
+				/* Tooltip:
+					'''
+					Left-click steps forward into a fast piercing thrust that poisons for {1}s
+					Right-click spends {0} stamina for a coiled lunge that always crits and inflicts Acid Venom for {2}s
+					Stops cleanly on impact so you do not slide into enemies
+					''' */
+			}
+
 			BarrowBlade: {
 				DisplayName: 巴罗之刃
 				Tooltip:
@@ -7539,6 +7682,8 @@ Mods: {
 					按住 攻击 进行蓄力
 					蓄力时箭更快更准
 					满弦射出的箭造成{0}%额外伤害，并额外穿透{1}个敌人
+					快速松弦仍能射出可用的箭，至少造成{2}%伤害并保持{3}%速度
+					快速松弦最低只消耗满弦{4}%的耐力
 					'''
 			}
 
@@ -7550,6 +7695,17 @@ Mods: {
 					每三次攻击射出两支精灵之箭
 					将木箭转化为圣箭
 					'''
+			}
+
+			SerpentsCoilItem: {
+				// DisplayName: Serpent's Coil
+				// ReinforcementPerk3: Converts all arrows, inflicts Acid Venom, and bursts {0} droplets
+				// ReinforcementPerk6: Every {0}rd shot fires a twin-arrow volley; droplets deal {1}% damage
+				/* Tooltip:
+					'''
+					Converts wooden arrows into fast piercing Venom Fang Arrows
+					Venom Fang Arrows poison targets and burst into {0} acid droplets on impact
+					''' */
 			}
 
 			CernosPrime: {
@@ -7598,6 +7754,8 @@ Mods: {
 					按住左键进行蓄力
 					蓄力时箭更快更准
 					满弦射出的箭造成{0}%额外伤害，并额外穿透{1}个敌人
+					快速松弦仍能射出可用的箭，至少造成{2}%伤害并保持{3}%速度
+					快速松弦最低只消耗满弦{4}%的耐力
 					'''
 			}
 
@@ -7888,14 +8046,15 @@ Mods: {
 
 			ArcherSpiritBell: {
 				// DisplayName: Archer Spirit Bell
-				// ArrowDamage: "{0} damage per arrow"
+				// ArrowDamage: "{0} summon damage per arrow"
+				// ReinforcementPerk2: Arrows inflict Frostbite and fire faster
 				/* Tooltip:
 					'''
 					Summons an Archer Spirit to fight for you
-					Looses frostburn arrows that inflict Frostburn on hit
-					Arrow damage scales with maximum mana (1 damage per 4 mana)
-					Bearer of the Curse's mana multiplier does not increase arrow damage
-					Uses 2 summoner slots
+					Looses frostburn arrows that scale with summon damage
+					Drains {0} mana per arrow ({1}x in Bearer of the Curse) unless holding another summon weapon or having {2}+ minion slots
+					Becomes dormant and translucent when out of mana
+					Uses {3} summoner slots
 					The spirit targets the highest HP enemy nearby
 					''' */
 			}
@@ -8051,6 +8210,32 @@ Mods: {
 					荆棘造成 {0}% 鞭子伤害
 					{$CommonItemTooltip.Whips}
 					'''
+			}
+
+			SerpentsTailLashItem: {
+				// DisplayName: Serpent's Tail Lash
+				// ReinforcementPerk3: +{0} tag damage (+{1}% crit), Acid Venom on all hits, longer reach
+				// ReinforcementPerk6: Needle Strike every {0}nd crack ({1} droplets at {2}%), +{3} tag (+{4}% crit)
+				/* Tooltip:
+					'''
+					{0} summon tag damage
+					Strikes poison enemies
+					Every {1}rd crack unleashes a longer needle thrust dealing +{2}% damage, inflicting Acid Venom for {3}s, and flicking {4} venom droplets
+					{$CommonItemTooltip.Whips}
+					''' */
+			}
+
+			UhlansSiegebowItem: {
+				// DisplayName: Ulhan's Siegebow
+				// ReinforcementPerk2: Blasts inflict Hellfire and tag damage scales higher
+				/* Tooltip:
+					'''
+					{0} summon tag damage
+					Fires short-range explosive bolts up to {1} tiles that focus minions and ignite enemies
+					Missed bolts lodge into tiles as proximity traps (max {2})
+					Minion strikes on tagged foes trigger a fiery powder burst for {3}% weapon damage
+					Uses no ammo
+					''' */
 			}
 
 			EnchantedWhip: {
@@ -10746,22 +10931,22 @@ Mods: {
 
 			Miakoda: {
 				DisplayName: Miakoda宝，一款人性化的智能语音（不是
-				Description: 一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
+				Description: 一个被从冢王奥斯里克禁锢中释放出来的远古存在，指引你的旅程...
 			}
 
 			MiakodaCrescent: {
 				DisplayName: Miakoda - 峨眉月状态
-				Description: 一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
+				Description: 一个被从冢王奥斯里克禁锢中释放出来的远古存在，指引你的旅程...
 			}
 
 			MiakodaFull: {
 				DisplayName: Miakoda - 满月状态
-				Description: 一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
+				Description: 一个被从冢王奥斯里克禁锢中释放出来的远古存在，指引你的旅程...
 			}
 
 			MiakodaNew: {
 				DisplayName: Miakoda - 新月状态
-				Description: 一个被从骷髅王禁锢中释放出来的远古存在，指引你的旅程...
+				Description: 一个被从冢王奥斯里克禁锢中释放出来的远古存在，指引你的旅程...
 			}
 
 			PhazonContamination: {
@@ -11081,6 +11266,16 @@ Mods: {
 			DominatrixDebuff: {
 				DisplayName: 主宰的加成
 				Description: ""
+			}
+
+			SerpentsTailLashDebuff: {
+				// DisplayName: Serpent's Tail Lash
+				// Description: ""
+			}
+
+			UhlansSiegebowDebuff: {
+				// DisplayName: Ulhan's Siegebow
+				// Description: ""
 			}
 
 			DragoonLashDebuff: {
@@ -11543,6 +11738,11 @@ Mods: {
 			Riposte: {
 				// DisplayName: Riposte
 				// Description: Your next attack deals {0}% more damage
+			}
+
+			CloakingSerpentScaleBuff: {
+				// DisplayName: Serpent Cloak
+				// Description: Reduced enemy aggro; next strike gains +{0}% crit chance and +{1}% damage
 			}
 
 			ShieldGuardBreak: {
@@ -12017,11 +12217,11 @@ Mods: {
 			// NecroSiphonPulse.DisplayName: Soul Siphon
 			// NecroCurseNova.DisplayName: Curse Nova
 			// GigasIceWaveSegment.DisplayName: Hoarfrost Creep
-			// NitoSwordSlash.DisplayName: Gravelord Sword
-			// NitoBoneShard.DisplayName: Gravelord Bone Shard
+			// NitoSwordSlash.DisplayName: Ossric's Greatsword
+			// NitoBoneShard.DisplayName: Barrow Bone Shard
 			// NitoDeathNova.DisplayName: Death Nova
-			// NitoGraveSpike.DisplayName: Gravelord Spike
-			// NitoCeilingSpike.DisplayName: Falling Gravelord Spike
+			// NitoGraveSpike.DisplayName: Barrow Spike
+			// NitoCeilingSpike.DisplayName: Falling Barrow Spike
 			// NitoGraveHand.DisplayName: Grave Hand
 			// NitoMiasmaCloud.DisplayName: Miasma
 			// QuaraTidalCrest.DisplayName: Tidal Crest
@@ -12672,7 +12872,7 @@ Mods: {
 			// EvilEyeTeleportBlast.DisplayName: Evil Eye Teleport Blast
 			// ElandVenomSplash.DisplayName: Eland Venom Splash
 			// GreatBlackKnightSpearHitbox.DisplayName: Great Black Knight Spear Hitbox
-			// NitoPyreFire.DisplayName: Nito Pyre Fire
+			// NitoPyreFire.DisplayName: Ossric's Pyre Fire
 			// BlackKnightBombExplosionSprite.DisplayName: Black Knight Bomb Explosion Sprite
 			// BlackKnightSpearBlightSwarm.DisplayName: Black Knight Spear Blight Swarm
 			// DragonMeteorExplosion.DisplayName: Dragon Meteor Explosion
@@ -12737,7 +12937,7 @@ Mods: {
 			// OolacileCultistDeathExplosion.DisplayName: Oolacile Cultist Death Explosion
 			// BasiliskLeechTongueTelegraph.DisplayName: Basilisk Leech Tongue Telegraph
 			// CursedDragonPoisonCloud.DisplayName: Cursed Dragon Poison Cloud
-			// NitoMiasmaWall.DisplayName: Nito Miasma Wall
+			// NitoMiasmaWall.DisplayName: Ossric's Miasma Wall
 			// ChaosCollapseBurst.DisplayName: Chaos Collapse Burst
 			// ChaosCollapseExplosionController.DisplayName: Chaos Collapse Explosion Controller
 			// EnemyFlamingArrow.DisplayName: Enemy Flaming Arrow
@@ -12872,9 +13072,17 @@ Mods: {
 			// ElementalBoulder.DisplayName: Elemental Boulder
 			// ElementalFireball.DisplayName: Elemental Fireball
 			// LethalTempoBolt.DisplayName: Lethal Tempo Bolt
-			// NitoSlamCloud.DisplayName: Nito Slam Cloud
+			// NitoSlamCloud.DisplayName: Ossric's Slam Cloud
 			// WitchkingMaceFlail.DisplayName: Witchking Mace Flail
 			// EaterToxicGlob.DisplayName: Eater Toxic Glob
+			// CausticMawAcidPoolProj.DisplayName: Caustic Maw Acid Pool Proj
+			// CausticMawProj.DisplayName: Caustic Maw Proj
+			// SerpentsFangProj.DisplayName: Serpents Fang Proj
+			// SerpentsCoilArrowProj.DisplayName: Serpents Coil Arrow Proj
+			// SerpentsTailLashProj.DisplayName: Serpents Tail Lash Proj
+			// UhlansSiegebowBoltProj.DisplayName: Uhlans Siegebow Bolt Proj
+			// UhlansSiegebowExplosionProj.DisplayName: Uhlans Siegebow Explosion Proj
+			// SerpentVenomDropletProj.DisplayName: Serpent Venom Droplet Proj
 		}
 
 		NPCs: {
@@ -13239,6 +13447,7 @@ Mods: {
 
 			GreatSerpentHead: {
 				// DisplayName: Great Serpent
+				// SHMDisplayName: Great Abyssal Serpent
 				// DespawnHandler: The Great Serpent slithers away into the dark...
 			}
 
@@ -13778,7 +13987,7 @@ Mods: {
 					就因我拒绝侍奉他口中之神，他便将我禁锢于此玩偶...
 					“月亮领主”？不过是它痴人说梦的自封！
 					'''
-				BrotherNotRescued: "{0}，我刚从骷髅王手中脱困时，感知到与你相似的气息！速去遗忘之城深处寻他"
+				BrotherNotRescued: "{0}，我刚从冢王奥斯里克手中脱困时，感知到与你相似的气息！速去遗忘之城深处寻他"
 				JungleWyvern:
 					'''
 					一头古兽镇守着遗忘之城，它拥有一枚附有强效复苏魔法的戒指
@@ -13851,7 +14060,7 @@ Mods: {
 				ShadowKeyHint:
 					'''
 					某些宝箱需特定钥匙才能打开，唯“死者之首”骷髅王认可者可得
-					我被骷髅王囚禁时，听闻它将一把暗影钥匙深藏于冻洋之下
+					我被冢王奥斯里克囚禁时，听闻骷髅王将一把暗影钥匙深藏于冻洋之下
 					另有传言称，飞龙法师会将其赐予参与其扭曲游戏的胜者，该游戏于东方山脉之巅的堡垒中举办
 					'''
 				HardmodeLorePart1:
@@ -14591,7 +14800,7 @@ Mods: {
 			// Eland.DisplayName: Eland
 			// EvilEye.DisplayName: Evil Eye
 			// Gigas.DisplayName: Holy Gigas
-			// GravelordNito.DisplayName: Gravelord Nito
+			// GravelordNito.DisplayName: Barrowlord Ossric
 
 			VesselOfSouls: {
 				// DisplayName: Vessel of Souls
@@ -14918,16 +15127,6 @@ Mods: {
 						''' */
 				}
 
-				NewEnemyBalance: {
-					// Label: New Enemy Balance
-					/* Tooltip:
-						'''
-						Retunes boss and enemy health for the 1.0 update and balance overhaul. The numbers are set for Expert; Master, Super Hardmode and
-						multiplayer scaling still stack on top. Created as a toggle for A/B comparisons.
-						Turn off to keep the original health values. Defaults to On.
-						''' */
-				}
-
 				NewSoulsModeStaminaSystem: {
 					// Label: Experimental Stamina Values
 					/* Tooltip:
@@ -14941,6 +15140,11 @@ Mods: {
 				DebugMode: {
 					// Label: Debug Mode
 					// Tooltip: ""
+				}
+
+				NewWeaponReinforcement: {
+					// Label: Iconic Weapon Reinforcement
+					// Tooltip: Enables reinforcing select iconic weapons at lit bonfires using Tempering Shards and Dark Souls.
 				}
 
 				DisableGloveAutoswing: {

@@ -3452,11 +3452,12 @@ namespace tsorcRevamp.NPCs.Invaders
         protected virtual bool TeleportCancelsAttack => false;
 
         /// <summary>True while an active attack, telegraph, pause, or recovery owns the puppet and must not be
-        /// interrupted by an automatic disengage/stuck teleport. Allows Idle, CasualStroll, ClosingDistance, FleeToHeal.</summary>
+        /// interrupted by an automatic disengage/stuck teleport. Allows Idle, CasualStroll, ClosingDistance.
+        /// FleeToHeal and Healing hold too: running away never closes distance, so the lost-sight and pursuit-stall
+        /// blinks fired mid-flee and read as "teleports away to heal". A heal retreat is on foot only.</summary>
         protected virtual bool ShouldHoldAutomaticTeleport => Phase != AttackPhase.Idle
             && Phase != AttackPhase.CasualStroll
-            && Phase != AttackPhase.ClosingDistance
-            && Phase != AttackPhase.FleeToHeal;
+            && Phase != AttackPhase.ClosingDistance;
 
         /// <summary>Called once on the tick a queued teleport finishes warping/revealing at its destination.</summary>
         protected virtual void OnTeleportCompleted()
@@ -12862,6 +12863,9 @@ namespace tsorcRevamp.NPCs.Invaders
         /// <summary>Keep armor/wing dye shaders on the enlarged spectral body (halo and trail copies stay
         /// flat). Off by default: ghost-style overlays are meant to read as a tinted silhouette.</summary>
         protected virtual bool SpectralKeepsArmorDyes => false;
+        /// <summary>Multiply spectral core tint and Hollow Warrior shimmer waves by ambient tile lighting so
+        /// cloaked non-ghost enemies (e.g. Assassin) blend into darkness instead of glowing fullbright cyan.</summary>
+        protected virtual bool SpectralLitByWorld => false;
         protected virtual float SpectralOverlayScale => 3f;
         protected virtual Color SpectralOverlayColor => new Color(100, 200, 255);
         protected virtual float SpectralCoreTintStrength => 0.75f;
@@ -12976,6 +12980,13 @@ namespace tsorcRevamp.NPCs.Invaders
             float time = (float)Main.timeForVisualEffects;
             float waveX = (float)Math.Sin(time * 0.16f + NPC.whoAmI) * 2.2f;
             float waveY = (float)Math.Cos(time * 0.11f + NPC.whoAmI * 0.7f) * 1.4f;
+            Color worldLight = Color.White;
+
+            if (SpectralLitByWorld)
+            {
+                worldLight = Lighting.GetColor(NPC.Center.ToTileCoordinates());
+            }
+
             for (int i = 0; i < 3; i++)
             {
                 Vector2 offset;
@@ -12994,6 +13005,11 @@ namespace tsorcRevamp.NPCs.Invaders
                 {
                     offset = new Vector2((float)Math.Sin(time * 0.31f) * 1.1f, -waveY);
                     shimmerColor = new Color(150, 230, 255) * 0.0512f;
+                }
+
+                if (SpectralLitByWorld)
+                {
+                    shimmerColor = shimmerColor.MultiplyRGB(worldLight);
                 }
 
                 shimmerColor.A = 0;
@@ -13064,6 +13080,13 @@ namespace tsorcRevamp.NPCs.Invaders
             }
 
             Vector2 feet = NPC.Bottom - Main.screenPosition;
+            Color tintColor = SpectralOverlayColor;
+
+            if (SpectralLitByWorld)
+            {
+                tintColor = tintColor.MultiplyRGB(Lighting.GetColor(NPC.Center.ToTileCoordinates()));
+            }
+
             _spectralDrawCache.Clear();
             foreach (DrawData original in drawInfo.DrawDataCache)
             {
@@ -13071,7 +13094,7 @@ namespace tsorcRevamp.NPCs.Invaders
                 data.position = feet + (data.position - feet) * SpectralOverlayScale;
                 data.scale *= SpectralOverlayScale;
                 data.color = Color.Lerp(data.color,
-                    SpectralOverlayColor * (data.color.A / 255f), SpectralCoreTintStrength)
+                    tintColor * (data.color.A / 255f), SpectralCoreTintStrength)
                     * SpectralCoreOpacity;
 
                 // Stripped by default: a ghost-style overlay (Artorias's phantom) is a flat tinted

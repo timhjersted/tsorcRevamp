@@ -213,6 +213,9 @@ namespace tsorcRevamp
             ShadowRumorsScene,
             DesertPathsScene,
             RageWarningScene,
+            DryadGiftScene,
+            MysticSanctuaryScene,
+            SolaireTowerScene,
             TwinEoWFight,
             DunledingAmbush,
             RemixDunledingAmbush,
@@ -584,6 +587,11 @@ namespace tsorcRevamp
             ScriptedEvent ShadowRumorsScene = new ScriptedEvent(new Vector2(1899, 1121), 5, default, 31, true, false, false, "", default, false, ShadowRumorsCondition, ShadowRumorsAction);
             ScriptedEvent DesertPathsScene = new ScriptedEvent(new Vector2(2364, 843), 13, default, 31, true, false, false, "", default, false, DesertPathsCondition, DesertPathsAction);
             ScriptedEvent RageWarningScene = new ScriptedEvent(new Vector2(7098, 1457), 7, default, 31, true, false, false, "", default, false, RageWarningCondition, RageWarningAction);
+            ScriptedEvent MysticSanctuaryScene = new ScriptedEvent(new Vector2(611, 1559), 6, default, 31, true, false, false, "", default, false, MysticSanctuaryCondition, MysticSanctuaryAction);
+
+            //STORY CONVERSATIONS WITH VILLAGERS (the Dryad's downstairs room, Solaire's watch tower)
+            ScriptedEvent DryadGiftScene = new ScriptedEvent(new Vector2(5166, 954), 4, default, 31, true, false, false, "", default, false, DryadGiftCondition, DryadGiftAction);
+            ScriptedEvent SolaireTowerScene = new ScriptedEvent(new Vector2(4369, 667), 7, default, 31, true, false, false, "", default, false, SolaireTowerCondition, SolaireTowerAction);
 
             //BOULDERFALL EVENT 1 - EARTH TEMPLE ENTRANCE
             ScriptedEvent BoulderfallEvent1 = new ScriptedEvent(new Vector2(4378, 922), 6, default, default, true, false, false, "", default, false, default, BoulderfallEvent1Action);
@@ -894,6 +902,9 @@ namespace tsorcRevamp
                 {ScriptedEventType.ShadowRumorsScene, ShadowRumorsScene},
                 {ScriptedEventType.DesertPathsScene, DesertPathsScene},
                 {ScriptedEventType.RageWarningScene, RageWarningScene},
+                {ScriptedEventType.DryadGiftScene, DryadGiftScene},
+                {ScriptedEventType.MysticSanctuaryScene, MysticSanctuaryScene},
+                {ScriptedEventType.SolaireTowerScene, SolaireTowerScene},
                 {ScriptedEventType.HellkiteDragonEvent, HellkiteDragonEvent},
                 {ScriptedEventType.PrimeGwynFight, PrimeGwynEvent},
                 {ScriptedEventType.EoL, EoL},
@@ -1446,6 +1457,21 @@ namespace tsorcRevamp
             return NPCs.Special.StoryCutscenes.RageWarningReady();
         }
 
+        public static bool DryadGiftCondition()
+        {
+            return NPCs.Special.StoryCutscenes.DryadGiftReady();
+        }
+
+        public static bool MysticSanctuaryCondition()
+        {
+            return NPCs.Special.StoryCutscenes.MysticSanctuaryReady();
+        }
+
+        public static bool SolaireTowerCondition()
+        {
+            return NPCs.Special.StoryCutscenes.SolaireTowerReady();
+        }
+
         public static bool HomecomingCondition()
         {
             return NPCs.Special.StoryCutscenes.HomecomingReady();
@@ -1768,6 +1794,21 @@ namespace tsorcRevamp
         public static EventActionStatus RageWarningAction(ScriptedEvent thisEvent)
         {
             return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.RageWarning);
+        }
+
+        public static EventActionStatus DryadGiftAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.DryadGift);
+        }
+
+        public static EventActionStatus MysticSanctuaryAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.MysticSanctuary);
+        }
+
+        public static EventActionStatus SolaireTowerAction(ScriptedEvent thisEvent)
+        {
+            return NPCs.Special.StoryCutscenes.RunRing(thisEvent, NPCs.Special.StoryScene.SolaireTower);
         }
 
         public static EventActionStatus HomecomingAction(ScriptedEvent thisEvent)

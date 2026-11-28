@@ -26,19 +26,35 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void AI()
         {
-            if (!Main.dedServ && Main.rand.NextBool(2))
+            // On-brand Destined Death red & black trail: 3 interpolated motes/tick along the velocity
+            // step (gap <= 4.5px at 13.25px/t) — 2 crimson RedTorch + 1 dark Shadowflame (noLight).
+            if (!Main.dedServ)
             {
-                int dustType = Main.rand.NextBool(2) ? DustID.Blood : DustID.Wraith;
-                Vector2 dustPos = Projectile.Center + Main.rand.NextVector2Circular(14f, 14f);
-                Vector2 dustVel = -Projectile.velocity.SafeNormalize(Vector2.Zero) * Main.rand.NextFloat(0.4f, 1.8f) + Main.rand.NextVector2Circular(0.5f, 0.5f);
-                Dust dust = Dust.NewDustPerfect(dustPos, dustType, dustVel, 100, default, Main.rand.NextFloat(0.9f, 1.3f));
-                dust.noGravity = true;
+                Vector2 backwards = -Projectile.velocity.SafeNormalize(Vector2.UnitX);
+                for (int i = 0; i < 3; i++)
+                {
+                    float fraction = (i + 0.5f) / 3f;
+                    bool soot = i == 1;
+                    Vector2 dustPos = Projectile.Center - Projectile.velocity * fraction
+                        + Main.rand.NextVector2Circular(5f, 5f);
+                    Vector2 dustVel = backwards * Main.rand.NextFloat(0.6f, 2.2f)
+                        + Main.rand.NextVector2Circular(0.6f, 0.6f);
+                    Dust dust = Dust.NewDustPerfect(
+                        dustPos,
+                        soot ? DustID.Shadowflame : DustID.RedTorch,
+                        dustVel,
+                        soot ? 70 : 45,
+                        soot ? new Color(18, 4, 10) : new Color(206, 16, 34),
+                        soot ? Main.rand.NextFloat(0.95f, 1.35f) : Main.rand.NextFloat(0.85f, 1.35f));
+                    dust.noGravity = true;
+                    dust.noLight = soot;
+                }
             }
         }
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), 600);
+            target.AddBuff(ModContent.BuffType<Buffs.Debuffs.DestinedDeath>(), Buffs.Debuffs.DestinedDeath.DefaultDurationTicks);
             Projectile.Kill();
         }
 
@@ -87,11 +103,49 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
                         (float)RedKnightBurstKind.SpearImpact, 0.85f);
                 }
             }
-            for (int i = 0; i < 12; i++)
+            if (!Main.dedServ)
             {
-                Dust dust = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(8f, 8f),
-                    DustID.Blood, Main.rand.NextVector2Circular(3f, 3f), 100, default, 1.2f);
-                dust.noGravity = true;
+                // 3-layer Destined Death impact burst: crimson body + dark soot + fast sparks + billowing smoke.
+                for (int i = 0; i < 24; i++)
+                {
+                    bool soot = i % 3 == 0;
+                    Dust body = Dust.NewDustPerfect(
+                        Projectile.Center + Main.rand.NextVector2Circular(10f, 10f),
+                        soot ? DustID.Shadowflame : DustID.RedTorch,
+                        Main.rand.NextVector2Circular(4.2f, 4.2f),
+                        soot ? 70 : 45,
+                        soot ? new Color(18, 4, 10) : new Color(206, 16, 34),
+                        soot ? Main.rand.NextFloat(0.95f, 1.4f) : Main.rand.NextFloat(0.9f, 1.4f));
+                    body.noGravity = true;
+                    body.noLight = soot;
+                }
+
+                for (int i = 0; i < 12; i++)
+                {
+                    Vector2 sparkDir = Main.rand.NextVector2Unit();
+                    Dust spark = Dust.NewDustPerfect(
+                        Projectile.Center + sparkDir * Main.rand.NextFloat(2f, 8f),
+                        DustID.RedTorch,
+                        sparkDir * Main.rand.NextFloat(5.5f, 9.5f),
+                        20,
+                        new Color(255, 65, 80),
+                        Main.rand.NextFloat(0.55f, 0.85f));
+                    spark.noGravity = true;
+                }
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Dust smoke = Dust.NewDustPerfect(
+                        Projectile.Center + Main.rand.NextVector2Circular(12f, 12f),
+                        DustID.Smoke,
+                        Main.rand.NextVector2Circular(1.6f, 1.6f),
+                        160,
+                        new Color(22, 10, 14),
+                        Main.rand.NextFloat(0.55f, 0.8f));
+                    smoke.noGravity = true;
+                    smoke.noLight = true;
+                    smoke.fadeIn = Main.rand.NextFloat(1.3f, 1.65f);
+                }
             }
             Projectile.active = false;
         }

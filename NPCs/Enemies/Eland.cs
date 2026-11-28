@@ -88,18 +88,28 @@ namespace tsorcRevamp.NPCs.Enemies
             }
 
             // Walking → advance the cycle within [walkStart, walkEnd]; pace tied to walk speed.
+            // The 12-frame walk loop covers ~24px of planted-foot travel (~2.0-2.4px/frame).
+            // Subtracting the threshold preserves fractional distance so steps stay locked to speed.
+            const double pixelsPerWalkFrame = 2.4;
+
             int currentFrame = NPC.frame.Y / frameHeight;
             if (currentFrame < walkStart || currentFrame > walkEnd)
+            {
                 currentFrame = walkStart;
+            }
 
             NPC.frameCounter += Math.Abs(NPC.velocity.X);
-            if (NPC.frameCounter >= 9.0)
+            while (NPC.frameCounter >= pixelsPerWalkFrame)
             {
-                NPC.frameCounter = 0;
+                NPC.frameCounter -= pixelsPerWalkFrame;
                 currentFrame++;
+
                 if (currentFrame > walkEnd)
+                {
                     currentFrame = walkStart;
+                }
             }
+
             NPC.frame.Y = currentFrame * frameHeight;
         }
 

@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using tsorcRevamp.Content.Items.Weapons;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Systems.ArcaneSorcery;
 
 namespace tsorcRevamp.Utilities.Balance
@@ -64,6 +65,10 @@ namespace tsorcRevamp.Utilities.Balance
             public int prefix;
             public string prefixName;
             public int baseDamage;
+            public bool reinforceable;
+            public int reinforcementLevel;
+            public int reinforcementUpgrades;
+            public int reinforcedBaseDamage;
             public int baseCrit;
             public int useTime;
             public DamageClass damageClass;
@@ -124,7 +129,7 @@ namespace tsorcRevamp.Utilities.Balance
         /// Keying on item alone would average a light poke together with a committed heavy swing and
         /// report a number that describes neither.
         /// </summary>
-        private readonly record struct AttackKey(int ItemType, int Mode, int Alt);
+        private readonly record struct AttackKey(int ItemType, int Mode, int Alt, int ReinforcementLevel);
 
         private static readonly Dictionary<AttackKey, BenchRun> ActiveRuns = new();
         private static readonly List<string> SessionResults = new();
@@ -146,10 +151,10 @@ namespace tsorcRevamp.Utilities.Balance
         /// one attack — Terraria resolves a single swing's hits against every overlapping NPC within
         /// one update. Returns the 1-based index of this target within the current swing.
         /// </summary>
-        internal static int MeleeAttackIndex(int itemType, int mode, int alt, int npcId)
+        internal static int MeleeAttackIndex(int itemType, int mode, int alt, int npcId, int reinforcementLevel = 0)
         {
             long now = Main.GameUpdateCount;
-            var key = new AttackKey(itemType, mode, alt);
+            var key = new AttackKey(itemType, mode, alt, reinforcementLevel);
             if (now != _meleeTick || !key.Equals(_meleeKey))
             {
                 _meleeTick = now;
@@ -179,7 +184,8 @@ namespace tsorcRevamp.Utilities.Balance
         /// it (one projectile's lifetime, or one melee swing).</param>
         /// <param name="projectileType">The projectile that dealt the hit, or -1 for a melee swing.</param>
         internal static void RecordHit(NPC npc, Player player, int itemType, int ammoType, int damageDone,
-            bool crit, int attackMode, int altFunction, int attackTargetIndex = 1, int projectileType = -1)
+            bool crit, int attackMode, int altFunction, int attackTargetIndex = 1, int projectileType = -1,
+            int reinforcementLevel = 0, int reinforcementUpgrades = 0)
         {
             if (!AutoEnabled || damageDone <= 0 || itemType <= 0
                 || npc == null || npc.type != NPCID.TargetDummy
@@ -191,10 +197,10 @@ namespace tsorcRevamp.Utilities.Balance
 
             long now = Main.GameUpdateCount;
 
-            var key = new AttackKey(itemType, attackMode, altFunction);
+            var key = new AttackKey(itemType, attackMode, altFunction, reinforcementLevel);
             if (!ActiveRuns.TryGetValue(key, out BenchRun run))
             {
-                run = BeginRun(player, npc, key, now);
+                run = BeginRun(player, npc, key, reinforcementUpgrades, now);
                 if (run == null)
                     return;
 
@@ -253,12 +259,12 @@ namespace tsorcRevamp.Utilities.Balance
         /// Counted from projectile spawn, not from hits, so that shots which miss entirely still show
         /// up. Without this a weapon that sprays and misses reads identically to a precise one.
         /// </summary>
-        internal static void NotifyProjectileSpawned(int itemType, int attackMode, int altFunction, int projectileType)
+        internal static void NotifyProjectileSpawned(int itemType, int attackMode, int altFunction, int projectileType, int reinforcementLevel = 0)
         {
             if (!AutoEnabled || itemType <= 0)
                 return;
 
-            var key = new AttackKey(itemType, attackMode, altFunction);
+            var key = new AttackKey(itemType, attackMode, altFunction, reinforcementLevel);
             if (ActiveRuns.TryGetValue(key, out BenchRun run))
             {
                 run.projectilesSpawned++;
@@ -519,14 +525,30 @@ namespace tsorcRevamp.Utilities.Balance
 
         // ---------------------------------------------------------------- lifecycle
 
-        private static BenchRun BeginRun(Player player, NPC dummy, AttackKey key, long now)
+        private static BenchRun BeginRun(Player player, NPC dummy, AttackKey key, int reinforcementUpgrades, long now)
         {
             var probe = new Item();
             probe.SetDefaults(key.ItemType);
             if (probe.IsAir)
                 return null;
 
-            Item live = FindItem(player, key.ItemType);
+            Item live = FindItem(player, key.ItemType, key.ReinforcementLevel);
+            bool reinforceable = WeaponReinforcement.CanEverReinforce(live ?? probe);
+            int displayedLevel = key.ReinforcementLevel;
+            int upgradesEarned = reinforcementUpgrades;
+
+            if (live != null && reinforceable)
+            {
+                displayedLevel = WeaponReinforcement.GetDisplayedLevel(live);
+                upgradesEarned = WeaponReinforcement.GetUpgradesEarned(live);
+            }
+
+            int reinforcedBaseDamage = probe.damage;
+            if (reinforceable && WeaponReinforcement.TryGetEntry(key.ItemType, out WeaponReinforcementEntry entry))
+            {
+                reinforcedBaseDamage = WeaponReinforcement.GetDamageForLevel(entry, (byte)displayedLevel);
+            }
+
             Dictionary<int, int> claimedSpawns = ClaimPendingSpawns(key);
 
             var run = new BenchRun
@@ -538,6 +560,10 @@ namespace tsorcRevamp.Utilities.Balance
                 prefix = live?.prefix ?? 0,
                 prefixName = BalanceLog.PrefixName(live?.prefix ?? 0),
                 baseDamage = probe.damage,
+                reinforceable = reinforceable,
+                reinforcementLevel = displayedLevel,
+                reinforcementUpgrades = upgradesEarned,
+                reinforcedBaseDamage = reinforcedBaseDamage,
                 baseCrit = probe.crit,
                 useTime = probe.useTime,
                 damageClass = probe.DamageType ?? DamageClass.Default,
@@ -649,6 +675,10 @@ namespace tsorcRevamp.Utilities.Balance
                     prefix = run.prefix,
                     prefixName = run.prefixName,
                     baseDamage = run.baseDamage,
+                    reinforceable = run.reinforceable,
+                    reinforcementLevel = run.reinforcementLevel,
+                    reinforcementUpgrades = run.reinforcementUpgrades,
+                    reinforcedBaseDamage = run.reinforcedBaseDamage,
                     baseCrit = run.baseCrit,
                     useTime = run.useTime,
                     damageClass = run.damageClass.Name,
@@ -721,7 +751,8 @@ namespace tsorcRevamp.Utilities.Balance
 
                 BalanceLog.Append(FileName, record);
 
-                string label = run.item + (string.IsNullOrEmpty(run.prefixName) ? "" : $" ({run.prefixName})")
+                string reinforcementTag = run.reinforceable ? $" +{run.reinforcementLevel}" : string.Empty;
+                string label = run.item + reinforcementTag + (string.IsNullOrEmpty(run.prefixName) ? "" : $" ({run.prefixName})")
                     + $" [{record.variant}] #{record.sampleIndex}";
                 // Distinguishing these two out loud matters: they produce near-identical crowd numbers
                 // and mean opposite things.
@@ -805,16 +836,37 @@ namespace tsorcRevamp.Utilities.Balance
 
         private static bool Near1(float value) => Math.Abs(value - 1f) < 0.005f;
 
-        private static Item FindItem(Player player, int itemType)
+        private static Item FindItem(Player player, int itemType, int expectedReinforcementLevel = -1)
         {
+            Item fallback = null;
             if (player.HeldItem != null && player.HeldItem.type == itemType)
-                return player.HeldItem;
+            {
+                if (expectedReinforcementLevel < 0 || WeaponReinforcement.GetDisplayedLevel(player.HeldItem) == expectedReinforcementLevel)
+                {
+                    return player.HeldItem;
+                }
+
+                fallback = player.HeldItem;
+            }
+
             for (int i = 0; i < player.inventory.Length; i++)
             {
-                if (player.inventory[i] != null && player.inventory[i].type == itemType)
-                    return player.inventory[i];
+                Item candidate = player.inventory[i];
+                if (candidate != null && candidate.type == itemType)
+                {
+                    if (expectedReinforcementLevel < 0 || WeaponReinforcement.GetDisplayedLevel(candidate) == expectedReinforcementLevel)
+                    {
+                        return candidate;
+                    }
+
+                    if (fallback == null)
+                    {
+                        fallback = candidate;
+                    }
+                }
             }
-            return null;
+
+            return fallback;
         }
 
         private static void AddAmmo(List<AmmoUsage> list, int ammoType, int damageDone)

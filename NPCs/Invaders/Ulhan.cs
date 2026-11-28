@@ -319,7 +319,10 @@ namespace tsorcRevamp.NPCs.Invaders
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
-            => npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<ArcherSpiritBell>()));
+        {
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<ArcherSpiritBell>()));
+            npcLoot.Add(ItemDropRule.ByCondition(new FirstBossKillRule(), ModContent.ItemType<Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem>()));
+        }
 
         public override void OnKill()
         {

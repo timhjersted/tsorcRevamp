@@ -20,7 +20,8 @@ namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
         public const int ManaRegen = 11;
         public const float CritChance = 32f;
         public const float LifeRegen = 3f;
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen / 2f);
+        public const int LavaImmunitySeconds = 7;
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(MaxMana, ManaCost, ManaRegen, CritChance, LifeRegen / 2f, LavaImmunitySeconds);
         public override void SetStaticDefaults()
         {
         }
@@ -53,10 +54,9 @@ namespace tsorcRevamp.Content.Items.Armor.SupremeDragoonSet
             player.GetModPlayer<SupremeDragoonCloakPlayer>().Equipped = true;
             player.GetCritChance(DamageClass.Generic) += CritChance;
             
-            player.lavaImmune = true;
+            player.lavaMax += LavaImmunitySeconds * 60;
             player.fireWalk = true;
             player.breath = 9999999;
-            player.waterWalk = true;
             player.noKnockback = true;
 
             player.ignoreWater = true;

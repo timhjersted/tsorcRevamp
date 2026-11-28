@@ -48,6 +48,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         static readonly Color MiasmaDark = new(18, 30, 17);  // poison fog, its own green family
         static readonly Color MiasmaMid = new(82, 126, 64);
         static readonly Color MiasmaCore = new(180, 210, 118);
+        // Miasma-debuff palette (Ossric's fog and breath): built from MiasmaPlayer's violet (104, 18, 205)
+        // and pink (255, 105, 215), toned down for smoke. Mid is a light purple leaning pink; the green
+        // set above stays for other poison users (Cursed Dragon).
+        static readonly Color MiasmaVioletDark = new(32, 12, 42);
+        static readonly Color MiasmaVioletMid = new(150, 80, 175);
+        static readonly Color MiasmaVioletCore = new(245, 160, 225);
         // NEW third family: the grave-pyre. Nito's blade sprite is crimson and the ground he tears open
         // should burn, so the eruption / rift / hand / sky-portal rim run red-and-black fire rather than
         // the purple death magic. Purple stays the *magic*, green stays the *poison*, red is the *pyre*.
@@ -193,14 +199,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         }
 
         /// <param name="phase">Per-cloud phase so a bank of clouds does not read as one stamp repeated.</param>
+        /// <param name="miasmaPalette">True = the violet/pink Miasma-debuff colours; false = the green poison set.</param>
         internal static void DrawMiasma(Vector2 center, Vector2 size, float rotation, float progress, float opacity,
-            float phase = 0f)
+            float phase = 0f, bool miasmaPalette = false)
         {
             LoadAssets();
+            Color dark = MiasmaDark;
+            Color mid = MiasmaMid;
+            Color core = MiasmaCore;
+            if (miasmaPalette)
+            {
+                dark = MiasmaVioletDark;
+                mid = MiasmaVioletMid;
+                core = MiasmaVioletCore;
+            }
             // AlphaBlend (premultiplied): this is SMOKE. Additive poison fog over a bright sky can never
             // read as dark or occluding, which is why it used to vanish into the background.
             Draw(miasmaVolumeEffect, "NitoMiasmaVolume", macroFog, veins, center, size * 1.6f, rotation,
-                MiasmaDark, MiasmaMid, MiasmaCore, opacity, progress, 1f, phase, BlendState.AlphaBlend);
+                dark, mid, core, opacity, progress, 1f, phase, BlendState.AlphaBlend);
         }
 
         internal static void DrawGroundRift(Vector2 center, Vector2 size, float progress, float opacity)

@@ -182,6 +182,11 @@ namespace tsorcRevamp.NPCs
         public bool markedByCrystalNunchaku;
         public bool markedByDetonationSignal;
         public bool markedByDominatrix;
+        public bool markedBySerpentsTailLash;
+        public byte serpentsTailLashReinforcementLevel;
+        public bool markedByUhlansSiegebow;
+        public int uhlansSiegebowPopCooldown;
+        public byte uhlansSiegebowReinforcementLevel;
         public bool markedByDragoonLash;
         public bool markedBySupremeDragoonLash;
         public bool markedByEnchantedWhip;
@@ -1871,6 +1876,12 @@ namespace tsorcRevamp.NPCs
             markedByCrystalNunchaku = false;
             markedByDetonationSignal = false;
             markedByDominatrix = false;
+            markedBySerpentsTailLash = false;
+            markedByUhlansSiegebow = false;
+            if (uhlansSiegebowPopCooldown > 0)
+            {
+                uhlansSiegebowPopCooldown--;
+            }
             markedByDragoonLash = false;
             markedBySupremeDragoonLash = false;
             markedByEnchantedWhip = false;
@@ -3537,6 +3548,34 @@ namespace tsorcRevamp.NPCs
             {
                 SummonTagCriticalStrikeChance += SupremeDragoonLash.SummonTagCrit;
             }
+            if (markedBySerpentsTailLash)
+            {
+                if (serpentsTailLashReinforcementLevel >= Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.PerkTier6Level)
+                {
+                    SummonTagFlatDamage += Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.Tier6SummonTagDamage;
+                    SummonTagCriticalStrikeChance += Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.Tier6SummonTagCrit;
+                }
+                else if (serpentsTailLashReinforcementLevel >= Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.PerkTier3Level)
+                {
+                    SummonTagFlatDamage += Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.Tier3SummonTagDamage;
+                    SummonTagCriticalStrikeChance += Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.Tier3SummonTagCrit;
+                }
+                else
+                {
+                    SummonTagFlatDamage += Content.Items.Weapons.Summon.Whips.SerpentsTailLash.SerpentsTailLashItem.SummonTagDamage;
+                }
+            }
+            if (markedByUhlansSiegebow)
+            {
+                // +2 milestone perk raises Siegebow summon tag damage by +1 per rank (+5 -> +6..+12).
+                int bonusTagFromRank = 0;
+                if (uhlansSiegebowReinforcementLevel >= 2)
+                {
+                    bonusTagFromRank = Math.Min(7, uhlansSiegebowReinforcementLevel - 1);
+                }
+
+                SummonTagFlatDamage += Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem.SummonTagDamage + bonusTagFromRank;
+            }
             #endregion
             #region Vanilla Whips
             if (markedByLeatherWhip)
@@ -3676,6 +3715,36 @@ namespace tsorcRevamp.NPCs
                         }
                         buffIndex++;
                     }
+                }
+                if (markedByUhlansSiegebow && uhlansSiegebowPopCooldown <= 0 && Main.myPlayer == projectileOwner.whoAmI)
+                {
+                    uhlansSiegebowPopCooldown = Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem.PowderPopCooldownTicks;
+                    int siegebowBaseDamage = Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem.BaseDamage;
+                    if (Systems.WeaponReinforcement.Enabled
+                        && Systems.WeaponReinforcement.TryGetEntry(ModContent.ItemType<Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem>(), out Systems.WeaponReinforcementEntry siegebowEntry))
+                    {
+                        siegebowBaseDamage = Systems.WeaponReinforcement.GetDamageForLevel(siegebowEntry, uhlansSiegebowReinforcementLevel);
+                    }
+
+                    float basePopDamage = siegebowBaseDamage
+                        * (Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowItem.PowderPopPercent / 100f)
+                        * modPlayerProjectileOwner.SummonTagStrength;
+                    int popDamage = (int)projectileOwner.GetTotalDamage(DamageClass.SummonMeleeSpeed).ApplyTo(basePopDamage);
+                    if (popDamage < 1)
+                    {
+                        popDamage = 1;
+                    }
+
+                    Projectile.NewProjectile(
+                        projectile.GetSource_FromThis(),
+                        npc.Center,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<Content.Items.Weapons.Summon.Whips.UhlansSiegebow.UhlansSiegebowExplosionProj>(),
+                        popDamage,
+                        1.5f,
+                        projectileOwner.whoAmI,
+                        1f,
+                        uhlansSiegebowReinforcementLevel);
                 }
                 #endregion
                 #region Vanilla Whip Special Effects

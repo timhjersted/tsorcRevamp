@@ -8,6 +8,7 @@ namespace tsorcRevamp.Buffs.Debuffs
     /// Visible buildup marker for poison. A full meter applies vanilla Poisoned for PoisonDurationTicks.
     /// Poison immunity (Bezoar etc.) blocks the buildup too. The meter is owned by the victim's client,
     /// so <see cref="Apply"/> must be called on that machine (hostile OnHitPlayer, local contact checks).
+    /// The meter is locked (buildup ignored) while the player is Poisoned.
     /// </summary>
     public class PoisonBuildup : ModBuff
     {

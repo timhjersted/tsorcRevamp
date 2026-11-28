@@ -206,7 +206,8 @@
   "tileX": 571,
   "tileY": 1552,
   "textWidth": 600,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- 你发现了沉没空域神庙 -",
@@ -222,7 +223,8 @@
   "tileY": 1559,
   "textWidth": 740,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "- 你发现了灰烬之王葛温的坟墓 - --NEWLINE   --NEWLINE 要打败葛温，你需要击败七个恶魔领主来获得足够的力量。 --NEWLINE   --NEWLINE 他们被称为亚尔特留斯、大地恶魔巫妖王、火焰恶魔马瑞丽斯、水之恶魔克拉肯、枯萎、冰龙希斯和渊堕飞龙法师。 --NEWLINE   --NEWLINE 在击败他们之前和葛温战斗，必死无疑",
@@ -291,7 +293,8 @@
   "tileX": 1411,
   "tileY": 574,
   "textWidth": 550,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "观察完这扇大门上的栓接系统， --NEWLINE   --NEWLINE 你认为必须要触发三个开关才能解锁它。",
@@ -1281,7 +1284,7 @@
   "category": "story"
 }
 {
-  "text": "\u0022Miakoda，在你的旅行中，你遇到过暗影钥匙吗？\u0022 --NEWLINE   --NEWLINE \u0022在我被骷髅王囚禁时，我听说它在冰冻海洋深处留下了一把。 --NEWLINE   --NEWLINE 我也听过传言，飞龙法师会向那些玩他的游戏的人提供一个， --NEWLINE   --NEWLINE 这个游戏是在他位于东部山巅的堡垒里举办的……\u0022",
+  "text": "\u0022Miakoda，在你的旅行中，你遇到过暗影钥匙吗？\u0022 --NEWLINE   --NEWLINE \u0022在我被冢王奥斯里克囚禁时，我听说骷髅王在冰冻海洋深处留下了一把。 --NEWLINE   --NEWLINE 我也听过传言，飞龙法师会向那些玩他的游戏的人提供一个， --NEWLINE   --NEWLINE 这个游戏是在他位于东部山巅的堡垒里举办的……\u0022",
   "tileX": 4236,
   "tileY": 1749,
   "textWidth": 500,
@@ -1433,7 +1436,8 @@
   "tileY": 666,
   "textWidth": 500,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "塔楼在这个方向上被堵住了…",
@@ -1447,7 +1451,8 @@
   "tileX": 4374,
   "tileY": 666,
   "textWidth": 520,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- 埃什峰村 -",
@@ -1902,7 +1907,8 @@
   "tileY": 952,
   "textWidth": 640,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "retired": true
 }
 {
   "text": "- 你发现了被遗忘的亚尔特留斯废墟 -",

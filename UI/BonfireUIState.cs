@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 using tsorcRevamp.Content.Projectiles.Pets;
+using tsorcRevamp.Systems;
 using tsorcRevamp.Utilities;
 
 namespace tsorcRevamp.UI
@@ -25,6 +26,9 @@ namespace tsorcRevamp.UI
         tsorcUIHoverTextButton ButtonPiggyBank;
         tsorcUIHoverTextButton ButtonSafe;
         tsorcUIHoverTextButton ButtonTravel;
+        tsorcUIHoverTextButton ButtonReinforce;
+        private bool reinforceButtonAttached;
+
         public override void OnInitialize()
         {
             // Here we define our container UIElement. In DragableUIPanel.cs, you can see that DragableUIPanel is a UIPanel with a couple added features.
@@ -32,9 +36,9 @@ namespace tsorcRevamp.UI
             BonfireUI.SetPadding(0);
             // We need to place this UIElement in relation to its Parent. Later we will be calling `base.Append(BonfireUI);`. 
             // This means that this class, BonfireUIState, will be our Parent. Since BonfireUIState is a UIState, the Left and Top are relative to the top left of the screen.
-            BonfireUI.Left.Set((Main.screenWidth - 208) / 2, 0f);
+            BonfireUI.Left.Set((Main.screenWidth - 256) / 2, 0f);
             BonfireUI.Top.Set((Main.screenHeight + 120) / 2, 0f);
-            BonfireUI.Width.Set(208f, 0f);
+            BonfireUI.Width.Set(256f, 0f);
             BonfireUI.Height.Set(64f, 0f);
             BonfireUI.BackgroundColor = new Color(35, 20, 20);
 
@@ -77,6 +81,16 @@ namespace tsorcRevamp.UI
             ButtonTravel.OnLeftClick += new MouseEvent(ButtonTravelClicked);
             BonfireUI.Append(ButtonTravel);
 
+            Asset<Texture2D> buttonReinforceTexture = ModContent.Request<Texture2D>("tsorcRevamp/UI/ButtonReinforce");
+            ButtonReinforce = new tsorcUIHoverTextButton(buttonReinforceTexture, "Reinforce Weapon");
+            ButtonReinforce.Left.Set(202, 0f);
+            ButtonReinforce.Top.Set(10, 0f);
+            ButtonReinforce.Width.Set(44, 0f);
+            ButtonReinforce.Height.Set(44, 0f);
+            ButtonReinforce.OnLeftClick += new MouseEvent(ButtonReinforceClicked);
+            BonfireUI.Append(ButtonReinforce);
+            reinforceButtonAttached = true;
+
             Append(BonfireUI);
 
             // As a recap, ExampleUI is a UIState, meaning it covers the whole screen. We attach BonfireUI to ExampleUI some distance from the top left corner.
@@ -90,7 +104,28 @@ namespace tsorcRevamp.UI
             ButtonPiggyBank.HoverText = LangUtils.GetTextValue("UI.AccessPiggyBank");
             ButtonSafe.HoverText = LangUtils.GetTextValue("UI.AccessSafe");
             ButtonTravel.HoverText = LangUtils.GetTextValue("UI.BonfireTravel");
+            ButtonReinforce.HoverText = LangUtils.GetTextValue("UI.BonfireReinforce");
+
+            bool reinforcementEnabled = WeaponReinforcement.Enabled;
+            if (reinforcementEnabled && !reinforceButtonAttached)
+            {
+                BonfireUI.Append(ButtonReinforce);
+                BonfireUI.Width.Set(256f, 0f);
+                reinforceButtonAttached = true;
+            }
+            else if (!reinforcementEnabled && reinforceButtonAttached)
+            {
+                ButtonReinforce.Remove();
+                BonfireUI.Width.Set(208f, 0f);
+                reinforceButtonAttached = false;
+            }
+
             base.Update(gameTime);
+        }
+
+        private void ButtonReinforceClicked(UIMouseEvent evt, UIElement listeningElement)
+        {
+            WeaponReinforcementUIState.Toggle();
         }
 
         // Shortcut to the fullscreen map, where bonfire warping happens. The warp itself is gated in

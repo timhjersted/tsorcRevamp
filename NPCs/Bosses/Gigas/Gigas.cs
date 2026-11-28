@@ -219,12 +219,12 @@ namespace tsorcRevamp.NPCs.Bosses.Gigas{
 			}
 		}
 
-        ///<summary>Unique weapon: the Wrath of Gold tome — guaranteed on the first kill, 25% on repeat
-        ///kills, never in SHM (those pay out in Dark Souls via NPC.value). OnKill registers NewSlain.</summary>
+        ///<summary>Unique weapon: the Wrath of Gold tome — guaranteed on the first Super Hardmode kill.
+        ///OnKill registers NewSlain after loot rules resolve.</summary>
         public override void ModifyNPCLoot(Terraria.ModLoader.NPCLoot npcLoot)
         {
             npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.ByCondition(
-                new NonSHMFirstKillRule(), ModContent.ItemType<WrathOfGold>()));
+                new SHMFirstKillRule(), ModContent.ItemType<WrathOfGold>()));
         }
 
         public override bool CheckActive()

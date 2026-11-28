@@ -21,6 +21,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 
         const int TapWindow = 18;
         const int ChargeTicks = 55;      // cursor-high hold: charge before the Reliquary Nova
+        const int ReinforcedChargeTicks = 42; // +3 milestone perk: faster Reliquary Nova charge
         const int NovaManaCost = 16;
 
         int Mode => (int)Projectile.ai[0];
@@ -29,7 +30,10 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
         // ai[2] snapshots effective use time, including prefixes and use-speed hooks.
         float EffectiveUseTime => Projectile.ai[2] > 0f ? Projectile.ai[2] : GravemawTome.BaseUseTime;
         int UseTicks => Math.Max(1, (int)EffectiveUseTime);
-        int ScaledChargeTicks => ScaleInterval(ChargeTicks);
+        public byte ReinforcementLevel;
+        bool HasShadowflamePerk => ReinforcementLevel >= GravemawTome.ShadowflamePerkLevel;
+        int BaseChargeTicks => HasShadowflamePerk ? ReinforcedChargeTicks : ChargeTicks;
+        int ScaledChargeTicks => ScaleInterval(BaseChargeTicks);
         bool castFinished;
         bool novaRepeating;
 
@@ -40,6 +44,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             writer.Write(Timer);
             writer.Write(castFinished);
             writer.Write(novaRepeating);
+            writer.Write(ReinforcementLevel);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -47,6 +52,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
             Projectile.localAI[0] = reader.ReadSingle();
             castFinished = reader.ReadBoolean();
             novaRepeating = reader.ReadBoolean();
+            ReinforcementLevel = reader.ReadByte();
         }
 
         public override void SetDefaults()
@@ -133,7 +139,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 {
                     Vector2 vel = (baseAng + MathHelper.ToRadians(i * 11f)).ToRotationVector2() * 10f;
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), origin, vel,
-                        ModContent.ProjectileType<GravemawSoulBolt>(), dmg, Projectile.knockBack, Projectile.owner, 0.04f);
+                        ModContent.ProjectileType<GravemawSoulBolt>(), dmg, Projectile.knockBack, Projectile.owner, 0.04f, HasShadowflamePerk ? 1f : 0f);
                 }
             }
             else
@@ -143,7 +149,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 Vector2 vel = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX * player.direction) * 8f;
                 int dmg = (int)(Projectile.damage * RightTapDmgMod);
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, vel,
-                    ModContent.ProjectileType<GravemawOrb>(), dmg, Projectile.knockBack, Projectile.owner);
+                    ModContent.ProjectileType<GravemawOrb>(), dmg, Projectile.knockBack, Projectile.owner, HasShadowflamePerk ? 1f : 0f);
             }
         }
 
@@ -198,7 +204,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                     SoundEngine.PlaySound(SoundID.Item74 with { Volume = 0.9f, Pitch = 0.1f }, player.Center);
                     int dmg = (int)(Projectile.damage * LeftHoldDmgMod);
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
-                        ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f);
+                        ModContent.ProjectileType<GravemawNova>(), dmg, Projectile.knockBack, Projectile.owner, 360f, HasShadowflamePerk ? 1f : 0f);
 
                     // Each repeated cast also pays the item-use mana and stamina normally charged when spawning a controller.
                     tsorcRevampPlayer tsorcPlayer = player.GetModPlayer<tsorcRevampPlayer>();
@@ -246,7 +252,7 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero,
                     ModContent.ProjectileType<GravemawMaw>(), dmg,
                     Projectile.knockBack * 0.2f, Projectile.owner, UsesRightClick ? 1f : 0f,
-                    ScaleInterval(12));
+                    ScaleInterval(12), HasShadowflamePerk ? 1f : 0f);
             }
         }
 

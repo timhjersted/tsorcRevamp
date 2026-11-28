@@ -2,16 +2,18 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using tsorcRevamp.Content.Items.Weapons.Magic;
 using tsorcRevamp.Content.Projectiles.Enemy.VesselOfSouls;
 
 namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
 {
-    ///<summary>Soulspit's homing soul-bolt (friendly magic). Reuses the PurpleSkull sprite. ai[0]=homing.</summary>
+    ///<summary>Soulspit's homing soul-bolt (friendly magic). Reuses the PurpleSkull sprite. ai[0]=homing, ai[1]=shadowflame perk.</summary>
     class GravemawSoulBolt : ModProjectile
     {
         public override string Texture => UsefulFunctions.RefactorableFilepath(typeof(PurpleSkull));
 
         float Homing => Projectile.ai[0];
+        bool InflictsShadowflame => Projectile.ai[1] >= 1f;
 
         public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
 
@@ -64,6 +66,14 @@ namespace tsorcRevamp.Content.Projectiles.Magic.Gravemaw
                 if (dSq < best) { best = dSq; closest = npc; }
             }
             return closest;
+        }
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (InflictsShadowflame)
+            {
+                target.AddBuff(BuffID.ShadowFlame, GravemawTome.ShadowflameDurationTicks);
+            }
         }
 
         public override void OnKill(int timeLeft)

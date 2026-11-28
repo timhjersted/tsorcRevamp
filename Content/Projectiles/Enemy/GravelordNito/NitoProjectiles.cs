@@ -405,6 +405,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         // ai[1] is deliberately opt-in: Quietus and the other existing nova users retain their
         // current debuffs/dust, while a grave-hand detonation gets the Destined Death treatment.
         bool GraveHandDetonation => Projectile.ai[1] > 0.5f;
+        // ai[1] = 2: the same Destined Death blast drawn as a harmless visual (Quietus body burst).
+        bool VisualOnly => Projectile.ai[1] > 1.5f;
         float Radius => Projectile.localAI[0];
         int DamageTicks => (int)(MaxRadius / ExpandSpeed) + 3;
         float CollisionHalfThickness => GraveHandDetonation ? RingHalfThickness * 1.25f : RingHalfThickness;
@@ -564,6 +566,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             }
             return false;
         }
+
+        public override bool? CanDamage() => VisualOnly ? false : null;
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -775,8 +779,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         const int GrabTicks = 16;    // the initial damaging emergence
         int PauseTicks => IsPhaseTwo ? 24 : 32;      // beat before closing (was 60 — now forces a real jump or roll-through)
-        float ConvergeSpeed => IsPhaseTwo ? 6.0f : 5.2f; // 150px close in 25-29 ticks (was 3.8 / 39 ticks)
-        const float OutwardSpeed = 6f;     // OutwardTravelDistance / OutwardSpeed drives the timeLeft, so it self-adjusts
+        // 30% faster than the old 6.0 / 5.2: 150px closes in 19-22 ticks.
+        float ConvergeSpeed => IsPhaseTwo ? 7.8f : 6.76f;
+        const float OutwardSpeed = 7.8f;   // 30% over 6. OutwardTravelDistance / OutwardSpeed drives the timeLeft, so it self-adjusts
         internal const float InitialHandOffset = 150f;
         const float OutwardTravelDistance = 300f;
         const int MaxConvergeTicks = 150; // failsafe so a hand can never chase forever
@@ -862,6 +867,13 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             if (Timer == EmergeTick + 1)
             {
                 SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.6f, Pitch = -0.4f }, Projectile.Center);
+                // Heavy ground-break thud. Only the exploder hand plays it, so the pair erupting on the
+                // same tick sounds once instead of doubling up.
+                if (IsExploder)
+                {
+                    SoundEngine.PlaySound(new SoundStyle("tsorcRevamp/Sounds/HollowKnight/false_knight_land_1st_time")
+                        with { Volume = 0.7f }, Projectile.Center);
+                }
                 for (int i = 0; i < 22; i++)
                 {
                     Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BoneTorch, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-4f, -1f), 80, default, 1.1f);
@@ -1179,12 +1191,114 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
         public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
         {
-            // Spawned at the breach (a ground point), so lift the box to sit ON the ground.
-            Projectile.position.Y -= Projectile.height * 0.75f;
+            // Spawned at the breach (a ground point). NewProjectile centres the box on that point, so
+            // lifting by HALF the height puts its bottom on the floor. The old 0.75 lift left the
+            // hitbox and the fire floating about a tile above the ground.
+            Projectile.position.Y -= Projectile.height * 0.5f;
         }
 
         // Stops biting once it starts guttering out, so the visual tail is never an invisible hitbox.
         public override bool? CanDamage() => !DismissingWithHand && Timer < BurnTicks;
+
+        // Only the blaze flames burn, not the plume around them. Each flame is a circle about the size of
+        // its drawn fire (26px radius at scale 1); faint flames (under 35% opacity) at the top of their
+        // climb or just born do not count, so nothing hurts that the player cannot clearly see.
+        // Every machine computes the same flames from the synced timer, so the hit player's check agrees.
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            for (int i = 0; i < FlameCount; i++)
+            {
+                if (!TryGetFlame(i, out Vector2 flamePosition, out float flameScale, out _, out float flameOpacity, out _))
+                {
+                    continue;
+                }
+                if (flameOpacity < 0.35f)
+                {
+                    continue;
+                }
+
+                float flameRadius = 26f * flameScale;
+                Vector2 closest = Vector2.Clamp(flamePosition, targetHitbox.TopLeft(), targetHitbox.BottomRight());
+                float distance = Vector2.Distance(flamePosition, closest);
+                if (distance <= flameRadius)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // The Destined Death blaze sprites promise this: each hit adds one Destined Death stack
+        // (DestinedDeath.ReApply increments Stacks on every AddBuff) and sets the player on fire.
+        // Runs on the hit player's machine; buff sync carries it.
+        public override void OnHitPlayer(Player target, Player.HurtInfo info)
+        {
+            target.AddBuff(ModContent.BuffType<DestinedDeath>(), DestinedDeath.DefaultDurationTicks);
+            target.AddBuff(BuffID.OnFire, 3 * 60);
+        }
+
+        // Rising blaze flames: each one is born at the floor somewhere across the patch, spins as it
+        // climbs straight up past the plume's ~150px top, and fades out on the way. Stateless: every
+        // flame's cycle comes from the projectile's own timer plus a hash of (flame, cycle), so nothing
+        // is stored and every machine gets the same flames for both drawing and collision.
+        const int FlameCount = 14;
+        const int FlameLifeTicks = 54;
+        const float FlameRiseHeight = 200f;
+        const float FlameSpinTurns = 1.1f; // full turns over one flame's life
+        const int FlameTicksPerFrame = 6;
+
+        bool TryGetFlame(int i, out Vector2 position, out float scale, out float rotation, out float opacity, out int frameIndex)
+        {
+            position = Vector2.Zero;
+            scale = 0f;
+            rotation = 0f;
+            opacity = 0f;
+            frameIndex = 2;
+
+            // Births are staggered evenly so a new flame appears below while older ones are still rising.
+            float birthDelay = i * FlameLifeTicks / (float)FlameCount;
+            float flameTime = Timer - birthDelay;
+            if (flameTime < 0f)
+            {
+                return false;
+            }
+
+            int cycle = (int)(flameTime / FlameLifeTicks);
+            float cycleStart = birthDelay + cycle * FlameLifeTicks;
+            if (cycleStart > BurnTicks)
+            {
+                return false; // no new flames once the patch starts guttering out
+            }
+
+            float life = (flameTime - cycle * FlameLifeTicks) / FlameLifeTicks;
+            int seedIndex = i * 31 + cycle * 7 + Projectile.identity * 101;
+            float seedX = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.HashToUnit(seedIndex);
+            float seedSize = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.HashToUnit(seedIndex + 1);
+            float seedSpin = global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.HashToUnit(seedIndex + 2);
+
+            float scatterHalfWidth = Projectile.width * 0.55f;
+            float flameX = Projectile.Center.X + (seedX * 2f - 1f) * scatterHalfWidth;
+            float riseHeight = FlameRiseHeight * (0.75f + 0.4f * seedSize);
+            float flameY = Projectile.Bottom.Y - 8f - life * riseHeight;
+            position = new Vector2(flameX, flameY);
+
+            float spinDirection = 1f;
+            if (seedSpin < 0.5f)
+            {
+                spinDirection = -1f;
+            }
+            rotation = seedSpin * MathHelper.TwoPi + spinDirection * life * FlameSpinTurns * MathHelper.TwoPi;
+
+            // Big at the base, shrinking as it burns off. 12% fade-in so births never pop.
+            scale = MathHelper.Lerp(0.85f, 0.4f, life) * (0.85f + 0.3f * seedSize);
+            float fadeIn = MathHelper.Clamp(life / 0.12f, 0f, 1f);
+            float fadeOut = (float)System.Math.Pow(1f - life, 1.3f);
+            opacity = fadeIn * fadeOut;
+
+            // Frames 2-4 only: frames 0-1 are tiny sparks, and cycling through them read as flicker.
+            frameIndex = 2 + ((int)(flameTime / FlameTicksPerFrame) + i) % 3;
+            return true;
+        }
 
         public override void DrawBehind(int index, System.Collections.Generic.List<int> behindNPCsAndTiles,
             System.Collections.Generic.List<int> behindNPCs, System.Collections.Generic.List<int> behindProjectiles,
@@ -1274,6 +1388,24 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 new Vector2(Projectile.width * 1.3f, 46f), 1f, 0.72f * fade);
             NitoVFX.DrawGraveEruption(Projectile.Center,
                 new Vector2(Projectile.width * 1.1f, Projectile.height * 1.5f), progress, 0.6f * fade);
+
+            // The rising blaze flames (see TryGetFlame) drawn over the plume.
+            const int BlazeFrameCount = 5;
+            Texture2D blazeTexture = ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(DestinedDeathBlaze))).Value;
+            int blazeFrameHeight = blazeTexture.Height / BlazeFrameCount;
+            Vector2 blazeOrigin = new Vector2(blazeTexture.Width * 0.5f, blazeFrameHeight * 0.5f);
+            for (int i = 0; i < FlameCount; i++)
+            {
+                if (!TryGetFlame(i, out Vector2 flamePosition, out float flameScale, out float flameRotation,
+                    out float flameOpacity, out int frameIndex))
+                {
+                    continue;
+                }
+                Rectangle blazeFrame = new Rectangle(0, frameIndex * blazeFrameHeight, blazeTexture.Width, blazeFrameHeight);
+                Vector2 flameScreenPosition = flamePosition - Main.screenPosition;
+                Main.EntitySpriteDraw(blazeTexture, flameScreenPosition, blazeFrame, Color.White * (flameOpacity * fade),
+                    flameRotation, blazeOrigin, flameScale, SpriteEffects.None, 0);
+            }
             return false;
         }
     }
@@ -1288,14 +1420,20 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         public override string Texture => "tsorcRevamp/NPCs/Bosses/GravelordNito/GravelordSpike";
 
         int DelayTicks => (int)Projectile.ai[0];
+        // ai[1] = world Y of the arena floor (Nito's feet when last grounded). 0 = always hit tiles.
+        float ArenaFloorY => Projectile.ai[1];
         int Timer => (int)Projectile.localAI[0];
+
+        // Tile collision switches on this far above the floor line, so the spike meets the floor
+        // surface even when Nito's terrain sink put his feet a little below it.
+        const float FloorCatchMargin = 48f;
 
         public override void SetDefaults()
         {
             Projectile.hostile = true;
             Projectile.width = 14;
             Projectile.height = 60;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
             Projectile.penetrate = 1;
             Projectile.timeLeft = 210;
@@ -1310,6 +1448,12 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         {
             Projectile.localAI[0]++;
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2; // sprite points down at rest
+
+            // Falls through ceilings, ledges and blocks above the fight, then lands on the arena floor.
+            // Every machine runs this from synced ai[1] and position, so tileCollide agrees everywhere.
+            bool reachedFloorLevel = Projectile.Bottom.Y >= ArenaFloorY - FloorCatchMargin;
+            Projectile.tileCollide = ArenaFloorY <= 0f || reachedFloorLevel;
+
             if (Timer <= DelayTicks)
             {
                 Lighting.AddLight(Projectile.Center, 0.22f, 0.18f, 0.3f);
@@ -1440,17 +1584,21 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
 
             if (!Main.dedServ)
             {
-                // Unthrottled 2-mote body trail interpolated across velocity (no fadeIn on DustID.Poisoned —
-                // type 46 grows at +0.1/tick). Billowing dark-green Smoke carries the gaseous atmosphere.
+                // Unthrottled 2-mote body trail interpolated across velocity, in the Miasma violet and pink
+                // (RainbowMk2 takes its colour from the dust colour). Billowing dark-violet Smoke carries the gas.
                 const int CloudTrailCount = 2;
                 for (int i = 0; i < CloudTrailCount; i++)
                 {
                     float fraction = (i + Main.rand.NextFloat()) / CloudTrailCount;
                     Vector2 trailPos = Projectile.Center - Projectile.velocity * fraction + Main.rand.NextVector2Circular(24f, 24f);
-                    int dustType = i == 0 ? DustID.Poisoned : DustID.CursedTorch;
-                    Dust body = Dust.NewDustPerfect(trailPos, dustType,
+                    Color bodyColor = MiasmaPlayer.MiasmaColor;
+                    if (i == 0)
+                    {
+                        bodyColor = MiasmaPlayer.MiasmaPinkColor;
+                    }
+                    Dust body = Dust.NewDustPerfect(trailPos, DustID.RainbowMk2,
                         Projectile.velocity * -0.06f + Main.rand.NextVector2Circular(0.9f, 0.9f),
-                        Main.rand.Next(40, 65), default, Main.rand.NextFloat(0.85f, 1.4f));
+                        Main.rand.Next(40, 65), bodyColor, Main.rand.NextFloat(0.85f, 1.4f));
                     body.noGravity = true;
                 }
 
@@ -1458,14 +1606,14 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
                 {
                     Dust smog = Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(22f, 22f),
                         DustID.Smoke, Projectile.velocity * -0.04f + Main.rand.NextVector2Circular(0.7f, 0.7f),
-                        155, new Color(28, 46, 24), Main.rand.NextFloat(0.55f, 0.8f));
+                        155, new Color(34, 14, 46), Main.rand.NextFloat(0.55f, 0.8f));
                     smog.noGravity = true;
                     smog.noLight = true;
                     smog.fadeIn = Main.rand.NextFloat(1.35f, 1.6f);
                 }
             }
 
-            Lighting.AddLight(Projectile.Center, 0.1f, 0.18f, 0.07f);
+            Lighting.AddLight(Projectile.Center, MiasmaPlayer.MiasmaColor.ToVector3() * 0.25f);
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -1473,7 +1621,7 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
             float progress = MathHelper.Clamp(Projectile.localAI[0] / 190f, 0f, 1f);
             float fade = MathHelper.Clamp(Projectile.timeLeft / 18f, 0f, 1f);
             NitoVFX.DrawMiasma(Projectile.Center, new Vector2(74f, 70f), Projectile.rotation,
-                progress, 0.88f * fade, Projectile.identity * 0.613f);
+                progress, 0.88f * fade, Projectile.identity * 0.613f, miasmaPalette: true);
             return true;
         }
 
@@ -1482,7 +1630,8 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.GravelordNito
         // Runs on the hit player's machine; MiasmaBuildup.Apply reports the gain to the server, which owns the meter.
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaBuildupPerHit);
+            Buffs.Debuffs.MiasmaBuildup.Apply(target, MiasmaBuildupPerHit,
+                global::tsorcRevamp.NPCs.Bosses.GravelordNito.GravelordNito.MiasmaProcTicks);
             target.AddBuff(BuffID.Darkness, 3 * 60);
         }
     }

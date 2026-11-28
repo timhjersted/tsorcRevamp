@@ -13,7 +13,9 @@
 
 using Microsoft.Xna.Framework;
 using System;
+using ReLogic.Utilities;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -141,15 +143,17 @@ namespace tsorcRevamp.Liquids
 
 
     // ──────────────────────────────────────────────────────────────────────────
-    //  5. SURFACE BUBBLE SYSTEM
+    //  5. SURFACE BUBBLES + ACID WATER LOOP
     //     Scans a small region around the local player every few ticks for water
     //     tiles whose top edge is open air, then fires green rising-dust particles
-    //     to replicate the "lava surface bubbling" look.
+    //     to replicate the "lava surface bubbling" look.  The same scan finds the
+    //     nearest swamp water, which sets the volume of the acid water loop.
     //
     //     Tuning knobs:
     //       ScanHalfWidth / ScanHalfHeight — tile search box around the player
     //       BubbleChance   — 1-in-N chance per open-surface water tile per tick
     //       Interval       — only runs every N game ticks (60 = once per second)
+    //       AcidHearingTiles / AcidMaxVolume / AcidFadePerTick — the loop
     // ──────────────────────────────────────────────────────────────────────────
     public class PoisonSwampBubbleSystem : ModSystem
     {
@@ -158,46 +162,143 @@ namespace tsorcRevamp.Liquids
         private const int BubbleChance   = 10;   // 1-in-N per surface tile per interval
         private const int Interval        = 5;   // run every N ticks
 
+        // Acid loop: full volume touching swamp water, silent AcidHearingTiles (20) tiles away - inside the scan box, so the
+        // scan always sees the water that sets it. The volume glides toward its target by AcidFadePerTick, so walking in
+        // or out fades over ~1s instead of jumping on each 5-tick scan. Ambient type: the ambient slider scales it.
+        private static readonly SoundStyle AcidLoopStyle = new SoundStyle("tsorcRevamp/Sounds/HollowKnight/acid_water_loop", SoundType.Ambient) with { IsLooped = true, MaxInstances = 0 };
+        private const float AcidHearingTiles = 20f;
+        private const float AcidMaxVolume = 0.6f;
+        private const float AcidFadePerTick = 1f / 60f;
+
         private static int _timer;
+        private static float acidTargetVolume;
+        private static float acidVolume;
+        private static SlotId acidSlot = SlotId.Invalid;
+
+        public override void OnWorldUnload()
+        {
+            if (SoundEngine.TryGetActiveSound(acidSlot, out ActiveSound acidSound))
+            {
+                acidSound.Stop();
+            }
+
+            acidSlot = SlotId.Invalid;
+            acidVolume = 0f;
+            acidTargetVolume = 0f;
+        }
 
         public override void PostUpdateEverything()
         {
-            if (Main.dedServ || Main.netMode == NetmodeID.Server) return;
+            if (Main.dedServ)
+            {
+                return;
+            }
 
             _timer++;
-            if (_timer < Interval) return;
-            _timer = 0;
 
-            Player player = Main.LocalPlayer;
-            if (!PoisonSwampCondition.IsActive(player)) return;
-
-            int cx = (int)(player.Center.X / 16f);
-            int cy = (int)(player.Center.Y / 16f);
-
-            int x0 = Math.Max(0, cx - ScanHalfWidth);
-            int x1 = Math.Min(Main.maxTilesX - 1, cx + ScanHalfWidth);
-            int y0 = Math.Max(1, cy - ScanHalfHeight);
-            int y1 = Math.Min(Main.maxTilesY - 1, cy + ScanHalfHeight);
-
-            for (int x = x0; x <= x1; x++)
+            if (_timer >= Interval)
             {
-                for (int y = y0; y <= y1; y++)
+                _timer = 0;
+
+                Player player = Main.LocalPlayer;
+                acidTargetVolume = 0f;
+
+                if (PoisonSwampCondition.IsActive(player))
                 {
-                    Tile tile = Main.tile[x, y];
-                    // Must be a water tile (liquidType 0) with liquid present
-                    if (tile.LiquidAmount <= 0 || tile.LiquidType != LiquidID.Water) continue;
-                    // Top neighbour must be air (open water surface)
-                    Tile above = Main.tile[x, y - 1];
-                    if (above.HasTile || above.LiquidAmount > 0) continue;
+                    int playerTileX = (int)(player.Center.X / 16f);
+                    int playerTileY = (int)(player.Center.Y / 16f);
 
-                    if (!Main.rand.NextBool(BubbleChance)) continue;
+                    int left = Math.Max(0, playerTileX - ScanHalfWidth);
+                    int right = Math.Min(Main.maxTilesX - 1, playerTileX + ScanHalfWidth);
+                    int top = Math.Max(1, playerTileY - ScanHalfHeight);
+                    int bottom = Math.Min(Main.maxTilesY - 1, playerTileY + ScanHalfHeight);
 
-                    // Spawn a rising green bubble-dust just above the water surface
-                    Vector2 pos = new Vector2(x * 16 + Main.rand.Next(16), (y - 1) * 16 + Main.rand.Next(8));
-                    int d = Dust.NewDust(pos, 4, 4, DustID.Poisoned, 0f, Main.rand.NextFloat(-1.8f, -0.6f), 80, default, Main.rand.NextFloat(0.7f, 1.3f));
-                    Main.dust[d].noGravity = true;
-                    Main.dust[d].fadeIn = Main.rand.NextFloat(0.4f, 0.8f);
+                    // Squared tile distance to the nearest water tile; MaxValue = none found.
+                    float nearestWaterDistanceSquared = float.MaxValue;
+
+                    for (int x = left; x <= right; x++)
+                    {
+                        for (int y = top; y <= bottom; y++)
+                        {
+                            Tile tile = Main.tile[x, y];
+
+                            // Must be a water tile (liquidType 0) with liquid present
+                            if (tile.LiquidAmount <= 0 || tile.LiquidType != LiquidID.Water)
+                            {
+                                continue;
+                            }
+
+                            float offsetX = x - playerTileX;
+                            float offsetY = y - playerTileY;
+                            float distanceSquared = offsetX * offsetX + offsetY * offsetY;
+
+                            if (distanceSquared < nearestWaterDistanceSquared)
+                            {
+                                nearestWaterDistanceSquared = distanceSquared;
+                            }
+
+                            // Top neighbour must be air (open water surface)
+                            Tile above = Main.tile[x, y - 1];
+
+                            if (above.HasTile || above.LiquidAmount > 0)
+                            {
+                                continue;
+                            }
+
+                            if (!Main.rand.NextBool(BubbleChance))
+                            {
+                                continue;
+                            }
+
+                            // Spawn a rising green bubble-dust just above the water surface
+                            Vector2 bubblePosition = new Vector2(x * 16 + Main.rand.Next(16), (y - 1) * 16 + Main.rand.Next(8));
+                            float riseSpeed = Main.rand.NextFloat(-1.8f, -0.6f);
+                            int dustIndex = Dust.NewDust(bubblePosition, 4, 4, DustID.Poisoned, 0f, riseSpeed, 80, default, Main.rand.NextFloat(0.7f, 1.3f));
+                            Main.dust[dustIndex].noGravity = true;
+                            Main.dust[dustIndex].fadeIn = Main.rand.NextFloat(0.4f, 0.8f);
+                        }
+                    }
+
+                    if (nearestWaterDistanceSquared < float.MaxValue)
+                    {
+                        float nearestWaterDistance = (float)Math.Sqrt(nearestWaterDistanceSquared);
+                        float closeness = MathHelper.Clamp(1f - nearestWaterDistance / AcidHearingTiles, 0f, 1f);
+                        acidTargetVolume = closeness * AcidMaxVolume;
+                    }
                 }
+            }
+
+            // Every tick: glide toward the target, start the loop when it becomes audible, stop it once fully faded.
+            float fadeStep = AcidFadePerTick * AcidMaxVolume;
+
+            if (acidVolume < acidTargetVolume)
+            {
+                acidVolume = MathHelper.Min(acidVolume + fadeStep, acidTargetVolume);
+            }
+            else if (acidVolume > acidTargetVolume)
+            {
+                acidVolume = MathHelper.Max(acidVolume - fadeStep, acidTargetVolume);
+            }
+
+            bool acidPlaying = SoundEngine.TryGetActiveSound(acidSlot, out ActiveSound acidSound);
+
+            if (acidVolume > 0f)
+            {
+                if (!acidPlaying)
+                {
+                    acidSlot = SoundEngine.PlaySound(AcidLoopStyle);
+                    acidPlaying = SoundEngine.TryGetActiveSound(acidSlot, out acidSound);
+                }
+
+                if (acidPlaying)
+                {
+                    acidSound.Volume = acidVolume;
+                }
+            }
+            else if (acidPlaying)
+            {
+                acidSound.Stop();
+                acidSlot = SlotId.Invalid;
             }
         }
     }

@@ -85,11 +85,13 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         protected override float PuppetJumpBoost => 7f;
         protected override bool UseLandingTimedLeapSlam => true;
         protected override int LeapSlamDownswingTicks => 14;
-        protected override float LeapAttackUpSpeed => 6f;
-        protected override float LeapAttackForwardSpeed => 9f;
+        protected override float LeapAttackUpSpeed => 7.5f;
+        protected override float LeapAttackForwardSpeed => 12f;
         protected override float LeapAttackMinimumForwardSpeed => 0f;
+        protected override float LeapAttackTargetLeadTicks => 10f;
+        protected override float LeapAttackAscentTrackingStrength => 0.14f;
         protected override float LeapMinLungeDistance => 0f;
-        protected override float LeapLandingStandoff => -32f;
+        protected override float LeapLandingStandoff => 0f;
         protected override float LeapSlamCarryRotation => -1.55f;
         protected override float LeapSlamImpactRotation => 2.36f;
         protected override bool SuppressGhostWallTeleport => base.SuppressGhostWallTeleport || _graceTicks > 0 || _restTicks > 0 || _guardUp || HasOwnedShots();

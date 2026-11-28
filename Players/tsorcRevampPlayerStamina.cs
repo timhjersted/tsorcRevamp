@@ -35,6 +35,10 @@ namespace tsorcRevamp
         // Here we include a custom resource, similar to mana or health.
         // Creating some variables to define the current value of our Stamina resource as well as the current maximum value. We also include a temporary max value, as well as some variables to handle the natural regeneration of this resource.
         public float staminaResourceCurrent;
+        // Stamina just before the latest weapon use was charged, and the GameUpdateCount tick it was charged on.
+        // Set in PreItemCheck on a new use; ChargedBowHeld reads it that same tick to learn what the draw actually cost.
+        public float staminaBeforeUseCharge;
+        public uint staminaUseChargeTick;
         // Both stamina displays follow the buff itself, including its duration after stamina recovers.
         public bool IsManaBurnActive => Player.HasBuff(ModContent.BuffType<ManaBurn>());
         public Color StaminaBarFillColor => IsManaBurnActive ? new Color(160, 70, 220) : new Color(40, 190, 80);

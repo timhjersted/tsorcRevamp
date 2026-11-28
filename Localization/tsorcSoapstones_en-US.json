@@ -203,7 +203,8 @@
   "tileX": 571,
   "tileY": 1552,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- You\u0027ve discovered the Sunken Sky Temple -",
@@ -220,7 +221,8 @@
   "tileY": 1559,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "- You have found the Tomb of Gwyn, Lord of Cinder - --NEWLINE  --NEWLINE To defeat Gwyn, you\u0027ll need the power obtained from defeating 7 ancient beings. They are known as Artorias, Water Fiend Kraken, Fire Fiend Marilith, Earth Fiend Lich, The Blight, The Ghost Wyvern Mage, and Seath the Scaleless. To fight Gwyn before this will surely result in death...",
@@ -294,7 +296,8 @@
   "tileX": 1411,
   "tileY": 574,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "skipOnExpanded": true
 }
 {
   "text": "Looking at the bolting system on this gate, you think it must take three switches to unlock.",
@@ -1460,7 +1463,8 @@
   "tileY": 666,
   "textWidth": 320,
   "style": 1,
-  "category": "story"
+  "category": "story",
+  "retired": true
 }
 {
   "text": "The tower is blocked from this direction...",
@@ -1474,7 +1478,8 @@
   "tileX": 4374,
   "tileY": 666,
   "textWidth": 320,
-  "style": 1
+  "style": 1,
+  "retired": true
 }
 {
   "text": "- Ashen Peak Village -",
@@ -1930,7 +1935,8 @@
   "tileY": 952,
   "textWidth": 320,
   "style": 1,
-  "category": "lore"
+  "category": "lore",
+  "retired": true
 }
 {
   "text": "- You have found the Lost Ruins of Artorias -",

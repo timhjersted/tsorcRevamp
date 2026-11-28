@@ -107,7 +107,9 @@ namespace tsorcRevamp.Content.Projectiles.Enemy.Weapons
             if (progress < 1f && Main.rand.NextFloat() < spawnChance)
             {
                 Vector2 ringOffset = Main.rand.NextVector2CircularEdge(ReticleRadiusX, ReticleRadiusY);
-                Dust reticleDust = Dust.NewDustPerfect(landing + ringOffset, DustID.Torch, new Vector2(0f, -0.3f), 100, default, 1.2f);
+                // 50% transparent ground telegraph: DustID.Torch ignores dust.alpha in GetAlpha (returns A=25 with RGB),
+                // so halving RGB via Color(128, 128, 128) is what actually renders it at 50% intensity.
+                Dust reticleDust = Dust.NewDustPerfect(landing + ringOffset, DustID.Torch, new Vector2(0f, -0.3f), 128, new Color(128, 128, 128), 1.2f); // dust-lint: ok
                 reticleDust.noGravity = true;
             }
         }

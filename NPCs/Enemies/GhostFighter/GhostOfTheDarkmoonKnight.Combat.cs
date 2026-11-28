@@ -28,7 +28,8 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
             new MeleeCombo { Name = LeapName, BaseWeight = 100, Preferred = ComboRangeBand.Mid, RangedStartOnly = true,
                 RecoveryTicks = 52, InitialFlashColor = Accent, Steps = new[] { new MeleeComboStep {
                     Motion = ComboMotion.LeapSlam, TelegraphTicks = 40, AttackTicks = 120, DamageMult = 1.25f,
-                    ReachMult = 1f, SwingSpeedMult = 1f, LeapForwardSpeedMult = 1f, LeapHeightMult = 1f } } },
+                    ReachMult = 1f, SwingSpeedMult = 1f, LeapForwardSpeedMult = 1f, LeapHeightMult = 1f,
+                    LeapStrikeRange = 115f, LeapApexRetargetStrength = 1f } } },
             new MeleeCombo { Name = CrescentName, BaseWeight = 100, Preferred = ComboRangeBand.Any, RangedStartOnly = true,
                 RecoveryTicks = 36, InitialFlashColor = Accent, Steps = new[] { CutStep(ComboMotion.UnderhandArc, 40, 32, 280f / 240f) } },
         };
@@ -103,7 +104,7 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
                 switch (move)
                 {
                     case Move.Cut: return _cutCooldown == 0 && distance <= 72 && Math.Abs(target.Center.Y - NPC.Center.Y) < 48 && (Vigil == null || Vigil.CanMeleeStart(26, 14));
-                    case Move.Leap: return _leapCooldown == 0 && distance >= 96 && distance <= 256 && CanLeap(target) && (Vigil == null || Vigil.CanMeleeStart(66, 14));
+                    case Move.Leap: return _leapCooldown == 0 && distance >= 96 && distance <= 320 && CanLeap(target) && (Vigil == null || Vigil.CanMeleeStart(66, 14));
                     case Move.Crescent: return _crescentCooldown == 0 && Vigil == null && distance >= 64 && distance <= 384;
                     case Move.Barrage: return _barrageCooldown == 0 && Vigil == null && distance >= 160 && distance <= 640;
                     default: return false;
@@ -118,12 +119,26 @@ namespace tsorcRevamp.NPCs.Enemies.GhostFighter
         }
         bool CanLeap(Player target)
         {
-            float dx = target.Center.X + Math.Sign(target.Center.X - NPC.Center.X) * 32f - NPC.Center.X;
-            if (Math.Abs(target.Bottom.Y - NPC.Bottom.Y) > 48f) return false;
-            for (int t = 4; t <= 40; t += 4)
-                if (Collision.SolidCollision(NPC.position + new Vector2(dx * t / 40f, -6f * t + 0.15f * t * t), NPC.width, NPC.height)) return false;
-            Vector2 landing = new Vector2(NPC.position.X + dx, target.Bottom.Y - NPC.height);
-            return !Collision.SolidCollision(landing, NPC.width, NPC.height) && Collision.TileCollision(landing, new Vector2(0, 16), NPC.width, NPC.height).Y < 16f;
+            float horizontalGap = target.Center.X - NPC.Center.X;
+            if (Math.Abs(target.Bottom.Y - NPC.Bottom.Y) > 64f)
+            {
+                return false;
+            }
+
+            // Sample the 50-tick ballistic arc (LeapAttackUpSpeed = 7.5f, gravity = 0.3f) for overhead/wall clearance.
+            for (int tick = 5; tick <= 50; tick += 5)
+            {
+                Vector2 samplePos = NPC.position + new Vector2(horizontalGap * tick / 50f, -7.5f * tick + 0.15f * tick * tick);
+                if (Collision.SolidCollision(samplePos, NPC.width, NPC.height))
+                {
+                    return false;
+                }
+            }
+
+            Vector2 landing = new Vector2(NPC.position.X + horizontalGap, target.Bottom.Y - NPC.height);
+            bool landingBlocked = Collision.SolidCollision(landing, NPC.width, NPC.height);
+            bool hasFloor = Collision.TileCollision(landing, new Vector2(0f, 16f), NPC.width, NPC.height).Y < 16f;
+            return !landingBlocked && hasFloor;
         }
         protected override void OnMeleeComboTelegraphTick(MeleeCombo combo, MeleeComboStep step, int elapsed, int total)
         {

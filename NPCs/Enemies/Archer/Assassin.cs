@@ -173,6 +173,7 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
         protected override bool HasSpectralOverlay => NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().IsInvisible;
         protected override bool UseHollowWarriorGhostEffect => true;
         protected override bool SpectralKeepsArmorDyes => true;
+        protected override bool SpectralLitByWorld => true;
         protected override float SpectralOverlayScale => 1f;
         protected override float SpectralCoreTintStrength => 0.3f;
 
@@ -452,9 +453,14 @@ namespace tsorcRevamp.NPCs.Enemies.Archer
             }
         }
 
-        // Full draw: a soft green light and a rising green mote every 4t at the nocked arrowhead.
+        // Full draw: a soft green light and a rising green mote every 4t at the nocked arrowhead (never while cloaked).
         protected override void DoArrowheadVFX(Vector2 arrowhead)
         {
+            if (NPC.GetGlobalNPC<tsorcRevampGlobalNPC>().IsInvisible)
+            {
+                return;
+            }
+
             Lighting.AddLight(arrowhead, 0.12f, 0.4f, 0.14f);
 
             if (Main.GameUpdateCount % 4 == 0)

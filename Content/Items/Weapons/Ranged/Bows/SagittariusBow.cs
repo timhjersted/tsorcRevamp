@@ -14,7 +14,7 @@ namespace tsorcRevamp.Content.Items.Weapons.Ranged.Bows
 {
     class SagittariusBow : ModItem
     {
-        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChargedBowHeld.FullDrawDamageBonusPercent, ChargedBowHeld.FullDrawBonusPierce);
+        public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(ChargedBowHeld.FullDrawDamageBonusPercent, ChargedBowHeld.FullDrawBonusPierce, ChargedBowHeld.QuickShotDamagePercent, ChargedBowHeld.QuickShotVelocityPercent, ChargedBowHeld.QuickShotStaminaCostPercent);
 
         public override void SetStaticDefaults()
         {

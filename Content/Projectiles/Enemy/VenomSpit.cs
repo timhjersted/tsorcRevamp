@@ -66,7 +66,10 @@ namespace tsorcRevamp.Content.Projectiles.Enemy
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            target.AddBuff(BuffID.Venom, 3 * 60);
+            // Keep Acid Venom at 5s real duration across Classic, Expert (2x), and Master (2.5x).
+            float debuffMultiplier = Main.expertMode ? Main.GameModeInfo.DebuffTimeMultiplier : 1f;
+            int venomTicks = System.Math.Max(1, (int)System.Math.Round(5f * 60f / debuffMultiplier));
+            target.AddBuff(BuffID.Venom, venomTicks);
         }
 
         public override void OnKill(int timeLeft)
