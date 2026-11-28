@@ -104,14 +104,14 @@ class RuneMage : ModNPC
                 StartFight(target);
                 break;
             }
-            case (float)ActionState.WalkingPhase1:
+            case (float)ActionState.Phase1:
             {
-                WalkingPhase1(target);
+                Phase1(target);
                 break;
             }
-            case (float)ActionState.JumpingPhase1:
+            case (float)ActionState.Jumping:
             {
-                JumpingPhase1(target);
+                Jumping(target);
                 break;
             }
             case (float)ActionState.PhaseTransition:
@@ -147,18 +147,24 @@ class RuneMage : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        if (ShouldDrawScrollAnimation && Main.netMode != NetmodeID.Server)
+        bool isNotServer = Main.netMode != NetmodeID.Server;
+        if (ShouldDrawScrollAnimation && isNotServer)
         {
             DrawScrollAnimation(spriteBatch, screenPos, drawColor);
         }
-        if (ShouldDrawWorldRune && Main.netMode != NetmodeID.Server)
+        if (ShouldDrawWorldRune && isNotServer)
         {
             DrawWorldRune(spriteBatch, screenPos, drawColor);
+        }
+
+        if (ShouldDrawAngryEmote && isNotServer)
+        {
+            DrawAngryEmote(spriteBatch, screenPos, drawColor);
         }
         return !ShouldDrawScrollAnimation;
     }
 
-    Texture2D WorldRuneSprite;
+    public Texture2D WorldRuneSprite;
     public void DrawWorldRune(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         WorldRuneSprite = (Texture2D)ModContent.Request<Texture2D>(UsefulFunctions.RefactorableFilepath(typeof(WorldRune))); 
@@ -167,7 +173,7 @@ class RuneMage : ModNPC
             Color.White, 0, WorldRuneSourceRectangle.Center.ToVector2(), 1, SpriteEffects.None, 0);
         Lighting.AddLight(WorldRunePosition, Color.DarkRed.ToVector3() * 1f);
     }
-    Texture2D ScrollAnimation;
+    public Texture2D ScrollAnimation;
     public void DrawScrollAnimation(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         ScrollAnimation = (Texture2D)ModContent.Request<Texture2D>(Texture + "_ScrollAnimation");
@@ -177,29 +183,48 @@ class RuneMage : ModNPC
         {
             ShouldDrawWorldRune = false;
         }
-        Main.NewText(currentFrame);
         Rectangle scrollAnimSourceRect = ScrollAnimation.Frame(1, ScrollFrames, 0, currentFrame);
         Vector2 spritePosition = NPC.Center - screenPos + new Vector2(24, currentFrame * ScrollAnimation.Height / ScrollFrames);
-        Main.NewText(spritePosition);
         Main.EntitySpriteDraw(ScrollAnimation, spritePosition, scrollAnimSourceRect,
             Color.White, 0, scrollAnimSourceRect.Center.ToVector2(), NPC.scale, SpriteEffects.None, 0);
         Lighting.AddLight(spritePosition, Color.DarkRed.ToVector3() * 1f);
     }
 
+    public Texture2D AngryEmote;
+    public int AngryEmoteTimer = 0;
+    public const int EmoteFrames = 2;
+    public void DrawAngryEmote(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        AngryEmote = (Texture2D)ModContent.Request<Texture2D>(Texture + "_EmoteAngry");
+        int frameDuration = 20;
+        int currentFrame = AngryEmoteTimer < frameDuration ? 0 : 1;
+        AngryEmoteTimer++;
+        Rectangle emoteSourceRect = AngryEmote.Frame(1, EmoteFrames, 0, currentFrame);
+        Vector2 spritePosition = NPC.Center - screenPos + new Vector2(18 * NPC.direction, (currentFrame * AngryEmote.Height / EmoteFrames) - 26);
+        SpriteEffects spriteEffects = NPC.direction == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        Main.EntitySpriteDraw(AngryEmote, spritePosition, emoteSourceRect,
+            Color.White, 0, emoteSourceRect.Center.ToVector2(), NPC.scale, spriteEffects, 0);
+        if (AngryEmoteTimer > 40)
+        {
+            ShouldDrawAngryEmote = false;
+            AngryEmoteTimer = 0;
+        }
+    }
+
     public override void OnSpawn(IEntitySource source)
     {
         NPC.direction = 1;
-        ServerPreRollingRandoms(1);
+        ServerPreRollingRandoms((int)RandRollTypes.IdlePatrolRoll);
     }
 
-    private int IdlePatrolRoll = 0;
-    private void ServerPreRollingRandoms(in int rollType)
+    public int IdlePatrolRoll;
+    public void ServerPreRollingRandoms(in int rollType)
     {
         if (Main.netMode != NetmodeID.MultiplayerClient)
         {
             switch (rollType)
             {
-                case 1: //rolling for IdlePatrolling random
+                case (int)RandRollTypes.IdlePatrolRoll:
                 {
                     if (AiTimer1 > 0) //if positive
                     {
@@ -227,7 +252,7 @@ class RuneMage : ModNPC
         reader.ReadInt32();
     }
 
-    private int FrameDuration;
+    public int FrameDuration;
     public override void FindFrame(int frameHeight)
     {
         switch (AiState)
@@ -446,7 +471,7 @@ class RuneMage : ModNPC
             }
         }*/
     }
-    private const float IdleWalkSpeed = 1.25f;
+    public const float IdleWalkSpeed = 1.25f;
     /// <summary>
     /// Patrols the area around the World Rune. Will also talk to the player occasionally, if he can see them.
     /// AiTimer1 determines when he will walk around or idle and look around.
@@ -454,7 +479,7 @@ class RuneMage : ModNPC
     /// AiTimer3 is just a cooldown for turning around when running into a solid tile.
     /// </summary>
     /// <param name="target"></param>
-    private void IdlePatrolling(Player target)
+    public void IdlePatrolling(Player target)
     {
         if (Collision.CanHitLine(NPC.position, NPC.width, NPC.height, target.position, target.width, target.height))
         {
@@ -464,13 +489,13 @@ class RuneMage : ModNPC
         if (AiTimer1 == 60) //roll a second in advance to decide what it does next
         {
             //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
-            ServerPreRollingRandoms(1);
+            ServerPreRollingRandoms((int)RandRollTypes.IdlePatrolRoll);
             AiTimer1--;
         }        
         else if (AiTimer1 == -60)
         {            
             //roll some random action, decide whether he walks again or keeps standing still, maybe turn around
-            ServerPreRollingRandoms(1);
+            ServerPreRollingRandoms((int)RandRollTypes.IdlePatrolRoll);
             AiTimer1++;
         }
         else if (AiTimer1 == 0)
@@ -620,9 +645,9 @@ class RuneMage : ModNPC
         }
     }
 
-    private int FirstRunePrisonCastTime = 60;
-    private int TotalRunePrisonFrames = 4;
-    private const int PickupDuration = 120;
+    public int FirstRunePrisonCastTime = 60;
+    public int TotalRunePrisonFrames = 4;
+    public const int PickupDuration = 120;
     /// <summary>
     /// Starts the fight by trapping the player in an undodgeable Rune Prison and then picking up the World Rune.
     /// Then the player is let go and it goes into normal first phase AI.
@@ -681,12 +706,17 @@ class RuneMage : ModNPC
         AiTimer1++;
         if (AiTimer2 > PickupDuration)
         {
-            //Main.NewText("Done");
             ShouldDrawScrollAnimation = false;
             ShouldDrawWorldRune = false;
+            AiState = (float)ActionState.Phase1;
+            AiTimer1 = 0;
+            AiTimer2 = 0;
+            AiTimer3 = 0;
+            NPC.netUpdate = true;
         }
     }
 
+    public bool ShouldDrawAngryEmote;
     public override void HitEffect(NPC.HitInfo hit)
     {
         if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -700,6 +730,7 @@ class RuneMage : ModNPC
                     NPC.FaceTarget();
                     NPC.netUpdate = true;
                     DialogueHandler(Main.netMode != NetmodeID.MultiplayerClient, true);
+                    ShouldDrawAngryEmote = true;
                     break;
                 }
                 case (float)ActionState.IsWarning:
@@ -713,13 +744,13 @@ class RuneMage : ModNPC
         ChatTimer = 0;
     }
 
-    private int ChatTimer = 0;
-    private int ChatTimerRequirement = 120;
-    private int ChatWarningTimer = 0;
-    private int MonologueProgress = 1;
-    private int TotalOnHitWarnings = 1;
-    private int TotalWarnings = 1;
-    private void DialogueHandler(bool isNotMpClient, bool warnImmediately = false)
+    public int ChatTimer = 0;
+    public int ChatTimerRequirement = 120;
+    public int ChatWarningTimer = 0;
+    public int MonologueProgress = 1;
+    public int TotalOnHitWarnings = 1;
+    public int TotalWarnings = 1;
+    public void DialogueHandler(bool isNotMpClient, bool warnImmediately = false)
     {
         bool SendText = false;
         string TextAddon = "";
@@ -793,26 +824,44 @@ class RuneMage : ModNPC
     }
 
     public const float ChaseSpeed = 5f;
+    public const float MeleeRange = 25f;
+    public const float JumpRange = 100f;
     /// <summary>
     /// Runs around, either away from the player for a while or towards, not very fast. Should be able to dodgeroll like tsorcs fighter ai, or jump to occasionally dodge attacks.
     /// </summary>
     /// <param name="target"></param>
-    private void WalkingPhase1(Player target)
+    public void Phase1(Player target)
     {
-        NPC.velocity.X = NPC.Center.DirectionTo(target.Center).X * ChaseSpeed;
+        AiTimer1++;
+        if (NPC.Center.Distance(target.Center) > MeleeRange)
+        {
+            //if (NPC.Distance(target.Center) > JumpRange) //if the npc is clearly above or below make it jump/fall towards player
+            Walking(NPC.DirectionTo(target.Center) * -1, target);
+        }
+        else
+        {
+            Walking(NPC.DirectionTo(target.Center), target);
+        }
+
+        if (NPC.collideX && NPC.velocity.Y >= 0)
+        {
+            AiState = (float)ActionState.Jumping;
+            AiTimer1 = 0;
+            AiTimer2 = 0;
+            AiTimer3 = 0;
+        }
+    }
+
+    public void Walking(Vector2 direction, Player target)
+    {
+        NPC.velocity.X = direction.X * ChaseSpeed;
         SetDirection();
 
         Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed,
             ref NPC.gfxOffY,
             (int)target.gravDir);
-
-        if (NPC.collideX && NPC.velocity.Y >= 0)
-        {
-            AiState = (float)ActionState.JumpingPhase1;
-            AiTimer1 = 0;
-        }
     }
-    private void JumpingPhase1(Player target)
+    public void Jumping(Player target)
     {
         NPC.velocity.Y += -8f;
     }
@@ -820,7 +869,7 @@ class RuneMage : ModNPC
     /// Transitioning into Phase 2. Invincible during this. Casts a magic platform for him to stand on (or makes his scroll fly and stands on it? Kinda like a magic carpet) and jumps on it. Does not attack. 
     /// </summary>
     /// <param name="target"></param>
-    private void PhaseTransition(Player target)
+    public void PhaseTransition(Player target)
     {
         SetDirection();
     }
@@ -828,7 +877,7 @@ class RuneMage : ModNPC
     /// Hovers above the player, moving left or right randomly while not attacking. Casts spells much more often. 
     /// </summary>
     /// <param name="target"></param>
-    private void HoveringPhase2(Player target)
+    public void HoveringPhase2(Player target)
     {
         SetDirection();
     }
@@ -837,7 +886,7 @@ class RuneMage : ModNPC
 /// Debuff attack that homes in on you and can only be dodged via rolling correctly
 /// </summary>
 /// <param name="target"></param>
-    private void SpellFlux(Player target)
+    public void SpellFlux(Player target)
     {
         NPC.velocity = Vector2.Zero;
     }
@@ -845,7 +894,7 @@ class RuneMage : ModNPC
 /// Simple damage projectile, deals more damage if hit by Spell Flux
 /// </summary>
 /// <param name="target"></param>
-    private void Overload(Player target)
+    public void Overload(Player target)
     {
         NPC.velocity = Vector2.Zero;
     }
@@ -853,13 +902,18 @@ class RuneMage : ModNPC
 /// Casts prison on top of player, this slows the player or roots them if they were hit by Spell Flux
 /// </summary>
 /// <param name="target"></param>
-    private void RunePrison(Player target)
+    public void RunePrison(Player target)
     {
         NPC.velocity = Vector2.Zero;
     }    
-    private void SetDirection()
+    public void SetDirection()
     {
         NPC.direction = NPC.velocity.X > 0f ? 1 : -1;
+    }
+
+    public enum RandRollTypes
+    {
+        IdlePatrolRoll
     }
 
     public enum ActionState
@@ -867,8 +921,8 @@ class RuneMage : ModNPC
         IdlePatrolling,
         IsWarning,
         StartingFight,
-        WalkingPhase1,
-        JumpingPhase1,
+        Phase1,
+        Jumping,
         PhaseTransition,
         HoveringPhase2,
         SpellFlux,
@@ -876,7 +930,7 @@ class RuneMage : ModNPC
         RunePrison,
     }
 
-    private enum FrameState
+    public enum FrameState
     {
         Idle,
         Jumping,
